@@ -18,7 +18,8 @@
     "format:check": "prettier --check \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config ./test/jest-unit.config.js"
   },
   "dependencies": {
     "@nestjs/common": "12.2.0",
@@ -32,14 +33,17 @@
     "@nestjs/cli": "12.0.10",
     "@nestjs/schematics": "12.0.10",
     "@rspack/core": "2.2.9",
+    "@types/jest": "30.0.0",
     "@types/node": "24.19.2",
     "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-boundaries": "7.3.0",
     "eslint-plugin-prettier": "5.5.7",
+    "jest": "30.5.2",
     "prettier": "3.9.10",
     "ts-checker-rspack-plugin": "1.7.2",
+    "ts-jest": "29.4.15",
     "tsconfig-paths-webpack-plugin": "4.2.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.1",

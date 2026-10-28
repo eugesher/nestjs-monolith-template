@@ -1,5 +1,8 @@
 words = [
     "cli",
+    "matchers",
     "nestjs",
     "rspack",
+    "scaffolded",
+    "tsc",
 ]

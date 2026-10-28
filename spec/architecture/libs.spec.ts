@@ -1,0 +1,162 @@
+import '../support/lint';
+import { Scaffold } from '../support/scaffold';
+
+describe('libs', () => {
+  let scaffold: Scaffold;
+
+  beforeAll(() => {
+    scaffold = Scaffold.create([
+      'libs/auth/src/index.ts',
+      'libs/cache/src/index.ts',
+      'libs/config/src/index.ts',
+      'libs/database/src/index.ts',
+      'libs/health/src/index.ts',
+      'libs/http/src/index.ts',
+      'libs/http/src/exceptions/unauthorized-http.exception.ts',
+      'libs/kernel/src/index.ts',
+      'libs/messaging/src/index.ts',
+      'libs/observability/src/index.ts',
+      'libs/openapi/src/index.ts',
+      'libs/toolkit/src/index.ts',
+      'libs/contracts/src/auth/index.ts',
+      'libs/contracts/src/cache/index.ts',
+      'libs/contracts/src/database/index.ts',
+      'libs/contracts/src/health/index.ts',
+      'libs/contracts/src/messaging/index.ts',
+      'core/modules/src/__ledger-fixture__/index.ts',
+      'apps/__libs-fixture__/src/features/item/item.module.ts',
+    ]);
+  });
+
+  afterAll(() => {
+    scaffold.remove();
+  });
+
+  it('a lib may NOT reach core', async () => {
+    await expect({
+      file: 'libs/observability/src/__fixture__.ts',
+      code: 'import { x } from "../../../core/modules/src/__ledger-fixture__";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a lib may NOT reach apps', async () => {
+    await expect({
+      file: 'libs/observability/src/__fixture__.ts',
+      code: 'import { x } from "../../../apps/__libs-fixture__/src/features/item/item.module";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a lib MAY import its own files', async () => {
+    await expect({
+      file: 'libs/http/src/__fixture__.ts',
+      code: 'import { x } from "./exceptions/unauthorized-http.exception";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    ['kernel', []],
+    ['toolkit', []],
+    ['auth', ['kernel', 'toolkit']],
+    ['cache', ['kernel', 'toolkit', 'observability']],
+    ['config', ['kernel', 'toolkit']],
+    ['database', ['kernel', 'toolkit']],
+    ['health', ['kernel', 'toolkit', 'observability']],
+    ['http', ['kernel', 'toolkit']],
+    ['messaging', ['kernel', 'toolkit']],
+    ['observability', ['kernel', 'toolkit', 'config']],
+    ['openapi', ['kernel', 'toolkit']],
+  ])('%s may import only %j of the other libs', async (from, allowed) => {
+    const libs = [
+      'auth',
+      'cache',
+      'config',
+      'database',
+      'health',
+      'http',
+      'kernel',
+      'messaging',
+      'observability',
+      'openapi',
+      'toolkit',
+    ];
+
+    for (const to of libs.filter((lib) => lib !== from)) {
+      if (allowed.includes(to)) {
+        await expect({
+          file: `libs/${from}/src/__fixture__.ts`,
+          code: `import { x } from "../../${to}/src";`,
+        }).toPassArchitectureLint();
+      } else {
+        await expect({
+          file: `libs/${from}/src/__fixture__.ts`,
+          code: `import { x } from "../../${to}/src";`,
+        }).toBreakRule('boundaries/dependencies');
+      }
+    }
+  });
+
+  it.each([
+    ['auth', ['auth']],
+    ['cache', ['cache']],
+    ['config', []],
+    ['database', ['database']],
+    ['health', ['cache', 'health']],
+    ['http', []],
+    ['kernel', []],
+    ['messaging', ['messaging']],
+    ['observability', []],
+    ['openapi', []],
+    ['toolkit', []],
+  ])('%s may import only the contracts of %j', async (from, allowed) => {
+    const contracts = ['auth', 'cache', 'database', 'health', 'messaging'];
+
+    for (const to of contracts) {
+      if (allowed.includes(to)) {
+        await expect({
+          file: `libs/${from}/src/infrastructure/__fixture__.ts`,
+          code: `import { x } from "../../../contracts/src/${to}";`,
+        }).toPassArchitectureLint();
+      } else {
+        await expect({
+          file: `libs/${from}/src/infrastructure/__fixture__.ts`,
+          code: `import { x } from "../../../contracts/src/${to}";`,
+        }).toBreakRule('boundaries/dependencies');
+      }
+    }
+  });
+
+  it.each(['auth', 'cache', 'database', 'health', 'messaging'])(
+    'the contracts of %s MAY import the framework-free libs',
+    async (lib) => {
+      await expect({
+        file: `libs/contracts/src/${lib}/__fixture__.ts`,
+        code: 'import { x } from "../../../kernel/src";\nimport { y } from "../../../toolkit/src";',
+      }).toPassArchitectureLint();
+    },
+  );
+
+  it.each([
+    ['libs/contracts/src/cache/__fixture__.ts', '../../../cache/src'],
+    ['libs/contracts/src/cache/__fixture__.ts', '../../../observability/src'],
+    ['libs/contracts/src/cache/__fixture__.ts', '../database'],
+  ])(
+    '%s may NOT import %s, contracts depend on nothing but the framework-free libs',
+    async (file, source) => {
+      await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
+        'boundaries/dependencies',
+      );
+    },
+  );
+
+  it.each([
+    ['toolkit', '@nestjs/common'],
+    ['toolkit', 'rxjs'],
+    ['kernel', '@nestjs/common'],
+    ['kernel', 'reflect-metadata'],
+  ])('the framework-free lib %s may NOT import %s', async (lib, source) => {
+    await expect({
+      file: `libs/${lib}/src/__fixture__.ts`,
+      code: `import { x } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
+});
