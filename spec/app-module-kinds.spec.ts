@@ -21,9 +21,7 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
   });
 
   it('every feature is either an aggregator or a regular module', () => {
-    const violations = moduleKindViolations().filter(
-      ({ module }) => module !== 'apps/admin-api/src/features/note',
-    );
+    const violations = moduleKindViolations();
 
     expect(violations).toEqual([]);
   });
