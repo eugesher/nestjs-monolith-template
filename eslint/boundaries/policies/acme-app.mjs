@@ -2,33 +2,36 @@ import { appContracts, from, libContracts, libs, own, packages, to } from '../se
 
 const namesakeLibContracts = to('acme-libs:contracts', { lib: '{{ from.file.captured.module }}' });
 
+const appRoot = [
+  to('acme-app:app', own('app')),
+  to('acme-app:app:global:index', own('app')),
+  to('acme-app:features:index', own('app')),
+  to('acme-app:processors:index', own('app')),
+  to('acme-app:common:shared:index', own('app')),
+  to('acme-core:entities'),
+  libs('cache', 'config', 'database', 'http', 'kernel', 'messaging', 'observability', 'toolkit'),
+  libContracts('database'),
+  packages(
+    '@nestjs-cls/transactional',
+    '@nestjs-cls/transactional-adapter-typeorm',
+    '@nestjs/common',
+    '@nestjs/config',
+    '@nestjs/schedule',
+    '@nestjs/typeorm',
+    'joi',
+    'nestjs-cls',
+    'typeorm',
+  ),
+];
+
 export const acmeApp = [
   from('acme-app:main', [
-    to('acme-app:app', own('app')),
+    to('acme-app:app:module', own('app')),
     libs('database', 'kernel', 'observability', 'openapi'),
-    packages('@nestjs/common', '@nestjs/config', '@nestjs/core'),
+    packages('@nestjs/common', '@nestjs/config', '@nestjs/core', 'nestjs-pino'),
   ]),
-  from('acme-app:app', [
-    to('acme-app:app', own('app')),
-    to('acme-app:app:global:index', own('app')),
-    to('acme-app:features:index', own('app')),
-    to('acme-app:processors:index', own('app')),
-    to('acme-app:common:shared:index', own('app')),
-    to('acme-core:entities'),
-    libs('cache', 'config', 'database', 'http', 'kernel', 'messaging', 'observability', 'toolkit'),
-    libContracts('database'),
-    packages(
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/common',
-      '@nestjs/config',
-      '@nestjs/schedule',
-      '@nestjs/typeorm',
-      'joi',
-      'nestjs-cls',
-      'typeorm',
-    ),
-  ]),
+  from('acme-app:app:module', [...appRoot, packages('@nestjs/core')]),
+  from('acme-app:app', appRoot),
   from('acme-app:common:shared', [
     to('acme-app:common:shared', own('app')),
     appContracts,
@@ -70,6 +73,7 @@ export const acmeApp = [
   from('acme-app:contracts', [appContracts, libs('kernel', 'toolkit')]),
   from('acme-app:test', [
     to('acme-app:test', own('app')),
+    to('acme-app:app:module', own('app')),
     to('acme-app:app', own('app')),
     to('acme-app:contracts', own('app')),
     to('acme-libs'),

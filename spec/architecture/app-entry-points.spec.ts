@@ -14,7 +14,9 @@ describe('app entry points', () => {
     );
 
     expect(appAliases).toEqual([
+      '@acme-admin-app',
       '@acme-admin-features',
+      '@acme-client-app',
       '@acme-client-common/modules/idempotency',
       '@acme-client-common/shared/concurrency',
       '@acme-client-common/shared/idempotency',
@@ -26,7 +28,9 @@ describe('app entry points', () => {
   });
 
   it.each([
+    '@acme-admin-app',
     '@acme-admin-features',
+    '@acme-client-app',
     '@acme-client-common/modules/idempotency',
     '@acme-client-common/shared/concurrency',
     '@acme-client-common/shared/idempotency',
@@ -39,6 +43,8 @@ describe('app entry points', () => {
   });
 
   it.each([
+    '@acme-admin-app/setup/config/config-setup.module',
+    '@acme-client-app/app.module',
     '@acme-admin-features/health/health.module',
     '@acme-client-features/health/health.module',
     '@acme-admin-features/index',
@@ -51,6 +57,70 @@ describe('app entry points', () => {
     '@acme-client-processors/index',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
+  });
+
+  it.each([
+    ['apps/admin-api/src/main.ts', '@acme-admin-app'],
+    ['apps/client-api/src/main.ts', '@acme-client-app'],
+    ['apps/admin-api/test/context/__fixture__.ts', '@acme-admin-app'],
+    ['apps/client-api/test/context/__fixture__.ts', '@acme-client-app'],
+  ])('%s MAY import the AppModule of its own app by %s', async (file, source) => {
+    await expect({
+      file,
+      code: `import { AppModule } from "${source}";`,
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    ['apps/admin-api/src/main.ts', '@acme-client-app'],
+    ['apps/client-api/src/main.ts', '@acme-admin-app'],
+    ['apps/admin-api/test/context/__fixture__.ts', '@acme-client-app'],
+  ])('%s may NOT import the AppModule of the other app by %s', async (file, source) => {
+    await expect({
+      file,
+      code: `import { AppModule } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    ['apps/admin-api/src/app/setup/orm/__fixture__.ts', '@acme-admin-app'],
+    ['apps/admin-api/src/app/global/auth/module/__fixture__.ts', '@acme-admin-app'],
+    ['apps/client-api/src/features/item/item.module.ts', '@acme-client-app'],
+    ['apps/client-api/src/processors/idempotency-purge/__fixture__.ts', '@acme-client-app'],
+    ['apps/client-api/src/common/shared/concurrency/__fixture__.ts', '@acme-client-app'],
+  ])('%s may NOT import the AppModule, only main and the tests do', async (file, source) => {
+    await expect({
+      file,
+      code: `import { AppModule } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the AppModule MAY register global providers with tokens from @nestjs/core', async () => {
+    await expect({
+      file: 'apps/admin-api/src/app/app.module.ts',
+      code: 'import { APP_FILTER, APP_PIPE } from "@nestjs/core";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the app setup may NOT import @nestjs/core, only the AppModule registers global providers', async () => {
+    await expect({
+      file: 'apps/admin-api/src/app/setup/orm/__fixture__.ts',
+      code: 'import { APP_PIPE } from "@nestjs/core";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('main may NOT reach past the AppModule into the app setup', async () => {
+    await expect({
+      file: 'apps/admin-api/src/main.ts',
+      code: 'import { ConfigSetupModule } from "./app/setup/config/config-setup.module";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('main MAY take the Nest logger from nestjs-pino', async () => {
+    await expect({
+      file: 'apps/client-api/src/main.ts',
+      code: 'import { Logger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
   });
 
   it.each([

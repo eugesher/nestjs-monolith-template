@@ -155,4 +155,85 @@ describe('LoggerSetupConfig', () => {
       expect(level).toBe('info');
     });
   });
+
+  describe('hooks.logMethod', () => {
+    let method: jest.Mock;
+
+    beforeEach(() => {
+      method = jest.fn();
+    });
+
+    it('drops an info line of a noisy Nest context outside production', () => {
+      process.env.NODE_ENV = 'development';
+
+      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+
+      config.pinoHttp.hooks?.logMethod?.call(
+        {} as never,
+        [{ context: 'RoutesResolver' }, 'NoteController {/api/notes}'],
+        method,
+        30,
+      );
+
+      expect(method).not.toHaveBeenCalled();
+    });
+
+    it('keeps a warn line of a noisy Nest context', () => {
+      process.env.NODE_ENV = 'development';
+
+      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+
+      config.pinoHttp.hooks?.logMethod?.call(
+        {} as never,
+        [{ context: 'InstanceLoader' }, 'slow module'],
+        method,
+        40,
+      );
+
+      expect(method).toHaveBeenCalledWith({ context: 'InstanceLoader' }, 'slow module');
+    });
+
+    it('keeps an info line of any other context', () => {
+      process.env.NODE_ENV = 'development';
+
+      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+
+      config.pinoHttp.hooks?.logMethod?.call(
+        {} as never,
+        [{ context: 'NoteCreateUseCase' }, 'Note created'],
+        method,
+        30,
+      );
+
+      expect(method).toHaveBeenCalledWith({ context: 'NoteCreateUseCase' }, 'Note created');
+    });
+
+    it('keeps an info line without an object first', () => {
+      process.env.NODE_ENV = 'development';
+
+      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+
+      config.pinoHttp.hooks?.logMethod?.call({} as never, ['RoutesResolver'], method, 30);
+
+      expect(method).toHaveBeenCalledWith('RoutesResolver');
+    });
+
+    it('keeps an info line of a noisy Nest context in production', () => {
+      process.env.NODE_ENV = 'production';
+
+      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+
+      config.pinoHttp.hooks?.logMethod?.call(
+        {} as never,
+        [{ context: 'RoutesResolver' }, 'NoteController {/api/notes}'],
+        method,
+        30,
+      );
+
+      expect(method).toHaveBeenCalledWith(
+        { context: 'RoutesResolver' },
+        'NoteController {/api/notes}',
+      );
+    });
+  });
 });
