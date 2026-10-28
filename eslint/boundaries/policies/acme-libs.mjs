@@ -21,5 +21,21 @@ export const acmeLibs = [
   fromLib('health', [libs('observability'), libContracts('cache')]),
   fromLib('observability', [libs('config')]),
   fromLib('config', [packages('@nestjs/common', '@nestjs/config')]),
+  fromLib('observability', [
+    packages(
+      '@nestjs/common',
+      '@opentelemetry/api',
+      '@opentelemetry/auto-instrumentations-node',
+      '@opentelemetry/exporter-trace-otlp-http',
+      '@opentelemetry/resources',
+      '@opentelemetry/sdk-node',
+      '@opentelemetry/semantic-conventions',
+      'async_hooks',
+      'crypto',
+      'http',
+      'nestjs-pino',
+      'pino-http',
+    ),
+  ]),
   fromLib('toolkit', [packages('crypto')]),
 ];

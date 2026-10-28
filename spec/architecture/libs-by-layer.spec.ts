@@ -329,4 +329,51 @@ describe('libs by layer', () => {
       code: 'import Joi from "joi";',
     }).toBreakRule('boundaries/dependencies');
   });
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/processors/purge/application/services/__fixture__.ts',
+    'apps/__layers-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+    'apps/__layers-fixture__/src/common/shared/auth/__fixture__.ts',
+  ])('%s MAY log through nestjs-pino', async (file) => {
+    await expect({
+      file,
+      code: 'import { InjectPinoLogger, PinoLogger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/domain/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
+  ])(
+    '%s may NOT log through nestjs-pino — outcomes are logged by the application',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { PinoLogger } from "nestjs-pino";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
+  ])('%s may NOT reach the observability lib', async (file) => {
+    await expect({
+      file,
+      code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a consumer MAY read the correlation context from the observability lib', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
+      code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+    }).toPassArchitectureLint();
+  });
 });

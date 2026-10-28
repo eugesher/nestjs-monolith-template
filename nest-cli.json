@@ -46,6 +46,15 @@
         "tsConfigPath": "libs/kernel/tsconfig.lib.json"
       }
     },
+    "observability": {
+      "type": "library",
+      "root": "libs/observability",
+      "entryFile": "index",
+      "sourceRoot": "libs/observability/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/observability/tsconfig.lib.json"
+      }
+    },
     "toolkit": {
       "type": "library",
       "root": "libs/toolkit",
