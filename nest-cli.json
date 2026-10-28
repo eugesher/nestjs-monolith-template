@@ -27,6 +27,24 @@
       "compilerOptions": {
         "tsConfigPath": "apps/client-api/tsconfig.app.json"
       }
+    },
+    "kernel": {
+      "type": "library",
+      "root": "libs/kernel",
+      "entryFile": "index",
+      "sourceRoot": "libs/kernel/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/kernel/tsconfig.lib.json"
+      }
+    },
+    "toolkit": {
+      "type": "library",
+      "root": "libs/toolkit",
+      "entryFile": "index",
+      "sourceRoot": "libs/toolkit/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/toolkit/tsconfig.lib.json"
+      }
     }
   }
 }

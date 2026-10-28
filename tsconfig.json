@@ -21,8 +21,11 @@
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {}
+    "paths": {
+      "@acme-libs/kernel": ["./libs/kernel/src"],
+      "@acme-libs/toolkit": ["./libs/toolkit/src"]
+    }
   },
-  "include": ["apps/**/*.ts", "spec/**/*.ts"],
+  "include": ["apps/**/*.ts", "libs/**/*.ts", "spec/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
