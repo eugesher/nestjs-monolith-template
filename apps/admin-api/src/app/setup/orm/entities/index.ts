@@ -1,3 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export const entities: TypeOrmModuleOptions['entities'] = [];
+import { Permission, Role, RolePermission, User, UserRole } from '@acme-core/entities';
+
+export const entities: TypeOrmModuleOptions['entities'] = [
+  Permission,
+  Role,
+  RolePermission,
+  User,
+  UserRole,
+];

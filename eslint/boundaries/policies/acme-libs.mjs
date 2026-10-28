@@ -17,6 +17,7 @@ export const acmeLibs = [
     ],
     [libs('kernel', 'toolkit')],
   ),
+  fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
   fromLib('cache', [
     libs('observability'),
     packages(

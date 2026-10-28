@@ -8,6 +8,7 @@ describe('lib entry points', () => {
     const libs = readdirSync(path.resolve(__dirname, '../../libs')).sort();
 
     expect(libs).toEqual([
+      'auth',
       'cache',
       'config',
       'contracts',
@@ -32,9 +33,11 @@ describe('lib entry points', () => {
     );
 
     expect(libAliases).toEqual([
+      '@acme-libs/auth',
       '@acme-libs/cache',
       '@acme-libs/cache/testing',
       '@acme-libs/config',
+      '@acme-libs/contracts/auth',
       '@acme-libs/contracts/cache',
       '@acme-libs/contracts/database',
       '@acme-libs/contracts/health',
@@ -53,9 +56,11 @@ describe('lib entry points', () => {
   });
 
   it.each([
+    '@acme-libs/auth',
     '@acme-libs/cache',
     '@acme-libs/cache/testing',
     '@acme-libs/config',
+    '@acme-libs/contracts/auth',
     '@acme-libs/contracts/cache',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
@@ -87,6 +92,8 @@ describe('lib entry points', () => {
     '@acme-libs/openapi/api-reference/api-reference',
     '@acme-libs/health/module/health-lib.module',
     '@acme-libs/contracts/health/ports/health-lib.port',
+    '@acme-libs/auth/module/auth-lib.module',
+    '@acme-libs/contracts/auth/ports/auth-user-validator.port',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });

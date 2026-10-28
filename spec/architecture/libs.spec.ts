@@ -213,6 +213,37 @@ describe('libs', () => {
     },
   );
 
+  it('the auth lib MAY import the Nest packages its guards and token check need', async () => {
+    await expect({
+      file: 'libs/auth/src/guards/__fixture__.ts',
+      code:
+        'import { Injectable } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        'import { Reflector } from "@nestjs/core";\n' +
+        'import { JwtService } from "@nestjs/jwt";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['typeorm', 'nestjs-pino', 'argon2'])(
+    'the auth lib may NOT import %s',
+    async (source) => {
+      await expect({
+        file: 'libs/auth/src/guards/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it.each(['http', 'health', 'observability'])(
+    'the %s lib may NOT import @nestjs/jwt — only auth verifies tokens',
+    async (lib) => {
+      await expect({
+        file: `libs/${lib}/src/__fixture__.ts`,
+        code: 'import { JwtService } from "@nestjs/jwt";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
   it.each(['nestjs-pino', '@opentelemetry/api', 'async_hooks'])(
     'the kernel lib may NOT import %s',
     async (source) => {

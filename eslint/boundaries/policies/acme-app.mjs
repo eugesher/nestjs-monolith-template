@@ -1,5 +1,7 @@
 import { appContracts, from, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
+const namesakeLibContracts = to('acme-libs:contracts', { lib: '{{ from.file.captured.module }}' });
+
 export const acmeApp = [
   from('acme-app:main', [
     to('acme-app:app', own('app')),
@@ -44,6 +46,8 @@ export const acmeApp = [
     to('acme-app:common:modules:index', own('app')),
     to('acme-core:modules:index'),
     libs('auth', 'config', 'kernel', 'observability', 'toolkit'),
+    namesakeLibContracts,
+    packages('@nestjs/common'),
   ]),
   from('acme-app:app:global:infrastructure', [
     to('acme-app:app:global:infrastructure', own('app', 'module')),
@@ -51,14 +55,16 @@ export const acmeApp = [
     appContracts,
     to('acme-core:entities'),
     libs('database', 'kernel', 'toolkit'),
-    to('acme-libs:contracts'),
+    namesakeLibContracts,
   ]),
   from('acme-app:app:global:infrastructure:core-adapters', [
+    to('acme-app:app:global:infrastructure:core-adapters', own('app', 'module')),
     to('acme-app:common:shared:index', own('app')),
     appContracts,
     to('acme-core:contracts'),
     libs('kernel', 'toolkit'),
-    to('acme-libs:contracts'),
+    namesakeLibContracts,
+    packages('@nestjs/common'),
   ]),
   from('acme-app:contracts', [appContracts, libs('kernel', 'toolkit')]),
   from('acme-app:test', [

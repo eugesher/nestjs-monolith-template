@@ -110,6 +110,20 @@ describe('global modules (app/global) — modules without controllers', () => {
     }).toPassArchitectureLint();
   });
 
+  it('infrastructure/core-adapters MAY reach a sibling adapter of its own module', async () => {
+    await expect({
+      file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/spec/__fixture__.ts',
+      code: 'import { x } from "..";',
+    }).toPassArchitectureLint();
+  });
+
+  it('infrastructure/core-adapters may NOT reach the core adapters of another module', async () => {
+    await expect({
+      file: 'apps/__global-fixture__/src/app/global/audit/infrastructure/core-adapters/__fixture__.ts',
+      code: 'import { x } from "../../../auth/infrastructure/core-adapters";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it('infrastructure/core-adapters may NOT reach entities', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
@@ -145,6 +159,58 @@ describe('global modules (app/global) — modules without controllers', () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/audit/infrastructure/__fixture__.ts',
       code: 'import { x } from "../../auth/infrastructure";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    [
+      'apps/__global-fixture__/src/app/global/auth/module/__fixture__.ts',
+      '../../../../../../../libs/contracts/src',
+    ],
+    [
+      'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+      '../../../../../../../../libs/contracts/src',
+    ],
+  ])('%s MAY reach the lib contracts of its own name', async (file, contracts) => {
+    await expect({ file, code: `import { x } from "${contracts}/auth";` }).toPassArchitectureLint();
+  });
+
+  it.each([
+    [
+      'apps/__global-fixture__/src/app/global/auth/module/__fixture__.ts',
+      '../../../../../../../libs/contracts/src',
+    ],
+    [
+      'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+      '../../../../../../../../libs/contracts/src',
+    ],
+    [
+      'apps/__global-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../../../libs/contracts/src',
+    ],
+  ])('%s may NOT reach lib contracts of another name', async (file, contracts) => {
+    await expect({ file, code: `import { x } from "${contracts}/cache";` }).toBreakRule(
+      'boundaries/dependencies',
+    );
+  });
+
+  it.each([
+    'apps/__global-fixture__/src/app/global/auth/module/__fixture__.ts',
+    'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+  ])('%s MAY import @nestjs/common', async (file) => {
+    await expect({
+      file,
+      code: 'import { Injectable } from "@nestjs/common";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/__global-fixture__/src/app/global/auth/module/__fixture__.ts',
+    'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+  ])('%s may NOT import @nestjs/jwt — the auth lib verifies tokens', async (file) => {
+    await expect({
+      file,
+      code: 'import { JwtService } from "@nestjs/jwt";',
     }).toBreakRule('boundaries/dependencies');
   });
 
