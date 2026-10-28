@@ -1,8 +1,8 @@
 # 08 — Item feature
 
-`apps/client-api/src/features/item` is the per-owner catalog behind `/items`. This note covers its
-`domain`, `application` and `infrastructure`: the `ItemModel` aggregate, optimistic concurrency,
-idempotent creation, the ledger record of an archive and the adapters behind the ports.
+`apps/client-api/src/features/item` is the per-owner catalog behind `/items`. This note covers the
+`ItemModel` aggregate, optimistic concurrency, idempotent creation, the ledger record of an archive,
+the adapters behind the ports and the HTTP surface.
 
 ## The aggregate
 
@@ -134,3 +134,64 @@ reads the id from there. An event without a catalog name is a programming mistak
 The adapter lives in `infrastructure/events`, a layer of its own. It is the only place in the
 feature that reaches both the contracts of the app and the messaging contract, so persistence
 cannot import the idempotency contract around its common-adapter.
+
+## HTTP
+
+| Method and path | Permission | Headers | Answer |
+| --- | --- | --- | --- |
+| `POST /items` | `item:write` | `Idempotency-Key`, required | 201, the item |
+| `GET /items` | `item:read` | | 200, a page of items |
+| `GET /items/:itemId` | `item:read` | | 200, the item |
+| `PATCH /items/:itemId/name` | `item:write` | `If-Match`, optional | 200, the item |
+| `PATCH /items/:itemId/archive` | `item:archive` | `If-Match`, optional | 200, the item |
+
+A replay of a creation answers 201 with the stored body, exactly like the first request.
+
+**Reads are owner-scoped unless the caller is an admin.** The controller passes no `ownerId` for an
+admin, so `ItemAccessService` skips the ownership check. Writes always pass the caller's own id, so
+even an admin changes only their own items.
+
+**`itemId` is a string of digits**, from 1 to 20 of them without a leading zero, checked by
+`ItemIdRequestDto`. Anything else is a 400 at the edge instead of a lookup that cannot match.
+
+### Headers
+
+The two header decorators live in `common/shared`, because only features use them:
+
+| Alias | Decorator | Refusal |
+| --- | --- | --- |
+| `@acme-client-common/shared/concurrency` | `IfMatch` | `IF_MATCH_INVALID` (400) |
+| `@acme-client-common/shared/idempotency` | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
+
+- **`If-Match` is a version, not an entity tag.** `3` and `"3"` both mean version 3; a missing or
+  empty header means "no expectation". Anything that is not a non-negative integer, including a weak
+  tag `W/"3"`, is refused rather than ignored, so a typo cannot turn into an unconditional write.
+- **`Idempotency-Key` is trimmed and at most 128 characters**, the width of the
+  `idempotency_key` column. The common module refuses a longer key with a plain `Error`, which
+  would be a 500, so the decorator answers 400 first.
+
+### Errors
+
+`ItemHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
+`HttpExceptionFilter` of `libs/http`. The body is `{ statusCode, message, code }`, plus `details`
+when the exception has them, such as `details.currentVersion` of `VERSION_MISMATCH`.
+
+| Code | Status |
+| --- | --- |
+| `ITEM_SKU_INVALID`, `ITEM_NAME_INVALID`, `ITEM_VERSION_INVALID` | 400 |
+| `ITEM_ACCESS_FORBIDDEN` | 403 |
+| `ITEM_NOT_FOUND` | 404 |
+| `ITEM_ALREADY_ARCHIVED`, `ITEM_SKU_TAKEN`, `ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT`, `VERSION_MISMATCH` | 409 |
+| `ITEM_IDEMPOTENCY_KEY_REUSED` | 422 |
+
+There is no global filter for TypeORM's `OptimisticLockVersionMismatchError`. TypeORM throws it only
+for a read with an optimistic lock, and nothing reads that way: the version check is the `WHERE` of
+the update, and its conflict arrives as `VERSION_MISMATCH` above.
+
+## Wiring
+
+`ItemModule` imports `ItemTypeOrmModule.forFeature()`, `IdempotencyCommonModule` and
+`LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
+`ITEM_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The app's entity list includes `Item`,
+`IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's
+connection. The events adapter relies on the global `EventsModule` of `libs/messaging`.

@@ -26,6 +26,8 @@
       "@acme-client-common/modules/idempotency": [
         "./apps/client-api/src/common/modules/idempotency"
       ],
+      "@acme-client-common/shared/concurrency": ["./apps/client-api/src/common/shared/concurrency"],
+      "@acme-client-common/shared/idempotency": ["./apps/client-api/src/common/shared/idempotency"],
       "@acme-client-contracts/idempotency": ["./apps/client-api/src/contracts/idempotency"],
       "@acme-client-contracts/ledger-catalog-events": [
         "./apps/client-api/src/contracts/ledger-catalog-events"

@@ -33,7 +33,7 @@ export const acmeApp = [
     appContracts,
     libs('http', 'kernel', 'observability', 'toolkit'),
     libContracts('cache'),
-    packages('nestjs-pino'),
+    packages('@nestjs/common', 'nestjs-pino'),
   ]),
   from('acme-app:common:shared:index', [to('acme-app:common:shared', own('app'))]),
   from('acme-app:app:global:index', [

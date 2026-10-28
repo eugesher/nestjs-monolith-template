@@ -16,6 +16,8 @@ describe('app entry points', () => {
     expect(appAliases).toEqual([
       '@acme-admin-features',
       '@acme-client-common/modules/idempotency',
+      '@acme-client-common/shared/concurrency',
+      '@acme-client-common/shared/idempotency',
       '@acme-client-contracts/idempotency',
       '@acme-client-contracts/ledger-catalog-events',
       '@acme-client-features',
@@ -25,6 +27,8 @@ describe('app entry points', () => {
   it.each([
     '@acme-admin-features',
     '@acme-client-common/modules/idempotency',
+    '@acme-client-common/shared/concurrency',
+    '@acme-client-common/shared/idempotency',
     '@acme-client-contracts/idempotency',
     '@acme-client-contracts/ledger-catalog-events',
     '@acme-client-features',
@@ -37,6 +41,8 @@ describe('app entry points', () => {
     '@acme-client-features/health/health.module',
     '@acme-admin-features/index',
     '@acme-client-common/modules/idempotency/application',
+    '@acme-client-common/shared/concurrency/decorators/if-match.decorator',
+    '@acme-client-common/shared/idempotency/helpers/idempotency-key.helper',
     '@acme-client-contracts/idempotency/ports/idempotency-common.port',
     '@acme-client-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
   ])('a deep path into an app does not resolve: %s', (source) => {
@@ -101,6 +107,15 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
+  it('a client-api feature presentation MAY import the shared decorators by their aliases', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/health/presentation/controllers/__fixture__.ts',
+      code:
+        'import { IfMatch } from "@acme-client-common/shared/concurrency";\n' +
+        'import { IdempotencyKey } from "@acme-client-common/shared/idempotency";',
+    }).toPassArchitectureLint();
+  });
+
   it('a client-api feature common-adapter MAY import the idempotency contracts by their alias', async () => {
     await expect({
       file: 'apps/client-api/src/features/health/infrastructure/common-adapters/__fixture__.ts',
@@ -131,6 +146,10 @@ describe('app entry points', () => {
     [
       'apps/admin-api/src/features/health/infrastructure/common-adapters/__fixture__.ts',
       '@acme-client-contracts/idempotency',
+    ],
+    [
+      'apps/admin-api/src/features/health/presentation/controllers/__fixture__.ts',
+      '@acme-client-common/shared/concurrency',
     ],
   ])('admin-api (%s) may NOT reach the client-api %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
