@@ -23,6 +23,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@acme-libs/config": ["./libs/config/src"],
+      "@acme-libs/contracts/database": ["./libs/contracts/src/database"],
+      "@acme-libs/database": ["./libs/database/src"],
       "@acme-libs/kernel": ["./libs/kernel/src"],
       "@acme-libs/observability": ["./libs/observability/src"],
       "@acme-libs/observability/testing": ["./libs/observability/src/testing"],
