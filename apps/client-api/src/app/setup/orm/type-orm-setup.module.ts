@@ -21,6 +21,7 @@ export class TypeOrmSetupModule {
         logging: config.getOrThrow<boolean>('DATABASE_LOGGING'),
         synchronize: false,
         timezone: 'Z',
+        dateStrings: ['DATE'],
         charset: 'utf8mb4',
         namingStrategy: new SnakeNamingStrategy(),
       }),
