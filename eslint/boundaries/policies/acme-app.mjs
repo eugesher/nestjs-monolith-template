@@ -15,7 +15,16 @@ export const acmeApp = [
     to('acme-core:entities'),
     libs('cache', 'config', 'database', 'http', 'kernel', 'messaging', 'observability', 'toolkit'),
     libContracts('database'),
-    packages('@nestjs/common', '@nestjs/config', 'joi'),
+    packages(
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/typeorm',
+      'joi',
+      'nestjs-cls',
+      'typeorm',
+    ),
   ]),
   from('acme-app:common:shared', [
     to('acme-app:common:shared', own('app')),

@@ -12,7 +12,8 @@ weaker rule has nothing left to complain about in the real tree.
 the real `eslint.config.mjs`, picked up from the repository root. Fixture paths are virtual and
 outside every `tsconfig.json` project, so `typescript-eslint`'s `disableTypeChecked` is laid over
 the config: type-aware rules would otherwise fail to parse the fixture. Only the architecture rules
-are counted (`boundaries/*`, `no-restricted-imports`, `no-restricted-syntax`); style findings in a
+are counted (`boundaries/*`, `no-restricted-globals`, `no-restricted-imports`,
+`no-restricted-syntax`); style findings in a
 one-line fixture are noise.
 
 **An unresolved import throws.** `eslint-plugin-boundaries` classifies the TARGET of an import by
@@ -39,3 +40,12 @@ runs Jest in band, and nothing else may run the specs in parallel.
 `tsconfig.json` maps it; before that the alias does not resolve and the plugin treats it as an
 external package. Cases that are about aliases (`app-entry-points`, deep lib entry points) are
 added together with the aliases.
+
+**The config does not depend on the working directory.** An editor runs ESLint from the nearest
+`package.json`, and `migrations/` and `scripts/` have their own (they run under plain `node` as ES
+modules). Both `eslint-plugin-boundaries` and the `typescript-eslint` project service default to
+`process.cwd()`, so from a sub-folder every file pattern misses and the project service finds no
+`tsconfig.json`. `boundaries/root-path` and `tsconfigRootDir` are pinned to the repository root,
+and `repo.spec.ts` lints from `migrations/` and `apps/admin-api/` in a child process to keep it
+that way: an in-process `new ESLint({ cwd })` does not change `process.cwd()` and would pass
+either way.

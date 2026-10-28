@@ -7,7 +7,7 @@ describe('lib entry points', () => {
   it('libs/ holds exactly the libs the edge table in libs.spec.ts knows about', () => {
     const libs = readdirSync(path.resolve(__dirname, '../../libs')).sort();
 
-    expect(libs).toEqual(['config', 'kernel', 'observability', 'toolkit']);
+    expect(libs).toEqual(['config', 'contracts', 'database', 'kernel', 'observability', 'toolkit']);
   });
 
   it('tsconfig publishes exactly these lib entry points, no wildcards', () => {
@@ -21,6 +21,8 @@ describe('lib entry points', () => {
 
     expect(libAliases).toEqual([
       '@acme-libs/config',
+      '@acme-libs/contracts/database',
+      '@acme-libs/database',
       '@acme-libs/kernel',
       '@acme-libs/observability',
       '@acme-libs/observability/testing',
@@ -29,12 +31,15 @@ describe('lib entry points', () => {
     ]);
   });
 
-  it.each(['@acme-libs/config', '@acme-libs/kernel', '@acme-libs/toolkit'])(
-    '%s resolves',
-    (source) => {
-      expect(source).toResolve();
-    },
-  );
+  it.each([
+    '@acme-libs/config',
+    '@acme-libs/contracts/database',
+    '@acme-libs/database',
+    '@acme-libs/kernel',
+    '@acme-libs/toolkit',
+  ])('%s resolves', (source) => {
+    expect(source).toResolve();
+  });
 
   it.each([
     '@acme-libs/kernel/app/app-name.enum',
@@ -42,6 +47,8 @@ describe('lib entry points', () => {
     '@acme-libs/toolkit/src',
     '@acme-libs/config/env/env.helper',
     '@acme-libs/observability/correlation/correlation.middleware',
+    '@acme-libs/contracts/database/ports/transaction.port',
+    '@acme-libs/database/transaction/transaction.adapter',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -108,4 +115,45 @@ describe('lib entry points', () => {
       }).toPassArchitectureLint();
     },
   );
+
+  it.each([
+    'apps/admin-api/src/app/setup/orm/__fixture__.ts',
+    'apps/admin-api/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/client-api/src/processors/purge/application/services/__fixture__.ts',
+    'apps/client-api/src/common/modules/idempotency/application/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+  ])('%s MAY import the transaction port by its alias', async (file) => {
+    await expect({
+      file,
+      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/admin-api/src/features/item/domain/__fixture__.ts',
+    'apps/admin-api/src/features/item/outbound/__fixture__.ts',
+    'apps/admin-api/src/features/item/presentation/controllers/__fixture__.ts',
+  ])(
+    '%s may NOT import the transaction port by its alias, transactions are run by the application',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it('the app root MAY import the database lib by its alias', async () => {
+    await expect({
+      file: 'apps/admin-api/src/app/setup/orm/__fixture__.ts',
+      code: 'import { SnakeNamingStrategy } from "@acme-libs/database";',
+    }).toPassArchitectureLint();
+  });
+
+  it('application may NOT import the database lib root, it takes the transaction port', async () => {
+    await expect({
+      file: 'apps/admin-api/src/features/item/application/use-cases/__fixture__.ts',
+      code: 'import { TransactionAdapter } from "@acme-libs/database";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 });

@@ -21,6 +21,16 @@ export const acmeLibs = [
   fromLib('health', [libs('observability'), libContracts('cache')]),
   fromLib('observability', [libs('config')]),
   fromLib('config', [packages('@nestjs/common', '@nestjs/config')]),
+  fromLib('database', [
+    packages(
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/common',
+      '@nestjs/core',
+      'nestjs-cls',
+      'typeorm',
+    ),
+  ]),
   fromLib('observability', [
     packages(
       '@nestjs/common',
