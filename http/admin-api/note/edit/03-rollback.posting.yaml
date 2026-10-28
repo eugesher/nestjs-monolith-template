@@ -1,0 +1,24 @@
+name: 03-rollback
+description: |-
+  e2e: Note › PATCH /api/notes/:noteId › should roll the note back when the revision insert fails
+
+  Expect: 409 Conflict, Resource already exists; note 203 stays at version 1 with its body
+  User: editor@example.com (token signed by scripts.py)
+  Before: SQL: INSERT INTO note_revision (id, note_id, note_version, body_before, body_after, editor_id) VALUES (299, 203, 2, 'Taken before.', 'Taken after.', '00000000-0000-4000-8000-000000000001')
+  After: SQL: DELETE FROM note_revision WHERE id = 299
+method: PATCH
+url: $ADMIN_API_BASE_URL/notes/203
+body:
+  content: |-
+    {
+      "body": "This edit is rolled back."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

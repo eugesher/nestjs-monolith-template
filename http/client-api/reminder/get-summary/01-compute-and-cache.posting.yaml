@@ -1,0 +1,14 @@
+name: 01-compute-and-cache
+description: |-
+  e2e: Reminder › GET /api/reminders/summary › should compute the summary of the caller and cache it
+
+  Expect: 200 OK, pending 4, nextDueOn 2026-05-15; key acme:reminders:summary:v1:00000000-0000-4000-8000-000000000003:__all__ cached for 60 s
+  User: viewer@example.com (token signed by scripts.py)
+  Before: Redis: FLUSHDB
+url: $CLIENT_API_BASE_URL/reminders/summary
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

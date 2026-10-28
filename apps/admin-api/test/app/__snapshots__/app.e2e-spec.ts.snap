@@ -1,0 +1,912 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
+{
+  "response": {
+    "body": {
+      "app": "admin-api",
+      "status": "ok",
+      "uptimeSeconds": Any<Number>,
+    },
+  },
+}
+`;
+
+exports[`App Health GET /api/health/ready should report readiness of the database and the cache 1`] = `
+{
+  "response": {
+    "body": {
+      "dependencies": {
+        "cache": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+        "database": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+      },
+      "status": "ready",
+    },
+  },
+}
+`;
+
+exports[`App Iam GET /api/iam/roles should list the roles with their permissions from the database 1`] = `
+{
+  "response": {
+    "body": [
+      {
+        "name": "admin",
+        "permissionCodes": [
+          "iam:assign",
+          "iam:role-edit",
+          "iam:user-create",
+          "item:archive",
+          "item:read",
+          "item:write",
+          "ledger:read",
+          "note:read",
+          "note:write",
+          "reminder:read",
+          "reminder:write",
+        ],
+      },
+      {
+        "name": "editor",
+        "permissionCodes": [
+          "item:archive",
+          "item:read",
+          "item:write",
+          "ledger:read",
+          "note:read",
+          "note:write",
+          "reminder:read",
+          "reminder:write",
+        ],
+      },
+      {
+        "name": "viewer",
+        "permissionCodes": [
+          "item:read",
+          "ledger:read",
+          "reminder:read",
+          "reminder:write",
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Iam GET /api/iam/roles should refuse a caller without iam:assign 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Iam POST /api/iam/users should create a user who can log in at once 1`] = `
+{
+  "db": {
+    "user": [
+      {
+        "created_at": Any<Date>,
+        "email": "new-viewer@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "user_roles": [
+      {
+        "role_id": 3,
+        "user_id": Any<String>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "email": "new-viewer@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Iam POST /api/iam/users should refuse a taken email in another case with 409 1`] = `
+{
+  "db": {
+    "user": [
+      {
+        "email": "editor@example.com",
+        "id": "00000000-0000-4000-8000-000000000002",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email editor@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Iam POST /api/iam/users/:userId/roles should answer 404 for an unknown user 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_NOT_FOUND",
+      "message": "User 00000000-0000-4000-8000-000000000099 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Iam POST /api/iam/users/:userId/roles should grant a role and answer 200 1`] = `
+{
+  "db": {
+    "user_roles": [
+      {
+        "role_id": 2,
+        "user_id": "00000000-0000-4000-8000-000000000004",
+      },
+      {
+        "role_id": 3,
+        "user_id": "00000000-0000-4000-8000-000000000004",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "roles": [
+        "viewer",
+        "editor",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Iam PUT /api/iam/roles/:role/permissions should answer 404 for an unknown role 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role auditor was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
+{
+  "db": {
+    "role_permissions": [
+      {
+        "permission_id": 1,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 4,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 10,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 11,
+        "role_id": 3,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each value in permissionCodes must be one of the following values: item:read, item:write, item:archive, ledger:read, iam:user-create, iam:assign, iam:role-edit, note:read, note:write, reminder:read, reminder:write",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
+{
+  "db": {
+    "role_permissions": [
+      {
+        "permission_id": 1,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 10,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 11,
+        "role_id": 3,
+      },
+    ],
+  },
+  "ledger": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+  "response": {
+    "body": {
+      "name": "viewer",
+      "permissionCodes": [
+        "item:read",
+        "reminder:read",
+        "reminder:write",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "action": "ItemCreated",
+          "correlationId": "seed-correlation-id",
+          "id": "400",
+          "occurredAt": "2026-01-01T00:00:00.000Z",
+          "operationKey": "item-created:100",
+          "payload": {
+            "name": "Seeded reference item",
+            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "sku": "SKU-0001",
+          },
+          "recordedAt": "2026-01-01T00:00:00.000Z",
+          "subjectId": "100",
+          "subjectType": "item",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Ledger GET /api/ledger should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes should filter by resolution 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Already handled.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "202",
+          "resolved": true,
+          "subjectId": "101",
+          "subjectType": "item",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 2,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes should list the notes of one subject, newest first 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Check the supplier.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "201",
+          "resolved": false,
+          "subjectId": "100",
+          "subjectType": "item",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Customer called about this.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "200",
+          "resolved": false,
+          "subjectId": "100",
+          "subjectType": "item",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes should refuse a caller without note:read 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes should refuse a resolution that is not a boolean with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "resolved must be a boolean value",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes should refuse half of a subject filter with 400 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_SUBJECT_INVALID",
+      "message": "A subject filter needs both subjectType and subjectId, or neither",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId should answer 404 for a missing note 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 299 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId should read one note 1`] = `
+{
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Already handled.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "202",
+      "resolved": true,
+      "subjectId": "101",
+      "subjectType": "item",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId should refuse an id that is not a number with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "noteId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId/revisions should answer 404 for the revisions of a missing note 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 299 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of a note 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "bodyAfter": "Already handled.",
+          "bodyBefore": "Handled soon.",
+          "correlationId": "seed-correlation-id",
+          "editorId": "00000000-0000-4000-8000-000000000001",
+          "id": "200",
+          "noteId": "202",
+          "noteVersion": 2,
+          "recordedAt": "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId should refuse to edit a resolved note with 409 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Already handled.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "202",
+        "resolved": 1,
+        "subject_id": "101",
+        "subject_type": "item",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 2,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Already handled.",
+        "body_before": "Handled soon.",
+        "correlation_id": "seed-correlation-id",
+        "editor_id": "00000000-0000-4000-8000-000000000001",
+        "id": "200",
+        "note_id": "202",
+        "note_version": 2,
+        "recorded_at": 2026-01-01T00:00:00.000Z,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_RESOLVED",
+      "message": "Note 202 is resolved and can no longer be modified",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId should rewrite the body and record a revision under the correlation id 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Customer called twice; refunded manually.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "200",
+        "resolved": 0,
+        "subject_id": "100",
+        "subject_type": "item",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Customer called twice; refunded manually.",
+        "body_before": "Customer called about this.",
+        "correlation_id": "e2e-note-edit",
+        "editor_id": "00000000-0000-4000-8000-000000000002",
+        "id": Any<String>,
+        "note_id": "200",
+        "note_version": 2,
+        "recorded_at": Any<Date>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Customer called twice; refunded manually.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "200",
+      "resolved": false,
+      "subjectId": "100",
+      "subjectType": "item",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId should roll the note back when the revision insert fails 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited while a revision is taken.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "203",
+        "resolved": 0,
+        "subject_id": "T-1",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Taken after.",
+        "id": "299",
+        "note_id": "203",
+        "note_version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Conflict",
+      "message": "Resource already exists",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId should write nothing for an edit to the current body 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Edited with the same body.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "204",
+      "resolved": false,
+      "subjectId": "T-2",
+      "subjectType": "ticket",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Already handled.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "202",
+        "resolved": 1,
+        "subject_id": "101",
+        "subject_type": "item",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_RESOLVED",
+      "message": "Note 202 is resolved and can no longer be modified",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId/resolve should resolve a note 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Check the supplier.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "201",
+        "resolved": 1,
+        "subject_id": "100",
+        "subject_type": "item",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Check the supplier.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "201",
+      "resolved": true,
+      "subjectId": "100",
+      "subjectType": "item",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Note POST /api/notes should create an unresolved note on an opaque subject 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000002",
+        "body": "Customer called.",
+        "created_at": Any<Date>,
+        "deleted_at": null,
+        "id": Any<String>,
+        "resolved": 0,
+        "subject_id": "T-900",
+        "subject_type": "support-ticket",
+        "updated_at": Any<Date>,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000002",
+      "body": "Customer called.",
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "resolved": false,
+      "subjectId": "T-900",
+      "subjectType": "support-ticket",
+      "updatedAt": Any<String>,
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse a refresh token as an access token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse the token of a disabled user 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
+{
+  "response": {
+    "body": {
+      "email": "viewer@example.com",
+      "id": "00000000-0000-4000-8000-000000000003",
+      "permissions": [
+        "item:read",
+        "ledger:read",
+        "reminder:read",
+        "reminder:write",
+      ],
+      "roles": [
+        "viewer",
+      ],
+    },
+  },
+  "roles": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should issue an access token the guards accept and a refresh token 1`] = `
+{
+  "me": {
+    "email": "editor@example.com",
+    "id": "00000000-0000-4000-8000-000000000002",
+    "permissions": [
+      "item:archive",
+      "item:read",
+      "item:write",
+      "ledger:read",
+      "note:read",
+      "note:write",
+      "reminder:read",
+      "reminder:write",
+    ],
+    "roles": [
+      "editor",
+    ],
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+      "refreshToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should refuse a disabled user with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be shorter than or equal to 255 characters",
+        "email must be an email",
+        "password must be shorter than or equal to 256 characters",
+        "password must be longer than or equal to 1 characters",
+        "password must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/refresh should exchange a refresh token for a pair the guards accept 1`] = `
+{
+  "me": {
+    "email": "viewer@example.com",
+    "id": "00000000-0000-4000-8000-000000000003",
+    "permissions": [
+      "item:read",
+      "ledger:read",
+      "reminder:read",
+      "reminder:write",
+    ],
+    "roles": [
+      "viewer",
+    ],
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+      "refreshToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/refresh should refuse an access token as a refresh token 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_REFRESH_TOKEN_INVALID",
+      "message": "Refresh token is invalid or expired",
+      "statusCode": 401,
+    },
+  },
+}
+`;

@@ -20,4 +20,11 @@ VALUES
     '$argon2id$v=19$m=19456,p=1,t=2$fzTVv6Cc9RuWhnM5aV8ueQ$ZikhYwgRND+UmXcAzRnECW3bS4P+eZBr+b3Qednrwqc',
     'active',
     '2026-01-01 00:00:00'
+  ),
+  (
+    '00000000-0000-4000-8000-000000000004',
+    'disabled@example.com',
+    '$argon2id$v=19$m=19456,p=1,t=2$VlJMsYMFnx06C/X2ZIfNoQ$j2gdpyC9jHtB6b2/v5bQqSOF8h10Hh71cTYIVClN9wY',
+    'disabled',
+    '2026-01-01 00:00:00'
   );

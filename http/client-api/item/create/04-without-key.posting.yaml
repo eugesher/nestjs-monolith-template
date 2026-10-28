@@ -1,0 +1,23 @@
+name: 04-without-key
+description: |-
+  e2e: Item › POST /api/items › should refuse a create without a key with 400
+
+  Expect: 400 Bad Request, code IDEMPOTENCY_KEY_REQUIRED, no item
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $CLIENT_API_BASE_URL/items
+body:
+  content: |-
+    {
+      "sku": "E2E-0005",
+      "name": "Refused item"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

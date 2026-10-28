@@ -1,0 +1,13 @@
+name: 01-roles
+description: |-
+  e2e: Iam › GET /api/iam/roles › should list the roles with their permissions from the database
+
+  Expect: 200 OK, admin, editor and viewer with their permission codes
+  User: admin@example.com (token signed by scripts.py)
+url: $ADMIN_API_BASE_URL/iam/roles
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

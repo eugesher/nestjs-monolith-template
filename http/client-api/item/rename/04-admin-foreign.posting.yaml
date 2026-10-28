@@ -1,0 +1,22 @@
+name: 04-admin-foreign
+description: |-
+  e2e: Item › PATCH /api/items/:itemId/name › should refuse an admin the rename of an item of another owner
+
+  Expect: 403 Forbidden, code ITEM_ACCESS_FORBIDDEN
+  User: admin@example.com (token signed by scripts.py)
+method: PATCH
+url: $CLIENT_API_BASE_URL/items/103/name
+body:
+  content: |-
+    {
+      "name": "Foreign rename"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

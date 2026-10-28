@@ -1,0 +1,16 @@
+name: 03-unknown-email
+description: |-
+  e2e: Session › POST /api/auth/login › should refuse an unknown email with the same 401
+
+  Expect: 401 Unauthorized, code AUTH_INVALID_CREDENTIALS
+method: POST
+url: $CLIENT_API_BASE_URL/auth/login
+body:
+  content: |-
+    {
+      "email": "nobody@example.com",
+      "password": "editor-password-please-change"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

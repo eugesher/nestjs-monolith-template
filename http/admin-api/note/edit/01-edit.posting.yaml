@@ -1,0 +1,24 @@
+name: 01-edit
+description: |-
+  e2e: Note › PATCH /api/notes/:noteId › should rewrite the body and record a revision under the correlation id
+
+  Expect: 200 OK, note 200 at version 2, one revision with correlation_id e2e-note-edit
+  User: editor@example.com (token signed by scripts.py)
+method: PATCH
+url: $ADMIN_API_BASE_URL/notes/200
+body:
+  content: |-
+    {
+      "body": "Customer called twice; refunded manually."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: x-correlation-id
+    value: e2e-note-edit
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

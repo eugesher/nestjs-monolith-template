@@ -1,0 +1,13 @@
+name: 02-ledger-not-mounted
+description: |-
+  e2e: should not mount the admin-api route /api/ledger
+
+  Expect: 404 Not Found
+  User: admin@example.com (token signed by scripts.py)
+url: $CLIENT_API_BASE_URL/ledger
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

@@ -1,0 +1,26 @@
+name: 02-taken-email
+description: |-
+  e2e: Iam › POST /api/iam/users › should refuse a taken email in another case with 409
+
+  Expect: 409 Conflict, code AUTH_EMAIL_TAKEN, no new user
+  User: admin@example.com (token signed by scripts.py)
+method: POST
+url: $ADMIN_API_BASE_URL/iam/users
+body:
+  content: |-
+    {
+      "email": "EDITOR@example.com",
+      "password": "another-password-please-change",
+      "roles": [
+        "viewer"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin
