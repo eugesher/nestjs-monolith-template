@@ -7,6 +7,7 @@ import { httpSurface } from './http-surface.mjs';
 import { identityAdmin } from './identity-admin.mjs';
 import { moduleAreas } from './module-areas.mjs';
 import { repo } from './repo.mjs';
+import { scheduler } from './scheduler.mjs';
 
 export const policies = [
   ...acmeApp,
@@ -18,4 +19,5 @@ export const policies = [
   httpSurface,
   eventBus,
   identityAdmin,
+  ...scheduler,
 ];
