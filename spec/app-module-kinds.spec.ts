@@ -9,6 +9,17 @@ import {
 } from './support/app-module-kinds';
 
 describe('feature kinds: an aggregator or a regular module, never both', () => {
+  it('finds the modules of every app', () => {
+    const relPaths = appModules().map(({ relPath }) => relPath);
+
+    expect(relPaths).toEqual(
+      expect.arrayContaining([
+        'apps/admin-api/src/features/health',
+        'apps/client-api/src/features/health',
+      ]),
+    );
+  });
+
   it('every feature is either an aggregator or a regular module', () => {
     expect(moduleKindViolations()).toEqual([]);
   });

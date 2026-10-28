@@ -22,6 +22,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@acme-admin-features": ["./apps/admin-api/src/features"],
+      "@acme-client-features": ["./apps/client-api/src/features"],
       "@acme-core/entities": ["./core/entities/src"],
       "@acme-libs/cache": ["./libs/cache/src"],
       "@acme-libs/cache/testing": ["./libs/cache/src/testing"],

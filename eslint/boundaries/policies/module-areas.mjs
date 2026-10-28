@@ -75,8 +75,12 @@ export const moduleAreas = [
       to('acme-app:common:shared:index', own('app')),
       libContracts('health'),
       libs('http', 'kernel', 'observability', 'toolkit'),
+      packages('@nestjs/common', '@nestjs/swagger'),
     ],
-    module: [libs('auth', 'config', 'health', 'http', 'kernel', 'toolkit')],
+    module: [
+      libs('auth', 'config', 'health', 'http', 'kernel', 'toolkit'),
+      packages('@nestjs/common'),
+    ],
   }),
   ...areaPolicies('processors', {
     application: [],

@@ -19,7 +19,14 @@ export const acmeLibs = [
   ),
   fromLib('cache', [
     libs('observability'),
-    packages('@nestjs/common', '@nestjs/config', '@opentelemetry/api', 'ioredis', 'nestjs-pino'),
+    packages(
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/core',
+      '@opentelemetry/api',
+      'ioredis',
+      'nestjs-pino',
+    ),
   ]),
   fromLib('health', [
     libs('observability'),
