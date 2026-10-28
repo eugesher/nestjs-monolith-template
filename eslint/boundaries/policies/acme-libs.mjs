@@ -26,6 +26,8 @@ export const acmeLibs = [
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
       '@nestjs/common',
+      '@nestjs/core',
+      'nestjs-cls',
       'typeorm',
     ),
   ]),

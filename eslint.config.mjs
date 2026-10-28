@@ -4,6 +4,7 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
 import { boundaries } from './eslint/boundaries/index.mjs';
 import { libsDeepImports } from './eslint/libs-deep-imports.mjs';
+import { plainNode } from './eslint/plain-node.mjs';
 import { specs } from './eslint/specs.mjs';
 import { style } from './eslint/style.mjs';
 import { typescript } from './eslint/typescript.mjs';
@@ -17,4 +18,5 @@ export default defineConfig(
   boundaries,
   specs,
   libsDeepImports,
+  plainNode,
 );

@@ -5,6 +5,7 @@ words = [
     "cli",
     "daf",
     "dotenv",
+    "esm",
     "iam",
     "instrumentations",
     "joi",

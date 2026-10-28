@@ -28,6 +28,7 @@ const ARCHITECTURE_RULES = [
   'boundaries/dependencies',
   'boundaries/no-unknown-dependencies',
   'boundaries/no-unknown-files',
+  'no-restricted-globals',
   'no-restricted-imports',
   'no-restricted-syntax',
 ];

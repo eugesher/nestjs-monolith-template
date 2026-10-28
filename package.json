@@ -14,12 +14,17 @@
     "start:dev:client-api": "nest start client-api --watch",
     "start:prod:admin-api": "node dist/apps/admin-api/main.js",
     "start:prod:client-api": "node dist/apps/client-api/main.js",
-    "format": "prettier --write \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
-    "format:check": "prettier --check \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
+    "format": "prettier --write \"{apps,core,libs,migrations,spec,scripts,test}/**/*.ts\"",
+    "format:check": "prettier --check \"{apps,core,libs,migrations,spec,scripts,test}/**/*.ts\"",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config ./test/jest-unit.config.js"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p migrations && tsc -p scripts",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config ./test/jest-unit.config.js",
+    "migration:cli": "node ./node_modules/typeorm/cli.js -d ./migrations/config/data-source.ts",
+    "migration:create": "node ./scripts/migration-create.ts",
+    "migration:run": "yarn migration:cli migration:run",
+    "migration:revert": "yarn migration:cli migration:revert",
+    "migration:show": "yarn migration:cli migration:show"
   },
   "dependencies": {
     "@nestjs-cls/transactional": "4.0.1",

@@ -1,3 +1,4 @@
+import { join } from 'path';
 import typescriptEslint from 'typescript-eslint';
 
 import { awaitedArgumentSelectors } from './syntax/awaited-argument.selectors.mjs';
@@ -12,6 +13,7 @@ export const typescript = {
   languageOptions: {
     parserOptions: {
       projectService: true,
+      tsconfigRootDir: join(import.meta.dirname, '..'),
     },
   },
   rules: {

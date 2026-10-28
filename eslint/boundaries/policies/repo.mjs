@@ -4,6 +4,7 @@ export const repo = [
   from('repo:spec', [
     to('repo:spec'),
     packages(
+      'child_process',
       'eslint',
       'eslint-import-resolver-typescript',
       'fs',
@@ -13,7 +14,7 @@ export const repo = [
       'typescript-eslint',
     ),
   ]),
-  ...['repo:scripts', 'repo:migrations', 'repo:docker-compose'].map((category) =>
-    from(category, [to(category)]),
-  ),
+  from('repo:migrations', [to('repo:migrations'), packages('dotenv', 'joi', 'path', 'typeorm')]),
+  from('repo:scripts', [to('repo:scripts'), packages('fs', 'path')]),
+  from('repo:docker-compose', [to('repo:docker-compose')]),
 ];
