@@ -12,6 +12,7 @@ describe('lib entry points', () => {
       'config',
       'contracts',
       'database',
+      'health',
       'http',
       'kernel',
       'messaging',
@@ -36,8 +37,10 @@ describe('lib entry points', () => {
       '@acme-libs/config',
       '@acme-libs/contracts/cache',
       '@acme-libs/contracts/database',
+      '@acme-libs/contracts/health',
       '@acme-libs/contracts/messaging',
       '@acme-libs/database',
+      '@acme-libs/health',
       '@acme-libs/http',
       '@acme-libs/kernel',
       '@acme-libs/messaging',
@@ -55,8 +58,10 @@ describe('lib entry points', () => {
     '@acme-libs/config',
     '@acme-libs/contracts/cache',
     '@acme-libs/contracts/database',
+    '@acme-libs/contracts/health',
     '@acme-libs/contracts/messaging',
     '@acme-libs/database',
+    '@acme-libs/health',
     '@acme-libs/http',
     '@acme-libs/kernel',
     '@acme-libs/messaging',
@@ -80,6 +85,8 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/messaging/ports/event-publisher.port',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
+    '@acme-libs/health/module/health-lib.module',
+    '@acme-libs/contracts/health/ports/health-lib.port',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -266,6 +273,27 @@ describe('lib entry points', () => {
     await expect({
       file: 'apps/client-api/src/features/item/infrastructure/events/__fixture__.ts',
       code: 'import { EventsModule } from "@acme-libs/messaging";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the health probes MAY import the cache contracts and their own contracts by their aliases', async () => {
+    await expect({
+      file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+      code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";\nimport { IHealthLibDependencyView } from "@acme-libs/contracts/health";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the health lib may NOT import the cache lib root, it probes through the cache port', async () => {
+    await expect({
+      file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+      code: 'import { CacheModule } from "@acme-libs/cache";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a controller may NOT import the health lib root, only a module wires it', async () => {
+    await expect({
+      file: 'apps/admin-api/src/features/item/presentation/controllers/__fixture__.ts',
+      code: 'import { HealthLibModule } from "@acme-libs/health";',
     }).toBreakRule('boundaries/dependencies');
   });
 
