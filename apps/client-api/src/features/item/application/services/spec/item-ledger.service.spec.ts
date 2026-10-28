@@ -26,10 +26,9 @@ describe('ItemLedgerService', () => {
     it('appends the archive under the operation key of the item', async () => {
       await service.recordArchived({
         itemId: '12',
-        sku: 'SKU-0001',
         events: [
           new ItemRenamedEvent('12', 'Desk lamp', 'Lamp'),
-          new ItemArchivedEvent('12', ItemStatusEnum.ACTIVE),
+          new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.ACTIVE),
         ],
       });
 
@@ -45,7 +44,7 @@ describe('ItemLedgerService', () => {
     });
 
     it('appends nothing without an archive', async () => {
-      await service.recordArchived({ itemId: '12', sku: 'SKU-0001', events: [] });
+      await service.recordArchived({ itemId: '12', events: [] });
 
       expect(append).not.toHaveBeenCalled();
     });
@@ -56,8 +55,7 @@ describe('ItemLedgerService', () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordArchived({
           itemId: '12',
-          sku: 'SKU-0001',
-          events: [new ItemArchivedEvent('12', ItemStatusEnum.DRAFT)],
+          events: [new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.DRAFT)],
         }),
       );
 
@@ -81,8 +79,7 @@ describe('ItemLedgerService', () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordArchived({
           itemId: '12',
-          sku: 'SKU-0001',
-          events: [new ItemArchivedEvent('12', ItemStatusEnum.ACTIVE)],
+          events: [new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.ACTIVE)],
         }),
       );
 

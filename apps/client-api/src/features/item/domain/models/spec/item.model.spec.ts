@@ -221,7 +221,11 @@ describe('ItemModel', () => {
       expect(item.version).toBe(4);
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(ItemArchivedEvent);
-      expect(events[0]).toMatchObject({ aggregateId: '12', previousStatus: 'active' });
+      expect(events[0]).toMatchObject({
+        aggregateId: '12',
+        sku: 'SKU-0001',
+        previousStatus: 'active',
+      });
     });
 
     it.each([

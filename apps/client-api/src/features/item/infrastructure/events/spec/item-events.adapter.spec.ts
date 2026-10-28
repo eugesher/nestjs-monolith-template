@@ -53,14 +53,15 @@ describe('ItemEventsAdapter', () => {
       });
     });
 
-    it('publishes an archive with the previous status', async () => {
+    it('publishes an archive with the sku and the previous status', async () => {
       await adapter.publish({
         itemId: '12',
-        events: [new ItemArchivedEvent('12', ItemStatusEnum.ACTIVE)],
+        events: [new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.ACTIVE)],
       });
 
       expect(publish).toHaveBeenCalledWith('catalog.item.archived', {
         itemId: '12',
+        sku: 'SKU-0001',
         previousStatus: ItemStatusEnum.ACTIVE,
         occurredAt: '2026-01-01T00:00:00.000Z',
       });
@@ -71,7 +72,7 @@ describe('ItemEventsAdapter', () => {
         itemId: '12',
         events: [
           new ItemRenamedEvent('12', 'New name', 'Old name'),
-          new ItemArchivedEvent('12', ItemStatusEnum.ACTIVE),
+          new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.ACTIVE),
         ],
       });
 

@@ -21,6 +21,7 @@ describe('app entry points', () => {
       '@acme-client-contracts/idempotency',
       '@acme-client-contracts/ledger-catalog-events',
       '@acme-client-features',
+      '@acme-client-processors',
     ]);
   });
 
@@ -32,6 +33,7 @@ describe('app entry points', () => {
     '@acme-client-contracts/idempotency',
     '@acme-client-contracts/ledger-catalog-events',
     '@acme-client-features',
+    '@acme-client-processors',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
   });
@@ -45,6 +47,8 @@ describe('app entry points', () => {
     '@acme-client-common/shared/idempotency/helpers/idempotency-key.helper',
     '@acme-client-contracts/idempotency/ports/idempotency-common.port',
     '@acme-client-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
+    '@acme-client-processors/ledger-catalog-events/ledger-catalog-events.module',
+    '@acme-client-processors/index',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -66,6 +70,24 @@ describe('app entry points', () => {
     await expect({
       file,
       code: `import { HealthModule } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('apps/client-api/src/app/app.module.ts MAY import the processors of its own app by @acme-client-processors', async () => {
+    await expect({
+      file: 'apps/client-api/src/app/app.module.ts',
+      code: 'import { LedgerCatalogEventsModule } from "@acme-client-processors";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/admin-api/src/app/app.module.ts',
+    'apps/client-api/src/features/item/item.module.ts',
+    'apps/client-api/src/main.ts',
+  ])('%s may NOT import the client-api processors index', async (file) => {
+    await expect({
+      file,
+      code: 'import { LedgerCatalogEventsModule } from "@acme-client-processors";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -113,6 +135,13 @@ describe('app entry points', () => {
       code:
         'import { IfMatch } from "@acme-client-common/shared/concurrency";\n' +
         'import { IdempotencyKey } from "@acme-client-common/shared/idempotency";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a client-api processor consumer MAY import the ledger catalog events contract by its alias', async () => {
+    await expect({
+      file: 'apps/client-api/src/processors/ledger-catalog-events/presentation/ledger-catalog-events.consumer.ts',
+      code: 'import { LEDGER_CATALOG_EVENTS } from "@acme-client-contracts/ledger-catalog-events";',
     }).toPassArchitectureLint();
   });
 

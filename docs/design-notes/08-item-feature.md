@@ -77,8 +77,13 @@ delete, so the retry is a replay.
 ## The ledger record of an archive
 
 `ItemArchiveUseCase` writes the item, publishes the events and then asks `ItemLedgerService` to
-record the archive under the operation key `item-archived:<id>`. The event path records the same
-fact under the same key, and the ledger keeps one row.
+record the archive under the operation key `item-archived:<id>`. The `ledger-catalog-events`
+processor records the same fact under the same key from the event (see
+`09-ledger-catalog-events-processor.md`), and the ledger keeps one row.
+
+**Both paths write the same payload**, `{ sku, previousStatus }`. Whichever append comes first wins
+the key, so a payload that differed between them would make the row depend on that order.
+`ItemArchivedEvent` carries the `sku` for this reason.
 
 The archive is already committed, so a failing append must not undo it. `ItemLedgerService` tries
 three times through `ReplayRetryHelper` and then logs the record at `error` for a replay instead of
@@ -125,7 +130,7 @@ the port and hands a replay's stored response back as the type the use case expe
 | --- | --- | --- |
 | `ItemCreatedEvent` | `catalog.item.created` | `itemId`, `sku`, `name`, `ownerId`, `occurredAt` |
 | `ItemRenamedEvent` | `catalog.item.renamed` | `itemId`, `name`, `previousName`, `occurredAt` |
-| `ItemArchivedEvent` | `catalog.item.archived` | `itemId`, `previousStatus`, `occurredAt` |
+| `ItemArchivedEvent` | `catalog.item.archived` | `itemId`, `sku`, `previousStatus`, `occurredAt` |
 
 `itemId` comes from the publish command, because a created item has no id in its event. The payload
 has no correlation id: an in-process listener runs in the context of the publishing request and

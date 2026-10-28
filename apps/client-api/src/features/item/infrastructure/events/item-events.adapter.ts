@@ -59,12 +59,13 @@ export class ItemEventsAdapter implements IItemEventsPort {
     }
 
     if (event instanceof ItemArchivedEvent) {
-      const { previousStatus } = event;
+      const { sku, previousStatus } = event;
 
       return this.publisher.publish<ILedgerCatalogEventsItemArchivedProcessorPayload>(
         LEDGER_CATALOG_EVENTS.ITEM_ARCHIVED,
         {
           itemId,
+          sku,
           previousStatus,
           occurredAt,
         },

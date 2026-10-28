@@ -19,15 +19,16 @@ export class ItemLedgerService {
   ) {}
 
   public async recordArchived(command: IItemLedgerRecordArchivedCommand): Promise<void> {
-    const { itemId, sku, events } = command;
+    const { itemId, events } = command;
     const archived = events.filter((event) => event instanceof ItemArchivedEvent);
 
     for (const event of archived) {
-      await this.appendArchived(itemId, sku, event);
+      await this.appendArchived(itemId, event);
     }
   }
 
-  private appendArchived(itemId: string, sku: string, event: ItemArchivedEvent): Promise<void> {
+  private appendArchived(itemId: string, event: ItemArchivedEvent): Promise<void> {
+    const { sku, previousStatus } = event;
     const operationKey = `item-archived:${itemId}`;
     const occurredAt = event.occurredAt.toISOString();
     const correlationId = CorrelationContextHelper.current(ItemLedgerService.name);
@@ -39,7 +40,7 @@ export class ItemLedgerService {
           subjectType: 'item',
           subjectId: itemId,
           action: 'ItemArchived',
-          payload: { sku, previousStatus: event.previousStatus },
+          payload: { sku, previousStatus },
           occurredAt,
         }),
       {
