@@ -21,6 +21,7 @@ export const httpSurface = {
           'acme-app:processors:infrastructure',
           'acme-app:processors:infrastructure:core-adapters',
           'acme-app:processors:infrastructure:common-adapters',
+          'acme-app:processors:infrastructure:events',
           'acme-app:processors:module',
           'acme-app:processors:presentation',
         ],

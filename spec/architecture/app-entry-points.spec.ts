@@ -17,6 +17,7 @@ describe('app entry points', () => {
       '@acme-admin-features',
       '@acme-client-common/modules/idempotency',
       '@acme-client-contracts/idempotency',
+      '@acme-client-contracts/ledger-catalog-events',
       '@acme-client-features',
     ]);
   });
@@ -25,6 +26,7 @@ describe('app entry points', () => {
     '@acme-admin-features',
     '@acme-client-common/modules/idempotency',
     '@acme-client-contracts/idempotency',
+    '@acme-client-contracts/ledger-catalog-events',
     '@acme-client-features',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -36,6 +38,7 @@ describe('app entry points', () => {
     '@acme-admin-features/index',
     '@acme-client-common/modules/idempotency/application',
     '@acme-client-contracts/idempotency/ports/idempotency-common.port',
+    '@acme-client-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });

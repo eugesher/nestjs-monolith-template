@@ -29,9 +29,11 @@ const areaPolicies = (area, sharedFacing) => {
       layer('infrastructure'),
       layer('infrastructure:core-adapters'),
       layer('infrastructure:common-adapters'),
+      layer('infrastructure:events'),
       to('acme-core:entities'),
       libs('database', 'kernel', 'toolkit'),
       to('acme-libs:contracts'),
+      ...sharedFacing.infrastructure,
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),
     from(`${prefix}:infrastructure:core-adapters`, [
@@ -47,6 +49,16 @@ const areaPolicies = (area, sharedFacing) => {
       layer('outbound'),
       to('acme-app:contracts', own('app')),
       libs('kernel', 'toolkit'),
+      ...sharedFacing.commonAdapters,
+    ]),
+    fromSpec(`${prefix}:infrastructure:events`),
+    from(`${prefix}:infrastructure:events`, [
+      layer('domain'),
+      layer('outbound'),
+      to('acme-app:contracts', own('app')),
+      libContracts('messaging'),
+      libs('kernel', 'toolkit'),
+      ...sharedFacing.commonAdapters,
     ]),
     from(`${prefix}:presentation`, [
       layer('domain'),
@@ -72,6 +84,16 @@ const areaPolicies = (area, sharedFacing) => {
 export const moduleAreas = [
   ...areaPolicies('features', {
     application: [to('acme-app:common:shared:index', own('app')), packages('@nestjs/common')],
+    infrastructure: [
+      packages(
+        '@nestjs-cls/transactional',
+        '@nestjs-cls/transactional-adapter-typeorm',
+        '@nestjs/common',
+        '@nestjs/typeorm',
+        'typeorm',
+      ),
+    ],
+    commonAdapters: [packages('@nestjs/common')],
     presentation: [
       to('acme-app:common:shared:index', own('app')),
       libContracts('auth', 'health'),
@@ -85,6 +107,8 @@ export const moduleAreas = [
   }),
   ...areaPolicies('processors', {
     application: [],
+    infrastructure: [],
+    commonAdapters: [],
     presentation: [
       to('acme-app:contracts', own('app')),
       libs('kernel', 'observability', 'toolkit'),
