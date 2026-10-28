@@ -23,6 +23,7 @@ export interface ILedgerCatalogEventsItemRenamedProcessorPayload {
 
 export interface ILedgerCatalogEventsItemArchivedProcessorPayload {
   itemId: string;
+  sku: string;
   previousStatus: ItemStatusEnum;
   occurredAt: string;
 }

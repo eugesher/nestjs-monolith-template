@@ -33,6 +33,7 @@
         "./apps/client-api/src/contracts/ledger-catalog-events"
       ],
       "@acme-client-features": ["./apps/client-api/src/features"],
+      "@acme-client-processors": ["./apps/client-api/src/processors"],
       "@acme-core/contracts/identity": ["./core/contracts/src/identity"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],
       "@acme-core/entities": ["./core/entities/src"],

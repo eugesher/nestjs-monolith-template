@@ -26,7 +26,7 @@ export class ItemArchiveUseCase {
     const { item, events } = written;
 
     await this.events.publish({ itemId, events });
-    await this.ledgerService.recordArchived({ itemId, sku: item.sku, events });
+    await this.ledgerService.recordArchived({ itemId, events });
 
     const view = ItemViewMapper.toView(item);
 

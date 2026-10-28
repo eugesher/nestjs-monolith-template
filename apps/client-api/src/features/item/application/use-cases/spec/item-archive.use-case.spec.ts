@@ -26,7 +26,7 @@ describe('ItemArchiveUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ItemArchivedEvent('12', ItemStatusEnum.ACTIVE)],
+      events: [new ItemArchivedEvent('12', 'SKU-0001', ItemStatusEnum.ACTIVE)],
     });
     recordArchived = jest.fn().mockResolvedValue(undefined);
     publish = jest.fn().mockResolvedValue(undefined);
@@ -57,7 +57,6 @@ describe('ItemArchiveUseCase', () => {
       });
       expect(recordArchived).toHaveBeenCalledWith({
         itemId: '12',
-        sku: 'SKU-0001',
         events: [expect.any(ItemArchivedEvent)],
       });
       expect(publish.mock.invocationCallOrder[0]).toBeLessThan(

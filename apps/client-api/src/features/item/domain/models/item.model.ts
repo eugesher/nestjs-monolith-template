@@ -149,7 +149,7 @@ export class ItemModel extends AggregateRoot<Maybe<string>> {
     this.currentStatus = ItemStatusEnum.ARCHIVED;
     this.currentVersion += 1;
 
-    const event = new ItemArchivedEvent(this.id, previousStatus);
+    const event = new ItemArchivedEvent(this.id, this.sku, previousStatus);
 
     this.addDomainEvent(event);
   }
