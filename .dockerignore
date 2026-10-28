@@ -6,3 +6,5 @@ dist
 .husky
 test
 coverage
+.env.local
+.env
