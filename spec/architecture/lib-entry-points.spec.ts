@@ -13,6 +13,7 @@ describe('lib entry points', () => {
       'contracts',
       'database',
       'kernel',
+      'messaging',
       'observability',
       'toolkit',
     ]);
@@ -33,8 +34,10 @@ describe('lib entry points', () => {
       '@acme-libs/config',
       '@acme-libs/contracts/cache',
       '@acme-libs/contracts/database',
+      '@acme-libs/contracts/messaging',
       '@acme-libs/database',
       '@acme-libs/kernel',
+      '@acme-libs/messaging',
       '@acme-libs/observability',
       '@acme-libs/observability/testing',
       '@acme-libs/observability/tracer',
@@ -48,8 +51,10 @@ describe('lib entry points', () => {
     '@acme-libs/config',
     '@acme-libs/contracts/cache',
     '@acme-libs/contracts/database',
+    '@acme-libs/contracts/messaging',
     '@acme-libs/database',
     '@acme-libs/kernel',
+    '@acme-libs/messaging',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -65,6 +70,8 @@ describe('lib entry points', () => {
     '@acme-libs/cache/redis/redis-cache.adapter',
     '@acme-libs/contracts/cache/ports/cache.port',
     '@acme-libs/database/transaction/transaction.adapter',
+    '@acme-libs/messaging/publisher/in-process-event-publisher.adapter',
+    '@acme-libs/contracts/messaging/ports/event-publisher.port',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -224,5 +231,33 @@ describe('lib entry points', () => {
       file: 'apps/admin-api/test/app/__fixture__.e2e-spec.ts',
       code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
     }).toPassArchitectureLint();
+  });
+
+  it('an infrastructure adapter MAY import the event publisher port by its alias', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/item/infrastructure/events/__fixture__.ts',
+      code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the application may NOT import the event publisher port, it publishes through its own port', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/item/application/use-cases/__fixture__.ts',
+      code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the app root MAY import the messaging lib by its alias', async () => {
+    await expect({
+      file: 'apps/client-api/src/app/app.module.ts',
+      code: 'import { EventsModule } from "@acme-libs/messaging";',
+    }).toPassArchitectureLint();
+  });
+
+  it('an infrastructure adapter may NOT import the messaging lib root', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/item/infrastructure/events/__fixture__.ts',
+      code: 'import { EventsModule } from "@acme-libs/messaging";',
+    }).toBreakRule('boundaries/dependencies');
   });
 });
