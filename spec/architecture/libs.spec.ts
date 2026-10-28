@@ -193,6 +193,26 @@ describe('libs', () => {
     }).toPassArchitectureLint();
   });
 
+  it('the health lib MAY import the packages its probes and use cases need', async () => {
+    await expect({
+      file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+      code:
+        'import { Injectable } from "@nestjs/common";\n' +
+        'import { PinoLogger } from "nestjs-pino";\n' +
+        'import { DataSource } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['ioredis', '@nestjs/typeorm', '@nestjs/config'])(
+    'the health lib may NOT import %s',
+    async (source) => {
+      await expect({
+        file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
   it.each(['nestjs-pino', '@opentelemetry/api', 'async_hooks'])(
     'the kernel lib may NOT import %s',
     async (source) => {

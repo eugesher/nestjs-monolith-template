@@ -64,6 +64,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "contracts-health": {
+      "type": "library",
+      "root": "libs/contracts/src/health",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/health",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
     "contracts-messaging": {
       "type": "library",
       "root": "libs/contracts/src/messaging",
@@ -89,6 +98,15 @@
       "sourceRoot": "libs/database/src",
       "compilerOptions": {
         "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
+    "health": {
+      "type": "library",
+      "root": "libs/health",
+      "entryFile": "index",
+      "sourceRoot": "libs/health/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/health/tsconfig.lib.json"
       }
     },
     "http": {
