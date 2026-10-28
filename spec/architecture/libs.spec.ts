@@ -61,7 +61,7 @@ describe('libs', () => {
     ['config', ['kernel', 'toolkit']],
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
-    ['http', ['kernel', 'toolkit']],
+    ['http', ['kernel', 'toolkit', 'database', 'observability']],
     ['messaging', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],

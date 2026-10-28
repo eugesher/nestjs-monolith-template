@@ -82,6 +82,15 @@
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
+    "http": {
+      "type": "library",
+      "root": "libs/http",
+      "entryFile": "index",
+      "sourceRoot": "libs/http/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http/tsconfig.lib.json"
+      }
+    },
     "kernel": {
       "type": "library",
       "root": "libs/kernel",
@@ -107,6 +116,15 @@
       "sourceRoot": "libs/observability/src",
       "compilerOptions": {
         "tsConfigPath": "libs/observability/tsconfig.lib.json"
+      }
+    },
+    "openapi": {
+      "type": "library",
+      "root": "libs/openapi",
+      "entryFile": "index",
+      "sourceRoot": "libs/openapi/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/openapi/tsconfig.lib.json"
       }
     },
     "toolkit": {
