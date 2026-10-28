@@ -22,6 +22,7 @@ export class ConfigSetupModule {
         DATABASE_LOGGING: Joi.boolean().default(development),
 
         REDIS_URL: Joi.string().uri({ scheme: 'redis' }).required(),
+        REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().default(500),
         CACHE_TTL_MS_DEFAULT: Joi.number().integer().positive().default(60_000),
 
         OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(5),

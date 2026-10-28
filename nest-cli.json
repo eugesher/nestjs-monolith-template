@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/client-api/tsconfig.app.json"
       }
     },
+    "cache": {
+      "type": "library",
+      "root": "libs/cache",
+      "entryFile": "index",
+      "sourceRoot": "libs/cache/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cache/tsconfig.lib.json"
+      }
+    },
     "config": {
       "type": "library",
       "root": "libs/config",
@@ -35,6 +44,15 @@
       "sourceRoot": "libs/config/src",
       "compilerOptions": {
         "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "contracts-cache": {
+      "type": "library",
+      "root": "libs/contracts/src/cache",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/cache",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
     "contracts-database": {
