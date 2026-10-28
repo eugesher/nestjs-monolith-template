@@ -112,7 +112,7 @@ export const moduleAreas = [
     presentation: [
       to('acme-app:contracts', own('app')),
       libs('kernel', 'observability', 'toolkit'),
-      packages('@nestjs/event-emitter'),
+      packages('@nestjs/event-emitter', '@nestjs/schedule'),
     ],
     module: [libs('config', 'kernel', 'toolkit')],
   }),

@@ -44,7 +44,8 @@ concurrent duplicate could work too.
 - **`release` deletes only an in-flight row.** A completed key survives a late release, so a replay
   stays possible.
 - **`purgeExpired` deletes rows older than `IDEMPOTENCY_KEY_TTL_HOURS`** (24 by default), whatever
-  their status, and logs the cutoff and the count. Until the purge runs, an expired key still
+  their status, and logs the cutoff and the count. The `idempotency-purge` processor calls it
+  every hour (see `10-idempotency-purge-processor.md`). Until the purge runs, an expired key still
   replays.
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain

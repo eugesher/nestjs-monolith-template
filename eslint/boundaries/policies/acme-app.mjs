@@ -22,6 +22,7 @@ export const acmeApp = [
       '@nestjs-cls/transactional-adapter-typeorm',
       '@nestjs/common',
       '@nestjs/config',
+      '@nestjs/schedule',
       '@nestjs/typeorm',
       'joi',
       'nestjs-cls',

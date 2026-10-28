@@ -25,6 +25,7 @@ describe('processors (processors/<module>) — modules entered by in-process eve
       'apps/__processors-fixture__/src/features/item/item.module.ts',
       'apps/__processors-fixture__/src/features/item/application/index.ts',
       'apps/__processors-fixture__/src/contracts/catalog-events/index.ts',
+      'apps/__processors-fixture__/src/contracts/idempotency/index.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'core/contracts/src/__ledger-fixture__/index.ts',
@@ -159,6 +160,13 @@ describe('processors (processors/<module>) — modules entered by in-process eve
       }).toPassArchitectureLint();
     });
 
+    it('infrastructure/common-adapters MAY reach the contract of a common module', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/processors/purge/infrastructure/common-adapters/__fixture__.ts',
+        code: 'import { x } from "../../../../contracts/idempotency";',
+      }).toPassArchitectureLint();
+    });
+
     it('infrastructure/common-adapters MAY take the DI names from @nestjs/common', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/catalog-events/infrastructure/common-adapters/__fixture__.ts',
@@ -267,6 +275,53 @@ describe('processors (processors/<module>) — modules entered by in-process eve
         }).toBreakRule('boundaries/dependencies');
       },
     );
+
+    it('a consumer MAY schedule with Cron and CronExpression', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/processors/purge/presentation/__fixture__.ts',
+        code: 'import { Cron, CronExpression } from "@nestjs/schedule";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      'import { SchedulerRegistry } from "@nestjs/schedule";',
+      'import { Cron, ScheduleModule } from "@nestjs/schedule";',
+    ])(
+      'a consumer may NOT take the scheduler itself (%s) — the app sets up ScheduleModule',
+      async (code) => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/processors/purge/presentation/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it.each([
+      'apps/__processors-fixture__/src/processors/purge/application/__fixture__.ts',
+      'apps/__processors-fixture__/src/processors/purge/infrastructure/__fixture__.ts',
+      'apps/__processors-fixture__/src/processors/purge/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/item/presentation/__fixture__.ts',
+      'apps/__processors-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
+    ])('%s may NOT schedule — only processor consumers do', async (file) => {
+      await expect({
+        file,
+        code: 'import { Cron } from "@nestjs/schedule";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('the app MAY set up ScheduleModule', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/app/setup/schedule/__fixture__.ts',
+        code: 'import { ScheduleModule } from "@nestjs/schedule";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the app may NOT schedule a job itself — schedules belong to processor consumers', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/app/setup/schedule/__fixture__.ts',
+        code: 'import { Cron } from "@nestjs/schedule";',
+      }).toBreakRule('boundaries/dependencies');
+    });
 
     it('a consumer may NOT import the HTTP platform', async () => {
       await expect({
