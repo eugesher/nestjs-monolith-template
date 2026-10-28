@@ -55,6 +55,20 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
+  it('common/shared MAY take @nestjs/common, for decorators and HTTP errors', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/common/shared/auth/guards/__fixture__.ts',
+      code: 'import { BadRequestException, createParamDecorator } from "@nestjs/common";',
+    }).toPassArchitectureLint();
+  });
+
+  it('common/shared may NOT take a package outside its allowlist', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/common/shared/auth/guards/__fixture__.ts',
+      code: 'import { ApiHeader } from "@nestjs/swagger";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it('a common barrel may NOT re-export contracts', async () => {
     await expect({
       file: 'apps/__shared-fixture__/src/common/shared/auth/index.ts',
