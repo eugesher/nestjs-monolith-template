@@ -29,6 +29,20 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
+    it.each(['fs', 'joi', 'path', 'typeorm'])('a seed script MAY import %s', async (source) => {
+      await expect({
+        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        code: `import x from "${source}";`,
+      }).toPassArchitectureLint();
+    });
+
+    it('a seed script may NOT import dotenv — the database comes from the environment of the process', async () => {
+      await expect({
+        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        code: 'import dotenv from "dotenv";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it.each(['../../../libs/toolkit/src', '../../../core/entities/src'])(
       'a seed script may NOT import project code (%s) — it runs under plain node',
       async (source) => {
