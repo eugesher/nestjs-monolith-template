@@ -1,0 +1,1 @@
+export const NOTE_OCC_RETRY_ATTEMPTS = Symbol('NOTE_OCC_RETRY_ATTEMPTS');
