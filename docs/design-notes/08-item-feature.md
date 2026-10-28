@@ -1,8 +1,8 @@
 # 08 — Item feature
 
 `apps/client-api/src/features/item` is the per-owner catalog behind `/items`. This note covers its
-`domain` and `application`: the `ItemModel` aggregate, optimistic concurrency, idempotent creation
-and the ledger record of an archive.
+`domain`, `application` and `infrastructure`: the `ItemModel` aggregate, optimistic concurrency,
+idempotent creation, the ledger record of an archive and the adapters behind the ports.
 
 ## The aggregate
 
@@ -89,3 +89,48 @@ throwing.
 A write logs its outcome at `info` after the work: `Item created`, `Item renamed`,
 `Item archived`, or a replay of a creation. A lost race logs at `info` and a spent budget at `warn`.
 Reads log nothing. The correlation id comes from the context.
+
+## Persistence
+
+Each port has its own repository: `ItemAccessRepository`, `ItemCreateRepository`,
+`ItemCrudRepository` and `ItemWriteRepository`. The access and write repositories share `findById`
+through `ItemFindByIdBaseRepository`. Every repository reads the `item` table through
+`TransactionHost`, so a query inside `TRANSACTION_PORT.run` joins that transaction.
+
+**The version check is in the `WHERE`.** `update` runs
+`UPDATE item SET name, status, version = <new> WHERE id = ? AND version = <as read>` and answers
+whether exactly one row changed. The repository does not read the row again and throws nothing.
+
+**`insert` reads the row back by its sku**, so the answer carries the id and the times the database
+set. A duplicate sku that slips past `existsBySku` in a race becomes `ITEM_SKU_TAKEN`, the same code
+the use case answers when it sees the sku first.
+
+`list` filters by owner only when `ownerId` is set and returns the newest items first.
+
+## Adapters
+
+| Port | Adapter | Target |
+| --- | --- | --- |
+| `ITEM_LEDGER_PORT` | `ItemLedgerCoreAdapter` | `LEDGER_CORE_APPEND_PORT` |
+| `ITEM_IDEMPOTENCY_PORT` | `ItemIdempotencyCommonAdapter` | `IDEMPOTENCY_COMMON_PORT` |
+| `ITEM_EVENTS_PORT` | `ItemEventsAdapter` | `EVENT_PUBLISHER_PORT` |
+
+The idempotency adapter turns the claim outcome enum of the common module into the plain outcomes of
+the port and hands a replay's stored response back as the type the use case expects.
+
+**The events adapter speaks the contract of its consumer.** Event names and payloads live in
+`@acme-client-contracts/ledger-catalog-events`, next to the processor that reads them:
+
+| Domain event | Event name | Payload |
+| --- | --- | --- |
+| `ItemCreatedEvent` | `catalog.item.created` | `itemId`, `sku`, `name`, `ownerId`, `occurredAt` |
+| `ItemRenamedEvent` | `catalog.item.renamed` | `itemId`, `name`, `previousName`, `occurredAt` |
+| `ItemArchivedEvent` | `catalog.item.archived` | `itemId`, `previousStatus`, `occurredAt` |
+
+`itemId` comes from the publish command, because a created item has no id in its event. The payload
+has no correlation id: an in-process listener runs in the context of the publishing request and
+reads the id from there. An event without a catalog name is a programming mistake and throws.
+
+The adapter lives in `infrastructure/events`, a layer of its own. It is the only place in the
+feature that reaches both the contracts of the app and the messaging contract, so persistence
+cannot import the idempotency contract around its common-adapter.

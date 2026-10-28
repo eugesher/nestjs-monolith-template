@@ -6,6 +6,7 @@ describe('features', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
+      'apps/__features-fixture__/src/contracts/catalog-events/index.ts',
       'apps/__features-fixture__/src/features/index.ts',
       'apps/__features-fixture__/src/features/item/item.module.ts',
       'apps/__features-fixture__/src/features/item/domain/index.ts',
@@ -158,6 +159,64 @@ describe('features', () => {
         file: 'apps/__features-fixture__/src/features/item/domain/__fixture__.ts',
         code: 'import { Injectable } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('infrastructure MAY read tables through the transaction host', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+        code: [
+          'import { Injectable } from "@nestjs/common";',
+          'import { TypeOrmModule } from "@nestjs/typeorm";',
+          'import { TransactionHost } from "@nestjs-cls/transactional";',
+          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";',
+          'import { Repository } from "typeorm";',
+        ].join('\n'),
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'domain', 'outbound', 'infrastructure/events'])(
+      '%s may NOT import typeorm — tables are persistence',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/item/${layer}/__fixture__.ts`,
+          code: 'import { Repository } from "typeorm";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure/events MAY reach app contracts and the messaging contract', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/infrastructure/events/__fixture__.ts',
+        code: [
+          'import { Inject, Injectable } from "@nestjs/common";',
+          'import { x } from "../../../../contracts/catalog-events";',
+          'import { y } from "../../../../../../../libs/contracts/src/messaging";',
+        ].join('\n'),
+      }).toPassArchitectureLint();
+    });
+
+    it('infrastructure/events may NOT reach another lib contract', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/infrastructure/events/__fixture__.ts',
+        code: 'import { y } from "../../../../../../../libs/contracts/src/database";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it.each(['infrastructure/persistence', 'infrastructure/core-adapters', 'application/services'])(
+      '%s may NOT reach app contracts — only common-adapters and events do',
+      async (folder) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/item/${folder}/__fixture__.ts`,
+          code: 'import { x } from "../../../../contracts/catalog-events";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure/common-adapters MAY reach app contracts with the DI decorators', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/infrastructure/common-adapters/__fixture__.ts',
+        code: 'import { Inject, Injectable } from "@nestjs/common";\nimport { x } from "../../../../contracts/catalog-events";',
+      }).toPassArchitectureLint();
     });
 
     it('presentation MAY import the request validation packages', async () => {
