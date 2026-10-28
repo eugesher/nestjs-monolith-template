@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { HealthModule, IamModule, SessionModule } from '@acme-admin-features';
+import { HealthModule, IamModule, LedgerModule, SessionModule } from '@acme-admin-features';
 import { CacheModule } from '@acme-libs/cache';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { EventsModule } from '@acme-libs/messaging';
@@ -20,6 +20,7 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     HealthModule,
     SessionModule,
     IamModule,
+    LedgerModule,
   ],
 })
 export class AppModule {}
