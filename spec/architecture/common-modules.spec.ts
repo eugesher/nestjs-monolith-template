@@ -62,6 +62,28 @@ describe('common modules (common/modules/<module>)', () => {
       }).toPassArchitectureLint();
     });
 
+    it.each([
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/typeorm',
+      'typeorm',
+    ])('common infrastructure MAY import the persistence package %s', async (source) => {
+      await expect({
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'module'])(
+      'common %s may NOT import typeorm, only infrastructure talks to the database',
+      async (layer) => {
+        await expect({
+          file: `apps/__common-fixture__/src/common/modules/idempotency/${layer}/__fixture__.ts`,
+          code: 'import { Repository } from "typeorm";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('common infrastructure MAY reach its own core-adapters and common-adapters', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',

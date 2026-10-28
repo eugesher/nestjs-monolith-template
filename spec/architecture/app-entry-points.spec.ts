@@ -13,10 +13,20 @@ describe('app entry points', () => {
       (alias) => alias.startsWith('@acme-admin') || alias.startsWith('@acme-client'),
     );
 
-    expect(appAliases).toEqual(['@acme-admin-features', '@acme-client-features']);
+    expect(appAliases).toEqual([
+      '@acme-admin-features',
+      '@acme-client-common/modules/idempotency',
+      '@acme-client-contracts/idempotency',
+      '@acme-client-features',
+    ]);
   });
 
-  it.each(['@acme-admin-features', '@acme-client-features'])('%s resolves', (source) => {
+  it.each([
+    '@acme-admin-features',
+    '@acme-client-common/modules/idempotency',
+    '@acme-client-contracts/idempotency',
+    '@acme-client-features',
+  ])('%s resolves', (source) => {
     expect(source).toResolve();
   });
 
@@ -24,6 +34,8 @@ describe('app entry points', () => {
     '@acme-admin-features/health/health.module',
     '@acme-client-features/health/health.module',
     '@acme-admin-features/index',
+    '@acme-client-common/modules/idempotency/application',
+    '@acme-client-contracts/idempotency/ports/idempotency-common.port',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -77,5 +89,49 @@ describe('app entry points', () => {
       file: 'apps/client-api/src/features/health/presentation/controllers/__fixture__.ts',
       code: 'import { HealthLibModule } from "@acme-libs/health";',
     }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a client-api feature root MAY mount the idempotency common module by its alias', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/health/health.module.ts',
+      code: 'import { IdempotencyCommonModule } from "@acme-client-common/modules/idempotency";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a client-api feature common-adapter MAY import the idempotency contracts by their alias', async () => {
+    await expect({
+      file: 'apps/client-api/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      code: 'import { IDEMPOTENCY_COMMON_PORT } from "@acme-client-contracts/idempotency";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    [
+      'apps/client-api/src/features/health/application/__fixture__.ts',
+      '@acme-client-contracts/idempotency',
+    ],
+    [
+      'apps/client-api/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      '@acme-client-common/modules/idempotency',
+    ],
+  ])('%s may NOT import %s', async (file, source) => {
+    await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
+      'boundaries/dependencies',
+    );
+  });
+
+  it.each([
+    [
+      'apps/admin-api/src/features/health/health.module.ts',
+      '@acme-client-common/modules/idempotency',
+    ],
+    [
+      'apps/admin-api/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      '@acme-client-contracts/idempotency',
+    ],
+  ])('admin-api (%s) may NOT reach the client-api %s', async (file, source) => {
+    await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
+      'boundaries/dependencies',
+    );
   });
 });
