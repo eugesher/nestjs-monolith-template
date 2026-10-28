@@ -22,6 +22,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@acme-libs/config": ["./libs/config/src"],
       "@acme-libs/kernel": ["./libs/kernel/src"],
       "@acme-libs/toolkit": ["./libs/toolkit/src"]
     }

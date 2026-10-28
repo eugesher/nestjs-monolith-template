@@ -1,11 +1,12 @@
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
 const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create(AppModule);
-  const port = Number(process.env.CLIENT_API_PORT ?? 3000);
+  const port = app.get(ConfigService).getOrThrow<number>('CLIENT_API_PORT');
 
   app.enableShutdownHooks();
 

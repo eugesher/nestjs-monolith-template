@@ -20,5 +20,6 @@ export const acmeLibs = [
   fromLib('cache', [libs('observability')]),
   fromLib('health', [libs('observability'), libContracts('cache')]),
   fromLib('observability', [libs('config')]),
+  fromLib('config', [packages('@nestjs/common', '@nestjs/config')]),
   fromLib('toolkit', [packages('crypto')]),
 ];

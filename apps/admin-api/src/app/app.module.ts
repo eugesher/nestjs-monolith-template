@@ -1,4 +1,8 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { ConfigSetupModule } from './setup/config/config-setup.module';
+
+@Module({
+  imports: [ConfigSetupModule.forRoot()],
+})
 export class AppModule {}

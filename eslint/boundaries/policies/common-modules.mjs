@@ -68,7 +68,7 @@ export const commonModules = [
     to('acme-app:common:modules:index', own('app')),
     to('acme-app:common:shared:index', own('app')),
     to('acme-core:modules:index'),
-    libs('kernel', 'toolkit'),
+    libs('config', 'kernel', 'toolkit'),
   ]),
   from('acme-app:common:modules:index', [layer('module')]),
 ];

@@ -42,7 +42,7 @@ export const acmeCore = [
     layer('module:facade'),
     layer('module'),
     ownContracts,
-    libs('kernel', 'toolkit'),
+    libs('config', 'kernel', 'toolkit'),
   ]),
   from('acme-core:modules:index', [layer('module')]),
   from('acme-core:contracts', [ownContracts, libs('kernel', 'toolkit')]),
