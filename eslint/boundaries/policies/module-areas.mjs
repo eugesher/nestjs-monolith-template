@@ -1,4 +1,4 @@
-import { from, fromSpec, layerOf, libContracts, libs, own, to } from '../selectors.mjs';
+import { from, fromSpec, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
 const areaPolicies = (area, sharedFacing) => {
   const prefix = `acme-app:${area}`;
@@ -21,6 +21,7 @@ const areaPolicies = (area, sharedFacing) => {
       ...sharedFacing.application,
       libs('kernel', 'observability', 'toolkit'),
       libContracts('database'),
+      packages('nestjs-pino'),
     ]),
     from(`${prefix}:infrastructure`, [
       layer('domain'),

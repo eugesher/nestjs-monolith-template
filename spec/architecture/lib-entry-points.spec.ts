@@ -7,7 +7,7 @@ describe('lib entry points', () => {
   it('libs/ holds exactly the libs the edge table in libs.spec.ts knows about', () => {
     const libs = readdirSync(path.resolve(__dirname, '../../libs')).sort();
 
-    expect(libs).toEqual(['config', 'kernel', 'toolkit']);
+    expect(libs).toEqual(['config', 'kernel', 'observability', 'toolkit']);
   });
 
   it('tsconfig publishes exactly these lib entry points, no wildcards', () => {
@@ -19,7 +19,14 @@ describe('lib entry points', () => {
       alias.startsWith('@acme-libs/'),
     );
 
-    expect(libAliases).toEqual(['@acme-libs/config', '@acme-libs/kernel', '@acme-libs/toolkit']);
+    expect(libAliases).toEqual([
+      '@acme-libs/config',
+      '@acme-libs/kernel',
+      '@acme-libs/observability',
+      '@acme-libs/observability/testing',
+      '@acme-libs/observability/tracer',
+      '@acme-libs/toolkit',
+    ]);
   });
 
   it.each(['@acme-libs/config', '@acme-libs/kernel', '@acme-libs/toolkit'])(
@@ -34,6 +41,7 @@ describe('lib entry points', () => {
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/toolkit/src',
     '@acme-libs/config/env/env.helper',
+    '@acme-libs/observability/correlation/correlation.middleware',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -68,4 +76,36 @@ describe('lib entry points', () => {
       code: 'import { Entity } from "@acme-libs/toolkit";',
     }).toBreakRule('boundaries/dependencies');
   });
+
+  it.each([
+    'apps/admin-api/src/features/item/application/use-cases/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+    'apps/admin-api/src/common/shared/auth/__fixture__.ts',
+  ])('%s may NOT import test helpers outside specs', async (file) => {
+    await expect({
+      file,
+      code: 'import { makePinoLoggerMock } from "@acme-libs/observability/testing";',
+    }).toBreakRule('no-restricted-imports');
+  });
+
+  it.each([
+    'apps/admin-api/src/features/item/application/use-cases/spec/__fixture__.spec.ts',
+    'core/modules/src/__ledger-fixture__/application/spec/__fixture__.spec.ts',
+    'apps/admin-api/test/app/__fixture__.e2e-spec.ts',
+  ])('the spec %s MAY import test helpers', async (file) => {
+    await expect({
+      file,
+      code: 'import { makePinoLoggerMock } from "@acme-libs/observability/testing";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['apps/admin-api/src/main.ts', 'apps/client-api/src/main.ts'])(
+    '%s MAY import the allowlisted deep entry point tracer',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import "@acme-libs/observability/tracer";',
+      }).toPassArchitectureLint();
+    },
+  );
 });

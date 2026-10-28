@@ -1,4 +1,4 @@
-import { from, layerOf, libContracts, libs, own, to } from '../selectors.mjs';
+import { from, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
 const layer = layerOf('acme-core:modules', ['module']);
 
@@ -19,6 +19,7 @@ export const acmeCore = [
     ownContracts,
     libs('kernel', 'observability', 'toolkit'),
     libContracts('database'),
+    packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [
     layer('domain'),

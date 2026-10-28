@@ -6,6 +6,7 @@ import {
   libContracts,
   libs,
   own,
+  packages,
   to,
 } from '../selectors.mjs';
 
@@ -26,6 +27,7 @@ export const commonModules = [
     appContracts,
     libs('kernel', 'observability', 'toolkit'),
     libContracts('database'),
+    packages('nestjs-pino'),
   ]),
   from('acme-app:common:modules:infrastructure', [
     layer('domain'),

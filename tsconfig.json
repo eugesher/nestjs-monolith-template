@@ -24,6 +24,9 @@
     "paths": {
       "@acme-libs/config": ["./libs/config/src"],
       "@acme-libs/kernel": ["./libs/kernel/src"],
+      "@acme-libs/observability": ["./libs/observability/src"],
+      "@acme-libs/observability/testing": ["./libs/observability/src/testing"],
+      "@acme-libs/observability/tracer": ["./libs/observability/src/tracer/tracer"],
       "@acme-libs/toolkit": ["./libs/toolkit/src"]
     }
   },

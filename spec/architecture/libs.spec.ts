@@ -181,4 +181,25 @@ describe('libs', () => {
       code: 'import Joi from "joi";',
     }).toBreakRule('boundaries/dependencies');
   });
+
+  it('the observability lib MAY import the logging, tracing and async context packages', async () => {
+    await expect({
+      file: 'libs/observability/src/correlation/__fixture__.ts',
+      code:
+        'import { AsyncLocalStorage } from "async_hooks";\n' +
+        'import { trace } from "@opentelemetry/api";\n' +
+        'import { NodeSDK } from "@opentelemetry/sdk-node";\n' +
+        'import { PinoLogger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['nestjs-pino', '@opentelemetry/api', 'async_hooks'])(
+    'the kernel lib may NOT import %s',
+    async (source) => {
+      await expect({
+        file: 'libs/kernel/src/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
 });
