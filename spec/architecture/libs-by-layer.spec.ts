@@ -17,6 +17,7 @@ describe('libs by layer', () => {
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
       'libs/toolkit/src/index.ts',
+      'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
       'libs/contracts/src/database/index.ts',
     ]);
@@ -102,6 +103,20 @@ describe('libs by layer', () => {
       file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../../../../libs/auth/src";',
     }).toPassArchitectureLint();
+  });
+
+  it('presentation MAY reach the auth lib contract for the type of the current user', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      code: 'import type { x } from "../../../../../../../libs/contracts/src/auth";',
+    }).toPassArchitectureLint();
+  });
+
+  it('application may NOT reach the auth lib contract', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      code: 'import type { x } from "../../../../../../../libs/contracts/src/auth";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([

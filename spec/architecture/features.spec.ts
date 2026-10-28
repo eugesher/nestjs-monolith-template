@@ -139,6 +139,44 @@ describe('features', () => {
       },
     );
 
+    it('application MAY import the DI decorators of @nestjs/common', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+        code: 'import { Inject, Injectable } from "@nestjs/common";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a core-adapter MAY import the DI decorators of @nestjs/common', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { Inject, Injectable } from "@nestjs/common";',
+      }).toPassArchitectureLint();
+    });
+
+    it('domain may NOT import @nestjs/common', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/domain/__fixture__.ts',
+        code: 'import { Injectable } from "@nestjs/common";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('presentation MAY import the request validation packages', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/presentation/dto/__fixture__.ts',
+        code: 'import { IsString } from "class-validator";\nimport { plainToInstance } from "class-transformer";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'domain', 'infrastructure', 'outbound'])(
+      '%s may NOT import class-validator — request validation is a presentation job',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/item/${layer}/__fixture__.ts`,
+          code: 'import { IsString } from "class-validator";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('the module root may NOT import a package off its allowlist', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/item/__fixture__.ts',

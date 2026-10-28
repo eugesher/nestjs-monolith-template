@@ -39,6 +39,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('outbound'),
       to('acme-core:contracts'),
       libs('kernel', 'toolkit'),
+      packages('@nestjs/common'),
     ]),
     fromSpec(`${prefix}:infrastructure:common-adapters`),
     from(`${prefix}:infrastructure:common-adapters`, [
@@ -70,12 +71,12 @@ const areaPolicies = (area, sharedFacing) => {
 
 export const moduleAreas = [
   ...areaPolicies('features', {
-    application: [to('acme-app:common:shared:index', own('app'))],
+    application: [to('acme-app:common:shared:index', own('app')), packages('@nestjs/common')],
     presentation: [
       to('acme-app:common:shared:index', own('app')),
-      libContracts('health'),
+      libContracts('auth', 'health'),
       libs('auth', 'http', 'kernel', 'observability', 'toolkit'),
-      packages('@nestjs/common', '@nestjs/swagger'),
+      packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
     module: [
       libs('auth', 'config', 'health', 'http', 'kernel', 'toolkit'),
