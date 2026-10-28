@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { HealthModule } from '@acme-admin-features';
 import { CacheModule } from '@acme-libs/cache';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { EventsModule } from '@acme-libs/messaging';
@@ -14,6 +15,7 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     TypeOrmSetupModule.forRoot(),
     CacheModule,
     EventsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

@@ -115,6 +115,30 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('the module root MAY import @nestjs/common', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/__fixture__.ts',
+        code: 'import { Module } from "@nestjs/common";',
+      }).toPassArchitectureLint();
+    });
+
+    it('presentation MAY import the HTTP and OpenAPI decorators', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+        code: 'import { Controller, Get } from "@nestjs/common";\nimport { ApiOkResponse } from "@nestjs/swagger";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'domain'])(
+      '%s may NOT import the OpenAPI decorators',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/item/${layer}/__fixture__.ts`,
+          code: 'import { ApiProperty } from "@nestjs/swagger";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('the module root may NOT import a package off its allowlist', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/item/__fixture__.ts',
