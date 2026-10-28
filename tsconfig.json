@@ -22,7 +22,10 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@acme-libs/cache": ["./libs/cache/src"],
+      "@acme-libs/cache/testing": ["./libs/cache/src/testing"],
       "@acme-libs/config": ["./libs/config/src"],
+      "@acme-libs/contracts/cache": ["./libs/contracts/src/cache"],
       "@acme-libs/contracts/database": ["./libs/contracts/src/database"],
       "@acme-libs/database": ["./libs/database/src"],
       "@acme-libs/kernel": ["./libs/kernel/src"],

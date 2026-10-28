@@ -41,6 +41,7 @@
     "@opentelemetry/resources": "3.0.0",
     "@opentelemetry/sdk-node": "0.300.0",
     "@opentelemetry/semantic-conventions": "1.43.0",
+    "ioredis": "6.0.0",
     "joi": "18.3.0",
     "mysql2": "3.24.6",
     "nestjs-cls": "7.0.1",

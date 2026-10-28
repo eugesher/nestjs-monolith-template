@@ -7,7 +7,15 @@ describe('lib entry points', () => {
   it('libs/ holds exactly the libs the edge table in libs.spec.ts knows about', () => {
     const libs = readdirSync(path.resolve(__dirname, '../../libs')).sort();
 
-    expect(libs).toEqual(['config', 'contracts', 'database', 'kernel', 'observability', 'toolkit']);
+    expect(libs).toEqual([
+      'cache',
+      'config',
+      'contracts',
+      'database',
+      'kernel',
+      'observability',
+      'toolkit',
+    ]);
   });
 
   it('tsconfig publishes exactly these lib entry points, no wildcards', () => {
@@ -20,7 +28,10 @@ describe('lib entry points', () => {
     );
 
     expect(libAliases).toEqual([
+      '@acme-libs/cache',
+      '@acme-libs/cache/testing',
       '@acme-libs/config',
+      '@acme-libs/contracts/cache',
       '@acme-libs/contracts/database',
       '@acme-libs/database',
       '@acme-libs/kernel',
@@ -32,7 +43,10 @@ describe('lib entry points', () => {
   });
 
   it.each([
+    '@acme-libs/cache',
+    '@acme-libs/cache/testing',
     '@acme-libs/config',
+    '@acme-libs/contracts/cache',
     '@acme-libs/contracts/database',
     '@acme-libs/database',
     '@acme-libs/kernel',
@@ -48,6 +62,8 @@ describe('lib entry points', () => {
     '@acme-libs/config/env/env.helper',
     '@acme-libs/observability/correlation/correlation.middleware',
     '@acme-libs/contracts/database/ports/transaction.port',
+    '@acme-libs/cache/redis/redis-cache.adapter',
+    '@acme-libs/contracts/cache/ports/cache.port',
     '@acme-libs/database/transaction/transaction.adapter',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
@@ -155,5 +171,58 @@ describe('lib entry points', () => {
       file: 'apps/admin-api/src/features/item/application/use-cases/__fixture__.ts',
       code: 'import { TransactionAdapter } from "@acme-libs/database";',
     }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    'apps/admin-api/src/common/shared/auth/__fixture__.ts',
+    'apps/client-api/src/features/reminder/infrastructure/cache/__fixture__.ts',
+  ])('%s MAY import the cache contracts by their alias', async (file) => {
+    await expect({
+      file,
+      code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/client-api/src/features/reminder/application/use-cases/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+  ])(
+    '%s may NOT import the cache contracts by their alias, the application reads through its own port',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+  it('the app root MAY import the cache lib by its alias', async () => {
+    await expect({
+      file: 'apps/admin-api/src/app/app.module.ts',
+      code: 'import { CacheModule } from "@acme-libs/cache";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/client-api/src/features/reminder/infrastructure/cache/__fixture__.ts',
+    'apps/client-api/src/common/shared/auth/__fixture__.ts',
+  ])('%s may NOT import the cache lib root, only the app root wires it', async (file) => {
+    await expect({
+      file,
+      code: 'import { CacheModule } from "@acme-libs/cache";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the Redis client token may NOT be imported outside specs', async () => {
+    await expect({
+      file: 'apps/admin-api/src/app/__fixture__.ts',
+      code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
+    }).toBreakRule('no-restricted-imports');
+  });
+
+  it('an e2e spec MAY take the Redis client token', async () => {
+    await expect({
+      file: 'apps/admin-api/test/app/__fixture__.e2e-spec.ts',
+      code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
+    }).toPassArchitectureLint();
   });
 });
