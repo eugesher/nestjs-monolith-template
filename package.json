@@ -1,0 +1,39 @@
+{
+  "name": "nestjs-monolith-template",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.11"
+  },
+  "scripts": {
+    "build": "nest build admin-api && nest build client-api",
+    "build:admin-api": "nest build admin-api",
+    "build:client-api": "nest build client-api",
+    "start:dev": "bash scripts/bash/start-dev.sh",
+    "start:dev:admin-api": "nest start admin-api --watch",
+    "start:dev:client-api": "nest start client-api --watch",
+    "start:prod:admin-api": "node dist/apps/admin-api/main.js",
+    "start:prod:client-api": "node dist/apps/client-api/main.js",
+    "format": "prettier --write \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
+    "format:check": "prettier --check \"{apps,core,libs,spec,scripts,test}/**/*.ts\""
+  },
+  "dependencies": {
+    "@nestjs/common": "12.2.0",
+    "@nestjs/core": "12.2.0",
+    "@nestjs/platform-express": "12.2.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "12.0.10",
+    "@nestjs/schematics": "12.0.10",
+    "@rspack/core": "2.2.9",
+    "@types/node": "24.19.2",
+    "prettier": "3.9.10",
+    "ts-checker-rspack-plugin": "1.7.2",
+    "tsconfig-paths-webpack-plugin": "4.2.0",
+    "typescript": "6.0.3",
+    "webpack-node-externals": "3.0.0"
+  },
+  "packageManager": "yarn@4.18.1"
+}
