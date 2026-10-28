@@ -77,6 +77,7 @@ export const acmeLibs = [
       'crypto',
       'http',
       'nestjs-pino',
+      'pino',
       'pino-http',
     ),
   ]),

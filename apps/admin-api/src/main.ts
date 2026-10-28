@@ -1,22 +1,36 @@
-import { Logger } from '@nestjs/common';
+import '@acme-libs/observability/tracer';
+
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { Logger } from 'nestjs-pino';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from '@acme-admin-app';
+import { AppNameEnum } from '@acme-libs/kernel';
+import { BootstrapLogger } from '@acme-libs/observability';
+import { ApiReference } from '@acme-libs/openapi';
+
+const logger = BootstrapLogger.setup(AppNameEnum.ADMIN_API);
 
 const bootstrap = async (): Promise<void> => {
-  const app = await NestFactory.create(AppModule);
-  const port = app.get(ConfigService).getOrThrow<number>('ADMIN_API_PORT');
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const config = app.get(ConfigService);
+  const port = config.getOrThrow<number>('ADMIN_API_PORT');
+  const prefix = config.getOrThrow<string>('API_PREFIX');
+  const appLogger = app.get(Logger);
 
+  app.useLogger(appLogger);
+  app.setGlobalPrefix(prefix);
   app.enableShutdownHooks();
+
+  ApiReference.setup(app, AppNameEnum.ADMIN_API, port);
 
   await app.listen(port);
 
-  Logger.log(`Admin API is listening on port ${port}`, 'Bootstrap');
+  logger.info(`Admin API is listening on port ${port}`);
 };
 
 bootstrap().catch((error: unknown) => {
-  Logger.error(error, 'Admin API bootstrap error');
+  logger.error(error, 'Admin API bootstrap error');
 
   process.exit(1);
 });

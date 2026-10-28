@@ -44,8 +44,8 @@ A successful purge logs nothing here. The common module already logs
 ## Wiring
 
 `IdempotencyPurgeModule` imports `IdempotencyCommonModule`, and the app mounts it through
-`@acme-client-processors`. `@Cron` only marks the method: the tick fires once the app imports
-`ScheduleModule.forRoot()`.
+`@acme-client-processors`. `@Cron` only marks the method: the tick fires because client-api imports
+`ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`.
 
 Lint lets a processor consumer take only `Cron` and `CronExpression` from `@nestjs/schedule`, and
 the app only `ScheduleModule`. No other layer imports the package.

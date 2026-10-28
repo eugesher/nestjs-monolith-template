@@ -22,7 +22,9 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@acme-admin-app": ["./apps/admin-api/src/app/app.module"],
       "@acme-admin-features": ["./apps/admin-api/src/features"],
+      "@acme-client-app": ["./apps/client-api/src/app/app.module"],
       "@acme-client-common/modules/idempotency": [
         "./apps/client-api/src/common/modules/idempotency"
       ],

@@ -68,6 +68,7 @@ describe('the config itself (eslint.config.mjs, as ESLint resolves it)', () => {
     ],
     ['acme-app:app:global:infrastructure:core-adapters', 'acme-app:app:global:infrastructure'],
     ['acme-app:app:global:index', 'acme-app:app'],
+    ['acme-app:app:module', 'acme-app:app'],
     ['acme-app:common:modules:module:facade', 'acme-app:common:modules:module'],
     ['acme-core:modules:module:facade', 'acme-core:modules:module'],
     ['acme-libs:contracts', 'acme-libs'],
