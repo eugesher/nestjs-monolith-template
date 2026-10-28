@@ -37,6 +37,24 @@
         "tsConfigPath": "libs/config/tsconfig.lib.json"
       }
     },
+    "contracts-database": {
+      "type": "library",
+      "root": "libs/contracts/src/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/database",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
     "kernel": {
       "type": "library",
       "root": "libs/kernel",

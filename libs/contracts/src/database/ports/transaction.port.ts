@@ -1,0 +1,5 @@
+export interface ITransactionPort {
+  run<T>(work: () => Promise<T>): Promise<T>;
+}
+
+export const TRANSACTION_PORT = Symbol('TRANSACTION_PORT');
