@@ -48,6 +48,23 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it.each(['@acme-core/contracts/identity', '@acme-core/modules/identity'])(
+      'ledger may NOT reach %s — the journal records facts, it never asks who the user is',
+      async (alias) => {
+        await expect({
+          file: 'core/modules/src/ledger/application/use-cases/__fixture__.ts',
+          code: `import { x } from "${alias}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('ledger MAY reach its own contracts through the alias', async () => {
+      await expect({
+        file: 'core/modules/src/ledger/application/use-cases/__fixture__.ts',
+        code: 'import { LEDGER_CORE_APPEND_PORT } from "@acme-core/contracts/ledger";',
+      }).toPassArchitectureLint();
+    });
+
     it('core application may NOT reach its own infrastructure', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/__fixture__.ts',

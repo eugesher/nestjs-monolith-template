@@ -109,6 +109,15 @@
         "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }
     },
+    "core-contracts-ledger": {
+      "type": "library",
+      "root": "core/contracts/src/ledger",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/ledger",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
+      }
+    },
     "core-entities": {
       "type": "library",
       "root": "core/entities",
@@ -123,6 +132,15 @@
       "root": "core/modules/src/identity",
       "entryFile": "index",
       "sourceRoot": "core/modules/src/identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
+    },
+    "core-modules-ledger": {
+      "type": "library",
+      "root": "core/modules/src/ledger",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/ledger",
       "compilerOptions": {
         "tsConfigPath": "core/modules/tsconfig.lib.json"
       }
