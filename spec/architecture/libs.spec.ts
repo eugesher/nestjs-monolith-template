@@ -167,4 +167,18 @@ describe('libs', () => {
       code: 'import { createHash, randomUUID } from "crypto";',
     }).toPassArchitectureLint();
   });
+
+  it('the config lib MAY import the Nest config packages it wraps', async () => {
+    await expect({
+      file: 'libs/config/src/provider/__fixture__.ts',
+      code: 'import { Provider } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the config lib may NOT import joi — each app owns its schema', async () => {
+    await expect({
+      file: 'libs/config/src/provider/__fixture__.ts',
+      code: 'import Joi from "joi";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 });

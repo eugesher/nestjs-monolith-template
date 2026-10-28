@@ -4,7 +4,7 @@ export const acmeApp = [
   from('acme-app:main', [
     to('acme-app:app', own('app')),
     libs('database', 'kernel', 'observability', 'openapi'),
-    packages('@nestjs/common', '@nestjs/core'),
+    packages('@nestjs/common', '@nestjs/config', '@nestjs/core'),
   ]),
   from('acme-app:app', [
     to('acme-app:app', own('app')),
@@ -15,7 +15,7 @@ export const acmeApp = [
     to('acme-core:entities'),
     libs('cache', 'config', 'database', 'http', 'kernel', 'messaging', 'observability', 'toolkit'),
     libContracts('database'),
-    packages('@nestjs/common'),
+    packages('@nestjs/common', '@nestjs/config', 'joi'),
   ]),
   from('acme-app:common:shared', [
     to('acme-app:common:shared', own('app')),
@@ -33,7 +33,7 @@ export const acmeApp = [
     appContracts,
     to('acme-app:common:modules:index', own('app')),
     to('acme-core:modules:index'),
-    libs('auth', 'kernel', 'observability', 'toolkit'),
+    libs('auth', 'config', 'kernel', 'observability', 'toolkit'),
   ]),
   from('acme-app:app:global:infrastructure', [
     to('acme-app:app:global:infrastructure', own('app', 'module')),

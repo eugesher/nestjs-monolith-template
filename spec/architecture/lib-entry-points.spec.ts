@@ -7,7 +7,7 @@ describe('lib entry points', () => {
   it('libs/ holds exactly the libs the edge table in libs.spec.ts knows about', () => {
     const libs = readdirSync(path.resolve(__dirname, '../../libs')).sort();
 
-    expect(libs).toEqual(['kernel', 'toolkit']);
+    expect(libs).toEqual(['config', 'kernel', 'toolkit']);
   });
 
   it('tsconfig publishes exactly these lib entry points, no wildcards', () => {
@@ -19,17 +19,21 @@ describe('lib entry points', () => {
       alias.startsWith('@acme-libs/'),
     );
 
-    expect(libAliases).toEqual(['@acme-libs/kernel', '@acme-libs/toolkit']);
+    expect(libAliases).toEqual(['@acme-libs/config', '@acme-libs/kernel', '@acme-libs/toolkit']);
   });
 
-  it.each(['@acme-libs/kernel', '@acme-libs/toolkit'])('%s resolves', (source) => {
-    expect(source).toResolve();
-  });
+  it.each(['@acme-libs/config', '@acme-libs/kernel', '@acme-libs/toolkit'])(
+    '%s resolves',
+    (source) => {
+      expect(source).toResolve();
+    },
+  );
 
   it.each([
     '@acme-libs/kernel/app/app-name.enum',
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/toolkit/src',
+    '@acme-libs/config/env/env.helper',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });

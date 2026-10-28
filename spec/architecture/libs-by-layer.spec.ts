@@ -266,4 +266,67 @@ describe('libs by layer', () => {
       }).toBreakRule('boundaries/dependencies');
     },
   );
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'apps/__layers-fixture__/src/processors/purge/__fixture__.ts',
+    'apps/__layers-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+    'apps/__layers-fixture__/src/app/global/auth/module/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
+    'apps/__layers-fixture__/src/app/setup/config/__fixture__.ts',
+  ])('%s MAY bind config values through the config lib', async (file) => {
+    await expect({
+      file,
+      code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/domain/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
+  ])(
+    '%s may NOT reach the config lib — values arrive through tokens bound at the module root',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it.each([
+    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
+  ])('%s may NOT read ConfigService directly', async (file) => {
+    await expect({
+      file,
+      code: 'import { ConfigService } from "@nestjs/config";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('bootstrap MAY set up the config module with its own Joi schema', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/app/setup/config/__fixture__.ts',
+      code: 'import { ConfigModule } from "@nestjs/config";\nimport Joi from "joi";',
+    }).toPassArchitectureLint();
+  });
+
+  it('main MAY read the port from ConfigService', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/main.ts',
+      code: 'import { ConfigService } from "@nestjs/config";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a feature may NOT import joi — validation of env is the app bootstrap job', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      code: 'import Joi from "joi";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 });

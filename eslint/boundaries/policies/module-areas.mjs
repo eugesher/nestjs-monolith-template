@@ -75,7 +75,7 @@ export const moduleAreas = [
       libContracts('health'),
       libs('http', 'kernel', 'observability', 'toolkit'),
     ],
-    module: [libs('auth', 'health', 'http', 'kernel', 'toolkit')],
+    module: [libs('auth', 'config', 'health', 'http', 'kernel', 'toolkit')],
   }),
   ...areaPolicies('processors', {
     application: [],
@@ -83,6 +83,6 @@ export const moduleAreas = [
       to('acme-app:contracts', own('app')),
       libs('kernel', 'observability', 'toolkit'),
     ],
-    module: [libs('kernel', 'toolkit')],
+    module: [libs('config', 'kernel', 'toolkit')],
   }),
 ];
