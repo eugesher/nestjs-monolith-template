@@ -15,7 +15,10 @@
     "start:prod:admin-api": "node dist/apps/admin-api/main.js",
     "start:prod:client-api": "node dist/apps/client-api/main.js",
     "format": "prettier --write \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
-    "format:check": "prettier --check \"{apps,core,libs,spec,scripts,test}/**/*.ts\""
+    "format:check": "prettier --check \"{apps,core,libs,spec,scripts,test}/**/*.ts\"",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@nestjs/common": "12.2.0",
@@ -25,14 +28,19 @@
     "rxjs": "7.8.2"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@nestjs/cli": "12.0.10",
     "@nestjs/schematics": "12.0.10",
     "@rspack/core": "2.2.9",
     "@types/node": "24.19.2",
+    "eslint": "10.13.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.7",
     "prettier": "3.9.10",
     "ts-checker-rspack-plugin": "1.7.2",
     "tsconfig-paths-webpack-plugin": "4.2.0",
     "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
     "webpack-node-externals": "3.0.0"
   },
   "packageManager": "yarn@4.18.1"
