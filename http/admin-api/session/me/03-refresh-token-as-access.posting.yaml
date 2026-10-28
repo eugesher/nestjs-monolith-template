@@ -1,0 +1,11 @@
+name: 03-refresh-token-as-access
+description: |-
+  e2e: Session › GET /api/auth/me › should refuse a refresh token as an access token
+
+  Expect: 401 Unauthorized
+  User: the token saved in refresh_token
+url: $ADMIN_API_BASE_URL/auth/me
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $refresh_token

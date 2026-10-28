@@ -24,3 +24,6 @@ lerna-debug.log*
 
 # Yarn
 /.yarn
+
+# Posting scripts
+__pycache__/

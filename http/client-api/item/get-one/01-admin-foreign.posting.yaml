@@ -1,0 +1,13 @@
+name: 01-admin-foreign
+description: |-
+  e2e: Item › GET /api/items/:itemId › should let an admin read the item of another owner
+
+  Expect: 200 OK, item 102
+  User: admin@example.com (token signed by scripts.py)
+url: $CLIENT_API_BASE_URL/items/102
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

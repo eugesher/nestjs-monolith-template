@@ -1,0 +1,16 @@
+name: 03-half-subject
+description: |-
+  e2e: Note › GET /api/notes › should refuse half of a subject filter with 400
+
+  Expect: 400 Bad Request, code NOTE_SUBJECT_INVALID
+  User: editor@example.com (token signed by scripts.py)
+url: $ADMIN_API_BASE_URL/notes
+params:
+  - name: subjectType
+    value: item
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_editor

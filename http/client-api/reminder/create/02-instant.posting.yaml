@@ -1,0 +1,23 @@
+name: 02-instant
+description: |-
+  e2e: Reminder › POST /api/reminders › should refuse an instant with 400 from validation
+
+  Expect: 400 Bad Request, dueOn must be a calendar date formatted YYYY-MM-DD
+  User: viewer@example.com (token signed by scripts.py)
+method: POST
+url: $CLIENT_API_BASE_URL/reminders
+body:
+  content: |-
+    {
+      "title": "Wrong shape",
+      "dueOn": "2026-06-01T00:00:00Z"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_viewer

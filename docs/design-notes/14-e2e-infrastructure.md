@@ -21,7 +21,7 @@ other host ports, so a dev server never attaches to the test infrastructure.
 | `test:e2e:infra:reload` | `down`, then `up` |
 | `test:e2e:infra:reseed` | resets the data of running infrastructure, see below |
 | `test:e2e:seed` | loads the seed files into `DATABASE_URL` |
-| `test:e2e:admin`, `test:e2e:client` | the e2e suite of one app, `--runInBand --ci` |
+| `test:e2e:admin`, `test:e2e:client` | the e2e suite of one app, `--runInBand --ci`, see `15-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`:
@@ -68,6 +68,7 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 | `00000000-0000-4000-8000-000000000001` | `admin@example.com` | `admin-password-please-change` | admin |
 | `00000000-0000-4000-8000-000000000002` | `editor@example.com` | `editor-password-please-change` | editor |
 | `00000000-0000-4000-8000-000000000003` | `viewer@example.com` | `viewer-password-please-change` | viewer |
+| `00000000-0000-4000-8000-000000000004` | `disabled@example.com` | `disabled-password-please-change` | viewer, disabled |
 
 The hashes in `user.sql` are argon2id with the cost parameters of `.env.example`. Roles and
 permissions get the ids of their order in `RoleEnum` and `PermissionCodeEnum`.

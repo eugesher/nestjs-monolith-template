@@ -1,0 +1,13 @@
+name: 01-revisions
+description: |-
+  e2e: Note › GET /api/notes/:noteId/revisions › should list the revisions of a note
+
+  Expect: 200 OK, revision 200 of note 202
+  User: editor@example.com (token signed by scripts.py)
+url: $ADMIN_API_BASE_URL/notes/202/revisions
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_editor

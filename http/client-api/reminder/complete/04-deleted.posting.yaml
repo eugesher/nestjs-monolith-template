@@ -1,0 +1,14 @@
+name: 04-deleted
+description: |-
+  e2e: Reminder › PATCH /api/reminders/:reminderId/done › should answer 404 for a deleted reminder
+
+  Expect: 404 Not Found, code REMINDER_NOT_FOUND
+  User: viewer@example.com (token signed by scripts.py)
+method: PATCH
+url: $CLIENT_API_BASE_URL/reminders/306/done
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

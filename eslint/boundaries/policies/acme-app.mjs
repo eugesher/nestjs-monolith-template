@@ -76,7 +76,18 @@ export const acmeApp = [
     to('acme-app:app:module', own('app')),
     to('acme-app:app', own('app')),
     to('acme-app:contracts', own('app')),
+    to('acme-core:entities'),
     to('acme-libs'),
     to('acme-libs:contracts'),
+    packages(
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/jwt',
+      '@nestjs/testing',
+      'ioredis',
+      'nestjs-pino',
+      'supertest',
+      'typeorm',
+    ),
   ]),
 ];
