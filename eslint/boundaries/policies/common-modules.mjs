@@ -39,6 +39,12 @@ export const commonModules = [
     to('acme-core:entities'),
     libs('database', 'kernel', 'toolkit'),
     to('acme-libs:contracts'),
+    packages(
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/typeorm',
+      'typeorm',
+    ),
   ]),
   fromSpec('acme-app:common:modules:infrastructure:core-adapters'),
   from('acme-app:common:modules:infrastructure:core-adapters', [
