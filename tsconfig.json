@@ -24,7 +24,9 @@
     "paths": {
       "@acme-admin-features": ["./apps/admin-api/src/features"],
       "@acme-client-features": ["./apps/client-api/src/features"],
+      "@acme-core/contracts/identity": ["./core/contracts/src/identity"],
       "@acme-core/entities": ["./core/entities/src"],
+      "@acme-core/modules/identity": ["./core/modules/src/identity"],
       "@acme-libs/cache": ["./libs/cache/src"],
       "@acme-libs/cache/testing": ["./libs/cache/src/testing"],
       "@acme-libs/config": ["./libs/config/src"],

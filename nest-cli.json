@@ -82,6 +82,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "core-contracts-identity": {
+      "type": "library",
+      "root": "core/contracts/src/identity",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
+      }
+    },
     "core-entities": {
       "type": "library",
       "root": "core/entities",
@@ -89,6 +98,15 @@
       "sourceRoot": "core/entities/src",
       "compilerOptions": {
         "tsConfigPath": "core/entities/tsconfig.lib.json"
+      }
+    },
+    "core-modules-identity": {
+      "type": "library",
+      "root": "core/modules/src/identity",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
       }
     },
     "database": {

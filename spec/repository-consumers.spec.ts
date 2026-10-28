@@ -1,6 +1,22 @@
 import { repositoryConsumers, repositoryConsumerViolations } from './support/repository-consumers';
 
 describe('one repository per use case, service or facade', () => {
+  it('finds the consumers of every area', () => {
+    const names = repositoryConsumers().map(({ name }) => name);
+
+    expect(names).toEqual(
+      expect.arrayContaining([
+        'IdentityCoreAssignRoleUseCase',
+        'IdentityCoreListRolesUseCase',
+        'IdentityCoreLoginUseCase',
+        'IdentityCoreRefreshTokenUseCase',
+        'IdentityCoreRegisterUserUseCase',
+        'IdentityCoreUpdateRolePermissionsUseCase',
+        'IdentityCoreValidateSubjectUseCase',
+      ]),
+    );
+  });
+
   it('every consumer keeps at most one repository of its own in "repository"', () => {
     expect(repositoryConsumerViolations(repositoryConsumers())).toEqual([]);
   });

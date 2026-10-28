@@ -29,6 +29,15 @@ export const acmeCore = [
     to('acme-core:entities'),
     libs('database', 'kernel', 'toolkit'),
     to('acme-libs:contracts'),
+    packages(
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/common',
+      '@nestjs/jwt',
+      '@nestjs/typeorm',
+      'argon2',
+      'typeorm',
+    ),
   ]),
   from('acme-core:modules:module:facade', [
     layer('application'),

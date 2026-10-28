@@ -185,6 +185,107 @@ describe('core modules', () => {
     });
   });
 
+  describe('packages and lib contracts', () => {
+    it('infrastructure MAY import the persistence, hashing and token packages', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+        code:
+          'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
+          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";\n' +
+          'import { JwtModule, JwtService } from "@nestjs/jwt";\n' +
+          'import { TypeOrmModule } from "@nestjs/typeorm";\n' +
+          'import { hash } from "argon2";\n' +
+          'import { Repository } from "typeorm";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      ['domain', 'argon2'],
+      ['domain', '@nestjs/jwt'],
+      ['outbound', 'argon2'],
+      ['application', 'argon2'],
+      ['application', '@nestjs/jwt'],
+      ['application', 'typeorm'],
+      ['module', 'argon2'],
+      ['module', '@nestjs/jwt'],
+      ['module', '@nestjs/typeorm'],
+    ])('%s may NOT import %s, only infrastructure talks to it', async (layer, source) => {
+      await expect({
+        file: `core/modules/src/__ledger-fixture__/${layer}/__fixture__.ts`,
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('application MAY take the transaction port and the logger', async () => {
+      await expect({
+        file: 'core/modules/src/identity/application/use-cases/__fixture__.ts',
+        code:
+          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
+          'import { PinoLogger } from "nestjs-pino";',
+      }).toPassArchitectureLint();
+    });
+
+    it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
+      await expect({
+        file: 'core/modules/src/identity/application/use-cases/__fixture__.ts',
+        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('the module root MAY bind config values with the config lib', async () => {
+      await expect({
+        file: 'core/modules/src/identity/module/__fixture__.ts',
+        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'infrastructure'])(
+      '%s may NOT read the config, values come in as tokens',
+      async (layer) => {
+        await expect({
+          file: `core/modules/src/identity/${layer}/__fixture__.ts`,
+          code: 'import { ConfigService } from "@nestjs/config";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+  });
+
+  describe('identity ports by app', () => {
+    it.each(['admin-api', 'client-api'])(
+      'a %s core adapter MAY import the identity session port',
+      async (app) => {
+        await expect({
+          file: `apps/${app}/src/features/session/infrastructure/core-adapters/__fixture__.ts`,
+          code: 'import { IDENTITY_CORE_SESSION_PORT, IIdentityCoreSessionPort } from "@acme-core/contracts/identity";',
+        }).toPassArchitectureLint();
+      },
+    );
+
+    it('an admin-api core adapter MAY import the identity admin port', async () => {
+      await expect({
+        file: 'apps/admin-api/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { IDENTITY_CORE_ADMIN_PORT, IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      'apps/client-api/src/features/session/infrastructure/core-adapters/__fixture__.ts',
+      'apps/client-api/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+    ])('%s may NOT import the identity admin port', async (file) => {
+      await expect({
+        file,
+        code: 'import { IDENTITY_CORE_ADMIN_PORT } from "@acme-core/contracts/identity";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('a client-api core adapter may NOT slip the admin port type in next to the session port', async () => {
+      await expect({
+        file: 'apps/client-api/src/features/session/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { IDENTITY_CORE_SESSION_PORT, IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+  });
+
   describe('core entities', () => {
     it('entities MAY reach the kernel lib', async () => {
       await expect({
