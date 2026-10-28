@@ -39,6 +39,20 @@ describe('app → core', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('a client-api feature may NOT reach the identity admin port — client-api has no back office, IAM lives in admin-api only', async () => {
+      await expect({
+        file: 'apps/client-api/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { IDENTITY_CORE_ADMIN_PORT, type IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('an admin-api feature MAY reach the identity admin port — the back office is admin-api', async () => {
+      await expect({
+        file: 'apps/admin-api/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { IDENTITY_CORE_ADMIN_PORT, type IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+      }).toPassArchitectureLint();
+    });
+
     it('infrastructure/core-adapters may NOT reach entities — it talks to the core module, not its tables', async () => {
       await expect({
         file: 'apps/__core-link-fixture__/src/features/item/infrastructure/core-adapters/__fixture__.ts',
