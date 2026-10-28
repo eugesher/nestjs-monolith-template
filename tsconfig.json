@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2023",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
@@ -23,6 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {}
   },
-  "include": ["apps/**/*.ts"],
+  "include": ["apps/**/*.ts", "spec/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
