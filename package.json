@@ -35,6 +35,8 @@
     "@types/node": "24.19.2",
     "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-boundaries": "7.3.0",
     "eslint-plugin-prettier": "5.5.7",
     "prettier": "3.9.10",
     "ts-checker-rspack-plugin": "1.7.2",
