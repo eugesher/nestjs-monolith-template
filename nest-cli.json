@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/client-api/tsconfig.app.json"
       }
     },
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
     "cache": {
       "type": "library",
       "root": "libs/cache",
@@ -44,6 +53,15 @@
       "sourceRoot": "libs/config/src",
       "compilerOptions": {
         "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "contracts-auth": {
+      "type": "library",
+      "root": "libs/contracts/src/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/auth",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
     "contracts-cache": {

@@ -74,7 +74,7 @@ export const moduleAreas = [
     presentation: [
       to('acme-app:common:shared:index', own('app')),
       libContracts('health'),
-      libs('http', 'kernel', 'observability', 'toolkit'),
+      libs('auth', 'http', 'kernel', 'observability', 'toolkit'),
       packages('@nestjs/common', '@nestjs/swagger'),
     ],
     module: [

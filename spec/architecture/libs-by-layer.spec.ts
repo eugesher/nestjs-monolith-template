@@ -97,6 +97,29 @@ describe('libs by layer', () => {
     }).toPassArchitectureLint();
   });
 
+  it('presentation MAY reach the auth lib for its route decorators', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      code: 'import { x } from "../../../../../../../libs/auth/src";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    ['apps/__layers-fixture__/src/features/item/domain/__fixture__.ts', '../../../../../../libs'],
+    [
+      'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+  ])('%s may NOT reach the auth lib', async (file, libs) => {
+    await expect({ file, code: `import { x } from "${libs}/auth/src";` }).toBreakRule(
+      'boundaries/dependencies',
+    );
+  });
+
   it('application may NOT reach the HTTP lib', async () => {
     await expect({
       file: 'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',

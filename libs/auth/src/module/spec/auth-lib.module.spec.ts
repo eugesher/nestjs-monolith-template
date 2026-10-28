@@ -1,0 +1,184 @@
+import { Controller, Get, Global, INestApplication, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+
+import { AUTH_USER_VALIDATOR_PORT, type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
+import { CurrentUser } from '../../decorators/auth-current-user.decorator';
+import { Public } from '../../decorators/auth-public.decorator';
+import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
+import { Roles } from '../../decorators/auth-roles.decorator';
+import { AuthLibModule } from '../auth-lib.module';
+
+describe('AuthLibModule', () => {
+  let app: INestApplication;
+  let url: string;
+
+  beforeEach(async () => {
+    @Controller()
+    class ProbeController {
+      @Public()
+      @Get('open')
+      public open(): string {
+        return 'open';
+      }
+
+      @Get('me')
+      public me(@CurrentUser() user: Maybe<IAuthCurrentUserView>): Maybe<IAuthCurrentUserView> {
+        return user;
+      }
+
+      @RequiresPermission(PermissionCodeEnum.ITEM_ARCHIVE, PermissionCodeEnum.ITEM_WRITE)
+      @Get('archive')
+      public archive(): string {
+        return 'archived';
+      }
+
+      @Roles(RoleEnum.ADMIN)
+      @Get('admin')
+      public admin(): string {
+        return 'admin';
+      }
+    }
+
+    @Global()
+    @Module({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          ignoreEnvFile: true,
+          load: [() => ({ JWT_ACCESS_SECRET: 'access-secret-of-at-least-thirty-two-chars' })],
+        }),
+      ],
+      providers: [
+        {
+          provide: AUTH_USER_VALIDATOR_PORT,
+          useValue: {
+            validate: (query: { sub: string }) => {
+              const users: Record<string, IAuthCurrentUserView> = {
+                ann: {
+                  id: 'ann',
+                  email: 'ann@example.com',
+                  roles: [RoleEnum.ADMIN],
+                  permissions: [PermissionCodeEnum.ITEM_ARCHIVE],
+                },
+                bob: {
+                  id: 'bob',
+                  email: 'bob@example.com',
+                  roles: [RoleEnum.VIEWER],
+                  permissions: [PermissionCodeEnum.ITEM_READ],
+                },
+              };
+
+              return Promise.resolve(users[query.sub]);
+            },
+          },
+        },
+      ],
+      exports: [AUTH_USER_VALIDATOR_PORT],
+    })
+    class ValidatorModule {}
+
+    @Module({ imports: [ValidatorModule, AuthLibModule], controllers: [ProbeController] })
+    class TestModule {}
+
+    app = await NestFactory.create(TestModule, { logger: false });
+    await app.listen(0, '127.0.0.1');
+    url = await app.getUrl();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('opens a public route without a token', async () => {
+    const response = await fetch(`${url}/open`);
+
+    expect(response.status).toBe(200);
+  });
+
+  it('closes every other route without a token with 401, before the claim guards run', async () => {
+    const statuses = [];
+
+    for (const route of ['me', 'archive', 'admin']) {
+      const response = await fetch(`${url}/${route}`);
+
+      statuses.push(response.status);
+    }
+
+    expect(statuses).toEqual([401, 401, 401]);
+  });
+
+  it('answers 401 for a token signed with another secret', async () => {
+    const token = await new JwtService({
+      secret: 'refresh-secret-of-at-least-thirty-two',
+    }).signAsync({ sub: 'ann' });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('answers 401 for a valid token of a user the validator does not know', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'eve' });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('hands the re-derived user to @CurrentUser()', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'ann', roles: ['forged'] });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+    const body: unknown = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({
+      id: 'ann',
+      email: 'ann@example.com',
+      roles: ['admin'],
+      permissions: ['item:archive'],
+    });
+  });
+
+  it('admits a user holding a required permission and a required role', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'ann' });
+    const statuses = [];
+
+    for (const route of ['archive', 'admin']) {
+      const response = await fetch(`${url}/${route}`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+
+      statuses.push(response.status);
+    }
+
+    expect(statuses).toEqual([200, 200]);
+  });
+
+  it('answers 403 to a user without the permission or the role', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'bob' });
+    const statuses = [];
+
+    for (const route of ['archive', 'admin']) {
+      const response = await fetch(`${url}/${route}`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+
+      statuses.push(response.status);
+    }
+
+    expect(statuses).toEqual([403, 403]);
+  });
+});
