@@ -101,3 +101,60 @@ repository.
 A write logs its outcome at `info` after the work: `Note created`, `Note edited`,
 `Note edit was a no-op` or `Note resolved`. A lost race logs at `info` and a spent budget at `warn`.
 Reads log nothing.
+
+## Persistence
+
+Each repository port has its own repository: `NoteAccessRepository`, `NoteCreateRepository`,
+`NoteCrudRepository`, `NoteEditRepository`, `NoteResolveRepository` and
+`NoteGetRevisionsRepository`. The edit and resolve repositories share `update` through
+`NoteUpdateBaseRepository`. Every repository reads its table through `TransactionHost`, so inside
+`TRANSACTION_PORT.run` it writes on the connection of the transaction.
+
+**The version check is in the `WHERE`**, as for items and reminders: `update` writes `body`,
+`resolved` and `version` where the id and the version as read match, and answers whether one row
+changed.
+
+`appendRevision` inserts one `note_revision` row. `UNIQUE (note_id, note_version)` is the last
+guard: two edits that both passed the version check could not record the same version twice.
+
+`list` returns the notes newest first, by id, optionally of one subject and of one resolution.
+`listForNote` returns the revisions of one note, newest version first.
+
+## HTTP
+
+| Method and path | Permission | Answer |
+| --- | --- | --- |
+| `POST /notes` | `note:write` | 201, the note |
+| `GET /notes` | `note:read` | 200, a page of notes |
+| `GET /notes/:noteId` | `note:read` | 200, the note |
+| `PATCH /notes/:noteId` | `note:write` | 200, the note |
+| `PATCH /notes/:noteId/resolve` | `note:write` | 200, the note |
+| `GET /notes/:noteId/revisions` | `note:read` | 200, a page of revisions |
+
+The caller is the author of a note they create and the editor of a revision they cause. Nothing
+else in a route depends on the caller.
+
+**Half a subject filter is a domain error, not a validation error.** The query DTO checks each
+half on its own; the pair rule lives in `NoteGetManyUseCase` only, and answers
+`NOTE_SUBJECT_INVALID`.
+
+`resolved` in the query is `true` or `false`; anything else is a 400 from validation. `noteId` is a
+string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, like `itemId`.
+
+### Errors
+
+`NoteHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
+`HttpExceptionFilter` of `libs/http`, with the same body as items.
+
+| Code | Status |
+| --- | --- |
+| `NOTE_SUBJECT_INVALID`, `NOTE_BODY_INVALID`, `NOTE_VERSION_INVALID` | 400 |
+| `NOTE_NOT_FOUND` | 404 |
+| `NOTE_RESOLVED`, `VERSION_MISMATCH` | 409 |
+
+## Wiring
+
+`NoteModule` imports `NoteTypeOrmModule.forFeature()`, binds every port with
+`{ provide, useClass }` and reads `NOTE_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The entity
+list of admin-api includes `Note` and `NoteRevision`. The feature exists only in admin-api: the
+client app has no `/notes` route.
