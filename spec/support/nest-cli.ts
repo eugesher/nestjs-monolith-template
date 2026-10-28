@@ -44,7 +44,7 @@ const projectOfAlias = (alias: string): string | null => {
 
 export const libraryProjectsOfAliases = (): [string, string][] =>
   Object.entries(aliases)
-    .map(([alias, [target]]) => [projectOfAlias(alias), target])
+    .map(([alias, [target]]) => [projectOfAlias(alias), path.normalize(target)])
     .filter((entry): entry is [string, string] => entry[0] !== null)
     .sort(([a], [b]) => a.localeCompare(b));
 

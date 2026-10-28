@@ -1,4 +1,4 @@
-import { from, fromLib, libContracts, libs, own, to } from '../selectors.mjs';
+import { from, fromLib, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
 export const acmeLibs = [
   from('acme-libs', [to('acme-libs', own('lib')), to('acme-libs:contracts', own('lib'))]),
@@ -20,4 +20,5 @@ export const acmeLibs = [
   fromLib('cache', [libs('observability')]),
   fromLib('health', [libs('observability'), libContracts('cache')]),
   fromLib('observability', [libs('config')]),
+  fromLib('toolkit', [packages('crypto')]),
 ];
