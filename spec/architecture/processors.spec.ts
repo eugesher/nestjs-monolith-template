@@ -231,6 +231,43 @@ describe('processors (processors/<module>) — modules entered by in-process eve
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('a consumer MAY subscribe with OnEvent', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/processors/catalog-events/presentation/__fixture__.ts',
+        code: 'import { OnEvent } from "@nestjs/event-emitter";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      'import { EventEmitter2 } from "@nestjs/event-emitter";',
+      'import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";',
+      'import { EventEmitterModule } from "@nestjs/event-emitter";',
+    ])(
+      'a consumer may NOT take the emitter itself (%s) — events are published through EVENT_PUBLISHER_PORT',
+      async (code) => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/processors/catalog-events/presentation/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it.each([
+      'apps/__processors-fixture__/src/processors/catalog-events/application/__fixture__.ts',
+      'apps/__processors-fixture__/src/processors/catalog-events/infrastructure/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/item/presentation/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/item/infrastructure/__fixture__.ts',
+      'apps/__processors-fixture__/src/app/__fixture__.ts',
+    ])(
+      '%s may NOT import the in-process bus — only processor consumers subscribe',
+      async (file) => {
+        await expect({
+          file,
+          code: 'import { OnEvent } from "@nestjs/event-emitter";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('a consumer may NOT import the HTTP platform', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/catalog-events/presentation/__fixture__.ts',

@@ -62,7 +62,7 @@ describe('libs', () => {
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit']],
-    ['messaging', ['kernel', 'toolkit']],
+    ['messaging', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {

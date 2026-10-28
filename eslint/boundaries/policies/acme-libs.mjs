@@ -22,6 +22,10 @@ export const acmeLibs = [
     packages('@nestjs/common', '@nestjs/config', '@opentelemetry/api', 'ioredis', 'nestjs-pino'),
   ]),
   fromLib('health', [libs('observability'), libContracts('cache')]),
+  fromLib('messaging', [
+    libs('observability'),
+    packages('@nestjs/common', '@nestjs/core', '@nestjs/event-emitter', 'nestjs-pino'),
+  ]),
   fromLib('observability', [libs('config')]),
   fromLib('config', [packages('@nestjs/common', '@nestjs/config')]),
   fromLib('database', [
