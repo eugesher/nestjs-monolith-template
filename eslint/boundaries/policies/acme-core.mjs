@@ -47,5 +47,5 @@ export const acmeCore = [
   ]),
   from('acme-core:modules:index', [layer('module')]),
   from('acme-core:contracts', [ownContracts, libs('kernel', 'toolkit')]),
-  from('acme-core:entities', [to('acme-core:entities'), libs('kernel')]),
+  from('acme-core:entities', [to('acme-core:entities'), libs('kernel'), packages('typeorm')]),
 ];
