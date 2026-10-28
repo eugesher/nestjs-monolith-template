@@ -12,9 +12,11 @@ describe('lib entry points', () => {
       'config',
       'contracts',
       'database',
+      'http',
       'kernel',
       'messaging',
       'observability',
+      'openapi',
       'toolkit',
     ]);
   });
@@ -36,11 +38,13 @@ describe('lib entry points', () => {
       '@acme-libs/contracts/database',
       '@acme-libs/contracts/messaging',
       '@acme-libs/database',
+      '@acme-libs/http',
       '@acme-libs/kernel',
       '@acme-libs/messaging',
       '@acme-libs/observability',
       '@acme-libs/observability/testing',
       '@acme-libs/observability/tracer',
+      '@acme-libs/openapi',
       '@acme-libs/toolkit',
     ]);
   });
@@ -53,8 +57,10 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/messaging',
     '@acme-libs/database',
+    '@acme-libs/http',
     '@acme-libs/kernel',
     '@acme-libs/messaging',
+    '@acme-libs/openapi',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -72,6 +78,8 @@ describe('lib entry points', () => {
     '@acme-libs/database/transaction/transaction.adapter',
     '@acme-libs/messaging/publisher/in-process-event-publisher.adapter',
     '@acme-libs/contracts/messaging/ports/event-publisher.port',
+    '@acme-libs/http/filters/http-exception.filter',
+    '@acme-libs/openapi/api-reference/api-reference',
   ])('a deep path into a lib does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -258,6 +266,46 @@ describe('lib entry points', () => {
     await expect({
       file: 'apps/client-api/src/features/item/infrastructure/events/__fixture__.ts',
       code: 'import { EventsModule } from "@acme-libs/messaging";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each(['apps/admin-api/src/main.ts', 'apps/client-api/src/main.ts'])(
+    '%s MAY import the openapi lib by its alias',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { ApiReference } from "@acme-libs/openapi";',
+      }).toPassArchitectureLint();
+    },
+  );
+
+  it.each([
+    'apps/admin-api/src/app/app.module.ts',
+    'apps/admin-api/src/features/item/presentation/controllers/__fixture__.ts',
+  ])('%s may NOT import the openapi lib, the document is built at startup only', async (file) => {
+    await expect({
+      file,
+      code: 'import { ApiReference } from "@acme-libs/openapi";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    'apps/admin-api/src/app/app.module.ts',
+    'apps/admin-api/src/common/shared/auth/__fixture__.ts',
+  ])('%s MAY import the http lib by its alias', async (file) => {
+    await expect({
+      file,
+      code: 'import { HttpExceptionFilter, StrictValidationPipe } from "@acme-libs/http";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/admin-api/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/admin-api/src/features/item/domain/__fixture__.ts',
+  ])('%s may NOT import the http lib, HTTP stays out of the core layers', async (file) => {
+    await expect({
+      file,
+      code: 'import { HttpExceptionFilter } from "@acme-libs/http";',
     }).toBreakRule('boundaries/dependencies');
   });
 });
