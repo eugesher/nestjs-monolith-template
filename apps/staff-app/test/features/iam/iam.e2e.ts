@@ -160,7 +160,7 @@ export class IamE2E {
           const response = await request(this.ctx.app.getHttpServer())
             .put('/api/iam/roles/viewer/permissions')
             .auth(this.ctx.adminToken, { type: 'bearer' })
-            .send({ permissionCodes: ['item:read', 'reminder:read', 'reminder:write'] })
+            .send({ permissionCodes: ['note:read'] })
             .expect(HttpStatus.OK);
 
           const ledger = await request(this.ctx.app.getHttpServer())
@@ -179,8 +179,9 @@ export class IamE2E {
             },
           }).toMatchSnapshot();
         } finally {
+          await this.ctx.dataSource.query('DELETE FROM staff_role_permissions WHERE role_id = 3');
           await this.ctx.dataSource.query(
-            'INSERT IGNORE INTO staff_role_permissions (role_id, permission_id) VALUES (3, 4)',
+            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1)',
           );
         }
       });
@@ -189,7 +190,7 @@ export class IamE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/iam/roles/viewer/permissions')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ permissionCodes: ['item:read', 'item:delete'] })
+          .send({ permissionCodes: ['ledger:read', 'ledger:delete'] })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({
@@ -206,7 +207,7 @@ export class IamE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/iam/roles/auditor/permissions')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ permissionCodes: ['item:read'] })
+          .send({ permissionCodes: ['ledger:read'] })
           .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();

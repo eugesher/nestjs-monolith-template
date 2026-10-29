@@ -8,6 +8,7 @@ export const acmeLibs = [
       'auth',
       'cache',
       'config',
+      'credentials',
       'database',
       'health',
       'http',
@@ -18,6 +19,9 @@ export const acmeLibs = [
     [baseLibs()],
   ),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
+  fromLib('credentials', [
+    packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt', 'argon2'),
+  ]),
   fromLib('cache', [
     libs('observability'),
     packages(

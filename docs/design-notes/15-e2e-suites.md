@@ -49,8 +49,9 @@ method wraps the `describe` of that endpoint. `ItemE2E.of(ctx)` builds it over t
 feature that needs a hook before each case has `hooks()`, as `ReminderE2E` flushes Redis.
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
-the logger and the global prefix, and signs one access token for each seeded account with
-`JWT_SECRET` from the config. Everything the cases read is a getter that throws before
+the logger and the global prefix, and signs one access token for each seeded account the cases use
+with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, ann, bob and carol in
+customer-app. Everything the cases read is a getter that throws before
 `init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
 The Jest files outside the apps live in `jest/`:
@@ -102,26 +103,28 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 
 ## What the suites cover
 
-| App          | Feature  | Cases                                                                                                                                                                           |
-| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| staff-app    | app      | the schema of every entity matches the migrated database; customer-app routes are not mounted                                                                                   |
-| staff-app    | session  | login answers one access token of the subject alone for the app lifetime, `me`; claims in a token are ignored; a disabled user is refused                                       |
-| staff-app    | iam      | roles from the database; a new user logs in at once; a revoked permission refuses a token that passed a moment before                                                           |
-| staff-app    | ledger   | a page of one subject; validation                                                                                                                                               |
-| staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                       |
-| customer-app | app      | staff-app routes are not mounted                                                                                                                                                |
-| customer-app | session  | login answers one access token of the subject alone for the app lifetime, `me` through the filter of this app                                                                   |
-| customer-app | item     | owner scope; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
-| customer-app | reminder | the summary is cached and every write drops it; dates under `TZ`; ownership; soft delete                                                                                        |
+| App          | Feature  | Cases                                                                                                                                                                                                             |
+| ------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| staff-app    | app      | the schema of every entity matches the migrated database; customer-app routes are not mounted                                                                                                                     |
+| staff-app    | session  | login answers one access token of the subject alone for the app lifetime, `me` with roles; claims in a token are ignored; a disabled user is refused; customer tokens are refused                                 |
+| staff-app    | iam      | roles from the database; a new user logs in at once; a revoked permission refuses a token that passed a moment before                                                                                             |
+| staff-app    | ledger   | a page of one subject; validation                                                                                                                                                                                 |
+| staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                                                         |
+| customer-app | app      | staff-app routes are not mounted                                                                                                                                                                                  |
+| customer-app | session  | login answers one access token of the subject alone for the app lifetime, `me`; staff credentials, a disabled customer and staff tokens are refused                                                               |
+| customer-app | item     | owner scope, another customer's item is a 404; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
+| customer-app | reminder | the summary is cached and every write drops it; dates under `TZ`; another customer's reminder is a 404; soft delete                                                                                               |
 
 **The schema check needs decorators.** It builds a `DataSource` of every entity in
 `@acme-core/entities` with `SnakeNamingStrategy`, and expects
 `driver.createSchemaBuilder().log()` to return no `upQueries`. The TypeORM CLI cannot do it under
 plain `node`, which has no decorators.
 
-**A token is shared because the secret is.** Each suite boots one app. Both apps verify a token
-with the same `JWT_SECRET`, so a token of one app is valid in the other; the suites check
-each app with tokens signed by that secret, not one app against the other.
+**A token of the other app is signed in the case.** Each suite boots one app, and the lint keeps
+the `AppModule` of the other app out of its tests. The session cases of each app build a
+`JwtService` over the `JWT_SECRET` of the other app's e2e setup and expect 401, and they also sign
+a subject of the other app with the secret of this one: one case for the secret, one for the
+table.
 
 ## Lint
 

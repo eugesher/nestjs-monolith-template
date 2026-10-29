@@ -1,14 +1,18 @@
-import { RoleEnum } from '@acme-libs/kernel';
-import { SessionLoginUseCase } from '../../../application';
+import { SessionLoginUseCase, SessionMeUseCase } from '../../../application';
 import { SessionController } from '../session.controller';
 
 describe('SessionController', () => {
   let login: jest.Mock;
+  let findSubject: jest.Mock;
   let controller: SessionController;
 
   beforeEach(() => {
     login = jest.fn();
-    controller = new SessionController(new SessionLoginUseCase({ login }));
+    findSubject = jest.fn();
+    controller = new SessionController(
+      new SessionLoginUseCase({ login, findSubject }),
+      new SessionMeUseCase({ login, findSubject }),
+    );
   });
 
   describe('handleLogin', () => {
@@ -26,18 +30,13 @@ describe('SessionController', () => {
   });
 
   describe('handleMe', () => {
-    it('answers the current user exactly as the guards resolved it', () => {
-      const response = controller.handleMe({
-        id: 'user-1',
-        email: 'ann@example.com',
-        roles: [RoleEnum.ADMIN],
-      });
+    it('answers the current user with the roles identity reads for them', async () => {
+      findSubject.mockResolvedValue({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
 
-      expect(response).toEqual({
-        id: 'user-1',
-        email: 'ann@example.com',
-        roles: ['admin'],
-      });
+      const response = await controller.handleMe({ id: 'user-1', email: 'ann@example.com' });
+
+      expect(response).toEqual({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
+      expect(findSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });
 });

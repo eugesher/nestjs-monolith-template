@@ -30,9 +30,9 @@ The aggregate records no events. Nothing outside the feature reacts to a reminde
 
 ## Ownership
 
-`ReminderAccessService` loads a reminder or refuses it: a missing reminder is `REMINDER_NOT_FOUND`
-(404), and a reminder of another owner is `REMINDER_ACCESS_FORBIDDEN` (403). The `ownerId` is
-always required. Unlike items, reminders have no admin path: every caller sees only their own.
+`ReminderAccessService` loads a reminder of the caller or refuses it with `REMINDER_NOT_FOUND`
+(404): a missing reminder and a reminder of another customer get the same answer, as with items.
+The `ownerId` is always required.
 
 Listing and the summary take the owner as a required filter, so no query can return the reminders
 of everyone.
@@ -123,17 +123,17 @@ single-flight and no fallback of its own. It logs nothing either: the cache lib 
 
 ## HTTP
 
-| Method and path                       | Permission       | Answer                        |
-| ------------------------------------- | ---------------- | ----------------------------- |
-| `POST /reminders`                     | `reminder:write` | 201, the reminder             |
-| `GET /reminders`                      | `reminder:read`  | 200, a page of reminders      |
-| `GET /reminders/summary`              | `reminder:read`  | 200, `{ pending, nextDueOn }` |
-| `PATCH /reminders/:reminderId/done`   | `reminder:write` | 200, the reminder             |
-| `PATCH /reminders/:reminderId/due-on` | `reminder:write` | 200, the reminder             |
-| `DELETE /reminders/:reminderId`       | `reminder:write` | 204                           |
+| Method and path                       | Answer                        |
+| ------------------------------------- | ----------------------------- |
+| `POST /reminders`                     | 201, the reminder             |
+| `GET /reminders`                      | 200, a page of reminders      |
+| `GET /reminders/summary`              | 200, `{ pending, nextDueOn }` |
+| `PATCH /reminders/:reminderId/done`   | 200, the reminder             |
+| `PATCH /reminders/:reminderId/due-on` | 200, the reminder             |
+| `DELETE /reminders/:reminderId`       | 204                           |
 
-**Every route is scoped to the caller, an admin included.** The controller always passes the
-caller's own id as `ownerId`.
+**Every route needs a customer token and is scoped to that customer.** The controller always passes
+the caller's own id as `ownerId`.
 
 **`dueOn` is checked twice.** The DTO refuses anything that is not written `YYYY-MM-DD`, such as an
 instant, with a 400 from validation. A well-formed date that does not exist, such as `2026-02-30`,
@@ -150,7 +150,6 @@ reaches the model and is refused there as `REMINDER_DUE_ON_INVALID`, also a 400.
 | Code                                                                                                     | Status |
 | -------------------------------------------------------------------------------------------------------- | ------ |
 | `REMINDER_TITLE_INVALID`, `REMINDER_BODY_INVALID`, `REMINDER_DUE_ON_INVALID`, `REMINDER_VERSION_INVALID` | 400    |
-| `REMINDER_ACCESS_FORBIDDEN`                                                                              | 403    |
 | `REMINDER_NOT_FOUND`                                                                                     | 404    |
 | `REMINDER_ALREADY_DONE`, `VERSION_MISMATCH`                                                              | 409    |
 

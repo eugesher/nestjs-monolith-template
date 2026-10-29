@@ -9,13 +9,13 @@ describe('StaffIdentityCoreRoleModel', () => {
     role = StaffIdentityCoreRoleModel.reconstitute({
       id: 2,
       name: RoleEnum.EDITOR,
-      permissionCodes: [PermissionCodeEnum.ITEM_READ],
+      permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
     });
   });
 
   describe('reconstitute', () => {
     it('keeps the stored state as is', () => {
-      expect(role).toMatchObject({ id: 2, name: 'editor', permissionCodes: ['item:read'] });
+      expect(role).toMatchObject({ id: 2, name: 'editor', permissionCodes: ['iam:assign'] });
     });
   });
 
@@ -23,14 +23,14 @@ describe('StaffIdentityCoreRoleModel', () => {
     it('replaces the codes with the known ones, without duplicates', () => {
       role.replacePermissions(
         [
-          PermissionCodeEnum.ITEM_WRITE,
+          PermissionCodeEnum.IAM_ROLE_EDIT,
           PermissionCodeEnum.NOTE_READ,
-          PermissionCodeEnum.ITEM_WRITE,
+          PermissionCodeEnum.IAM_ROLE_EDIT,
         ],
         [
           StaffIdentityCorePermissionModel.reconstitute({
             id: 2,
-            code: PermissionCodeEnum.ITEM_WRITE,
+            code: PermissionCodeEnum.IAM_ROLE_EDIT,
           }),
           StaffIdentityCorePermissionModel.reconstitute({
             id: 8,
@@ -39,7 +39,7 @@ describe('StaffIdentityCoreRoleModel', () => {
         ],
       );
 
-      expect(role.permissionCodes).toEqual(['item:write', 'note:read']);
+      expect(role.permissionCodes).toEqual(['iam:role-edit', 'note:read']);
     });
 
     it('clears the codes with an empty list', () => {
@@ -52,14 +52,14 @@ describe('StaffIdentityCoreRoleModel', () => {
       const replace = (): void =>
         role.replacePermissions(
           [
-            PermissionCodeEnum.ITEM_WRITE,
+            PermissionCodeEnum.IAM_ROLE_EDIT,
             PermissionCodeEnum.NOTE_READ,
             PermissionCodeEnum.LEDGER_READ,
           ],
           [
             StaffIdentityCorePermissionModel.reconstitute({
               id: 2,
-              code: PermissionCodeEnum.ITEM_WRITE,
+              code: PermissionCodeEnum.IAM_ROLE_EDIT,
             }),
           ],
         );
@@ -70,7 +70,7 @@ describe('StaffIdentityCoreRoleModel', () => {
           message: 'Unknown permission codes: note:read, ledger:read',
         }) as Error,
       );
-      expect(role.permissionCodes).toEqual(['item:read']);
+      expect(role.permissionCodes).toEqual(['iam:assign']);
     });
   });
 });

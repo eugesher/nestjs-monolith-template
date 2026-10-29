@@ -28,10 +28,15 @@ invalidate the `If-Match` version of everyone else.
 
 ## Ownership
 
-`ItemAccessService` loads an item or refuses it: a missing item is `ITEM_NOT_FOUND` (404), and an
-item of another owner is `ITEM_ACCESS_FORBIDDEN` (403), never an empty answer. Reads take an
-optional `ownerId`: `undefined` means a caller that is not owner-scoped and skips the comparison.
-Writes take a required one, so no write can skip it.
+An item belongs to the customer who created it, and only that customer sees it. `ItemAccessService`
+loads an item of the caller or refuses it with `ITEM_NOT_FOUND` (404): a missing item and an item of
+another customer get the same answer, so an id never reveals whether someone else's item exists.
+Every read and every write takes a required `ownerId`, and `GET /items` filters by it in the query,
+so no call can skip the scope.
+
+**There are no roles to widen the scope.** A customer holds no roles or permissions (see
+`02-global-auth-guards.md`), so there is no admin who reads the items of everyone. A back office
+that needs that would live in staff-app, over its own feature.
 
 ## Optimistic concurrency
 
@@ -142,19 +147,18 @@ cannot import the idempotency contract around its common-adapter.
 
 ## HTTP
 
-| Method and path                | Permission     | Headers                     | Answer               |
-| ------------------------------ | -------------- | --------------------------- | -------------------- |
-| `POST /items`                  | `item:write`   | `Idempotency-Key`, required | 201, the item        |
-| `GET /items`                   | `item:read`    |                             | 200, a page of items |
-| `GET /items/:itemId`           | `item:read`    |                             | 200, the item        |
-| `PATCH /items/:itemId/name`    | `item:write`   | `If-Match`, optional        | 200, the item        |
-| `PATCH /items/:itemId/archive` | `item:archive` | `If-Match`, optional        | 200, the item        |
+| Method and path                | Headers                     | Answer               |
+| ------------------------------ | --------------------------- | -------------------- |
+| `POST /items`                  | `Idempotency-Key`, required | 201, the item        |
+| `GET /items`                   |                             | 200, a page of items |
+| `GET /items/:itemId`           |                             | 200, the item        |
+| `PATCH /items/:itemId/name`    | `If-Match`, optional        | 200, the item        |
+| `PATCH /items/:itemId/archive` | `If-Match`, optional        | 200, the item        |
 
 A replay of a creation answers 201 with the stored body, exactly like the first request.
 
-**Reads are owner-scoped unless the caller is an admin.** The controller passes no `ownerId` for an
-admin, so `ItemAccessService` skips the ownership check. Writes always pass the caller's own id, so
-even an admin changes only their own items.
+**Every route needs a customer token and nothing else.** The controller passes the id of the
+caller as `ownerId` on every route.
 
 **`itemId` is a string of digits**, from 1 to 20 of them without a leading zero, checked by
 `ItemIdRequestDto`. Anything else is a 400 at the edge instead of a lookup that cannot match.
@@ -184,7 +188,6 @@ when the exception has them, such as `details.currentVersion` of `VERSION_MISMAT
 | Code                                                                                               | Status |
 | -------------------------------------------------------------------------------------------------- | ------ |
 | `ITEM_SKU_INVALID`, `ITEM_NAME_INVALID`, `ITEM_VERSION_INVALID`                                    | 400    |
-| `ITEM_ACCESS_FORBIDDEN`                                                                            | 403    |
 | `ITEM_NOT_FOUND`                                                                                   | 404    |
 | `ITEM_ALREADY_ARCHIVED`, `ITEM_SKU_TAKEN`, `ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT`, `VERSION_MISMATCH` | 409    |
 | `ITEM_IDEMPOTENCY_KEY_REUSED`                                                                      | 422    |

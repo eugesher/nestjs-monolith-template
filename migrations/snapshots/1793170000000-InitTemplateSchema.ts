@@ -3,6 +3,17 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
 export class InitTemplateSchema1793170000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      CREATE TABLE customer (
+        id            CHAR(36)     NOT NULL PRIMARY KEY,
+        email         VARCHAR(255) NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        status        VARCHAR(16)  NOT NULL DEFAULT 'active',
+        created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_customer_email (email)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `);
+
+    await queryRunner.query(`
       CREATE TABLE staff_user (
         id            CHAR(36)     NOT NULL PRIMARY KEY,
         email         VARCHAR(255) NOT NULL,
@@ -107,5 +118,6 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
     await queryRunner.query('DROP TABLE IF EXISTS staff_permission');
     await queryRunner.query('DROP TABLE IF EXISTS staff_role');
     await queryRunner.query('DROP TABLE IF EXISTS staff_user');
+    await queryRunner.query('DROP TABLE IF EXISTS customer');
   }
 }

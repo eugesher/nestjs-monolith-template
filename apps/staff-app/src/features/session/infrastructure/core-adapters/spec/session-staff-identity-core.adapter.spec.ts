@@ -4,13 +4,15 @@ import { SessionStaffIdentityCoreAdapter } from '../session-staff-identity-core.
 
 describe('SessionStaffIdentityCoreAdapter', () => {
   let login: jest.Mock;
+  let validateSubject: jest.Mock;
   let adapter: SessionStaffIdentityCoreAdapter;
 
   beforeEach(() => {
     login = jest.fn();
+    validateSubject = jest.fn();
     adapter = new SessionStaffIdentityCoreAdapter({
       login,
-      validateSubject: jest.fn(),
+      validateSubject,
       findPermissionCodes: jest.fn(),
     });
   });
@@ -63,6 +65,21 @@ describe('SessionStaffIdentityCoreAdapter', () => {
       const execution = adapter.login({ email: 'ann@example.com', password: 'secret' });
 
       await expect(execution).rejects.toBe(failure);
+    });
+  });
+
+  describe('findSubject', () => {
+    it('answers the subject identity re-derives for the user', async () => {
+      validateSubject.mockResolvedValue({
+        id: 'user-1',
+        email: 'ann@example.com',
+        roles: ['admin'],
+      });
+
+      const subject = await adapter.findSubject({ userId: 'user-1' });
+
+      expect(subject).toEqual({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
+      expect(validateSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });
 });

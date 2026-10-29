@@ -3,7 +3,7 @@ description: |-
   e2e: Item › PATCH /api/items/:itemId/name › should refuse a malformed If-Match with 400
 
   Expect: 400 Bad Request, code IF_MATCH_INVALID
-  User: admin@example.com (token signed by scripts.py)
+  User: bob@example.com (token signed by scripts.py)
 method: PATCH
 url: $CUSTOMER_APP_BASE_URL/items/101/name
 body:
@@ -21,4 +21,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_admin
+  setup: scripts.py:as_bob

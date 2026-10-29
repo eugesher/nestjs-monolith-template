@@ -9,7 +9,7 @@ body:
   content: |-
     {
       "email": "nobody@example.com",
-      "password": "editor-password-please-change"
+      "password": "ann-password-please-change"
     }
 headers:
   - name: Content-Type

@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { IStaffIdentityCoreAccessTokenView } from '@acme-core/contracts/staff-identity';
-import { StaffIdentityCoreUserModel } from '../../domain';
 import {
-  STAFF_IDENTITY_CORE_ACCESS_TOKEN_PORT,
-  type IStaffIdentityCoreAccessTokenPort,
-} from '../../outbound';
+  CREDENTIALS_ACCESS_TOKEN_PORT,
+  type ICredentialsAccessTokenPort,
+} from '@acme-libs/contracts/credentials';
+import { StaffIdentityCoreUserModel } from '../../domain';
 
 @Injectable()
 export class StaffIdentityCoreAccessTokenService {
   constructor(
-    @Inject(STAFF_IDENTITY_CORE_ACCESS_TOKEN_PORT)
-    private readonly accessToken: IStaffIdentityCoreAccessTokenPort,
+    @Inject(CREDENTIALS_ACCESS_TOKEN_PORT)
+    private readonly accessToken: ICredentialsAccessTokenPort,
   ) {}
 
   public async issue(user: StaffIdentityCoreUserModel): Promise<IStaffIdentityCoreAccessTokenView> {

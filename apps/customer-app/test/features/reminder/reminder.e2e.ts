@@ -21,10 +21,10 @@ export class ReminderE2E {
       it('should compute the summary of the caller and cache it', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        const key = 'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000003:__all__';
+        const key = 'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000103:__all__';
 
         expect({
           response: { body: response.body },
@@ -39,7 +39,7 @@ export class ReminderE2E {
 
       it('should answer the cached summary', async () => {
         await this.ctx.redis.set(
-          'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000003:__all__',
+          'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000103:__all__',
           JSON.stringify({ pending: 99, nextDueOn: '2030-01-01' }),
           'PX',
           60_000,
@@ -47,7 +47,7 @@ export class ReminderE2E {
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -60,7 +60,7 @@ export class ReminderE2E {
       it('should list the own reminders of the caller, soonest first, without deleted ones', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/reminders')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -70,7 +70,7 @@ export class ReminderE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/reminders')
           .query({ status: 'done' })
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -83,7 +83,7 @@ export class ReminderE2E {
       it('should create a pending reminder on the date sent and drop the cached summary', async () => {
         await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         const [{ lastId }] = await this.ctx.dataSource.query(
@@ -92,7 +92,7 @@ export class ReminderE2E {
 
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/reminders')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .send({ title: 'Renew the domain', dueOn: '2026-06-01' })
           .expect(HttpStatus.CREATED);
 
@@ -132,7 +132,7 @@ export class ReminderE2E {
       it('should refuse an instant with 400 from validation', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/reminders')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .send({ title: 'Wrong shape', dueOn: '2026-06-01T00:00:00Z' })
           .expect(HttpStatus.BAD_REQUEST);
 
@@ -142,7 +142,7 @@ export class ReminderE2E {
       it('should refuse a date that does not exist with 400 from the model', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/reminders')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .send({ title: 'Not a day', dueOn: '2026-02-30' })
           .expect(HttpStatus.BAD_REQUEST);
 
@@ -156,12 +156,12 @@ export class ReminderE2E {
       it('should complete a reminder and drop the cached summary', async () => {
         await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/301/done')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({
@@ -176,11 +176,11 @@ export class ReminderE2E {
         });
       });
 
-      it('should refuse the reminder of another owner with 403', async () => {
+      it('should hide the reminder of another customer with 404', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/300/done')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
-          .expect(HttpStatus.FORBIDDEN);
+          .auth(this.ctx.annToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
 
         expect({
           response: { body: response.body },
@@ -193,7 +193,7 @@ export class ReminderE2E {
       it('should refuse a done reminder with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/302/done')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.CONFLICT);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -202,7 +202,7 @@ export class ReminderE2E {
       it('should answer 404 for a deleted reminder', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/306/done')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -211,7 +211,7 @@ export class ReminderE2E {
       it('should refuse an id that is not a number with 400 from validation', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/abc/done')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -224,12 +224,12 @@ export class ReminderE2E {
       it('should move a reminder to the date sent and drop the cached summary', async () => {
         await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/reminders/305/due-on')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .send({ dueOn: '2026-10-01' })
           .expect(HttpStatus.OK);
 
@@ -252,12 +252,12 @@ export class ReminderE2E {
       it('should soft-delete a reminder and drop the cached summary', async () => {
         await request(this.ctx.app.getHttpServer())
           .get('/api/reminders/summary')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         const response = await request(this.ctx.app.getHttpServer())
           .delete('/api/reminders/304')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .expect(HttpStatus.NO_CONTENT);
 
         expect({

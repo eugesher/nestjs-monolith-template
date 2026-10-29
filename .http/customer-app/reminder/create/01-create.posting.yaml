@@ -3,7 +3,7 @@ description: |-
   e2e: Reminder › POST /api/reminders › should create a pending reminder on the date sent and drop the cached summary
 
   Expect: 201 Created, dueOn 2026-06-01; the summary key is gone
-  User: viewer@example.com (token signed by scripts.py)
+  User: carol@example.com (token signed by scripts.py)
   Before: Redis: FLUSHDB
   Before: send reminder/get-summary/01-compute-and-cache
 method: POST
@@ -22,4 +22,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_viewer
+  setup: scripts.py:as_carol

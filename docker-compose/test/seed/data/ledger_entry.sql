@@ -16,7 +16,7 @@ VALUES
     'item',
     '100',
     'ItemCreated',
-    '{"sku": "SKU-0001", "name": "Seeded reference item", "ownerId": "00000000-0000-4000-8000-000000000001"}',
+    '{"sku": "SKU-0001", "name": "Seeded reference item", "ownerId": "00000000-0000-4000-8000-000000000102"}',
     'seed-correlation-id',
     '2026-01-01 00:00:00.000',
     '2026-01-01 00:00:00.000'
@@ -27,7 +27,7 @@ VALUES
     'item',
     '101',
     'ItemCreated',
-    '{"sku": "SKU-0002", "name": "Seeded draft item", "ownerId": "00000000-0000-4000-8000-000000000001"}',
+    '{"sku": "SKU-0002", "name": "Seeded draft item", "ownerId": "00000000-0000-4000-8000-000000000102"}',
     'seed-correlation-id',
     '2026-01-01 00:00:00.000',
     '2026-01-01 00:00:00.000'

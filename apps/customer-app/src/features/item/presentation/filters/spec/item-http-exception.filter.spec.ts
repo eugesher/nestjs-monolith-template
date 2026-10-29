@@ -27,7 +27,6 @@ describe('ItemHttpExceptionFilter', () => {
     ['ITEM_NAME_INVALID', 400],
     ['ITEM_VERSION_INVALID', 400],
     ['ITEM_NOT_FOUND', 404],
-    ['ITEM_ACCESS_FORBIDDEN', 403],
     ['ITEM_ALREADY_ARCHIVED', 409],
     ['ITEM_SKU_TAKEN', 409],
     ['ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT', 409],

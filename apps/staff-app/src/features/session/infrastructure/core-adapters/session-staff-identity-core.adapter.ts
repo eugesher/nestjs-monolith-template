@@ -5,12 +5,14 @@ import {
   type IStaffIdentityCoreSessionPort,
 } from '@acme-core/contracts/staff-identity';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
-import { DomainException } from '@acme-libs/toolkit';
+import { DomainException, Maybe } from '@acme-libs/toolkit';
 import { SessionDomainException } from '../../domain';
 import {
   ISessionIdentityAccessTokenView,
+  ISessionIdentityFindSubjectQuery,
   ISessionIdentityLoginCommand,
   ISessionIdentityPort,
+  ISessionIdentitySubjectView,
 } from '../../outbound';
 
 @Injectable()
@@ -30,6 +32,14 @@ export class SessionStaffIdentityCoreAdapter implements ISessionIdentityPort {
     } catch (error) {
       throw SessionStaffIdentityCoreAdapter.translate(error);
     }
+  }
+
+  public findSubject(
+    query: ISessionIdentityFindSubjectQuery,
+  ): Promise<Maybe<ISessionIdentitySubjectView>> {
+    const { userId } = query;
+
+    return this.identity.validateSubject({ userId });
   }
 
   private static translate(error: unknown): unknown {

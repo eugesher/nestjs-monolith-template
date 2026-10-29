@@ -9,9 +9,9 @@ credentials, their roles and what each role permits. Its contract
 | `STAFF_IDENTITY_CORE_SESSION_PORT` | `StaffIdentityCoreSessionFacade` | login, the global auth guards                  |
 | `STAFF_IDENTITY_CORE_ADMIN_PORT`   | `StaffIdentityCoreAdminFacade`   | the back office that registers users and roles |
 
-The admin port belongs to staff-app alone: the lint policy `staff-identity-admin.mjs` refuses it
-anywhere in customer-app (see `04-iam-feature.md`). customer-app has no identity module of its own
-yet, so its login and its guards call the session port of `staff-identity` too.
+The whole module belongs to staff-app: the lint policy `identity-modules.mjs` refuses its
+contracts, its module and its `Staff*` entities anywhere in customer-app, which has a module of its
+own (see `19-customer-identity.md`).
 
 ## Every table carries the `staff_` prefix
 
@@ -35,13 +35,15 @@ it needed backticks. The prefixed name is a plain identifier in migrations, seed
 `core/entities/src/staff-identity/`, next to the entities of other modules, and the `Staff` prefix tells
 an account of staff apart from any other principal in every import.
 
-## What stays inside the module
+## What the module shares
 
-**Password hashing and token signing are adapters of the module.** `StaffIdentityCorePasswordHasherAdapter`
-wraps argon2 and `StaffIdentityCoreAccessTokenAdapter` signs `{ sub }` with `JWT_SECRET`. Both sit
-behind outbound ports in `infrastructure`. While one module uses them, a shared lib would only add
-an indirection.
+**Password hashing and token signing come from `libs/credentials`.** The module imports
+`CredentialsLibModule`, and its use cases inject `CREDENTIALS_PASSWORD_HASHER_PORT` and
+`CREDENTIALS_ACCESS_TOKEN_PORT` from `@acme-libs/contracts/credentials`. `customer-identity` does the
+same, so both kinds of account are hashed and signed by one piece of code, each with the
+`AUTH_ARGON2_*` and `JWT_*` values of its own app (see `19-customer-identity.md`).
 
 **The kernel enums are staff vocabulary.** `RoleEnum` lists staff roles and `PermissionCodeEnum`
-lists the codes those roles grant. The codes for items and reminders are still there, because the
-customer-app routes still check them.
+lists the codes those roles grant: `ledger:read`, the three `iam:*` codes and the two `note:*`
+codes. A customer holds none of them. `IdentityErrorCodeEnum` and `UserStatusEnum` are shared by
+both identity modules.

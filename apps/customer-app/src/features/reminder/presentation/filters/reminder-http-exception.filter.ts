@@ -11,7 +11,6 @@ export class ReminderHttpExceptionFilter implements ExceptionFilter<ReminderDoma
     [ReminderErrorCodeEnum.REMINDER_DUE_ON_INVALID]: HttpStatus.BAD_REQUEST,
     [ReminderErrorCodeEnum.REMINDER_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
     [ReminderErrorCodeEnum.REMINDER_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [ReminderErrorCodeEnum.REMINDER_ACCESS_FORBIDDEN]: HttpStatus.FORBIDDEN,
     [ReminderErrorCodeEnum.REMINDER_ALREADY_DONE]: HttpStatus.CONFLICT,
     [ReminderErrorCodeEnum.REMINDER_VERSION_MISMATCH]: HttpStatus.CONFLICT,
   };

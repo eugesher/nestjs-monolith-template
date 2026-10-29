@@ -31,7 +31,7 @@ describe('App', () => {
     async (path) => {
       await request(ctx.app.getHttpServer())
         .get(path)
-        .auth(ctx.adminToken, { type: 'bearer' })
+        .auth(ctx.bobToken, { type: 'bearer' })
         .expect(HttpStatus.NOT_FOUND);
     },
   );

@@ -1,9 +1,9 @@
 name: 02-foreign
 description: |-
-  e2e: Reminder › PATCH /api/reminders/:reminderId/done › should refuse the reminder of another owner with 403
+  e2e: Reminder › PATCH /api/reminders/:reminderId/done › should hide the reminder of another customer with 404
 
-  Expect: 403 Forbidden, code REMINDER_ACCESS_FORBIDDEN
-  User: editor@example.com (token signed by scripts.py)
+  Expect: 404 Not Found, code REMINDER_NOT_FOUND
+  User: ann@example.com (token signed by scripts.py)
 method: PATCH
 url: $CUSTOMER_APP_BASE_URL/reminders/300/done
 auth:
@@ -11,4 +11,4 @@ auth:
   bearer_token:
     token: $token
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

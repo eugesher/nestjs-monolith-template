@@ -58,15 +58,19 @@ The e2e flushes Redis before every reminder case. When a description checks cach
 ## Tokens
 
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
-(`as_admin`, `as_editor`, `as_viewer` and so on). The function signs an HS256 token of a seeded user
-(`sub`, `iat`) with `JWT_SECRET` from `env/apps/<app>/.env.local` and puts it into the variable `token`,
-as `ctx.jwt.sign` does in the e2e. This also covers tokens that no login issues:
+(`as_admin`, `as_editor` and `as_viewer` for staff, `as_ann`, `as_bob` and `as_carol` for customers,
+and so on). The function signs an HS256 token of a seeded user (`sub`, `iat`) with `JWT_SECRET` from
+`env/apps/<app>/.env.local` and puts it into the variable `token`, as `ctx.jwt.sign` does in the e2e.
+This also covers tokens that no login issues:
 
-- the token of a disabled user (`as_disabled`);
-- a token with forged role claims (`as_viewer_forged_claims`).
+- the token of a disabled user (`as_disabled`, `as_dora`);
+- a token with forged role claims (`as_viewer_forged_claims`);
+- the token of a user of the other app (`as_customer`, `as_staff_user`);
+- a token signed with the `JWT_SECRET` of the other app (`as_editor_with_customer_secret`,
+  `as_ann_with_staff_secret`), which needs `.env.local` of both apps.
 
-`session/login/01-editor` saves the token it gets into the variable `access_token`. The requests
-that send it say so in `Note:` or `User:`.
+`session/login/01-editor` of staff-app and `session/login/01-customer` of customer-app save the token
+they get into the variable `access_token`. The requests that send it say so in `Note:` or `User:`.
 
 ## Setup and cleanup
 

@@ -3,7 +3,7 @@ description: |-
   e2e: Item › POST /api/items › should refuse a taken sku with 409 and release the key
 
   Expect: 409 Conflict, code ITEM_SKU_TAKEN, no idempotency_key row
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
 method: POST
 url: $CUSTOMER_APP_BASE_URL/items
 body:
@@ -22,4 +22,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

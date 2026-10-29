@@ -3,7 +3,7 @@ description: |-
   e2e: Reminder › POST /api/reminders › should refuse a date that does not exist with 400 from the model
 
   Expect: 400 Bad Request, code REMINDER_DUE_ON_INVALID
-  User: viewer@example.com (token signed by scripts.py)
+  User: carol@example.com (token signed by scripts.py)
 method: POST
 url: $CUSTOMER_APP_BASE_URL/reminders
 body:
@@ -20,4 +20,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_viewer
+  setup: scripts.py:as_carol

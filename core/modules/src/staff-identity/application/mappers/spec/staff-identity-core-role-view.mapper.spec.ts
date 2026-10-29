@@ -8,12 +8,12 @@ describe('StaffIdentityCoreRoleViewMapper', () => {
       const role = StaffIdentityCoreRoleModel.reconstitute({
         id: 1,
         name: RoleEnum.ADMIN,
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
       });
 
       const view = StaffIdentityCoreRoleViewMapper.toView(role);
 
-      expect(view).toEqual({ name: 'admin', permissionCodes: ['iam:assign', 'item:read'] });
+      expect(view).toEqual({ name: 'admin', permissionCodes: ['iam:assign', 'ledger:read'] });
     });
   });
 });

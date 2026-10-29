@@ -1,13 +1,8 @@
 INSERT INTO staff_permission (id, code)
 VALUES
-  (1, 'item:read'),
-  (2, 'item:write'),
-  (3, 'item:archive'),
-  (4, 'ledger:read'),
-  (5, 'iam:user-create'),
-  (6, 'iam:assign'),
-  (7, 'iam:role-edit'),
-  (8, 'note:read'),
-  (9, 'note:write'),
-  (10, 'reminder:read'),
-  (11, 'reminder:write');
+  (1, 'ledger:read'),
+  (2, 'iam:user-create'),
+  (3, 'iam:assign'),
+  (4, 'iam:role-edit'),
+  (5, 'note:read'),
+  (6, 'note:write');

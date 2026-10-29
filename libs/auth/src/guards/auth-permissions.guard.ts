@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { AUTH_USER_VALIDATOR_PORT, type IAuthUserValidatorPort } from '@acme-libs/contracts/auth';
+import { AUTH_CLAIMS_PORT, type IAuthClaimsPort } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
@@ -17,8 +17,8 @@ import { IAuthRequest } from '../interfaces/auth-request.interface';
 @Injectable()
 export class AuthPermissionsGuard implements CanActivate {
   constructor(
-    @Inject(AUTH_USER_VALIDATOR_PORT)
-    private readonly validator: IAuthUserValidatorPort,
+    @Inject(AUTH_CLAIMS_PORT)
+    private readonly claims: IAuthClaimsPort,
     private readonly reflector: Reflector,
   ) {}
 
@@ -39,7 +39,7 @@ export class AuthPermissionsGuard implements CanActivate {
       throw new ForbiddenException('Insufficient permissions');
     }
 
-    const held = await this.validator.findPermissionCodes({ userId: request.user.id });
+    const held = await this.claims.findPermissionCodes({ userId: request.user.id });
 
     if (!AuthClaimHelper.holdsAny(required, held)) {
       throw new ForbiddenException('Insufficient permissions');

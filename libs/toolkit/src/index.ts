@@ -1,5 +1,3 @@
-export * from './access/load-owned-options.interface';
-export * from './access/ownership.helper';
 export * from './concurrency/occ-retry-policy.interface';
 export * from './concurrency/occ-retry.helper';
 export * from './ddd/aggregate-root.base';

@@ -32,79 +32,11 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 }
 `;
 
-exports[`App Item GET /api/items should list only the own items of a caller who is not an admin 1`] = `
+exports[`App Item GET /api/items should list only the own items of the caller, newest first 1`] = `
 {
   "response": {
     "body": {
       "items": [
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "106",
-          "name": "Viewer item",
-          "sku": "SKU-0007",
-          "status": "draft",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 1,
-    },
-  },
-}
-`;
-
-exports[`App Item GET /api/items should list the items of every owner to an admin, newest first 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "106",
-          "name": "Viewer item",
-          "sku": "SKU-0007",
-          "status": "draft",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "105",
-          "name": "Editor archived item",
-          "sku": "SKU-0006",
-          "status": "archived",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 2,
-        },
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "104",
-          "name": "Editor item under concurrent renames",
-          "sku": "SKU-0005",
-          "status": "draft",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "103",
-          "name": "Editor item to archive",
-          "sku": "SKU-0004",
-          "status": "active",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "102",
-          "name": "Editor item to rename",
-          "sku": "SKU-0003",
-          "status": "draft",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "101",
@@ -126,35 +58,35 @@ exports[`App Item GET /api/items should list the items of every owner to an admi
       ],
       "page": 1,
       "size": 20,
-      "total": 7,
+      "total": 2,
     },
   },
 }
 `;
 
-exports[`App Item GET /api/items/:itemId should let an admin read the item of another owner 1`] = `
+exports[`App Item GET /api/items/:itemId should hide the item of another customer with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ITEM_NOT_FOUND",
+      "message": "Item 100 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Item GET /api/items/:itemId should read an own item 1`] = `
 {
   "response": {
     "body": {
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "102",
-      "name": "Editor item to rename",
+      "name": "Ann item to rename",
       "sku": "SKU-0003",
       "status": "draft",
       "updatedAt": "2026-01-01T00:00:00.000Z",
       "version": 1,
-    },
-  },
-}
-`;
-
-exports[`App Item GET /api/items/:itemId should refuse the item of another owner to a caller who is not an admin 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "ITEM_ACCESS_FORBIDDEN",
-      "message": "Item 100 does not belong to the caller",
-      "statusCode": 403,
     },
   },
 }
@@ -168,8 +100,8 @@ exports[`App Item PATCH /api/items/:itemId/archive should archive and record one
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
         "id": "103",
-        "name": "Editor item to archive",
-        "owner_id": "00000000-0000-4000-8000-000000000002",
+        "name": "Ann item to archive",
+        "owner_id": "00000000-0000-4000-8000-000000000101",
         "sku": "SKU-0004",
         "status": "archived",
         "updated_at": Any<Date>,
@@ -197,7 +129,7 @@ exports[`App Item PATCH /api/items/:itemId/archive should archive and record one
     "body": {
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "103",
-      "name": "Editor item to archive",
+      "name": "Ann item to archive",
       "sku": "SKU-0004",
       "status": "archived",
       "updatedAt": Any<String>,
@@ -215,8 +147,8 @@ exports[`App Item PATCH /api/items/:itemId/archive should refuse to archive an a
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
         "id": "105",
-        "name": "Editor archived item",
-        "owner_id": "00000000-0000-4000-8000-000000000002",
+        "name": "Ann archived item",
+        "owner_id": "00000000-0000-4000-8000-000000000101",
         "sku": "SKU-0006",
         "status": "archived",
         "updated_at": 2026-01-01T00:00:00.000Z,
@@ -256,6 +188,33 @@ exports[`App Item PATCH /api/items/:itemId/name should apply every one of concur
 }
 `;
 
+exports[`App Item PATCH /api/items/:itemId/name should hide the item of another customer from a rename with 404 1`] = `
+{
+  "db": {
+    "item": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "103",
+        "name": "Ann item to archive",
+        "owner_id": "00000000-0000-4000-8000-000000000101",
+        "sku": "SKU-0004",
+        "status": "active",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "ITEM_NOT_FOUND",
+      "message": "Item 103 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
 exports[`App Item PATCH /api/items/:itemId/name should refuse a malformed If-Match with 400 1`] = `
 {
   "response": {
@@ -277,7 +236,7 @@ exports[`App Item PATCH /api/items/:itemId/name should refuse a stale If-Match w
         "deleted_at": null,
         "id": "101",
         "name": "Seeded draft item",
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "00000000-0000-4000-8000-000000000102",
         "sku": "SKU-0002",
         "status": "draft",
         "updated_at": 2026-01-01T00:00:00.000Z,
@@ -298,33 +257,6 @@ exports[`App Item PATCH /api/items/:itemId/name should refuse a stale If-Match w
 }
 `;
 
-exports[`App Item PATCH /api/items/:itemId/name should refuse an admin the rename of an item of another owner 1`] = `
-{
-  "db": {
-    "item": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "103",
-        "name": "Editor item to archive",
-        "owner_id": "00000000-0000-4000-8000-000000000002",
-        "sku": "SKU-0004",
-        "status": "active",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "ITEM_ACCESS_FORBIDDEN",
-      "message": "Item 103 does not belong to the caller",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
 exports[`App Item PATCH /api/items/:itemId/name should rename with a quoted If-Match and bump the version 1`] = `
 {
   "db": {
@@ -334,7 +266,7 @@ exports[`App Item PATCH /api/items/:itemId/name should rename with a quoted If-M
         "deleted_at": null,
         "id": "102",
         "name": "Renamed item",
-        "owner_id": "00000000-0000-4000-8000-000000000002",
+        "owner_id": "00000000-0000-4000-8000-000000000101",
         "sku": "SKU-0003",
         "status": "draft",
         "updated_at": Any<Date>,
@@ -364,7 +296,7 @@ exports[`App Item POST /api/items should create a draft, record the key and the 
         "created_at": Any<Date>,
         "id": Any<String>,
         "idempotency_key": "e2e-create-key",
-        "request_fingerprint": "bdb48050946b9a9c1e2f8f42bbb27b51852a0459350bd9fabaf7c7219d4094f9",
+        "request_fingerprint": "7e1e1d082671ae61d9a79fd83f421663a9fb9f808fd806221bc7e2c58de83c7f",
         "response_body": Any<String>,
         "status": "completed",
       },
@@ -375,7 +307,7 @@ exports[`App Item POST /api/items should create a draft, record the key and the 
         "deleted_at": null,
         "id": Any<String>,
         "name": "Created item",
-        "owner_id": "00000000-0000-4000-8000-000000000002",
+        "owner_id": "00000000-0000-4000-8000-000000000101",
         "sku": "E2E-0001",
         "status": "draft",
         "updated_at": Any<Date>,
@@ -391,7 +323,7 @@ exports[`App Item POST /api/items should create a draft, record the key and the 
         "operation_key": Any<String>,
         "payload": {
           "name": "Created item",
-          "ownerId": "00000000-0000-4000-8000-000000000002",
+          "ownerId": "00000000-0000-4000-8000-000000000101",
           "sku": "E2E-0001",
         },
         "recorded_at": Any<Date>,
@@ -409,18 +341,6 @@ exports[`App Item POST /api/items should create a draft, record the key and the 
       "status": "draft",
       "updatedAt": Any<String>,
       "version": 1,
-    },
-  },
-}
-`;
-
-exports[`App Item POST /api/items should refuse a caller without item:write 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
     },
   },
 }
@@ -528,7 +448,7 @@ exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a rem
         "deleted_at": Any<Date>,
         "due_on": "2026-08-01",
         "id": "304",
-        "owner_id": "00000000-0000-4000-8000-000000000003",
+        "owner_id": "00000000-0000-4000-8000-000000000103",
         "status": "pending",
         "title": "Cancel the trial",
         "updated_at": Any<Date>,
@@ -552,7 +472,7 @@ exports[`App Reminder GET /api/reminders should filter by status 1`] = `
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-04-01",
           "id": "302",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "done",
           "title": "Book the venue",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -577,7 +497,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-04-01",
           "id": "302",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "done",
           "title": "Book the venue",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -588,7 +508,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-05-15",
           "id": "301",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "pending",
           "title": "Pay the invoice",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -599,7 +519,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-06-01",
           "id": "300",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "pending",
           "title": "Renew the subscription",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -610,7 +530,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-08-01",
           "id": "304",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "pending",
           "title": "Cancel the trial",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -621,7 +541,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-09-01",
           "id": "305",
-          "ownerId": "00000000-0000-4000-8000-000000000003",
+          "ownerId": "00000000-0000-4000-8000-000000000103",
           "status": "pending",
           "title": "Water the plants",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -651,10 +571,10 @@ exports[`App Reminder GET /api/reminders/summary should compute the summary of t
 {
   "cache": {
     "keys": [
-      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000003:__all__",
+      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000103:__all__",
     ],
     "values": {
-      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000003:__all__": "{"pending":4,"nextDueOn":"2026-05-15"}",
+      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000103:__all__": "{"pending":4,"nextDueOn":"2026-05-15"}",
     },
   },
   "response": {
@@ -691,7 +611,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a re
         "deleted_at": null,
         "due_on": "2026-05-15",
         "id": "301",
-        "owner_id": "00000000-0000-4000-8000-000000000003",
+        "owner_id": "00000000-0000-4000-8000-000000000103",
         "status": "done",
         "title": "Pay the invoice",
         "updated_at": Any<Date>,
@@ -705,11 +625,39 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a re
       "createdAt": "2026-01-01T00:00:00.000Z",
       "dueOn": "2026-05-15",
       "id": "301",
-      "ownerId": "00000000-0000-4000-8000-000000000003",
+      "ownerId": "00000000-0000-4000-8000-000000000103",
       "status": "done",
       "title": "Pay the invoice",
       "updatedAt": Any<String>,
       "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the reminder of another customer with 404 1`] = `
+{
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "due_on": "2026-06-01",
+        "id": "300",
+        "owner_id": "00000000-0000-4000-8000-000000000103",
+        "status": "pending",
+        "title": "Renew the subscription",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "REMINDER_NOT_FOUND",
+      "message": "Reminder 300 was not found",
+      "statusCode": 404,
     },
   },
 }
@@ -741,34 +689,6 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id 
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse the reminder of another owner with 403 1`] = `
-{
-  "db": {
-    "reminder": [
-      {
-        "body": "",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "due_on": "2026-06-01",
-        "id": "300",
-        "owner_id": "00000000-0000-4000-8000-000000000003",
-        "status": "pending",
-        "title": "Renew the subscription",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "REMINDER_ACCESS_FORBIDDEN",
-      "message": "Reminder 300 does not belong to the caller",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
 exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
 {
   "cache": {
@@ -782,7 +702,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a remi
         "deleted_at": null,
         "due_on": "2026-10-01",
         "id": "305",
-        "owner_id": "00000000-0000-4000-8000-000000000003",
+        "owner_id": "00000000-0000-4000-8000-000000000103",
         "status": "pending",
         "title": "Water the plants",
         "updated_at": Any<Date>,
@@ -796,7 +716,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a remi
       "createdAt": "2026-01-01T00:00:00.000Z",
       "dueOn": "2026-10-01",
       "id": "305",
-      "ownerId": "00000000-0000-4000-8000-000000000003",
+      "ownerId": "00000000-0000-4000-8000-000000000103",
       "status": "pending",
       "title": "Water the plants",
       "updatedAt": Any<String>,
@@ -819,7 +739,7 @@ exports[`App Reminder POST /api/reminders should create a pending reminder on th
         "deleted_at": null,
         "due_on": "2026-06-01",
         "id": Any<String>,
-        "owner_id": "00000000-0000-4000-8000-000000000003",
+        "owner_id": "00000000-0000-4000-8000-000000000103",
         "status": "pending",
         "title": "Renew the domain",
         "updated_at": Any<Date>,
@@ -833,7 +753,7 @@ exports[`App Reminder POST /api/reminders should create a pending reminder on th
       "createdAt": Any<String>,
       "dueOn": "2026-06-01",
       "id": Any<String>,
-      "ownerId": "00000000-0000-4000-8000-000000000003",
+      "ownerId": "00000000-0000-4000-8000-000000000103",
       "status": "pending",
       "title": "Renew the domain",
       "updatedAt": Any<String>,
@@ -880,6 +800,39 @@ exports[`App Session GET /api/auth/me should refuse a caller without a token 1`]
 }
 `;
 
+exports[`App Session GET /api/auth/me should refuse the token of a customer signed with the secret of staff-app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse the token of a disabled customer 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse the token of a staff user signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Session POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
   "claims": [
@@ -889,15 +842,24 @@ exports[`App Session POST /api/auth/login should issue an access token of the su
   ],
   "lifetime": 604800,
   "me": {
-    "email": "editor@example.com",
-    "id": "00000000-0000-4000-8000-000000000002",
-    "roles": [
-      "editor",
-    ],
+    "email": "ann@example.com",
+    "id": "00000000-0000-4000-8000-000000000101",
   },
   "response": {
     "body": {
       "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/login should refuse a disabled customer with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "Customer 00000000-0000-4000-8000-000000000104 is disabled",
+      "statusCode": 403,
     },
   },
 }
@@ -927,3 +889,14 @@ exports[`App Session POST /api/auth/login should refuse an unknown email with th
 }
 `;
 
+exports[`App Session POST /api/auth/login should refuse the credentials of a staff user with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;

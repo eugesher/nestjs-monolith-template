@@ -9,9 +9,8 @@ import {
 
 import { IfMatch } from '@acme-customer-common/shared/concurrency';
 import { IdempotencyKey } from '@acme-customer-common/shared/idempotency';
-import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser } from '@acme-libs/auth';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import type { Maybe } from '@acme-libs/toolkit';
 import {
   ItemArchiveUseCase,
@@ -40,12 +39,7 @@ export class ItemController {
     private readonly archive: ItemArchiveUseCase,
   ) {}
 
-  private static readScopeOf(user: IAuthCurrentUserView): Maybe<string> {
-    return user.roles.includes(RoleEnum.ADMIN) ? undefined : user.id;
-  }
-
   @Post()
-  @RequiresPermission(PermissionCodeEnum.ITEM_WRITE)
   @ApiHeader({ name: 'Idempotency-Key', required: true, description: 'At most 128 characters' })
   @ApiOperation({ summary: 'Create an item (idempotent)' })
   @ApiCreatedResponse({ type: ItemResponseDto })
@@ -60,35 +54,30 @@ export class ItemController {
   }
 
   @Get()
-  @RequiresPermission(PermissionCodeEnum.ITEM_READ)
-  @ApiOperation({ summary: 'List the items visible to the caller, newest first' })
+  @ApiOperation({ summary: 'List the items of the caller, newest first' })
   @ApiOkResponse({ type: ItemPageResponseDto })
   public handleGetMany(
     @Query() query: ItemGetManyRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ItemPageResponseDto> {
     const { page, size } = query;
-    const ownerId = ItemController.readScopeOf(user);
 
-    return this.getMany.execute({ page, size, ownerId });
+    return this.getMany.execute({ page, size, ownerId: user.id });
   }
 
   @Get(':itemId')
-  @RequiresPermission(PermissionCodeEnum.ITEM_READ)
-  @ApiOperation({ summary: 'Read one item' })
+  @ApiOperation({ summary: 'Read one item of the caller' })
   @ApiOkResponse({ type: ItemResponseDto })
   public handleGetOne(
     @Param() params: ItemIdRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ItemResponseDto> {
     const { itemId } = params;
-    const ownerId = ItemController.readScopeOf(user);
 
-    return this.getOne.execute({ itemId, ownerId });
+    return this.getOne.execute({ itemId, ownerId: user.id });
   }
 
   @Patch(':itemId/name')
-  @RequiresPermission(PermissionCodeEnum.ITEM_WRITE)
   @ApiHeader({ name: 'If-Match', required: false, description: 'The item version, for OCC' })
   @ApiOperation({ summary: 'Rename an item (optimistic concurrency)' })
   @ApiOkResponse({ type: ItemResponseDto })
@@ -105,7 +94,6 @@ export class ItemController {
   }
 
   @Patch(':itemId/archive')
-  @RequiresPermission(PermissionCodeEnum.ITEM_ARCHIVE)
   @ApiHeader({ name: 'If-Match', required: false, description: 'The item version, for OCC' })
   @ApiOperation({ summary: 'Archive an item (optimistic concurrency)' })
   @ApiOkResponse({ type: ItemResponseDto })

@@ -30,12 +30,6 @@ describe('ItemAccessService', () => {
       expect(findById).toHaveBeenCalledWith('12');
     });
 
-    it('answers any item when the caller is not owner-scoped', async () => {
-      const item = await service.loadOwned({ itemId: '12', ownerId: undefined });
-
-      expect(item.ownerId).toBe('owner-1');
-    });
-
     it('refuses a missing item with ITEM_NOT_FOUND', async () => {
       findById.mockResolvedValue(null);
 
@@ -45,10 +39,10 @@ describe('ItemAccessService', () => {
       });
     });
 
-    it('refuses an item of another owner with ITEM_ACCESS_FORBIDDEN', async () => {
+    it('refuses an item of another owner with the same ITEM_NOT_FOUND, hiding that it exists', async () => {
       await expect(service.loadOwned({ itemId: '12', ownerId: 'owner-2' })).rejects.toMatchObject({
-        code: 'ITEM_ACCESS_FORBIDDEN',
-        message: 'Item 12 does not belong to the caller',
+        code: 'ITEM_NOT_FOUND',
+        message: 'Item 12 was not found',
       });
     });
   });

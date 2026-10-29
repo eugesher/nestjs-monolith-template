@@ -3,7 +3,7 @@ description: |-
   e2e: Item › PATCH /api/items/:itemId/name › should rename with a quoted If-Match and bump the version
 
   Expect: 200 OK, item 102 renamed at version 2
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
 method: PATCH
 url: $CUSTOMER_APP_BASE_URL/items/102/name
 body:
@@ -21,4 +21,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann
