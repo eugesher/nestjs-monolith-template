@@ -3,6 +3,7 @@ export * from './commands/identity-core-login.command';
 export * from './commands/identity-core-register-user.command';
 export * from './commands/identity-core-update-role-permissions.command';
 
+export * from './queries/identity-core-find-permission-codes.query';
 export * from './queries/identity-core-validate-subject.query';
 
 export * from './views/identity-core-access-token.view';

@@ -150,6 +150,11 @@ export class IamE2E {
     describe('PUT /api/iam/roles/:role/permissions', () => {
       it('should replace the permissions and refuse the same token at once', async () => {
         try {
+          const before = await request(this.ctx.app.getHttpServer())
+            .get('/api/ledger')
+            .auth(this.ctx.viewerToken, { type: 'bearer' })
+            .expect(HttpStatus.OK);
+
           const response = await request(this.ctx.app.getHttpServer())
             .put('/api/iam/roles/viewer/permissions')
             .auth(this.ctx.adminToken, { type: 'bearer' })
@@ -162,6 +167,7 @@ export class IamE2E {
             .expect(HttpStatus.FORBIDDEN);
 
           expect({
+            before: { status: before.status },
             response: { body: response.body },
             ledger: ledger.body,
             db: {

@@ -2,7 +2,7 @@ name: 01-revoke
 description: |-
   e2e: Iam › PUT /api/iam/roles/:role/permissions › should replace the permissions and refuse the same token at once
 
-  Expect: 200 OK, viewer keeps item:read, reminder:read, reminder:write; a viewer token then gets 403 from GET /ledger
+  Expect: 200 OK, viewer keeps item:read, reminder:read, reminder:write; the same viewer token gets 200 from GET /ledger before and 403 after
   User: admin@example.com (token signed by scripts.py)
   After: SQL: INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (3, 4)
 method: PUT

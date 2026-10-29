@@ -8,7 +8,11 @@ describe('SessionIdentityCoreAdapter', () => {
 
   beforeEach(() => {
     login = jest.fn();
-    adapter = new SessionIdentityCoreAdapter({ login, validateSubject: jest.fn() });
+    adapter = new SessionIdentityCoreAdapter({
+      login,
+      validateSubject: jest.fn(),
+      findPermissionCodes: jest.fn(),
+    });
   });
 
   describe('login', () => {

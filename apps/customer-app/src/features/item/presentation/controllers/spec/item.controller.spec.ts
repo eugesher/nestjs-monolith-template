@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 import {
   ItemArchiveUseCase,
   ItemCreateUseCase,
@@ -38,7 +38,7 @@ describe('ItemController', () => {
 
       const response = await controller.handleCreate(
         { sku: 'SKU-1001', name: 'Lamp' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
         'key-1',
       );
 
@@ -62,7 +62,6 @@ describe('ItemController', () => {
           id: 'user-1',
           email: 'ann@example.com',
           roles: [RoleEnum.VIEWER],
-          permissions: [PermissionCodeEnum.ITEM_READ],
         },
       );
 
@@ -75,7 +74,7 @@ describe('ItemController', () => {
 
       await controller.handleGetMany(
         {},
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
       );
 
       expect(getMany).toHaveBeenCalledWith({
@@ -92,7 +91,7 @@ describe('ItemController', () => {
 
       const response = await controller.handleGetOne(
         { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.EDITOR], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.EDITOR] },
       );
 
       expect(response).toEqual({ id: '12' });
@@ -104,7 +103,7 @@ describe('ItemController', () => {
 
       await controller.handleGetOne(
         { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
       );
 
       expect(getOne).toHaveBeenCalledWith({ itemId: '12', ownerId: undefined });
@@ -118,7 +117,7 @@ describe('ItemController', () => {
       const response = await controller.handleRename(
         { itemId: '12' },
         { name: 'Desk lamp' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
         3,
       );
 
@@ -138,7 +137,7 @@ describe('ItemController', () => {
 
       const response = await controller.handleArchive(
         { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
         undefined,
       );
 

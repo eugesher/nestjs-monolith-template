@@ -8,6 +8,7 @@ import { ConfigProviderHelper } from '@acme-libs/config';
 import {
   IdentityCoreAccessTokenService,
   IdentityCoreAssignRoleUseCase,
+  IdentityCoreFindPermissionCodesUseCase,
   IdentityCoreListRolesUseCase,
   IdentityCoreLoginUseCase,
   IdentityCoreRegisterUserUseCase,
@@ -18,6 +19,7 @@ import {
   IdentityCoreAccessTokenAdapter,
   IdentityCoreAccessTokenModule,
   IdentityCoreAssignRoleRepository,
+  IdentityCoreFindPermissionCodesRepository,
   IdentityCoreListRolesRepository,
   IdentityCoreLoginRepository,
   IdentityCorePasswordHasherAdapter,
@@ -31,6 +33,7 @@ import {
   IDENTITY_CORE_ACCESS_TOKEN_PORT,
   IDENTITY_CORE_ACCESS_TOKEN_SECRET,
   IDENTITY_CORE_ASSIGN_ROLE_REPOSITORY_PORT,
+  IDENTITY_CORE_FIND_PERMISSION_CODES_REPOSITORY_PORT,
   IDENTITY_CORE_LIST_ROLES_REPOSITORY_PORT,
   IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
   IDENTITY_CORE_PASSWORD_HASHER_MEMORY_COST,
@@ -51,6 +54,7 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
     { provide: IDENTITY_CORE_ADMIN_PORT, useClass: IdentityCoreAdminFacade },
     { provide: IDENTITY_CORE_SESSION_PORT, useClass: IdentityCoreSessionFacade },
     IdentityCoreAssignRoleUseCase,
+    IdentityCoreFindPermissionCodesUseCase,
     IdentityCoreListRolesUseCase,
     IdentityCoreLoginUseCase,
     IdentityCoreRegisterUserUseCase,
@@ -60,6 +64,10 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
     {
       provide: IDENTITY_CORE_ASSIGN_ROLE_REPOSITORY_PORT,
       useClass: IdentityCoreAssignRoleRepository,
+    },
+    {
+      provide: IDENTITY_CORE_FIND_PERMISSION_CODES_REPOSITORY_PORT,
+      useClass: IdentityCoreFindPermissionCodesRepository,
     },
     {
       provide: IDENTITY_CORE_LIST_ROLES_REPOSITORY_PORT,

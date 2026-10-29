@@ -4,7 +4,12 @@ import {
   IDENTITY_CORE_SESSION_PORT,
   type IIdentityCoreSessionPort,
 } from '@acme-core/contracts/identity';
-import { IAuthCurrentUserView, IAuthJwtPayloadQuery } from '@acme-libs/contracts/auth';
+import {
+  IAuthCurrentUserView,
+  IAuthFindPermissionCodesQuery,
+  IAuthJwtPayloadQuery,
+} from '@acme-libs/contracts/auth';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 
 @Injectable()
@@ -18,5 +23,9 @@ export class AuthIdentityCoreAdapter {
     const { sub } = query;
 
     return this.identity.validateSubject({ userId: sub });
+  }
+
+  public findPermissionCodes(query: IAuthFindPermissionCodesQuery): Promise<PermissionCodeEnum[]> {
+    return this.identity.findPermissionCodes(query);
   }
 }

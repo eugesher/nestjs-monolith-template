@@ -1,9 +1,9 @@
-import { PermissionCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { IdentityCoreUserModel } from '../../../domain';
 import { IdentityCoreValidateSubjectUseCase } from '../identity-core-validate-subject.use-case';
 
 describe('IdentityCoreValidateSubjectUseCase', () => {
-  let repository: { findById: jest.Mock; findPermissionCodes: jest.Mock };
+  let repository: { findById: jest.Mock };
   let useCase: IdentityCoreValidateSubjectUseCase;
 
   beforeEach(() => {
@@ -17,23 +17,15 @@ describe('IdentityCoreValidateSubjectUseCase', () => {
           roles: [RoleEnum.EDITOR],
         }),
       ),
-      findPermissionCodes: jest
-        .fn()
-        .mockResolvedValue([PermissionCodeEnum.ITEM_READ, PermissionCodeEnum.ITEM_WRITE]),
     };
     useCase = new IdentityCoreValidateSubjectUseCase(repository);
   });
 
-  it('returns the subject of an active user with its current permissions', async () => {
+  it('returns the subject of an active user without its permissions', async () => {
     const subject = await useCase.execute({ userId: 'user-1' });
 
-    expect(subject).toEqual({
-      id: 'user-1',
-      email: 'editor@example.com',
-      roles: ['editor'],
-      permissions: ['item:read', 'item:write'],
-    });
-    expect(repository.findPermissionCodes).toHaveBeenCalledWith('user-1');
+    expect(subject).toEqual({ id: 'user-1', email: 'editor@example.com', roles: ['editor'] });
+    expect(repository.findById).toHaveBeenCalledWith('user-1');
   });
 
   it('returns nothing for an unknown user', async () => {
@@ -58,6 +50,5 @@ describe('IdentityCoreValidateSubjectUseCase', () => {
     const subject = await useCase.execute({ userId: 'user-1' });
 
     expect(subject).toBeUndefined();
-    expect(repository.findPermissionCodes).not.toHaveBeenCalled();
   });
 });

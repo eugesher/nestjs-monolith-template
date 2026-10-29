@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 export class SessionMeResponseDto {
   @ApiResponseProperty()
@@ -11,7 +11,4 @@ export class SessionMeResponseDto {
 
   @ApiResponseProperty({ example: [RoleEnum.ADMIN] })
   public roles: RoleEnum[];
-
-  @ApiResponseProperty({ example: [PermissionCodeEnum.ITEM_READ, PermissionCodeEnum.ITEM_WRITE] })
-  public permissions: PermissionCodeEnum[];
 }

@@ -2,6 +2,7 @@ export * from './interfaces';
 
 export * from './ports/identity-core-access-token.port';
 export * from './ports/identity-core-assign-role-repository.port';
+export * from './ports/identity-core-find-permission-codes-repository.port';
 export * from './ports/identity-core-list-roles-repository.port';
 export * from './ports/identity-core-login-repository.port';
 export * from './ports/identity-core-password-hasher.port';

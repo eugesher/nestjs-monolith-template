@@ -31,6 +31,10 @@ what it carries.
   OpenAPI document says the same.
 - **Replacing permissions replaces them.** `PUT` sends the full set, and an empty list is rejected by
   the DTO. An unknown code is a 400 (`AUTH_PERMISSION_NOT_FOUND`), not a silently ignored grant.
+- **A change of permissions applies to the next request.** Tokens carry no permissions, and
+  `AuthPermissionsGuard` reads the codes from the database on every gated route (see
+  `02-global-auth-guards.md`). A token that passed a moment before the `PUT` is refused right after
+  it, with no re-login.
 - **Unknown role or user is a 404.** The path `:role` is not validated against `RoleEnum` in
   presentation: identity looks the role up and answers `AUTH_ROLE_NOT_FOUND`.
 - **Refusals reuse the session pattern.** The core adapter rethrows identity refusals as

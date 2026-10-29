@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 import { SessionLoginUseCase } from '../../../application';
 import { SessionController } from '../session.controller';
 
@@ -31,14 +31,12 @@ describe('SessionController', () => {
         id: 'user-1',
         email: 'ann@example.com',
         roles: [RoleEnum.ADMIN],
-        permissions: [PermissionCodeEnum.ITEM_READ],
       });
 
       expect(response).toEqual({
         id: 'user-1',
         email: 'ann@example.com',
         roles: ['admin'],
-        permissions: ['item:read'],
       });
     });
   });

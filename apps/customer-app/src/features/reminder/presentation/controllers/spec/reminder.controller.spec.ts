@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, ReminderStatusEnum, RoleEnum } from '@acme-libs/kernel';
+import { ReminderStatusEnum, RoleEnum } from '@acme-libs/kernel';
 import {
   ReminderCompleteUseCase,
   ReminderCreateUseCase,
@@ -42,7 +42,7 @@ describe('ReminderController', () => {
 
       const response = await controller.handleCreate(
         { title: 'Renew', body: 'The annual one', dueOn: '2026-06-01' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
       );
 
       expect(response).toEqual({ id: '31', title: 'Renew' });
@@ -65,7 +65,6 @@ describe('ReminderController', () => {
           id: 'user-1',
           email: 'ann@example.com',
           roles: [RoleEnum.ADMIN],
-          permissions: [PermissionCodeEnum.REMINDER_READ],
         },
       );
 
@@ -87,7 +86,6 @@ describe('ReminderController', () => {
         id: 'user-1',
         email: 'ann@example.com',
         roles: [RoleEnum.VIEWER],
-        permissions: [],
       });
 
       expect(response).toEqual({ pending: 2, nextDueOn: '2026-06-01' });
@@ -101,7 +99,7 @@ describe('ReminderController', () => {
 
       const response = await controller.handleComplete(
         { reminderId: '31' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
       );
 
       expect(response).toEqual({ id: '31', status: 'done' });
@@ -116,7 +114,7 @@ describe('ReminderController', () => {
       const response = await controller.handleReschedule(
         { reminderId: '31' },
         { dueOn: '2026-07-01' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
       );
 
       expect(response).toEqual({ id: '31', dueOn: '2026-07-01' });
@@ -134,7 +132,7 @@ describe('ReminderController', () => {
 
       const response = await controller.handleDelete(
         { reminderId: '31' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
       );
 
       expect(response).toBeUndefined();

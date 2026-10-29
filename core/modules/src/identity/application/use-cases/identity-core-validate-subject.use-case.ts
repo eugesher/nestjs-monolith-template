@@ -27,8 +27,6 @@ export class IdentityCoreValidateSubjectUseCase {
       return undefined;
     }
 
-    const permissions = await this.repository.findPermissionCodes(user.id);
-
-    return { id: user.id, email: user.email, roles: [...user.roles], permissions };
+    return { id: user.id, email: user.email, roles: [...user.roles] };
   }
 }
