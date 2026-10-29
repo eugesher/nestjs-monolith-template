@@ -4,7 +4,9 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { In, Repository } from 'typeorm';
 
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
-import { StaffIdentityCoreUserModel } from '../../../domain';
+import { MysqlErrorHelper } from '@acme-libs/database';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { StaffIdentityCoreException, StaffIdentityCoreUserModel } from '../../../domain';
 import { type IStaffIdentityCoreRegisterUserRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -23,17 +25,21 @@ export class StaffIdentityCoreRegisterUserRepository implements IStaffIdentityCo
     return this.txHost.tx.getRepository(StaffUser);
   }
 
-  public existsByEmail(email: string): Promise<boolean> {
-    return this.users.exists({ where: { email } });
-  }
-
   public async insert(user: StaffIdentityCoreUserModel): Promise<void> {
-    await this.users.insert({
-      id: user.id,
-      email: user.email,
-      passwordHash: user.passwordHash,
-      status: user.status,
-    });
+    const { id, email, passwordHash, status } = user;
+
+    try {
+      await this.users.insert({ id, email, passwordHash, status });
+    } catch (error) {
+      if (!MysqlErrorHelper.isDuplicateKey(error)) {
+        throw error;
+      }
+
+      throw new StaffIdentityCoreException(
+        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+        `Email ${email} is already registered`,
+      );
+    }
 
     if (user.roles.length === 0) {
       return;

@@ -1,4 +1,4 @@
-name: 02-taken-email
+name: 03-taken-email
 description: |-
   e2e: Iam › POST /api/iam/users › should refuse a taken email in another case with 409
 

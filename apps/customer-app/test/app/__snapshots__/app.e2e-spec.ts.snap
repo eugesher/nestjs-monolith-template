@@ -900,3 +900,113 @@ exports[`App Session POST /api/auth/login should refuse the credentials of a sta
   },
 }
 `;
+
+exports[`App Session POST /api/auth/register should create a customer who logs in and creates an item of their own 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "created_at": Any<Date>,
+        "email": "eve@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "item": [
+      {
+        "name": "Item of a new customer",
+        "owner_id": Any<String>,
+        "sku": "E2E-EVE-0001",
+      },
+    ],
+  },
+  "me": {
+    "email": "eve@example.com",
+    "id": Any<String>,
+  },
+  "response": {
+    "body": {
+      "email": "eve@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/register should let one of two simultaneous sign-ups with one email through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "email": "gina@example.com",
+      },
+    ],
+  },
+  "refused": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email gina@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
+exports[`App Session POST /api/auth/register should refuse a malformed email with 400 from validation and store nothing 1`] = `
+{
+  "db": {
+    "customer": [],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be an email",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/register should refuse a password shorter than 12 with 400 from validation and store nothing 1`] = `
+{
+  "db": {
+    "customer": [],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "password must be longer than or equal to 12 characters",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Session POST /api/auth/register should refuse a taken email in another case with 409 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "email": "ann@example.com",
+        "id": "00000000-0000-4000-8000-000000000101",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email ann@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+}
+`;

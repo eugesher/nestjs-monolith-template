@@ -1,17 +1,18 @@
 # 03 — Session feature
 
-`apps/<app>/src/features/session` serves `POST /auth/login` and `GET /auth/me` in both apps. The feature is called `session` because `auth` already names the lib,
-its contract and the global module. The route keeps `auth`, because the URL is a contract.
+`apps/<app>/src/features/session` serves `POST /auth/login` and `GET /auth/me` in both apps, and
+`POST /auth/register` in customer-app. The feature is called `session` because `auth` already names
+the lib, its contract and the global module. The route keeps `auth`, because the URL is a contract.
 
 ## The full path, even for a thin feature
 
-| Layer          | Piece                                                                    | Job                                                    |
-| -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| presentation   | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter` | HTTP, validation, status codes                         |
-| application    | `SessionLoginUseCase`, `SessionMeUseCase` in staff-app                   | the feature's operations                               |
-| outbound       | `SESSION_IDENTITY_PORT`                                                  | what the feature needs from identity, in its own terms |
-| infrastructure | `SessionStaffIdentityCoreAdapter`, `SessionCustomerIdentityCoreAdapter`  | calls the session port of the identity module          |
-| domain         | `SessionDomainException`                                                 | the refusal the feature understands                    |
+| Layer          | Piece                                                                                            | Job                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| presentation   | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter`                         | HTTP, validation, status codes                         |
+| application    | `SessionLoginUseCase`, `SessionMeUseCase` in staff-app, `SessionRegisterUseCase` in customer-app | the feature's operations                               |
+| outbound       | `SESSION_IDENTITY_PORT`                                                                          | what the feature needs from identity, in its own terms |
+| infrastructure | `SessionStaffIdentityCoreAdapter`, `SessionCustomerIdentityCoreAdapter`                          | calls the session port of the identity module          |
+| domain         | `SessionDomainException`                                                                         | the refusal the feature understands                    |
 
 The port is named after the need, identity, and the adapter after the core module it calls:
 `staff-identity` in staff-app, `customer-identity` in customer-app (see `18-staff-identity.md` and
@@ -35,6 +36,47 @@ answers `{ id, email, roles }`. A user disabled between the guard and the use ca
 
 **`me` answers no permissions.** A client that needs the codes would get a use case that asks the
 session facade for them explicitly, rather than a read on every request.
+
+## Sign-up in customer-app
+
+**A customer signs up alone, staff are created by an admin.** `POST /auth/register` of customer-app
+is `@Public()` and calls `register` of the `customer-identity` session port. staff-app has no
+sign-up: a staff user comes from `POST /iam/users`, behind `iam:user:create` (see
+`04-iam-feature.md`).
+
+**Sign-up answers who was created, not a token.** The response is `201` with `{ id, email }`, and
+the client logs in next. Login stays the only place that issues a token, checks the status and logs
+`Customer logged in`, so there is one path to audit and one place where the token lifetime matters.
+
+**The rules are those of a staff user.** The request DTO wants a well-formed email of at most 255
+characters and a password of 12 to 256 characters. The core module checks the email and the length
+again (`AUTH_EMAIL_INVALID`, `AUTH_PASSWORD_TOO_WEAK`), because it does not trust its caller. The
+email is normalized as login normalizes it, so `Eve@Example.com` signs up and logs in as
+`eve@example.com`. The password is hashed with argon2id by `CREDENTIALS_PASSWORD_HASHER_PORT`, and a
+new customer is `active`.
+
+**A taken email is a 409, whatever its case.** The unique index `uq_customer_email` decides, not a
+lookup before the insert. A lookup and an insert are two statements: two sign-ups with one email at
+the same moment would both pass the lookup, and the loser would hit the index as a 500. The register
+repository inserts at once and turns the duplicate-key error of the driver (`MysqlErrorHelper`) into
+`AUTH_EMAIL_TAKEN`, which maps to 409. `POST /iam/users` of staff-app does the same (see
+`18-staff-identity.md`), and the e2e of each app sends two such requests at once and expects one 201
+and one 409.
+
+The e2e signs a customer up, logs in with the same credentials, reads `me` and creates an item: the
+item's `owner_id` is the id sign-up answered.
+
+## Open questions
+
+**Login and sign-up have no rate limit.** Both routes are public, and the template has no throttler.
+A client can guess passwords at the speed of argon2 or create accounts in bulk. Two ways out:
+`@nestjs/throttler` with Redis storage, so the limit holds across instances, or a limit at the
+reverse proxy in front of the apps. Either is a decision of the project built on the template.
+
+**Sign-up tells whether an email has an account.** Login answers the same 401 for an unknown email
+and a wrong password, but sign-up answers 409 for a taken email. Hiding it would need a confirmation
+email that says "you already have an account" while the response stays the same, and the template
+sends no email. A rate limit at least makes probing slow.
 
 ## Refusals
 

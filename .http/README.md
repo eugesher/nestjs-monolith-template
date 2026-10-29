@@ -21,13 +21,17 @@ test, so the test can be found in `apps/<app>/test`.
 
 `app` holds the cases that check a route of the other app is not mounted.
 
-Three e2e cases are not one request:
+Six e2e cases are not one request:
 
 - the schema check of staff-app compares the migrated database with the entities and has no
   request;
 - the concurrent renames of an item send six requests at once, `item/rename/05-concurrent` sends
   one;
-- the replay of an item create sends the same request twice, as `item/create/02-replay` says.
+- the replay of an item create sends the same request twice, as `item/create/02-replay` says;
+- two simultaneous registrations with one email send the same request twice at once, in
+  `customer-app/session/register/03-simultaneous` and `staff-app/iam/register-user/02-simultaneous`;
+- the sign-up of a customer goes on to log in, read `me` and create an item with the new
+  credentials, as `session/register/01-register` says.
 
 ## Environment
 

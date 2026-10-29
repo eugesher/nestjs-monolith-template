@@ -1,13 +1,35 @@
-import { SessionLoginUseCase } from '../../../application';
+import { SessionLoginUseCase, SessionRegisterUseCase } from '../../../application';
 import { SessionController } from '../session.controller';
 
 describe('SessionController', () => {
+  let register: jest.Mock;
   let login: jest.Mock;
   let controller: SessionController;
 
   beforeEach(() => {
+    register = jest.fn();
     login = jest.fn();
-    controller = new SessionController(new SessionLoginUseCase({ login }));
+    controller = new SessionController(
+      new SessionRegisterUseCase({ register, login }),
+      new SessionLoginUseCase({ register, login }),
+    );
+  });
+
+  describe('handleRegister', () => {
+    it('answers the customer the register use case created', async () => {
+      register.mockResolvedValue({ id: 'customer-1', email: 'eve@example.com' });
+
+      const response = await controller.handleRegister({
+        email: 'eve@example.com',
+        password: 'long-enough-password',
+      });
+
+      expect(response).toEqual({ id: 'customer-1', email: 'eve@example.com' });
+      expect(register).toHaveBeenCalledWith({
+        email: 'eve@example.com',
+        password: 'long-enough-password',
+      });
+    });
   });
 
   describe('handleLogin', () => {

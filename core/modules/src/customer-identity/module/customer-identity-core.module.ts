@@ -5,15 +5,18 @@ import { CredentialsLibModule } from '@acme-libs/credentials';
 import {
   CustomerIdentityCoreAccessTokenService,
   CustomerIdentityCoreLoginUseCase,
+  CustomerIdentityCoreRegisterUseCase,
   CustomerIdentityCoreValidateSubjectUseCase,
 } from '../application';
 import {
   CustomerIdentityCoreLoginRepository,
+  CustomerIdentityCoreRegisterRepository,
   CustomerIdentityCoreTypeOrmModule,
   CustomerIdentityCoreValidateSubjectRepository,
 } from '../infrastructure';
 import {
   CUSTOMER_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
+  CUSTOMER_IDENTITY_CORE_REGISTER_REPOSITORY_PORT,
   CUSTOMER_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
 } from '../outbound';
 import { CustomerIdentityCoreSessionFacade } from './customer-identity-core-session.facade';
@@ -24,11 +27,16 @@ import { CustomerIdentityCoreSessionFacade } from './customer-identity-core-sess
   providers: [
     { provide: CUSTOMER_IDENTITY_CORE_SESSION_PORT, useClass: CustomerIdentityCoreSessionFacade },
     CustomerIdentityCoreLoginUseCase,
+    CustomerIdentityCoreRegisterUseCase,
     CustomerIdentityCoreValidateSubjectUseCase,
     CustomerIdentityCoreAccessTokenService,
     {
       provide: CUSTOMER_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
       useClass: CustomerIdentityCoreLoginRepository,
+    },
+    {
+      provide: CUSTOMER_IDENTITY_CORE_REGISTER_REPOSITORY_PORT,
+      useClass: CustomerIdentityCoreRegisterRepository,
     },
     {
       provide: CUSTOMER_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,

@@ -92,6 +92,38 @@ export class IamE2E {
         expect(login.body).toEqual({ accessToken: expect.any(String) });
       });
 
+      it('should let one of two simultaneous registrations with one email through and refuse the other with 409', async () => {
+        const body = {
+          email: 'race-viewer@example.com',
+          password: 'race-viewer-password-please-change',
+          roles: ['viewer'],
+        };
+
+        const responses = await Promise.all([
+          request(this.ctx.app.getHttpServer())
+            .post('/api/iam/users')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send(body),
+          request(this.ctx.app.getHttpServer())
+            .post('/api/iam/users')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send(body),
+        ]);
+        const statuses = responses.map((response) => response.status).sort();
+        const refused = responses.find((response) => 'code' in response.body);
+
+        expect({
+          statuses,
+          refused: { body: refused?.body },
+          db: {
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT email FROM staff_user WHERE email = ? ORDER BY id',
+              ['race-viewer@example.com'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
       it('should refuse a taken email in another case with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/iam/users')

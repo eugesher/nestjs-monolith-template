@@ -2,11 +2,12 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { StaffIdentityCoreException } from '../../../domain';
 import { StaffIdentityCoreRegisterUserUseCase } from '../staff-identity-core-register-user.use-case';
 
 describe('StaffIdentityCoreRegisterUserUseCase', () => {
   let outcomes: string[];
-  let repository: { existsByEmail: jest.Mock; insert: jest.Mock };
+  let repository: { insert: jest.Mock };
   let transaction: { run: jest.Mock };
   let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
   let logger: PinoLoggerMock;
@@ -14,10 +15,7 @@ describe('StaffIdentityCoreRegisterUserUseCase', () => {
 
   beforeEach(() => {
     outcomes = [];
-    repository = {
-      existsByEmail: jest.fn().mockResolvedValue(false),
-      insert: jest.fn().mockResolvedValue(undefined),
-    };
+    repository = { insert: jest.fn().mockResolvedValue(undefined) };
     transaction = {
       run: jest.fn(async (work: () => Promise<unknown>) => {
         outcomes.push('begin');
@@ -56,7 +54,6 @@ describe('StaffIdentityCoreRegisterUserUseCase', () => {
       email: 'editor@example.com',
     });
     expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
-    expect(repository.existsByEmail).toHaveBeenCalledWith('editor@example.com');
     expect(repository.insert).toHaveBeenCalledWith(
       expect.objectContaining({
         id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
@@ -94,8 +91,13 @@ describe('StaffIdentityCoreRegisterUserUseCase', () => {
     expect(transaction.run).not.toHaveBeenCalled();
   });
 
-  it('rejects a taken email inside the transaction and stores nothing', async () => {
-    repository.existsByEmail.mockResolvedValue(true);
+  it('lets the taken email refusal of the repository roll the transaction back', async () => {
+    repository.insert.mockRejectedValue(
+      new StaffIdentityCoreException(
+        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+        'Email editor@example.com is already registered',
+      ),
+    );
 
     const register = useCase.execute({
       email: 'editor@example.com',
@@ -107,7 +109,7 @@ describe('StaffIdentityCoreRegisterUserUseCase', () => {
       code: IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
       message: 'Email editor@example.com is already registered',
     });
-    expect(repository.insert).not.toHaveBeenCalled();
     expect(outcomes).toEqual(['begin']);
+    expect(logger.info).not.toHaveBeenCalled();
   });
 });

@@ -3,14 +3,67 @@ import { SessionDomainException } from '../../../domain';
 import { SessionCustomerIdentityCoreAdapter } from '../session-customer-identity-core.adapter';
 
 describe('SessionCustomerIdentityCoreAdapter', () => {
+  let register: jest.Mock;
   let login: jest.Mock;
   let adapter: SessionCustomerIdentityCoreAdapter;
 
   beforeEach(() => {
+    register = jest.fn();
     login = jest.fn();
     adapter = new SessionCustomerIdentityCoreAdapter({
+      register,
       login,
       validateSubject: jest.fn(),
+    });
+  });
+
+  describe('register', () => {
+    it('registers through identity and answers the created customer', async () => {
+      register.mockResolvedValue({ id: 'customer-1', email: 'eve@example.com' });
+
+      const customer = await adapter.register({
+        email: 'eve@example.com',
+        password: 'long-enough-password',
+      });
+
+      expect(customer).toEqual({ id: 'customer-1', email: 'eve@example.com' });
+      expect(register).toHaveBeenCalledWith({
+        email: 'eve@example.com',
+        password: 'long-enough-password',
+      });
+    });
+
+    it('turns an identity refusal into a session refusal with the same code and message', async () => {
+      register.mockRejectedValue(
+        Object.assign(Object.create(DomainException.prototype) as DomainException, {
+          code: 'AUTH_EMAIL_TAKEN',
+          message: 'Email ann@example.com is already registered',
+        }),
+      );
+
+      const execution = adapter.register({
+        email: 'ann@example.com',
+        password: 'long-enough-password',
+      });
+
+      await expect(execution).rejects.toBeInstanceOf(SessionDomainException);
+      await expect(execution).rejects.toMatchObject({
+        code: 'AUTH_EMAIL_TAKEN',
+        message: 'Email ann@example.com is already registered',
+      });
+    });
+
+    it('rethrows an error that is not a domain exception', async () => {
+      const failure = new Error('Connection lost');
+
+      register.mockRejectedValue(failure);
+
+      const execution = adapter.register({
+        email: 'eve@example.com',
+        password: 'long-enough-password',
+      });
+
+      await expect(execution).rejects.toBe(failure);
     });
   });
 

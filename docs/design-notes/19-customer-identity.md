@@ -3,12 +3,14 @@
 `core/modules/src/customer-identity` owns the accounts of the people who buy: an email, a password
 hash and a status. Its contract `core/contracts/src/customer-identity` has one port:
 
-| Port                                  | Facade                              | Consumer                     |
-| ------------------------------------- | ----------------------------------- | ---------------------------- |
-| `CUSTOMER_IDENTITY_CORE_SESSION_PORT` | `CustomerIdentityCoreSessionFacade` | login, the global auth guard |
+| Port                                  | Facade                              | Consumer                              |
+| ------------------------------------- | ----------------------------------- | ------------------------------------- |
+| `CUSTOMER_IDENTITY_CORE_SESSION_PORT` | `CustomerIdentityCoreSessionFacade` | sign-up, login, the global auth guard |
 
-`login` checks the password and signs an access token, `validateSubject` answers `{ id, email }`
-of an active customer. Self sign-up is not part of the module yet.
+`register` creates an active customer with an argon2id hash and answers `{ id, email }`, `login`
+checks the password and signs an access token, `validateSubject` answers `{ id, email }` of an
+active customer. A customer signs up alone, so `register` sits on the session port: there is no
+admin port and no back office for customers (see `03-session-feature.md`).
 
 ## Customers are not staff
 

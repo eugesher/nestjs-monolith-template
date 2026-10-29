@@ -10,8 +10,7 @@ import {
   type ICredentialsPasswordHasherPort,
 } from '@acme-libs/contracts/credentials';
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
-import { StaffIdentityCoreException, StaffIdentityCoreUserModel } from '../../domain';
+import { StaffIdentityCoreUserModel } from '../../domain';
 import {
   STAFF_IDENTITY_CORE_REGISTER_USER_REPOSITORY_PORT,
   type IStaffIdentityCoreRegisterUserRepositoryPort,
@@ -48,15 +47,6 @@ export class StaffIdentityCoreRegisterUserUseCase {
   }
 
   private async insert(user: StaffIdentityCoreUserModel): Promise<void> {
-    const taken = await this.repository.existsByEmail(user.email);
-
-    if (taken) {
-      throw new StaffIdentityCoreException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
-        `Email ${user.email} is already registered`,
-      );
-    }
-
     await this.repository.insert(user);
   }
 }
