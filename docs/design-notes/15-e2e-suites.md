@@ -53,16 +53,17 @@ the logger and the global prefix, and signs one access token for each seeded acc
 `JWT_ACCESS_SECRET` from the config. Everything the cases read is a getter that throws before
 `init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
-The shared files live in `jest/`:
+The Jest files outside the apps live in `jest/`:
 
 | File                        | What it does                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------- |
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
-| `jest-setup.js`             | the environment of the apps under test, set before any module loads             |
+| `<app>.e2e-setup.js`        | the environment of one app under test, set before any module loads              |
 
-**The environment comes from `jest-setup.js` only.** It sets every variable the config schemas
-read, so a developer's `.env.local` never leaks into a run: the variables of the process take
-precedence over the env files.
+**The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module
+loads and sets every variable the config schema of its app reads, and nothing else. A developer's
+`.env.local` never leaks into a run: the variables of the process take precedence over the env
+files.
 
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a
 JavaScript `Date` come back a day early, so the reminder cases catch it.

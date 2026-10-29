@@ -44,10 +44,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment: &api-env
+    environment:
       NODE_ENV: production
-      STAFF_APP_PORT: 3001
-      CUSTOMER_APP_PORT: 3000
+      PORT: 3000
       API_PREFIX: api
       API_USE_API_REFERENCE: 'true'
       DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
@@ -74,7 +73,17 @@ services:
       redis:
         condition: service_healthy
     environment:
-      <<: *api-env
+      NODE_ENV: production
+      PORT: 3001
+      API_PREFIX: api
+      API_USE_API_REFERENCE: 'true'
+      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
+      REDIS_URL: redis://redis:6379
+      OCC_RETRY_ATTEMPTS: 5
+      JWT_ACCESS_SECRET: development-access-secret-do-not-use-in-prod-32
+      JWT_REFRESH_SECRET: development-refresh-secret-do-not-use-in-prod-32
+      OTEL_SDK_DISABLED: 'true'
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
     networks:
       - backend
 

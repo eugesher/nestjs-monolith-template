@@ -8,13 +8,14 @@ import { AppNameEnum } from '@acme-libs/kernel';
 export class ConfigSetupModule {
   public static forRoot(): Promise<DynamicModule> {
     const development = !EnvHelper.isProduction();
+    const envFilePath = EnvHelper.appEnvFilePaths(AppNameEnum.CUSTOMER_APP);
     const options: ConfigModuleOptions = {
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath,
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
 
-        CUSTOMER_APP_PORT: Joi.number().port().required(),
+        PORT: Joi.number().port().required(),
         API_PREFIX: Joi.string().default('api'),
         API_USE_API_REFERENCE: Joi.boolean().default(development),
 

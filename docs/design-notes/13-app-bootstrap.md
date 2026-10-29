@@ -10,14 +10,37 @@ token issued by one app is accepted by the other.
 
 1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
-   environment of the process: `.env.local` is not loaded yet at that point.
+   environment of the process: the env file of the app is not loaded yet at that point.
 2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
    failed start.
 3. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:
    Nest's own lines go through pino too, and the lines buffered before the logger existed are
    flushed through it.
 4. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
-   `STAFF_APP_PORT` or `CUSTOMER_APP_PORT`.
+   `PORT`.
+
+## Environment
+
+Each app has its own env file, and the migrations have theirs, all in `env/`:
+
+| Example                              | Read by                            | Holds                                     |
+| ------------------------------------ | ---------------------------------- | ----------------------------------------- |
+| `env/apps/staff-app/.env.example`    | staff-app                          | every variable of the staff-app schema    |
+| `env/apps/customer-app/.env.example` | customer-app                       | every variable of the customer-app schema |
+| `env/migrations/.env.example`        | `migrations/config/data-source.ts` | `DATABASE_URL` only                       |
+
+A variable with the same meaning has the same name in both apps: `PORT`, `DATABASE_URL`, the JWT
+secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
+its own `.env.local` filled in.
+
+`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local` sits next
+to its example.
+
+`EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
+the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
+bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads
+no file, and the environment comes from the container. The variables of the process always take
+precedence over the files.
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
 filters, the guards and the correlation middleware are all in `AppModule` or in modules it imports.

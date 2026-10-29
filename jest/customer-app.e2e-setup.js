@@ -1,7 +1,6 @@
 Object.assign(process.env, {
   NODE_ENV: 'test',
-  STAFF_APP_PORT: '3001',
-  CUSTOMER_APP_PORT: '3000',
+  PORT: '3000',
   API_PREFIX: 'api',
   API_USE_API_REFERENCE: 'false',
   DATABASE_URL: 'mysql://root:root@127.0.0.1:3307/acme_db',
