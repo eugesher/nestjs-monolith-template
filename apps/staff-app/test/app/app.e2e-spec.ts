@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import * as entities from '@acme-core/entities';
 import { SnakeNamingStrategy } from '@acme-libs/database';
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, IamE2E, LedgerE2E, NoteE2E, SessionE2E } from '../features';
+import { HealthE2E, IamE2E, LedgerE2E, NoteE2E, AuthE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -14,7 +14,7 @@ describe('App', () => {
   const ctx = new AppE2EContext();
 
   const healthE2E = HealthE2E.of(ctx);
-  const sessionE2E = SessionE2E.of(ctx);
+  const authE2E = AuthE2E.of(ctx);
   const iamE2E = IamE2E.of(ctx);
   const ledgerE2E = LedgerE2E.of(ctx);
   const noteE2E = NoteE2E.of(ctx);
@@ -65,9 +65,9 @@ describe('App', () => {
     healthE2E.ready();
   });
 
-  describe('Session', () => {
-    sessionE2E.handleLogin();
-    sessionE2E.handleMe();
+  describe('Auth', () => {
+    authE2E.handleLogin();
+    authE2E.handleMe();
   });
 
   describe('Iam', () => {

@@ -1,0 +1,13 @@
+name: 03-staff-user
+description: |-
+  e2e: Auth › GET /api/auth/me › should refuse the token of a staff user signed with the secret of this app
+
+  Expect: 401 Unauthorized
+  User: staff editor@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/auth/me
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_staff_user

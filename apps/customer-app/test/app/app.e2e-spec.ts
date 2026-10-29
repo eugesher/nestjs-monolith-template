@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, ItemE2E, ReminderE2E, SessionE2E } from '../features';
+import { HealthE2E, ItemE2E, ReminderE2E, AuthE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -10,7 +10,7 @@ describe('App', () => {
   const ctx = new AppE2EContext();
 
   const healthE2E = HealthE2E.of(ctx);
-  const sessionE2E = SessionE2E.of(ctx);
+  const authE2E = AuthE2E.of(ctx);
   const itemE2E = ItemE2E.of(ctx);
   const reminderE2E = ReminderE2E.of(ctx);
 
@@ -41,10 +41,10 @@ describe('App', () => {
     healthE2E.ready();
   });
 
-  describe('Session', () => {
-    sessionE2E.handleRegister();
-    sessionE2E.handleLogin();
-    sessionE2E.handleMe();
+  describe('Auth', () => {
+    authE2E.handleRegister();
+    authE2E.handleLogin();
+    authE2E.handleMe();
   });
 
   describe('Item', () => {

@@ -1,5 +1,227 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of staff-app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a disabled customer 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+{
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
+  "lifetime": 604800,
+  "me": {
+    "email": "ann@example.com",
+    "id": "00000000-0000-4000-8000-000000000101",
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a disabled customer with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "Customer 00000000-0000-4000-8000-000000000104 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse the credentials of a staff user with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/register should create a customer who logs in and creates an item of their own 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "created_at": Any<Date>,
+        "email": "eve@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "item": [
+      {
+        "name": "Item of a new customer",
+        "owner_id": Any<String>,
+        "sku": "E2E-EVE-0001",
+      },
+    ],
+  },
+  "me": {
+    "email": "eve@example.com",
+    "id": Any<String>,
+  },
+  "response": {
+    "body": {
+      "email": "eve@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/register should let one of two simultaneous sign-ups with one email through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "email": "gina@example.com",
+      },
+    ],
+  },
+  "refused": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email gina@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
+exports[`App Auth POST /api/auth/register should refuse a malformed email with 400 from validation and store nothing 1`] = `
+{
+  "db": {
+    "customer": [],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be an email",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/register should refuse a password shorter than 12 with 400 from validation and store nothing 1`] = `
+{
+  "db": {
+    "customer": [],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "password must be longer than or equal to 12 characters",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/register should refuse a taken email in another case with 409 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "email": "ann@example.com",
+        "id": "00000000-0000-4000-8000-000000000101",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email ann@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
@@ -784,228 +1006,6 @@ exports[`App Reminder POST /api/reminders should refuse an instant with 400 from
         "dueOn must be a calendar date formatted YYYY-MM-DD",
       ],
       "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse a caller without a token 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a customer signed with the secret of staff-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a disabled customer 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a staff user signed with the secret of this app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
-{
-  "claims": [
-    "exp",
-    "iat",
-    "sub",
-  ],
-  "lifetime": 604800,
-  "me": {
-    "email": "ann@example.com",
-    "id": "00000000-0000-4000-8000-000000000101",
-  },
-  "response": {
-    "body": {
-      "accessToken": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse a disabled customer with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_INACTIVE",
-      "message": "Customer 00000000-0000-4000-8000-000000000104 is disabled",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse the credentials of a staff user with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/register should create a customer who logs in and creates an item of their own 1`] = `
-{
-  "db": {
-    "customer": [
-      {
-        "created_at": Any<Date>,
-        "email": "eve@example.com",
-        "id": Any<String>,
-        "password_hash": Any<String>,
-        "status": "active",
-      },
-    ],
-    "item": [
-      {
-        "name": "Item of a new customer",
-        "owner_id": Any<String>,
-        "sku": "E2E-EVE-0001",
-      },
-    ],
-  },
-  "me": {
-    "email": "eve@example.com",
-    "id": Any<String>,
-  },
-  "response": {
-    "body": {
-      "email": "eve@example.com",
-      "id": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/register should let one of two simultaneous sign-ups with one email through and refuse the other with 409 1`] = `
-{
-  "db": {
-    "customer": [
-      {
-        "email": "gina@example.com",
-      },
-    ],
-  },
-  "refused": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email gina@example.com is already registered",
-      "statusCode": 409,
-    },
-  },
-  "statuses": [
-    201,
-    409,
-  ],
-}
-`;
-
-exports[`App Session POST /api/auth/register should refuse a malformed email with 400 from validation and store nothing 1`] = `
-{
-  "db": {
-    "customer": [],
-  },
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "email must be an email",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/register should refuse a password shorter than 12 with 400 from validation and store nothing 1`] = `
-{
-  "db": {
-    "customer": [],
-  },
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "password must be longer than or equal to 12 characters",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/register should refuse a taken email in another case with 409 1`] = `
-{
-  "db": {
-    "customer": [
-      {
-        "email": "ann@example.com",
-        "id": "00000000-0000-4000-8000-000000000101",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email ann@example.com is already registered",
-      "statusCode": 409,
     },
   },
 }

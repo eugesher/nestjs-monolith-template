@@ -2,10 +2,10 @@
 
 `apps/staff-app/src/features/iam` is the back office over `staff-identity`: `POST /iam/users`,
 `POST /iam/users/:userId/roles`, `GET /iam/roles` and `PUT /iam/roles/:role/permissions`. It has
-the same layers as `session` (see `03-session-feature.md`): one use case per endpoint,
+the same layers as `auth` (see `03-auth-feature.md`): one use case per endpoint,
 `IAM_IDENTITY_PORT`, and `IamStaffIdentityCoreAdapter` over `STAFF_IDENTITY_CORE_ADMIN_PORT`.
 IAM manages staff only: a customer signs up on their own through `POST /auth/register` of
-customer-app (see `03-session-feature.md`).
+customer-app (see `03-auth-feature.md`).
 
 ## Only staff-app has it
 
@@ -39,6 +39,6 @@ what it carries.
   it, with no re-login.
 - **Unknown role or user is a 404.** The path `:role` is not validated against `RoleEnum` in
   presentation: `staff-identity` looks the role up and answers `AUTH_ROLE_NOT_FOUND`.
-- **Refusals reuse the session pattern.** The core adapter rethrows identity refusals as
+- **Refusals reuse the auth pattern.** The core adapter rethrows identity refusals as
   `IamDomainException`, and `IamHttpExceptionFilter` maps them with the same status table and
   delegates to the shared `HttpExceptionFilter`.

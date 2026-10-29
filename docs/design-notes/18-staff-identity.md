@@ -4,10 +4,10 @@
 credentials, their roles and what each role permits. Its contract
 `core/contracts/src/staff-identity` has two ports:
 
-| Port                               | Facade                           | Consumer                                       |
-| ---------------------------------- | -------------------------------- | ---------------------------------------------- |
-| `STAFF_IDENTITY_CORE_SESSION_PORT` | `StaffIdentityCoreSessionFacade` | login, the global auth guards                  |
-| `STAFF_IDENTITY_CORE_ADMIN_PORT`   | `StaffIdentityCoreAdminFacade`   | the back office that registers users and roles |
+| Port                             | Facade                         | Consumer                                       |
+| -------------------------------- | ------------------------------ | ---------------------------------------------- |
+| `STAFF_IDENTITY_CORE_AUTH_PORT`  | `StaffIdentityCoreAuthFacade`  | login, the global auth guards                  |
+| `STAFF_IDENTITY_CORE_ADMIN_PORT` | `StaffIdentityCoreAdminFacade` | the back office that registers users and roles |
 
 The whole module belongs to staff-app: the lint policy `identity-modules.mjs` refuses its
 contracts, its module and its `Staff*` entities anywhere in customer-app, which has a module of its

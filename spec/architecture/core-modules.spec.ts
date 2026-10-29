@@ -305,31 +305,31 @@ describe('core modules', () => {
   });
 
   describe('identity modules by app', () => {
-    it('a staff-app core adapter MAY import the staff identity session and admin ports', async () => {
+    it('a staff-app core adapter MAY import the staff identity auth and admin ports', async () => {
       await expect({
         file: 'apps/staff-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/staff-identity";',
+        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
       }).toPassArchitectureLint();
     });
 
-    it('a customer-app core adapter MAY import the customer identity session port', async () => {
+    it('a customer-app core adapter MAY import the customer identity auth port', async () => {
       await expect({
-        file: 'apps/customer-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { CUSTOMER_IDENTITY_CORE_SESSION_PORT, ICustomerIdentityCoreSessionPort } from "@acme-core/contracts/customer-identity";',
+        file: 'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT, ICustomerIdentityCoreAuthPort } from "@acme-core/contracts/customer-identity";',
       }).toPassArchitectureLint();
     });
 
     it.each([
       [
-        'apps/customer-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/staff-identity";',
+        'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
+        'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
       ],
       [
         'apps/customer-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/staff-identity";',
+        'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
       ],
       [
-        'apps/customer-app/src/features/session/session.module.ts',
+        'apps/customer-app/src/features/auth/auth.module.ts',
         'import { StaffIdentityCoreModule } from "@acme-core/modules/staff-identity";',
       ],
       [
@@ -342,15 +342,15 @@ describe('core modules', () => {
 
     it.each([
       [
-        'apps/staff-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
-        'import { CUSTOMER_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/customer-identity";',
+        'apps/staff-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
+        'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";',
       ],
       [
         'apps/staff-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { CUSTOMER_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/customer-identity";',
+        'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";',
       ],
       [
-        'apps/staff-app/src/features/session/session.module.ts',
+        'apps/staff-app/src/features/auth/auth.module.ts',
         'import { CustomerIdentityCoreModule } from "@acme-core/modules/customer-identity";',
       ],
       [

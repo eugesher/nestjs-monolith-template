@@ -13,7 +13,7 @@ export class ApiReference {
     },
     [AppNameEnum.CUSTOMER_APP]: {
       title: 'ACME customer API',
-      description: 'The customer-facing surface: sessions and the item catalog.',
+      description: 'The customer-facing surface: sign-up, sign-in and the item catalog.',
     },
   };
 

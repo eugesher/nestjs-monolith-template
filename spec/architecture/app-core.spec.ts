@@ -48,10 +48,10 @@ describe('app → core', () => {
 
     it('a customer-app feature may NOT slip a staff identity port in next to a customer identity one', async () => {
       await expect({
-        file: 'apps/customer-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
+        file: 'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
         code:
-          'import { CUSTOMER_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/customer-identity";\n' +
-          'import { STAFF_IDENTITY_CORE_SESSION_PORT } from "@acme-core/contracts/staff-identity";',
+          'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";\n' +
+          'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
       }).toBreakRule('boundaries/dependencies');
     });
 

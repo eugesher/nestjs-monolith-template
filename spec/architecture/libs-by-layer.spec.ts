@@ -119,7 +119,7 @@ describe('libs by layer', () => {
     ['customer-app', 'import type { IAuthCurrentUserView } from "@acme-libs/contracts/auth";'],
   ])('%s presentation MAY take %s', async (app, code) => {
     await expect({
-      file: `apps/${app}/src/features/session/presentation/controllers/__fixture__.ts`,
+      file: `apps/${app}/src/features/auth/presentation/controllers/__fixture__.ts`,
       code,
     }).toPassArchitectureLint();
   });

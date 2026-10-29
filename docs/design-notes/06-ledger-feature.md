@@ -1,8 +1,8 @@
 # 06 — Ledger feature
 
 `apps/staff-app/src/features/ledger` serves `GET /ledger`, the back office view of the journal that
-`core/modules/src/ledger` keeps (see `05-core-ledger.md`). It has the same layers as `session` (see
-`03-session-feature.md`): `LedgerListEntriesUseCase`, `LEDGER_QUERY_PORT`, and
+`core/modules/src/ledger` keeps (see `05-core-ledger.md`). It has the same layers as `auth` (see
+`03-auth-feature.md`): `LedgerListEntriesUseCase`, `LEDGER_QUERY_PORT`, and
 `LedgerQueryCoreAdapter` over `LEDGER_CORE_QUERY_PORT`.
 
 ## Read-only, and only staff-app
