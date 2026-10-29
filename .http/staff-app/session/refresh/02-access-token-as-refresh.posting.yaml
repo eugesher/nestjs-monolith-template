@@ -1,0 +1,16 @@
+name: 02-access-token-as-refresh
+description: |-
+  e2e: Session › POST /api/auth/refresh › should refuse an access token as a refresh token
+
+  Expect: 401 Unauthorized, code AUTH_REFRESH_TOKEN_INVALID
+  Note: send session/login/01-editor first: it saves access_token
+method: POST
+url: $STAFF_APP_BASE_URL/auth/refresh
+body:
+  content: |-
+    {
+      "refreshToken": "$access_token"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

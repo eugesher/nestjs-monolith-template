@@ -171,7 +171,7 @@ describe('repo', () => {
   describe('working directory', () => {
     it.each([
       ['migrations', 'config/data-source.ts'],
-      ['apps/admin-api', 'src/main.ts'],
+      ['apps/staff-app', 'src/main.ts'],
     ])(
       'linting from %s, as an editor does from the nearest package, classifies %s from the repo root',
       (cwd, file) => {

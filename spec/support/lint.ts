@@ -22,7 +22,7 @@ declare global {
 
 const ROOT = path.resolve(__dirname, '../..');
 const TSCONFIG = path.join(ROOT, 'tsconfig.json');
-const RESOLVING_FILE = path.join(ROOT, 'apps/admin-api/src/features/__fixture__.ts');
+const RESOLVING_FILE = path.join(ROOT, 'apps/staff-app/src/features/__fixture__.ts');
 
 const ARCHITECTURE_RULES = [
   'boundaries/dependencies',

@@ -1,0 +1,13 @@
+name: 01-own
+description: |-
+  e2e: Reminder › GET /api/reminders › should list the own reminders of the caller, soonest first, without deleted ones
+
+  Expect: 200 OK, reminders 302, 301, 300, 304, 305
+  User: viewer@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/reminders
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

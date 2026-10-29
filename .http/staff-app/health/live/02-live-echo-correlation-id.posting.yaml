@@ -1,0 +1,9 @@
+name: 02-live-echo-correlation-id
+description: |-
+  e2e: Health › GET /api/health › should echo an inbound correlation id
+
+  Expect: 200 OK, response header x-correlation-id: e2e-correlation-id
+url: $STAFF_APP_BASE_URL/health
+headers:
+  - name: x-correlation-id
+    value: e2e-correlation-id

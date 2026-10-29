@@ -1,6 +1,6 @@
 # 08 — Item feature
 
-`apps/client-api/src/features/item` is the per-owner catalog behind `/items`. This note covers the
+`apps/customer-app/src/features/item` is the per-owner catalog behind `/items`. This note covers the
 `ItemModel` aggregate, optimistic concurrency, idempotent creation, the ledger record of an archive,
 the adapters behind the ports and the HTTP surface.
 
@@ -124,7 +124,7 @@ The idempotency adapter turns the claim outcome enum of the common module into t
 the port and hands a replay's stored response back as the type the use case expects.
 
 **The events adapter speaks the contract of its consumer.** Event names and payloads live in
-`@acme-client-contracts/ledger-catalog-events`, next to the processor that reads them:
+`@acme-customer-contracts/ledger-catalog-events`, next to the processor that reads them:
 
 | Domain event        | Event name              | Payload                                          |
 | ------------------- | ----------------------- | ------------------------------------------------ |
@@ -163,10 +163,10 @@ even an admin changes only their own items.
 
 The two header decorators live in `common/shared`, because only features use them:
 
-| Alias                                    | Decorator        | Refusal                                                     |
-| ---------------------------------------- | ---------------- | ----------------------------------------------------------- |
-| `@acme-client-common/shared/concurrency` | `IfMatch`        | `IF_MATCH_INVALID` (400)                                    |
-| `@acme-client-common/shared/idempotency` | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
+| Alias                                      | Decorator        | Refusal                                                     |
+| ------------------------------------------ | ---------------- | ----------------------------------------------------------- |
+| `@acme-customer-common/shared/concurrency` | `IfMatch`        | `IF_MATCH_INVALID` (400)                                    |
+| `@acme-customer-common/shared/idempotency` | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
 
 - **`If-Match` is a version, not an entity tag.** `3` and `"3"` both mean version 3; a missing or
   empty header means "no expectation". Anything that is not a non-negative integer, including a weak

@@ -1,15 +1,15 @@
 # 04 — IAM feature
 
-`apps/admin-api/src/features/iam` is the back office over identity: `POST /iam/users`,
+`apps/staff-app/src/features/iam` is the back office over identity: `POST /iam/users`,
 `POST /iam/users/:userId/roles`, `GET /iam/roles` and `PUT /iam/roles/:role/permissions`. It has
 the same layers as `session` (see `03-session-feature.md`): one use case per endpoint,
 `IAM_IDENTITY_PORT`, and `IamIdentityCoreAdapter` over `IDENTITY_CORE_ADMIN_PORT`.
 
-## Only admin-api has it
+## Only staff-app has it
 
-**client-api cannot even import the admin port.** The lint policy `identity-admin.mjs` forbids
-`IDENTITY_CORE_ADMIN_PORT` and `IIdentityCoreAdminPort` anywhere in client-api, so copying the
-feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on client-api is a
+**customer-app cannot even import the admin port.** The lint policy `identity-admin.mjs` forbids
+`IDENTITY_CORE_ADMIN_PORT` and `IIdentityCoreAdminPort` anywhere in customer-app, so copying the
+feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on customer-app is a
 404, not a 403: the route does not exist, and the answer does not confirm that it exists elsewhere.
 
 ## Three permission codes, on purpose

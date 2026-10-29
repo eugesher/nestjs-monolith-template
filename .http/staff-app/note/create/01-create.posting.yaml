@@ -1,0 +1,24 @@
+name: 01-create
+description: |-
+  e2e: Note › POST /api/notes › should create an unresolved note on an opaque subject
+
+  Expect: 201 Created, a new note at version 1
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/notes
+body:
+  content: |-
+    {
+      "subjectType": "support-ticket",
+      "subjectId": "T-900",
+      "body": "Customer called."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

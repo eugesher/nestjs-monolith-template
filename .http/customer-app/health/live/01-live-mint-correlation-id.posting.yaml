@@ -1,0 +1,6 @@
+name: 01-live-mint-correlation-id
+description: |-
+  e2e: Health › GET /api/health › should report liveness and mint a correlation id
+
+  Expect: 200 OK, response header x-correlation-id is a new UUID v4
+url: $CUSTOMER_APP_BASE_URL/health

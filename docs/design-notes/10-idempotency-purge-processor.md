@@ -1,6 +1,6 @@
 # 10 — Idempotency purge processor
 
-`apps/client-api/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
+`apps/customer-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
 hour through the idempotency common module (see `07-idempotency-common-module.md`). It is a
 processor: a schedule enters it, not an HTTP request.
 
@@ -44,7 +44,7 @@ A successful purge logs nothing here. The common module already logs
 ## Wiring
 
 `IdempotencyPurgeModule` imports `IdempotencyCommonModule`, and the app mounts it through
-`@acme-client-processors`. `@Cron` only marks the method: the tick fires because client-api imports
+`@acme-customer-processors`. `@Cron` only marks the method: the tick fires because customer-app imports
 `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`.
 
 Lint lets a processor consumer take only `Cron` and `CronExpression` from `@nestjs/schedule`, and

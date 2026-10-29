@@ -14,8 +14,8 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
 
     expect(relPaths).toEqual(
       expect.arrayContaining([
-        'apps/admin-api/src/features/health',
-        'apps/client-api/src/features/health',
+        'apps/staff-app/src/features/health',
+        'apps/customer-app/src/features/health',
       ]),
     );
   });

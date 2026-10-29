@@ -1,0 +1,16 @@
+name: 01-delete
+description: |-
+  e2e: Reminder › DELETE /api/reminders/:reminderId › should soft-delete a reminder and drop the cached summary
+
+  Expect: 204 No Content, reminder 304 gets deleted_at; the summary key is gone
+  User: viewer@example.com (token signed by scripts.py)
+  Before: Redis: FLUSHDB
+  Before: send reminder/get-summary/01-compute-and-cache
+method: DELETE
+url: $CUSTOMER_APP_BASE_URL/reminders/304
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

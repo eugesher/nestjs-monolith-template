@@ -7,12 +7,12 @@ import { AppNameEnum } from '@acme-libs/kernel';
 
 export class ApiReference {
   private static readonly DOCUMENTS: Record<AppNameEnum, { title: string; description: string }> = {
-    [AppNameEnum.ADMIN_API]: {
-      title: 'ACME admin API',
+    [AppNameEnum.STAFF_APP]: {
+      title: 'ACME staff API',
       description: 'The back-office surface: identity administration and the audit log.',
     },
-    [AppNameEnum.CLIENT_API]: {
-      title: 'ACME client API',
+    [AppNameEnum.CUSTOMER_APP]: {
+      title: 'ACME customer API',
       description: 'The customer-facing surface: sessions and the item catalog.',
     },
   };

@@ -1,0 +1,22 @@
+name: 04-resolved
+description: |-
+  e2e: Note › PATCH /api/notes/:noteId › should refuse to edit a resolved note with 409
+
+  Expect: 409 Conflict, code NOTE_RESOLVED
+  User: editor@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/notes/202
+body:
+  content: |-
+    {
+      "body": "Too late."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

@@ -1,0 +1,27 @@
+name: 01-revoke
+description: |-
+  e2e: Iam › PUT /api/iam/roles/:role/permissions › should replace the permissions and refuse the same token at once
+
+  Expect: 200 OK, viewer keeps item:read, reminder:read, reminder:write; a viewer token then gets 403 from GET /ledger
+  User: admin@example.com (token signed by scripts.py)
+  After: SQL: INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (3, 4)
+method: PUT
+url: $STAFF_APP_BASE_URL/iam/roles/viewer/permissions
+body:
+  content: |-
+    {
+      "permissionCodes": [
+        "item:read",
+        "reminder:read",
+        "reminder:write"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin
