@@ -29,18 +29,18 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 
 ## AppModule
 
-| Piece | Where | What it does |
-| --- | --- | --- |
-| `ConfigSetupModule.forRoot()` | `app/setup/config` | validates the environment of the app with Joi |
-| `LoggerSetupModule.forRoot(<app>)` | `libs/observability` | pino, HTTP request logs |
-| `TypeOrmSetupModule.forRoot()` | `app/setup/orm` | the connection, the entities of the app, `TRANSACTION_PORT` |
-| `ScheduleSetupModule` | `app/setup/schedule`, client-api only | `ScheduleModule.forRoot()` for `@Cron` |
-| `CacheModule`, `EventsModule` | `libs/cache`, `libs/messaging` | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT` |
-| `AuthModule` | `app/global/auth` | the three global guards |
-| features, processors | `@acme-<app>-features`, `@acme-client-processors` | the routes and the consumers |
-| `APP_PIPE` | `StrictValidationPipe` | whitelist, forbid unknown properties, transform |
-| `APP_FILTER` | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log |
-| `CorrelationMiddleware` | every route, `*path` | opens the correlation context of the request |
+| Piece                              | Where                                                | What it does                                                |
+| ---------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
+| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi               |
+| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
+| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
+| `ScheduleSetupModule`              | `app/setup/schedule`, client-api only                | `ScheduleModule.forRoot()` for `@Cron`                      |
+| `CacheModule`, `EventsModule`      | `libs/cache`, `libs/messaging`                       | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT`              |
+| `AuthModule`                       | `app/global/auth`                                    | the three global guards                                     |
+| features, processors               | `@acme-<app>-features`, `@acme-client-processors`    | the routes and the consumers                                |
+| `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |
+| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log                                  |
+| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                |
 
 Every module in `app/setup/` is named `*SetupModule`.
 

@@ -10,12 +10,12 @@ persistence and the HTTP surface.
 `ReminderModel` walks `pending → done`. Completing or moving a reminder bumps `version`, and a done
 reminder refuses every further change with `REMINDER_ALREADY_DONE`.
 
-| Rule | Code |
-| --- | --- |
-| `title` is 1 to 255 characters after trimming | `REMINDER_TITLE_INVALID` |
-| `body` is at most 2000 characters after trimming, empty is fine | `REMINDER_BODY_INVALID` |
-| `dueOn` is a real calendar date written `YYYY-MM-DD` | `REMINDER_DUE_ON_INVALID` |
-| `version` is a positive integer | `REMINDER_VERSION_INVALID` |
+| Rule                                                            | Code                       |
+| --------------------------------------------------------------- | -------------------------- |
+| `title` is 1 to 255 characters after trimming                   | `REMINDER_TITLE_INVALID`   |
+| `body` is at most 2000 characters after trimming, empty is fine | `REMINDER_BODY_INVALID`    |
+| `dueOn` is a real calendar date written `YYYY-MM-DD`            | `REMINDER_DUE_ON_INVALID`  |
+| `version` is a positive integer                                 | `REMINDER_VERSION_INVALID` |
 
 **`dueOn` is a calendar date, not an instant.** It has no time and no zone, so it stays a string
 from the request to the `date` column. The model refuses a string with a time and a date that does
@@ -53,7 +53,7 @@ by mistake, because completing and moving are the only changes.
 `ReminderGetSummaryUseCase` answers `{ pending, nextDueOn }` through `REMINDER_SUMMARY_PORT`:
 
 ```ts
-summary.read({ ownerId, compute: () => repository.summarize(ownerId) })
+summary.read({ ownerId, compute: () => repository.summarize(ownerId) });
 ```
 
 **The use case knows how to compute the summary, the port knows how to cache it.** The use case
@@ -109,10 +109,10 @@ date of the summary.
 
 `ReminderSummaryCacheAdapter` binds `REMINDER_SUMMARY_PORT` to `CACHE_PORT`:
 
-| Port call | Cache call |
-| --- | --- |
+| Port call                    | Cache call                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------- |
 | `read({ ownerId, compute })` | `wrap(CACHE_KEYS.reminderSummary(ownerId), REMINDER_SUMMARY_TTL_MS, compute)` |
-| `invalidate(ownerId)` | `delByPrefix(CACHE_KEYS.reminderSummaryPrefix(ownerId))` |
+| `invalidate(ownerId)`        | `delByPrefix(CACHE_KEYS.reminderSummaryPrefix(ownerId))`                      |
 
 The keys are `acme:reminders:summary:v1:<ownerId>:__all__` and its prefix without `__all__`.
 `REMINDER_SUMMARY_TTL_MS` comes from `CACHE_TTL_MS_DEFAULT`, 60 seconds by default.
@@ -123,14 +123,14 @@ single-flight and no fallback of its own. It logs nothing either: the cache lib 
 
 ## HTTP
 
-| Method and path | Permission | Answer |
-| --- | --- | --- |
-| `POST /reminders` | `reminder:write` | 201, the reminder |
-| `GET /reminders` | `reminder:read` | 200, a page of reminders |
-| `GET /reminders/summary` | `reminder:read` | 200, `{ pending, nextDueOn }` |
-| `PATCH /reminders/:reminderId/done` | `reminder:write` | 200, the reminder |
-| `PATCH /reminders/:reminderId/due-on` | `reminder:write` | 200, the reminder |
-| `DELETE /reminders/:reminderId` | `reminder:write` | 204 |
+| Method and path                       | Permission       | Answer                        |
+| ------------------------------------- | ---------------- | ----------------------------- |
+| `POST /reminders`                     | `reminder:write` | 201, the reminder             |
+| `GET /reminders`                      | `reminder:read`  | 200, a page of reminders      |
+| `GET /reminders/summary`              | `reminder:read`  | 200, `{ pending, nextDueOn }` |
+| `PATCH /reminders/:reminderId/done`   | `reminder:write` | 200, the reminder             |
+| `PATCH /reminders/:reminderId/due-on` | `reminder:write` | 200, the reminder             |
+| `DELETE /reminders/:reminderId`       | `reminder:write` | 204                           |
 
 **Every route is scoped to the caller, an admin included.** The controller always passes the
 caller's own id as `ownerId`.
@@ -147,12 +147,12 @@ reaches the model and is refused there as `REMINDER_DUE_ON_INVALID`, also a 400.
 `ReminderHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
 `HttpExceptionFilter` of `libs/http`, with the same body as items.
 
-| Code | Status |
-| --- | --- |
-| `REMINDER_TITLE_INVALID`, `REMINDER_BODY_INVALID`, `REMINDER_DUE_ON_INVALID`, `REMINDER_VERSION_INVALID` | 400 |
-| `REMINDER_ACCESS_FORBIDDEN` | 403 |
-| `REMINDER_NOT_FOUND` | 404 |
-| `REMINDER_ALREADY_DONE`, `VERSION_MISMATCH` | 409 |
+| Code                                                                                                     | Status |
+| -------------------------------------------------------------------------------------------------------- | ------ |
+| `REMINDER_TITLE_INVALID`, `REMINDER_BODY_INVALID`, `REMINDER_DUE_ON_INVALID`, `REMINDER_VERSION_INVALID` | 400    |
+| `REMINDER_ACCESS_FORBIDDEN`                                                                              | 403    |
+| `REMINDER_NOT_FOUND`                                                                                     | 404    |
+| `REMINDER_ALREADY_DONE`, `VERSION_MISMATCH`                                                              | 409    |
 
 ## Wiring
 

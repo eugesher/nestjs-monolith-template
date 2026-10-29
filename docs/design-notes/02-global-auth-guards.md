@@ -2,11 +2,11 @@
 
 ## Where the pieces live
 
-| Piece | Location | Knows about |
-| --- | --- | --- |
-| Guards, route decorators | `libs/auth` | the token, the request, `AUTH_USER_VALIDATOR_PORT` |
-| Validator port, user view | `libs/contracts/src/auth` | kernel enums only |
-| Port implementation | `apps/<app>/src/app/global/auth` | the identity core module, through a core adapter |
+| Piece                     | Location                         | Knows about                                        |
+| ------------------------- | -------------------------------- | -------------------------------------------------- |
+| Guards, route decorators  | `libs/auth`                      | the token, the request, `AUTH_USER_VALIDATOR_PORT` |
+| Validator port, user view | `libs/contracts/src/auth`        | kernel enums only                                  |
+| Port implementation       | `apps/<app>/src/app/global/auth` | the identity core module, through a core adapter   |
 
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in

@@ -15,11 +15,11 @@ Access needs `ledger:read`. A principal without it gets a 403, and one without a
 
 ## Paging and filters
 
-| Query parameter | Meaning |
-| --- | --- |
-| `page`, `size` | page window; `size` above 100 is capped, not rejected |
-| `subjectType`, `subjectId` | the history of one subject, such as `item` and `12` |
-| `correlationId` | everything one request caused |
+| Query parameter            | Meaning                                               |
+| -------------------------- | ----------------------------------------------------- |
+| `page`, `size`             | page window; `size` above 100 is capped, not rejected |
+| `subjectType`, `subjectId` | the history of one subject, such as `item` and `12`   |
+| `correlationId`            | everything one request caused                         |
 
 **The core owns the window.** The DTO checks that `page` and `size` are positive integers and leaves
 the limits to `LedgerCoreListEntriesUseCase`, which applies the defaults (page 1, size 20) and the

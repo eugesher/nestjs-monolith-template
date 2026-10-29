@@ -53,12 +53,12 @@ the logger and the global prefix, and signs one access token for each seeded acc
 `JWT_ACCESS_SECRET` from the config. Everything the cases read is a getter that throws before
 `init()`. The client context also holds the Redis client, through `@acme-libs/cache/testing`.
 
-The shared files live in `test/`:
+The shared files live in `jest/`:
 
-| File | What it does |
-| --- | --- |
+| File                        | What it does                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------- |
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
-| `jest-setup.js` | the environment of the apps under test, set before any module loads |
+| `jest-setup.js`             | the environment of the apps under test, set before any module loads             |
 
 **The environment comes from `jest-setup.js` only.** It sets every variable the config schemas
 read, so a developer's `.env.local` never leaks into a run: the variables of the process take
@@ -101,17 +101,17 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 
 ## What the suites cover
 
-| App | Feature | Cases |
-| --- | --- | --- |
-| admin-api | app | the schema of every entity matches the migrated database; client-api routes are not mounted |
-| admin-api | session | login, refresh, `me`; claims in a token are ignored; refresh and access tokens are not interchangeable; a disabled user is refused |
-| admin-api | iam | roles from the database; a new user logs in at once; a revoked permission refuses the same token at once |
-| admin-api | ledger | a page of one subject; validation |
-| admin-api | note | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back |
-| client-api | app | admin-api routes are not mounted |
-| client-api | session | login, refresh, `me` through the filter of this app |
-| client-api | item | owner scope; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
-| client-api | reminder | the summary is cached and every write drops it; dates under `TZ`; ownership; soft delete |
+| App        | Feature  | Cases                                                                                                                                                                           |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| admin-api  | app      | the schema of every entity matches the migrated database; client-api routes are not mounted                                                                                     |
+| admin-api  | session  | login, refresh, `me`; claims in a token are ignored; refresh and access tokens are not interchangeable; a disabled user is refused                                              |
+| admin-api  | iam      | roles from the database; a new user logs in at once; a revoked permission refuses the same token at once                                                                        |
+| admin-api  | ledger   | a page of one subject; validation                                                                                                                                               |
+| admin-api  | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                       |
+| client-api | app      | admin-api routes are not mounted                                                                                                                                                |
+| client-api | session  | login, refresh, `me` through the filter of this app                                                                                                                             |
+| client-api | item     | owner scope; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
+| client-api | reminder | the summary is cached and every write drops it; dates under `TZ`; ownership; soft delete                                                                                        |
 
 **The schema check needs decorators.** It builds a `DataSource` of every entity in
 `@acme-core/entities` with `SnakeNamingStrategy`, and expects
@@ -130,10 +130,10 @@ contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cac
 `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
-(`eslint/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
+(`lint/configs/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
 what checks their shape.
 
 ## HTTP collection
 
-`http/` holds a [Posting](https://posting.sh) collection per app with one request per e2e case. See
-`http/README.md`.
+`.http/` holds a [Posting](https://posting.sh) collection per app with one request per e2e case. See
+`.http/README.md`.

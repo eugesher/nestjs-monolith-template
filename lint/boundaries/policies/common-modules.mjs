@@ -8,7 +8,7 @@ import {
   own,
   packages,
   to,
-} from '../selectors.mjs';
+} from './selectors.mjs';
 
 const layer = layerOf('acme-app:common:modules', ['app', 'module']);
 

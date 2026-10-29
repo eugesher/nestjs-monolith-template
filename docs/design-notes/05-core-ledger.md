@@ -3,10 +3,10 @@
 `core/modules/src/ledger` is an append-only journal of business facts: what happened to which
 subject, and under which correlation id. Its contract `core/contracts/src/ledger` has two ports:
 
-| Port | Facade | Consumer |
-| --- | --- | --- |
-| `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact |
-| `LEDGER_CORE_QUERY_PORT` | `LedgerCoreQueryFacade` | the back office that reads the journal |
+| Port                      | Facade                   | Consumer                               |
+| ------------------------- | ------------------------ | -------------------------------------- |
+| `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact                 |
+| `LEDGER_CORE_QUERY_PORT`  | `LedgerCoreQueryFacade`  | the back office that reads the journal |
 
 Two ports instead of one let each app bind only what it uses.
 

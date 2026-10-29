@@ -4,11 +4,11 @@
 hour through the idempotency common module (see `07-idempotency-common-module.md`). It is a
 processor: a schedule enters it, not an HTTP request.
 
-| Layer | What it holds |
-| --- | --- |
-| `presentation` | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)` |
-| `application` | `IdempotencyPurgeRunUseCase` |
-| `outbound` | `IDEMPOTENCY_PURGE_IDEMPOTENCY_PORT` |
+| Layer                            | What it holds                                                             |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `presentation`                   | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`            |
+| `application`                    | `IdempotencyPurgeRunUseCase`                                              |
+| `outbound`                       | `IDEMPOTENCY_PURGE_IDEMPOTENCY_PORT`                                      |
 | `infrastructure/common-adapters` | `IdempotencyPurgeIdempotencyCommonAdapter` over `IDEMPOTENCY_COMMON_PORT` |
 
 The common module owns the TTL (`IDEMPOTENCY_KEY_TTL_HOURS`) and the cutoff, so the port takes no
@@ -36,7 +36,7 @@ log: outcomes are logged by the application.
   case a singleton, so the flag is shared by every tick.
 - **The flag is cleared in `finally`.** A throw must not leave it set and silence every later tick.
 - **A failed purge is logged, not thrown.** It logs `Idempotency purge failed, the next tick
-  retries` at `warn` with the error. Expired keys only cost space until the next tick.
+retries` at `warn` with the error. Expired keys only cost space until the next tick.
 
 A successful purge logs nothing here. The common module already logs
 `Expired idempotency keys purged` with the cutoff, the count and the TTL.

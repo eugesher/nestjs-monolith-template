@@ -4,11 +4,11 @@
 `core/modules/src/ledger` (see `05-core-ledger.md`). It is a processor, not a feature: an in-process
 event enters it, not an HTTP request, and it has no controller.
 
-| Layer | What it holds |
-| --- | --- |
-| `presentation` | `LedgerCatalogEventsConsumer`, one `@OnEvent` handler per event |
-| `application` | a use case per event and `LedgerCatalogEventsRecordService` |
-| `outbound` | `LEDGER_CATALOG_EVENTS_LEDGER_PORT` |
+| Layer                          | What it holds                                                         |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `presentation`                 | `LedgerCatalogEventsConsumer`, one `@OnEvent` handler per event       |
+| `application`                  | a use case per event and `LedgerCatalogEventsRecordService`           |
+| `outbound`                     | `LEDGER_CATALOG_EVENTS_LEDGER_PORT`                                   |
 | `infrastructure/core-adapters` | `LedgerCatalogEventsLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT` |
 
 The processor sees no feature. The event names and payloads live in
@@ -17,10 +17,10 @@ The processor sees no feature. The event names and payloads live in
 
 ## Events and entries
 
-| Event | Operation key | Action | Payload |
-| --- | --- | --- | --- |
-| `catalog.item.created` | `item-created:<id>` | `ItemCreated` | `sku`, `name`, `ownerId` |
-| `catalog.item.archived` | `item-archived:<id>` | `ItemArchived` | `sku`, `previousStatus` |
+| Event                   | Operation key        | Action         | Payload                  |
+| ----------------------- | -------------------- | -------------- | ------------------------ |
+| `catalog.item.created`  | `item-created:<id>`  | `ItemCreated`  | `sku`, `name`, `ownerId` |
+| `catalog.item.archived` | `item-archived:<id>` | `ItemArchived` | `sku`, `previousStatus`  |
 
 Every entry has the subject type `item` and the item id as the subject id. The item feature also
 publishes `catalog.item.renamed`, which nothing subscribes to.

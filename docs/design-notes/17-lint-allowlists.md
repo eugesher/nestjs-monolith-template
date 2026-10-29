@@ -1,6 +1,6 @@
 # 17 — Lint allowlists
 
-Every `allow` entry of a policy in `eslint/boundaries/policies/` is a dependency the code has. An
+Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
 
 **A removed edge is pinned by a spec.** `spec/architecture/unused-edges.spec.ts` holds one
@@ -13,7 +13,7 @@ common-module spec imports the kernel; both are code the lint checks.
 
 ## Why an edge without a use stays
 
-### `selectors.mjs` — the base libs
+### `policies/selectors.mjs` — the base libs
 
 `baseLibs(...names)` is `libs('kernel', 'toolkit', ...names)`. The kernel is the vocabulary and the
 toolkit is the technique of every layer, so each layer gets both whether or not one of its files
@@ -53,7 +53,7 @@ Removing one of them turns its spec red.
 ### `module-areas.mjs` — processors share the layer model of features
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
-(`module-layers.mjs`). A processor uses fewer of them: today none has a domain, a plain
+(`categories/module-layers.mjs`). A processor uses fewer of them: today none has a domain, a plain
 infrastructure layer or `infrastructure/events`. Their entries stay, so a processor that grows a
 domain or publishes an event follows the same rules a feature does.
 

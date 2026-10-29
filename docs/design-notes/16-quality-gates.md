@@ -9,22 +9,22 @@ the coverage thresholds of the unit suite, and the CI workflow.
 yarn test:unit:coverage
 ```
 
-`test/jest-unit.config.js` collects coverage from `apps`, `core` and `libs` and fails the run below
+`jest/jest-unit.config.js` collects coverage from `apps`, `core` and `libs` and fails the run below
 a threshold.
 
 **What is not counted** is code that has no logic of its own or is covered by the e2e suites only:
 
-| Excluded | Why |
-| --- | --- |
-| `index.ts` | barrels |
-| `*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts` | declarations |
-| `*.module.ts`, `apps/*/src/main.ts` | wiring, booted by the e2e suites |
-| `infrastructure/persistence/repositories/**` | SQL, checked against the database by the e2e suites |
-| `presentation/controllers/**` | routes, guards and pipes, checked over HTTP by the e2e suites |
-| `module/*.facade.ts` | each method hands the call to a use case |
-| `libs/observability/src/tracer/tracer.ts` | a side-effect entry; its logic is in `tracer.helper.ts` |
-| `libs/openapi/src/api-reference/api-reference.ts` | mounts the reference page |
-| `libs/*/src/testing/**`, `apps/*/test/**` | test code |
+| Excluded                                                                           | Why                                                           |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `index.ts`                                                                         | barrels                                                       |
+| `*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts` | declarations                                                  |
+| `*.module.ts`, `apps/*/src/main.ts`                                                | wiring, booted by the e2e suites                              |
+| `infrastructure/persistence/repositories/**`                                       | SQL, checked against the database by the e2e suites           |
+| `presentation/controllers/**`                                                      | routes, guards and pipes, checked over HTTP by the e2e suites |
+| `module/*.facade.ts`                                                               | each method hands the call to a use case                      |
+| `libs/observability/src/tracer/tracer.ts`                                          | a side-effect entry; its logic is in `tracer.helper.ts`       |
+| `libs/openapi/src/api-reference/api-reference.ts`                                  | mounts the reference page                                     |
+| `libs/*/src/testing/**`, `apps/*/test/**`                                          | test code                                                     |
 
 **The thresholds** are 95% for statements, branches, functions and lines, three times over:
 
@@ -47,13 +47,14 @@ emits it as is. The e2e configs keep the faster per-file compile: they collect n
 
 [husky](https://typicode.github.io/husky/) installs the hooks of `.husky/` on `yarn install`:
 
-| Hook | Runs |
-| --- | --- |
-| `pre-commit` | `lint-staged`: `eslint --cache --fix` on the staged `*.ts` files; the whole `yarn lint` when `eslint.config.mjs`, `eslint/**/*.mjs`, `tsconfig.json` or `package.json` is staged |
-| `pre-push` | `yarn typecheck` |
+| Hook         | Runs                                                                                                                                                                                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pre-commit` | `yarn lint`: `pretty-quick --staged` formats every staged file Prettier knows, then `lint-staged` runs `eslint --cache --fix` on the staged `*.ts` files, and the whole `yarn lint:all` when `eslint.config.mjs`, `lint/**/*.mjs`, `tsconfig.json` or `package.json` is staged |
+| `pre-push`   | `yarn typecheck`                                                                                                                                                                                                                                                               |
 
-A change to the lint config or the aliases can break files that are not staged, so it lints the
-whole tree.
+`yarn lint` checks the staged files only; `yarn lint:all` checks the whole tree, as CI does. A
+change to the lint config or the aliases can break files that are not staged, so it runs the
+whole-tree lint.
 
 **The hooks are installed by `postinstall`, not `prepare`.** Yarn 4 does not run `prepare` on
 install. The script is `husky || true`: the production install of the `Dockerfile` drops dev
@@ -67,11 +68,12 @@ dependencies, and without the `husky` binary the install would fail.
 lint → typecheck → build → unit → e2e
 ```
 
-- `lint` also runs `yarn format:check`;
+- `lint` runs `yarn lint:all` and `yarn format:check`, which checks every file Prettier knows
+  outside `.gitignore`;
 - `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
-- `e2e` starts MySQL and Redis of `docker-compose/database-and-tests` and reseeds before each
-  suite, as `15-e2e-suites.md` requires. The seeding runs on the runner through
-  `yarn test:e2e:infra:reseed`, so the `node` service of the compose file is not built. The suites
-  read no env file: `test/jest-setup.js` sets the whole environment.
+- `e2e` starts MySQL and Redis of `docker-compose/test` and reseeds before each suite, as
+  `15-e2e-suites.md` requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`,
+  so the `node` service of the compose file is not built. The suites read no env file:
+  `jest/jest-setup.js` sets the whole environment.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.

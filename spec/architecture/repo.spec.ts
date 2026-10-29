@@ -12,8 +12,8 @@ describe('repo', () => {
       'core/entities/src/index.ts',
       'libs/toolkit/src/index.ts',
       'migrations/config/data-source.ts',
-      'scripts/support/script-args.ts',
-      'docker-compose/database-and-tests/seed/support/seed-rows.ts',
+      'scripts/node/support/script-args.ts',
+      'docker-compose/test/seed/support/seed-rows.ts',
     ]);
   });
 
@@ -24,21 +24,21 @@ describe('repo', () => {
   describe('docker-compose scripts (repo:docker-compose)', () => {
     it('a seed script MAY import its own support files', async () => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: 'import { x } from "./support/seed-rows";',
       }).toPassArchitectureLint();
     });
 
     it.each(['fs', 'joi', 'path', 'typeorm'])('a seed script MAY import %s', async (source) => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: `import x from "${source}";`,
       }).toPassArchitectureLint();
     });
 
     it('a seed script may NOT import dotenv — the database comes from the environment of the process', async () => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: 'import dotenv from "dotenv";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -47,7 +47,7 @@ describe('repo', () => {
       'a seed script may NOT import project code (%s) — it runs under plain node',
       async (source) => {
         await expect({
-          file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+          file: 'docker-compose/test/seed/__fixture__.ts',
           code: `import { x } from "${source}";`,
         }).toBreakRule('boundaries/dependencies');
       },
@@ -57,15 +57,15 @@ describe('repo', () => {
   describe('migrations (repo:migrations)', () => {
     it('a migration MAY import the migrations config', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
-        code: 'import { x } from "./config/data-source";',
+        file: 'migrations/snapshots/__fixture__.ts',
+        code: 'import { x } from "../config/data-source";',
       }).toPassArchitectureLint();
     });
 
     it('a migration may NOT import project code — it runs under plain node', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
-        code: 'import { x } from "../core/entities/src";',
+        file: 'migrations/snapshots/__fixture__.ts',
+        code: 'import { x } from "../../core/entities/src";',
       }).toBreakRule('boundaries/dependencies');
     });
 
@@ -81,7 +81,7 @@ describe('repo', () => {
 
     it('a migration may NOT import a package outside its allowlist', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
+        file: 'migrations/snapshots/__fixture__.ts',
         code: 'import { Module } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -90,40 +90,40 @@ describe('repo', () => {
   describe('scripts (repo:scripts)', () => {
     it('a script MAY import its own support files', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: 'import { x } from "./support/script-args";',
       }).toPassArchitectureLint();
     });
 
     it.each(['fs', 'path'])('a script MAY import %s', async (source) => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: `import { x } from "${source}";`,
       }).toPassArchitectureLint();
     });
 
     it('a script may NOT import a package outside its allowlist', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: 'import { DataSource } from "typeorm";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a script may NOT import project code', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
-        code: 'import { x } from "../libs/toolkit/src";',
+        file: 'scripts/node/__fixture__.ts',
+        code: 'import { x } from "../../libs/toolkit/src";',
       }).toBreakRule('boundaries/dependencies');
     });
   });
 
   describe('plain node files (migrations, scripts, seeds)', () => {
     it.each([
-      ['migrations/__fixture__.ts', '__dirname'],
+      ['migrations/snapshots/__fixture__.ts', '__dirname'],
       ['migrations/config/__fixture__.ts', '__filename'],
-      ['scripts/__fixture__.ts', 'require'],
-      ['docker-compose/database-and-tests/seed/__fixture__.ts', 'module'],
-      ['scripts/__fixture__.ts', 'exports'],
+      ['scripts/node/__fixture__.ts', 'require'],
+      ['docker-compose/test/seed/__fixture__.ts', 'module'],
+      ['scripts/node/__fixture__.ts', 'exports'],
     ])(
       '%s may NOT use the CommonJS global %s — node runs it as an ES module',
       async (file, name) => {
@@ -154,7 +154,7 @@ describe('repo', () => {
       'a namespace import of the node module %s is allowed',
       async (source) => {
         await expect({
-          file: 'scripts/__fixture__.ts',
+          file: 'scripts/node/__fixture__.ts',
           code: `import * as x from "${source}";`,
         }).not.toBreakRule('no-restricted-syntax');
       },

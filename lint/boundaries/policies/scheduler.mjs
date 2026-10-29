@@ -1,4 +1,4 @@
-import { packages } from '../selectors.mjs';
+import { packages } from './selectors.mjs';
 
 export const scheduler = [
   {

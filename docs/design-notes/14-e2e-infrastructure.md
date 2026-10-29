@@ -1,26 +1,26 @@
 # 14 — E2E infrastructure
 
-The e2e suites run against a real MySQL and a real Redis, started by
-`docker-compose/database-and-tests`. The development stack in the root `docker-compose.yml` uses
-other host ports, so a dev server never attaches to the test infrastructure.
+The e2e suites run against a real MySQL and a real Redis, started by `docker-compose/test`. The
+development stack in the root `docker-compose.yml` uses other host ports, so a dev server never
+attaches to the test infrastructure.
 
-| | Development | Tests |
-| --- | --- | --- |
-| Compose file | `docker-compose.yml` | `docker-compose/database-and-tests/docker-compose.yml` |
-| Project | `acme` | `acme-e2e` |
-| MySQL | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root` |
-| Redis | `localhost:6379`, no password | `localhost:6380`, password `e2e-redis-password` |
-| Data | a named volume, kept | an anonymous volume, rebuilt on every `up` |
+|              | Development                           | Tests                                           |
+| ------------ | ------------------------------------- | ----------------------------------------------- |
+| Compose file | `docker-compose.yml`                  | `docker-compose/test/docker-compose.yml`        |
+| Project      | `acme`                                | `acme-e2e`                                      |
+| MySQL        | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root`               |
+| Redis        | `localhost:6379`, no password         | `localhost:6380`, password `e2e-redis-password` |
+| Data         | a named volume, kept                  | an anonymous volume, rebuilt on every `up`      |
 
 ## Scripts
 
-| Script | What it does |
-| --- | --- |
-| `test:e2e:infra:up` | builds and starts MySQL, Redis and the `node` container, attached |
-| `test:e2e:infra:down` | removes the containers and their volumes |
-| `test:e2e:infra:reload` | `down`, then `up` |
-| `test:e2e:infra:reseed` | resets the data of running infrastructure, see below |
-| `test:e2e:seed` | loads the seed files into `DATABASE_URL` |
+| Script                              | What it does                                                         |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `test:e2e:infra:up`                 | builds and starts MySQL, Redis and the `node` container, attached    |
+| `test:e2e:infra:down`               | removes the containers and their volumes                             |
+| `test:e2e:infra:reload`             | `down`, then `up`                                                    |
+| `test:e2e:infra:reseed`             | resets the data of running infrastructure, see below                 |
+| `test:e2e:seed`                     | loads the seed files into `DATABASE_URL`                             |
 | `test:e2e:admin`, `test:e2e:client` | the e2e suite of one app, `--runInBand --ci`, see `15-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
@@ -34,7 +34,7 @@ reseed; the final run of a change starts from a reload.
 
 ## Seeds
 
-`docker-compose/database-and-tests/seed/data/<table>.sql` holds the rows of one table:
+`docker-compose/test/seed/data/<table>.sql` holds the rows of one table:
 
 - one `INSERT`, the rows sorted by primary key;
 - every row states its primary key, nothing relies on `AUTO_INCREMENT`;
@@ -51,8 +51,8 @@ Seed failed: Seeded rows break foreign keys:
 fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 ```
 
-**The seed runs under plain `node`**, like the migrations: `docker-compose/database-and-tests` has
-its own `package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
+**The seed runs under plain `node`**, like the migrations: `docker-compose/` has its own
+`package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
 It imports no project code, only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from
 the environment of the process and never from an env file, so it cannot seed the development
 database by accident. To seed it on purpose:
@@ -63,11 +63,11 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 
 ### Seeded accounts
 
-| Id | Email | Password | Role |
-| --- | --- | --- | --- |
-| `00000000-0000-4000-8000-000000000001` | `admin@example.com` | `admin-password-please-change` | admin |
-| `00000000-0000-4000-8000-000000000002` | `editor@example.com` | `editor-password-please-change` | editor |
-| `00000000-0000-4000-8000-000000000003` | `viewer@example.com` | `viewer-password-please-change` | viewer |
+| Id                                     | Email                  | Password                          | Role             |
+| -------------------------------------- | ---------------------- | --------------------------------- | ---------------- |
+| `00000000-0000-4000-8000-000000000001` | `admin@example.com`    | `admin-password-please-change`    | admin            |
+| `00000000-0000-4000-8000-000000000002` | `editor@example.com`   | `editor-password-please-change`   | editor           |
+| `00000000-0000-4000-8000-000000000003` | `viewer@example.com`   | `viewer-password-please-change`   | viewer           |
 | `00000000-0000-4000-8000-000000000004` | `disabled@example.com` | `disabled-password-please-change` | viewer, disabled |
 
 The hashes in `user.sql` are argon2id with the cost parameters of `.env.example`. Roles and
@@ -80,15 +80,15 @@ shifts the rows another feature's tests read. A row created by a test gets the n
 `AUTO_INCREMENT` value after the highest seeded id, and tests find it through `MAX(id)` read before
 the call, never by a literal.
 
-| Feature | Tables | Range |
-| --- | --- | --- |
-| identity | `role`, `permission` | 1–99 |
-| identity | `user` | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
-| item | `item` | 100–199 |
-| note | `note`, `note_revision` | 200–299 |
-| reminder | `reminder` | 300–399 |
-| ledger | `ledger_entry` | 400–499 |
-| idempotency | `idempotency_key` | 500–599 |
+| Feature     | Tables                  | Range                                                     |
+| ----------- | ----------------------- | --------------------------------------------------------- |
+| identity    | `role`, `permission`    | 1–99                                                      |
+| identity    | `user`                  | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
+| item        | `item`                  | 100–199                                                   |
+| note        | `note`, `note_revision` | 200–299                                                   |
+| reminder    | `reminder`              | 300–399                                                   |
+| ledger      | `ledger_entry`          | 400–499                                                   |
+| idempotency | `idempotency_key`       | 500–599                                                   |
 
 ## Images
 

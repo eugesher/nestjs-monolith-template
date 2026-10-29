@@ -3136,6 +3136,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pkgr/core@npm:^0.2.7":
+  version: 0.2.10
+  resolution: "@pkgr/core@npm:0.2.10"
+  checksum: 10c0/a0ab26e61afc0ed621fdfc03ee07d148c95ab959fcbf426aadbd4710e989dbca509d119ebbc156af33e3072550c7c788271995dbd6594786777ea69592b2f081
+  languageName: node
+  linkType: hard
+
 "@pkgr/core@npm:^0.3.6":
   version: 0.3.6
   resolution: "@pkgr/core@npm:0.3.6"
@@ -7362,6 +7369,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mri@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "mri@npm:1.2.0"
+  checksum: 10c0/a3d32379c2554cf7351db6237ddc18dc9e54e4214953f3da105b97dc3babe0deb3ffe99cf409b38ea47cc29f9430561ba6b53b24ab8f9ce97a4b50409e4a50e7
+  languageName: node
+  linkType: hard
+
 "ms@npm:^2.1.1, ms@npm:^2.1.3":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
@@ -7519,6 +7533,7 @@ __metadata:
     pino-http: "npm:11.0.0"
     pino-pretty: "npm:13.2.0"
     prettier: "npm:3.9.10"
+    pretty-quick: "npm:4.2.2"
     reflect-metadata: "npm:0.2.2"
     rxjs: "npm:7.8.2"
     supertest: "npm:7.3.1"
@@ -7910,7 +7925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:4.0.7, picomatch@npm:^4.0.3, picomatch@npm:^4.0.4, picomatch@npm:^4.0.7":
+"picomatch@npm:4.0.7, picomatch@npm:^4.0.2, picomatch@npm:^4.0.3, picomatch@npm:^4.0.4, picomatch@npm:^4.0.7":
   version: 4.0.7
   resolution: "picomatch@npm:4.0.7"
   checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
@@ -8076,6 +8091,25 @@ __metadata:
     "@jest/schemas": "npm:30.5.0"
     ansi-styles: "npm:^5.2.0"
   checksum: 10c0/bdef1790b9c93d1aa329c93885b0d1b8b6a3273bb680377531c70151b2e1b0a465210cae100661fc19b0bf35f507587f78b1a2f1afcf08791b9fe5630c23c076
+  languageName: node
+  linkType: hard
+
+"pretty-quick@npm:4.2.2":
+  version: 4.2.2
+  resolution: "pretty-quick@npm:4.2.2"
+  dependencies:
+    "@pkgr/core": "npm:^0.2.7"
+    ignore: "npm:^7.0.5"
+    mri: "npm:^1.2.0"
+    picocolors: "npm:^1.1.1"
+    picomatch: "npm:^4.0.2"
+    tinyexec: "npm:^0.3.2"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    prettier: ^3.0.0
+  bin:
+    pretty-quick: lib/cli.mjs
+  checksum: 10c0/3062677741d144e0439971f24742b39eb1ae78b263c5431b2d320b98a4d91de033e1a0b91267c2df7b51159f37446d250c6e33c094b56aa1185e6a4c38d5604f
   languageName: node
   linkType: hard
 
@@ -8902,6 +8936,13 @@ __metadata:
   dependencies:
     real-require: "npm:^1.0.0"
   checksum: 10c0/2d55ace44785a2547b9b15c61c1d2db6d5b3712e21ddb1be23b1f5d19387ac8f153f24767bfae03b3f7c8651eb83758e1fcbb954e1077336b562d2d2cd723137
+  languageName: node
+  linkType: hard
+
+"tinyexec@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "tinyexec@npm:0.3.2"
+  checksum: 10c0/3efbf791a911be0bf0821eab37a3445c2ba07acc1522b1fa84ae1e55f10425076f1290f680286345ed919549ad67527d07281f1c19d584df3b74326909eb1f90
   languageName: node
   linkType: hard
 

@@ -3,15 +3,15 @@
 Two [Posting](https://posting.sh) collections for checking the apps by hand, one per app:
 
 ```bash
-posting --collection http/admin-api --env http/dev.env
+posting --collection .http/admin-api --env .http/dev.env
 ```
 
 ```bash
-posting --collection http/client-api --env http/dev.env
+posting --collection .http/client-api --env .http/dev.env
 ```
 
 Script paths in the requests are relative to the collection root, so the root must be
-`http/admin-api` or `http/client-api` itself.
+`.http/admin-api` or `.http/client-api` itself.
 
 ## What is inside
 

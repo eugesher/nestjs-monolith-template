@@ -6,13 +6,13 @@ its contract and the global module. The route keeps `auth`, because the URL is a
 
 ## The full path, even for a thin feature
 
-| Layer | Piece | Job |
-| --- | --- | --- |
-| presentation | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter` | HTTP, validation, status codes |
-| application | `SessionLoginUseCase`, `SessionRefreshUseCase` | the feature's operations |
-| outbound | `SESSION_IDENTITY_PORT` | what the feature needs from identity, in its own terms |
-| infrastructure | `SessionIdentityCoreAdapter` | calls `IDENTITY_CORE_SESSION_PORT` |
-| domain | `SessionDomainException` | the refusal the feature understands |
+| Layer          | Piece                                                                    | Job                                                    |
+| -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
+| presentation   | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter` | HTTP, validation, status codes                         |
+| application    | `SessionLoginUseCase`, `SessionRefreshUseCase`                           | the feature's operations                               |
+| outbound       | `SESSION_IDENTITY_PORT`                                                  | what the feature needs from identity, in its own terms |
+| infrastructure | `SessionIdentityCoreAdapter`                                             | calls `IDENTITY_CORE_SESSION_PORT`                     |
+| domain         | `SessionDomainException`                                                 | the refusal the feature understands                    |
 
 **The controller never sees a core contract.** A shortcut, a controller that injects the identity
 port, would save four files. It would also make presentation depend on a core module, and then the
@@ -41,13 +41,13 @@ the refusal.
 therefore stay in one place. The feature module provides `HttpExceptionFilter` so that Nest can
 inject it into the feature filter.
 
-| Code | Status |
-| --- | --- |
-| `AUTH_INVALID_CREDENTIALS`, `AUTH_REFRESH_TOKEN_INVALID` | 401 |
-| `AUTH_USER_INACTIVE` | 403 |
-| `AUTH_USER_NOT_FOUND`, `AUTH_ROLE_NOT_FOUND` | 404 |
-| `AUTH_EMAIL_TAKEN` | 409 |
-| `AUTH_EMAIL_INVALID`, `AUTH_PASSWORD_TOO_WEAK`, `AUTH_PERMISSION_NOT_FOUND` | 400 |
+| Code                                                                        | Status |
+| --------------------------------------------------------------------------- | ------ |
+| `AUTH_INVALID_CREDENTIALS`, `AUTH_REFRESH_TOKEN_INVALID`                    | 401    |
+| `AUTH_USER_INACTIVE`                                                        | 403    |
+| `AUTH_USER_NOT_FOUND`, `AUTH_ROLE_NOT_FOUND`                                | 404    |
+| `AUTH_EMAIL_TAKEN`                                                          | 409    |
+| `AUTH_EMAIL_INVALID`, `AUTH_PASSWORD_TOO_WEAK`, `AUTH_PERMISSION_NOT_FOUND` | 400    |
 
 Login answers the same 401 for an unknown email and for a wrong password, so the response does not
 reveal which accounts exist.

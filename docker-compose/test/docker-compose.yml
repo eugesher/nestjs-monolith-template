@@ -30,7 +30,7 @@ services:
   node:
     build:
       context: ../..
-      dockerfile: docker-compose/database-and-tests/Dockerfile.node
+      dockerfile: docker-compose/test/docker/Dockerfile.node
     command: sh -c "yarn migration:run && yarn test:e2e:seed"
     environment:
       DATABASE_URL: mysql://root:root@mysql:3306/acme_db

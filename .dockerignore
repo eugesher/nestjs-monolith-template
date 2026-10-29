@@ -4,7 +4,7 @@ dist
 .yarn/cache
 .yarn/install-state.gz
 .husky
-test
+jest
 coverage
 .env.local
 .env

@@ -9,11 +9,11 @@ the adapters behind the ports and the HTTP surface.
 `ItemModel` walks `draft → active → archived`. Every change that reaches the database bumps
 `version`, and an archived item refuses every further change with `ITEM_ALREADY_ARCHIVED`.
 
-| Rule | Code |
-| --- | --- |
-| `sku` matches `^[A-Z0-9][A-Z0-9-]{2,63}$` | `ITEM_SKU_INVALID` |
-| `name` is 1 to 255 characters after trimming | `ITEM_NAME_INVALID` |
-| `version` is a positive integer | `ITEM_VERSION_INVALID` |
+| Rule                                         | Code                   |
+| -------------------------------------------- | ---------------------- |
+| `sku` matches `^[A-Z0-9][A-Z0-9-]{2,63}$`    | `ITEM_SKU_INVALID`     |
+| `name` is 1 to 255 characters after trimming | `ITEM_NAME_INVALID`    |
+| `version` is a positive integer              | `ITEM_VERSION_INVALID` |
 
 **The id is a string.** The column is `bigint unsigned`, which may exceed the safe integer range of
 a JavaScript number, so the id stays a string from the row to the response.
@@ -59,12 +59,12 @@ After a successful save the service reads the row again, so the answer carries t
 `ItemCreateUseCase` claims the `Idempotency-Key` on the logical body `{ sku, name, ownerId }`
 before any work:
 
-| Claim | Answer |
-| --- | --- |
-| `claimed` | create the item |
-| `replay` | the stored response, nothing else happens |
+| Claim       | Answer                                    |
+| ----------- | ----------------------------------------- |
+| `claimed`   | create the item                           |
+| `replay`    | the stored response, nothing else happens |
 | `in-flight` | `ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT` (409) |
-| `mismatch` | `ITEM_IDEMPOTENCY_KEY_REUSED` (422) |
+| `mismatch`  | `ITEM_IDEMPOTENCY_KEY_REUSED` (422)       |
 
 **The insert and the completion of the key share one transaction.** If completing the key fails,
 the item is rolled back with it. Otherwise a stored item with a released key would answer the
@@ -114,11 +114,11 @@ the use case answers when it sees the sku first.
 
 ## Adapters
 
-| Port | Adapter | Target |
-| --- | --- | --- |
-| `ITEM_LEDGER_PORT` | `ItemLedgerCoreAdapter` | `LEDGER_CORE_APPEND_PORT` |
+| Port                    | Adapter                        | Target                    |
+| ----------------------- | ------------------------------ | ------------------------- |
+| `ITEM_LEDGER_PORT`      | `ItemLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT` |
 | `ITEM_IDEMPOTENCY_PORT` | `ItemIdempotencyCommonAdapter` | `IDEMPOTENCY_COMMON_PORT` |
-| `ITEM_EVENTS_PORT` | `ItemEventsAdapter` | `EVENT_PUBLISHER_PORT` |
+| `ITEM_EVENTS_PORT`      | `ItemEventsAdapter`            | `EVENT_PUBLISHER_PORT`    |
 
 The idempotency adapter turns the claim outcome enum of the common module into the plain outcomes of
 the port and hands a replay's stored response back as the type the use case expects.
@@ -126,11 +126,11 @@ the port and hands a replay's stored response back as the type the use case expe
 **The events adapter speaks the contract of its consumer.** Event names and payloads live in
 `@acme-client-contracts/ledger-catalog-events`, next to the processor that reads them:
 
-| Domain event | Event name | Payload |
-| --- | --- | --- |
-| `ItemCreatedEvent` | `catalog.item.created` | `itemId`, `sku`, `name`, `ownerId`, `occurredAt` |
-| `ItemRenamedEvent` | `catalog.item.renamed` | `itemId`, `name`, `previousName`, `occurredAt` |
-| `ItemArchivedEvent` | `catalog.item.archived` | `itemId`, `sku`, `previousStatus`, `occurredAt` |
+| Domain event        | Event name              | Payload                                          |
+| ------------------- | ----------------------- | ------------------------------------------------ |
+| `ItemCreatedEvent`  | `catalog.item.created`  | `itemId`, `sku`, `name`, `ownerId`, `occurredAt` |
+| `ItemRenamedEvent`  | `catalog.item.renamed`  | `itemId`, `name`, `previousName`, `occurredAt`   |
+| `ItemArchivedEvent` | `catalog.item.archived` | `itemId`, `sku`, `previousStatus`, `occurredAt`  |
 
 `itemId` comes from the publish command, because a created item has no id in its event. The payload
 has no correlation id: an in-process listener runs in the context of the publishing request and
@@ -142,13 +142,13 @@ cannot import the idempotency contract around its common-adapter.
 
 ## HTTP
 
-| Method and path | Permission | Headers | Answer |
-| --- | --- | --- | --- |
-| `POST /items` | `item:write` | `Idempotency-Key`, required | 201, the item |
-| `GET /items` | `item:read` | | 200, a page of items |
-| `GET /items/:itemId` | `item:read` | | 200, the item |
-| `PATCH /items/:itemId/name` | `item:write` | `If-Match`, optional | 200, the item |
-| `PATCH /items/:itemId/archive` | `item:archive` | `If-Match`, optional | 200, the item |
+| Method and path                | Permission     | Headers                     | Answer               |
+| ------------------------------ | -------------- | --------------------------- | -------------------- |
+| `POST /items`                  | `item:write`   | `Idempotency-Key`, required | 201, the item        |
+| `GET /items`                   | `item:read`    |                             | 200, a page of items |
+| `GET /items/:itemId`           | `item:read`    |                             | 200, the item        |
+| `PATCH /items/:itemId/name`    | `item:write`   | `If-Match`, optional        | 200, the item        |
+| `PATCH /items/:itemId/archive` | `item:archive` | `If-Match`, optional        | 200, the item        |
 
 A replay of a creation answers 201 with the stored body, exactly like the first request.
 
@@ -163,9 +163,9 @@ even an admin changes only their own items.
 
 The two header decorators live in `common/shared`, because only features use them:
 
-| Alias | Decorator | Refusal |
-| --- | --- | --- |
-| `@acme-client-common/shared/concurrency` | `IfMatch` | `IF_MATCH_INVALID` (400) |
+| Alias                                    | Decorator        | Refusal                                                     |
+| ---------------------------------------- | ---------------- | ----------------------------------------------------------- |
+| `@acme-client-common/shared/concurrency` | `IfMatch`        | `IF_MATCH_INVALID` (400)                                    |
 | `@acme-client-common/shared/idempotency` | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
 
 - **`If-Match` is a version, not an entity tag.** `3` and `"3"` both mean version 3; a missing or
@@ -181,13 +181,13 @@ The two header decorators live in `common/shared`, because only features use the
 `HttpExceptionFilter` of `libs/http`. The body is `{ statusCode, message, code }`, plus `details`
 when the exception has them, such as `details.currentVersion` of `VERSION_MISMATCH`.
 
-| Code | Status |
-| --- | --- |
-| `ITEM_SKU_INVALID`, `ITEM_NAME_INVALID`, `ITEM_VERSION_INVALID` | 400 |
-| `ITEM_ACCESS_FORBIDDEN` | 403 |
-| `ITEM_NOT_FOUND` | 404 |
-| `ITEM_ALREADY_ARCHIVED`, `ITEM_SKU_TAKEN`, `ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT`, `VERSION_MISMATCH` | 409 |
-| `ITEM_IDEMPOTENCY_KEY_REUSED` | 422 |
+| Code                                                                                               | Status |
+| -------------------------------------------------------------------------------------------------- | ------ |
+| `ITEM_SKU_INVALID`, `ITEM_NAME_INVALID`, `ITEM_VERSION_INVALID`                                    | 400    |
+| `ITEM_ACCESS_FORBIDDEN`                                                                            | 403    |
+| `ITEM_NOT_FOUND`                                                                                   | 404    |
+| `ITEM_ALREADY_ARCHIVED`, `ITEM_SKU_TAKEN`, `ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT`, `VERSION_MISMATCH` | 409    |
+| `ITEM_IDEMPOTENCY_KEY_REUSED`                                                                      | 422    |
 
 There is no global filter for TypeORM's `OptimisticLockVersionMismatchError`. TypeORM throws it only
 for a read with an optimistic lock, and nothing reads that way: the version check is the `WHERE` of

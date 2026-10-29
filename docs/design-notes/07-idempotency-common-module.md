@@ -5,10 +5,10 @@
 It is a common module because two different entry points need it: the `item` feature claims keys
 while serving writes, and the `idempotency-purge` processor deletes expired ones on a schedule.
 
-| Alias | What it is |
-| --- | --- |
-| `@acme-client-contracts/idempotency` | `IDEMPOTENCY_COMMON_PORT`, its commands and views, `IdempotencyCommonClaimOutcomeEnum` |
-| `@acme-client-common/modules/idempotency` | `IdempotencyCommonModule`, the only export of the module root |
+| Alias                                     | What it is                                                                             |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| `@acme-client-contracts/idempotency`      | `IDEMPOTENCY_COMMON_PORT`, its commands and views, `IdempotencyCommonClaimOutcomeEnum` |
+| `@acme-client-common/modules/idempotency` | `IdempotencyCommonModule`, the only export of the module root                          |
 
 A feature root mounts the module. The feature reaches the port only from a common-adapter. Lint
 keeps admin-api out of both aliases.
@@ -23,12 +23,12 @@ succeeds. A "have I seen this key?" read before the write would let both through
 `BodyFingerprintHelper` hashes it canonically: object keys are sorted at every depth and array order
 is kept. The caller must leave out anything that changes on a retry, such as the correlation id.
 
-| Outcome | When | What the caller does |
-| --- | --- | --- |
-| `claimed` | the insert succeeded | the work, then `complete`, or `release` if it throws |
-| `replay` | same key, same body, completed | answers `storedResponse` without doing the work again |
-| `in-flight` | same key, same body, not completed | asks the client to retry shortly (409) |
-| `mismatch` | same key, different body | refuses (422): the stored answer belongs to another question |
+| Outcome     | When                               | What the caller does                                         |
+| ----------- | ---------------------------------- | ------------------------------------------------------------ |
+| `claimed`   | the insert succeeded               | the work, then `complete`, or `release` if it throws         |
+| `replay`    | same key, same body, completed     | answers `storedResponse` without doing the work again        |
+| `in-flight` | same key, same body, not completed | asks the client to retry shortly (409)                       |
+| `mismatch`  | same key, different body           | refuses (422): the stored answer belongs to another question |
 
 The outcome enum lives in the contract, not in `libs/kernel`, because only client-api reads it.
 
