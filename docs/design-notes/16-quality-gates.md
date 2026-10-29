@@ -9,7 +9,7 @@ the coverage thresholds of the unit suite, and the CI workflow.
 yarn test:unit:coverage
 ```
 
-`test/jest-unit.config.js` collects coverage from `apps`, `core` and `libs` and fails the run below
+`jest/jest-unit.config.js` collects coverage from `apps`, `core` and `libs` and fails the run below
 a threshold.
 
 **What is not counted** is code that has no logic of its own or is covered by the e2e suites only:
@@ -49,7 +49,7 @@ emits it as is. The e2e configs keep the faster per-file compile: they collect n
 
 | Hook | Runs |
 | --- | --- |
-| `pre-commit` | `lint-staged`: `eslint --cache --fix` on the staged `*.ts` files; the whole `yarn lint` when `eslint.config.mjs`, `eslint/**/*.mjs`, `tsconfig.json` or `package.json` is staged |
+| `pre-commit` | `lint-staged`: `eslint --cache --fix` on the staged `*.ts` files; the whole `yarn lint` when `eslint.config.mjs`, `lint/**/*.mjs`, `tsconfig.json` or `package.json` is staged |
 | `pre-push` | `yarn typecheck` |
 
 A change to the lint config or the aliases can break files that are not staged, so it lints the
@@ -72,6 +72,6 @@ lint → typecheck → build → unit → e2e
 - `e2e` starts MySQL and Redis of `docker-compose/database-and-tests` and reseeds before each
   suite, as `15-e2e-suites.md` requires. The seeding runs on the runner through
   `yarn test:e2e:infra:reseed`, so the `node` service of the compose file is not built. The suites
-  read no env file: `test/jest-setup.js` sets the whole environment.
+  read no env file: `jest/jest-setup.js` sets the whole environment.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.

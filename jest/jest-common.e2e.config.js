@@ -16,7 +16,7 @@ module.exports = (app) => ({
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: path.join(repoRoot, 'apps', app),
   testEnvironment: 'node',
-  setupFiles: ['reflect-metadata', path.join(repoRoot, 'test/jest-setup.js')],
+  setupFiles: ['reflect-metadata', path.join(repoRoot, 'jest/jest-setup.js')],
   testRegex: '\\.e2e-spec\\.ts$',
   transform: {
     '^.+\\.ts$': 'ts-jest',

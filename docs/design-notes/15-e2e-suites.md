@@ -53,7 +53,7 @@ the logger and the global prefix, and signs one access token for each seeded acc
 `JWT_ACCESS_SECRET` from the config. Everything the cases read is a getter that throws before
 `init()`. The client context also holds the Redis client, through `@acme-libs/cache/testing`.
 
-The shared files live in `test/`:
+The shared files live in `jest/`:
 
 | File | What it does |
 | --- | --- |
@@ -130,7 +130,7 @@ contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cac
 `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
-(`eslint/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
+(`lint/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
 what checks their shape.
 
 ## HTTP collection

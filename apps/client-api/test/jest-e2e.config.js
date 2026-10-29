@@ -1,3 +1,3 @@
-const config = require('../../../test/jest-common.e2e.config');
+const config = require('../../../jest/jest-common.e2e.config');
 
 module.exports = config('client-api');

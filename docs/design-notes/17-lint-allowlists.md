@@ -1,6 +1,6 @@
 # 17 — Lint allowlists
 
-Every `allow` entry of a policy in `eslint/boundaries/policies/` is a dependency the code has. An
+Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
 
 **A removed edge is pinned by a spec.** `spec/architecture/unused-edges.spec.ts` holds one
