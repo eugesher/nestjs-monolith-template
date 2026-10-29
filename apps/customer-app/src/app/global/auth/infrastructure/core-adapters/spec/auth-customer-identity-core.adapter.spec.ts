@@ -6,7 +6,11 @@ describe('AuthCustomerIdentityCoreAdapter', () => {
 
   beforeEach(() => {
     validateSubject = jest.fn();
-    adapter = new AuthCustomerIdentityCoreAdapter({ login: jest.fn(), validateSubject });
+    adapter = new AuthCustomerIdentityCoreAdapter({
+      register: jest.fn(),
+      login: jest.fn(),
+      validateSubject,
+    });
   });
 
   describe('findSubject', () => {

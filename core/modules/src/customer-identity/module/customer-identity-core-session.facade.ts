@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import {
   ICustomerIdentityCoreAccessTokenView,
   ICustomerIdentityCoreLoginCommand,
+  ICustomerIdentityCoreRegisterCommand,
+  ICustomerIdentityCoreRegisterView,
   ICustomerIdentityCoreSessionPort,
   ICustomerIdentityCoreSubjectView,
   ICustomerIdentityCoreValidateSubjectQuery,
@@ -10,6 +12,7 @@ import {
 import { Maybe } from '@acme-libs/toolkit';
 import {
   CustomerIdentityCoreLoginUseCase,
+  CustomerIdentityCoreRegisterUseCase,
   CustomerIdentityCoreValidateSubjectUseCase,
 } from '../application';
 
@@ -17,8 +20,15 @@ import {
 export class CustomerIdentityCoreSessionFacade implements ICustomerIdentityCoreSessionPort {
   constructor(
     private readonly identityCoreLogin: CustomerIdentityCoreLoginUseCase,
+    private readonly identityCoreRegister: CustomerIdentityCoreRegisterUseCase,
     private readonly identityCoreValidateSubject: CustomerIdentityCoreValidateSubjectUseCase,
   ) {}
+
+  public register(
+    command: ICustomerIdentityCoreRegisterCommand,
+  ): Promise<ICustomerIdentityCoreRegisterView> {
+    return this.identityCoreRegister.execute(command);
+  }
 
   public login(
     command: ICustomerIdentityCoreLoginCommand,

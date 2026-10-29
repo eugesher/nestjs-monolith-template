@@ -4,6 +4,8 @@
 `POST /iam/users/:userId/roles`, `GET /iam/roles` and `PUT /iam/roles/:role/permissions`. It has
 the same layers as `session` (see `03-session-feature.md`): one use case per endpoint,
 `IAM_IDENTITY_PORT`, and `IamStaffIdentityCoreAdapter` over `STAFF_IDENTITY_CORE_ADMIN_PORT`.
+IAM manages staff only: a customer signs up on their own through `POST /auth/register` of
+customer-app (see `03-session-feature.md`).
 
 ## Only staff-app has it
 

@@ -42,6 +42,7 @@ describe('App', () => {
   });
 
   describe('Session', () => {
+    sessionE2E.handleRegister();
     sessionE2E.handleLogin();
     sessionE2E.handleMe();
   });

@@ -47,3 +47,12 @@ same, so both kinds of account are hashed and signed by one piece of code, each 
 lists the codes those roles grant: `ledger:read`, the three `iam:*` codes and the two `note:*`
 codes. A customer holds none of them. `IdentityErrorCodeEnum` and `UserStatusEnum` are shared by
 both identity modules.
+
+## A taken email
+
+**The unique index answers whether an email is taken.** `StaffIdentityCoreRegisterUserRepository`
+inserts the user without looking the email up first and turns a duplicate-key error on
+`uq_staff_user_email` into `AUTH_EMAIL_TAKEN`. A lookup first would leave a window between the two
+statements in which a second registration with the same email passes too and then fails with 500.
+The roles are inserted after the user in the same transaction, so a refused registration leaves no
+rows behind. `customer-identity` registers customers the same way.

@@ -1,7 +1,6 @@
 import { StaffIdentityCoreUserModel } from '../../domain';
 
 export interface IStaffIdentityCoreRegisterUserRepositoryPort {
-  existsByEmail(email: string): Promise<boolean>;
   insert(user: StaffIdentityCoreUserModel): Promise<void>;
 }
 

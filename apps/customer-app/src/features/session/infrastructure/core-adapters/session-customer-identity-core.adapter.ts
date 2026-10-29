@@ -11,6 +11,8 @@ import {
   ISessionIdentityAccessTokenView,
   ISessionIdentityLoginCommand,
   ISessionIdentityPort,
+  ISessionIdentityRegisterCommand,
+  ISessionIdentityRegisterView,
 } from '../../outbound';
 
 @Injectable()
@@ -19,6 +21,18 @@ export class SessionCustomerIdentityCoreAdapter implements ISessionIdentityPort 
     @Inject(CUSTOMER_IDENTITY_CORE_SESSION_PORT)
     private readonly identity: ICustomerIdentityCoreSessionPort,
   ) {}
+
+  public async register(
+    command: ISessionIdentityRegisterCommand,
+  ): Promise<ISessionIdentityRegisterView> {
+    const { email, password } = command;
+
+    try {
+      return await this.identity.register({ email, password });
+    } catch (error) {
+      throw SessionCustomerIdentityCoreAdapter.translate(error);
+    }
+  }
 
   public async login(
     command: ISessionIdentityLoginCommand,

@@ -106,6 +106,29 @@ exports[`App Iam POST /api/iam/users should create a user who can log in at once
 }
 `;
 
+exports[`App Iam POST /api/iam/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "email": "race-viewer@example.com",
+      },
+    ],
+  },
+  "refused": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email race-viewer@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
 exports[`App Iam POST /api/iam/users should refuse a taken email in another case with 409 1`] = `
 {
   "db": {

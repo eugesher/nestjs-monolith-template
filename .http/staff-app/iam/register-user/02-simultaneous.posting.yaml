@@ -1,0 +1,27 @@
+name: 02-simultaneous
+description: |-
+  e2e: Iam › POST /api/iam/users › should let one of two simultaneous registrations with one email through and refuse the other with 409
+
+  Expect: one 201 Created and one 409 Conflict with code AUTH_EMAIL_TAKEN, one user row race-viewer@example.com
+  User: admin@example.com (token signed by scripts.py)
+  Note: send it twice at the same moment
+method: POST
+url: $STAFF_APP_BASE_URL/iam/users
+body:
+  content: |-
+    {
+      "email": "race-viewer@example.com",
+      "password": "race-viewer-password-please-change",
+      "roles": [
+        "viewer"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

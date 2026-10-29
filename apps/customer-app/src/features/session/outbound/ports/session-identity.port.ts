@@ -1,6 +1,12 @@
-import { ISessionIdentityAccessTokenView, ISessionIdentityLoginCommand } from '../interfaces';
+import {
+  ISessionIdentityAccessTokenView,
+  ISessionIdentityLoginCommand,
+  ISessionIdentityRegisterCommand,
+  ISessionIdentityRegisterView,
+} from '../interfaces';
 
 export interface ISessionIdentityPort {
+  register(command: ISessionIdentityRegisterCommand): Promise<ISessionIdentityRegisterView>;
   login(command: ISessionIdentityLoginCommand): Promise<ISessionIdentityAccessTokenView>;
 }
 
