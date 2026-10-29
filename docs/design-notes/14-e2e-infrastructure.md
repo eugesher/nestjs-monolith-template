@@ -51,8 +51,8 @@ Seed failed: Seeded rows break foreign keys:
 fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 ```
 
-**The seed runs under plain `node`**, like the migrations: `docker-compose/database-and-tests` has
-its own `package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
+**The seed runs under plain `node`**, like the migrations: `docker-compose/` has its own
+`package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
 It imports no project code, only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from
 the environment of the process and never from an env file, so it cannot seed the development
 database by accident. To seed it on purpose:

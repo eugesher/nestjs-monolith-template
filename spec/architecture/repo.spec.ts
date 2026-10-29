@@ -12,7 +12,7 @@ describe('repo', () => {
       'core/entities/src/index.ts',
       'libs/toolkit/src/index.ts',
       'migrations/config/data-source.ts',
-      'scripts/support/script-args.ts',
+      'scripts/node/support/script-args.ts',
       'docker-compose/database-and-tests/seed/support/seed-rows.ts',
     ]);
   });
@@ -90,29 +90,29 @@ describe('repo', () => {
   describe('scripts (repo:scripts)', () => {
     it('a script MAY import its own support files', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: 'import { x } from "./support/script-args";',
       }).toPassArchitectureLint();
     });
 
     it.each(['fs', 'path'])('a script MAY import %s', async (source) => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: `import { x } from "${source}";`,
       }).toPassArchitectureLint();
     });
 
     it('a script may NOT import a package outside its allowlist', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
+        file: 'scripts/node/__fixture__.ts',
         code: 'import { DataSource } from "typeorm";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a script may NOT import project code', async () => {
       await expect({
-        file: 'scripts/__fixture__.ts',
-        code: 'import { x } from "../libs/toolkit/src";',
+        file: 'scripts/node/__fixture__.ts',
+        code: 'import { x } from "../../libs/toolkit/src";',
       }).toBreakRule('boundaries/dependencies');
     });
   });
@@ -121,9 +121,9 @@ describe('repo', () => {
     it.each([
       ['migrations/snapshots/__fixture__.ts', '__dirname'],
       ['migrations/config/__fixture__.ts', '__filename'],
-      ['scripts/__fixture__.ts', 'require'],
+      ['scripts/node/__fixture__.ts', 'require'],
       ['docker-compose/database-and-tests/seed/__fixture__.ts', 'module'],
-      ['scripts/__fixture__.ts', 'exports'],
+      ['scripts/node/__fixture__.ts', 'exports'],
     ])(
       '%s may NOT use the CommonJS global %s — node runs it as an ES module',
       async (file, name) => {
@@ -154,7 +154,7 @@ describe('repo', () => {
       'a namespace import of the node module %s is allowed',
       async (source) => {
         await expect({
-          file: 'scripts/__fixture__.ts',
+          file: 'scripts/node/__fixture__.ts',
           code: `import * as x from "${source}";`,
         }).not.toBreakRule('no-restricted-syntax');
       },

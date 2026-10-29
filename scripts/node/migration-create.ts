@@ -9,7 +9,7 @@ if (name === undefined || !/^[A-Z][A-Za-z0-9]*$/.test(name)) {
 }
 
 const timestamp = Date.now();
-const file = join(import.meta.dirname, '../migrations/snapshots', `${timestamp}-${name}.ts`);
+const file = join(import.meta.dirname, '../../migrations/snapshots', `${timestamp}-${name}.ts`);
 const template = `import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class ${name}${timestamp} implements MigrationInterface {
