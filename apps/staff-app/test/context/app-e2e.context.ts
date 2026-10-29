@@ -54,7 +54,7 @@ export class AppE2EContext {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
     const config = moduleFixture.get(ConfigService);
-    const secret = config.getOrThrow<string>('JWT_ACCESS_SECRET');
+    const secret = config.getOrThrow<string>('JWT_SECRET');
     const prefix = config.getOrThrow<string>('API_PREFIX');
     const jwt = new JwtService({ secret });
     const app = moduleFixture.createNestApplication({ bufferLogs: true });

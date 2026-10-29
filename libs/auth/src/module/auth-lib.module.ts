@@ -12,7 +12,7 @@ import { AuthRolesGuard } from '../guards/auth-roles.guard';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.getOrThrow<string>('JWT_ACCESS_SECRET'),
+        secret: config.getOrThrow<string>('JWT_SECRET'),
       }),
     }),
   ],

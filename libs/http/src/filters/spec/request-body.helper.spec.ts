@@ -8,7 +8,6 @@ describe('RequestBodyHelper', () => {
         password: 'p',
         currentPassword: 'c',
         newPassword: 'n',
-        refreshToken: 't',
       });
 
       expect(masked).toEqual({
@@ -16,7 +15,6 @@ describe('RequestBodyHelper', () => {
         password: '[REDACTED]',
         currentPassword: '[REDACTED]',
         newPassword: '[REDACTED]',
-        refreshToken: '[REDACTED]',
       });
     });
 

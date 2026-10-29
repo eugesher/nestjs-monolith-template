@@ -46,5 +46,5 @@ asks the validator for the user. Roles and permissions come from the database on
 a revoked grant or a disabled account stops working on the next call, not at token expiry. The
 cost is one read per request.
 
-**A refresh token does not open a route.** The guard verifies with `JWT_ACCESS_SECRET`; refresh
-tokens are signed with `JWT_REFRESH_SECRET`, and the config schema refuses equal secrets.
+**One secret, one kind of token.** The guard verifies with `JWT_SECRET`, the secret identity signs
+the access token with. There is no other token kind for the guard to tell apart.

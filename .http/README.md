@@ -59,14 +59,14 @@ The e2e flushes Redis before every reminder case. When a description checks cach
 
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
 (`as_admin`, `as_editor`, `as_viewer` and so on). The function signs an HS256 token of a seeded user
-(`sub`, `iat`) with `JWT_ACCESS_SECRET` from `env/apps/<app>/.env.local` and puts it into the variable `token`,
+(`sub`, `iat`) with `JWT_SECRET` from `env/apps/<app>/.env.local` and puts it into the variable `token`,
 as `ctx.jwt.sign` does in the e2e. This also covers tokens that no login issues:
 
 - the token of a disabled user (`as_disabled`);
 - a token with forged role claims (`as_viewer_forged_claims`).
 
-`session/login/01-editor` saves the tokens it gets into the variables `access_token` and
-`refresh_token`. The requests that send one of them say so in `Note:` or `User:`.
+`session/login/01-editor` saves the token it gets into the variable `access_token`. The requests
+that send it say so in `Note:` or `User:`.
 
 ## Setup and cleanup
 

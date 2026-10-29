@@ -29,14 +29,8 @@ export class ConfigSetupModule {
         OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(5),
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).default(24),
 
-        JWT_ACCESS_SECRET: Joi.string().min(32).required(),
-        JWT_ACCESS_EXPIRES_IN: Joi.string().default('15m'),
-        JWT_REFRESH_SECRET: Joi.string()
-          .min(32)
-          .required()
-          .invalid(Joi.ref('JWT_ACCESS_SECRET'))
-          .messages({ 'any.invalid': 'JWT_REFRESH_SECRET must differ from JWT_ACCESS_SECRET' }),
-        JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
+        JWT_SECRET: Joi.string().min(32).required(),
+        JWT_EXPIRES_IN: Joi.string().default('7d'),
         AUTH_ARGON2_MEMORY_COST: Joi.number().integer().positive().default(19_456),
         AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().default(2),
         AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().default(1),

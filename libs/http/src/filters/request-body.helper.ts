@@ -1,10 +1,5 @@
 export class RequestBodyHelper {
-  private static readonly SECRET_FIELDS = new Set([
-    'password',
-    'currentPassword',
-    'newPassword',
-    'refreshToken',
-  ]);
+  private static readonly SECRET_FIELDS = new Set(['password', 'currentPassword', 'newPassword']);
   private static readonly MASK = '[REDACTED]';
 
   public static mask(body: unknown): unknown {

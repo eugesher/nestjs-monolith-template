@@ -67,7 +67,6 @@ describe('App', () => {
 
   describe('Session', () => {
     sessionE2E.handleLogin();
-    sessionE2E.handleRefresh();
     sessionE2E.handleMe();
   });
 

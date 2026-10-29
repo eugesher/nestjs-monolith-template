@@ -62,7 +62,7 @@ export class AppE2EContext {
     const dataSource = moduleFixture.get(DataSource);
     const redis = moduleFixture.get<Redis>(REDIS_CLIENT);
     const config = moduleFixture.get(ConfigService);
-    const secret = config.getOrThrow<string>('JWT_ACCESS_SECRET');
+    const secret = config.getOrThrow<string>('JWT_SECRET');
     const prefix = config.getOrThrow<string>('API_PREFIX');
     const jwt = new JwtService({ secret });
     const app = moduleFixture.createNestApplication({ bufferLogs: true });

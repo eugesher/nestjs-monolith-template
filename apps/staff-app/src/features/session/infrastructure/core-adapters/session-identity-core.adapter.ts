@@ -8,10 +8,9 @@ import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { DomainException } from '@acme-libs/toolkit';
 import { SessionDomainException } from '../../domain';
 import {
+  ISessionIdentityAccessTokenView,
   ISessionIdentityLoginCommand,
   ISessionIdentityPort,
-  ISessionIdentityRefreshCommand,
-  ISessionIdentityTokenPairView,
 } from '../../outbound';
 
 @Injectable()
@@ -23,23 +22,11 @@ export class SessionIdentityCoreAdapter implements ISessionIdentityPort {
 
   public async login(
     command: ISessionIdentityLoginCommand,
-  ): Promise<ISessionIdentityTokenPairView> {
+  ): Promise<ISessionIdentityAccessTokenView> {
     const { email, password } = command;
 
     try {
       return await this.identity.login({ email, password });
-    } catch (error) {
-      throw SessionIdentityCoreAdapter.translate(error);
-    }
-  }
-
-  public async refresh(
-    command: ISessionIdentityRefreshCommand,
-  ): Promise<ISessionIdentityTokenPairView> {
-    const { refreshToken } = command;
-
-    try {
-      return await this.identity.refreshToken({ refreshToken });
     } catch (error) {
       throw SessionIdentityCoreAdapter.translate(error);
     }

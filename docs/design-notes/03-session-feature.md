@@ -1,7 +1,6 @@
 # 03 — Session feature
 
-`apps/<app>/src/features/session` serves `POST /auth/login`, `POST /auth/refresh` and
-`GET /auth/me` in both apps. The feature is called `session` because `auth` already names the lib,
+`apps/<app>/src/features/session` serves `POST /auth/login` and `GET /auth/me` in both apps. The feature is called `session` because `auth` already names the lib,
 its contract and the global module. The route keeps `auth`, because the URL is a contract.
 
 ## The full path, even for a thin feature
@@ -9,7 +8,7 @@ its contract and the global module. The route keeps `auth`, because the URL is a
 | Layer          | Piece                                                                    | Job                                                    |
 | -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
 | presentation   | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter` | HTTP, validation, status codes                         |
-| application    | `SessionLoginUseCase`, `SessionRefreshUseCase`                           | the feature's operations                               |
+| application    | `SessionLoginUseCase`                                                    | the feature's operations                               |
 | outbound       | `SESSION_IDENTITY_PORT`                                                  | what the feature needs from identity, in its own terms |
 | infrastructure | `SessionIdentityCoreAdapter`                                             | calls `IDENTITY_CORE_SESSION_PORT`                     |
 | domain         | `SessionDomainException`                                                 | the refusal the feature understands                    |
@@ -37,13 +36,13 @@ the refusal.
 
 **The feature filter delegates.** `SessionHttpExceptionFilter` turns the code into an
 `HttpException` with the body `{ statusCode, message, code }` and hands it to the shared
-`HttpExceptionFilter`. Logging, and masking of `password` and `refreshToken` in the logged request,
+`HttpExceptionFilter`. Logging, and masking of `password` in the logged request,
 therefore stay in one place. The feature module provides `HttpExceptionFilter` so that Nest can
 inject it into the feature filter.
 
 | Code                                                                        | Status |
 | --------------------------------------------------------------------------- | ------ |
-| `AUTH_INVALID_CREDENTIALS`, `AUTH_REFRESH_TOKEN_INVALID`                    | 401    |
+| `AUTH_INVALID_CREDENTIALS`                                                  | 401    |
 | `AUTH_USER_INACTIVE`                                                        | 403    |
 | `AUTH_USER_NOT_FOUND`, `AUTH_ROLE_NOT_FOUND`                                | 404    |
 | `AUTH_EMAIL_TAKEN`                                                          | 409    |
@@ -54,6 +53,14 @@ reveal which accounts exist.
 
 ## One token, two apps
 
-Both apps verify with the same `JWT_ACCESS_SECRET` and read the same identity tables. A pair issued
-by one app is accepted by the other, and either app can refresh it. Login and refresh carry
-`@Public()`; without it the global JWT guard would answer 401 before the controller runs.
+Both apps verify with the same `JWT_SECRET` and read the same identity tables. A token issued
+by one app is accepted by the other. Login carries `@Public()`; without it the global JWT guard
+would answer 401 before the controller runs.
+
+**Login answers one access token.** The response is `{ accessToken }`. There is no refresh token:
+when the access token expires, the user logs in again. Its lifetime is `JWT_EXPIRES_IN` of the app,
+30 days in staff-app and 7 days in customer-app by default.
+
+**A long lifetime does not delay revocation.** The guard re-reads the user on every request (see
+`02-global-auth-guards.md`), so a disabled account or a revoked permission stops working on the
+next call. Expiry only bounds how long a stolen token stays usable for an account nobody disabled.

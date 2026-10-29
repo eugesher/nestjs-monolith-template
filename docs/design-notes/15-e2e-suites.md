@@ -50,7 +50,7 @@ feature that needs a hook before each case has `hooks()`, as `ReminderE2E` flush
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
 the logger and the global prefix, and signs one access token for each seeded account with
-`JWT_ACCESS_SECRET` from the config. Everything the cases read is a getter that throws before
+`JWT_SECRET` from the config. Everything the cases read is a getter that throws before
 `init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
 The Jest files outside the apps live in `jest/`:
@@ -105,12 +105,12 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 | App          | Feature  | Cases                                                                                                                                                                           |
 | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | staff-app    | app      | the schema of every entity matches the migrated database; customer-app routes are not mounted                                                                                   |
-| staff-app    | session  | login, refresh, `me`; claims in a token are ignored; refresh and access tokens are not interchangeable; a disabled user is refused                                              |
+| staff-app    | session  | login answers one access token of the app lifetime, `me`; claims in a token are ignored; a disabled user is refused                                                             |
 | staff-app    | iam      | roles from the database; a new user logs in at once; a revoked permission refuses the same token at once                                                                        |
 | staff-app    | ledger   | a page of one subject; validation                                                                                                                                               |
 | staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                       |
 | customer-app | app      | staff-app routes are not mounted                                                                                                                                                |
-| customer-app | session  | login, refresh, `me` through the filter of this app                                                                                                                             |
+| customer-app | session  | login answers one access token of the app lifetime, `me` through the filter of this app                                                                                         |
 | customer-app | item     | owner scope; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
 | customer-app | reminder | the summary is cached and every write drops it; dates under `TZ`; ownership; soft delete                                                                                        |
 
@@ -120,7 +120,7 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 plain `node`, which has no decorators.
 
 **A token is shared because the secret is.** Each suite boots one app. Both apps verify a token
-with the same `JWT_ACCESS_SECRET`, so a token of one app is valid in the other; the suites check
+with the same `JWT_SECRET`, so a token of one app is valid in the other; the suites check
 each app with tokens signed by that secret, not one app against the other.
 
 ## Lint

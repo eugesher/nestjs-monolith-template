@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type ISessionIdentityPort, SESSION_IDENTITY_PORT } from '../../outbound';
-import { ISessionLoginCommand, ISessionTokenPairView } from '../interfaces';
+import { ISessionLoginCommand, ISessionAccessTokenView } from '../interfaces';
 
 @Injectable()
 export class SessionLoginUseCase {
@@ -10,7 +10,7 @@ export class SessionLoginUseCase {
     private readonly identity: ISessionIdentityPort,
   ) {}
 
-  public execute(command: ISessionLoginCommand): Promise<ISessionTokenPairView> {
+  public execute(command: ISessionLoginCommand): Promise<ISessionAccessTokenView> {
     const { email, password } = command;
 
     return this.identity.login({ email, password });

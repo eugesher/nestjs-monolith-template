@@ -30,7 +30,6 @@ describe('SessionHttpExceptionFilter', () => {
     ['AUTH_EMAIL_INVALID', 400],
     ['AUTH_PASSWORD_TOO_WEAK', 400],
     ['AUTH_INVALID_CREDENTIALS', 401],
-    ['AUTH_REFRESH_TOKEN_INVALID', 401],
     ['AUTH_USER_INACTIVE', 403],
     ['AUTH_USER_NOT_FOUND', 404],
     ['AUTH_ROLE_NOT_FOUND', 404],

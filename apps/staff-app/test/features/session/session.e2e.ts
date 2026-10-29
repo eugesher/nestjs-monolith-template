@@ -12,7 +12,7 @@ export class SessionE2E {
 
   public handleLogin(): void {
     describe('POST /api/auth/login', () => {
-      it('should issue an access token the guards accept and a refresh token', async () => {
+      it('should issue an access token the guards accept, valid for the lifetime of this app', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/login')
           .send({ email: 'editor@example.com', password: 'editor-password-please-change' })
@@ -23,8 +23,13 @@ export class SessionE2E {
           .auth(response.body.accessToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        expect({ response: { body: response.body }, me: me.body }).toMatchSnapshot({
-          response: { body: { accessToken: expect.any(String), refreshToken: expect.any(String) } },
+        const payload = this.ctx.jwt.verify<{ iat: number; exp: number }>(
+          response.body.accessToken,
+        );
+        const lifetime = payload.exp - payload.iat;
+
+        expect({ response: { body: response.body }, me: me.body, lifetime }).toMatchSnapshot({
+          response: { body: { accessToken: expect.any(String) } },
         });
       });
 
@@ -63,40 +68,6 @@ export class SessionE2E {
     });
   }
 
-  public handleRefresh(): void {
-    describe('POST /api/auth/refresh', () => {
-      it('should exchange a refresh token for a pair the guards accept', async () => {
-        const login = await request(this.ctx.app.getHttpServer())
-          .post('/api/auth/login')
-          .send({ email: 'viewer@example.com', password: 'viewer-password-please-change' })
-          .expect(HttpStatus.OK);
-
-        const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/auth/refresh')
-          .send({ refreshToken: login.body.refreshToken })
-          .expect(HttpStatus.OK);
-
-        const me = await request(this.ctx.app.getHttpServer())
-          .get('/api/auth/me')
-          .auth(response.body.accessToken, { type: 'bearer' })
-          .expect(HttpStatus.OK);
-
-        expect({ response: { body: response.body }, me: me.body }).toMatchSnapshot({
-          response: { body: { accessToken: expect.any(String), refreshToken: expect.any(String) } },
-        });
-      });
-
-      it('should refuse an access token as a refresh token', async () => {
-        const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/auth/refresh')
-          .send({ refreshToken: this.ctx.viewerToken })
-          .expect(HttpStatus.UNAUTHORIZED);
-
-        expect({ response: { body: response.body } }).toMatchSnapshot();
-      });
-    });
-  }
-
   public handleMe(): void {
     describe('GET /api/auth/me', () => {
       it('should take the roles from the database, not from the token claims', async () => {
@@ -122,20 +93,6 @@ export class SessionE2E {
       it('should refuse a caller without a token', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/auth/me')
-          .expect(HttpStatus.UNAUTHORIZED);
-
-        expect({ response: { body: response.body } }).toMatchSnapshot();
-      });
-
-      it('should refuse a refresh token as an access token', async () => {
-        const login = await request(this.ctx.app.getHttpServer())
-          .post('/api/auth/login')
-          .send({ email: 'viewer@example.com', password: 'viewer-password-please-change' })
-          .expect(HttpStatus.OK);
-
-        const response = await request(this.ctx.app.getHttpServer())
-          .get('/api/auth/me')
-          .auth(login.body.refreshToken, { type: 'bearer' })
           .expect(HttpStatus.UNAUTHORIZED);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();

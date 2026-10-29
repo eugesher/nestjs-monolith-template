@@ -49,7 +49,7 @@ describe('AuthLibModule', () => {
         ConfigModule.forRoot({
           isGlobal: true,
           ignoreEnvFile: true,
-          load: [() => ({ JWT_ACCESS_SECRET: 'access-secret-of-at-least-thirty-two-chars' })],
+          load: [() => ({ JWT_SECRET: 'access-secret-of-at-least-thirty-two-chars' })],
         }),
       ],
       providers: [
@@ -113,7 +113,7 @@ describe('AuthLibModule', () => {
 
   it('answers 401 for a token signed with another secret', async () => {
     const token = await new JwtService({
-      secret: 'refresh-secret-of-at-least-thirty-two',
+      secret: 'another-secret-of-at-least-thirty-two',
     }).signAsync({ sub: 'ann' });
 
     const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });

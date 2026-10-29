@@ -1,15 +1,13 @@
 import { Maybe } from '@acme-libs/toolkit';
 import {
+  IIdentityCoreAccessTokenView,
   IIdentityCoreLoginCommand,
-  IIdentityCoreRefreshTokenCommand,
   IIdentityCoreSubjectView,
-  IIdentityCoreTokenPairView,
   IIdentityCoreValidateSubjectQuery,
 } from '../interfaces';
 
 export interface IIdentityCoreSessionPort {
-  login(command: IIdentityCoreLoginCommand): Promise<IIdentityCoreTokenPairView>;
-  refreshToken(command: IIdentityCoreRefreshTokenCommand): Promise<IIdentityCoreTokenPairView>;
+  login(command: IIdentityCoreLoginCommand): Promise<IIdentityCoreAccessTokenView>;
   validateSubject(
     query: IIdentityCoreValidateSubjectQuery,
   ): Promise<Maybe<IIdentityCoreSubjectView>>;
