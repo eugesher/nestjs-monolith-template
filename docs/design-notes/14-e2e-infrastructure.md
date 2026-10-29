@@ -1,16 +1,16 @@
 # 14 — E2E infrastructure
 
-The e2e suites run against a real MySQL and a real Redis, started by
-`docker-compose/database-and-tests`. The development stack in the root `docker-compose.yml` uses
-other host ports, so a dev server never attaches to the test infrastructure.
+The e2e suites run against a real MySQL and a real Redis, started by `docker-compose/test`. The
+development stack in the root `docker-compose.yml` uses other host ports, so a dev server never
+attaches to the test infrastructure.
 
-|              | Development                           | Tests                                                  |
-| ------------ | ------------------------------------- | ------------------------------------------------------ |
-| Compose file | `docker-compose.yml`                  | `docker-compose/database-and-tests/docker-compose.yml` |
-| Project      | `acme`                                | `acme-e2e`                                             |
-| MySQL        | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root`                      |
-| Redis        | `localhost:6379`, no password         | `localhost:6380`, password `e2e-redis-password`        |
-| Data         | a named volume, kept                  | an anonymous volume, rebuilt on every `up`             |
+|              | Development                           | Tests                                           |
+| ------------ | ------------------------------------- | ----------------------------------------------- |
+| Compose file | `docker-compose.yml`                  | `docker-compose/test/docker-compose.yml`        |
+| Project      | `acme`                                | `acme-e2e`                                      |
+| MySQL        | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root`               |
+| Redis        | `localhost:6379`, no password         | `localhost:6380`, password `e2e-redis-password` |
+| Data         | a named volume, kept                  | an anonymous volume, rebuilt on every `up`      |
 
 ## Scripts
 
@@ -34,7 +34,7 @@ reseed; the final run of a change starts from a reload.
 
 ## Seeds
 
-`docker-compose/database-and-tests/seed/data/<table>.sql` holds the rows of one table:
+`docker-compose/test/seed/data/<table>.sql` holds the rows of one table:
 
 - one `INSERT`, the rows sorted by primary key;
 - every row states its primary key, nothing relies on `AUTO_INCREMENT`;

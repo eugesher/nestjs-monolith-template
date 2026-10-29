@@ -13,7 +13,7 @@ describe('repo', () => {
       'libs/toolkit/src/index.ts',
       'migrations/config/data-source.ts',
       'scripts/node/support/script-args.ts',
-      'docker-compose/database-and-tests/seed/support/seed-rows.ts',
+      'docker-compose/test/seed/support/seed-rows.ts',
     ]);
   });
 
@@ -24,21 +24,21 @@ describe('repo', () => {
   describe('docker-compose scripts (repo:docker-compose)', () => {
     it('a seed script MAY import its own support files', async () => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: 'import { x } from "./support/seed-rows";',
       }).toPassArchitectureLint();
     });
 
     it.each(['fs', 'joi', 'path', 'typeorm'])('a seed script MAY import %s', async (source) => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: `import x from "${source}";`,
       }).toPassArchitectureLint();
     });
 
     it('a seed script may NOT import dotenv — the database comes from the environment of the process', async () => {
       await expect({
-        file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+        file: 'docker-compose/test/seed/__fixture__.ts',
         code: 'import dotenv from "dotenv";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -47,7 +47,7 @@ describe('repo', () => {
       'a seed script may NOT import project code (%s) — it runs under plain node',
       async (source) => {
         await expect({
-          file: 'docker-compose/database-and-tests/seed/__fixture__.ts',
+          file: 'docker-compose/test/seed/__fixture__.ts',
           code: `import { x } from "${source}";`,
         }).toBreakRule('boundaries/dependencies');
       },
@@ -122,7 +122,7 @@ describe('repo', () => {
       ['migrations/snapshots/__fixture__.ts', '__dirname'],
       ['migrations/config/__fixture__.ts', '__filename'],
       ['scripts/node/__fixture__.ts', 'require'],
-      ['docker-compose/database-and-tests/seed/__fixture__.ts', 'module'],
+      ['docker-compose/test/seed/__fixture__.ts', 'module'],
       ['scripts/node/__fixture__.ts', 'exports'],
     ])(
       '%s may NOT use the CommonJS global %s — node runs it as an ES module',
