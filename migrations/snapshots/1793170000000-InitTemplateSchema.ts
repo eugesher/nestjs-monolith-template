@@ -63,18 +63,16 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TABLE item (
+      CREATE TABLE product (
         id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         sku        VARCHAR(64)  NOT NULL,
         name       VARCHAR(255) NOT NULL,
-        owner_id   CHAR(36)     NOT NULL,
         status     ENUM('draft','active','archived') NOT NULL DEFAULT 'draft',
         version    INT          NOT NULL DEFAULT 1,
         created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP    NULL,
-        UNIQUE KEY uq_item_sku (sku),
-        KEY idx_item_owner (owner_id)
+        UNIQUE KEY uq_product_sku (sku)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
@@ -112,7 +110,7 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('DROP TABLE IF EXISTS ledger_entry');
     await queryRunner.query('DROP TABLE IF EXISTS idempotency_key');
-    await queryRunner.query('DROP TABLE IF EXISTS item');
+    await queryRunner.query('DROP TABLE IF EXISTS product');
     await queryRunner.query('DROP TABLE IF EXISTS staff_role_permissions');
     await queryRunner.query('DROP TABLE IF EXISTS staff_user_roles');
     await queryRunner.query('DROP TABLE IF EXISTS staff_permission');

@@ -1,6 +1,6 @@
 # 09 — Ledger catalog events processor
 
-`apps/customer-app/src/processors/ledger-catalog-events` records catalog events in the ledger of
+`apps/staff-app/src/processors/ledger-catalog-events` records catalog events in the ledger of
 `core/modules/src/ledger` (see `05-core-ledger.md`). It is a processor, not a feature: an in-process
 event enters it, not an HTTP request, and it has no controller.
 
@@ -12,20 +12,20 @@ event enters it, not an HTTP request, and it has no controller.
 | `infrastructure/core-adapters` | `LedgerCatalogEventsLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT` |
 
 The processor sees no feature. The event names and payloads live in
-`@acme-customer-contracts/ledger-catalog-events`, which the item feature publishes against (see
-`08-item-feature.md`).
+`@acme-staff-contracts/ledger-catalog-events`, which the product feature publishes against (see
+`08-product-feature.md`).
 
 ## Events and entries
 
-| Event                   | Operation key        | Action         | Payload                  |
-| ----------------------- | -------------------- | -------------- | ------------------------ |
-| `catalog.item.created`  | `item-created:<id>`  | `ItemCreated`  | `sku`, `name`, `ownerId` |
-| `catalog.item.archived` | `item-archived:<id>` | `ItemArchived` | `sku`, `previousStatus`  |
+| Event                      | Operation key           | Action            | Payload                 |
+| -------------------------- | ----------------------- | ----------------- | ----------------------- |
+| `catalog.product.created`  | `product-created:<id>`  | `ProductCreated`  | `sku`, `name`           |
+| `catalog.product.archived` | `product-archived:<id>` | `ProductArchived` | `sku`, `previousStatus` |
 
-Every entry has the subject type `item` and the item id as the subject id. The item feature also
-publishes `catalog.item.renamed`, which nothing subscribes to.
+Every entry has the subject type `product` and the product id as the subject id. The product feature also
+publishes `catalog.product.renamed`, which nothing subscribes to.
 
-**The archive has two writers.** The item feature also records the archive after the commit, under
+**The archive has two writers.** The product feature also records the archive after the commit, under
 the same key and with the same payload. The ledger keeps the first append and answers the second
 with `appended: false`, so the row is the same whichever comes first.
 
@@ -37,7 +37,7 @@ like any other code serving that request.
 
 ## Failures
 
-The item is already committed when its event arrives, so a failed append must not reach the
+The product is already committed when its event arrives, so a failed append must not reach the
 publisher. `LedgerCatalogEventsRecordService` tries three times through `ReplayRetryHelper`, logs
 each retry at `warn` and then the entry at `error` for a replay, and returns normally.
 

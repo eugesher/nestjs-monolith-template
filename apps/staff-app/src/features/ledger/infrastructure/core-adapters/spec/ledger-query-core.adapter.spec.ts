@@ -16,7 +16,7 @@ describe('LedgerQueryCoreAdapter', () => {
       const page = await adapter.list({
         page: 3,
         size: 5,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });
@@ -25,7 +25,7 @@ describe('LedgerQueryCoreAdapter', () => {
       expect(list).toHaveBeenCalledWith({
         page: 3,
         size: 5,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });

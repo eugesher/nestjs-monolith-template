@@ -7,7 +7,7 @@ description: |-
 url: $STAFF_APP_BASE_URL/notes
 params:
   - name: subjectType
-    value: item
+    value: product
 auth:
   type: bearer_token
   bearer_token:

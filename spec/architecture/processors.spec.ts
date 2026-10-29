@@ -22,8 +22,8 @@ describe('processors (processors/<module>) — modules entered by in-process eve
       'apps/__processors-fixture__/src/processors/digest/modules/index.ts',
       'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/digest-daily.module.ts',
       'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/presentation/index.ts',
-      'apps/__processors-fixture__/src/features/item/item.module.ts',
-      'apps/__processors-fixture__/src/features/item/application/index.ts',
+      'apps/__processors-fixture__/src/features/product/product.module.ts',
+      'apps/__processors-fixture__/src/features/product/application/index.ts',
       'apps/__processors-fixture__/src/contracts/catalog-events/index.ts',
       'apps/__processors-fixture__/src/contracts/idempotency/index.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/index.ts',
@@ -263,8 +263,8 @@ describe('processors (processors/<module>) — modules entered by in-process eve
     it.each([
       'apps/__processors-fixture__/src/processors/catalog-events/application/__fixture__.ts',
       'apps/__processors-fixture__/src/processors/catalog-events/infrastructure/__fixture__.ts',
-      'apps/__processors-fixture__/src/features/item/presentation/__fixture__.ts',
-      'apps/__processors-fixture__/src/features/item/infrastructure/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/product/presentation/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/product/infrastructure/__fixture__.ts',
       'apps/__processors-fixture__/src/app/__fixture__.ts',
     ])(
       '%s may NOT import the in-process bus — only processor consumers subscribe',
@@ -300,7 +300,7 @@ describe('processors (processors/<module>) — modules entered by in-process eve
       'apps/__processors-fixture__/src/processors/purge/application/__fixture__.ts',
       'apps/__processors-fixture__/src/processors/purge/infrastructure/__fixture__.ts',
       'apps/__processors-fixture__/src/processors/purge/__fixture__.ts',
-      'apps/__processors-fixture__/src/features/item/presentation/__fixture__.ts',
+      'apps/__processors-fixture__/src/features/product/presentation/__fixture__.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
     ])('%s may NOT schedule — only processor consumers do', async (file) => {
       await expect({
@@ -365,13 +365,13 @@ describe('processors (processors/<module>) — modules entered by in-process eve
     it('a processor may NOT reach a feature', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/catalog-events/__fixture__.ts',
-        code: 'import { x } from "../../features/item/item.module";',
+        code: 'import { x } from "../../features/product/product.module";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a feature may NOT reach a processor', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/features/item/__fixture__.ts',
+        file: 'apps/__processors-fixture__/src/features/product/__fixture__.ts',
         code: 'import { x } from "../../processors/catalog-events/catalog-events.module";',
       }).toBreakRule('boundaries/dependencies');
     });

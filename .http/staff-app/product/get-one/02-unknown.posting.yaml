@@ -1,0 +1,13 @@
+name: 02-unknown
+description: |-
+  e2e: Product › GET /api/products/:productId › should answer an unknown product with 404
+
+  Expect: 404 Not Found, code PRODUCT_NOT_FOUND
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/products/999
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

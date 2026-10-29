@@ -27,9 +27,9 @@ describe('one repository per use case, service or facade', () => {
         'a use case with its own repository port',
         [
           {
-            name: 'ItemGetHistoryUseCase',
+            name: 'ProductGetHistoryUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemGetHistoryRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductGetHistoryRepositoryPort' }],
           },
         ],
       ],
@@ -37,9 +37,9 @@ describe('one repository per use case, service or facade', () => {
         'a service with its own repository port',
         [
           {
-            name: 'ItemPricingService',
+            name: 'ProductPricingService',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemPricingRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductPricingRepositoryPort' }],
           },
         ],
       ],
@@ -57,14 +57,14 @@ describe('one repository per use case, service or facade', () => {
         'the CRUD use cases of a resource sharing its CRUD repository',
         [
           {
-            name: 'ItemGetManyUseCase',
+            name: 'ProductGetManyUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemCrudRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
           },
           {
-            name: 'ItemDeleteOneUseCase',
+            name: 'ProductDeleteOneUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemCrudRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
           },
         ],
       ],
@@ -77,11 +77,11 @@ describe('one repository per use case, service or facade', () => {
         'two repositories',
         [
           {
-            name: 'ItemGetHistoryUseCase',
+            name: 'ProductGetHistoryUseCase',
             file: 'x',
             params: [
-              { name: 'repository', type: 'IItemGetHistoryRepositoryPort' },
-              { name: 'other', type: 'IItemListArchivedRepositoryPort' },
+              { name: 'repository', type: 'IProductGetHistoryRepositoryPort' },
+              { name: 'other', type: 'IProductListArchivedRepositoryPort' },
             ],
           },
         ],
@@ -90,9 +90,9 @@ describe('one repository per use case, service or facade', () => {
         'a repository kept under another name',
         [
           {
-            name: 'ItemGetHistoryUseCase',
+            name: 'ProductGetHistoryUseCase',
             file: 'x',
-            params: [{ name: 'categories', type: 'IItemGetHistoryRepositoryPort' }],
+            params: [{ name: 'categories', type: 'IProductGetHistoryRepositoryPort' }],
           },
         ],
       ],
@@ -100,9 +100,9 @@ describe('one repository per use case, service or facade', () => {
         'the repository of another consumer',
         [
           {
-            name: 'ItemGetHistoryUseCase',
+            name: 'ProductGetHistoryUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemListArchivedRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductListArchivedRepositoryPort' }],
           },
         ],
       ],
@@ -110,9 +110,9 @@ describe('one repository per use case, service or facade', () => {
         'a CRUD repository outside the CRUD use cases',
         [
           {
-            name: 'ItemGetHistoryUseCase',
+            name: 'ProductGetHistoryUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemCrudRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
           },
         ],
       ],
@@ -122,7 +122,7 @@ describe('one repository per use case, service or facade', () => {
           {
             name: 'NoteGetManyUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IItemCrudRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
           },
         ],
       ],

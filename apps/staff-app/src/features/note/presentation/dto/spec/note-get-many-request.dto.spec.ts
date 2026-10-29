@@ -16,7 +16,7 @@ describe('NoteGetManyRequestDto', () => {
     const dto = plainToInstance(NoteGetManyRequestDto, {
       page: '2',
       size: '500',
-      subjectType: 'item',
+      subjectType: 'product',
       subjectId: '42',
       resolved: 'false',
     });
@@ -27,7 +27,7 @@ describe('NoteGetManyRequestDto', () => {
     expect(dto).toEqual({
       page: 2,
       size: 500,
-      subjectType: 'item',
+      subjectType: 'product',
       subjectId: '42',
       resolved: false,
     });
@@ -43,7 +43,7 @@ describe('NoteGetManyRequestDto', () => {
   });
 
   it('leaves half of the subject to the use case', () => {
-    const dto = plainToInstance(NoteGetManyRequestDto, { subjectType: 'item' });
+    const dto = plainToInstance(NoteGetManyRequestDto, { subjectType: 'product' });
 
     const errors = validateSync(dto);
 
@@ -53,7 +53,7 @@ describe('NoteGetManyRequestDto', () => {
   it.each([
     ['page zero', { page: '0' }, 'page', ['min']],
     ['a fractional size', { size: '1.5' }, 'size', ['isInt']],
-    ['an uppercase subject type', { subjectType: 'Item' }, 'subjectType', ['matches']],
+    ['an uppercase subject type', { subjectType: 'Product' }, 'subjectType', ['matches']],
     ['an empty subject id', { subjectId: '' }, 'subjectId', ['minLength']],
     ['a subject id of 65 characters', { subjectId: 's'.repeat(65) }, 'subjectId', ['maxLength']],
     ['resolved=yes', { resolved: 'yes' }, 'resolved', ['isBoolean']],

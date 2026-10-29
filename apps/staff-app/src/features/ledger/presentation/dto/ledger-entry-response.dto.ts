@@ -4,16 +4,16 @@ export class LedgerEntryResponseDto {
   @ApiResponseProperty({ example: '4210' })
   public id: string;
 
-  @ApiResponseProperty({ example: 'item-archived:12' })
+  @ApiResponseProperty({ example: 'product-archived:12' })
   public operationKey: string;
 
-  @ApiResponseProperty({ example: 'item' })
+  @ApiResponseProperty({ example: 'product' })
   public subjectType: string;
 
   @ApiResponseProperty({ example: '12' })
   public subjectId: string;
 
-  @ApiResponseProperty({ example: 'ItemArchived' })
+  @ApiResponseProperty({ example: 'ProductArchived' })
   public action: string;
 
   @ApiResponseProperty({ example: { title: 'Lamp' } })

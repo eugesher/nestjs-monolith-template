@@ -33,8 +33,8 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
       root = mkdtempSync(path.join(tmpdir(), 'app-module-kinds-'));
 
       for (const file of [
-        'apps/app/src/features/item/item.module.ts',
-        'apps/app/src/features/item/presentation/controllers/item.controller.ts',
+        'apps/app/src/features/product/product.module.ts',
+        'apps/app/src/features/product/presentation/controllers/product.controller.ts',
         'apps/app/src/features/ledger/ledger.module.ts',
         'apps/app/src/features/ledger/modules/index.ts',
         'apps/app/src/features/ledger/modules/ledger-export/ledger-export.module.ts',
@@ -61,13 +61,13 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
           .map(({ relPath, area, nested }) => ({ relPath, area, nested }))
           .sort((a, b) => a.relPath.localeCompare(b.relPath)),
       ).toEqual([
-        { relPath: 'apps/app/src/features/item', area: 'features', nested: false },
         { relPath: 'apps/app/src/features/ledger', area: 'features', nested: false },
         {
           relPath: 'apps/app/src/features/ledger/modules/ledger-export',
           area: 'features',
           nested: true,
         },
+        { relPath: 'apps/app/src/features/product', area: 'features', nested: false },
         { relPath: 'apps/app/src/processors/catalog-events', area: 'processors', nested: false },
         { relPath: 'apps/app/src/processors/digest', area: 'processors', nested: false },
         { relPath: 'apps/app/src/processors/purge', area: 'processors', nested: false },

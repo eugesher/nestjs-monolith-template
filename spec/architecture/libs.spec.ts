@@ -26,7 +26,7 @@ describe('libs', () => {
       'libs/contracts/src/health/index.ts',
       'libs/contracts/src/messaging/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
-      'apps/__libs-fixture__/src/features/item/item.module.ts',
+      'apps/__libs-fixture__/src/features/product/product.module.ts',
     ]);
   });
 
@@ -44,7 +44,7 @@ describe('libs', () => {
   it('a lib may NOT reach apps', async () => {
     await expect({
       file: 'libs/observability/src/__fixture__.ts',
-      code: 'import { x } from "../../../apps/__libs-fixture__/src/features/item/item.module";',
+      code: 'import { x } from "../../../apps/__libs-fixture__/src/features/product/product.module";',
     }).toBreakRule('boundaries/dependencies');
   });
 

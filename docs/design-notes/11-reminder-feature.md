@@ -24,15 +24,16 @@ not exist, such as `2026-02-30`.
 **Moving a reminder to its current date changes nothing.** It keeps the version, and the write
 service does not touch the database.
 
-**The id is a string**, like the item id: the column is `bigint unsigned`.
+**The id is a string**, like the product id: the column is `bigint unsigned`.
 
 The aggregate records no events. Nothing outside the feature reacts to a reminder.
 
 ## Ownership
 
 `ReminderAccessService` loads a reminder of the caller or refuses it with `REMINDER_NOT_FOUND`
-(404): a missing reminder and a reminder of another customer get the same answer, as with items.
-The `ownerId` is always required.
+(404): a missing reminder and a reminder of another customer get the same answer, so an id never
+reveals whether someone else's reminder exists. The `ownerId` is always required. Reminders are the
+ownership example of the template: products are a shared catalog (see `08-product-feature.md`).
 
 Listing and the summary take the owner as a required filter, so no query can return the reminders
 of everyone.
@@ -40,7 +41,7 @@ of everyone.
 ## Optimistic concurrency
 
 `ReminderWriteService.write(command, mutate)` changes a stored reminder the same way
-`ItemWriteService` changes an item: it loads the reminder fresh, applies `mutate`, and saves with
+`ProductWriteService` changes a product: it loads the reminder fresh, applies `mutate`, and saves with
 `UPDATE … WHERE version = <as read>`. The repository answers a lost race with `false`, and the
 service turns it into `ReminderWriteConflictError` for `OccRetryHelper`.
 
@@ -91,7 +92,7 @@ Each repository port has its own repository: `ReminderAccessRepository`, `Remind
 `deleted_at IS NULL` to every find and query builder on the entity, so the access service answers
 `REMINDER_NOT_FOUND` for it and neither the list nor the summary counts it.
 
-**The version check is in the `WHERE`**, as for items: `update` writes `due_on`, `status` and
+**The version check is in the `WHERE`**, as for products: `update` writes `due_on`, `status` and
 `version` where the id and the version as read match, and answers whether one row changed.
 
 `list` returns the reminders of one owner, soonest first and then by id, optionally of one status.
@@ -140,12 +141,12 @@ instant, with a 400 from validation. A well-formed date that does not exist, suc
 reaches the model and is refused there as `REMINDER_DUE_ON_INVALID`, also a 400.
 
 `reminderId` is a string of 1 to 20 digits without a leading zero, checked by
-`ReminderIdRequestDto`, like `itemId`.
+`ReminderIdRequestDto`, like `productId`.
 
 ### Errors
 
 `ReminderHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
-`HttpExceptionFilter` of `libs/http`, with the same body as items.
+`HttpExceptionFilter` of `libs/http`, with the same body as products.
 
 | Code                                                                                                     | Status |
 | -------------------------------------------------------------------------------------------------------- | ------ |

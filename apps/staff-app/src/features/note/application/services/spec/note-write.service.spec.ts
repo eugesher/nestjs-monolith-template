@@ -15,7 +15,7 @@ describe('NoteWriteService', () => {
     load = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Supplier confirmed',
         authorId: 'admin-1',

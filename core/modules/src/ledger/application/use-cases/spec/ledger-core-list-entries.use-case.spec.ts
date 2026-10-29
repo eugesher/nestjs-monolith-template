@@ -11,10 +11,10 @@ describe('LedgerCoreListEntriesUseCase', () => {
         items: [
           LedgerCoreEntryModel.reconstitute({
             id: '4210',
-            operationKey: 'item-archived:12',
-            subjectType: 'item',
+            operationKey: 'product-archived:12',
+            subjectType: 'product',
             subjectId: '12',
-            action: 'ItemArchived',
+            action: 'ProductArchived',
             payload: {},
             correlationId: 'corr-1',
             occurredAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -34,7 +34,7 @@ describe('LedgerCoreListEntriesUseCase', () => {
       const page = await useCase.execute({
         page: 2,
         size: 1,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });
@@ -43,10 +43,10 @@ describe('LedgerCoreListEntriesUseCase', () => {
         items: [
           {
             id: '4210',
-            operationKey: 'item-archived:12',
-            subjectType: 'item',
+            operationKey: 'product-archived:12',
+            subjectType: 'product',
             subjectId: '12',
-            action: 'ItemArchived',
+            action: 'ProductArchived',
             payload: {},
             correlationId: 'corr-1',
             occurredAt: '2026-01-01T00:00:00.000Z',
@@ -60,7 +60,7 @@ describe('LedgerCoreListEntriesUseCase', () => {
       expect(repository.list).toHaveBeenCalledWith({
         page: 2,
         size: 1,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });

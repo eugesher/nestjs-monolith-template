@@ -64,8 +64,16 @@ repository inserts at once and turns the duplicate-key error of the driver (`Mys
 `18-staff-identity.md`), and the e2e of each app sends two such requests at once and expects one 201
 and one 409.
 
-The e2e signs a customer up, logs in with the same credentials, reads `me` and creates an item: the
-item's `owner_id` is the id sign-up answered.
+**Sign-up records a fact in the ledger.** After the insert, `AuthRegisterUseCase` asks
+`AuthLedgerService` to append `CustomerRegistered` under the operation key
+`customer-registered:<id>`, through `AUTH_LEDGER_PORT` and `AuthLedgerCoreAdapter` over
+`LEDGER_CORE_APPEND_PORT`. The customer is already stored, so a failing append must not turn the
+sign-up into an error: the service tries three times through `ReplayRetryHelper` and then logs the
+record at `error` for a replay, like the archive of a product (see `08-product-feature.md`). The
+payload is empty: the email is personal data, and an append-only journal cannot forget it.
+
+The e2e signs a customer up, logs in with the same credentials, reads `me` and finds one ledger
+entry of the new customer under the correlation id of the sign-up.
 
 ## Open questions
 

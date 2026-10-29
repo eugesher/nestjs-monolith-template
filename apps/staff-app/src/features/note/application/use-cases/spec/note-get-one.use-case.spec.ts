@@ -10,7 +10,7 @@ describe('NoteGetOneUseCase', () => {
     load = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -30,7 +30,7 @@ describe('NoteGetOneUseCase', () => {
       expect(load).toHaveBeenCalledWith({ noteId: '7' });
       expect(view).toEqual({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',

@@ -9,11 +9,12 @@ export class ApiReference {
   private static readonly DOCUMENTS: Record<AppNameEnum, { title: string; description: string }> = {
     [AppNameEnum.STAFF_APP]: {
       title: 'ACME staff API',
-      description: 'The back-office surface: identity administration and the audit log.',
+      description:
+        'The back-office surface: identity administration, the product catalog and the audit log.',
     },
     [AppNameEnum.CUSTOMER_APP]: {
       title: 'ACME customer API',
-      description: 'The customer-facing surface: sign-up, sign-in and the item catalog.',
+      description: 'The customer-facing surface: sign-up, sign-in and reminders.',
     },
   };
 

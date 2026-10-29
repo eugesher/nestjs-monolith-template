@@ -6,7 +6,7 @@ describe('NoteViewMapper', () => {
     it('maps a stored note with its instants as ISO strings', () => {
       const note = NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -18,7 +18,7 @@ describe('NoteViewMapper', () => {
 
       expect(NoteViewMapper.toView(note)).toEqual({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -33,7 +33,7 @@ describe('NoteViewMapper', () => {
       jest.useFakeTimers({ now: new Date('2026-03-01T10:00:00.000Z') });
 
       const note = NoteModel.create({
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',

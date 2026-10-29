@@ -13,7 +13,7 @@ describe('NoteCreateUseCase', () => {
     insert = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -30,7 +30,7 @@ describe('NoteCreateUseCase', () => {
   describe('execute', () => {
     it('stores an unresolved note and answers the stored note', async () => {
       const view = await useCase.execute({
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: ' 42 ',
         body: ' Check the supplier ',
         authorId: 'admin-1',
@@ -43,7 +43,7 @@ describe('NoteCreateUseCase', () => {
       expect(note.version).toBe(1);
       expect(view).toEqual({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -53,7 +53,7 @@ describe('NoteCreateUseCase', () => {
         updatedAt: '2026-01-01T00:00:00.000Z',
       });
       expect(logger.info).toHaveBeenCalledWith(
-        { noteId: '7', subjectType: 'item', subjectId: '42', authorId: 'admin-1' },
+        { noteId: '7', subjectType: 'product', subjectId: '42', authorId: 'admin-1' },
         'Note created',
       );
     });
@@ -61,7 +61,7 @@ describe('NoteCreateUseCase', () => {
     it('refuses an invalid note before storing anything', async () => {
       await expect(
         useCase.execute({
-          subjectType: 'Item',
+          subjectType: 'Product',
           subjectId: '42',
           body: 'Check the supplier',
           authorId: 'admin-1',

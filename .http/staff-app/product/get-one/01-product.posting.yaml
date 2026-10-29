@@ -1,0 +1,13 @@
+name: 01-product
+description: |-
+  e2e: Product › GET /api/products/:productId › should read a product
+
+  Expect: 200 OK, product 102
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/products/102
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

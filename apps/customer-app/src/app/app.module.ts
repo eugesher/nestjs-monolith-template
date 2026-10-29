@@ -1,8 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { HealthModule, ItemModule, ReminderModule, AuthModule } from '@acme-customer-features';
-import { IdempotencyPurgeModule, LedgerCatalogEventsModule } from '@acme-customer-processors';
+import { HealthModule, ReminderModule, AuthModule } from '@acme-customer-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
@@ -15,23 +14,18 @@ import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observabili
 import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
-import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
     TypeOrmSetupModule.forRoot(),
-    ScheduleSetupModule,
     CacheModule,
     EventsModule,
     AuthGlobalModule,
     HealthModule,
-    ItemModule,
     ReminderModule,
     AuthModule,
-    IdempotencyPurgeModule,
-    LedgerCatalogEventsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },

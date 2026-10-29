@@ -19,7 +19,7 @@ describe('NoteResolveUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -34,7 +34,7 @@ describe('NoteResolveUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -78,7 +78,7 @@ describe('NoteResolveUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -103,7 +103,7 @@ describe('NoteResolveUseCase', () => {
       findById.mockReset().mockResolvedValue(
         NoteModel.reconstitute({
           id: '7',
-          subjectType: 'item',
+          subjectType: 'product',
           subjectId: '42',
           body: 'Check the supplier',
           authorId: 'admin-1',

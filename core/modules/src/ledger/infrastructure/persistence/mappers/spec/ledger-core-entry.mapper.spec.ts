@@ -6,10 +6,10 @@ describe('LedgerCoreEntryMapper', () => {
     it('restores the row as a frozen entry with its string id', () => {
       const row = Object.assign(new LedgerEntry(), {
         id: '4210',
-        operationKey: 'item-archived:12',
-        subjectType: 'item',
+        operationKey: 'product-archived:12',
+        subjectType: 'product',
         subjectId: '12',
-        action: 'ItemArchived',
+        action: 'ProductArchived',
         payload: { previousStatus: 'active' },
         correlationId: 'corr-1',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -20,10 +20,10 @@ describe('LedgerCoreEntryMapper', () => {
 
       expect({ ...entry }).toEqual({
         id: '4210',
-        operationKey: 'item-archived:12',
-        subjectType: 'item',
+        operationKey: 'product-archived:12',
+        subjectType: 'product',
         subjectId: '12',
-        action: 'ItemArchived',
+        action: 'ProductArchived',
         payload: { previousStatus: 'active' },
         correlationId: 'corr-1',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),

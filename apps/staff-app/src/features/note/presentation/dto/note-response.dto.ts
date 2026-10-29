@@ -4,7 +4,7 @@ export class NoteResponseDto {
   @ApiResponseProperty({ example: '17' })
   public id: string;
 
-  @ApiResponseProperty({ example: 'item' })
+  @ApiResponseProperty({ example: 'product' })
   public subjectType: string;
 
   @ApiResponseProperty({ example: '42' })

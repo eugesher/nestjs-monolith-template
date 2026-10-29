@@ -17,7 +17,7 @@ export class LedgerListEntriesRequestDto {
   @Min(1)
   public size?: number;
 
-  @ApiPropertyOptional({ example: 'item' })
+  @ApiPropertyOptional({ example: 'product' })
   @IsOptional()
   @IsString()
   @MaxLength(64)

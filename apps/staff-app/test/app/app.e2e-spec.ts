@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import * as entities from '@acme-core/entities';
 import { SnakeNamingStrategy } from '@acme-libs/database';
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, IamE2E, LedgerE2E, NoteE2E, AuthE2E } from '../features';
+import { HealthE2E, IamE2E, LedgerE2E, NoteE2E, ProductE2E, AuthE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -18,6 +18,7 @@ describe('App', () => {
   const iamE2E = IamE2E.of(ctx);
   const ledgerE2E = LedgerE2E.of(ctx);
   const noteE2E = NoteE2E.of(ctx);
+  const productE2E = ProductE2E.of(ctx);
 
   beforeAll(async () => {
     await ctx.init();
@@ -50,15 +51,12 @@ describe('App', () => {
     }
   });
 
-  it.each(['/api/items', '/api/reminders'])(
-    'should not mount the customer-app route %s',
-    async (path) => {
-      await request(ctx.app.getHttpServer())
-        .get(path)
-        .auth(ctx.adminToken, { type: 'bearer' })
-        .expect(HttpStatus.NOT_FOUND);
-    },
-  );
+  it.each(['/api/reminders'])('should not mount the customer-app route %s', async (path) => {
+    await request(ctx.app.getHttpServer())
+      .get(path)
+      .auth(ctx.adminToken, { type: 'bearer' })
+      .expect(HttpStatus.NOT_FOUND);
+  });
 
   describe('Health', () => {
     healthE2E.live();
@@ -88,5 +86,13 @@ describe('App', () => {
     noteE2E.handleCreate();
     noteE2E.handleEdit();
     noteE2E.handleResolve();
+  });
+
+  describe('Product', () => {
+    productE2E.handleGetMany();
+    productE2E.handleGetOne();
+    productE2E.handleCreate();
+    productE2E.handleRename();
+    productE2E.handleArchive();
   });
 });

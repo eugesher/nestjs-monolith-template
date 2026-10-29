@@ -231,7 +231,7 @@ describe('repo', () => {
 
     it('an import of a file outside every pattern fails lint', async () => {
       await expect({
-        file: 'apps/__repo-fixture__/src/features/item/domain/__fixture__.ts',
+        file: 'apps/__repo-fixture__/src/features/product/domain/__fixture__.ts',
         code: 'import x from "../../../../../../package.json";',
       }).toBreakRule('boundaries/no-unknown-dependencies');
     });

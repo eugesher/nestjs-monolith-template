@@ -82,10 +82,9 @@ Customers, in `customer.sql`:
 | `00000000-0000-4000-8000-000000000104` | `dora@example.com`  | `dora-password-please-change`  | disabled |
 
 The hashes are argon2id with the cost parameters of the app env examples. Roles and permissions get
-the ids of their order in `RoleEnum` and `PermissionCodeEnum`. The items and reminders belong to
-customers: bob owns the first two items, ann owns the items to rename and to archive and one
-reminder, carol owns one item and most reminders, so every case has a record of another customer to
-be refused.
+the ids of their order in `RoleEnum` and `PermissionCodeEnum`. The products belong to the catalog
+and have no owner. The reminders belong to customers: ann owns one reminder and carol most of them,
+so every case has a record of another customer to be refused.
 
 ### Id ranges
 
@@ -99,7 +98,7 @@ the call, never by a literal.
 | identity    | `staff_role`, `staff_permission` | 1–99                                                      |
 | identity    | `staff_user`                     | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
 | identity    | `customer`                       | `00000000-0000-4000-8000-000000000101` to `…000000000199` |
-| item        | `item`                           | 100–199                                                   |
+| product     | `product`                        | 100–199                                                   |
 | note        | `note`, `note_revision`          | 200–299                                                   |
 | reminder    | `reminder`                       | 300–399                                                   |
 | ledger      | `ledger_entry`                   | 400–499                                                   |
