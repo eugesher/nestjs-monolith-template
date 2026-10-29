@@ -15,7 +15,7 @@ export class EnvHelper {
       return [];
     }
 
-    const directory = join(root, 'apps', app);
+    const directory = join(root, 'env', 'apps', app);
 
     return [join(directory, '.env.local'), join(directory, '.env')];
   }

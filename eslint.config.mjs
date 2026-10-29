@@ -18,7 +18,6 @@ export default defineConfig(
       '**/node_modules/**',
       '**/*.config.js',
       'jest/*.js',
-      'apps/*/test/jest-setup.js',
       '.lintstagedrc.js',
       '.yarn/**',
       'coverage/**',

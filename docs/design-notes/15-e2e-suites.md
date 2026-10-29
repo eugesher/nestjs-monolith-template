@@ -24,7 +24,6 @@ written by running Jest without it, then read before it is kept.
 ```text
 apps/<app>/test/
   jest-e2e.config.js
-  jest-setup.js
   app/app.e2e-spec.ts
   app/__snapshots__/app.e2e-spec.ts.snap
   context/app-e2e.context.ts
@@ -54,13 +53,14 @@ the logger and the global prefix, and signs one access token for each seeded acc
 `JWT_ACCESS_SECRET` from the config. Everything the cases read is a getter that throws before
 `init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
-The shared Jest config lives in `jest/`:
+The Jest files outside the apps live in `jest/`:
 
 | File                        | What it does                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------- |
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
+| `<app>.e2e-setup.js`        | the environment of one app under test, set before any module loads              |
 
-**The environment comes from `apps/<app>/test/jest-setup.js` only.** It runs before any module
+**The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module
 loads and sets every variable the config schema of its app reads, and nothing else. A developer's
 `.env.local` never leaks into a run: the variables of the process take precedence over the env
 files.

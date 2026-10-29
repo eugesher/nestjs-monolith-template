@@ -21,19 +21,21 @@ token issued by one app is accepted by the other.
 
 ## Environment
 
-Each app has its own env file, and the migrations have theirs:
+Each app has its own env file, and the migrations have theirs, all in `env/`:
 
-| Example                          | Read by                            | Holds                                     |
-| -------------------------------- | ---------------------------------- | ----------------------------------------- |
-| `apps/staff-app/.env.example`    | staff-app                          | every variable of the staff-app schema    |
-| `apps/customer-app/.env.example` | customer-app                       | every variable of the customer-app schema |
-| `migrations/.env.example`        | `migrations/config/data-source.ts` | `DATABASE_URL` only                       |
+| Example                              | Read by                            | Holds                                     |
+| ------------------------------------ | ---------------------------------- | ----------------------------------------- |
+| `env/apps/staff-app/.env.example`    | staff-app                          | every variable of the staff-app schema    |
+| `env/apps/customer-app/.env.example` | customer-app                       | every variable of the customer-app schema |
+| `env/migrations/.env.example`        | `migrations/config/data-source.ts` | `DATABASE_URL` only                       |
 
 A variable with the same meaning has the same name in both apps: `PORT`, `DATABASE_URL`, the JWT
 secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
 its own `.env.local` filled in.
 
-`ConfigSetupModule` loads `apps/<app>/.env.local`, then `apps/<app>/.env`.
+`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local` sits next
+to its example.
+
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
 the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
 bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads

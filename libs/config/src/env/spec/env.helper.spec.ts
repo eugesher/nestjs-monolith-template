@@ -52,8 +52,8 @@ describe('EnvHelper', () => {
       const paths = EnvHelper.appEnvFilePaths('staff-app');
 
       expect(paths).toEqual([
-        join(root, 'apps/staff-app/.env.local'),
-        join(root, 'apps/staff-app/.env'),
+        join(root, 'env/apps/staff-app/.env.local'),
+        join(root, 'env/apps/staff-app/.env'),
       ]);
     });
 
