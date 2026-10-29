@@ -10,7 +10,7 @@ describe('NoteGetManyUseCase', () => {
       items: [
         NoteModel.reconstitute({
           id: '7',
-          subjectType: 'item',
+          subjectType: 'product',
           subjectId: '42',
           body: 'Check the supplier',
           authorId: 'admin-1',
@@ -48,7 +48,7 @@ describe('NoteGetManyUseCase', () => {
         items: [
           {
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -68,7 +68,7 @@ describe('NoteGetManyUseCase', () => {
       await useCase.execute({
         page: 0,
         size: 500,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         resolved: false,
       });
@@ -76,14 +76,14 @@ describe('NoteGetManyUseCase', () => {
       expect(list).toHaveBeenCalledWith({
         page: 1,
         size: 100,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         resolved: false,
       });
     });
 
     it.each([
-      ['only a subject type', 'item', undefined],
+      ['only a subject type', 'product', undefined],
       ['only a subject id', undefined, '42'],
     ])('refuses %s with NOTE_SUBJECT_INVALID', async (_, subjectType, subjectId) => {
       await expect(

@@ -20,10 +20,10 @@ describe('LedgerCoreAppendEntryUseCase', () => {
     it('appends the entry under the correlation id of the context', async () => {
       const view = await CorrelationContextHelper.run('corr-1', () =>
         useCase.execute({
-          operationKey: ' item-archived:12 ',
-          subjectType: 'item',
+          operationKey: ' product-archived:12 ',
+          subjectType: 'product',
           subjectId: '12',
-          action: 'ItemArchived',
+          action: 'ProductArchived',
           payload: { previousStatus: 'active' },
           occurredAt: '2026-01-01T03:00:00+03:00',
         }),
@@ -33,17 +33,17 @@ describe('LedgerCoreAppendEntryUseCase', () => {
       expect(view).toEqual({ id: '4210', appended: true });
       expect({ ...entry }).toEqual({
         id: undefined,
-        operationKey: 'item-archived:12',
-        subjectType: 'item',
+        operationKey: 'product-archived:12',
+        subjectType: 'product',
         subjectId: '12',
-        action: 'ItemArchived',
+        action: 'ProductArchived',
         payload: { previousStatus: 'active' },
         correlationId: 'corr-1',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
         recordedAt: undefined,
       });
       expect(logger.info).toHaveBeenCalledWith(
-        { id: '4210', operationKey: 'item-archived:12' },
+        { id: '4210', operationKey: 'product-archived:12' },
         'Ledger entry appended',
       );
     });
@@ -53,10 +53,10 @@ describe('LedgerCoreAppendEntryUseCase', () => {
 
       const view = await CorrelationContextHelper.run('corr-2', () =>
         useCase.execute({
-          operationKey: 'item-archived:12',
-          subjectType: 'item',
+          operationKey: 'product-archived:12',
+          subjectType: 'product',
           subjectId: '12',
-          action: 'ItemArchived',
+          action: 'ProductArchived',
           payload: {},
           occurredAt: '2026-01-01T00:00:00Z',
         }),
@@ -64,17 +64,17 @@ describe('LedgerCoreAppendEntryUseCase', () => {
 
       expect(view).toEqual({ id: '4210', appended: false });
       expect(logger.info).toHaveBeenCalledWith(
-        { id: '4210', operationKey: 'item-archived:12' },
+        { id: '4210', operationKey: 'product-archived:12' },
         'Ledger entry already recorded under this operation key',
       );
     });
 
     it('refuses an instant without a zone before touching storage', async () => {
       const execution = useCase.execute({
-        operationKey: 'item-archived:12',
-        subjectType: 'item',
+        operationKey: 'product-archived:12',
+        subjectType: 'product',
         subjectId: '12',
-        action: 'ItemArchived',
+        action: 'ProductArchived',
         payload: {},
         occurredAt: '2026-01-01T00:00:00',
       });

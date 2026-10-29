@@ -15,7 +15,7 @@ export class NoteE2E {
       it('should list the notes of one subject, newest first', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
-          .query({ subjectType: 'item', subjectId: '100' })
+          .query({ subjectType: 'product', subjectId: '100' })
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -35,7 +35,7 @@ export class NoteE2E {
       it('should refuse half of a subject filter with 400', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
-          .query({ subjectType: 'item' })
+          .query({ subjectType: 'product' })
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 

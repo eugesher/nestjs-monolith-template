@@ -25,13 +25,13 @@ Six e2e cases are not one request:
 
 - the schema check of staff-app compares the migrated database with the entities and has no
   request;
-- the concurrent renames of an item send six requests at once, `item/rename/05-concurrent` sends
+- the concurrent renames of a product send six requests at once, `product/rename/05-concurrent` sends
   one;
-- the replay of an item create sends the same request twice, as `item/create/02-replay` says;
+- the replay of a product create sends the same request twice, as `product/create/02-replay` says;
 - two simultaneous registrations with one email send the same request twice at once, in
   `customer-app/auth/register/03-simultaneous` and `staff-app/iam/register-user/02-simultaneous`;
-- the sign-up of a customer goes on to log in, read `me` and create an item with the new
-  credentials, as `auth/register/01-register` says.
+- the sign-up of a customer goes on to log in and read `me` with the new credentials, as
+  `auth/register/01-register` says.
 
 ## Environment
 

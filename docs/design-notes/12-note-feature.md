@@ -8,7 +8,7 @@ write that spans two tables.
 ## The aggregate
 
 `NoteModel` points at its subject with an opaque pair, `(subjectType, subjectId)`. Nothing checks
-that the subject exists or what kind of thing it is: a note on an item and a note on a support
+that the subject exists or what kind of thing it is: a note on a product and a note on a support
 ticket are the same note. `resolved` closes a note for good.
 
 | Rule                                             | Code                   |
@@ -22,7 +22,7 @@ ticket are the same note. `resolved` closes a note for good.
 **An edit to the current body changes nothing.** It keeps the version, and the edit use case
 writes nothing: no update and no revision.
 
-**The id is a string**, like the item and reminder ids: the column is `bigint unsigned`.
+**The id is a string**, like the product and reminder ids: the column is `bigint unsigned`.
 
 Notes have no owner. Any caller with `note:read` reads every note, and any caller with
 `note:write` edits or resolves any note. A missing note is `NOTE_NOT_FOUND`.
@@ -110,7 +110,7 @@ Each repository port has its own repository: `NoteAccessRepository`, `NoteCreate
 `NoteUpdateBaseRepository`. Every repository reads its table through `TransactionHost`, so inside
 `TRANSACTION_PORT.run` it writes on the connection of the transaction.
 
-**The version check is in the `WHERE`**, as for items and reminders: `update` writes `body`,
+**The version check is in the `WHERE`**, as for products and reminders: `update` writes `body`,
 `resolved` and `version` where the id and the version as read match, and answers whether one row
 changed.
 
@@ -139,12 +139,12 @@ half on its own; the pair rule lives in `NoteGetManyUseCase` only, and answers
 `NOTE_SUBJECT_INVALID`.
 
 `resolved` in the query is `true` or `false`; anything else is a 400 from validation. `noteId` is a
-string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, like `itemId`.
+string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, like `productId`.
 
 ### Errors
 
 `NoteHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
-`HttpExceptionFilter` of `libs/http`, with the same body as items.
+`HttpExceptionFilter` of `libs/http`, with the same body as products.
 
 | Code                                                                | Status |
 | ------------------------------------------------------------------- | ------ |

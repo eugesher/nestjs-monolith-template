@@ -23,23 +23,17 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@acme-staff-app": ["./apps/staff-app/src/app/app.module"],
+      "@acme-staff-common/modules/idempotency": ["./apps/staff-app/src/common/modules/idempotency"],
+      "@acme-staff-common/shared/concurrency": ["./apps/staff-app/src/common/shared/concurrency"],
+      "@acme-staff-common/shared/idempotency": ["./apps/staff-app/src/common/shared/idempotency"],
+      "@acme-staff-contracts/idempotency": ["./apps/staff-app/src/contracts/idempotency"],
+      "@acme-staff-contracts/ledger-catalog-events": [
+        "./apps/staff-app/src/contracts/ledger-catalog-events"
+      ],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
+      "@acme-staff-processors": ["./apps/staff-app/src/processors"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
-      "@acme-customer-common/modules/idempotency": [
-        "./apps/customer-app/src/common/modules/idempotency"
-      ],
-      "@acme-customer-common/shared/concurrency": [
-        "./apps/customer-app/src/common/shared/concurrency"
-      ],
-      "@acme-customer-common/shared/idempotency": [
-        "./apps/customer-app/src/common/shared/idempotency"
-      ],
-      "@acme-customer-contracts/idempotency": ["./apps/customer-app/src/contracts/idempotency"],
-      "@acme-customer-contracts/ledger-catalog-events": [
-        "./apps/customer-app/src/contracts/ledger-catalog-events"
-      ],
       "@acme-customer-features": ["./apps/customer-app/src/features"],
-      "@acme-customer-processors": ["./apps/customer-app/src/processors"],
       "@acme-core/contracts/customer-identity": ["./core/contracts/src/customer-identity"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],
       "@acme-core/contracts/staff-identity": ["./core/contracts/src/staff-identity"],

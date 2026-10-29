@@ -4,14 +4,14 @@ describe('NoteModel', () => {
   describe('create', () => {
     it('opens an unresolved note at version 1 with a trimmed subject id and body', () => {
       const note = NoteModel.create({
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '  42  ',
         body: '  Check the supplier  ',
         authorId: 'admin-1',
       });
 
       expect(note.id).toBeUndefined();
-      expect(note.subjectType).toBe('item');
+      expect(note.subjectType).toBe('product');
       expect(note.subjectId).toBe('42');
       expect(note.body).toBe('Check the supplier');
       expect(note.authorId).toBe('admin-1');
@@ -35,10 +35,10 @@ describe('NoteModel', () => {
     });
 
     it.each([
-      ['a capital letter', 'Item'],
+      ['a capital letter', 'Product'],
       ['a single letter', 'i'],
-      ['a leading dash', '-item'],
-      ['a digit', 'item2'],
+      ['a leading dash', '-product'],
+      ['a digit', 'product2'],
       ['65 characters', `i${'t'.repeat(64)}`],
     ])('refuses a subject type with %s with NOTE_SUBJECT_INVALID', (_, subjectType) => {
       expect(() =>
@@ -68,7 +68,7 @@ describe('NoteModel', () => {
       ['a subject id longer than 64', 's'.repeat(65)],
     ])('refuses %s with NOTE_SUBJECT_INVALID', (_, subjectId) => {
       expect(() =>
-        NoteModel.create({ subjectType: 'item', subjectId, body: 'Body', authorId: 'admin-1' }),
+        NoteModel.create({ subjectType: 'product', subjectId, body: 'Body', authorId: 'admin-1' }),
       ).toThrow(
         expect.objectContaining({
           code: 'NOTE_SUBJECT_INVALID',
@@ -79,7 +79,7 @@ describe('NoteModel', () => {
 
     it('accepts a body of 4000 characters', () => {
       const note = NoteModel.create({
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'b'.repeat(4000),
         authorId: 'admin-1',
@@ -93,7 +93,7 @@ describe('NoteModel', () => {
       ['a body longer than 4000', 'b'.repeat(4001)],
     ])('refuses %s with NOTE_BODY_INVALID', (_, body) => {
       expect(() =>
-        NoteModel.create({ subjectType: 'item', subjectId: '42', body, authorId: 'admin-1' }),
+        NoteModel.create({ subjectType: 'product', subjectId: '42', body, authorId: 'admin-1' }),
       ).toThrow(
         expect.objectContaining({
           code: 'NOTE_BODY_INVALID',
@@ -107,7 +107,7 @@ describe('NoteModel', () => {
     it('restores a stored note as it was', () => {
       const note = NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -128,7 +128,7 @@ describe('NoteModel', () => {
       expect(() =>
         NoteModel.reconstitute({
           id: '7',
-          subjectType: 'item',
+          subjectType: 'product',
           subjectId: '42',
           body: 'Check the supplier',
           authorId: 'admin-1',
@@ -152,7 +152,7 @@ describe('NoteModel', () => {
     beforeEach(() => {
       note = NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -202,7 +202,7 @@ describe('NoteModel', () => {
     it('resolves the note and bumps the version', () => {
       const note = NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',
@@ -221,7 +221,7 @@ describe('NoteModel', () => {
     it('refuses a resolved note with NOTE_RESOLVED', () => {
       const note = NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',

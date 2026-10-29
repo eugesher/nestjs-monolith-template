@@ -9,7 +9,7 @@ describe('unused edges', () => {
       'apps/__unused-fixture__/src/common/shared/concurrency/index.ts',
       'apps/__unused-fixture__/src/contracts/idempotency/index.ts',
       'apps/__unused-fixture__/src/common/modules/idempotency/domain/index.ts',
-      'apps/__unused-fixture__/src/features/item/domain/index.ts',
+      'apps/__unused-fixture__/src/features/product/domain/index.ts',
       'apps/__unused-fixture__/src/app/setup/config/config-setup.module.ts',
       'core/modules/src/__unused-fixture__/domain/index.ts',
       'core/contracts/src/__unused-fixture__/index.ts',
@@ -186,22 +186,22 @@ describe('unused edges', () => {
     it.each([
       [
         'feature application may NOT reach a shared barrel: shared code serves the HTTP surface',
-        'apps/__unused-fixture__/src/features/item/application/__fixture__.ts',
+        'apps/__unused-fixture__/src/features/product/application/__fixture__.ts',
         '../../../common/shared/concurrency',
       ],
       [
         'feature infrastructure may NOT reach the messaging contracts: events are published from infrastructure/events',
-        'apps/__unused-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+        'apps/__unused-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         '../../../../../../../libs/contracts/src/messaging',
       ],
       [
         'feature presentation may NOT reach the observability lib: the middleware of the app sets the correlation id',
-        'apps/__unused-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+        'apps/__unused-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
         '../../../../../../../libs/observability/src',
       ],
       [
         'the feature root may NOT reach its domain: it wires providers, and the domain has none',
-        'apps/__unused-fixture__/src/features/item/__fixture__.ts',
+        'apps/__unused-fixture__/src/features/product/__fixture__.ts',
         './domain',
       ],
     ])('%s', async (_, file, source) => {

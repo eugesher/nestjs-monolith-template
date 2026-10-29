@@ -23,7 +23,7 @@ describe('LedgerListEntriesRequestDto', () => {
 
   it('accepts every filter', () => {
     const dto = plainToInstance(LedgerListEntriesRequestDto, {
-      subjectType: 'item',
+      subjectType: 'product',
       subjectId: '12',
       correlationId: '0b8f4f9e-4c1d-4a8e-9a57-3f1e2d6c7b90',
     });

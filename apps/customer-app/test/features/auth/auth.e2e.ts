@@ -13,9 +13,10 @@ export class AuthE2E {
 
   public handleRegister(): void {
     describe('POST /api/auth/register', () => {
-      it('should create a customer who logs in and creates an item of their own', async () => {
+      it('should create a customer who logs in and record the registration in the ledger under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/register')
+          .set('x-correlation-id', 'e2e-customer-register')
           .send({ email: 'Eve@Example.com', password: 'eve-password-please-change' })
           .expect(HttpStatus.CREATED);
 
@@ -29,13 +30,6 @@ export class AuthE2E {
           .auth(login.body.accessToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        const item = await request(this.ctx.app.getHttpServer())
-          .post('/api/items')
-          .set('Idempotency-Key', 'e2e-register-key')
-          .auth(login.body.accessToken, { type: 'bearer' })
-          .send({ sku: 'E2E-EVE-0001', name: 'Item of a new customer' })
-          .expect(HttpStatus.CREATED);
-
         const actual = {
           response: { body: response.body },
           me: me.body,
@@ -44,9 +38,9 @@ export class AuthE2E {
               'SELECT * FROM customer WHERE email = ? ORDER BY id',
               ['eve@example.com'],
             ),
-            item: await this.ctx.dataSource.query(
-              'SELECT owner_id, sku, name FROM item WHERE id = ? ORDER BY id',
-              [item.body.id],
+            ledger_entry: await this.ctx.dataSource.query(
+              'SELECT * FROM ledger_entry WHERE subject_type = ? AND subject_id = ? ORDER BY id',
+              ['customer', response.body.id],
             ),
           },
         };
@@ -62,14 +56,27 @@ export class AuthE2E {
                 created_at: expect.any(Date),
               },
             ],
-            item: [{ owner_id: expect.any(String) }],
+            ledger_entry: [
+              {
+                id: expect.any(String),
+                operation_key: expect.any(String),
+                subject_id: expect.any(String),
+                occurred_at: expect.any(Date),
+                recorded_at: expect.any(Date),
+              },
+            ],
           },
         });
         expect(actual).toMatchObject({
           me: { id: response.body.id },
           db: {
             customer: [{ id: response.body.id }],
-            item: [{ owner_id: response.body.id }],
+            ledger_entry: [
+              {
+                operation_key: `customer-registered:${response.body.id}`,
+                subject_id: response.body.id,
+              },
+            ],
           },
         });
         expect(response.body.id).toMatch(

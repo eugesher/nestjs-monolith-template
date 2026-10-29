@@ -1,4 +1,4 @@
-import { AuthLoginUseCase, AuthRegisterUseCase } from '../../../application';
+import { AuthLedgerService, AuthLoginUseCase, AuthRegisterUseCase } from '../../../application';
 import { AuthController } from '../auth.controller';
 
 describe('AuthController', () => {
@@ -10,7 +10,10 @@ describe('AuthController', () => {
     register = jest.fn();
     login = jest.fn();
     controller = new AuthController(
-      new AuthRegisterUseCase({ register, login }),
+      new AuthRegisterUseCase({ recordRegistered: jest.fn() } as unknown as AuthLedgerService, {
+        register,
+        login,
+      }),
       new AuthLoginUseCase({ register, login }),
     );
   });

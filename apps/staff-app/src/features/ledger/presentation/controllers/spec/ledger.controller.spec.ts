@@ -14,13 +14,13 @@ describe('LedgerController', () => {
     it('answers the page for the filters of the query string', async () => {
       list.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
 
-      const response = await controller.handleList({ subjectType: 'item', subjectId: '12' });
+      const response = await controller.handleList({ subjectType: 'product', subjectId: '12' });
 
       expect(response).toEqual({ items: [], total: 0, page: 1, size: 20 });
       expect(list).toHaveBeenCalledWith({
         page: undefined,
         size: undefined,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: undefined,
       });

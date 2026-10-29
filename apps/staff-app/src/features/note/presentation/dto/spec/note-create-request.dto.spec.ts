@@ -5,7 +5,7 @@ import { NoteCreateRequestDto } from '../note-create-request.dto';
 
 describe('NoteCreateRequestDto', () => {
   it.each([
-    ['a note on an item', { subjectType: 'item', subjectId: '42', body: 'Refunded' }],
+    ['a note on a product', { subjectType: 'product', subjectId: '42', body: 'Refunded' }],
     [
       'a dashed subject type and the longest values',
       { subjectType: 'support-ticket', subjectId: 's'.repeat(64), body: 'b'.repeat(4000) },
@@ -19,10 +19,10 @@ describe('NoteCreateRequestDto', () => {
   });
 
   it.each([
-    ['an uppercase subject type', 'Item'],
+    ['an uppercase subject type', 'Product'],
     ['a one-letter subject type', 'i'],
-    ['a subject type with a digit', 'item2'],
-    ['a subject type starting with a dash', '-item'],
+    ['a subject type with a digit', 'product2'],
+    ['a subject type starting with a dash', '-product'],
   ])('rejects %s', (_case, subjectType) => {
     const dto = plainToInstance(NoteCreateRequestDto, {
       subjectType,
@@ -45,7 +45,7 @@ describe('NoteCreateRequestDto', () => {
     ['a number as the subject id', 42, ['maxLength', 'minLength', 'isString']],
   ])('rejects %s', (_case, subjectId, constraints) => {
     const dto = plainToInstance(NoteCreateRequestDto, {
-      subjectType: 'item',
+      subjectType: 'product',
       subjectId,
       body: 'Refunded',
     });
@@ -63,7 +63,7 @@ describe('NoteCreateRequestDto', () => {
     ['a missing body', undefined, ['maxLength', 'minLength', 'isString']],
   ])('rejects %s', (_case, body, constraints) => {
     const dto = plainToInstance(NoteCreateRequestDto, {
-      subjectType: 'item',
+      subjectType: 'product',
       subjectId: '42',
       body,
     });

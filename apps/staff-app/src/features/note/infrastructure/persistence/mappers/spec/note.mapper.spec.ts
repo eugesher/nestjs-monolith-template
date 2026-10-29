@@ -6,7 +6,7 @@ describe('NoteMapper', () => {
     it('restores the row as a note with its string id and stored times', () => {
       const row = Object.assign(new Note(), {
         id: '17',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Customer called about this',
         authorId: '7d3f0e2a-5b1c-4c8e-9a4f-2b6d8e1f3a5c',
@@ -31,7 +31,7 @@ describe('NoteMapper', () => {
         updatedAt: note.updatedAt,
       }).toEqual({
         id: '17',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Customer called about this',
         authorId: '7d3f0e2a-5b1c-4c8e-9a4f-2b6d8e1f3a5c',

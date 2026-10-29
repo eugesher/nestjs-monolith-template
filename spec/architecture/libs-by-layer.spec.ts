@@ -28,8 +28,14 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/features/item/domain/__fixture__.ts', '../../../../../../libs'],
-    ['apps/__layers-fixture__/src/features/item/outbound/__fixture__.ts', '../../../../../../libs'],
+    [
+      'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/features/product/outbound/__fixture__.ts',
+      '../../../../../../libs',
+    ],
     ['apps/__layers-fixture__/src/contracts/audit/__fixture__.ts', '../../../../../libs'],
     ['core/modules/src/__ledger-fixture__/domain/__fixture__.ts', '../../../../../libs'],
     ['core/modules/src/__ledger-fixture__/outbound/__fixture__.ts', '../../../../../libs'],
@@ -93,21 +99,21 @@ describe('libs by layer', () => {
 
   it('presentation MAY reach the HTTP lib', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../../../../libs/http/src";',
     }).toPassArchitectureLint();
   });
 
   it('presentation MAY reach the auth lib for its route decorators', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../../../../libs/auth/src";',
     }).toPassArchitectureLint();
   });
 
   it('presentation MAY reach the auth lib contract for the type of the current user', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import type { x } from "../../../../../../../libs/contracts/src/auth";',
     }).toPassArchitectureLint();
   });
@@ -133,7 +139,7 @@ describe('libs by layer', () => {
     'customer-app presentation may NOT take %s — a customer holds no roles or permissions',
     async (code) => {
       await expect({
-        file: 'apps/customer-app/src/features/item/presentation/controllers/__fixture__.ts',
+        file: 'apps/customer-app/src/features/reminder/presentation/controllers/__fixture__.ts',
         code,
       }).toBreakRule('boundaries/dependencies');
     },
@@ -163,15 +169,18 @@ describe('libs by layer', () => {
 
   it('application may NOT reach the auth lib contract', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       code: 'import type { x } from "../../../../../../../libs/contracts/src/auth";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/features/item/domain/__fixture__.ts', '../../../../../../libs'],
     [
-      'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       '../../../../../../../libs',
     ],
     [
@@ -186,14 +195,14 @@ describe('libs by layer', () => {
 
   it('application may NOT reach the HTTP lib', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       code: 'import { x } from "../../../../../../../libs/http/src";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
     [
-      'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
       '../../../../../../../libs',
     ],
     [
@@ -222,16 +231,19 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/features/item/domain/__fixture__.ts', '../../../../../../libs'],
     [
-      'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       '../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       '../../../../../../../libs',
     ],
-    ['apps/__layers-fixture__/src/features/item/__fixture__.ts', '../../../../../libs'],
+    ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs'],
     ['core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts', '../../../../../libs'],
   ])('nothing else may reach the database lib: %s', async (file, libs) => {
     await expect({
@@ -242,7 +254,7 @@ describe('libs by layer', () => {
 
   it.each([
     [
-      'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       '../../../../../../../libs',
     ],
     [
@@ -262,10 +274,16 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/features/item/domain/__fixture__.ts', '../../../../../../libs'],
-    ['apps/__layers-fixture__/src/features/item/outbound/__fixture__.ts', '../../../../../../libs'],
     [
-      'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/features/product/outbound/__fixture__.ts',
+      '../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       '../../../../../../../libs',
     ],
     ['core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts', '../../../../../libs'],
@@ -281,7 +299,7 @@ describe('libs by layer', () => {
 
   it.each([
     [
-      'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
       '../../../../../../../libs',
     ],
     ['core/modules/src/__ledger-fixture__/application/__fixture__.ts', '../../../../../libs'],
@@ -297,17 +315,17 @@ describe('libs by layer', () => {
 
   it('infrastructure MAY reach the lib contracts it adapts', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/infrastructure/cache/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/infrastructure/cache/__fixture__.ts',
       code: 'import { x } from "../../../../../../../libs/contracts/src/cache";',
     }).toPassArchitectureLint();
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/features/item/infrastructure/cache/__fixture__.ts', 'cache'],
-    ['apps/__layers-fixture__/src/features/item/infrastructure/cache/__fixture__.ts', 'http'],
-    ['apps/__layers-fixture__/src/features/item/infrastructure/cache/__fixture__.ts', 'config'],
+    ['apps/__layers-fixture__/src/features/product/infrastructure/cache/__fixture__.ts', 'cache'],
+    ['apps/__layers-fixture__/src/features/product/infrastructure/cache/__fixture__.ts', 'http'],
+    ['apps/__layers-fixture__/src/features/product/infrastructure/cache/__fixture__.ts', 'config'],
     [
-      'apps/__layers-fixture__/src/features/item/infrastructure/cache/__fixture__.ts',
+      'apps/__layers-fixture__/src/features/product/infrastructure/cache/__fixture__.ts',
       'observability',
     ],
   ])(
@@ -323,8 +341,12 @@ describe('libs by layer', () => {
   it.each([
     ['apps/__layers-fixture__/src/app/__fixture__.ts', '../../../../libs', 'cache'],
     ['apps/__layers-fixture__/src/app/__fixture__.ts', '../../../../libs', 'messaging'],
-    ['apps/__layers-fixture__/src/features/item/__fixture__.ts', '../../../../../libs', 'auth'],
-    ['apps/__layers-fixture__/src/features/item/__fixture__.ts', '../../../../../libs', 'health'],
+    ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs', 'auth'],
+    [
+      'apps/__layers-fixture__/src/features/product/__fixture__.ts',
+      '../../../../../libs',
+      'health',
+    ],
     [
       'apps/__layers-fixture__/src/app/global/auth/module/__fixture__.ts',
       '../../../../../../../libs',
@@ -342,7 +364,7 @@ describe('libs by layer', () => {
 
   it.each([
     ['core/modules/src/__ledger-fixture__/module/__fixture__.ts', '../../../../../libs', 'cache'],
-    ['apps/__layers-fixture__/src/features/item/__fixture__.ts', '../../../../../libs', 'cache'],
+    ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs', 'cache'],
     ['apps/__layers-fixture__/src/processors/purge/__fixture__.ts', '../../../../../libs', 'auth'],
   ])(
     'the module root %s may NOT reach %s/%s, it wires only the libs it uses',
@@ -355,7 +377,7 @@ describe('libs by layer', () => {
   );
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/__fixture__.ts',
     'apps/__layers-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
     'apps/__layers-fixture__/src/app/global/auth/module/__fixture__.ts',
@@ -369,10 +391,10 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/domain/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
   ])(
@@ -386,8 +408,8 @@ describe('libs by layer', () => {
   );
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
   ])('%s may NOT read ConfigService directly', async (file) => {
     await expect({
@@ -412,13 +434,13 @@ describe('libs by layer', () => {
 
   it('a feature may NOT import joi — validation of env is the app bootstrap job', async () => {
     await expect({
-      file: 'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import Joi from "joi";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/application/services/__fixture__.ts',
     'apps/__layers-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
@@ -431,11 +453,11 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/domain/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/item/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
   ])(
     '%s may NOT log through nestjs-pino — outcomes are logged by the application',
@@ -448,7 +470,7 @@ describe('libs by layer', () => {
   );
 
   it.each([
-    'apps/__layers-fixture__/src/features/item/infrastructure/persistence/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
   ])('%s may NOT reach the observability lib', async (file) => {
     await expect({

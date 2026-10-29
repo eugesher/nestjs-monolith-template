@@ -106,7 +106,7 @@ describe('lib entry points', () => {
   });
 
   it.each([
-    'apps/staff-app/src/features/item/domain/__fixture__.ts',
+    'apps/staff-app/src/features/product/domain/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
   ])('%s MAY import the framework-free libs by their aliases', async (file) => {
     await expect({
@@ -118,7 +118,7 @@ describe('lib entry points', () => {
   it('entities MAY import the kernel lib by its alias', async () => {
     await expect({
       file: 'core/entities/src/__fixture__.ts',
-      code: 'import { ItemStatusEnum } from "@acme-libs/kernel";',
+      code: 'import { ProductStatusEnum } from "@acme-libs/kernel";',
     }).toPassArchitectureLint();
   });
 
@@ -137,7 +137,7 @@ describe('lib entry points', () => {
   });
 
   it.each([
-    'apps/staff-app/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
     'apps/staff-app/src/common/shared/auth/__fixture__.ts',
   ])('%s may NOT import test helpers outside specs', async (file) => {
@@ -148,7 +148,7 @@ describe('lib entry points', () => {
   });
 
   it.each([
-    'apps/staff-app/src/features/item/application/use-cases/spec/__fixture__.spec.ts',
+    'apps/staff-app/src/features/product/application/use-cases/spec/__fixture__.spec.ts',
     'core/modules/src/__ledger-fixture__/application/spec/__fixture__.spec.ts',
     'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
   ])('the spec %s MAY import test helpers', async (file) => {
@@ -170,9 +170,9 @@ describe('lib entry points', () => {
 
   it.each([
     'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-    'apps/staff-app/src/features/item/application/use-cases/__fixture__.ts',
-    'apps/customer-app/src/processors/purge/application/services/__fixture__.ts',
-    'apps/customer-app/src/common/modules/idempotency/application/__fixture__.ts',
+    'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/staff-app/src/processors/purge/application/services/__fixture__.ts',
+    'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
@@ -182,9 +182,9 @@ describe('lib entry points', () => {
   });
 
   it.each([
-    'apps/staff-app/src/features/item/domain/__fixture__.ts',
-    'apps/staff-app/src/features/item/outbound/__fixture__.ts',
-    'apps/staff-app/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/staff-app/src/features/product/domain/__fixture__.ts',
+    'apps/staff-app/src/features/product/outbound/__fixture__.ts',
+    'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
   ])(
     '%s may NOT import the transaction port by its alias, transactions are run by the application',
     async (file) => {
@@ -204,7 +204,7 @@ describe('lib entry points', () => {
 
   it('application may NOT import the database lib root, it takes the transaction port', async () => {
     await expect({
-      file: 'apps/staff-app/src/features/item/application/use-cases/__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
       code: 'import { TransactionAdapter } from "@acme-libs/database";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -240,7 +240,7 @@ describe('lib entry points', () => {
 
   it.each([
     'apps/customer-app/src/features/reminder/infrastructure/cache/__fixture__.ts',
-    'apps/customer-app/src/common/shared/auth/__fixture__.ts',
+    'apps/staff-app/src/common/shared/auth/__fixture__.ts',
   ])('%s may NOT import the cache lib root, only the app root wires it', async (file) => {
     await expect({
       file,
@@ -264,14 +264,14 @@ describe('lib entry points', () => {
 
   it('an infrastructure adapter MAY import the event publisher port by its alias', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/item/infrastructure/events/__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/infrastructure/events/__fixture__.ts',
       code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
     }).toPassArchitectureLint();
   });
 
   it('the application may NOT import the event publisher port, it publishes through its own port', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/item/application/use-cases/__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
       code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -285,7 +285,7 @@ describe('lib entry points', () => {
 
   it('an infrastructure adapter may NOT import the messaging lib root', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/item/infrastructure/events/__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/infrastructure/events/__fixture__.ts',
       code: 'import { EventsModule } from "@acme-libs/messaging";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -306,7 +306,7 @@ describe('lib entry points', () => {
 
   it('a controller may NOT import the health lib root, only a module wires it', async () => {
     await expect({
-      file: 'apps/staff-app/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import { HealthLibModule } from "@acme-libs/health";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -323,7 +323,7 @@ describe('lib entry points', () => {
 
   it.each([
     'apps/staff-app/src/app/app.module.ts',
-    'apps/staff-app/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
   ])('%s may NOT import the openapi lib, the document is built at startup only', async (file) => {
     await expect({
       file,
@@ -342,8 +342,8 @@ describe('lib entry points', () => {
   });
 
   it.each([
-    'apps/staff-app/src/features/item/application/use-cases/__fixture__.ts',
-    'apps/staff-app/src/features/item/domain/__fixture__.ts',
+    'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/staff-app/src/features/product/domain/__fixture__.ts',
   ])('%s may NOT import the http lib, HTTP stays out of the core layers', async (file) => {
     await expect({
       file,

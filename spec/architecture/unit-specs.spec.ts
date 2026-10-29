@@ -6,8 +6,8 @@ describe('unit specs', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
-      'apps/__specs-fixture__/src/features/item/infrastructure/core-adapters/item-ledger-core.adapter.ts',
-      'apps/__specs-fixture__/src/features/item/infrastructure/common-adapters/item-idempotency-common.adapter.ts',
+      'apps/__specs-fixture__/src/features/product/infrastructure/core-adapters/product-ledger-core.adapter.ts',
+      'apps/__specs-fixture__/src/features/product/infrastructure/common-adapters/product-idempotency-common.adapter.ts',
       'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/core-adapters/catalog-events-ledger-core.adapter.ts',
       'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/common-adapters/catalog-events-idempotency-common.adapter.ts',
       'apps/__specs-fixture__/src/common/modules/idempotency/infrastructure/core-adapters/idempotency-common-identity-core.adapter.ts',
@@ -21,12 +21,12 @@ describe('unit specs', () => {
 
   it.each([
     [
-      'apps/__specs-fixture__/src/features/item/infrastructure/core-adapters',
-      'item-ledger-core.adapter',
+      'apps/__specs-fixture__/src/features/product/infrastructure/core-adapters',
+      'product-ledger-core.adapter',
     ],
     [
-      'apps/__specs-fixture__/src/features/item/infrastructure/common-adapters',
-      'item-idempotency-common.adapter',
+      'apps/__specs-fixture__/src/features/product/infrastructure/common-adapters',
+      'product-idempotency-common.adapter',
     ],
     [
       'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/core-adapters',
@@ -53,12 +53,12 @@ describe('unit specs', () => {
 
   it.each([
     [
-      'apps/__specs-fixture__/src/features/item/infrastructure/core-adapters',
-      'item-ledger-core.adapter',
+      'apps/__specs-fixture__/src/features/product/infrastructure/core-adapters',
+      'product-ledger-core.adapter',
     ],
     [
-      'apps/__specs-fixture__/src/features/item/infrastructure/common-adapters',
-      'item-idempotency-common.adapter',
+      'apps/__specs-fixture__/src/features/product/infrastructure/common-adapters',
+      'product-idempotency-common.adapter',
     ],
     [
       'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/core-adapters',

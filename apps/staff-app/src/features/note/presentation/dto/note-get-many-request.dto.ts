@@ -26,7 +26,7 @@ export class NoteGetManyRequestDto {
   @Min(1)
   public size?: number;
 
-  @ApiPropertyOptional({ example: 'item', description: 'Only together with subjectId' })
+  @ApiPropertyOptional({ example: 'product', description: 'Only together with subjectId' })
   @IsOptional()
   @IsString()
   @Matches(/^[a-z][a-z-]{1,63}$/, { message: 'subjectType must be lowercase letters and dashes' })

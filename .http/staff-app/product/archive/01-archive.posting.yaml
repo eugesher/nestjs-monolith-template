@@ -1,0 +1,19 @@
+name: 01-archive
+description: |-
+  e2e: Product › PATCH /api/products/:productId/archive › should archive and record one ledger entry under the correlation id
+
+  Expect: 200 OK, product 103 archived at version 2, one ledger entry product-archived:103 with correlation_id e2e-product-archive
+  User: editor@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/products/103/archive
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: If-Match
+    value: '1'
+  - name: x-correlation-id
+    value: e2e-product-archive
+scripts:
+  setup: scripts.py:as_editor

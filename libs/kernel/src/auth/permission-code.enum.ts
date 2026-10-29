@@ -5,4 +5,7 @@ export enum PermissionCodeEnum {
   IAM_ROLE_EDIT = 'iam:role-edit',
   NOTE_READ = 'note:read',
   NOTE_WRITE = 'note:write',
+  PRODUCT_READ = 'product:read',
+  PRODUCT_WRITE = 'product:write',
+  PRODUCT_ARCHIVE = 'product:archive',
 }

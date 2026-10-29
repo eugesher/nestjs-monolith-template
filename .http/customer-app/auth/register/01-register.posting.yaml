@@ -1,9 +1,9 @@
 name: 01-register
 description: |-
-  e2e: Auth › POST /api/auth/register › should create a customer who logs in and creates an item of their own
+  e2e: Auth › POST /api/auth/register › should create a customer who logs in and record the registration in the ledger under the correlation id
 
-  Expect: 201 Created, {id, email} without a token; a customer row eve@example.com, active, with an argon2id hash
-  Note: then log in as eve@example.com with the same password, GET /auth/me and POST /items (Idempotency-Key e2e-register-key) with that token: 200, 200 and 201 with owner_id = id
+  Expect: 201 Created, {id, email} without a token; a customer row eve@example.com, active, with an argon2id hash; a ledger entry customer-registered:<id> with correlation_id e2e-customer-register
+  Note: then log in as eve@example.com with the same password and GET /auth/me with that token: 200 and 200
 method: POST
 url: $CUSTOMER_APP_BASE_URL/auth/register
 body:
@@ -13,5 +13,7 @@ body:
       "password": "eve-password-please-change"
     }
 headers:
+  - name: x-correlation-id
+    value: e2e-customer-register
   - name: Content-Type
     value: application/json

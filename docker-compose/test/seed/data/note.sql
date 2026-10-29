@@ -13,7 +13,7 @@ INSERT INTO note (
 VALUES
   (
     200,
-    'item',
+    'product',
     '100',
     'Customer called about this.',
     '00000000-0000-4000-8000-000000000001',
@@ -25,7 +25,7 @@ VALUES
   ),
   (
     201,
-    'item',
+    'product',
     '100',
     'Check the supplier.',
     '00000000-0000-4000-8000-000000000001',
@@ -37,7 +37,7 @@ VALUES
   ),
   (
     202,
-    'item',
+    'product',
     '101',
     'Already handled.',
     '00000000-0000-4000-8000-000000000001',

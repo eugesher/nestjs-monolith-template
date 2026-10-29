@@ -15,7 +15,7 @@ export class LedgerE2E {
       it('should list the entries of one subject', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/ledger')
-          .query({ subjectType: 'item', subjectId: '100' })
+          .query({ subjectType: 'product', subjectId: '100' })
           .auth(this.ctx.viewerToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 

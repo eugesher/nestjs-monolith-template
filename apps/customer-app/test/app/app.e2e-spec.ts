@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, ItemE2E, ReminderE2E, AuthE2E } from '../features';
+import { HealthE2E, ReminderE2E, AuthE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -11,7 +11,6 @@ describe('App', () => {
 
   const healthE2E = HealthE2E.of(ctx);
   const authE2E = AuthE2E.of(ctx);
-  const itemE2E = ItemE2E.of(ctx);
   const reminderE2E = ReminderE2E.of(ctx);
 
   beforeAll(async () => {
@@ -26,7 +25,7 @@ describe('App', () => {
     await ctx.close();
   });
 
-  it.each(['/api/iam/roles', '/api/ledger', '/api/notes'])(
+  it.each(['/api/iam/roles', '/api/ledger', '/api/notes', '/api/products'])(
     'should not mount the staff-app route %s',
     async (path) => {
       await request(ctx.app.getHttpServer())
@@ -45,14 +44,6 @@ describe('App', () => {
     authE2E.handleRegister();
     authE2E.handleLogin();
     authE2E.handleMe();
-  });
-
-  describe('Item', () => {
-    itemE2E.handleGetMany();
-    itemE2E.handleGetOne();
-    itemE2E.handleCreate();
-    itemE2E.handleRename();
-    itemE2E.handleArchive();
   });
 
   describe('Reminder', () => {

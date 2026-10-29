@@ -22,14 +22,14 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
 
   it('a feature MAY reach common through its barrel', async () => {
     await expect({
-      file: 'apps/__shared-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__shared-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../common/shared/auth";',
     }).toPassArchitectureLint();
   });
 
   it('a feature may NOT take a deep path into common', async () => {
     await expect({
-      file: 'apps/__shared-fixture__/src/features/item/presentation/controllers/__fixture__.ts',
+      file: 'apps/__shared-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../common/shared/auth/guards/auth-jwt.guard";',
     }).toBreakRule('boundaries/dependencies');
   });

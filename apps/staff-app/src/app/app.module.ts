@@ -6,8 +6,10 @@ import {
   IamModule,
   LedgerModule,
   NoteModule,
+  ProductModule,
   AuthModule,
 } from '@acme-staff-features';
+import { IdempotencyPurgeModule, LedgerCatalogEventsModule } from '@acme-staff-processors';
 import { CacheModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
@@ -20,12 +22,14 @@ import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observabili
 import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
+import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.STAFF_APP),
     TypeOrmSetupModule.forRoot(),
+    ScheduleSetupModule,
     CacheModule,
     EventsModule,
     AuthGlobalModule,
@@ -34,6 +38,9 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     IamModule,
     LedgerModule,
     NoteModule,
+    ProductModule,
+    IdempotencyPurgeModule,
+    LedgerCatalogEventsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },

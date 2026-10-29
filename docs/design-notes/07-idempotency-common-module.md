@@ -1,17 +1,17 @@
 # 07 — Idempotency common module
 
-`apps/customer-app/src/common/modules/idempotency` keeps the `idempotency_key` table: which
+`apps/staff-app/src/common/modules/idempotency` keeps the `idempotency_key` table: which
 `Idempotency-Key` a client has used, for which request body, and what the first request answered.
-It is a common module because two different entry points need it: the `item` feature claims keys
+It is a common module because two different entry points need it: the `product` feature claims keys
 while serving writes, and the `idempotency-purge` processor deletes expired ones on a schedule.
 
-| Alias                                       | What it is                                                                             |
-| ------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `@acme-customer-contracts/idempotency`      | `IDEMPOTENCY_COMMON_PORT`, its commands and views, `IdempotencyCommonClaimOutcomeEnum` |
-| `@acme-customer-common/modules/idempotency` | `IdempotencyCommonModule`, the only export of the module root                          |
+| Alias                                    | What it is                                                                             |
+| ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| `@acme-staff-contracts/idempotency`      | `IDEMPOTENCY_COMMON_PORT`, its commands and views, `IdempotencyCommonClaimOutcomeEnum` |
+| `@acme-staff-common/modules/idempotency` | `IdempotencyCommonModule`, the only export of the module root                          |
 
 A feature root mounts the module. The feature reaches the port only from a common-adapter. Lint
-keeps staff-app out of both aliases.
+keeps customer-app out of both aliases.
 
 ## Claim before the work
 
@@ -30,7 +30,7 @@ is kept. The caller must leave out anything that changes on a retry, such as the
 | `in-flight` | same key, same body, not completed | asks the client to retry shortly (409)                       |
 | `mismatch`  | same key, different body           | refuses (422): the stored answer belongs to another question |
 
-The outcome enum lives in the contract, not in `libs/kernel`, because only customer-app reads it.
+The outcome enum lives in the contract, not in `libs/kernel`, because only staff-app reads it.
 
 **A key that vanished is in flight.** If the insert hits a duplicate but the row is gone when the
 module reads it, the holder has just released it. The answer is `in-flight`: the client retries and

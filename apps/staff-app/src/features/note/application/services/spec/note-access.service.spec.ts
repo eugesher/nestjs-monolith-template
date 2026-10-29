@@ -9,7 +9,7 @@ describe('NoteAccessService', () => {
     findById = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Check the supplier',
         authorId: 'admin-1',

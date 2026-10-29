@@ -1,6 +1,6 @@
 export * from './customer-identity/customer.entity';
 export * from './idempotency/idempotency-key.entity';
-export * from './item/item.entity';
+export * from './product/product.entity';
 export * from './ledger/ledger-entry.entity';
 export * from './note/note-revision.entity';
 export * from './note/note.entity';

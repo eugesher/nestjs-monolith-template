@@ -15,29 +15,29 @@ describe('app entry points', () => {
 
     expect(appAliases).toEqual([
       '@acme-staff-app',
+      '@acme-staff-common/modules/idempotency',
+      '@acme-staff-common/shared/concurrency',
+      '@acme-staff-common/shared/idempotency',
+      '@acme-staff-contracts/idempotency',
+      '@acme-staff-contracts/ledger-catalog-events',
       '@acme-staff-features',
+      '@acme-staff-processors',
       '@acme-customer-app',
-      '@acme-customer-common/modules/idempotency',
-      '@acme-customer-common/shared/concurrency',
-      '@acme-customer-common/shared/idempotency',
-      '@acme-customer-contracts/idempotency',
-      '@acme-customer-contracts/ledger-catalog-events',
       '@acme-customer-features',
-      '@acme-customer-processors',
     ]);
   });
 
   it.each([
     '@acme-staff-app',
+    '@acme-staff-common/modules/idempotency',
+    '@acme-staff-common/shared/concurrency',
+    '@acme-staff-common/shared/idempotency',
+    '@acme-staff-contracts/idempotency',
+    '@acme-staff-contracts/ledger-catalog-events',
     '@acme-staff-features',
+    '@acme-staff-processors',
     '@acme-customer-app',
-    '@acme-customer-common/modules/idempotency',
-    '@acme-customer-common/shared/concurrency',
-    '@acme-customer-common/shared/idempotency',
-    '@acme-customer-contracts/idempotency',
-    '@acme-customer-contracts/ledger-catalog-events',
     '@acme-customer-features',
-    '@acme-customer-processors',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
   });
@@ -48,13 +48,13 @@ describe('app entry points', () => {
     '@acme-staff-features/health/health.module',
     '@acme-customer-features/health/health.module',
     '@acme-staff-features/index',
-    '@acme-customer-common/modules/idempotency/application',
-    '@acme-customer-common/shared/concurrency/decorators/if-match.decorator',
-    '@acme-customer-common/shared/idempotency/helpers/idempotency-key.helper',
-    '@acme-customer-contracts/idempotency/ports/idempotency-common.port',
-    '@acme-customer-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
-    '@acme-customer-processors/ledger-catalog-events/ledger-catalog-events.module',
-    '@acme-customer-processors/index',
+    '@acme-staff-common/modules/idempotency/application',
+    '@acme-staff-common/shared/concurrency/decorators/if-match.decorator',
+    '@acme-staff-common/shared/idempotency/helpers/idempotency-key.helper',
+    '@acme-staff-contracts/idempotency/ports/idempotency-common.port',
+    '@acme-staff-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
+    '@acme-staff-processors/ledger-catalog-events/ledger-catalog-events.module',
+    '@acme-staff-processors/index',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
   });
@@ -85,9 +85,9 @@ describe('app entry points', () => {
   it.each([
     ['apps/staff-app/src/app/setup/orm/__fixture__.ts', '@acme-staff-app'],
     ['apps/staff-app/src/app/global/auth/module/__fixture__.ts', '@acme-staff-app'],
-    ['apps/customer-app/src/features/item/item.module.ts', '@acme-customer-app'],
-    ['apps/customer-app/src/processors/idempotency-purge/__fixture__.ts', '@acme-customer-app'],
-    ['apps/customer-app/src/common/shared/concurrency/__fixture__.ts', '@acme-customer-app'],
+    ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff-app'],
+    ['apps/staff-app/src/processors/idempotency-purge/__fixture__.ts', '@acme-staff-app'],
+    ['apps/staff-app/src/common/shared/concurrency/__fixture__.ts', '@acme-staff-app'],
   ])('%s may NOT import the AppModule, only main and the tests do', async (file, source) => {
     await expect({
       file,
@@ -143,21 +143,21 @@ describe('app entry points', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('apps/customer-app/src/app/app.module.ts MAY import the processors of its own app by @acme-customer-processors', async () => {
+  it('apps/staff-app/src/app/app.module.ts MAY import the processors of its own app by @acme-staff-processors', async () => {
     await expect({
-      file: 'apps/customer-app/src/app/app.module.ts',
-      code: 'import { LedgerCatalogEventsModule } from "@acme-customer-processors";',
+      file: 'apps/staff-app/src/app/app.module.ts',
+      code: 'import { LedgerCatalogEventsModule } from "@acme-staff-processors";',
     }).toPassArchitectureLint();
   });
 
   it.each([
-    'apps/staff-app/src/app/app.module.ts',
-    'apps/customer-app/src/features/item/item.module.ts',
-    'apps/customer-app/src/main.ts',
-  ])('%s may NOT import the customer-app processors index', async (file) => {
+    'apps/customer-app/src/app/app.module.ts',
+    'apps/staff-app/src/features/product/product.module.ts',
+    'apps/staff-app/src/main.ts',
+  ])('%s may NOT import the staff-app processors index', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerCatalogEventsModule } from "@acme-customer-processors";',
+      code: 'import { LedgerCatalogEventsModule } from "@acme-staff-processors";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -192,44 +192,44 @@ describe('app entry points', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('a customer-app feature root MAY mount the idempotency common module by its alias', async () => {
+  it('a staff-app feature root MAY mount the idempotency common module by its alias', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/health/health.module.ts',
-      code: 'import { IdempotencyCommonModule } from "@acme-customer-common/modules/idempotency";',
+      file: 'apps/staff-app/src/features/health/health.module.ts',
+      code: 'import { IdempotencyCommonModule } from "@acme-staff-common/modules/idempotency";',
     }).toPassArchitectureLint();
   });
 
-  it('a customer-app feature presentation MAY import the shared decorators by their aliases', async () => {
+  it('a staff-app feature presentation MAY import the shared decorators by their aliases', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',
+      file: 'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
       code:
-        'import { IfMatch } from "@acme-customer-common/shared/concurrency";\n' +
-        'import { IdempotencyKey } from "@acme-customer-common/shared/idempotency";',
+        'import { IfMatch } from "@acme-staff-common/shared/concurrency";\n' +
+        'import { IdempotencyKey } from "@acme-staff-common/shared/idempotency";',
     }).toPassArchitectureLint();
   });
 
-  it('a customer-app processor consumer MAY import the ledger catalog events contract by its alias', async () => {
+  it('a staff-app processor consumer MAY import the ledger catalog events contract by its alias', async () => {
     await expect({
-      file: 'apps/customer-app/src/processors/ledger-catalog-events/presentation/ledger-catalog-events.consumer.ts',
-      code: 'import { LEDGER_CATALOG_EVENTS } from "@acme-customer-contracts/ledger-catalog-events";',
+      file: 'apps/staff-app/src/processors/ledger-catalog-events/presentation/ledger-catalog-events.consumer.ts',
+      code: 'import { LEDGER_CATALOG_EVENTS } from "@acme-staff-contracts/ledger-catalog-events";',
     }).toPassArchitectureLint();
   });
 
-  it('a customer-app feature common-adapter MAY import the idempotency contracts by their alias', async () => {
+  it('a staff-app feature common-adapter MAY import the idempotency contracts by their alias', async () => {
     await expect({
-      file: 'apps/customer-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      code: 'import { IDEMPOTENCY_COMMON_PORT } from "@acme-customer-contracts/idempotency";',
+      file: 'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      code: 'import { IDEMPOTENCY_COMMON_PORT } from "@acme-staff-contracts/idempotency";',
     }).toPassArchitectureLint();
   });
 
   it.each([
     [
-      'apps/customer-app/src/features/health/application/__fixture__.ts',
-      '@acme-customer-contracts/idempotency',
+      'apps/staff-app/src/features/health/application/__fixture__.ts',
+      '@acme-staff-contracts/idempotency',
     ],
     [
-      'apps/customer-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      '@acme-customer-common/modules/idempotency',
+      'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      '@acme-staff-common/modules/idempotency',
     ],
   ])('%s may NOT import %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
@@ -239,18 +239,18 @@ describe('app entry points', () => {
 
   it.each([
     [
-      'apps/staff-app/src/features/health/health.module.ts',
-      '@acme-customer-common/modules/idempotency',
+      'apps/customer-app/src/features/health/health.module.ts',
+      '@acme-staff-common/modules/idempotency',
     ],
     [
-      'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      '@acme-customer-contracts/idempotency',
+      'apps/customer-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
+      '@acme-staff-contracts/idempotency',
     ],
     [
-      'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
-      '@acme-customer-common/shared/concurrency',
+      'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',
+      '@acme-staff-common/shared/concurrency',
     ],
-  ])('staff-app (%s) may NOT reach the customer-app %s', async (file, source) => {
+  ])('customer-app (%s) may NOT reach the staff-app %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
       'boundaries/dependencies',
     );

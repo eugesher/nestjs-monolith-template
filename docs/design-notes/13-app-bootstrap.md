@@ -57,10 +57,10 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi               |
 | `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
-| `ScheduleSetupModule`              | `app/setup/schedule`, customer-app only              | `ScheduleModule.forRoot()` for `@Cron`                      |
+| `ScheduleSetupModule`              | `app/setup/schedule`, staff-app only                 | `ScheduleModule.forRoot()` for `@Cron`                      |
 | `CacheModule`, `EventsModule`      | `libs/cache`, `libs/messaging`                       | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT`              |
 | `AuthGlobalModule`                 | `app/global/auth`                                    | the three global guards                                     |
-| features, processors               | `@acme-<app>-features`, `@acme-customer-processors`  | the routes and the consumers                                |
+| features, processors               | `@acme-<app>-features`, `@acme-staff-processors`     | the routes and the consumers                                |
 | `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log                                  |
 | `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                |
@@ -78,7 +78,8 @@ header. Inside the request, `CorrelationContextHelper.current()` answers that id
 written by the request carries the id the client got back.
 
 The entity list of each app holds exactly the entities of the modules it mounts. staff-app has no
-`Item`, customer-app has no `Note`.
+`Reminder`, customer-app has no `Product`. Both list `LedgerEntry`, because both mount the core
+ledger.
 
 ## Logs
 

@@ -40,13 +40,13 @@ describe('NoteController', () => {
       create.mockResolvedValue({ id: '17', body: 'Refunded' });
 
       const response = await controller.handleCreate(
-        { subjectType: 'item', subjectId: '42', body: 'Refunded' },
+        { subjectType: 'product', subjectId: '42', body: 'Refunded' },
         { id: 'user-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ id: '17', body: 'Refunded' });
       expect(create).toHaveBeenCalledWith({
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Refunded',
         authorId: 'user-1',
@@ -61,7 +61,7 @@ describe('NoteController', () => {
       const response = await controller.handleGetMany({
         page: 2,
         size: 5,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         resolved: false,
       });
@@ -70,7 +70,7 @@ describe('NoteController', () => {
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
         size: 5,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         resolved: false,
       });

@@ -16,7 +16,7 @@ describe('LedgerListEntriesUseCase', () => {
       await useCase.execute({
         page: 2,
         size: 10,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });
@@ -24,7 +24,7 @@ describe('LedgerListEntriesUseCase', () => {
       expect(list).toHaveBeenCalledWith({
         page: 2,
         size: 10,
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
       });
@@ -35,10 +35,10 @@ describe('LedgerListEntriesUseCase', () => {
         items: [
           {
             id: '7',
-            operationKey: 'item-archived:12',
-            subjectType: 'item',
+            operationKey: 'product-archived:12',
+            subjectType: 'product',
             subjectId: '12',
-            action: 'ItemArchived',
+            action: 'ProductArchived',
             payload: { title: 'Lamp' },
             correlationId: 'corr-1',
             occurredAt: '2026-01-01T00:00:00.000Z',
@@ -56,10 +56,10 @@ describe('LedgerListEntriesUseCase', () => {
         items: [
           {
             id: '7',
-            operationKey: 'item-archived:12',
-            subjectType: 'item',
+            operationKey: 'product-archived:12',
+            subjectType: 'product',
             subjectId: '12',
-            action: 'ItemArchived',
+            action: 'ProductArchived',
             payload: { title: 'Lamp' },
             correlationId: 'corr-1',
             occurredAt: '2026-01-01T00:00:00.000Z',

@@ -8,7 +8,17 @@ subject, and under which correlation id. Its contract `core/contracts/src/ledger
 | `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact                 |
 | `LEDGER_CORE_QUERY_PORT`  | `LedgerCoreQueryFacade`  | the back office that reads the journal |
 
-Two ports instead of one let each app bind only what it uses.
+Two ports instead of one let each app bind only what it uses. The ledger is the core module both
+apps share:
+
+| App          | Writer                                | Facts                               |
+| ------------ | ------------------------------------- | ----------------------------------- |
+| customer-app | the `auth` feature                    | `CustomerRegistered`                |
+| staff-app    | the `product` feature                 | `ProductArchived`                   |
+| staff-app    | the `ledger-catalog-events` processor | `ProductCreated`, `ProductArchived` |
+
+customer-app binds the append port alone. staff-app binds both and serves the journal through its
+`ledger` feature (see `06-ledger-feature.md`).
 
 ## Append is the only verb
 
@@ -17,7 +27,7 @@ has no behavior beyond its invariants, and a broken invariant throws a plain `Er
 is a programming mistake in the caller, not a business refusal that a client should see by code.
 
 **The operation key makes append idempotent.** Every fact carries an `operationKey`, such as
-`item-archived:12`, and the column has a UNIQUE index. A second append with the same key hits a
+`product-archived:12`, and the column has a UNIQUE index. A second append with the same key hits a
 duplicate key. `LedgerCoreAppendEntryRepository` catches exactly that error, reads the id of the
 existing row and answers `{ id, appended: false }`. A caller that delivers the same fact twice gets
 one row and no exception. Any other database error passes through.

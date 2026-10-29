@@ -22,7 +22,7 @@ describe('NoteEditUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -37,7 +37,7 @@ describe('NoteEditUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Supplier confirmed',
             authorId: 'admin-1',
@@ -88,7 +88,7 @@ describe('NoteEditUseCase', () => {
       });
       expect(view).toEqual({
         id: '7',
-        subjectType: 'item',
+        subjectType: 'product',
         subjectId: '42',
         body: 'Supplier confirmed',
         authorId: 'admin-1',
@@ -157,7 +157,7 @@ describe('NoteEditUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -188,7 +188,7 @@ describe('NoteEditUseCase', () => {
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
-            subjectType: 'item',
+            subjectType: 'product',
             subjectId: '42',
             body: 'Check the supplier',
             authorId: 'admin-1',
@@ -214,7 +214,7 @@ describe('NoteEditUseCase', () => {
       findById.mockReset().mockResolvedValue(
         NoteModel.reconstitute({
           id: '7',
-          subjectType: 'item',
+          subjectType: 'product',
           subjectId: '42',
           body: 'Check the supplier',
           authorId: 'admin-1',

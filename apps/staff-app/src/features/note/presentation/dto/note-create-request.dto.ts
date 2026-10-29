@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class NoteCreateRequestDto {
-  @ApiProperty({ example: 'item', description: 'The kind of thing the note is about' })
+  @ApiProperty({ example: 'product', description: 'The kind of thing the note is about' })
   @IsString()
   @Matches(/^[a-z][a-z-]{1,63}$/, { message: 'subjectType must be lowercase letters and dashes' })
   public subjectType: string;

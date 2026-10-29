@@ -8,18 +8,18 @@
 ## Read-only, and only staff-app
 
 The feature binds the query port and nothing else. Recording facts is the job of whoever caused
-them, never of an HTTP client, so no endpoint can write to the journal. customer-app does not mount
-the feature at all.
+them, never of an HTTP client, so no endpoint can write to the journal. customer-app records the
+sign-up of a customer through the append port but does not mount this feature at all.
 
 Access needs `ledger:read`. A principal without it gets a 403, and one without a token gets a 401.
 
 ## Paging and filters
 
-| Query parameter            | Meaning                                               |
-| -------------------------- | ----------------------------------------------------- |
-| `page`, `size`             | page window; `size` above 100 is capped, not rejected |
-| `subjectType`, `subjectId` | the history of one subject, such as `item` and `12`   |
-| `correlationId`            | everything one request caused                         |
+| Query parameter            | Meaning                                                |
+| -------------------------- | ------------------------------------------------------ |
+| `page`, `size`             | page window; `size` above 100 is capped, not rejected  |
+| `subjectType`, `subjectId` | the history of one subject, such as `product` and `12` |
+| `correlationId`            | everything one request caused                          |
 
 **The core owns the window.** The DTO checks that `page` and `size` are positive integers and leaves
 the limits to `LedgerCoreListEntriesUseCase`, which applies the defaults (page 1, size 20) and the
