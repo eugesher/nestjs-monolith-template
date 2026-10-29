@@ -1,0 +1,81 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import {
+  STAFF_IDENTITY_CORE_ADMIN_PORT,
+  type IStaffIdentityCoreAdminPort,
+} from '@acme-core/contracts/staff-identity';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { DomainException } from '@acme-libs/toolkit';
+import { IamDomainException } from '../../domain';
+import {
+  IIamIdentityAssignRoleCommand,
+  IIamIdentityPort,
+  IIamIdentityRegisterUserCommand,
+  IIamIdentityRoleView,
+  IIamIdentityUpdateRolePermissionsCommand,
+  IIamIdentityUserRolesView,
+  IIamIdentityUserView,
+} from '../../outbound';
+
+@Injectable()
+export class IamStaffIdentityCoreAdapter implements IIamIdentityPort {
+  constructor(
+    @Inject(STAFF_IDENTITY_CORE_ADMIN_PORT)
+    private readonly identity: IStaffIdentityCoreAdminPort,
+  ) {}
+
+  public async registerUser(
+    command: IIamIdentityRegisterUserCommand,
+  ): Promise<IIamIdentityUserView> {
+    const { email, password, roles } = command;
+
+    try {
+      return await this.identity.registerUser({ email, password, roles });
+    } catch (error) {
+      throw IamStaffIdentityCoreAdapter.translate(error);
+    }
+  }
+
+  public async assignRole(
+    command: IIamIdentityAssignRoleCommand,
+  ): Promise<IIamIdentityUserRolesView> {
+    const { userId, role } = command;
+
+    try {
+      return await this.identity.assignRole({ userId, role });
+    } catch (error) {
+      throw IamStaffIdentityCoreAdapter.translate(error);
+    }
+  }
+
+  public listRoles(): Promise<IIamIdentityRoleView[]> {
+    return this.identity.listRoles();
+  }
+
+  public async updateRolePermissions(
+    command: IIamIdentityUpdateRolePermissionsCommand,
+  ): Promise<IIamIdentityRoleView> {
+    const { role, permissionCodes } = command;
+
+    try {
+      return await this.identity.updateRolePermissions({ role, permissionCodes });
+    } catch (error) {
+      throw IamStaffIdentityCoreAdapter.translate(error);
+    }
+  }
+
+  private static translate(error: unknown): unknown {
+    if (
+      error instanceof DomainException &&
+      IamStaffIdentityCoreAdapter.isIdentityCode(error.code)
+    ) {
+      return new IamDomainException(error.code, error.message);
+    }
+
+    return error;
+  }
+
+  private static isIdentityCode(code: string): code is IdentityErrorCodeEnum {
+    return Object.values<string>(IdentityErrorCodeEnum).includes(code);
+  }
+}

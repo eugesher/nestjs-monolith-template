@@ -1,1 +1,1 @@
-export * from './core-adapters/session-identity-core.adapter';
+export * from './core-adapters/session-staff-identity-core.adapter';

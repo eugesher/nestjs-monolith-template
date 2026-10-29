@@ -1,4 +1,4 @@
-import { AuthIdentityCoreAdapter } from '../../infrastructure';
+import { AuthStaffIdentityCoreAdapter } from '../../infrastructure';
 import { AuthFacade } from '../auth.facade';
 
 describe('AuthFacade', () => {
@@ -12,7 +12,7 @@ describe('AuthFacade', () => {
     facade = new AuthFacade({
       findSubject,
       findPermissionCodes,
-    } as unknown as AuthIdentityCoreAdapter);
+    } as unknown as AuthStaffIdentityCoreAdapter);
   });
 
   describe('validate', () => {

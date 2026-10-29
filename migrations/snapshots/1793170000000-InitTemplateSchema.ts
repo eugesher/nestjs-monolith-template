@@ -3,51 +3,51 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
 export class InitTemplateSchema1793170000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TABLE \`user\` (
+      CREATE TABLE staff_user (
         id            CHAR(36)     NOT NULL PRIMARY KEY,
         email         VARCHAR(255) NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         status        VARCHAR(16)  NOT NULL DEFAULT 'active',
         created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY uq_user_email (email)
+        UNIQUE KEY uq_staff_user_email (email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
     await queryRunner.query(`
-      CREATE TABLE \`role\` (
+      CREATE TABLE staff_role (
         id          INT AUTO_INCREMENT PRIMARY KEY,
         name        VARCHAR(64) NOT NULL,
         description VARCHAR(255) NULL,
-        UNIQUE KEY uq_role_name (name)
+        UNIQUE KEY uq_staff_role_name (name)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
     await queryRunner.query(`
-      CREATE TABLE \`permission\` (
+      CREATE TABLE staff_permission (
         id          INT AUTO_INCREMENT PRIMARY KEY,
         code        VARCHAR(64) NOT NULL,
         description VARCHAR(255) NULL,
-        UNIQUE KEY uq_permission_code (code)
+        UNIQUE KEY uq_staff_permission_code (code)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
     await queryRunner.query(`
-      CREATE TABLE user_roles (
+      CREATE TABLE staff_user_roles (
         user_id CHAR(36) NOT NULL,
         role_id INT      NOT NULL,
         PRIMARY KEY (user_id, role_id),
-        CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES \`user\`(id) ON DELETE CASCADE,
-        CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES \`role\`(id) ON DELETE CASCADE
+        CONSTRAINT fk_staff_user_roles_user FOREIGN KEY (user_id) REFERENCES staff_user(id) ON DELETE CASCADE,
+        CONSTRAINT fk_staff_user_roles_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
     await queryRunner.query(`
-      CREATE TABLE role_permissions (
+      CREATE TABLE staff_role_permissions (
         role_id       INT NOT NULL,
         permission_id INT NOT NULL,
         PRIMARY KEY (role_id, permission_id),
-        CONSTRAINT fk_role_permissions_role FOREIGN KEY (role_id) REFERENCES \`role\`(id) ON DELETE CASCADE,
-        CONSTRAINT fk_role_permissions_permission FOREIGN KEY (permission_id) REFERENCES \`permission\`(id) ON DELETE CASCADE
+        CONSTRAINT fk_staff_role_permissions_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE,
+        CONSTRAINT fk_staff_role_permissions_permission FOREIGN KEY (permission_id) REFERENCES staff_permission(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
@@ -102,10 +102,10 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
     await queryRunner.query('DROP TABLE IF EXISTS ledger_entry');
     await queryRunner.query('DROP TABLE IF EXISTS idempotency_key');
     await queryRunner.query('DROP TABLE IF EXISTS item');
-    await queryRunner.query('DROP TABLE IF EXISTS role_permissions');
-    await queryRunner.query('DROP TABLE IF EXISTS user_roles');
-    await queryRunner.query('DROP TABLE IF EXISTS `permission`');
-    await queryRunner.query('DROP TABLE IF EXISTS `role`');
-    await queryRunner.query('DROP TABLE IF EXISTS `user`');
+    await queryRunner.query('DROP TABLE IF EXISTS staff_role_permissions');
+    await queryRunner.query('DROP TABLE IF EXISTS staff_user_roles');
+    await queryRunner.query('DROP TABLE IF EXISTS staff_permission');
+    await queryRunner.query('DROP TABLE IF EXISTS staff_role');
+    await queryRunner.query('DROP TABLE IF EXISTS staff_user');
   }
 }

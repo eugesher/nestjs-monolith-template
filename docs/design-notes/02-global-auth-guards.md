@@ -6,12 +6,14 @@
 | ------------------------- | -------------------------------- | -------------------------------------------------- |
 | Guards, route decorators  | `libs/auth`                      | the token, the request, `AUTH_USER_VALIDATOR_PORT` |
 | Validator port, user view | `libs/contracts/src/auth`        | kernel enums only                                  |
-| Port implementation       | `apps/<app>/src/app/global/auth` | the identity core module, through a core adapter   |
+| Port implementation       | `apps/<app>/src/app/global/auth` | an identity core module, through a core adapter    |
 
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in
-its global `AuthModule`: the facade calls `AuthIdentityCoreAdapter`, which calls
-`IDENTITY_CORE_SESSION_PORT.validateSubject`. The port has a second method, `findPermissionCodes`,
+its global `AuthModule`: the facade calls the app's core adapter, which calls
+`STAFF_IDENTITY_CORE_SESSION_PORT.validateSubject`. In staff-app that adapter is
+`AuthStaffIdentityCoreAdapter`. customer-app has no identity module of its own yet, so its
+`AuthIdentityCoreAdapter` calls `staff-identity` too. The port has a second method, `findPermissionCodes`,
 which the facade answers the same way. The global module also imports `AuthLibModule`, so
 mounting `AuthModule` in `AppModule` is the whole wiring.
 
@@ -43,7 +45,7 @@ credentials.
 
 ## The user is re-derived
 
-**The token names the subject and nothing else.** Identity signs `{ sub }`, and the verified
+**The token names the subject and nothing else.** `staff-identity` signs `{ sub }`, and the verified
 payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the token, so there is
 no stale copy of them to trust or to refresh.
 
@@ -57,5 +59,5 @@ a route without `@RequiresPermission`. On a route with it, the guard asks the va
 permission codes of the user, one read, and checks them. A revoked permission therefore refuses the
 very next gated request, while an ungated request such as `GET /auth/me` pays for the user alone.
 
-**One secret, one kind of token.** The guard verifies with `JWT_SECRET`, the secret identity signs
+**One secret, one kind of token.** The guard verifies with `JWT_SECRET`, the secret the identity module signs
 the access token with. There is no other token kind for the guard to tell apart.

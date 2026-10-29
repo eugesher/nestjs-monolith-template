@@ -8,11 +8,11 @@ import {
 } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
-import { AuthIdentityCoreAdapter } from '../infrastructure';
+import { AuthStaffIdentityCoreAdapter } from '../infrastructure';
 
 @Injectable()
 export class AuthFacade implements IAuthUserValidatorPort {
-  constructor(private readonly identity: AuthIdentityCoreAdapter) {}
+  constructor(private readonly identity: AuthStaffIdentityCoreAdapter) {}
 
   public validate(query: IAuthJwtPayloadQuery): Promise<Maybe<IAuthCurrentUserView>> {
     return this.identity.findSubject(query);

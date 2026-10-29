@@ -1,15 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 
-import { IdentityCoreModule } from '@acme-core/modules/identity';
+import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
 import { AuthLibModule } from '@acme-libs/auth';
 import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
-import { AuthIdentityCoreAdapter } from '../infrastructure';
+import { AuthStaffIdentityCoreAdapter } from '../infrastructure';
 import { AuthFacade } from './auth.facade';
 
 @Global()
 @Module({
-  imports: [AuthLibModule, IdentityCoreModule],
+  imports: [AuthLibModule, StaffIdentityCoreModule],
   exports: [AUTH_USER_VALIDATOR_PORT],
-  providers: [{ provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthFacade }, AuthIdentityCoreAdapter],
+  providers: [
+    { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthFacade },
+    AuthStaffIdentityCoreAdapter,
+  ],
 })
 export class AuthModule {}

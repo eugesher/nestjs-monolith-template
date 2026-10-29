@@ -100,11 +100,11 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
-    "core-contracts-identity": {
+    "core-contracts-staff-identity": {
       "type": "library",
-      "root": "core/contracts/src/identity",
+      "root": "core/contracts/src/staff-identity",
       "entryFile": "index",
-      "sourceRoot": "core/contracts/src/identity",
+      "sourceRoot": "core/contracts/src/staff-identity",
       "compilerOptions": {
         "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }
@@ -127,11 +127,11 @@
         "tsConfigPath": "core/entities/tsconfig.lib.json"
       }
     },
-    "core-modules-identity": {
+    "core-modules-staff-identity": {
       "type": "library",
-      "root": "core/modules/src/identity",
+      "root": "core/modules/src/staff-identity",
       "entryFile": "index",
-      "sourceRoot": "core/modules/src/identity",
+      "sourceRoot": "core/modules/src/staff-identity",
       "compilerOptions": {
         "tsConfigPath": "core/modules/tsconfig.lib.json"
       }
