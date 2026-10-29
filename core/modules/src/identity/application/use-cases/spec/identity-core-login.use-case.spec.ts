@@ -1,11 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import {
-  IdentityErrorCodeEnum,
-  PermissionCodeEnum,
-  RoleEnum,
-  UserStatusEnum,
-} from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { IdentityCoreUserModel } from '../../../domain';
 import { IdentityCoreAccessTokenService } from '../../services/identity-core-access-token.service';
@@ -13,7 +8,7 @@ import { IdentityCoreLoginUseCase } from '../identity-core-login.use-case';
 
 describe('IdentityCoreLoginUseCase', () => {
   let issue: jest.Mock;
-  let repository: { findByEmail: jest.Mock; findPermissionCodes: jest.Mock };
+  let repository: { findByEmail: jest.Mock };
   let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: IdentityCoreLoginUseCase;
@@ -30,7 +25,6 @@ describe('IdentityCoreLoginUseCase', () => {
           roles: [RoleEnum.EDITOR],
         }),
       ),
-      findPermissionCodes: jest.fn().mockResolvedValue([PermissionCodeEnum.ITEM_READ]),
     };
     passwordHasher = { hash: jest.fn(), verify: jest.fn().mockResolvedValue(true) };
     logger = makePinoLoggerMock();
@@ -51,7 +45,7 @@ describe('IdentityCoreLoginUseCase', () => {
     expect(view).toEqual({ accessToken: 'access-token' });
     expect(repository.findByEmail).toHaveBeenCalledWith('editor@example.com');
     expect(passwordHasher.verify).toHaveBeenCalledWith('hash', 'correct-horse');
-    expect(issue).toHaveBeenCalledWith(expect.objectContaining({ id: 'user-1' }), ['item:read']);
+    expect(issue).toHaveBeenCalledWith(expect.objectContaining({ id: 'user-1' }));
     expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1' }, 'User logged in');
   });
 

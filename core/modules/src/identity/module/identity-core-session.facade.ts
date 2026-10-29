@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 
 import {
   IIdentityCoreAccessTokenView,
+  IIdentityCoreFindPermissionCodesQuery,
   IIdentityCoreLoginCommand,
   IIdentityCoreSessionPort,
   IIdentityCoreSubjectView,
   IIdentityCoreValidateSubjectQuery,
 } from '@acme-core/contracts/identity';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
-import { IdentityCoreLoginUseCase, IdentityCoreValidateSubjectUseCase } from '../application';
+import {
+  IdentityCoreFindPermissionCodesUseCase,
+  IdentityCoreLoginUseCase,
+  IdentityCoreValidateSubjectUseCase,
+} from '../application';
 
 @Injectable()
 export class IdentityCoreSessionFacade implements IIdentityCoreSessionPort {
   constructor(
+    private readonly identityCoreFindPermissionCodes: IdentityCoreFindPermissionCodesUseCase,
     private readonly identityCoreLogin: IdentityCoreLoginUseCase,
     private readonly identityCoreValidateSubject: IdentityCoreValidateSubjectUseCase,
   ) {}
@@ -25,5 +32,11 @@ export class IdentityCoreSessionFacade implements IIdentityCoreSessionPort {
     query: IIdentityCoreValidateSubjectQuery,
   ): Promise<Maybe<IIdentityCoreSubjectView>> {
     return this.identityCoreValidateSubject.execute(query);
+  }
+
+  public findPermissionCodes(
+    query: IIdentityCoreFindPermissionCodesQuery,
+  ): Promise<PermissionCodeEnum[]> {
+    return this.identityCoreFindPermissionCodes.execute(query);
   }
 }

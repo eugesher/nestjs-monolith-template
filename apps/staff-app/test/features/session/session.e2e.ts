@@ -12,7 +12,7 @@ export class SessionE2E {
 
   public handleLogin(): void {
     describe('POST /api/auth/login', () => {
-      it('should issue an access token the guards accept, valid for the lifetime of this app', async () => {
+      it('should issue an access token of the subject alone, valid for the lifetime of this app', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/login')
           .send({ email: 'editor@example.com', password: 'editor-password-please-change' })
@@ -26,9 +26,15 @@ export class SessionE2E {
         const payload = this.ctx.jwt.verify<{ iat: number; exp: number }>(
           response.body.accessToken,
         );
+        const claims = Object.keys(payload).sort();
         const lifetime = payload.exp - payload.iat;
 
-        expect({ response: { body: response.body }, me: me.body, lifetime }).toMatchSnapshot({
+        expect({
+          response: { body: response.body },
+          me: me.body,
+          claims,
+          lifetime,
+        }).toMatchSnapshot({
           response: { body: { accessToken: expect.any(String) } },
         });
       });

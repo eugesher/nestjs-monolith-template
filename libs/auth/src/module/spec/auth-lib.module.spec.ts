@@ -58,21 +58,19 @@ describe('AuthLibModule', () => {
           useValue: {
             validate: (query: { sub: string }) => {
               const users: Record<string, IAuthCurrentUserView> = {
-                ann: {
-                  id: 'ann',
-                  email: 'ann@example.com',
-                  roles: [RoleEnum.ADMIN],
-                  permissions: [PermissionCodeEnum.ITEM_ARCHIVE],
-                },
-                bob: {
-                  id: 'bob',
-                  email: 'bob@example.com',
-                  roles: [RoleEnum.VIEWER],
-                  permissions: [PermissionCodeEnum.ITEM_READ],
-                },
+                ann: { id: 'ann', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
+                bob: { id: 'bob', email: 'bob@example.com', roles: [RoleEnum.VIEWER] },
               };
 
               return Promise.resolve(users[query.sub]);
+            },
+            findPermissionCodes: (query: { userId: string }) => {
+              const permissions: Record<string, PermissionCodeEnum[]> = {
+                ann: [PermissionCodeEnum.ITEM_ARCHIVE],
+                bob: [PermissionCodeEnum.ITEM_READ],
+              };
+
+              return Promise.resolve(permissions[query.userId]);
             },
           },
         },
@@ -140,12 +138,7 @@ describe('AuthLibModule', () => {
     const body: unknown = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({
-      id: 'ann',
-      email: 'ann@example.com',
-      roles: ['admin'],
-      permissions: ['item:archive'],
-    });
+    expect(body).toEqual({ id: 'ann', email: 'ann@example.com', roles: ['admin'] });
   });
 
   it('admits a user holding a required permission and a required role', async () => {

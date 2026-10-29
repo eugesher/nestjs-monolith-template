@@ -225,6 +225,9 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
 
 exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
 {
+  "before": {
+    "status": 200,
+  },
   "db": {
     "role_permissions": [
       {
@@ -763,12 +766,6 @@ exports[`App Session GET /api/auth/me should take the roles from the database, n
     "body": {
       "email": "viewer@example.com",
       "id": "00000000-0000-4000-8000-000000000003",
-      "permissions": [
-        "item:read",
-        "ledger:read",
-        "reminder:read",
-        "reminder:write",
-      ],
       "roles": [
         "viewer",
       ],
@@ -782,22 +779,17 @@ exports[`App Session GET /api/auth/me should take the roles from the database, n
 }
 `;
 
-exports[`App Session POST /api/auth/login should issue an access token the guards accept, valid for the lifetime of this app 1`] = `
+exports[`App Session POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
   "lifetime": 2592000,
   "me": {
     "email": "editor@example.com",
     "id": "00000000-0000-4000-8000-000000000002",
-    "permissions": [
-      "item:archive",
-      "item:read",
-      "item:write",
-      "ledger:read",
-      "note:read",
-      "note:write",
-      "reminder:read",
-      "reminder:write",
-    ],
     "roles": [
       "editor",
     ],

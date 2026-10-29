@@ -1,6 +1,13 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+import { AUTH_USER_VALIDATOR_PORT, type IAuthUserValidatorPort } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
@@ -9,17 +16,32 @@ import { IAuthRequest } from '../interfaces/auth-request.interface';
 
 @Injectable()
 export class AuthPermissionsGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    @Inject(AUTH_USER_VALIDATOR_PORT)
+    private readonly validator: IAuthUserValidatorPort,
+    private readonly reflector: Reflector,
+  ) {}
 
-  public canActivate(context: ExecutionContext): boolean {
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
     const targets = [context.getHandler(), context.getClass()];
     const required = this.reflector.getAllAndOverride<Maybe<PermissionCodeEnum[]>>(
       AuthMetadataKeyEnum.PERMISSIONS,
       targets,
     );
+
+    if (!required || required.length === 0) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<IAuthRequest>();
 
-    if (!AuthClaimHelper.holdsAny(required, request.user?.permissions)) {
+    if (!request.user) {
+      throw new ForbiddenException('Insufficient permissions');
+    }
+
+    const held = await this.validator.findPermissionCodes({ userId: request.user.id });
+
+    if (!AuthClaimHelper.holdsAny(required, held)) {
       throw new ForbiddenException('Insufficient permissions');
     }
 

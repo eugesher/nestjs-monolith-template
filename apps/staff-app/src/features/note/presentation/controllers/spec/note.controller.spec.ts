@@ -42,7 +42,7 @@ describe('NoteController', () => {
 
       const response = await controller.handleCreate(
         { subjectType: 'item', subjectId: '42', body: 'Refunded' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
       );
 
       expect(response).toEqual({ id: '17', body: 'Refunded' });
@@ -96,7 +96,7 @@ describe('NoteController', () => {
       const response = await controller.handleEdit(
         { noteId: '17' },
         { body: 'Refunded twice' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN], permissions: [] },
+        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
       );
 
       expect(response).toEqual({ id: '17', version: 2 });

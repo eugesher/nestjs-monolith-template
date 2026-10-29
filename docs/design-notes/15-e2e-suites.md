@@ -105,12 +105,12 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 | App          | Feature  | Cases                                                                                                                                                                           |
 | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | staff-app    | app      | the schema of every entity matches the migrated database; customer-app routes are not mounted                                                                                   |
-| staff-app    | session  | login answers one access token of the app lifetime, `me`; claims in a token are ignored; a disabled user is refused                                                             |
-| staff-app    | iam      | roles from the database; a new user logs in at once; a revoked permission refuses the same token at once                                                                        |
+| staff-app    | session  | login answers one access token of the subject alone for the app lifetime, `me`; claims in a token are ignored; a disabled user is refused                                       |
+| staff-app    | iam      | roles from the database; a new user logs in at once; a revoked permission refuses a token that passed a moment before                                                           |
 | staff-app    | ledger   | a page of one subject; validation                                                                                                                                               |
 | staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                       |
 | customer-app | app      | staff-app routes are not mounted                                                                                                                                                |
-| customer-app | session  | login answers one access token of the app lifetime, `me` through the filter of this app                                                                                         |
+| customer-app | session  | login answers one access token of the subject alone for the app lifetime, `me` through the filter of this app                                                                   |
 | customer-app | item     | owner scope; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; concurrent renames; archive with one ledger entry |
 | customer-app | reminder | the summary is cached and every write drops it; dates under `TZ`; ownership; soft delete                                                                                        |
 

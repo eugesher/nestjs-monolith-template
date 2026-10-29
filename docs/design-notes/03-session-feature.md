@@ -18,9 +18,13 @@ port, would save four files. It would also make presentation depend on a core mo
 lint would need a "presentation-only feature" exception. With the full path, every feature follows
 one rule, and this thin feature is the smallest example of it.
 
-**`me` has no use case.** `AuthJwtGuard` has already re-read the user, roles and permissions from
-the database and put them on the request. `handleMe` copies `@CurrentUser()` into the response DTO.
-A use case would only pass the same value through.
+**`me` has no use case.** `AuthJwtGuard` has already re-read the user and the roles from the
+database and put them on the request. `handleMe` copies `@CurrentUser()` into the response DTO,
+`{ id, email, roles }`. A use case would only pass the same value through.
+
+**`me` answers no permissions.** The guard reads permissions only on routes that require one, and
+`me` requires none. A client that needs the codes would get a use case that asks the session
+facade for them explicitly, rather than a read on every request.
 
 ## Refusals
 
@@ -57,8 +61,9 @@ Both apps verify with the same `JWT_SECRET` and read the same identity tables. A
 by one app is accepted by the other. Login carries `@Public()`; without it the global JWT guard
 would answer 401 before the controller runs.
 
-**Login answers one access token.** The response is `{ accessToken }`. There is no refresh token:
-when the access token expires, the user logs in again. Its lifetime is `JWT_EXPIRES_IN` of the app,
+**Login answers one access token.** The response is `{ accessToken }`, and the token carries only
+the subject: `sub`, `iat`, `exp`. There is no refresh token: when the access token expires, the
+user logs in again. Its lifetime is `JWT_EXPIRES_IN` of the app,
 30 days in staff-app and 7 days in customer-app by default.
 
 **A long lifetime does not delay revocation.** The guard re-reads the user on every request (see

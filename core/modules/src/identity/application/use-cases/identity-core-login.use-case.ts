@@ -54,8 +54,7 @@ export class IdentityCoreLoginUseCase {
 
     user.assertActive();
 
-    const permissionCodes = await this.repository.findPermissionCodes(user.id);
-    const view = await this.identityCoreAccessToken.issue(user, permissionCodes);
+    const view = await this.identityCoreAccessToken.issue(user);
 
     this.logger.info({ userId: user.id }, 'User logged in');
 

@@ -11,7 +11,8 @@
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in
 its global `AuthModule`: the facade calls `AuthIdentityCoreAdapter`, which calls
-`IDENTITY_CORE_SESSION_PORT.validateSubject`. The global module also imports `AuthLibModule`, so
+`IDENTITY_CORE_SESSION_PORT.validateSubject`. The port has a second method, `findPermissionCodes`,
+which the facade answers the same way. The global module also imports `AuthLibModule`, so
 mounting `AuthModule` in `AppModule` is the whole wiring.
 
 **A global module pairs with the lib contract of its own name.** `app/global/auth` may import
@@ -29,7 +30,8 @@ in registration order:
    It puts the user on `request.user`.
 2. `AuthRolesGuard` — `@Roles(...)`: 403 unless the user holds ANY of the listed roles.
 3. `AuthPermissionsGuard` — `@RequiresPermission(...)`: 403 unless the user holds ANY of the
-   listed codes.
+   listed codes. It asks the validator for the codes of `request.user`, and only on a route that
+   lists some.
 
 **Authentication must come first.** The claim guards read `request.user`. Ahead of the JWT guard
 they would see an anonymous request on every gated route and answer 403 where 401 is meant. Keep
@@ -41,10 +43,19 @@ credentials.
 
 ## The user is re-derived
 
+**The token names the subject and nothing else.** Identity signs `{ sub }`, and the verified
+payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the token, so there is
+no stale copy of them to trust or to refresh.
+
 **Claims in the token are not trusted.** The guard reads only `sub` from the verified payload and
-asks the validator for the user. Roles and permissions come from the database on every request, so
-a revoked grant or a disabled account stops working on the next call, not at token expiry. The
-cost is one read per request.
+asks the validator for the user: id, email and roles, without permissions. The user comes from the
+database on every request, so a disabled account or a revoked role stops working on the next call,
+not at token expiry. The cost is one read per request.
+
+**Permissions are read only where a route asks for them.** `AuthPermissionsGuard` returns early on
+a route without `@RequiresPermission`. On a route with it, the guard asks the validator for the
+permission codes of the user, one read, and checks them. A revoked permission therefore refuses the
+very next gated request, while an ungated request such as `GET /auth/me` pays for the user alone.
 
 **One secret, one kind of token.** The guard verifies with `JWT_SECRET`, the secret identity signs
 the access token with. There is no other token kind for the guard to tell apart.

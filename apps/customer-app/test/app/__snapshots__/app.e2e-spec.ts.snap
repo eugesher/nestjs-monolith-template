@@ -880,22 +880,17 @@ exports[`App Session GET /api/auth/me should refuse a caller without a token 1`]
 }
 `;
 
-exports[`App Session POST /api/auth/login should issue an access token the guards accept, valid for the lifetime of this app 1`] = `
+exports[`App Session POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
   "lifetime": 604800,
   "me": {
     "email": "editor@example.com",
     "id": "00000000-0000-4000-8000-000000000002",
-    "permissions": [
-      "item:archive",
-      "item:read",
-      "item:write",
-      "ledger:read",
-      "note:read",
-      "note:write",
-      "reminder:read",
-      "reminder:write",
-    ],
     "roles": [
       "editor",
     ],

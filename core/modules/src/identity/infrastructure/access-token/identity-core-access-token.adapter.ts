@@ -19,14 +19,9 @@ export class IdentityCoreAccessTokenAdapter implements IIdentityCoreAccessTokenP
   ) {}
 
   public sign(payload: IIdentityCoreAccessTokenPayloadCommand): Promise<string> {
-    const jti = crypto.randomUUID();
-
-    return this.jwt.signAsync(
-      { ...payload, jti },
-      {
-        secret: this.secret,
-        expiresIn: this.expiresIn as JwtSignOptions['expiresIn'],
-      },
-    );
+    return this.jwt.signAsync(payload, {
+      secret: this.secret,
+      expiresIn: this.expiresIn as JwtSignOptions['expiresIn'],
+    });
   }
 }

@@ -6,6 +6,7 @@ export * from './password-hasher/identity-core-password-hasher.adapter';
 export * from './persistence/orm/identity-core-type-orm.module';
 
 export * from './persistence/repositories/identity-core-assign-role.repository';
+export * from './persistence/repositories/identity-core-find-permission-codes.repository';
 export * from './persistence/repositories/identity-core-list-roles.repository';
 export * from './persistence/repositories/identity-core-login.repository';
 export * from './persistence/repositories/identity-core-register-user.repository';
