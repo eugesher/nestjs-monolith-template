@@ -70,7 +70,7 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 | `00000000-0000-4000-8000-000000000003` | `viewer@example.com`   | `viewer-password-please-change`   | viewer           |
 | `00000000-0000-4000-8000-000000000004` | `disabled@example.com` | `disabled-password-please-change` | viewer, disabled |
 
-The hashes in `user.sql` are argon2id with the cost parameters of `.env.example`. Roles and
+The hashes in `user.sql` are argon2id with the cost parameters of the app env examples. Roles and
 permissions get the ids of their order in `RoleEnum` and `PermissionCodeEnum`.
 
 ### Id ranges

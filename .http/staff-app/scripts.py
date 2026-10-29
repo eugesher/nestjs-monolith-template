@@ -5,7 +5,7 @@ import json
 import time
 from pathlib import Path
 
-ENV_FILE = Path(__file__).resolve().parents[2] / ".env.local"
+ENV_FILE = Path(__file__).resolve().parents[2] / "apps" / "staff-app" / ".env.local"
 ADMIN_ID = "00000000-0000-4000-8000-000000000001"
 EDITOR_ID = "00000000-0000-4000-8000-000000000002"
 VIEWER_ID = "00000000-0000-4000-8000-000000000003"

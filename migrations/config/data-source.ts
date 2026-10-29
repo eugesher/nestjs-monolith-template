@@ -7,8 +7,8 @@ interface IMigrationEnv {
   DATABASE_URL: string;
 }
 
-const root = join(import.meta.dirname, '../..');
-const envFiles = [join(root, '.env.local'), join(root, '.env')];
+const directory = join(import.meta.dirname, '..');
+const envFiles = [join(directory, '.env.local'), join(directory, '.env')];
 
 dotenv.config({ path: envFiles, quiet: true });
 

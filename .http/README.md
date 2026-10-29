@@ -38,7 +38,7 @@ yarn test:e2e:infra:reload
 ```
 
 Start each app with the database and Redis of the e2e infrastructure. The variables of the shell
-take precedence over `.env.local`:
+take precedence over `apps/<app>/.env.local`:
 
 ```bash
 DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:staff-app
@@ -59,7 +59,7 @@ The e2e flushes Redis before every reminder case. When a description checks cach
 
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
 (`as_admin`, `as_editor`, `as_viewer` and so on). The function signs an HS256 token of a seeded user
-(`sub`, `iat`) with `JWT_ACCESS_SECRET` from `.env.local` and puts it into the variable `token`,
+(`sub`, `iat`) with `JWT_ACCESS_SECRET` from `apps/<app>/.env.local` and puts it into the variable `token`,
 as `ctx.jwt.sign` does in the e2e. This also covers tokens that no login issues:
 
 - the token of a disabled user (`as_disabled`);

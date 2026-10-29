@@ -53,7 +53,7 @@ export const acmeLibs = [
     packages('@nestjs/common', '@nestjs/core', '@nestjs/event-emitter', 'nestjs-pino'),
   ]),
   fromLib('observability', [libs('config')]),
-  fromLib('config', [packages('@nestjs/common', '@nestjs/config')]),
+  fromLib('config', [packages('@nestjs/common', '@nestjs/config', 'fs', 'path')]),
   fromLib('database', [
     packages(
       '@nestjs-cls/transactional',

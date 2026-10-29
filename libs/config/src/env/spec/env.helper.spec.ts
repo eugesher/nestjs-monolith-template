@@ -1,3 +1,6 @@
+import fs from 'fs';
+import { join } from 'path';
+
 import { EnvHelper } from '../env.helper';
 
 describe('EnvHelper', () => {
@@ -35,6 +38,31 @@ describe('EnvHelper', () => {
       const production = EnvHelper.isProduction();
 
       expect(production).toBe(false);
+    });
+  });
+
+  describe('appEnvFilePaths', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('returns the env files of the app under the repository root', () => {
+      const root = join(__dirname, '../../../../..');
+
+      const paths = EnvHelper.appEnvFilePaths('staff-app');
+
+      expect(paths).toEqual([
+        join(root, 'apps/staff-app/.env.local'),
+        join(root, 'apps/staff-app/.env'),
+      ]);
+    });
+
+    it('returns no files outside the repository', () => {
+      jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+
+      const paths = EnvHelper.appEnvFilePaths('staff-app');
+
+      expect(paths).toEqual([]);
     });
   });
 });

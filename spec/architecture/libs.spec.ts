@@ -175,6 +175,20 @@ describe('libs', () => {
     }).toPassArchitectureLint();
   });
 
+  it('the config lib MAY import fs and path to find the env files of an app', async () => {
+    await expect({
+      file: 'libs/config/src/env/__fixture__.ts',
+      code: 'import { existsSync } from "fs";\nimport { dirname, join } from "path";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the config lib may NOT import dotenv — @nestjs/config loads the env files', async () => {
+    await expect({
+      file: 'libs/config/src/env/__fixture__.ts',
+      code: 'import dotenv from "dotenv";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it('the config lib may NOT import joi — each app owns its schema', async () => {
     await expect({
       file: 'libs/config/src/provider/__fixture__.ts',

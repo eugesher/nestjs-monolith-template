@@ -14,7 +14,7 @@ const logger = BootstrapLogger.setup(AppNameEnum.STAFF_APP);
 const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const config = app.get(ConfigService);
-  const port = config.getOrThrow<number>('STAFF_APP_PORT');
+  const port = config.getOrThrow<number>('PORT');
   const prefix = config.getOrThrow<string>('API_PREFIX');
   const appLogger = app.get(Logger);
 

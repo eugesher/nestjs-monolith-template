@@ -6,5 +6,5 @@ dist
 .husky
 jest
 coverage
-.env.local
-.env
+**/.env.local
+**/.env
