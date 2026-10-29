@@ -1,0 +1,2 @@
+yarn test:unit:coverage
+yarn typecheck

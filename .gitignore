@@ -27,3 +27,7 @@ lerna-debug.log*
 
 # Posting scripts
 __pycache__/
+
+# Jest and ESLint
+/coverage
+.eslintcache
