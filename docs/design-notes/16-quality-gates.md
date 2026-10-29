@@ -50,7 +50,7 @@ emits it as is. The e2e configs keep the faster per-file compile: they collect n
 | Hook | Runs |
 | --- | --- |
 | `pre-commit` | `lint-staged`: `eslint --cache --fix` on the staged `*.ts` files; the whole `yarn lint` when `eslint.config.mjs`, `eslint/**/*.mjs`, `tsconfig.json` or `package.json` is staged |
-| `pre-push` | `yarn test:unit:coverage`, then `yarn typecheck` |
+| `pre-push` | `yarn typecheck` |
 
 A change to the lint config or the aliases can break files that are not staged, so it lints the
 whole tree.
@@ -61,14 +61,14 @@ dependencies, and without the `husky` binary the install would fail.
 
 ## CI
 
-`.github/workflows/ci.yml` runs on every push and pull request, one job after another:
+`.github/workflows/ci.yml` runs on every push, one job after another:
 
 ```text
 lint → typecheck → build → unit → e2e
 ```
 
 - `lint` also runs `yarn format:check`;
-- `unit` runs `yarn test:unit:coverage`, so the thresholds hold in CI as well;
+- `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
 - `e2e` starts MySQL and Redis of `docker-compose/database-and-tests` and reseeds before each
   suite, as `15-e2e-suites.md` requires. The seeding runs on the runner through
   `yarn test:e2e:infra:reseed`, so the `node` service of the compose file is not built. The suites

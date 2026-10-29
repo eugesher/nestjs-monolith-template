@@ -31,3 +31,6 @@ __pycache__/
 # Jest and ESLint
 /coverage
 .eslintcache
+
+# Scaffolds of the architecture specs
+__*-fixture__/
