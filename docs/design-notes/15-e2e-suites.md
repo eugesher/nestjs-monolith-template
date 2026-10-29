@@ -130,7 +130,7 @@ contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cac
 `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
-(`lint/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
+(`lint/configs/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
 what checks their shape.
 
 ## HTTP collection

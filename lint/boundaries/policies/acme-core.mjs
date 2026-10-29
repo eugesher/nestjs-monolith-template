@@ -1,4 +1,4 @@
-import { baseLibs, from, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
+import { baseLibs, from, layerOf, libContracts, libs, own, packages, to } from './selectors.mjs';
 
 const layer = layerOf('acme-core:modules', ['module']);
 

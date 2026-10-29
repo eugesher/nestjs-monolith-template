@@ -1,4 +1,4 @@
-import { to } from '../selectors.mjs';
+import { to } from './selectors.mjs';
 
 export const identityAdmin = {
   from: { file: { categories: 'acme-app:*', captured: { app: 'client-api' } } },

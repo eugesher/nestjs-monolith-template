@@ -7,7 +7,7 @@ import {
   own,
   packages,
   to,
-} from '../selectors.mjs';
+} from './selectors.mjs';
 
 const areaPolicies = (area, sharedFacing) => {
   const prefix = `acme-app:${area}`;

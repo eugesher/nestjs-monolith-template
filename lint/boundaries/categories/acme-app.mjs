@@ -1,4 +1,4 @@
-import { moduleAreaLayers, moduleAreas } from '../module-layers.mjs';
+import { moduleAreaLayers, moduleAreas } from './module-layers.mjs';
 
 export const acmeApp = [
   ['acme-app:main', 'apps/*/src/main.ts', ['app']],

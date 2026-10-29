@@ -1,4 +1,4 @@
-import { packages } from '../selectors.mjs';
+import { packages } from './selectors.mjs';
 
 const diNames = '{DynamicModule,Inject,Injectable,Module}';
 

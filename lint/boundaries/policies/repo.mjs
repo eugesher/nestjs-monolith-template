@@ -1,4 +1,4 @@
-import { from, packages, to } from '../selectors.mjs';
+import { from, packages, to } from './selectors.mjs';
 
 export const repo = [
   from('repo:spec', [

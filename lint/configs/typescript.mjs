@@ -1,8 +1,8 @@
 import { join } from 'path';
 import typescriptEslint from 'typescript-eslint';
 
-import { awaitedArgumentSelectors } from './syntax/awaited-argument.selectors.mjs';
-import { barrelBypassSelectors } from './syntax/barrel-bypass.selectors.mjs';
+import { awaitedArgumentSelectors } from '../syntax/awaited-argument.selectors.mjs';
+import { barrelBypassSelectors } from '../syntax/barrel-bypass.selectors.mjs';
 
 export const typescript = {
   files: ['**/*.ts'],
@@ -13,7 +13,7 @@ export const typescript = {
   languageOptions: {
     parserOptions: {
       projectService: true,
-      tsconfigRootDir: join(import.meta.dirname, '..'),
+      tsconfigRootDir: join(import.meta.dirname, '../..'),
     },
   },
   rules: {

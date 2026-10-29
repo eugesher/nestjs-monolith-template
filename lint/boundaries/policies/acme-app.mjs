@@ -7,7 +7,7 @@ import {
   own,
   packages,
   to,
-} from '../selectors.mjs';
+} from './selectors.mjs';
 
 const namesakeLibContracts = to('acme-libs:contracts', { lib: '{{ from.file.captured.module }}' });
 
