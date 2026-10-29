@@ -57,15 +57,15 @@ describe('repo', () => {
   describe('migrations (repo:migrations)', () => {
     it('a migration MAY import the migrations config', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
-        code: 'import { x } from "./config/data-source";',
+        file: 'migrations/snapshots/__fixture__.ts',
+        code: 'import { x } from "../config/data-source";',
       }).toPassArchitectureLint();
     });
 
     it('a migration may NOT import project code — it runs under plain node', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
-        code: 'import { x } from "../core/entities/src";',
+        file: 'migrations/snapshots/__fixture__.ts',
+        code: 'import { x } from "../../core/entities/src";',
       }).toBreakRule('boundaries/dependencies');
     });
 
@@ -81,7 +81,7 @@ describe('repo', () => {
 
     it('a migration may NOT import a package outside its allowlist', async () => {
       await expect({
-        file: 'migrations/__fixture__.ts',
+        file: 'migrations/snapshots/__fixture__.ts',
         code: 'import { Module } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -119,7 +119,7 @@ describe('repo', () => {
 
   describe('plain node files (migrations, scripts, seeds)', () => {
     it.each([
-      ['migrations/__fixture__.ts', '__dirname'],
+      ['migrations/snapshots/__fixture__.ts', '__dirname'],
       ['migrations/config/__fixture__.ts', '__filename'],
       ['scripts/__fixture__.ts', 'require'],
       ['docker-compose/database-and-tests/seed/__fixture__.ts', 'module'],

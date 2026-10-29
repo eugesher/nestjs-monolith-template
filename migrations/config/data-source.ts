@@ -23,7 +23,7 @@ if (result.error) {
 
 const env: IMigrationEnv = result.value;
 
-const migrations = join(import.meta.dirname, '../*.ts');
+const migrations = join(import.meta.dirname, '../snapshots/*.ts');
 
 export default new DataSource({
   type: 'mysql',
