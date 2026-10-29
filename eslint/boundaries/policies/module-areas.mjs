@@ -1,4 +1,13 @@
-import { from, fromSpec, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
+import {
+  baseLibs,
+  from,
+  fromSpec,
+  layerOf,
+  libContracts,
+  own,
+  packages,
+  to,
+} from '../selectors.mjs';
 
 const areaPolicies = (area, sharedFacing) => {
   const prefix = `acme-app:${area}`;
@@ -12,14 +21,14 @@ const areaPolicies = (area, sharedFacing) => {
         module: '{{ from.file.captured.module }}/modules/*',
       }),
     ]),
-    from(`${prefix}:domain`, [layer('domain'), libs('kernel', 'toolkit')]),
-    from(`${prefix}:outbound`, [layer('domain'), layer('outbound'), libs('kernel', 'toolkit')]),
+    from(`${prefix}:domain`, [layer('domain'), baseLibs()]),
+    from(`${prefix}:outbound`, [layer('domain'), layer('outbound'), baseLibs()]),
     from(`${prefix}:application`, [
       layer('domain'),
       layer('outbound'),
       layer('application'),
       ...sharedFacing.application,
-      libs('kernel', 'observability', 'toolkit'),
+      baseLibs('observability'),
       libContracts('database'),
       packages('nestjs-pino'),
     ]),
@@ -31,8 +40,8 @@ const areaPolicies = (area, sharedFacing) => {
       layer('infrastructure:common-adapters'),
       layer('infrastructure:events'),
       to('acme-core:entities'),
-      libs('database', 'kernel', 'toolkit'),
-      to('acme-libs:contracts'),
+      baseLibs('database'),
+      libContracts('cache'),
       ...sharedFacing.infrastructure,
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),
@@ -40,7 +49,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('domain'),
       layer('outbound'),
       to('acme-core:contracts'),
-      libs('kernel', 'toolkit'),
+      baseLibs(),
       packages('@nestjs/common'),
     ]),
     fromSpec(`${prefix}:infrastructure:common-adapters`),
@@ -48,7 +57,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('domain'),
       layer('outbound'),
       to('acme-app:contracts', own('app')),
-      libs('kernel', 'toolkit'),
+      baseLibs(),
       ...sharedFacing.commonAdapters,
     ]),
     fromSpec(`${prefix}:infrastructure:events`),
@@ -57,7 +66,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('outbound'),
       to('acme-app:contracts', own('app')),
       libContracts('messaging'),
-      libs('kernel', 'toolkit'),
+      baseLibs(),
       ...sharedFacing.commonAdapters,
     ]),
     from(`${prefix}:presentation`, [
@@ -67,7 +76,6 @@ const areaPolicies = (area, sharedFacing) => {
       ...sharedFacing.presentation,
     ]),
     from(`${prefix}:module`, [
-      layer('domain'),
       layer('outbound'),
       layer('application'),
       layer('infrastructure'),
@@ -83,7 +91,7 @@ const areaPolicies = (area, sharedFacing) => {
 
 export const moduleAreas = [
   ...areaPolicies('features', {
-    application: [to('acme-app:common:shared:index', own('app')), packages('@nestjs/common')],
+    application: [packages('@nestjs/common')],
     infrastructure: [
       packages(
         '@nestjs-cls/transactional',
@@ -97,13 +105,10 @@ export const moduleAreas = [
     presentation: [
       to('acme-app:common:shared:index', own('app')),
       libContracts('auth', 'health'),
-      libs('auth', 'http', 'kernel', 'observability', 'toolkit'),
+      baseLibs('auth', 'http'),
       packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
-    module: [
-      libs('auth', 'config', 'health', 'http', 'kernel', 'toolkit'),
-      packages('@nestjs/common'),
-    ],
+    module: [baseLibs('auth', 'config', 'health', 'http'), packages('@nestjs/common')],
   }),
   ...areaPolicies('processors', {
     application: [],
@@ -111,9 +116,9 @@ export const moduleAreas = [
     commonAdapters: [],
     presentation: [
       to('acme-app:contracts', own('app')),
-      libs('kernel', 'observability', 'toolkit'),
+      baseLibs('observability'),
       packages('@nestjs/event-emitter', '@nestjs/schedule'),
     ],
-    module: [libs('config', 'kernel', 'toolkit')],
+    module: [baseLibs('config')],
   }),
 ];
