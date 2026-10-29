@@ -4,7 +4,7 @@ import {
   STAFF_IDENTITY_CORE_ADMIN_PORT,
   STAFF_IDENTITY_CORE_SESSION_PORT,
 } from '@acme-core/contracts/staff-identity';
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { CredentialsLibModule } from '@acme-libs/credentials';
 import {
   StaffIdentityCoreAccessTokenService,
   StaffIdentityCoreAssignRoleUseCase,
@@ -16,30 +16,20 @@ import {
   StaffIdentityCoreValidateSubjectUseCase,
 } from '../application';
 import {
-  StaffIdentityCoreAccessTokenAdapter,
-  StaffIdentityCoreAccessTokenModule,
   StaffIdentityCoreAssignRoleRepository,
   StaffIdentityCoreFindPermissionCodesRepository,
   StaffIdentityCoreListRolesRepository,
   StaffIdentityCoreLoginRepository,
-  StaffIdentityCorePasswordHasherAdapter,
   StaffIdentityCoreRegisterUserRepository,
   StaffIdentityCoreTypeOrmModule,
   StaffIdentityCoreUpdateRolePermissionsRepository,
   StaffIdentityCoreValidateSubjectRepository,
 } from '../infrastructure';
 import {
-  STAFF_IDENTITY_CORE_ACCESS_TOKEN_EXPIRES_IN,
-  STAFF_IDENTITY_CORE_ACCESS_TOKEN_PORT,
-  STAFF_IDENTITY_CORE_ACCESS_TOKEN_SECRET,
   STAFF_IDENTITY_CORE_ASSIGN_ROLE_REPOSITORY_PORT,
   STAFF_IDENTITY_CORE_FIND_PERMISSION_CODES_REPOSITORY_PORT,
   STAFF_IDENTITY_CORE_LIST_ROLES_REPOSITORY_PORT,
   STAFF_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
-  STAFF_IDENTITY_CORE_PASSWORD_HASHER_MEMORY_COST,
-  STAFF_IDENTITY_CORE_PASSWORD_HASHER_PARALLELISM,
-  STAFF_IDENTITY_CORE_PASSWORD_HASHER_PORT,
-  STAFF_IDENTITY_CORE_PASSWORD_HASHER_TIME_COST,
   STAFF_IDENTITY_CORE_REGISTER_USER_REPOSITORY_PORT,
   STAFF_IDENTITY_CORE_UPDATE_ROLE_PERMISSIONS_REPOSITORY_PORT,
   STAFF_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
@@ -48,10 +38,7 @@ import { StaffIdentityCoreAdminFacade } from './staff-identity-core-admin.facade
 import { StaffIdentityCoreSessionFacade } from './staff-identity-core-session.facade';
 
 @Module({
-  imports: [
-    StaffIdentityCoreTypeOrmModule.forFeature(),
-    StaffIdentityCoreAccessTokenModule.register(),
-  ],
+  imports: [StaffIdentityCoreTypeOrmModule.forFeature(), CredentialsLibModule],
   exports: [STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_SESSION_PORT],
   providers: [
     { provide: STAFF_IDENTITY_CORE_ADMIN_PORT, useClass: StaffIdentityCoreAdminFacade },
@@ -92,28 +79,6 @@ import { StaffIdentityCoreSessionFacade } from './staff-identity-core-session.fa
       provide: STAFF_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
       useClass: StaffIdentityCoreValidateSubjectRepository,
     },
-    {
-      provide: STAFF_IDENTITY_CORE_ACCESS_TOKEN_PORT,
-      useClass: StaffIdentityCoreAccessTokenAdapter,
-    },
-    {
-      provide: STAFF_IDENTITY_CORE_PASSWORD_HASHER_PORT,
-      useClass: StaffIdentityCorePasswordHasherAdapter,
-    },
-    ConfigProviderHelper.value(STAFF_IDENTITY_CORE_ACCESS_TOKEN_EXPIRES_IN, 'JWT_EXPIRES_IN'),
-    ConfigProviderHelper.value(STAFF_IDENTITY_CORE_ACCESS_TOKEN_SECRET, 'JWT_SECRET'),
-    ConfigProviderHelper.value(
-      STAFF_IDENTITY_CORE_PASSWORD_HASHER_MEMORY_COST,
-      'AUTH_ARGON2_MEMORY_COST',
-    ),
-    ConfigProviderHelper.value(
-      STAFF_IDENTITY_CORE_PASSWORD_HASHER_PARALLELISM,
-      'AUTH_ARGON2_PARALLELISM',
-    ),
-    ConfigProviderHelper.value(
-      STAFF_IDENTITY_CORE_PASSWORD_HASHER_TIME_COST,
-      'AUTH_ARGON2_TIME_COST',
-    ),
   ],
 })
 export class StaffIdentityCoreModule {}

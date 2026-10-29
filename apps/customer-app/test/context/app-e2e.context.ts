@@ -17,9 +17,9 @@ interface IAppE2EState {
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
   redis: Redis;
   jwt: JwtService;
-  adminToken: string;
-  editorToken: string;
-  viewerToken: string;
+  annToken: string;
+  bobToken: string;
+  carolToken: string;
 }
 
 export class AppE2EContext {
@@ -45,16 +45,16 @@ export class AppE2EContext {
     return this.started.jwt;
   }
 
-  public get adminToken(): string {
-    return this.started.adminToken;
+  public get annToken(): string {
+    return this.started.annToken;
   }
 
-  public get editorToken(): string {
-    return this.started.editorToken;
+  public get bobToken(): string {
+    return this.started.bobToken;
   }
 
-  public get viewerToken(): string {
-    return this.started.viewerToken;
+  public get carolToken(): string {
+    return this.started.carolToken;
   }
 
   public async init(): Promise<void> {
@@ -74,9 +74,9 @@ export class AppE2EContext {
     await app.init();
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
-    const adminToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000001' });
-    const editorToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000002' });
-    const viewerToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000003' });
+    const annToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000101' });
+    const bobToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000102' });
+    const carolToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000103' });
 
     this.state = {
       app,
@@ -85,9 +85,9 @@ export class AppE2EContext {
       rootLoggerWarn,
       redis,
       jwt,
-      adminToken,
-      editorToken,
-      viewerToken,
+      annToken,
+      bobToken,
+      carolToken,
     };
   }
 

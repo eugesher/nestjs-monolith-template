@@ -9,6 +9,7 @@ describe('libs', () => {
       'libs/auth/src/index.ts',
       'libs/cache/src/index.ts',
       'libs/config/src/index.ts',
+      'libs/credentials/src/index.ts',
       'libs/database/src/index.ts',
       'libs/health/src/index.ts',
       'libs/http/src/index.ts',
@@ -20,6 +21,7 @@ describe('libs', () => {
       'libs/toolkit/src/index.ts',
       'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
+      'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
       'libs/contracts/src/messaging/index.ts',
@@ -59,6 +61,7 @@ describe('libs', () => {
     ['auth', ['kernel', 'toolkit']],
     ['cache', ['kernel', 'toolkit', 'observability']],
     ['config', ['kernel', 'toolkit']],
+    ['credentials', ['kernel', 'toolkit']],
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'database', 'observability']],
@@ -70,6 +73,7 @@ describe('libs', () => {
       'auth',
       'cache',
       'config',
+      'credentials',
       'database',
       'health',
       'http',
@@ -99,6 +103,7 @@ describe('libs', () => {
     ['auth', ['auth']],
     ['cache', ['cache']],
     ['config', []],
+    ['credentials', ['credentials']],
     ['database', ['database']],
     ['health', ['cache', 'health']],
     ['http', []],
@@ -108,7 +113,7 @@ describe('libs', () => {
     ['openapi', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'database', 'health', 'messaging'];
+    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'messaging'];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {
@@ -125,7 +130,7 @@ describe('libs', () => {
     }
   });
 
-  it.each(['auth', 'cache', 'database', 'health', 'messaging'])(
+  it.each(['auth', 'cache', 'credentials', 'database', 'health', 'messaging'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {
       await expect({
@@ -248,8 +253,26 @@ describe('libs', () => {
     },
   );
 
+  it('the credentials lib MAY import the packages hashing and signing need', async () => {
+    await expect({
+      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      code:
+        'import { Injectable } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        'import { JwtService } from "@nestjs/jwt";\n' +
+        'import { hash } from "argon2";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['typeorm', 'nestjs-pino'])('the credentials lib may NOT import %s', async (source) => {
+    await expect({
+      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      code: `import { x } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it.each(['http', 'health', 'observability'])(
-    'the %s lib may NOT import @nestjs/jwt — only auth verifies tokens',
+    'the %s lib may NOT import @nestjs/jwt — auth verifies tokens and credentials signs them',
     async (lib) => {
       await expect({
         file: `libs/${lib}/src/__fixture__.ts`,

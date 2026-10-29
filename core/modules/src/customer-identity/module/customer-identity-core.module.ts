@@ -1,0 +1,39 @@
+import { Module } from '@nestjs/common';
+
+import { CUSTOMER_IDENTITY_CORE_SESSION_PORT } from '@acme-core/contracts/customer-identity';
+import { CredentialsLibModule } from '@acme-libs/credentials';
+import {
+  CustomerIdentityCoreAccessTokenService,
+  CustomerIdentityCoreLoginUseCase,
+  CustomerIdentityCoreValidateSubjectUseCase,
+} from '../application';
+import {
+  CustomerIdentityCoreLoginRepository,
+  CustomerIdentityCoreTypeOrmModule,
+  CustomerIdentityCoreValidateSubjectRepository,
+} from '../infrastructure';
+import {
+  CUSTOMER_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
+  CUSTOMER_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
+} from '../outbound';
+import { CustomerIdentityCoreSessionFacade } from './customer-identity-core-session.facade';
+
+@Module({
+  imports: [CustomerIdentityCoreTypeOrmModule.forFeature(), CredentialsLibModule],
+  exports: [CUSTOMER_IDENTITY_CORE_SESSION_PORT],
+  providers: [
+    { provide: CUSTOMER_IDENTITY_CORE_SESSION_PORT, useClass: CustomerIdentityCoreSessionFacade },
+    CustomerIdentityCoreLoginUseCase,
+    CustomerIdentityCoreValidateSubjectUseCase,
+    CustomerIdentityCoreAccessTokenService,
+    {
+      provide: CUSTOMER_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
+      useClass: CustomerIdentityCoreLoginRepository,
+    },
+    {
+      provide: CUSTOMER_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
+      useClass: CustomerIdentityCoreValidateSubjectRepository,
+    },
+  ],
+})
+export class CustomerIdentityCoreModule {}

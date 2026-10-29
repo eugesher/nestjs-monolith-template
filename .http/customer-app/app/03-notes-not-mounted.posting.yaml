@@ -3,11 +3,11 @@ description: |-
   e2e: should not mount the staff-app route /api/notes
 
   Expect: 404 Not Found
-  User: admin@example.com (token signed by scripts.py)
+  User: bob@example.com (token signed by scripts.py)
 url: $CUSTOMER_APP_BASE_URL/notes
 auth:
   type: bearer_token
   bearer_token:
     token: $token
 scripts:
-  setup: scripts.py:as_admin
+  setup: scripts.py:as_bob

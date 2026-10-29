@@ -24,10 +24,10 @@ describe('ItemGetOneUseCase', () => {
   });
 
   describe('execute', () => {
-    it('answers the view of the item the caller may read', async () => {
-      const view = await useCase.execute({ itemId: '12', ownerId: undefined });
+    it('answers the view of the item the caller owns', async () => {
+      const view = await useCase.execute({ itemId: '12', ownerId: 'owner-1' });
 
-      expect(loadOwned).toHaveBeenCalledWith({ itemId: '12', ownerId: undefined });
+      expect(loadOwned).toHaveBeenCalledWith({ itemId: '12', ownerId: 'owner-1' });
       expect(view).toEqual({
         id: '12',
         sku: 'SKU-0001',

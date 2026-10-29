@@ -4,12 +4,9 @@ import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
 import { AUTH_USER_VALIDATOR_PORT, type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import type { Maybe } from '@acme-libs/toolkit';
 import { CurrentUser } from '../../decorators/auth-current-user.decorator';
 import { Public } from '../../decorators/auth-public.decorator';
-import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
-import { Roles } from '../../decorators/auth-roles.decorator';
 import { AuthLibModule } from '../auth-lib.module';
 
 describe('AuthLibModule', () => {
@@ -29,18 +26,6 @@ describe('AuthLibModule', () => {
       public me(@CurrentUser() user: Maybe<IAuthCurrentUserView>): Maybe<IAuthCurrentUserView> {
         return user;
       }
-
-      @RequiresPermission(PermissionCodeEnum.ITEM_ARCHIVE, PermissionCodeEnum.ITEM_WRITE)
-      @Get('archive')
-      public archive(): string {
-        return 'archived';
-      }
-
-      @Roles(RoleEnum.ADMIN)
-      @Get('admin')
-      public admin(): string {
-        return 'admin';
-      }
     }
 
     @Global()
@@ -58,19 +43,10 @@ describe('AuthLibModule', () => {
           useValue: {
             validate: (query: { sub: string }) => {
               const users: Record<string, IAuthCurrentUserView> = {
-                ann: { id: 'ann', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
-                bob: { id: 'bob', email: 'bob@example.com', roles: [RoleEnum.VIEWER] },
+                ann: { id: 'ann', email: 'ann@example.com' },
               };
 
               return Promise.resolve(users[query.sub]);
-            },
-            findPermissionCodes: (query: { userId: string }) => {
-              const permissions: Record<string, PermissionCodeEnum[]> = {
-                ann: [PermissionCodeEnum.ITEM_ARCHIVE],
-                bob: [PermissionCodeEnum.ITEM_READ],
-              };
-
-              return Promise.resolve(permissions[query.userId]);
             },
           },
         },
@@ -97,16 +73,10 @@ describe('AuthLibModule', () => {
     expect(response.status).toBe(200);
   });
 
-  it('closes every other route without a token with 401, before the claim guards run', async () => {
-    const statuses = [];
+  it('closes every other route without a token with 401', async () => {
+    const response = await fetch(`${url}/me`);
 
-    for (const route of ['me', 'archive', 'admin']) {
-      const response = await fetch(`${url}/${route}`);
-
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([401, 401, 401]);
+    expect(response.status).toBe(401);
   });
 
   it('answers 401 for a token signed with another secret', async () => {
@@ -132,46 +102,12 @@ describe('AuthLibModule', () => {
   it('hands the re-derived user to @CurrentUser()', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'ann', roles: ['forged'] });
+    }).signAsync({ sub: 'ann', email: 'forged@example.com' });
 
     const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
     const body: unknown = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ id: 'ann', email: 'ann@example.com', roles: ['admin'] });
-  });
-
-  it('admits a user holding a required permission and a required role', async () => {
-    const token = await new JwtService({
-      secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'ann' });
-    const statuses = [];
-
-    for (const route of ['archive', 'admin']) {
-      const response = await fetch(`${url}/${route}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([200, 200]);
-  });
-
-  it('answers 403 to a user without the permission or the role', async () => {
-    const token = await new JwtService({
-      secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'bob' });
-    const statuses = [];
-
-    for (const route of ['archive', 'admin']) {
-      const response = await fetch(`${url}/${route}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([403, 403]);
+    expect(body).toEqual({ id: 'ann', email: 'ann@example.com' });
   });
 });

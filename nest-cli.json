@@ -73,6 +73,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "contracts-credentials": {
+      "type": "library",
+      "root": "libs/contracts/src/credentials",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/credentials",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
     "contracts-database": {
       "type": "library",
       "root": "libs/contracts/src/database",
@@ -98,6 +107,15 @@
       "sourceRoot": "libs/contracts/src/messaging",
       "compilerOptions": {
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
+    "core-contracts-customer-identity": {
+      "type": "library",
+      "root": "core/contracts/src/customer-identity",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/customer-identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }
     },
     "core-contracts-staff-identity": {
@@ -127,6 +145,15 @@
         "tsConfigPath": "core/entities/tsconfig.lib.json"
       }
     },
+    "core-modules-customer-identity": {
+      "type": "library",
+      "root": "core/modules/src/customer-identity",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/customer-identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
+    },
     "core-modules-staff-identity": {
       "type": "library",
       "root": "core/modules/src/staff-identity",
@@ -143,6 +170,15 @@
       "sourceRoot": "core/modules/src/ledger",
       "compilerOptions": {
         "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
+    },
+    "credentials": {
+      "type": "library",
+      "root": "libs/credentials",
+      "entryFile": "index",
+      "sourceRoot": "libs/credentials/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/credentials/tsconfig.lib.json"
       }
     },
     "database": {

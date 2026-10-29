@@ -31,7 +31,6 @@ describe('ReminderHttpExceptionFilter', () => {
     ['REMINDER_DUE_ON_INVALID', 400],
     ['REMINDER_VERSION_INVALID', 400],
     ['REMINDER_NOT_FOUND', 404],
-    ['REMINDER_ACCESS_FORBIDDEN', 403],
     ['REMINDER_ALREADY_DONE', 409],
     ['VERSION_MISMATCH', 409],
   ])('maps %s to %i with the code and the domain message in the body', (code, status) => {

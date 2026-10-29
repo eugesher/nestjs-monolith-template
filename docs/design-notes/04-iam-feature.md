@@ -7,9 +7,9 @@ the same layers as `session` (see `03-session-feature.md`): one use case per end
 
 ## Only staff-app has it
 
-**customer-app cannot even import the admin port.** The lint policy `staff-identity-admin.mjs` forbids
-`STAFF_IDENTITY_CORE_ADMIN_PORT` and `IStaffIdentityCoreAdminPort` anywhere in customer-app, so copying the
-feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on customer-app is a
+**customer-app cannot even import the admin port.** The lint policy `identity-modules.mjs` keeps
+`staff-identity` out of customer-app altogether, its contracts, its module and its entities, so
+copying the feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on customer-app is a
 404, not a 403: the route does not exist, and the answer does not confirm that it exists elsewhere.
 
 ## Three permission codes, on purpose

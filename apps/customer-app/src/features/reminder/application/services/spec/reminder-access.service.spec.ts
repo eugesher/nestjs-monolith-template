@@ -42,12 +42,12 @@ describe('ReminderAccessService', () => {
       });
     });
 
-    it('refuses a reminder of another owner with REMINDER_ACCESS_FORBIDDEN', async () => {
+    it('refuses a reminder of another owner with the same REMINDER_NOT_FOUND, hiding that it exists', async () => {
       await expect(
         service.loadOwned({ reminderId: '7', ownerId: 'owner-2' }),
       ).rejects.toMatchObject({
-        code: 'REMINDER_ACCESS_FORBIDDEN',
-        message: 'Reminder 7 does not belong to the caller',
+        code: 'REMINDER_NOT_FOUND',
+        message: 'Reminder 7 was not found',
       });
     });
   });

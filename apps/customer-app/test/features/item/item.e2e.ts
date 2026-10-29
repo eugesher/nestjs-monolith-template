@@ -12,19 +12,10 @@ export class ItemE2E {
 
   public handleGetMany(): void {
     describe('GET /api/items', () => {
-      it('should list only the own items of a caller who is not an admin', async () => {
+      it('should list only the own items of the caller, newest first', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/items')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
-          .expect(HttpStatus.OK);
-
-        expect({ response: { body: response.body } }).toMatchSnapshot();
-      });
-
-      it('should list the items of every owner to an admin, newest first', async () => {
-        const response = await request(this.ctx.app.getHttpServer())
-          .get('/api/items')
-          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -34,20 +25,20 @@ export class ItemE2E {
 
   public handleGetOne(): void {
     describe('GET /api/items/:itemId', () => {
-      it('should let an admin read the item of another owner', async () => {
+      it('should read an own item', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/items/102')
-          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse the item of another owner to a caller who is not an admin', async () => {
+      it('should hide the item of another customer with 404', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/items/100')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
-          .expect(HttpStatus.FORBIDDEN);
+          .auth(this.ctx.carolToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
@@ -63,7 +54,7 @@ export class ItemE2E {
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-create-key')
           .set('x-correlation-id', 'e2e-item-create')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0001', name: 'Created item' })
           .expect(HttpStatus.CREATED);
 
@@ -134,14 +125,14 @@ export class ItemE2E {
         const first = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-replay-key')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0002', name: 'Replayed item' })
           .expect(HttpStatus.CREATED);
 
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-replay-key')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0002', name: 'Replayed item' })
           .expect(HttpStatus.CREATED);
 
@@ -164,14 +155,14 @@ export class ItemE2E {
         await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-reuse-key')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0003', name: 'First body' })
           .expect(HttpStatus.CREATED);
 
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-reuse-key')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0004', name: 'Another body' })
           .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -189,7 +180,7 @@ export class ItemE2E {
       it('should refuse a create without a key with 400', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0005', name: 'Refused item' })
           .expect(HttpStatus.BAD_REQUEST);
 
@@ -207,7 +198,7 @@ export class ItemE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'k'.repeat(129))
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'E2E-0005', name: 'Refused item' })
           .expect(HttpStatus.BAD_REQUEST);
 
@@ -225,7 +216,7 @@ export class ItemE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/items')
           .set('Idempotency-Key', 'e2e-taken-sku-key')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ sku: 'SKU-0001', name: 'Taken sku' })
           .expect(HttpStatus.CONFLICT);
 
@@ -242,17 +233,6 @@ export class ItemE2E {
           },
         }).toMatchSnapshot();
       });
-
-      it('should refuse a caller without item:write', async () => {
-        const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/items')
-          .set('Idempotency-Key', 'e2e-viewer-key')
-          .auth(this.ctx.viewerToken, { type: 'bearer' })
-          .send({ sku: 'E2E-0006', name: 'Refused item' })
-          .expect(HttpStatus.FORBIDDEN);
-
-        expect({ response: { body: response.body } }).toMatchSnapshot();
-      });
     });
   }
 
@@ -262,7 +242,7 @@ export class ItemE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/items/102/name')
           .set('If-Match', '"1"')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ name: 'Renamed item' })
           .expect(HttpStatus.OK);
 
@@ -279,7 +259,7 @@ export class ItemE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/items/101/name')
           .set('If-Match', '0')
-          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
           .send({ name: 'Stale rename' })
           .expect(HttpStatus.CONFLICT);
 
@@ -293,19 +273,19 @@ export class ItemE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/items/101/name')
           .set('If-Match', 'not-a-number')
-          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
           .send({ name: 'Malformed rename' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse an admin the rename of an item of another owner', async () => {
+      it('should hide the item of another customer from a rename with 404', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/items/103/name')
-          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
           .send({ name: 'Foreign rename' })
-          .expect(HttpStatus.FORBIDDEN);
+          .expect(HttpStatus.NOT_FOUND);
 
         expect({
           response: { body: response.body },
@@ -318,7 +298,7 @@ export class ItemE2E {
           [1, 2, 3, 4, 5, 6].map((index) =>
             request(this.ctx.app.getHttpServer())
               .patch('/api/items/104/name')
-              .auth(this.ctx.editorToken, { type: 'bearer' })
+              .auth(this.ctx.annToken, { type: 'bearer' })
               .send({ name: `Concurrent rename ${index}` }),
           ),
         );
@@ -340,7 +320,7 @@ export class ItemE2E {
           .patch('/api/items/103/archive')
           .set('If-Match', '1')
           .set('x-correlation-id', 'e2e-item-archive')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({
@@ -370,7 +350,7 @@ export class ItemE2E {
       it('should refuse to archive an archived item with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/items/105/archive')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.annToken, { type: 'bearer' })
           .expect(HttpStatus.CONFLICT);
 
         expect({

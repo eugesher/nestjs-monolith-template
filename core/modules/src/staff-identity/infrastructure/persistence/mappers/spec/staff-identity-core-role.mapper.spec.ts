@@ -7,13 +7,13 @@ describe('StaffIdentityCoreRoleMapper', () => {
       const role = Object.assign(new StaffRole(), {
         id: 2,
         name: 'editor',
-        description: 'Edits items',
+        description: 'Edits notes',
         rolePermissions: [
           Object.assign(new StaffRolePermission(), {
-            permission: Object.assign(new StaffPermission(), { code: 'item:write' }),
+            permission: Object.assign(new StaffPermission(), { code: 'iam:role-edit' }),
           }),
           Object.assign(new StaffRolePermission(), {
-            permission: Object.assign(new StaffPermission(), { code: 'item:read' }),
+            permission: Object.assign(new StaffPermission(), { code: 'iam:assign' }),
           }),
         ],
       });
@@ -23,7 +23,7 @@ describe('StaffIdentityCoreRoleMapper', () => {
       expect(model).toMatchObject({
         id: 2,
         name: 'editor',
-        permissionCodes: ['item:read', 'item:write'],
+        permissionCodes: ['iam:assign', 'iam:role-edit'],
       });
     });
   });

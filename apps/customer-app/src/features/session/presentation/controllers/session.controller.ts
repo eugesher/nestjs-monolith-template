@@ -25,11 +25,11 @@ export class SessionController {
   }
 
   @Get('me')
-  @ApiOperation({ summary: 'The authenticated subject, as the guards resolved it' })
+  @ApiOperation({ summary: 'The authenticated customer, as the guards resolved them' })
   @ApiOkResponse({ type: SessionMeResponseDto })
   public handleMe(@CurrentUser() user: IAuthCurrentUserView): SessionMeResponseDto {
-    const { id, email, roles } = user;
+    const { id, email } = user;
 
-    return { id, email, roles };
+    return { id, email };
   }
 }

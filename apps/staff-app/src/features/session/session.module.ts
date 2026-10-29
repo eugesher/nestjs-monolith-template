@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { SessionLoginUseCase } from './application';
+import { SessionLoginUseCase, SessionMeUseCase } from './application';
 import { SessionStaffIdentityCoreAdapter } from './infrastructure';
 import { SESSION_IDENTITY_PORT } from './outbound';
 import { SessionController } from './presentation';
@@ -13,6 +13,7 @@ import { SessionController } from './presentation';
   providers: [
     HttpExceptionFilter,
     SessionLoginUseCase,
+    SessionMeUseCase,
     { provide: SESSION_IDENTITY_PORT, useClass: SessionStaffIdentityCoreAdapter },
   ],
 })

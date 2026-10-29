@@ -1,4 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
 import { SessionLoginUseCase } from '../../../application';
 import { SessionController } from '../session.controller';
 
@@ -27,17 +26,9 @@ describe('SessionController', () => {
 
   describe('handleMe', () => {
     it('answers the current user exactly as the guards resolved it', () => {
-      const response = controller.handleMe({
-        id: 'user-1',
-        email: 'ann@example.com',
-        roles: [RoleEnum.ADMIN],
-      });
+      const response = controller.handleMe({ id: 'customer-1', email: 'ann@example.com' });
 
-      expect(response).toEqual({
-        id: 'user-1',
-        email: 'ann@example.com',
-        roles: ['admin'],
-      });
+      expect(response).toEqual({ id: 'customer-1', email: 'ann@example.com' });
     });
   });
 });

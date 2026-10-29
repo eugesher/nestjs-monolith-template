@@ -10,7 +10,6 @@ export class ItemHttpExceptionFilter implements ExceptionFilter<ItemDomainExcept
     [ItemErrorCodeEnum.ITEM_NAME_INVALID]: HttpStatus.BAD_REQUEST,
     [ItemErrorCodeEnum.ITEM_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
     [ItemErrorCodeEnum.ITEM_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [ItemErrorCodeEnum.ITEM_ACCESS_FORBIDDEN]: HttpStatus.FORBIDDEN,
     [ItemErrorCodeEnum.ITEM_ALREADY_ARCHIVED]: HttpStatus.CONFLICT,
     [ItemErrorCodeEnum.ITEM_SKU_TAKEN]: HttpStatus.CONFLICT,
     [ItemErrorCodeEnum.ITEM_IDEMPOTENT_REQUEST_IN_FLIGHT]: HttpStatus.CONFLICT,

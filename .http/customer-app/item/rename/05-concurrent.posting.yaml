@@ -3,7 +3,7 @@ description: |-
   e2e: Item › PATCH /api/items/:itemId/name › should apply every one of concurrent renames without If-Match
 
   Expect: 200 OK, item 104 version + 1
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
   Note: the e2e sends six renames at once and gets version 7; one request shows only a single rename
 method: PATCH
 url: $CUSTOMER_APP_BASE_URL/items/104/name
@@ -20,4 +20,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

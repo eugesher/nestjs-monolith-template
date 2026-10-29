@@ -3,7 +3,7 @@ description: |-
   e2e: Reminder › PATCH /api/reminders/:reminderId/due-on › should move a reminder to the date sent and drop the cached summary
 
   Expect: 200 OK, reminder 305 due on 2026-10-01; the summary key is gone
-  User: viewer@example.com (token signed by scripts.py)
+  User: carol@example.com (token signed by scripts.py)
   Before: Redis: FLUSHDB
   Before: send reminder/get-summary/01-compute-and-cache
 method: PATCH
@@ -21,4 +21,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_viewer
+  setup: scripts.py:as_carol

@@ -5,13 +5,15 @@ import {
   IStaffIdentityCoreAccessTokenView,
   IStaffIdentityCoreLoginCommand,
 } from '@acme-core/contracts/staff-identity';
+import {
+  CREDENTIALS_PASSWORD_HASHER_PORT,
+  type ICredentialsPasswordHasherPort,
+} from '@acme-libs/contracts/credentials';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { StaffIdentityCoreException, StaffIdentityCoreUserModel } from '../../domain';
 import {
   STAFF_IDENTITY_CORE_LOGIN_REPOSITORY_PORT,
-  STAFF_IDENTITY_CORE_PASSWORD_HASHER_PORT,
   type IStaffIdentityCoreLoginRepositoryPort,
-  type IStaffIdentityCorePasswordHasherPort,
 } from '../../outbound';
 import { StaffIdentityCoreAccessTokenService } from '../services/staff-identity-core-access-token.service';
 
@@ -21,8 +23,8 @@ export class StaffIdentityCoreLoginUseCase {
     private readonly identityCoreAccessToken: StaffIdentityCoreAccessTokenService,
     @Inject(STAFF_IDENTITY_CORE_LOGIN_REPOSITORY_PORT)
     private readonly repository: IStaffIdentityCoreLoginRepositoryPort,
-    @Inject(STAFF_IDENTITY_CORE_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: IStaffIdentityCorePasswordHasherPort,
+    @Inject(CREDENTIALS_PASSWORD_HASHER_PORT)
+    private readonly passwordHasher: ICredentialsPasswordHasherPort,
     @InjectPinoLogger(StaffIdentityCoreLoginUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

@@ -1,0 +1,13 @@
+name: 02-disabled-customer
+description: |-
+  e2e: Session › GET /api/auth/me › should refuse the token of a disabled customer
+
+  Expect: 401 Unauthorized
+  User: dora@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/auth/me
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_dora

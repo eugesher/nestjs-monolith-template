@@ -6,13 +6,13 @@ describe('StaffIdentityCoreFindPermissionCodesUseCase', () => {
     const repository = {
       findPermissionCodes: jest
         .fn()
-        .mockResolvedValue([PermissionCodeEnum.ITEM_READ, PermissionCodeEnum.ITEM_WRITE]),
+        .mockResolvedValue([PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.IAM_ROLE_EDIT]),
     };
     const useCase = new StaffIdentityCoreFindPermissionCodesUseCase(repository);
 
     const codes = await useCase.execute({ userId: 'user-1' });
 
-    expect(codes).toEqual(['item:read', 'item:write']);
+    expect(codes).toEqual(['iam:assign', 'iam:role-edit']);
     expect(repository.findPermissionCodes).toHaveBeenCalledWith('user-1');
   });
 });

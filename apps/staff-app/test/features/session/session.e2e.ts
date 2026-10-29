@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import request from 'supertest';
 
 import { AppE2EContext } from '../../context/app-e2e.context';
@@ -106,6 +107,28 @@ export class SessionE2E {
 
       it('should refuse the token of a disabled user', async () => {
         const token = this.ctx.jwt.sign({ sub: '00000000-0000-4000-8000-000000000004' });
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/auth/me')
+          .auth(token, { type: 'bearer' })
+          .expect(HttpStatus.UNAUTHORIZED);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it.each([
+        [
+          'a customer signed with the secret of this app',
+          new JwtService({ secret: 'e2e-secret-at-least-32-characters-long' }),
+          '00000000-0000-4000-8000-000000000101',
+        ],
+        [
+          'a staff user signed with the secret of customer-app',
+          new JwtService({ secret: 'customer-e2e-secret-at-least-32-characters' }),
+          '00000000-0000-4000-8000-000000000002',
+        ],
+      ])('should refuse the token of %s', async (_, jwt, sub) => {
+        const token = jwt.sign({ sub });
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/auth/me')

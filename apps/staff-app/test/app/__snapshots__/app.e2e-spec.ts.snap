@@ -42,36 +42,23 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
           "iam:assign",
           "iam:role-edit",
           "iam:user-create",
-          "item:archive",
-          "item:read",
-          "item:write",
           "ledger:read",
           "note:read",
           "note:write",
-          "reminder:read",
-          "reminder:write",
         ],
       },
       {
         "name": "editor",
         "permissionCodes": [
-          "item:archive",
-          "item:read",
-          "item:write",
           "ledger:read",
           "note:read",
           "note:write",
-          "reminder:read",
-          "reminder:write",
         ],
       },
       {
         "name": "viewer",
         "permissionCodes": [
-          "item:read",
           "ledger:read",
-          "reminder:read",
-          "reminder:write",
         ],
       },
     ],
@@ -197,25 +184,13 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
         "permission_id": 1,
         "role_id": 3,
       },
-      {
-        "permission_id": 4,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 10,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 11,
-        "role_id": 3,
-      },
     ],
   },
   "response": {
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: item:read, item:write, item:archive, ledger:read, iam:user-create, iam:assign, iam:role-edit, note:read, note:write, reminder:read, reminder:write",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, note:read, note:write",
       ],
       "statusCode": 400,
     },
@@ -231,15 +206,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permiss
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": 1,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 10,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 11,
+        "permission_id": 5,
         "role_id": 3,
       },
     ],
@@ -253,9 +220,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permiss
     "body": {
       "name": "viewer",
       "permissionCodes": [
-        "item:read",
-        "reminder:read",
-        "reminder:write",
+        "note:read",
       ],
     },
   },
@@ -275,7 +240,7 @@ exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] =
           "operationKey": "item-created:100",
           "payload": {
             "name": "Seeded reference item",
-            "ownerId": "00000000-0000-4000-8000-000000000001",
+            "ownerId": "00000000-0000-4000-8000-000000000102",
             "sku": "SKU-0001",
           },
           "recordedAt": "2026-01-01T00:00:00.000Z",
@@ -739,6 +704,28 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
 `;
 
 exports[`App Session GET /api/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Session GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
 {
   "response": {
     "body": {

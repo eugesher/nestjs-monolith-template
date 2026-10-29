@@ -1,4 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
 import {
   ItemArchiveUseCase,
   ItemCreateUseCase,
@@ -38,7 +37,7 @@ describe('ItemController', () => {
 
       const response = await controller.handleCreate(
         { sku: 'SKU-1001', name: 'Lamp' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
+        { id: 'customer-1', email: 'ann@example.com' },
         'key-1',
       );
 
@@ -46,78 +45,48 @@ describe('ItemController', () => {
       expect(create).toHaveBeenCalledWith({
         sku: 'SKU-1001',
         name: 'Lamp',
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         idempotencyKey: 'key-1',
       });
     });
   });
 
   describe('handleGetMany', () => {
-    it('lists only the items of a caller who is not an admin', async () => {
+    it('lists only the items of the caller', async () => {
       getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
 
       const response = await controller.handleGetMany(
         { page: 2, size: 5 },
-        {
-          id: 'user-1',
-          email: 'ann@example.com',
-          roles: [RoleEnum.VIEWER],
-        },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
-      expect(getMany).toHaveBeenCalledWith({ page: 2, size: 5, ownerId: 'user-1' });
-    });
-
-    it('lists the items of every owner for an admin', async () => {
-      getMany.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
-
-      await controller.handleGetMany(
-        {},
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
-      );
-
-      expect(getMany).toHaveBeenCalledWith({
-        page: undefined,
-        size: undefined,
-        ownerId: undefined,
-      });
+      expect(getMany).toHaveBeenCalledWith({ page: 2, size: 5, ownerId: 'customer-1' });
     });
   });
 
   describe('handleGetOne', () => {
-    it('reads the item of the path in the scope of a caller who is not an admin', async () => {
+    it('reads the item of the path in the scope of the caller', async () => {
       getOne.mockResolvedValue({ id: '12' });
 
       const response = await controller.handleGetOne(
         { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.EDITOR] },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ id: '12' });
-      expect(getOne).toHaveBeenCalledWith({ itemId: '12', ownerId: 'user-1' });
-    });
-
-    it('reads the item of the path without an owner scope for an admin', async () => {
-      getOne.mockResolvedValue({ id: '12' });
-
-      await controller.handleGetOne(
-        { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
-      );
-
-      expect(getOne).toHaveBeenCalledWith({ itemId: '12', ownerId: undefined });
+      expect(getOne).toHaveBeenCalledWith({ itemId: '12', ownerId: 'customer-1' });
     });
   });
 
   describe('handleRename', () => {
-    it('renames the item of the path as its owner, even for an admin', async () => {
+    it('renames the item of the path as its owner', async () => {
       rename.mockResolvedValue({ id: '12', name: 'Desk lamp' });
 
       const response = await controller.handleRename(
         { itemId: '12' },
         { name: 'Desk lamp' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
+        { id: 'customer-1', email: 'ann@example.com' },
         3,
       );
 
@@ -125,26 +94,26 @@ describe('ItemController', () => {
       expect(rename).toHaveBeenCalledWith({
         itemId: '12',
         name: 'Desk lamp',
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         expectedVersion: 3,
       });
     });
   });
 
   describe('handleArchive', () => {
-    it('archives the item of the path as its owner, even for an admin', async () => {
+    it('archives the item of the path as its owner', async () => {
       archive.mockResolvedValue({ id: '12', status: 'archived' });
 
       const response = await controller.handleArchive(
         { itemId: '12' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.ADMIN] },
+        { id: 'customer-1', email: 'ann@example.com' },
         undefined,
       );
 
       expect(response).toEqual({ id: '12', status: 'archived' });
       expect(archive).toHaveBeenCalledWith({
         itemId: '12',
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         expectedVersion: undefined,
       });
     });

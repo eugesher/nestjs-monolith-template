@@ -10,7 +10,7 @@ body:
   content: |-
     {
       "permissionCodes": [
-        "item:read"
+        "ledger:read"
       ]
     }
 auth:

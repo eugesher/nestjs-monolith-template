@@ -136,18 +136,18 @@ describe('IamStaffIdentityCoreAdapter', () => {
     it('replaces the permissions through identity and answers the role', async () => {
       updateRolePermissions.mockResolvedValue({
         name: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
       const role = await adapter.updateRolePermissions({
         role: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
-      expect(role).toEqual({ name: 'viewer', permissionCodes: ['item:read'] });
+      expect(role).toEqual({ name: 'viewer', permissionCodes: ['iam:assign'] });
       expect(updateRolePermissions).toHaveBeenCalledWith({
         role: 'viewer',
-        permissionCodes: ['item:read'],
+        permissionCodes: ['iam:assign'],
       });
     });
 
@@ -161,7 +161,7 @@ describe('IamStaffIdentityCoreAdapter', () => {
 
       const execution = adapter.updateRolePermissions({
         role: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
       await expect(execution).rejects.toBeInstanceOf(IamDomainException);

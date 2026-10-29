@@ -19,9 +19,8 @@ export class ItemCrudRepository implements IItemCrudRepositoryPort {
 
   public async list(query: IItemPageQuery): Promise<IPage<ItemModel>> {
     const { page, size, ownerId } = query;
-    const byOwner = ownerId === undefined ? {} : { ownerId };
     const [items, total] = await this.items.findAndCount({
-      where: byOwner,
+      where: { ownerId },
       order: { id: 'DESC' },
       skip: (page - 1) * size,
       take: size,

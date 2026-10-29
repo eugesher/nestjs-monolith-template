@@ -69,17 +69,17 @@ describe('IamController', () => {
     it('replaces the permissions of the role of the path with the codes of the body', async () => {
       updateRolePermissions.mockResolvedValue({
         name: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
       const response = await controller.handleUpdateRolePermissions(RoleEnum.VIEWER, {
-        permissionCodes: [PermissionCodeEnum.ITEM_READ],
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
-      expect(response).toEqual({ name: 'viewer', permissionCodes: ['item:read'] });
+      expect(response).toEqual({ name: 'viewer', permissionCodes: ['iam:assign'] });
       expect(updateRolePermissions).toHaveBeenCalledWith({
         role: 'viewer',
-        permissionCodes: ['item:read'],
+        permissionCodes: ['iam:assign'],
       });
     });
   });

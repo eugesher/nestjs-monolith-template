@@ -6,7 +6,7 @@ describe('SessionLoginUseCase', () => {
 
   beforeEach(() => {
     login = jest.fn();
-    useCase = new SessionLoginUseCase({ login });
+    useCase = new SessionLoginUseCase({ login, findSubject: jest.fn() });
   });
 
   describe('execute', () => {

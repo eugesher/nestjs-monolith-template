@@ -3,7 +3,7 @@ description: |-
   e2e: Reminder › GET /api/reminders › should filter by status
 
   Expect: 200 OK, reminder 302
-  User: viewer@example.com (token signed by scripts.py)
+  User: carol@example.com (token signed by scripts.py)
 url: $CUSTOMER_APP_BASE_URL/reminders
 params:
   - name: status
@@ -13,4 +13,4 @@ auth:
   bearer_token:
     token: $token
 scripts:
-  setup: scripts.py:as_viewer
+  setup: scripts.py:as_carol

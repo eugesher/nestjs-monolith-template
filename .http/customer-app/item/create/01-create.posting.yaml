@@ -3,7 +3,7 @@ description: |-
   e2e: Item › POST /api/items › should create a draft, record the key and the ledger entry under the correlation id
 
   Expect: 201 Created; item, a completed idempotency_key row and a ledger entry item-created with correlation_id e2e-item-create
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
 method: POST
 url: $CUSTOMER_APP_BASE_URL/items
 body:
@@ -24,4 +24,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

@@ -16,7 +16,6 @@ describe('AuthJwtGuard', () => {
     validate = jest.fn().mockResolvedValue({
       id: 'user-1',
       email: 'ann@example.com',
-      roles: ['admin'],
     });
     verifyAsync = jest.fn().mockResolvedValue({ sub: 'user-1', roles: ['ignored'] });
     getAllAndOverride = jest.fn().mockReturnValue(undefined);
@@ -27,7 +26,7 @@ describe('AuthJwtGuard', () => {
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;
     guard = new AuthJwtGuard(
-      { validate, findPermissionCodes: jest.fn() },
+      { validate },
       { verifyAsync } as unknown as JwtService,
       { getAllAndOverride } as unknown as Reflector,
     );
@@ -42,7 +41,6 @@ describe('AuthJwtGuard', () => {
     expect(request.user).toEqual({
       id: 'user-1',
       email: 'ann@example.com',
-      roles: ['admin'],
     });
   });
 

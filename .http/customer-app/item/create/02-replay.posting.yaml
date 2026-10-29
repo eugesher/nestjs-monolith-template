@@ -3,7 +3,7 @@ description: |-
   e2e: Item › POST /api/items › should replay the same response for the same key and body without a second item
 
   Expect: 201 Created both times with the same body, one item, one ledger entry
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
   Note: send it twice
 method: POST
 url: $CUSTOMER_APP_BASE_URL/items
@@ -23,4 +23,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

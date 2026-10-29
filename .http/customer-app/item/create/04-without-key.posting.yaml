@@ -3,7 +3,7 @@ description: |-
   e2e: Item › POST /api/items › should refuse a create without a key with 400
 
   Expect: 400 Bad Request, code IDEMPOTENCY_KEY_REQUIRED, no item
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
 method: POST
 url: $CUSTOMER_APP_BASE_URL/items
 body:
@@ -20,4 +20,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

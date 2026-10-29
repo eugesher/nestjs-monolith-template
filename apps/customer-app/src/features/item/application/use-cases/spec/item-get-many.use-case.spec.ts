@@ -54,9 +54,9 @@ describe('ItemGetManyUseCase', () => {
       ['defaults an absent window', undefined, undefined, { page: 1, size: 20 }],
       ['caps the size at 100', 1, 500, { page: 1, size: 100 }],
     ])('%s', async (_, page, size, window) => {
-      await useCase.execute({ page, size, ownerId: undefined });
+      await useCase.execute({ page, size, ownerId: 'owner-1' });
 
-      expect(list).toHaveBeenCalledWith({ ...window, ownerId: undefined });
+      expect(list).toHaveBeenCalledWith({ ...window, ownerId: 'owner-1' });
     });
   });
 });

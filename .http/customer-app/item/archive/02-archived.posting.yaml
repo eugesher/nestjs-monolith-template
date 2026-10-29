@@ -3,7 +3,7 @@ description: |-
   e2e: Item › PATCH /api/items/:itemId/archive › should refuse to archive an archived item with 409
 
   Expect: 409 Conflict, code ITEM_ALREADY_ARCHIVED, no ledger entry
-  User: editor@example.com (token signed by scripts.py)
+  User: ann@example.com (token signed by scripts.py)
 method: PATCH
 url: $CUSTOMER_APP_BASE_URL/items/105/archive
 auth:
@@ -11,4 +11,4 @@ auth:
   bearer_token:
     token: $token
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_ann

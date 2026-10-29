@@ -1,0 +1,19 @@
+name: 01-customer
+description: |-
+  e2e: Session › POST /api/auth/login › should issue an access token of the subject alone, valid for the lifetime of this app
+
+  Expect: 200 OK, accessToken with the claims sub, iat, exp only; exp - iat = 604800 (7 days)
+  Note: the token is saved to the session variable access_token
+method: POST
+url: $CUSTOMER_APP_BASE_URL/auth/login
+body:
+  content: |-
+    {
+      "email": "ann@example.com",
+      "password": "ann-password-please-change"
+    }
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  on_response: scripts.py:capture_login

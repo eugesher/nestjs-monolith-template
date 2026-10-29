@@ -6,6 +6,8 @@ export class IamRoleResponseDto {
   @ApiResponseProperty({ example: RoleEnum.EDITOR })
   public name: RoleEnum;
 
-  @ApiResponseProperty({ example: [PermissionCodeEnum.ITEM_READ, PermissionCodeEnum.ITEM_WRITE] })
+  @ApiResponseProperty({
+    example: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.IAM_ROLE_EDIT],
+  })
   public permissionCodes: PermissionCodeEnum[];
 }

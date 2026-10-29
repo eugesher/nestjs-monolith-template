@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { OwnershipHelper } from '@acme-libs/toolkit';
 import { ItemDomainException, ItemErrorCodeEnum, ItemModel } from '../../domain';
 import { type IItemAccessRepositoryPort, ITEM_ACCESS_REPOSITORY_PORT } from '../../outbound';
 import { IItemAccessLoadOwnedQuery } from '../interfaces/queries/item-access-load-owned.query';
@@ -12,25 +11,17 @@ export class ItemAccessService {
     private readonly repository: IItemAccessRepositoryPort,
   ) {}
 
-  public loadOwned(query: IItemAccessLoadOwnedQuery): Promise<ItemModel> {
+  public async loadOwned(query: IItemAccessLoadOwnedQuery): Promise<ItemModel> {
     const { itemId, ownerId } = query;
+    const item = await this.repository.findById(itemId);
 
-    return OwnershipHelper.loadOwned({
-      find: () => this.repository.findById(itemId),
-      owner: (item) => item.ownerId,
-      requiredOwner: ownerId,
-      onMissing: () => {
-        throw new ItemDomainException(
-          ItemErrorCodeEnum.ITEM_NOT_FOUND,
-          `Item ${itemId} was not found`,
-        );
-      },
-      onForbidden: () => {
-        throw new ItemDomainException(
-          ItemErrorCodeEnum.ITEM_ACCESS_FORBIDDEN,
-          `Item ${itemId} does not belong to the caller`,
-        );
-      },
-    });
+    if (item?.ownerId !== ownerId) {
+      throw new ItemDomainException(
+        ItemErrorCodeEnum.ITEM_NOT_FOUND,
+        `Item ${itemId} was not found`,
+      );
+    }
+
+    return item;
   }
 }

@@ -112,6 +112,55 @@ describe('libs by layer', () => {
     }).toPassArchitectureLint();
   });
 
+  it.each([
+    ['staff-app', 'import { CurrentUser, RequiresPermission, Roles } from "@acme-libs/auth";'],
+    ['staff-app', 'import { PermissionCodeEnum, RoleEnum } from "@acme-libs/kernel";'],
+    ['customer-app', 'import { CurrentUser, Public } from "@acme-libs/auth";'],
+    ['customer-app', 'import type { IAuthCurrentUserView } from "@acme-libs/contracts/auth";'],
+  ])('%s presentation MAY take %s', async (app, code) => {
+    await expect({
+      file: `apps/${app}/src/features/session/presentation/controllers/__fixture__.ts`,
+      code,
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'import { CurrentUser, RequiresPermission } from "@acme-libs/auth";',
+    'import { Roles } from "@acme-libs/auth";',
+    'import { PermissionCodeEnum } from "@acme-libs/kernel";',
+    'import { ReminderStatusEnum, RoleEnum } from "@acme-libs/kernel";',
+  ])(
+    'customer-app presentation may NOT take %s — a customer holds no roles or permissions',
+    async (code) => {
+      await expect({
+        file: 'apps/customer-app/src/features/item/presentation/controllers/__fixture__.ts',
+        code,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it.each([
+    [
+      'apps/customer-app/src/app/global/auth/module/__fixture__.ts',
+      'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";',
+    ],
+    [
+      'apps/customer-app/src/app/global/auth/module/__fixture__.ts',
+      'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
+    ],
+  ])('%s may NOT wire the claim guards: %s', async (file, code) => {
+    await expect({ file, code }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the staff-app global auth module MAY wire the claim guards', async () => {
+    await expect({
+      file: 'apps/staff-app/src/app/global/auth/module/__fixture__.ts',
+      code:
+        'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";\n' +
+        'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
+    }).toPassArchitectureLint();
+  });
+
   it('application may NOT reach the auth lib contract', async () => {
     await expect({
       file: 'apps/__layers-fixture__/src/features/item/application/use-cases/__fixture__.ts',

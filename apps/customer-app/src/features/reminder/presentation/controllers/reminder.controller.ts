@@ -19,9 +19,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser } from '@acme-libs/auth';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
 import {
   ReminderCompleteUseCase,
   ReminderCreateUseCase,
@@ -53,7 +52,6 @@ export class ReminderController {
   ) {}
 
   @Post()
-  @RequiresPermission(PermissionCodeEnum.REMINDER_WRITE)
   @ApiOperation({ summary: 'Create a reminder for yourself' })
   @ApiCreatedResponse({ type: ReminderResponseDto })
   public handleCreate(
@@ -66,7 +64,6 @@ export class ReminderController {
   }
 
   @Get()
-  @RequiresPermission(PermissionCodeEnum.REMINDER_READ)
   @ApiOperation({ summary: 'List your reminders, soonest first' })
   @ApiOkResponse({ type: ReminderPageResponseDto })
   public handleGetMany(
@@ -79,7 +76,6 @@ export class ReminderController {
   }
 
   @Get('summary')
-  @RequiresPermission(PermissionCodeEnum.REMINDER_READ)
   @ApiOperation({ summary: 'How many of your reminders are pending, and when the next is due' })
   @ApiOkResponse({ type: ReminderSummaryResponseDto })
   public handleGetSummary(
@@ -89,7 +85,6 @@ export class ReminderController {
   }
 
   @Patch(':reminderId/done')
-  @RequiresPermission(PermissionCodeEnum.REMINDER_WRITE)
   @ApiOperation({ summary: 'Mark one of your reminders as done' })
   @ApiOkResponse({ type: ReminderResponseDto })
   public handleComplete(
@@ -102,7 +97,6 @@ export class ReminderController {
   }
 
   @Patch(':reminderId/due-on')
-  @RequiresPermission(PermissionCodeEnum.REMINDER_WRITE)
   @ApiOperation({ summary: 'Move one of your reminders to another day' })
   @ApiOkResponse({ type: ReminderResponseDto })
   public handleReschedule(
@@ -117,7 +111,6 @@ export class ReminderController {
   }
 
   @Delete(':reminderId')
-  @RequiresPermission(PermissionCodeEnum.REMINDER_WRITE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete one of your reminders' })
   @ApiNoContentResponse()

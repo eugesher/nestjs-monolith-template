@@ -16,7 +16,7 @@ describe('AuthStaffIdentityCoreAdapter', () => {
   });
 
   describe('findSubject', () => {
-    it('asks identity for the subject of the token and answers it as the current user', async () => {
+    it('asks identity for the subject of the token and answers its id and email as the current user', async () => {
       validateSubject.mockResolvedValue({
         id: 'user-1',
         email: 'ann@example.com',
@@ -25,7 +25,7 @@ describe('AuthStaffIdentityCoreAdapter', () => {
 
       const user = await adapter.findSubject({ sub: 'user-1' });
 
-      expect(user).toEqual({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
+      expect(user).toEqual({ id: 'user-1', email: 'ann@example.com' });
       expect(validateSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
 
@@ -38,13 +38,36 @@ describe('AuthStaffIdentityCoreAdapter', () => {
     });
   });
 
+  describe('findRoles', () => {
+    it('answers the roles of the subject identity re-derives', async () => {
+      validateSubject.mockResolvedValue({
+        id: 'user-1',
+        email: 'ann@example.com',
+        roles: ['admin'],
+      });
+
+      const roles = await adapter.findRoles({ userId: 'user-1' });
+
+      expect(roles).toEqual(['admin']);
+      expect(validateSubject).toHaveBeenCalledWith({ userId: 'user-1' });
+    });
+
+    it('answers no roles when identity knows no active subject', async () => {
+      validateSubject.mockResolvedValue(undefined);
+
+      const roles = await adapter.findRoles({ userId: 'user-1' });
+
+      expect(roles).toEqual([]);
+    });
+  });
+
   describe('findPermissionCodes', () => {
     it('answers the permission codes identity reads for the user', async () => {
-      findPermissionCodes.mockResolvedValue(['item:archive']);
+      findPermissionCodes.mockResolvedValue(['note:write']);
 
       const codes = await adapter.findPermissionCodes({ userId: 'user-1' });
 
-      expect(codes).toEqual(['item:archive']);
+      expect(codes).toEqual(['note:write']);
       expect(findPermissionCodes).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });

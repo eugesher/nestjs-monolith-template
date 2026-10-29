@@ -1,0 +1,16 @@
+name: 05-disabled-customer
+description: |-
+  e2e: Session › POST /api/auth/login › should refuse a disabled customer with 403
+
+  Expect: 403 Forbidden, code AUTH_USER_INACTIVE
+method: POST
+url: $CUSTOMER_APP_BASE_URL/auth/login
+body:
+  content: |-
+    {
+      "email": "dora@example.com",
+      "password": "dora-password-please-change"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

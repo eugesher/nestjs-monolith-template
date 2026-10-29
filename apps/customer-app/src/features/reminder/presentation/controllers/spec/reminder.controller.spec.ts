@@ -1,4 +1,4 @@
-import { ReminderStatusEnum, RoleEnum } from '@acme-libs/kernel';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
 import {
   ReminderCompleteUseCase,
   ReminderCreateUseCase,
@@ -42,12 +42,12 @@ describe('ReminderController', () => {
 
       const response = await controller.handleCreate(
         { title: 'Renew', body: 'The annual one', dueOn: '2026-06-01' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ id: '31', title: 'Renew' });
       expect(create).toHaveBeenCalledWith({
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         title: 'Renew',
         body: 'The annual one',
         dueOn: '2026-06-01',
@@ -56,15 +56,14 @@ describe('ReminderController', () => {
   });
 
   describe('handleGetMany', () => {
-    it('lists only the reminders of the caller, even for an admin', async () => {
+    it('lists only the reminders of the caller', async () => {
       getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
 
       const response = await controller.handleGetMany(
         { page: 2, size: 5, status: ReminderStatusEnum.DONE },
         {
-          id: 'user-1',
+          id: 'customer-1',
           email: 'ann@example.com',
-          roles: [RoleEnum.ADMIN],
         },
       );
 
@@ -72,7 +71,7 @@ describe('ReminderController', () => {
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
         size: 5,
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         status: 'done',
       });
     });
@@ -83,13 +82,12 @@ describe('ReminderController', () => {
       getSummary.mockResolvedValue({ pending: 2, nextDueOn: '2026-06-01' });
 
       const response = await controller.handleGetSummary({
-        id: 'user-1',
+        id: 'customer-1',
         email: 'ann@example.com',
-        roles: [RoleEnum.VIEWER],
       });
 
       expect(response).toEqual({ pending: 2, nextDueOn: '2026-06-01' });
-      expect(getSummary).toHaveBeenCalledWith({ ownerId: 'user-1' });
+      expect(getSummary).toHaveBeenCalledWith({ ownerId: 'customer-1' });
     });
   });
 
@@ -99,11 +97,11 @@ describe('ReminderController', () => {
 
       const response = await controller.handleComplete(
         { reminderId: '31' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ id: '31', status: 'done' });
-      expect(complete).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'user-1' });
+      expect(complete).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'customer-1' });
     });
   });
 
@@ -114,13 +112,13 @@ describe('ReminderController', () => {
       const response = await controller.handleReschedule(
         { reminderId: '31' },
         { dueOn: '2026-07-01' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ id: '31', dueOn: '2026-07-01' });
       expect(reschedule).toHaveBeenCalledWith({
         reminderId: '31',
-        ownerId: 'user-1',
+        ownerId: 'customer-1',
         dueOn: '2026-07-01',
       });
     });
@@ -132,11 +130,11 @@ describe('ReminderController', () => {
 
       const response = await controller.handleDelete(
         { reminderId: '31' },
-        { id: 'user-1', email: 'ann@example.com', roles: [RoleEnum.VIEWER] },
+        { id: 'customer-1', email: 'ann@example.com' },
       );
 
       expect(response).toBeUndefined();
-      expect(remove).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'user-1' });
+      expect(remove).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'customer-1' });
     });
   });
 });

@@ -23,13 +23,13 @@ describe('StaffIdentityCoreUpdateRolePermissionsUseCase', () => {
         StaffIdentityCoreRoleModel.reconstitute({
           id: 2,
           name: RoleEnum.EDITOR,
-          permissionCodes: [PermissionCodeEnum.ITEM_READ],
+          permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
         }),
       ),
       findPermissions: jest.fn().mockResolvedValue([
         StaffIdentityCorePermissionModel.reconstitute({
           id: 2,
-          code: PermissionCodeEnum.ITEM_WRITE,
+          code: PermissionCodeEnum.IAM_ROLE_EDIT,
         }),
         StaffIdentityCorePermissionModel.reconstitute({
           id: 8,
@@ -60,17 +60,17 @@ describe('StaffIdentityCoreUpdateRolePermissionsUseCase', () => {
   it('replaces the permissions of the role in one transaction', async () => {
     const view = await useCase.execute({
       role: RoleEnum.EDITOR,
-      permissionCodes: [PermissionCodeEnum.ITEM_WRITE, PermissionCodeEnum.NOTE_READ],
+      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.NOTE_READ],
     });
 
-    expect(view).toEqual({ name: 'editor', permissionCodes: ['item:write', 'note:read'] });
-    expect(repository.findPermissions).toHaveBeenCalledWith(['item:write', 'note:read']);
+    expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'note:read'] });
+    expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'note:read']);
     expect(repository.replacePermissions).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 2, permissionCodes: ['item:write', 'note:read'] }),
+      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'note:read'] }),
     );
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
-      { role: 'editor', permissionCodes: ['item:write', 'note:read'] },
+      { role: 'editor', permissionCodes: ['iam:role-edit', 'note:read'] },
       'Role permissions replaced',
     );
   });
@@ -90,7 +90,7 @@ describe('StaffIdentityCoreUpdateRolePermissionsUseCase', () => {
   it('rejects unknown permission codes and writes nothing', async () => {
     const update = useCase.execute({
       role: RoleEnum.EDITOR,
-      permissionCodes: [PermissionCodeEnum.ITEM_WRITE, PermissionCodeEnum.LEDGER_READ],
+      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.LEDGER_READ],
     });
 
     await expect(update).rejects.toMatchObject({
