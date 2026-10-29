@@ -59,7 +59,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
 | `ScheduleSetupModule`              | `app/setup/schedule`, customer-app only              | `ScheduleModule.forRoot()` for `@Cron`                      |
 | `CacheModule`, `EventsModule`      | `libs/cache`, `libs/messaging`                       | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT`              |
-| `AuthModule`                       | `app/global/auth`                                    | the three global guards                                     |
+| `AuthGlobalModule`                 | `app/global/auth`                                    | the three global guards                                     |
 | features, processors               | `@acme-<app>-features`, `@acme-customer-processors`  | the routes and the consumers                                |
 | `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log                                  |

@@ -1,1 +1,1 @@
-export * from './auth/module/auth.module';
+export * from './auth/module/auth-global.module';

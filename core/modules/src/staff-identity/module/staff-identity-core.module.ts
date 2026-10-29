@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import {
   STAFF_IDENTITY_CORE_ADMIN_PORT,
-  STAFF_IDENTITY_CORE_SESSION_PORT,
+  STAFF_IDENTITY_CORE_AUTH_PORT,
 } from '@acme-core/contracts/staff-identity';
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import {
@@ -35,14 +35,14 @@ import {
   STAFF_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
 } from '../outbound';
 import { StaffIdentityCoreAdminFacade } from './staff-identity-core-admin.facade';
-import { StaffIdentityCoreSessionFacade } from './staff-identity-core-session.facade';
+import { StaffIdentityCoreAuthFacade } from './staff-identity-core-auth.facade';
 
 @Module({
   imports: [StaffIdentityCoreTypeOrmModule.forFeature(), CredentialsLibModule],
-  exports: [STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_SESSION_PORT],
+  exports: [STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_AUTH_PORT],
   providers: [
     { provide: STAFF_IDENTITY_CORE_ADMIN_PORT, useClass: StaffIdentityCoreAdminFacade },
-    { provide: STAFF_IDENTITY_CORE_SESSION_PORT, useClass: StaffIdentityCoreSessionFacade },
+    { provide: STAFF_IDENTITY_CORE_AUTH_PORT, useClass: StaffIdentityCoreAuthFacade },
     StaffIdentityCoreAssignRoleUseCase,
     StaffIdentityCoreFindPermissionCodesUseCase,
     StaffIdentityCoreListRolesUseCase,

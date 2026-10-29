@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { CUSTOMER_IDENTITY_CORE_SESSION_PORT } from '@acme-core/contracts/customer-identity';
+import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from '@acme-core/contracts/customer-identity';
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import {
   CustomerIdentityCoreAccessTokenService,
@@ -19,13 +19,13 @@ import {
   CUSTOMER_IDENTITY_CORE_REGISTER_REPOSITORY_PORT,
   CUSTOMER_IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
 } from '../outbound';
-import { CustomerIdentityCoreSessionFacade } from './customer-identity-core-session.facade';
+import { CustomerIdentityCoreAuthFacade } from './customer-identity-core-auth.facade';
 
 @Module({
   imports: [CustomerIdentityCoreTypeOrmModule.forFeature(), CredentialsLibModule],
-  exports: [CUSTOMER_IDENTITY_CORE_SESSION_PORT],
+  exports: [CUSTOMER_IDENTITY_CORE_AUTH_PORT],
   providers: [
-    { provide: CUSTOMER_IDENTITY_CORE_SESSION_PORT, useClass: CustomerIdentityCoreSessionFacade },
+    { provide: CUSTOMER_IDENTITY_CORE_AUTH_PORT, useClass: CustomerIdentityCoreAuthFacade },
     CustomerIdentityCoreLoginUseCase,
     CustomerIdentityCoreRegisterUseCase,
     CustomerIdentityCoreValidateSubjectUseCase,

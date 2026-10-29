@@ -1,0 +1,16 @@
+name: 02-taken-email
+description: |-
+  e2e: Auth › POST /api/auth/register › should refuse a taken email in another case with 409
+
+  Expect: 409 Conflict, code AUTH_EMAIL_TAKEN, no new customer
+method: POST
+url: $CUSTOMER_APP_BASE_URL/auth/register
+body:
+  content: |-
+    {
+      "email": "ANN@example.com",
+      "password": "another-password-please-change"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

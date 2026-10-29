@@ -29,9 +29,9 @@ Six e2e cases are not one request:
   one;
 - the replay of an item create sends the same request twice, as `item/create/02-replay` says;
 - two simultaneous registrations with one email send the same request twice at once, in
-  `customer-app/session/register/03-simultaneous` and `staff-app/iam/register-user/02-simultaneous`;
+  `customer-app/auth/register/03-simultaneous` and `staff-app/iam/register-user/02-simultaneous`;
 - the sign-up of a customer goes on to log in, read `me` and create an item with the new
-  credentials, as `session/register/01-register` says.
+  credentials, as `auth/register/01-register` says.
 
 ## Environment
 
@@ -73,7 +73,7 @@ This also covers tokens that no login issues:
 - a token signed with the `JWT_SECRET` of the other app (`as_editor_with_customer_secret`,
   `as_ann_with_staff_secret`), which needs `.env.local` of both apps.
 
-`session/login/01-editor` of staff-app and `session/login/01-customer` of customer-app save the token
+`auth/login/01-editor` of staff-app and `auth/login/01-customer` of customer-app save the token
 they get into the variable `access_token`. The requests that send it say so in `Note:` or `User:`.
 
 ## Setup and cleanup

@@ -1,0 +1,17 @@
+name: 03-simultaneous
+description: |-
+  e2e: Auth › POST /api/auth/register › should let one of two simultaneous sign-ups with one email through and refuse the other with 409
+
+  Expect: one 201 Created and one 409 Conflict with code AUTH_EMAIL_TAKEN, one customer row gina@example.com
+  Note: send it twice at the same moment
+method: POST
+url: $CUSTOMER_APP_BASE_URL/auth/register
+body:
+  content: |-
+    {
+      "email": "gina@example.com",
+      "password": "gina-password-please-change"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

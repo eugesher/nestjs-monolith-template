@@ -10,16 +10,21 @@
 
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in
-its global `AuthModule`: the facade calls the app's core adapter, which calls the session port of
+its global `AuthGlobalModule`: the facade calls the app's core adapter, which calls the auth port of
 the identity module of that app.
 
-| App          | Core adapter                      | Identity module     | Ports bound                                    |
-| ------------ | --------------------------------- | ------------------- | ---------------------------------------------- |
-| staff-app    | `AuthStaffIdentityCoreAdapter`    | `staff-identity`    | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
-| customer-app | `AuthCustomerIdentityCoreAdapter` | `customer-identity` | `AUTH_USER_VALIDATOR_PORT`                     |
+| App          | Core adapter                            | Identity module     | Ports bound                                    |
+| ------------ | --------------------------------------- | ------------------- | ---------------------------------------------- |
+| staff-app    | `AuthGlobalStaffIdentityCoreAdapter`    | `staff-identity`    | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
+| customer-app | `AuthGlobalCustomerIdentityCoreAdapter` | `customer-identity` | `AUTH_USER_VALIDATOR_PORT`                     |
 
-The global module also imports the lib modules, so mounting `AuthModule` in `AppModule` is the
+The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.
+
+**Global classes carry the `AuthGlobal` prefix.** The folder stays `app/global/auth`, paired with
+the lib contract below, but the feature `features/auth` owns the plain names: `AuthModule`, and
+`AuthStaffIdentityCoreAdapter` for the core adapter of its own. The prefix keeps the two apart in
+imports, in stack traces and in DI errors.
 
 **A global module pairs with the lib contract of its own name.** `app/global/auth` may import
 `libs/contracts/src/auth`, and only that contract. The lint expresses it as one selector,
@@ -57,7 +62,7 @@ Each guard is one `APP_GUARD` provider, and Nest runs global guards in registrat
 
 **Authentication must come first.** The claim guards read `request.user`. Ahead of the JWT guard
 they would see an anonymous request on every gated route and answer 403 where 401 is meant. The
-staff-app `AuthModule` imports `AuthLibModule` before `AuthClaimsLibModule`, and the spec of the
+staff-app `AuthGlobalModule` imports `AuthLibModule` before `AuthClaimsLibModule`, and the spec of the
 claims module checks that a gated route without a token answers 401.
 
 **Deny by default.** A route without decorators needs a token. `@Public()` is the only way out, and
@@ -83,5 +88,5 @@ very next gated request, while an ungated request pays for the user alone.
 **One secret per app.** The guard verifies with `JWT_SECRET` of the app, the secret its identity
 module signs the access token with. The two apps have different secrets, so a token of one app
 fails the signature check in the other. Even with a shared secret it would fail: the subject of a
-customer is not a row of `staff_user`, and the other way round. The session e2e of each app sends
+customer is not a row of `staff_user`, and the other way round. The auth e2e of each app sends
 both kinds of foreign token and expects 401.

@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { HealthModule, ItemModule, ReminderModule, SessionModule } from '@acme-customer-features';
+import { HealthModule, ItemModule, ReminderModule, AuthModule } from '@acme-customer-features';
 import { IdempotencyPurgeModule, LedgerCatalogEventsModule } from '@acme-customer-processors';
 import { CacheModule } from '@acme-libs/cache';
 import {
@@ -12,7 +12,7 @@ import {
 import { AppNameEnum } from '@acme-libs/kernel';
 import { EventsModule } from '@acme-libs/messaging';
 import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
-import { AuthModule } from './global';
+import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
 import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
@@ -25,11 +25,11 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     ScheduleSetupModule,
     CacheModule,
     EventsModule,
-    AuthModule,
+    AuthGlobalModule,
     HealthModule,
     ItemModule,
     ReminderModule,
-    SessionModule,
+    AuthModule,
     IdempotencyPurgeModule,
     LedgerCatalogEventsModule,
   ],

@@ -1,5 +1,145 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
+{
+  "response": {
+    "body": {
+      "email": "viewer@example.com",
+      "id": "00000000-0000-4000-8000-000000000003",
+      "roles": [
+        "viewer",
+      ],
+    },
+  },
+  "roles": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+{
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
+  "lifetime": 2592000,
+  "me": {
+    "email": "editor@example.com",
+    "id": "00000000-0000-4000-8000-000000000002",
+    "roles": [
+      "editor",
+    ],
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be shorter than or equal to 255 characters",
+        "email must be an email",
+        "password must be shorter than or equal to 256 characters",
+        "password must be longer than or equal to 1 characters",
+        "password must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
@@ -725,144 +865,3 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
   },
 }
 `;
-
-exports[`App Session GET /api/auth/me should refuse a caller without a token 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should refuse the token of a disabled user 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
-{
-  "response": {
-    "body": {
-      "email": "viewer@example.com",
-      "id": "00000000-0000-4000-8000-000000000003",
-      "roles": [
-        "viewer",
-      ],
-    },
-  },
-  "roles": {
-    "error": "Forbidden",
-    "message": "Insufficient permissions",
-    "statusCode": 403,
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
-{
-  "claims": [
-    "exp",
-    "iat",
-    "sub",
-  ],
-  "lifetime": 2592000,
-  "me": {
-    "email": "editor@example.com",
-    "id": "00000000-0000-4000-8000-000000000002",
-    "roles": [
-      "editor",
-    ],
-  },
-  "response": {
-    "body": {
-      "accessToken": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse a disabled user with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_INACTIVE",
-      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "email must be shorter than or equal to 255 characters",
-        "email must be an email",
-        "password must be shorter than or equal to 256 characters",
-        "password must be longer than or equal to 1 characters",
-        "password must be a string",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-

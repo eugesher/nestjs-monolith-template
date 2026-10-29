@@ -6,7 +6,7 @@ import {
   IamModule,
   LedgerModule,
   NoteModule,
-  SessionModule,
+  AuthModule,
 } from '@acme-staff-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
@@ -17,7 +17,7 @@ import {
 import { AppNameEnum } from '@acme-libs/kernel';
 import { EventsModule } from '@acme-libs/messaging';
 import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
-import { AuthModule } from './global';
+import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
 
@@ -28,9 +28,9 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     TypeOrmSetupModule.forRoot(),
     CacheModule,
     EventsModule,
-    AuthModule,
+    AuthGlobalModule,
     HealthModule,
-    SessionModule,
+    AuthModule,
     IamModule,
     LedgerModule,
     NoteModule,
