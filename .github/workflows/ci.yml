@@ -21,7 +21,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
       - run: yarn install --immutable
-      - run: yarn lint
+      - run: yarn lint:all
       - run: yarn format:check
 
   typecheck:

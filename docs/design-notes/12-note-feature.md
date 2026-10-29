@@ -11,13 +11,13 @@ write that spans two tables.
 that the subject exists or what kind of thing it is: a note on an item and a note on a support
 ticket are the same note. `resolved` closes a note for good.
 
-| Rule | Code |
-| --- | --- |
-| `subjectType` matches `^[a-z][a-z-]{1,63}$` | `NOTE_SUBJECT_INVALID` |
+| Rule                                             | Code                   |
+| ------------------------------------------------ | ---------------------- |
+| `subjectType` matches `^[a-z][a-z-]{1,63}$`      | `NOTE_SUBJECT_INVALID` |
 | `subjectId` is 1 to 64 characters after trimming | `NOTE_SUBJECT_INVALID` |
-| `body` is 1 to 4000 characters after trimming | `NOTE_BODY_INVALID` |
-| `version` is a positive integer | `NOTE_VERSION_INVALID` |
-| a resolved note refuses `edit` and `resolve` | `NOTE_RESOLVED` |
+| `body` is 1 to 4000 characters after trimming    | `NOTE_BODY_INVALID`    |
+| `version` is a positive integer                  | `NOTE_VERSION_INVALID` |
+| a resolved note refuses `edit` and `resolve`     | `NOTE_RESOLVED`        |
 
 **An edit to the current body changes nothing.** It keeps the version, and the edit use case
 writes nothing: no update and no revision.
@@ -81,14 +81,14 @@ transaction. Resolving is one statement and runs without one.
 
 ## Use cases
 
-| Use case | Repository port | What it does |
-| --- | --- | --- |
-| `NoteCreateUseCase` | `NOTE_CREATE_REPOSITORY_PORT` | inserts an unresolved note at version 1 |
-| `NoteGetOneUseCase` | none, through `NoteAccessService` | answers one note |
-| `NoteGetManyUseCase` | `NOTE_CRUD_REPOSITORY_PORT` | a page of notes, optionally of one subject and of one resolution |
-| `NoteEditUseCase` | `NOTE_EDIT_REPOSITORY_PORT` | edits the body and appends a revision |
-| `NoteResolveUseCase` | `NOTE_RESOLVE_REPOSITORY_PORT` | resolves the note |
-| `NoteGetRevisionsUseCase` | `NOTE_GET_REVISIONS_REPOSITORY_PORT` | a page of the revisions of an existing note |
+| Use case                  | Repository port                      | What it does                                                     |
+| ------------------------- | ------------------------------------ | ---------------------------------------------------------------- |
+| `NoteCreateUseCase`       | `NOTE_CREATE_REPOSITORY_PORT`        | inserts an unresolved note at version 1                          |
+| `NoteGetOneUseCase`       | none, through `NoteAccessService`    | answers one note                                                 |
+| `NoteGetManyUseCase`      | `NOTE_CRUD_REPOSITORY_PORT`          | a page of notes, optionally of one subject and of one resolution |
+| `NoteEditUseCase`         | `NOTE_EDIT_REPOSITORY_PORT`          | edits the body and appends a revision                            |
+| `NoteResolveUseCase`      | `NOTE_RESOLVE_REPOSITORY_PORT`       | resolves the note                                                |
+| `NoteGetRevisionsUseCase` | `NOTE_GET_REVISIONS_REPOSITORY_PORT` | a page of the revisions of an existing note                      |
 
 `NoteAccessService` has its own port, `NOTE_ACCESS_REPOSITORY_PORT`. No consumer holds more than one
 repository.
@@ -122,14 +122,14 @@ guard: two edits that both passed the version check could not record the same ve
 
 ## HTTP
 
-| Method and path | Permission | Answer |
-| --- | --- | --- |
-| `POST /notes` | `note:write` | 201, the note |
-| `GET /notes` | `note:read` | 200, a page of notes |
-| `GET /notes/:noteId` | `note:read` | 200, the note |
-| `PATCH /notes/:noteId` | `note:write` | 200, the note |
-| `PATCH /notes/:noteId/resolve` | `note:write` | 200, the note |
-| `GET /notes/:noteId/revisions` | `note:read` | 200, a page of revisions |
+| Method and path                | Permission   | Answer                   |
+| ------------------------------ | ------------ | ------------------------ |
+| `POST /notes`                  | `note:write` | 201, the note            |
+| `GET /notes`                   | `note:read`  | 200, a page of notes     |
+| `GET /notes/:noteId`           | `note:read`  | 200, the note            |
+| `PATCH /notes/:noteId`         | `note:write` | 200, the note            |
+| `PATCH /notes/:noteId/resolve` | `note:write` | 200, the note            |
+| `GET /notes/:noteId/revisions` | `note:read`  | 200, a page of revisions |
 
 The caller is the author of a note they create and the editor of a revision they cause. Nothing
 else in a route depends on the caller.
@@ -146,11 +146,11 @@ string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, 
 `NoteHttpExceptionFilter` maps the domain codes to statuses and hands the response to the
 `HttpExceptionFilter` of `libs/http`, with the same body as items.
 
-| Code | Status |
-| --- | --- |
-| `NOTE_SUBJECT_INVALID`, `NOTE_BODY_INVALID`, `NOTE_VERSION_INVALID` | 400 |
-| `NOTE_NOT_FOUND` | 404 |
-| `NOTE_RESOLVED`, `VERSION_MISMATCH` | 409 |
+| Code                                                                | Status |
+| ------------------------------------------------------------------- | ------ |
+| `NOTE_SUBJECT_INVALID`, `NOTE_BODY_INVALID`, `NOTE_VERSION_INVALID` | 400    |
+| `NOTE_NOT_FOUND`                                                    | 404    |
+| `NOTE_RESOLVED`, `VERSION_MISMATCH`                                 | 409    |
 
 ## Wiring
 

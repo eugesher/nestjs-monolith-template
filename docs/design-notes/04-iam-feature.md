@@ -14,11 +14,11 @@ feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on
 
 ## Three permission codes, on purpose
 
-| Endpoint | Permission |
-| --- | --- |
-| `POST /iam/users` | `iam:user-create` |
-| `POST /iam/users/:userId/roles`, `GET /iam/roles` | `iam:assign` |
-| `PUT /iam/roles/:role/permissions` | `iam:role-edit` |
+| Endpoint                                          | Permission        |
+| ------------------------------------------------- | ----------------- |
+| `POST /iam/users`                                 | `iam:user-create` |
+| `POST /iam/users/:userId/roles`, `GET /iam/roles` | `iam:assign`      |
+| `PUT /iam/roles/:role/permissions`                | `iam:role-edit`   |
 
 Creating a principal, granting a role and redefining what a role means are separate privileges.
 With one shared code, anyone allowed to grant a role could also mint users or rewrite `viewer` to

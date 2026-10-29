@@ -3,7 +3,7 @@
 ## `spec/` — architecture lint specs
 
 The architecture lint lives in `lint/`. `spec/architecture/*.spec.ts` keeps it honest: a rule
-that gets weaker turns `yarn test:unit` red even while `yarn lint` is still green, because the
+that gets weaker turns `yarn test:unit` red even while `yarn lint:all` is still green, because the
 weaker rule has nothing left to complain about in the real tree.
 
 ### `spec/support/lint.ts`
