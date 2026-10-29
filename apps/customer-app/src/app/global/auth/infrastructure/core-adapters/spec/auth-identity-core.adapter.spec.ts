@@ -8,7 +8,6 @@ describe('AuthIdentityCoreAdapter', () => {
     validateSubject = jest.fn();
     adapter = new AuthIdentityCoreAdapter({
       login: jest.fn(),
-      refreshToken: jest.fn(),
       validateSubject,
     });
   });

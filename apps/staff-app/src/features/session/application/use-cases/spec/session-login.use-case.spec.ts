@@ -6,16 +6,16 @@ describe('SessionLoginUseCase', () => {
 
   beforeEach(() => {
     login = jest.fn();
-    useCase = new SessionLoginUseCase({ login, refresh: jest.fn() });
+    useCase = new SessionLoginUseCase({ login });
   });
 
   describe('execute', () => {
-    it('exchanges the credentials for the token pair of identity', async () => {
-      login.mockResolvedValue({ accessToken: 'access-1', refreshToken: 'refresh-1' });
+    it('exchanges the credentials for the access token of identity', async () => {
+      login.mockResolvedValue({ accessToken: 'access-1' });
 
-      const tokenPair = await useCase.execute({ email: 'ann@example.com', password: 'secret' });
+      const accessToken = await useCase.execute({ email: 'ann@example.com', password: 'secret' });
 
-      expect(tokenPair).toEqual({ accessToken: 'access-1', refreshToken: 'refresh-1' });
+      expect(accessToken).toEqual({ accessToken: 'access-1' });
       expect(login).toHaveBeenCalledWith({ email: 'ann@example.com', password: 'secret' });
     });
 

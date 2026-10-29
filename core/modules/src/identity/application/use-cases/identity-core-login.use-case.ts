@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
+  IIdentityCoreAccessTokenView,
   IIdentityCoreLoginCommand,
-  IIdentityCoreTokenPairView,
 } from '@acme-core/contracts/identity';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { IdentityCoreException, IdentityCoreUserModel } from '../../domain';
@@ -13,12 +13,12 @@ import {
   type IIdentityCoreLoginRepositoryPort,
   type IIdentityCorePasswordHasherPort,
 } from '../../outbound';
-import { IdentityCoreTokenPairService } from '../services/identity-core-token-pair.service';
+import { IdentityCoreAccessTokenService } from '../services/identity-core-access-token.service';
 
 @Injectable()
 export class IdentityCoreLoginUseCase {
   constructor(
-    private readonly identityCoreTokenPair: IdentityCoreTokenPairService,
+    private readonly identityCoreAccessToken: IdentityCoreAccessTokenService,
     @Inject(IDENTITY_CORE_LOGIN_REPOSITORY_PORT)
     private readonly repository: IIdentityCoreLoginRepositoryPort,
     @Inject(IDENTITY_CORE_PASSWORD_HASHER_PORT)
@@ -27,7 +27,7 @@ export class IdentityCoreLoginUseCase {
     private readonly logger: PinoLogger,
   ) {}
 
-  public async execute(command: IIdentityCoreLoginCommand): Promise<IIdentityCoreTokenPairView> {
+  public async execute(command: IIdentityCoreLoginCommand): Promise<IIdentityCoreAccessTokenView> {
     const { email, password } = command;
     const normalized = IdentityCoreUserModel.normalizeEmail(email);
     const user = await this.repository.findByEmail(normalized);
@@ -55,10 +55,10 @@ export class IdentityCoreLoginUseCase {
     user.assertActive();
 
     const permissionCodes = await this.repository.findPermissionCodes(user.id);
-    const tokenPair = await this.identityCoreTokenPair.issue(user, permissionCodes);
+    const view = await this.identityCoreAccessToken.issue(user, permissionCodes);
 
     this.logger.info({ userId: user.id }, 'User logged in');
 
-    return tokenPair;
+    return view;
   }
 }

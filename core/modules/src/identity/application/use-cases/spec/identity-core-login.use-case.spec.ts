@@ -8,7 +8,7 @@ import {
 } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { IdentityCoreUserModel } from '../../../domain';
-import { IdentityCoreTokenPairService } from '../../services/identity-core-token-pair.service';
+import { IdentityCoreAccessTokenService } from '../../services/identity-core-access-token.service';
 import { IdentityCoreLoginUseCase } from '../identity-core-login.use-case';
 
 describe('IdentityCoreLoginUseCase', () => {
@@ -19,9 +19,7 @@ describe('IdentityCoreLoginUseCase', () => {
   let useCase: IdentityCoreLoginUseCase;
 
   beforeEach(() => {
-    issue = jest
-      .fn()
-      .mockResolvedValue({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+    issue = jest.fn().mockResolvedValue({ accessToken: 'access-token' });
     repository = {
       findByEmail: jest.fn().mockResolvedValue(
         IdentityCoreUserModel.reconstitute({
@@ -37,20 +35,20 @@ describe('IdentityCoreLoginUseCase', () => {
     passwordHasher = { hash: jest.fn(), verify: jest.fn().mockResolvedValue(true) };
     logger = makePinoLoggerMock();
     useCase = new IdentityCoreLoginUseCase(
-      { issue } as unknown as IdentityCoreTokenPairService,
+      { issue } as unknown as IdentityCoreAccessTokenService,
       repository,
       passwordHasher,
       logger as unknown as PinoLogger,
     );
   });
 
-  it('issues a token pair for the right password', async () => {
-    const pair = await useCase.execute({
+  it('issues an access token for the right password', async () => {
+    const view = await useCase.execute({
       email: ' Editor@Example.com ',
       password: 'correct-horse',
     });
 
-    expect(pair).toEqual({ accessToken: 'access-token', refreshToken: 'refresh-token' });
+    expect(view).toEqual({ accessToken: 'access-token' });
     expect(repository.findByEmail).toHaveBeenCalledWith('editor@example.com');
     expect(passwordHasher.verify).toHaveBeenCalledWith('hash', 'correct-horse');
     expect(issue).toHaveBeenCalledWith(expect.objectContaining({ id: 'user-1' }), ['item:read']);

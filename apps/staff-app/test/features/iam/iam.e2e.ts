@@ -87,10 +87,7 @@ export class IamE2E {
           /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
         );
         expect(actual.db.user[0].password_hash).toMatch(/^\$argon2id\$v=19\$m=19456,p=1,t=2\$/);
-        expect(login.body).toEqual({
-          accessToken: expect.any(String),
-          refreshToken: expect.any(String),
-        });
+        expect(login.body).toEqual({ accessToken: expect.any(String) });
       });
 
       it('should refuse a taken email in another case with 409', async () => {

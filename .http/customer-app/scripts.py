@@ -14,7 +14,6 @@ VIEWER_ID = "00000000-0000-4000-8000-000000000003"
 def capture_login(response, posting) -> None:
     data = response.json()
     posting.set_variable("access_token", data["accessToken"])
-    posting.set_variable("refresh_token", data["refreshToken"])
 
 
 def as_admin(posting) -> None:
@@ -44,6 +43,6 @@ def encode(value: bytes) -> str:
 def access_secret() -> str:
     for line in ENV_FILE.read_text().splitlines():
         name, _, value = line.partition("=")
-        if name.strip() == "JWT_ACCESS_SECRET":
+        if name.strip() == "JWT_SECRET":
             return value.strip().strip('"')
-    raise KeyError(f"JWT_ACCESS_SECRET is missing in {ENV_FILE}")
+    raise KeyError(f"JWT_SECRET is missing in {ENV_FILE}")

@@ -9,7 +9,6 @@ describe('one repository per use case, service or facade', () => {
         'IdentityCoreAssignRoleUseCase',
         'IdentityCoreListRolesUseCase',
         'IdentityCoreLoginUseCase',
-        'IdentityCoreRefreshTokenUseCase',
         'IdentityCoreRegisterUserUseCase',
         'IdentityCoreUpdateRolePermissionsUseCase',
         'IdentityCoreValidateSubjectUseCase',

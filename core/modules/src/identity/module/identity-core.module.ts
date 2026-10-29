@@ -6,12 +6,11 @@ import {
 } from '@acme-core/contracts/identity';
 import { ConfigProviderHelper } from '@acme-libs/config';
 import {
+  IdentityCoreAccessTokenService,
   IdentityCoreAssignRoleUseCase,
   IdentityCoreListRolesUseCase,
   IdentityCoreLoginUseCase,
-  IdentityCoreRefreshTokenUseCase,
   IdentityCoreRegisterUserUseCase,
-  IdentityCoreTokenPairService,
   IdentityCoreUpdateRolePermissionsUseCase,
   IdentityCoreValidateSubjectUseCase,
 } from '../application';
@@ -22,7 +21,6 @@ import {
   IdentityCoreListRolesRepository,
   IdentityCoreLoginRepository,
   IdentityCorePasswordHasherAdapter,
-  IdentityCoreRefreshTokenRepository,
   IdentityCoreRegisterUserRepository,
   IdentityCoreTypeOrmModule,
   IdentityCoreUpdateRolePermissionsRepository,
@@ -39,9 +37,6 @@ import {
   IDENTITY_CORE_PASSWORD_HASHER_PARALLELISM,
   IDENTITY_CORE_PASSWORD_HASHER_PORT,
   IDENTITY_CORE_PASSWORD_HASHER_TIME_COST,
-  IDENTITY_CORE_REFRESH_TOKEN_EXPIRES_IN,
-  IDENTITY_CORE_REFRESH_TOKEN_REPOSITORY_PORT,
-  IDENTITY_CORE_REFRESH_TOKEN_SECRET,
   IDENTITY_CORE_REGISTER_USER_REPOSITORY_PORT,
   IDENTITY_CORE_UPDATE_ROLE_PERMISSIONS_REPOSITORY_PORT,
   IDENTITY_CORE_VALIDATE_SUBJECT_REPOSITORY_PORT,
@@ -58,11 +53,10 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
     IdentityCoreAssignRoleUseCase,
     IdentityCoreListRolesUseCase,
     IdentityCoreLoginUseCase,
-    IdentityCoreRefreshTokenUseCase,
     IdentityCoreRegisterUserUseCase,
     IdentityCoreUpdateRolePermissionsUseCase,
     IdentityCoreValidateSubjectUseCase,
-    IdentityCoreTokenPairService,
+    IdentityCoreAccessTokenService,
     {
       provide: IDENTITY_CORE_ASSIGN_ROLE_REPOSITORY_PORT,
       useClass: IdentityCoreAssignRoleRepository,
@@ -72,10 +66,6 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
       useClass: IdentityCoreListRolesRepository,
     },
     { provide: IDENTITY_CORE_LOGIN_REPOSITORY_PORT, useClass: IdentityCoreLoginRepository },
-    {
-      provide: IDENTITY_CORE_REFRESH_TOKEN_REPOSITORY_PORT,
-      useClass: IdentityCoreRefreshTokenRepository,
-    },
     {
       provide: IDENTITY_CORE_REGISTER_USER_REPOSITORY_PORT,
       useClass: IdentityCoreRegisterUserRepository,
@@ -90,8 +80,8 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
     },
     { provide: IDENTITY_CORE_ACCESS_TOKEN_PORT, useClass: IdentityCoreAccessTokenAdapter },
     { provide: IDENTITY_CORE_PASSWORD_HASHER_PORT, useClass: IdentityCorePasswordHasherAdapter },
-    ConfigProviderHelper.value(IDENTITY_CORE_ACCESS_TOKEN_EXPIRES_IN, 'JWT_ACCESS_EXPIRES_IN'),
-    ConfigProviderHelper.value(IDENTITY_CORE_ACCESS_TOKEN_SECRET, 'JWT_ACCESS_SECRET'),
+    ConfigProviderHelper.value(IDENTITY_CORE_ACCESS_TOKEN_EXPIRES_IN, 'JWT_EXPIRES_IN'),
+    ConfigProviderHelper.value(IDENTITY_CORE_ACCESS_TOKEN_SECRET, 'JWT_SECRET'),
     ConfigProviderHelper.value(
       IDENTITY_CORE_PASSWORD_HASHER_MEMORY_COST,
       'AUTH_ARGON2_MEMORY_COST',
@@ -101,8 +91,6 @@ import { IdentityCoreSessionFacade } from './identity-core-session.facade';
       'AUTH_ARGON2_PARALLELISM',
     ),
     ConfigProviderHelper.value(IDENTITY_CORE_PASSWORD_HASHER_TIME_COST, 'AUTH_ARGON2_TIME_COST'),
-    ConfigProviderHelper.value(IDENTITY_CORE_REFRESH_TOKEN_EXPIRES_IN, 'JWT_REFRESH_EXPIRES_IN'),
-    ConfigProviderHelper.value(IDENTITY_CORE_REFRESH_TOKEN_SECRET, 'JWT_REFRESH_SECRET'),
   ],
 })
 export class IdentityCoreModule {}

@@ -1,4 +1,4 @@
-name: 04-disabled-user
+name: 03-disabled-user
 description: |-
   e2e: Session › GET /api/auth/me › should refuse the token of a disabled user
 

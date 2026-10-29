@@ -746,17 +746,6 @@ exports[`App Session GET /api/auth/me should refuse a caller without a token 1`]
 }
 `;
 
-exports[`App Session GET /api/auth/me should refuse a refresh token as an access token 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
 exports[`App Session GET /api/auth/me should refuse the token of a disabled user 1`] = `
 {
   "response": {
@@ -793,8 +782,9 @@ exports[`App Session GET /api/auth/me should take the roles from the database, n
 }
 `;
 
-exports[`App Session POST /api/auth/login should issue an access token the guards accept and a refresh token 1`] = `
+exports[`App Session POST /api/auth/login should issue an access token the guards accept, valid for the lifetime of this app 1`] = `
 {
+  "lifetime": 2592000,
   "me": {
     "email": "editor@example.com",
     "id": "00000000-0000-4000-8000-000000000002",
@@ -815,7 +805,6 @@ exports[`App Session POST /api/auth/login should issue an access token the guard
   "response": {
     "body": {
       "accessToken": Any<String>,
-      "refreshToken": Any<String>,
     },
   },
 }
@@ -875,38 +864,3 @@ exports[`App Session POST /api/auth/login should refuse an unknown email with th
 }
 `;
 
-exports[`App Session POST /api/auth/refresh should exchange a refresh token for a pair the guards accept 1`] = `
-{
-  "me": {
-    "email": "viewer@example.com",
-    "id": "00000000-0000-4000-8000-000000000003",
-    "permissions": [
-      "item:read",
-      "ledger:read",
-      "reminder:read",
-      "reminder:write",
-    ],
-    "roles": [
-      "viewer",
-    ],
-  },
-  "response": {
-    "body": {
-      "accessToken": Any<String>,
-      "refreshToken": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Session POST /api/auth/refresh should refuse an access token as a refresh token 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_REFRESH_TOKEN_INVALID",
-      "message": "Refresh token is invalid or expired",
-      "statusCode": 401,
-    },
-  },
-}
-`;

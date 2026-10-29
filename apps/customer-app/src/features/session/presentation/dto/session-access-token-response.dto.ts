@@ -1,9 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-export class SessionTokenPairResponseDto {
+export class SessionAccessTokenResponseDto {
   @ApiResponseProperty()
   public accessToken: string;
-
-  @ApiResponseProperty()
-  public refreshToken: string;
 }
