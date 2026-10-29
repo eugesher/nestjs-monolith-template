@@ -58,7 +58,8 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
 | `ScheduleSetupModule`              | `app/setup/schedule`, staff-app only                 | `ScheduleModule.forRoot()` for `@Cron`                      |
-| `CacheModule`, `EventsModule`      | `libs/cache`, `libs/messaging`                       | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT`              |
+| `QueueSetupModule`                 | `app/setup/queue`, staff-app only                    | the Bull connection to `REDIS_URL`, `removeOnComplete`      |
+| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                         |
 | `AuthGlobalModule`                 | `app/global/auth`                                    | the three global guards                                     |
 | features, processors               | `@acme-<app>-features`, `@acme-staff-processors`     | the routes and the consumers                                |
 | `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |

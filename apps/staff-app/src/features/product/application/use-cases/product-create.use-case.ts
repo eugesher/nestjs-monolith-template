@@ -5,24 +5,22 @@ import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/da
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../domain';
 import {
   type IProductCreateRepositoryPort,
-  type IProductEventsPort,
   type IProductIdempotencyPort,
   PRODUCT_CREATE_REPOSITORY_PORT,
-  PRODUCT_EVENTS_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
 import { ProductViewMapper } from '../mappers/product-view.mapper';
+import { ProductLedgerService } from '../services/product-ledger.service';
 
 @Injectable()
 export class ProductCreateUseCase {
   constructor(
+    private readonly ledgerService: ProductLedgerService,
     @Inject(PRODUCT_CREATE_REPOSITORY_PORT)
     private readonly repository: IProductCreateRepositoryPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
-    @Inject(PRODUCT_EVENTS_PORT)
-    private readonly events: IProductEventsPort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
     @InjectPinoLogger(ProductCreateUseCase.name)
@@ -80,7 +78,7 @@ export class ProductCreateUseCase {
     const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
     const events = draft.pullDomainEvents();
 
-    await this.events.publish({ productId: view.id, events });
+    await this.ledgerService.enqueue({ productId: view.id, events });
 
     this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
 

@@ -60,6 +60,8 @@ export class ProductE2E {
           .send({ sku: 'E2E-0001', name: 'Created product' })
           .expect(HttpStatus.CREATED);
 
+        await this.ctx.drainLedgerRecordQueue();
+
         const actual = {
           response: { body: response.body },
           db: {
@@ -141,6 +143,8 @@ export class ProductE2E {
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ sku: 'E2E-0002', name: 'Replayed product' })
           .expect(HttpStatus.CREATED);
+
+        await this.ctx.drainLedgerRecordQueue();
 
         expect(response.body).toEqual(first.body);
         expect({
@@ -330,6 +334,8 @@ export class ProductE2E {
           .set('x-correlation-id', 'e2e-product-archive')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
+
+        await this.ctx.drainLedgerRecordQueue();
 
         expect({
           response: { body: response.body },

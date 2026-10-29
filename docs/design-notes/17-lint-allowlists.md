@@ -44,7 +44,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
   database contracts, the entities, the database and config libs;
-- the libs a layer is meant to reach: the cache and messaging libs from the app root, the auth
+- the libs a layer is meant to reach: the cache lib from the app root, the auth
   lib from a feature root, the database contracts from the application of a common module;
 - a script, a migration or a seed script that imports its own support files.
 
@@ -54,10 +54,10 @@ Removing one of them turns its spec red.
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
 (`categories/module-layers.mjs`). A processor uses fewer of them: today none has a domain, a plain
-infrastructure layer or `infrastructure/events`. Their entries stay, so a processor that grows a
-domain or publishes an event follows the same rules a feature does.
+infrastructure layer or `infrastructure/queue`. Their entries stay, so a processor that grows a
+domain or enqueues a job follows the same rules a feature does.
 
-`infrastructure:events` of a processor is a category without files for the same reason.
+`infrastructure:queue` of a processor is a category without files for the same reason.
 
 The module root of a feature or a processor may reach a shared barrel, as the module root of a
 common module may (a positive case of the common modules spec).

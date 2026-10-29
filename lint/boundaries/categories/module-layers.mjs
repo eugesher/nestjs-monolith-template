@@ -6,7 +6,7 @@ export const moduleAreaLayers = [
   'application',
   'infrastructure:core-adapters',
   'infrastructure:common-adapters',
-  'infrastructure:events',
+  'infrastructure:queue',
   'infrastructure',
   'presentation',
 ];

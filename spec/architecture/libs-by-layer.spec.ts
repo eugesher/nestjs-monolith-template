@@ -13,7 +13,6 @@ describe('libs by layer', () => {
       'libs/health/src/index.ts',
       'libs/http/src/index.ts',
       'libs/kernel/src/index.ts',
-      'libs/messaging/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
       'libs/toolkit/src/index.ts',
@@ -48,7 +47,6 @@ describe('libs by layer', () => {
       'database',
       'health',
       'http',
-      'messaging',
       'observability',
       'openapi',
     ];
@@ -76,7 +74,6 @@ describe('libs by layer', () => {
       'health',
       'http',
       'kernel',
-      'messaging',
       'observability',
       'openapi',
       'toolkit',
@@ -340,7 +337,6 @@ describe('libs by layer', () => {
 
   it.each([
     ['apps/__layers-fixture__/src/app/__fixture__.ts', '../../../../libs', 'cache'],
-    ['apps/__layers-fixture__/src/app/__fixture__.ts', '../../../../libs', 'messaging'],
     ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs', 'auth'],
     [
       'apps/__layers-fixture__/src/features/product/__fixture__.ts',

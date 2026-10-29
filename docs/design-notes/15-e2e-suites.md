@@ -2,7 +2,7 @@
 
 Each app has one e2e suite that boots its `AppModule` against the infrastructure of
 `14-e2e-infrastructure.md`. The suites keep only what unit specs cannot show: SQL, transactions,
-the wiring of guards, pipes, filters and middleware, the cache, idempotency and in-process events.
+the wiring of guards, pipes, filters and middleware, the cache, idempotency and the ledger record queue.
 Logic stays in the unit specs.
 
 ## Running
@@ -53,6 +53,11 @@ the logger and the global prefix, and signs one access token for each seeded acc
 with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, ann, bob and carol in
 customer-app. Everything the cases read is a getter that throws before
 `init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
+
+**A case waits for the ledger record queue before it reads the ledger.** The staff-app context has
+`drainLedgerRecordQueue()`: it polls `getJobCounts()` of the `ledger-record` queue every 100 ms until
+no job is waiting, active or delayed, and throws after 100 polls. The jobs run in the e2e process,
+so a drained queue means the rows are written.
 
 The Jest files outside the apps live in `jest/`:
 

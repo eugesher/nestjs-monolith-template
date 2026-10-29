@@ -6,7 +6,7 @@ describe('features', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
-      'apps/__features-fixture__/src/contracts/catalog-events/index.ts',
+      'apps/__features-fixture__/src/contracts/ledger-record/index.ts',
       'apps/__features-fixture__/src/features/index.ts',
       'apps/__features-fixture__/src/features/product/product.module.ts',
       'apps/__features-fixture__/src/features/product/domain/index.ts',
@@ -174,7 +174,7 @@ describe('features', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['application', 'domain', 'outbound', 'infrastructure/events'])(
+    it.each(['application', 'domain', 'outbound', 'infrastructure/queue'])(
       '%s may NOT import typeorm — tables are persistence',
       async (layer) => {
         await expect({
@@ -184,30 +184,41 @@ describe('features', () => {
       },
     );
 
-    it('infrastructure/events MAY reach app contracts and the messaging contract', async () => {
+    it('infrastructure/queue MAY reach app contracts and inject a Bull queue', async () => {
       await expect({
-        file: 'apps/__features-fixture__/src/features/product/infrastructure/events/__fixture__.ts',
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/queue/__fixture__.ts',
         code: [
-          'import { Inject, Injectable } from "@nestjs/common";',
-          'import { x } from "../../../../contracts/catalog-events";',
-          'import { y } from "../../../../../../../libs/contracts/src/messaging";',
+          'import { InjectQueue } from "@nestjs/bull";',
+          'import { Injectable } from "@nestjs/common";',
+          'import type { Queue } from "bull";',
+          'import { x } from "../../../../contracts/ledger-record";',
         ].join('\n'),
       }).toPassArchitectureLint();
     });
 
-    it('infrastructure/events may NOT reach another lib contract', async () => {
+    it.each(['import { BullModule } from "@nestjs/bull";', 'import type { Job } from "bull";'])(
+      'infrastructure/queue may NOT take more than InjectQueue and the Queue type (%s)',
+      async (code) => {
+        await expect({
+          file: 'apps/__features-fixture__/src/features/product/infrastructure/queue/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure/queue may NOT reach a lib contract', async () => {
       await expect({
-        file: 'apps/__features-fixture__/src/features/product/infrastructure/events/__fixture__.ts',
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/queue/__fixture__.ts',
         code: 'import { y } from "../../../../../../../libs/contracts/src/database";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['infrastructure/persistence', 'infrastructure/core-adapters', 'application/services'])(
-      '%s may NOT reach app contracts — only common-adapters and events do',
+      '%s may NOT reach app contracts — only common-adapters and queue do',
       async (folder) => {
         await expect({
           file: `apps/__features-fixture__/src/features/product/${folder}/__fixture__.ts`,
-          code: 'import { x } from "../../../../contracts/catalog-events";',
+          code: 'import { x } from "../../../../contracts/ledger-record";',
         }).toBreakRule('boundaries/dependencies');
       },
     );
@@ -215,7 +226,7 @@ describe('features', () => {
     it('infrastructure/common-adapters MAY reach app contracts with the DI decorators', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/common-adapters/__fixture__.ts',
-        code: 'import { Inject, Injectable } from "@nestjs/common";\nimport { x } from "../../../../contracts/catalog-events";',
+        code: 'import { Inject, Injectable } from "@nestjs/common";\nimport { x } from "../../../../contracts/ledger-record";',
       }).toPassArchitectureLint();
     });
 

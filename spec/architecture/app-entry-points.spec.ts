@@ -18,8 +18,9 @@ describe('app entry points', () => {
       '@acme-staff-common/modules/idempotency',
       '@acme-staff-common/shared/concurrency',
       '@acme-staff-common/shared/idempotency',
+      '@acme-staff-common/shared/ledger-record',
       '@acme-staff-contracts/idempotency',
-      '@acme-staff-contracts/ledger-catalog-events',
+      '@acme-staff-contracts/ledger-record',
       '@acme-staff-features',
       '@acme-staff-processors',
       '@acme-customer-app',
@@ -32,8 +33,9 @@ describe('app entry points', () => {
     '@acme-staff-common/modules/idempotency',
     '@acme-staff-common/shared/concurrency',
     '@acme-staff-common/shared/idempotency',
+    '@acme-staff-common/shared/ledger-record',
     '@acme-staff-contracts/idempotency',
-    '@acme-staff-contracts/ledger-catalog-events',
+    '@acme-staff-contracts/ledger-record',
     '@acme-staff-features',
     '@acme-staff-processors',
     '@acme-customer-app',
@@ -52,8 +54,9 @@ describe('app entry points', () => {
     '@acme-staff-common/shared/concurrency/decorators/if-match.decorator',
     '@acme-staff-common/shared/idempotency/helpers/idempotency-key.helper',
     '@acme-staff-contracts/idempotency/ports/idempotency-common.port',
-    '@acme-staff-contracts/ledger-catalog-events/events/ledger-catalog-events.event',
-    '@acme-staff-processors/ledger-catalog-events/ledger-catalog-events.module',
+    '@acme-staff-common/shared/ledger-record/queues/ledger-record-queue.module',
+    '@acme-staff-contracts/ledger-record/queues/ledger-record.queue',
+    '@acme-staff-processors/ledger-record/ledger-record.module',
     '@acme-staff-processors/index',
   ])('a deep path into an app does not resolve: %s', (source) => {
     expect(source).not.toResolve();
@@ -146,7 +149,7 @@ describe('app entry points', () => {
   it('apps/staff-app/src/app/app.module.ts MAY import the processors of its own app by @acme-staff-processors', async () => {
     await expect({
       file: 'apps/staff-app/src/app/app.module.ts',
-      code: 'import { LedgerCatalogEventsModule } from "@acme-staff-processors";',
+      code: 'import { LedgerRecordModule } from "@acme-staff-processors";',
     }).toPassArchitectureLint();
   });
 
@@ -157,7 +160,7 @@ describe('app entry points', () => {
   ])('%s may NOT import the staff-app processors index', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerCatalogEventsModule } from "@acme-staff-processors";',
+      code: 'import { LedgerRecordModule } from "@acme-staff-processors";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -208,10 +211,20 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it('a staff-app processor consumer MAY import the ledger catalog events contract by its alias', async () => {
+  it('a staff-app processor consumer MAY import the ledger record contract by its alias', async () => {
     await expect({
-      file: 'apps/staff-app/src/processors/ledger-catalog-events/presentation/ledger-catalog-events.consumer.ts',
-      code: 'import { LEDGER_CATALOG_EVENTS } from "@acme-staff-contracts/ledger-catalog-events";',
+      file: 'apps/staff-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+      code: 'import { LEDGER_RECORD_QUEUE } from "@acme-staff-contracts/ledger-record";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/staff-app/src/processors/ledger-record/ledger-record.module.ts',
+    'apps/staff-app/src/features/product/product.module.ts',
+  ])('%s MAY register the ledger record queue by its alias', async (file) => {
+    await expect({
+      file,
+      code: 'import { LedgerRecordQueueModule } from "@acme-staff-common/shared/ledger-record";',
     }).toPassArchitectureLint();
   });
 
@@ -230,6 +243,10 @@ describe('app entry points', () => {
     [
       'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
       '@acme-staff-common/modules/idempotency',
+    ],
+    [
+      'apps/staff-app/src/features/product/infrastructure/queue/__fixture__.ts',
+      '@acme-staff-common/shared/ledger-record',
     ],
   ])('%s may NOT import %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
@@ -250,6 +267,7 @@ describe('app entry points', () => {
       'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',
       '@acme-staff-common/shared/concurrency',
     ],
+    ['apps/customer-app/src/app/app.module.ts', '@acme-staff-common/shared/ledger-record'],
   ])('customer-app (%s) may NOT reach the staff-app %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
       'boundaries/dependencies',

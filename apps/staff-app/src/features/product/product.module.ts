@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { IdempotencyCommonModule } from '@acme-staff-common/modules/idempotency';
+import { LedgerRecordQueueModule } from '@acme-staff-common/shared/ledger-record';
 import { LedgerCoreModule } from '@acme-core/modules/ledger';
 import { ConfigProviderHelper } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
@@ -18,9 +19,9 @@ import {
   ProductAccessRepository,
   ProductCreateRepository,
   ProductCrudRepository,
-  ProductEventsAdapter,
   ProductIdempotencyCommonAdapter,
   ProductLedgerCoreAdapter,
+  ProductLedgerRecordQueueAdapter,
   ProductTypeOrmModule,
   ProductWriteRepository,
 } from './infrastructure';
@@ -28,16 +29,22 @@ import {
   PRODUCT_ACCESS_REPOSITORY_PORT,
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_CRUD_REPOSITORY_PORT,
-  PRODUCT_EVENTS_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
   PRODUCT_LEDGER_PORT,
+  PRODUCT_LEDGER_RECORD_PORT,
+  PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
   PRODUCT_OCC_RETRY_ATTEMPTS,
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from './outbound';
 import { ProductController } from './presentation';
 
 @Module({
-  imports: [ProductTypeOrmModule.forFeature(), IdempotencyCommonModule, LedgerCoreModule],
+  imports: [
+    ProductTypeOrmModule.forFeature(),
+    IdempotencyCommonModule,
+    LedgerRecordQueueModule,
+    LedgerCoreModule,
+  ],
   controllers: [ProductController],
   providers: [
     HttpExceptionFilter,
@@ -55,8 +62,9 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_WRITE_REPOSITORY_PORT, useClass: ProductWriteRepository },
     { provide: PRODUCT_LEDGER_PORT, useClass: ProductLedgerCoreAdapter },
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCommonAdapter },
-    { provide: PRODUCT_EVENTS_PORT, useClass: ProductEventsAdapter },
+    { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },
     ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
+    ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
   ],
 })
 export class ProductModule {}

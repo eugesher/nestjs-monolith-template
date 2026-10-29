@@ -100,15 +100,6 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
-    "contracts-messaging": {
-      "type": "library",
-      "root": "libs/contracts/src/messaging",
-      "entryFile": "index",
-      "sourceRoot": "libs/contracts/src/messaging",
-      "compilerOptions": {
-        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
-      }
-    },
     "core-contracts-customer-identity": {
       "type": "library",
       "root": "core/contracts/src/customer-identity",
@@ -215,15 +206,6 @@
       "sourceRoot": "libs/kernel/src",
       "compilerOptions": {
         "tsConfigPath": "libs/kernel/tsconfig.lib.json"
-      }
-    },
-    "messaging": {
-      "type": "library",
-      "root": "libs/messaging",
-      "entryFile": "index",
-      "sourceRoot": "libs/messaging/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/messaging/tsconfig.lib.json"
       }
     },
     "observability": {

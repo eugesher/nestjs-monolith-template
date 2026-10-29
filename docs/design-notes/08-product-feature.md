@@ -24,7 +24,8 @@ invalidate the `If-Match` version of everyone else.
 
 **Events are recorded, not published.** `create`, `rename` and `archive` add `ProductCreatedEvent`,
 `ProductRenamedEvent` and `ProductArchivedEvent`. A use case pulls them after the write and hands them to
-`PRODUCT_EVENTS_PORT` together with the stored id, because a created product has no id until the insert.
+`ProductLedgerService` together with the stored id, because a created product has no id until the
+insert. The service turns them into ledger records (see below).
 
 ## Access
 
@@ -74,23 +75,49 @@ the product is rolled back with it. Otherwise a stored product with a released k
 client's retry with `PRODUCT_SKU_TAKEN` instead of a replay.
 
 Any failure after the claim releases the key, so an honest retry can take it again. A failure
-after the commit, such as publishing the event, leaves a completed key that `release` does not
-delete, so the retry is a replay.
+after the commit, such as enqueueing the ledger record, leaves a completed key that `release` does
+not delete, so the retry is a replay.
 
 ## The ledger record of an archive
 
-`ProductArchiveUseCase` writes the product, publishes the events and then asks `ProductLedgerService` to
-record the archive under the operation key `product-archived:<id>`. The `ledger-catalog-events`
-processor records the same fact under the same key from the event (see
-`09-ledger-catalog-events-processor.md`), and the ledger keeps one row.
+`ProductArchiveUseCase` writes the product, enqueues its ledger records and then asks
+`ProductLedgerService` to append the archive itself under the operation key `product-archived:<id>`.
+The `ledger-record` processor appends the same record from the queue (see
+`09-ledger-record-processor.md`), and the ledger keeps one row.
 
-**Both paths write the same payload**, `{ sku, previousStatus }`. Whichever append comes first wins
-the key, so a payload that differed between them would make the row depend on that order.
-`ProductArchivedEvent` carries the `sku` for this reason.
+**Both paths write the same record**: `ProductLedgerService` builds it once, with the payload
+`{ sku, previousStatus }`. Whichever append comes first wins the key, so a payload that differed
+between them would make the row depend on that order. `ProductArchivedEvent` carries the `sku` for
+this reason.
 
 The archive is already committed, so a failing append must not undo it. `ProductLedgerService` tries
 three times through `ReplayRetryHelper` and then logs the record at `error` for a replay instead of
 throwing.
+
+## The ledger records of the queue
+
+After the commit, `ProductCreateUseCase` and `ProductArchiveUseCase` hand their domain events to
+`ProductLedgerService.enqueue`, which turns each into a ready record and puts it on the
+`ledger-record` queue through `PRODUCT_LEDGER_RECORD_PORT`:
+
+| Domain event           | Operation key           | Action            | Payload                 |
+| ---------------------- | ----------------------- | ----------------- | ----------------------- |
+| `ProductCreatedEvent`  | `product-created:<id>`  | `ProductCreated`  | `sku`, `name`           |
+| `ProductArchivedEvent` | `product-archived:<id>` | `ProductArchived` | `sku`, `previousStatus` |
+
+The subject type is `product` and the subject id is the product id, which comes from the command,
+because a created product has no id in its event. A rename is not a ledger fact, so
+`ProductRenameUseCase` enqueues nothing. The record carries the correlation id of the request, read
+from the context in the application: the job runs in another async chain.
+
+The product is already committed, so a failing enqueue must not undo it either. The service tries
+three times through `ReplayRetryHelper` and then logs the record at `error` for a replay.
+
+**An enqueue has a deadline.** While Redis is down, Bull keeps the command in the offline queue of
+its client and `add` never settles, so the request would hang after the commit. The adapter races
+`add` against `REDIS_COMMAND_TIMEOUT_MS` (`PRODUCT_LEDGER_RECORD_TIMEOUT_MS`) and throws when it runs
+out. A timed-out `add` may still reach Redis once it is back, and so may its retries: the ledger
+keeps the first row of the key, so the copies append nothing.
 
 ## Logs
 
@@ -117,31 +144,23 @@ the use case answers when it sees the sku first.
 
 ## Adapters
 
-| Port                       | Adapter                           | Target                    |
-| -------------------------- | --------------------------------- | ------------------------- |
-| `PRODUCT_LEDGER_PORT`      | `ProductLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT` |
-| `PRODUCT_IDEMPOTENCY_PORT` | `ProductIdempotencyCommonAdapter` | `IDEMPOTENCY_COMMON_PORT` |
-| `PRODUCT_EVENTS_PORT`      | `ProductEventsAdapter`            | `EVENT_PUBLISHER_PORT`    |
+| Port                         | Adapter                           | Target                    |
+| ---------------------------- | --------------------------------- | ------------------------- |
+| `PRODUCT_LEDGER_PORT`        | `ProductLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT` |
+| `PRODUCT_IDEMPOTENCY_PORT`   | `ProductIdempotencyCommonAdapter` | `IDEMPOTENCY_COMMON_PORT` |
+| `PRODUCT_LEDGER_RECORD_PORT` | `ProductLedgerRecordQueueAdapter` | the `ledger-record` queue |
 
 The idempotency adapter turns the claim outcome enum of the common module into the plain outcomes of
 the port and hands a replay's stored response back as the type the use case expects.
 
-**The events adapter speaks the contract of its consumer.** Event names and payloads live in
-`@acme-staff-contracts/ledger-catalog-events`, next to the processor that reads them:
+**The queue adapter speaks the contract of its consumer.** The queue name and the job type live in
+`@acme-staff-contracts/ledger-record`, next to the processor that reads them. The adapter adds the
+record as one job and nothing else: the job options come with the queue registration of
+`@acme-staff-common/shared/ledger-record`.
 
-| Domain event           | Event name                 | Payload                                            |
-| ---------------------- | -------------------------- | -------------------------------------------------- |
-| `ProductCreatedEvent`  | `catalog.product.created`  | `productId`, `sku`, `name`, `occurredAt`           |
-| `ProductRenamedEvent`  | `catalog.product.renamed`  | `productId`, `name`, `previousName`, `occurredAt`  |
-| `ProductArchivedEvent` | `catalog.product.archived` | `productId`, `sku`, `previousStatus`, `occurredAt` |
-
-`productId` comes from the publish command, because a created product has no id in its event. The payload
-has no correlation id: an in-process listener runs in the context of the publishing request and
-reads the id from there. An event without a catalog name is a programming mistake and throws.
-
-The adapter lives in `infrastructure/events`, a layer of its own. It is the only place in the
-feature that reaches both the contracts of the app and the messaging contract, so persistence
-cannot import the idempotency contract around its common-adapter.
+The adapter lives in `infrastructure/queue`, a layer of its own. It is the only place in the feature
+that reaches both the contracts of the app and Bull, so persistence cannot import the idempotency
+contract around its common-adapter.
 
 ## HTTP
 
@@ -198,8 +217,8 @@ the update, and its conflict arrives as `VERSION_MISMATCH` above.
 
 ## Wiring
 
-`ProductModule` imports `ProductTypeOrmModule.forFeature()`, `IdempotencyCommonModule` and
-`LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
+`ProductModule` imports `ProductTypeOrmModule.forFeature()`, `IdempotencyCommonModule`,
+`LedgerRecordQueueModule` and `LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
 `PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
 `IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's
-connection. The events adapter relies on the global `EventsModule` of `libs/messaging`.
+connection. The queue adapter relies on the Bull connection of `QueueSetupModule`.

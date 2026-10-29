@@ -8,7 +8,6 @@ import { ProductRenameUseCase } from '../product-rename.use-case';
 
 describe('ProductRenameUseCase', () => {
   let write: jest.Mock;
-  let publish: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductRenameUseCase;
 
@@ -25,17 +24,15 @@ describe('ProductRenameUseCase', () => {
       }),
       events: [new ProductRenamedEvent('12', 'Desk lamp', 'Lamp')],
     });
-    publish = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
     useCase = new ProductRenameUseCase(
       { write } as unknown as ProductWriteService,
-      { publish },
       logger as unknown as PinoLogger,
     );
   });
 
   describe('execute', () => {
-    it('renames through the write service, publishes the events and answers the stored product', async () => {
+    it('renames through the write service and answers the stored product', async () => {
       const view = await useCase.execute({
         productId: '12',
         name: 'Desk lamp',
@@ -46,10 +43,6 @@ describe('ProductRenameUseCase', () => {
         { productId: '12', expectedVersion: 3 },
         expect.any(Function),
       );
-      expect(publish).toHaveBeenCalledWith({
-        productId: '12',
-        events: [expect.any(ProductRenamedEvent)],
-      });
       expect(view).toEqual({
         id: '12',
         sku: 'SKU-0001',

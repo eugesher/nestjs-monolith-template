@@ -11,11 +11,11 @@ subject, and under which correlation id. Its contract `core/contracts/src/ledger
 Two ports instead of one let each app bind only what it uses. The ledger is the core module both
 apps share:
 
-| App          | Writer                                | Facts                               |
-| ------------ | ------------------------------------- | ----------------------------------- |
-| customer-app | the `auth` feature                    | `CustomerRegistered`                |
-| staff-app    | the `product` feature                 | `ProductArchived`                   |
-| staff-app    | the `ledger-catalog-events` processor | `ProductCreated`, `ProductArchived` |
+| App          | Writer                        | Facts                               |
+| ------------ | ----------------------------- | ----------------------------------- |
+| customer-app | the `auth` feature            | `CustomerRegistered`                |
+| staff-app    | the `product` feature         | `ProductArchived`                   |
+| staff-app    | the `ledger-record` processor | `ProductCreated`, `ProductArchived` |
 
 customer-app binds the append port alone. staff-app binds both and serves the journal through its
 `ledger` feature (see `06-ledger-feature.md`).
@@ -44,8 +44,9 @@ shows how long delivery took.
 
 **The correlation id comes from the context.** The append command has no `correlationId` field.
 `LedgerCoreAppendEntryUseCase` takes it from `CorrelationContextHelper.current()`, so a fact
-recorded while serving a request carries that request's id, including facts recorded by in-process
-event consumers.
+recorded while serving a request carries that request's id. A queue consumer opens the context with
+the id the job carries, so a fact recorded from a job carries the id of the request that enqueued
+it.
 
 ## Reading
 

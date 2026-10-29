@@ -1,11 +1,14 @@
+import { getQueueToken } from '@nestjs/bull';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import type { Queue } from 'bull';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '@acme-staff-app';
+import { LEDGER_RECORD_QUEUE } from '@acme-staff-contracts/ledger-record';
 import { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
@@ -20,6 +23,9 @@ interface IAppE2EState {
 }
 
 export class AppE2EContext {
+  private static readonly POLL_INTERVAL_MS = 100;
+  private static readonly POLL_ATTEMPTS = 100;
+
   private state: Maybe<IAppE2EState>;
 
   public get app(): INestApplication {
@@ -84,6 +90,22 @@ export class AppE2EContext {
 
   public close(): Promise<void> {
     return this.app.close();
+  }
+
+  public async drainLedgerRecordQueue(): Promise<void> {
+    const queue = this.moduleFixture.get<Queue>(getQueueToken(LEDGER_RECORD_QUEUE));
+
+    for (let attempt = 1; attempt <= AppE2EContext.POLL_ATTEMPTS; attempt++) {
+      const counts = await queue.getJobCounts();
+
+      if (counts.waiting + counts.active + counts.delayed === 0) {
+        return;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, AppE2EContext.POLL_INTERVAL_MS));
+    }
+
+    throw new Error(`The ${LEDGER_RECORD_QUEUE} queue did not drain`);
   }
 
   public takeRootWarnings(): unknown[][] {

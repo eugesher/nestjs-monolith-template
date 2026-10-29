@@ -17,7 +17,6 @@ describe('lib entry points', () => {
       'health',
       'http',
       'kernel',
-      'messaging',
       'observability',
       'openapi',
       'toolkit',
@@ -43,13 +42,11 @@ describe('lib entry points', () => {
       '@acme-libs/contracts/credentials',
       '@acme-libs/contracts/database',
       '@acme-libs/contracts/health',
-      '@acme-libs/contracts/messaging',
       '@acme-libs/credentials',
       '@acme-libs/database',
       '@acme-libs/health',
       '@acme-libs/http',
       '@acme-libs/kernel',
-      '@acme-libs/messaging',
       '@acme-libs/observability',
       '@acme-libs/observability/testing',
       '@acme-libs/observability/tracer',
@@ -68,13 +65,11 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/credentials',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
-    '@acme-libs/contracts/messaging',
     '@acme-libs/credentials',
     '@acme-libs/database',
     '@acme-libs/health',
     '@acme-libs/http',
     '@acme-libs/kernel',
-    '@acme-libs/messaging',
     '@acme-libs/openapi',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
@@ -91,8 +86,6 @@ describe('lib entry points', () => {
     '@acme-libs/cache/redis/redis-cache.adapter',
     '@acme-libs/contracts/cache/ports/cache.port',
     '@acme-libs/database/transaction/transaction.adapter',
-    '@acme-libs/messaging/publisher/in-process-event-publisher.adapter',
-    '@acme-libs/contracts/messaging/ports/event-publisher.port',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
     '@acme-libs/health/module/health-lib.module',
@@ -260,34 +253,6 @@ describe('lib entry points', () => {
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
       code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
     }).toPassArchitectureLint();
-  });
-
-  it('an infrastructure adapter MAY import the event publisher port by its alias', async () => {
-    await expect({
-      file: 'apps/staff-app/src/features/product/infrastructure/events/__fixture__.ts',
-      code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
-    }).toPassArchitectureLint();
-  });
-
-  it('the application may NOT import the event publisher port, it publishes through its own port', async () => {
-    await expect({
-      file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-      code: 'import { EVENT_PUBLISHER_PORT } from "@acme-libs/contracts/messaging";',
-    }).toBreakRule('boundaries/dependencies');
-  });
-
-  it('the app root MAY import the messaging lib by its alias', async () => {
-    await expect({
-      file: 'apps/customer-app/src/app/app.module.ts',
-      code: 'import { EventsModule } from "@acme-libs/messaging";',
-    }).toPassArchitectureLint();
-  });
-
-  it('an infrastructure adapter may NOT import the messaging lib root', async () => {
-    await expect({
-      file: 'apps/staff-app/src/features/product/infrastructure/events/__fixture__.ts',
-      code: 'import { EventsModule } from "@acme-libs/messaging";',
-    }).toBreakRule('boundaries/dependencies');
   });
 
   it('the health probes MAY import the cache contracts and their own contracts by their aliases', async () => {

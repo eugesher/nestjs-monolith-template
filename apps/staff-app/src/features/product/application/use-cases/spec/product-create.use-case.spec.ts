@@ -3,6 +3,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { ProductCreatedEvent, ProductModel } from '../../../domain';
+import { ProductLedgerService } from '../../services/product-ledger.service';
 import { ProductCreateUseCase } from '../product-create.use-case';
 
 describe('ProductCreateUseCase', () => {
@@ -11,7 +12,7 @@ describe('ProductCreateUseCase', () => {
   let claim: jest.Mock;
   let complete: jest.Mock;
   let release: jest.Mock;
-  let publish: jest.Mock;
+  let enqueue: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductCreateUseCase;
@@ -32,13 +33,13 @@ describe('ProductCreateUseCase', () => {
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
-    publish = jest.fn().mockResolvedValue(undefined);
+    enqueue = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductCreateUseCase(
+      { enqueue } as unknown as ProductLedgerService,
       { existsBySku, insert },
       { claim, complete, release },
-      { publish },
       { run },
       logger as unknown as PinoLogger,
     );
@@ -74,18 +75,18 @@ describe('ProductCreateUseCase', () => {
       expect(release).not.toHaveBeenCalled();
     });
 
-    it('publishes the creation under the stored id after the commit and logs it', async () => {
+    it('enqueues the ledger records under the stored id after the commit and logs it', async () => {
       await useCase.execute({
         sku: 'SKU-0001',
         name: 'Lamp',
         idempotencyKey: 'key-1',
       });
 
-      expect(publish).toHaveBeenCalledWith({
+      expect(enqueue).toHaveBeenCalledWith({
         productId: '12',
         events: [expect.any(ProductCreatedEvent)],
       });
-      expect(run.mock.invocationCallOrder[0]).toBeLessThan(publish.mock.invocationCallOrder[0]);
+      expect(run.mock.invocationCallOrder[0]).toBeLessThan(enqueue.mock.invocationCallOrder[0]);
       expect(logger.info).toHaveBeenCalledWith(
         { productId: '12', sku: 'SKU-0001' },
         'Product created',
@@ -106,7 +107,7 @@ describe('ProductCreateUseCase', () => {
 
       expect(view).toEqual({ id: '12', sku: 'SKU-0001' });
       expect(insert).not.toHaveBeenCalled();
-      expect(publish).not.toHaveBeenCalled();
+      expect(enqueue).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Product creation replayed from the idempotency store',
@@ -166,7 +167,7 @@ describe('ProductCreateUseCase', () => {
         }),
       ).rejects.toThrow('lock wait timeout');
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
-      expect(publish).not.toHaveBeenCalled();
+      expect(enqueue).not.toHaveBeenCalled();
     });
   });
 });
