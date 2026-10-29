@@ -1,23 +1,18 @@
-import { from, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
+import { baseLibs, from, layerOf, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
 const layer = layerOf('acme-core:modules', ['module']);
 
 const ownContracts = to('acme-core:contracts', own('module'));
 
 export const acmeCore = [
-  from('acme-core:modules:domain', [layer('domain'), libs('kernel', 'toolkit')]),
-  from('acme-core:modules:outbound', [
-    layer('domain'),
-    layer('outbound'),
-    ownContracts,
-    libs('kernel', 'toolkit'),
-  ]),
+  from('acme-core:modules:domain', [layer('domain'), baseLibs()]),
+  from('acme-core:modules:outbound', [layer('domain'), layer('outbound'), baseLibs()]),
   from('acme-core:modules:application', [
     layer('domain'),
     layer('outbound'),
     layer('application'),
     ownContracts,
-    libs('kernel', 'observability', 'toolkit'),
+    baseLibs('observability'),
     libContracts('database'),
     packages('nestjs-pino'),
   ]),
@@ -25,10 +20,8 @@ export const acmeCore = [
     layer('domain'),
     layer('outbound'),
     layer('infrastructure'),
-    ownContracts,
     to('acme-core:entities'),
-    libs('database', 'kernel', 'toolkit'),
-    to('acme-libs:contracts'),
+    baseLibs('database'),
     packages(
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
@@ -39,22 +32,17 @@ export const acmeCore = [
       'typeorm',
     ),
   ]),
-  from('acme-core:modules:module:facade', [
-    layer('application'),
-    ownContracts,
-    libs('http', 'kernel', 'observability', 'toolkit'),
-  ]),
+  from('acme-core:modules:module:facade', [layer('application'), ownContracts, baseLibs()]),
   from('acme-core:modules:module', [
-    layer('domain'),
     layer('outbound'),
     layer('application'),
     layer('infrastructure'),
     layer('module:facade'),
     layer('module'),
     ownContracts,
-    libs('config', 'kernel', 'toolkit'),
+    baseLibs('config'),
   ]),
   from('acme-core:modules:index', [layer('module')]),
-  from('acme-core:contracts', [ownContracts, libs('kernel', 'toolkit')]),
+  from('acme-core:contracts', [ownContracts, baseLibs()]),
   from('acme-core:entities', [to('acme-core:entities'), libs('kernel'), packages('typeorm')]),
 ];

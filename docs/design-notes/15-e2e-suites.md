@@ -125,9 +125,9 @@ each app with tokens signed by that secret, not one app against the other.
 ## Lint
 
 `apps/*/test/**` is the category `acme-app:test`. It sees its own app's tests, its `AppModule`, its
-contracts, `@acme-core/entities`, the libs and their contracts, and the packages `@nestjs/common`,
-`@nestjs/config`, `@nestjs/jwt`, `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and
-`typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
+contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cache` and
+`observability`, and the packages `@nestjs/common`, `@nestjs/config`, `@nestjs/jwt`,
+`@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
 (`eslint/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is

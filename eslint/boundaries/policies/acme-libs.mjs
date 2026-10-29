@@ -1,8 +1,8 @@
-import { from, fromLib, libContracts, libs, own, packages, to } from '../selectors.mjs';
+import { baseLibs, from, fromLib, libContracts, libs, own, packages, to } from '../selectors.mjs';
 
 export const acmeLibs = [
   from('acme-libs', [to('acme-libs', own('lib')), to('acme-libs:contracts', own('lib'))]),
-  from('acme-libs:contracts', [to('acme-libs:contracts', own('lib')), libs('kernel', 'toolkit')]),
+  from('acme-libs:contracts', [to('acme-libs:contracts', own('lib')), baseLibs()]),
   fromLib(
     [
       'auth',
@@ -15,7 +15,7 @@ export const acmeLibs = [
       'observability',
       'openapi',
     ],
-    [libs('kernel', 'toolkit')],
+    [baseLibs()],
   ),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
   fromLib('cache', [
