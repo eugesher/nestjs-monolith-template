@@ -39,17 +39,17 @@ describe('app → core', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a customer-app feature may NOT reach the identity admin port — customer-app has no back office, IAM lives in staff-app only', async () => {
+    it('a customer-app feature may NOT reach the staff identity admin port — customer-app has no back office, IAM lives in staff-app only', async () => {
       await expect({
         file: 'apps/customer-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { IDENTITY_CORE_ADMIN_PORT, type IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, type IStaffIdentityCoreAdminPort } from "@acme-core/contracts/staff-identity";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('an staff-app feature MAY reach the identity admin port — the back office is staff-app', async () => {
+    it('an staff-app feature MAY reach the staff identity admin port — the back office is staff-app', async () => {
       await expect({
         file: 'apps/staff-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { IDENTITY_CORE_ADMIN_PORT, type IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
+        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, type IStaffIdentityCoreAdminPort } from "@acme-core/contracts/staff-identity";',
       }).toPassArchitectureLint();
     });
 

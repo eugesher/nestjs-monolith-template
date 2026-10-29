@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  IDENTITY_CORE_SESSION_PORT,
-  type IIdentityCoreSessionPort,
-} from '@acme-core/contracts/identity';
+  STAFF_IDENTITY_CORE_SESSION_PORT,
+  type IStaffIdentityCoreSessionPort,
+} from '@acme-core/contracts/staff-identity';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { DomainException } from '@acme-libs/toolkit';
 import { SessionDomainException } from '../../domain';
@@ -16,8 +16,8 @@ import {
 @Injectable()
 export class SessionIdentityCoreAdapter implements ISessionIdentityPort {
   constructor(
-    @Inject(IDENTITY_CORE_SESSION_PORT)
-    private readonly identity: IIdentityCoreSessionPort,
+    @Inject(STAFF_IDENTITY_CORE_SESSION_PORT)
+    private readonly identity: IStaffIdentityCoreSessionPort,
   ) {}
 
   public async login(

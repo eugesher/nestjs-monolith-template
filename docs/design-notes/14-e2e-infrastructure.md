@@ -70,7 +70,7 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 | `00000000-0000-4000-8000-000000000003` | `viewer@example.com`   | `viewer-password-please-change`   | viewer           |
 | `00000000-0000-4000-8000-000000000004` | `disabled@example.com` | `disabled-password-please-change` | viewer, disabled |
 
-The hashes in `user.sql` are argon2id with the cost parameters of the app env examples. Roles and
+The hashes in `staff_user.sql` are argon2id with the cost parameters of the app env examples. Roles and
 permissions get the ids of their order in `RoleEnum` and `PermissionCodeEnum`.
 
 ### Id ranges
@@ -80,15 +80,15 @@ shifts the rows another feature's tests read. A row created by a test gets the n
 `AUTO_INCREMENT` value after the highest seeded id, and tests find it through `MAX(id)` read before
 the call, never by a literal.
 
-| Feature     | Tables                  | Range                                                     |
-| ----------- | ----------------------- | --------------------------------------------------------- |
-| identity    | `role`, `permission`    | 1–99                                                      |
-| identity    | `user`                  | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
-| item        | `item`                  | 100–199                                                   |
-| note        | `note`, `note_revision` | 200–299                                                   |
-| reminder    | `reminder`              | 300–399                                                   |
-| ledger      | `ledger_entry`          | 400–499                                                   |
-| idempotency | `idempotency_key`       | 500–599                                                   |
+| Feature     | Tables                           | Range                                                     |
+| ----------- | -------------------------------- | --------------------------------------------------------- |
+| identity    | `staff_role`, `staff_permission` | 1–99                                                      |
+| identity    | `staff_user`                     | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
+| item        | `item`                           | 100–199                                                   |
+| note        | `note`, `note_revision`          | 200–299                                                   |
+| reminder    | `reminder`                       | 300–399                                                   |
+| ledger      | `ledger_entry`                   | 400–499                                                   |
+| idempotency | `idempotency_key`                | 500–599                                                   |
 
 ## Images
 

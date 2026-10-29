@@ -53,12 +53,12 @@ export class IamE2E {
         const actual = {
           response: { body: response.body },
           db: {
-            user: await this.ctx.dataSource.query(
-              'SELECT * FROM `user` WHERE email = ? ORDER BY id',
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user WHERE email = ? ORDER BY id',
               ['new-viewer@example.com'],
             ),
-            user_roles: await this.ctx.dataSource.query(
-              'SELECT * FROM user_roles WHERE user_id = ? ORDER BY role_id',
+            staff_user_roles: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
               [response.body.id],
             ),
           },
@@ -67,26 +67,28 @@ export class IamE2E {
         expect(actual).toMatchSnapshot({
           response: { body: { id: expect.any(String) } },
           db: {
-            user: [
+            staff_user: [
               {
                 id: expect.any(String),
                 password_hash: expect.any(String),
                 created_at: expect.any(Date),
               },
             ],
-            user_roles: [{ user_id: expect.any(String) }],
+            staff_user_roles: [{ user_id: expect.any(String) }],
           },
         });
         expect(actual).toMatchObject({
           db: {
-            user: [{ id: response.body.id }],
-            user_roles: [{ user_id: response.body.id }],
+            staff_user: [{ id: response.body.id }],
+            staff_user_roles: [{ user_id: response.body.id }],
           },
         });
         expect(response.body.id).toMatch(
           /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
         );
-        expect(actual.db.user[0].password_hash).toMatch(/^\$argon2id\$v=19\$m=19456,p=1,t=2\$/);
+        expect(actual.db.staff_user[0].password_hash).toMatch(
+          /^\$argon2id\$v=19\$m=19456,p=1,t=2\$/,
+        );
         expect(login.body).toEqual({ accessToken: expect.any(String) });
       });
 
@@ -104,8 +106,8 @@ export class IamE2E {
         expect({
           response: { body: response.body },
           db: {
-            user: await this.ctx.dataSource.query(
-              'SELECT id, email FROM `user` WHERE email = ? ORDER BY id',
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT id, email FROM staff_user WHERE email = ? ORDER BY id',
               ['editor@example.com'],
             ),
           },
@@ -126,8 +128,8 @@ export class IamE2E {
         expect({
           response: { body: response.body },
           db: {
-            user_roles: await this.ctx.dataSource.query(
-              'SELECT * FROM user_roles WHERE user_id = ? ORDER BY role_id',
+            staff_user_roles: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
               ['00000000-0000-4000-8000-000000000004'],
             ),
           },
@@ -171,14 +173,14 @@ export class IamE2E {
             response: { body: response.body },
             ledger: ledger.body,
             db: {
-              role_permissions: await this.ctx.dataSource.query(
-                'SELECT * FROM role_permissions WHERE role_id = 3 ORDER BY permission_id',
+              staff_role_permissions: await this.ctx.dataSource.query(
+                'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY permission_id',
               ),
             },
           }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (3, 4)',
+            'INSERT IGNORE INTO staff_role_permissions (role_id, permission_id) VALUES (3, 4)',
           );
         }
       });
@@ -193,8 +195,8 @@ export class IamE2E {
         expect({
           response: { body: response.body },
           db: {
-            role_permissions: await this.ctx.dataSource.query(
-              'SELECT * FROM role_permissions WHERE role_id = 3 ORDER BY permission_id',
+            staff_role_permissions: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY permission_id',
             ),
           },
         }).toMatchSnapshot();

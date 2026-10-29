@@ -10,8 +10,12 @@ its contract and the global module. The route keeps `auth`, because the URL is a
 | presentation   | `SessionController`, request/response DTOs, `SessionHttpExceptionFilter` | HTTP, validation, status codes                         |
 | application    | `SessionLoginUseCase`                                                    | the feature's operations                               |
 | outbound       | `SESSION_IDENTITY_PORT`                                                  | what the feature needs from identity, in its own terms |
-| infrastructure | `SessionIdentityCoreAdapter`                                             | calls `IDENTITY_CORE_SESSION_PORT`                     |
+| infrastructure | `SessionStaffIdentityCoreAdapter`                                        | calls `STAFF_IDENTITY_CORE_SESSION_PORT`               |
 | domain         | `SessionDomainException`                                                 | the refusal the feature understands                    |
+
+The port is named after the need, identity, and the adapter after the core module it calls. In
+staff-app that module is `staff-identity`. customer-app has no identity module of its own yet: its
+`SessionIdentityCoreAdapter` calls `staff-identity` as well.
 
 **The controller never sees a core contract.** A shortcut, a controller that injects the identity
 port, would save four files. It would also make presentation depend on a core module, and then the
@@ -29,7 +33,7 @@ facade for them explicitly, rather than a read on every request.
 ## Refusals
 
 **The core adapter translates, the filter maps.** Identity throws its own `DomainException`
-subclass, which a feature must not import. `SessionIdentityCoreAdapter` catches any
+subclass, which a feature must not import. The session core adapter catches any
 `DomainException` whose code belongs to `IdentityErrorCodeEnum` and rethrows it as
 `SessionDomainException` with the same code and message. Anything else, such as a lost connection,
 passes through untouched and ends up as a 500.
@@ -57,7 +61,7 @@ reveal which accounts exist.
 
 ## One token, two apps
 
-Both apps verify with the same `JWT_SECRET` and read the same identity tables. A token issued
+Both apps verify with the same `JWT_SECRET` and read the same `staff_*` tables. A token issued
 by one app is accepted by the other. Login carries `@Public()`; without it the global JWT guard
 would answer 401 before the controller runs.
 

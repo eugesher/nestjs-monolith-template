@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { IdentityCoreModule } from '@acme-core/modules/identity';
+import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { SessionLoginUseCase } from './application';
 import { SessionIdentityCoreAdapter } from './infrastructure';
@@ -8,7 +8,7 @@ import { SESSION_IDENTITY_PORT } from './outbound';
 import { SessionController } from './presentation';
 
 @Module({
-  imports: [IdentityCoreModule],
+  imports: [StaffIdentityCoreModule],
   controllers: [SessionController],
   providers: [
     HttpExceptionFilter,

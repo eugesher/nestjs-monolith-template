@@ -94,7 +94,7 @@ exports[`App Iam GET /api/iam/roles should refuse a caller without iam:assign 1`
 exports[`App Iam POST /api/iam/users should create a user who can log in at once 1`] = `
 {
   "db": {
-    "user": [
+    "staff_user": [
       {
         "created_at": Any<Date>,
         "email": "new-viewer@example.com",
@@ -103,7 +103,7 @@ exports[`App Iam POST /api/iam/users should create a user who can log in at once
         "status": "active",
       },
     ],
-    "user_roles": [
+    "staff_user_roles": [
       {
         "role_id": 3,
         "user_id": Any<String>,
@@ -122,7 +122,7 @@ exports[`App Iam POST /api/iam/users should create a user who can log in at once
 exports[`App Iam POST /api/iam/users should refuse a taken email in another case with 409 1`] = `
 {
   "db": {
-    "user": [
+    "staff_user": [
       {
         "email": "editor@example.com",
         "id": "00000000-0000-4000-8000-000000000002",
@@ -154,7 +154,7 @@ exports[`App Iam POST /api/iam/users/:userId/roles should answer 404 for an unkn
 exports[`App Iam POST /api/iam/users/:userId/roles should grant a role and answer 200 1`] = `
 {
   "db": {
-    "user_roles": [
+    "staff_user_roles": [
       {
         "role_id": 2,
         "user_id": "00000000-0000-4000-8000-000000000004",
@@ -192,7 +192,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should answer 404 for an u
 exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
 {
   "db": {
-    "role_permissions": [
+    "staff_role_permissions": [
       {
         "permission_id": 1,
         "role_id": 3,
@@ -229,7 +229,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permiss
     "status": 200,
   },
   "db": {
-    "role_permissions": [
+    "staff_role_permissions": [
       {
         "permission_id": 1,
         "role_id": 3,

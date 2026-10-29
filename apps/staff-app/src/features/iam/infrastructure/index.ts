@@ -1,1 +1,1 @@
-export * from './core-adapters/iam-identity-core.adapter';
+export * from './core-adapters/iam-staff-identity-core.adapter';

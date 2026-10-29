@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  IDENTITY_CORE_SESSION_PORT,
-  type IIdentityCoreSessionPort,
-} from '@acme-core/contracts/identity';
+  STAFF_IDENTITY_CORE_SESSION_PORT,
+  type IStaffIdentityCoreSessionPort,
+} from '@acme-core/contracts/staff-identity';
 import {
   IAuthCurrentUserView,
   IAuthFindPermissionCodesQuery,
@@ -15,8 +15,8 @@ import { Maybe } from '@acme-libs/toolkit';
 @Injectable()
 export class AuthIdentityCoreAdapter {
   constructor(
-    @Inject(IDENTITY_CORE_SESSION_PORT)
-    private readonly identity: IIdentityCoreSessionPort,
+    @Inject(STAFF_IDENTITY_CORE_SESSION_PORT)
+    private readonly identity: IStaffIdentityCoreSessionPort,
   ) {}
 
   public findSubject(query: IAuthJwtPayloadQuery): Promise<Maybe<IAuthCurrentUserView>> {
