@@ -135,5 +135,5 @@ what checks their shape.
 
 ## HTTP collection
 
-`http/` holds a [Posting](https://posting.sh) collection per app with one request per e2e case. See
-`http/README.md`.
+`.http/` holds a [Posting](https://posting.sh) collection per app with one request per e2e case. See
+`.http/README.md`.
