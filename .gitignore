@@ -27,3 +27,10 @@ lerna-debug.log*
 
 # Posting scripts
 __pycache__/
+
+# Jest and ESLint
+/coverage
+.eslintcache
+
+# Scaffolds of the architecture specs
+__*-fixture__/

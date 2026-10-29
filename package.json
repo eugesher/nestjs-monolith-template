@@ -20,6 +20,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p migrations && tsc -p scripts && tsc -p docker-compose/database-and-tests",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config ./test/jest-unit.config.js",
+    "test:unit:coverage": "yarn test:unit --coverage",
     "test:e2e:admin": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --ci --config ./apps/admin-api/test/jest-e2e.config.js",
     "test:e2e:client": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --ci --config ./apps/client-api/test/jest-e2e.config.js",
     "test:e2e:infra:up": "docker compose -f ./docker-compose/database-and-tests/docker-compose.yml up --build --renew-anon-volumes",
@@ -31,7 +32,8 @@
     "migration:create": "node ./scripts/migration-create.ts",
     "migration:run": "yarn migration:cli migration:run",
     "migration:revert": "yarn migration:cli migration:revert",
-    "migration:show": "yarn migration:cli migration:show"
+    "migration:show": "yarn migration:cli migration:show",
+    "postinstall": "husky || true"
   },
   "dependencies": {
     "@nestjs-cls/transactional": "4.0.1",
@@ -82,7 +84,9 @@
     "eslint-import-resolver-typescript": "4.4.5",
     "eslint-plugin-boundaries": "7.3.0",
     "eslint-plugin-prettier": "5.5.7",
+    "husky": "9.1.7",
     "jest": "30.5.2",
+    "lint-staged": "17.6.0",
     "pino-pretty": "13.2.0",
     "prettier": "3.9.10",
     "supertest": "7.3.1",

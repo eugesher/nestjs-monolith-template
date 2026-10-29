@@ -16,6 +16,7 @@ export default defineConfig(
       '**/node_modules/**',
       '**/*.config.js',
       'test/*.js',
+      '.lintstagedrc.js',
       '.yarn/**',
       'coverage/**',
       'dist/**',
