@@ -1,4 +1,4 @@
 export enum AppNameEnum {
-  ADMIN_API = 'admin-api',
-  CLIENT_API = 'client-api',
+  STAFF_APP = 'staff-app',
+  CUSTOMER_APP = 'customer-app',
 }

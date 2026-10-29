@@ -1,0 +1,16 @@
+name: 01-refresh
+description: |-
+  e2e: Session › POST /api/auth/refresh › should exchange a refresh token for a pair the guards accept
+
+  Expect: 200 OK, a new accessToken and refreshToken
+  Note: send session/login/01-editor first: it saves refresh_token
+method: POST
+url: $STAFF_APP_BASE_URL/auth/refresh
+body:
+  content: |-
+    {
+      "refreshToken": "$refresh_token"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

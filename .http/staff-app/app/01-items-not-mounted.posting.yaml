@@ -1,0 +1,13 @@
+name: 01-items-not-mounted
+description: |-
+  e2e: should not mount the customer-app route /api/items
+
+  Expect: 404 Not Found
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/items
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

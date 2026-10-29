@@ -1,6 +1,6 @@
 # 13 — App bootstrap
 
-admin-api and client-api are two deployables over one module graph: each has its own `main.ts`,
+staff-app and customer-app are two deployables over one module graph: each has its own `main.ts`,
 its own `AppModule` and its own port, and both read the same database, Redis and JWT secrets. A
 token issued by one app is accepted by the other.
 
@@ -17,7 +17,7 @@ token issued by one app is accepted by the other.
    Nest's own lines go through pino too, and the lines buffered before the logger existed are
    flushed through it.
 4. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
-   `ADMIN_API_PORT` or `CLIENT_API_PORT`.
+   `STAFF_APP_PORT` or `CUSTOMER_APP_PORT`.
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
 filters, the guards and the correlation middleware are all in `AppModule` or in modules it imports.
@@ -34,10 +34,10 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi               |
 | `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
-| `ScheduleSetupModule`              | `app/setup/schedule`, client-api only                | `ScheduleModule.forRoot()` for `@Cron`                      |
+| `ScheduleSetupModule`              | `app/setup/schedule`, customer-app only              | `ScheduleModule.forRoot()` for `@Cron`                      |
 | `CacheModule`, `EventsModule`      | `libs/cache`, `libs/messaging`                       | global `CACHE_PORT` and `EVENT_PUBLISHER_PORT`              |
 | `AuthModule`                       | `app/global/auth`                                    | the three global guards                                     |
-| features, processors               | `@acme-<app>-features`, `@acme-client-processors`    | the routes and the consumers                                |
+| features, processors               | `@acme-<app>-features`, `@acme-customer-processors`  | the routes and the consumers                                |
 | `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log                                  |
 | `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                |
@@ -54,8 +54,8 @@ it on the request and the response. Whichever runs first decides, and the other 
 header. Inside the request, `CorrelationContextHelper.current()` answers that id, so a ledger entry
 written by the request carries the id the client got back.
 
-The entity list of each app holds exactly the entities of the modules it mounts. admin-api has no
-`Item`, client-api has no `Note`.
+The entity list of each app holds exactly the entities of the modules it mounts. staff-app has no
+`Item`, customer-app has no `Note`.
 
 ## Logs
 
@@ -66,7 +66,7 @@ still pass, and production keeps everything.
 
 ## Entry points
 
-`@acme-admin-app` and `@acme-client-app` resolve to the FILE `app/app.module.ts`, not to a folder:
+`@acme-staff-app` and `@acme-customer-app` resolve to the FILE `app/app.module.ts`, not to a folder:
 `app/` has no barrel next to the module. `main.ts` and the e2e context import `AppModule` by them.
 
 Lint gives `app.module.ts` its own category, `acme-app:app:module`:

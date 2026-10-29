@@ -1,6 +1,6 @@
 # 11 — Reminder feature
 
-`apps/client-api/src/features/reminder` is the per-owner list behind `/reminders`, with a summary of
+`apps/customer-app/src/features/reminder` is the per-owner list behind `/reminders`, with a summary of
 it: how many reminders are pending and when the next one is due. This note covers the
 `ReminderModel` aggregate, ownership, optimistic concurrency, the cache-aside summary, the
 persistence and the HTTP surface.

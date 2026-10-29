@@ -1,6 +1,6 @@
 # 09 — Ledger catalog events processor
 
-`apps/client-api/src/processors/ledger-catalog-events` records catalog events in the ledger of
+`apps/customer-app/src/processors/ledger-catalog-events` records catalog events in the ledger of
 `core/modules/src/ledger` (see `05-core-ledger.md`). It is a processor, not a feature: an in-process
 event enters it, not an HTTP request, and it has no controller.
 
@@ -12,7 +12,7 @@ event enters it, not an HTTP request, and it has no controller.
 | `infrastructure/core-adapters` | `LedgerCatalogEventsLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT` |
 
 The processor sees no feature. The event names and payloads live in
-`@acme-client-contracts/ledger-catalog-events`, which the item feature publishes against (see
+`@acme-customer-contracts/ledger-catalog-events`, which the item feature publishes against (see
 `08-item-feature.md`).
 
 ## Events and entries

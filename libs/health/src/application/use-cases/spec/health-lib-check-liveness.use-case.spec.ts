@@ -3,12 +3,12 @@ import { HealthLibCheckLivenessUseCase } from '../health-lib-check-liveness.use-
 
 describe('HealthLibCheckLivenessUseCase', () => {
   it('names the deployable and reports whole seconds of uptime', () => {
-    const useCase = new HealthLibCheckLivenessUseCase(AppNameEnum.CLIENT_API, {
+    const useCase = new HealthLibCheckLivenessUseCase(AppNameEnum.CUSTOMER_APP, {
       seconds: () => 42.9,
     });
 
     const view = useCase.execute();
 
-    expect(view).toEqual({ status: 'ok', app: 'client-api', uptimeSeconds: 42 });
+    expect(view).toEqual({ status: 'ok', app: 'customer-app', uptimeSeconds: 42 });
   });
 });

@@ -1,0 +1,13 @@
+name: 02-without-iam-assign
+description: |-
+  e2e: Iam › GET /api/iam/roles › should refuse a caller without iam:assign
+
+  Expect: 403 Forbidden, Insufficient permissions
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/iam/roles
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

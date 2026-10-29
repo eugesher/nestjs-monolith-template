@@ -10,10 +10,10 @@ describe('core entities (@acme-core/entities)', () => {
   });
 
   it.each([
-    'apps/admin-api/src/app/setup/orm/entities/index.ts',
-    'apps/client-api/src/features/item/infrastructure/persistence/repositories/__fixture__.ts',
-    'apps/client-api/src/common/modules/idempotency/infrastructure/persistence/repositories/__fixture__.ts',
-    'apps/client-api/src/processors/purge/infrastructure/__fixture__.ts',
+    'apps/staff-app/src/app/setup/orm/entities/index.ts',
+    'apps/customer-app/src/features/item/infrastructure/persistence/repositories/__fixture__.ts',
+    'apps/customer-app/src/common/modules/idempotency/infrastructure/persistence/repositories/__fixture__.ts',
+    'apps/customer-app/src/processors/purge/infrastructure/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
   ])('%s MAY import the entities', async (file) => {
     await expect({
@@ -23,17 +23,17 @@ describe('core entities (@acme-core/entities)', () => {
   });
 
   it.each([
-    'apps/client-api/src/features/item/domain/__fixture__.ts',
-    'apps/client-api/src/features/item/outbound/__fixture__.ts',
-    'apps/client-api/src/features/item/application/use-cases/__fixture__.ts',
-    'apps/client-api/src/features/item/presentation/controllers/__fixture__.ts',
-    'apps/client-api/src/features/item/item.module.ts',
-    'apps/client-api/src/processors/purge/application/__fixture__.ts',
-    'apps/client-api/src/common/shared/auth/__fixture__.ts',
+    'apps/customer-app/src/features/item/domain/__fixture__.ts',
+    'apps/customer-app/src/features/item/outbound/__fixture__.ts',
+    'apps/customer-app/src/features/item/application/use-cases/__fixture__.ts',
+    'apps/customer-app/src/features/item/presentation/controllers/__fixture__.ts',
+    'apps/customer-app/src/features/item/item.module.ts',
+    'apps/customer-app/src/processors/purge/application/__fixture__.ts',
+    'apps/customer-app/src/common/shared/auth/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
-    'apps/client-api/src/main.ts',
+    'apps/customer-app/src/main.ts',
   ])(
     '%s may NOT import the entities, a table is reached only through a repository',
     async (file) => {

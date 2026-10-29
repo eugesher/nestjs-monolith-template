@@ -6,7 +6,7 @@ import { BootstrapLogger } from '../bootstrap-logger';
 describe('BootstrapLogger', () => {
   describe('setup', () => {
     it('builds a pino logger that logs out of DI in the format of the app', () => {
-      const logger = BootstrapLogger.setup(AppNameEnum.ADMIN_API);
+      const logger = BootstrapLogger.setup(AppNameEnum.STAFF_APP);
 
       expect(logger).toBeInstanceOf(PinoLogger);
     });

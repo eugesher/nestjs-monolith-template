@@ -50,7 +50,7 @@ describe('TracerHelper', () => {
 
     it('starts the SDK with the service and environment of the process', () => {
       process.env.OTEL_SDK_DISABLED = 'false';
-      process.env.OTEL_SERVICE_NAME = 'client-api';
+      process.env.OTEL_SERVICE_NAME = 'customer-app';
       process.env.NODE_ENV = 'production';
 
       const sdk = TracerHelper.start() as unknown as {
@@ -64,7 +64,7 @@ describe('TracerHelper', () => {
 
       expect(sdk?.start).toHaveBeenCalledTimes(1);
       expect(options.resource.attributes).toEqual({
-        'service.name': 'client-api',
+        'service.name': 'customer-app',
         'deployment.environment.name': 'production',
       });
       expect(options.instrumentations).toEqual([['http-instrumentation']]);

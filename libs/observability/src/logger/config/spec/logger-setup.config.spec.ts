@@ -20,7 +20,7 @@ describe('LoggerSetupConfig', () => {
   });
 
   it('logs every route', () => {
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
     expect(config.forRoutes).toEqual([{ path: '*path', method: RequestMethod.ALL }]);
   });
@@ -28,7 +28,7 @@ describe('LoggerSetupConfig', () => {
   it('logs info without pretty printing in production', () => {
     process.env.NODE_ENV = 'production';
 
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
     expect(config.pinoHttp.level).toBe('info');
     expect(config.pinoHttp.transport).toBeUndefined();
@@ -37,7 +37,7 @@ describe('LoggerSetupConfig', () => {
   it('logs debug through pino-pretty outside production', () => {
     process.env.NODE_ENV = 'development';
 
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
     expect(config.pinoHttp.level).toBe('debug');
     expect(config.pinoHttp.transport).toEqual({
@@ -56,17 +56,17 @@ describe('LoggerSetupConfig', () => {
     process.env.NODE_ENV = 'production';
     process.env.LOG_LEVEL = 'warn';
 
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
     expect(config.pinoHttp.level).toBe('warn');
   });
 
   it('adds the app name to every log line', () => {
-    const config = new LoggerSetupConfig(AppNameEnum.CLIENT_API);
+    const config = new LoggerSetupConfig(AppNameEnum.CUSTOMER_APP);
 
     const mixin = config.pinoHttp.mixin?.({}, 30, {} as never);
 
-    expect(mixin).toEqual({ app: 'client-api' });
+    expect(mixin).toEqual({ app: 'customer-app' });
   });
 
   it('adds the trace and span ids of the active span', () => {
@@ -78,18 +78,18 @@ describe('LoggerSetupConfig', () => {
 
     jest.spyOn(trace, 'getActiveSpan').mockReturnValue(span);
 
-    const config = new LoggerSetupConfig(AppNameEnum.CLIENT_API);
+    const config = new LoggerSetupConfig(AppNameEnum.CUSTOMER_APP);
     const mixin = config.pinoHttp.mixin?.({}, 30, {} as never);
 
     expect(mixin).toEqual({
-      app: 'client-api',
+      app: 'customer-app',
       traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
       spanId: '00f067aa0ba902b7',
     });
   });
 
   it('uses the inbound correlation id as the request id and returns it in the response', () => {
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
     const req = { headers: { 'x-correlation-id': 'c0ffee00-0000-4000-8000-000000000001' } };
     const res = { headersSent: false, setHeader: jest.fn() };
 
@@ -103,7 +103,7 @@ describe('LoggerSetupConfig', () => {
   });
 
   it('adds the correlation id header to the request log', () => {
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
     const req = { headers: { 'x-correlation-id': 'c0ffee00-0000-4000-8000-000000000001' } };
 
     const props = config.pinoHttp.customProps?.(req as never, {} as never);
@@ -112,7 +112,7 @@ describe('LoggerSetupConfig', () => {
   });
 
   it('removes the authorization, cookie and set-cookie headers', () => {
-    const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
     expect(config.pinoHttp.redact).toEqual({
       paths: ['req.headers.authorization', 'req.headers.cookie', 'res.headers["set-cookie"]'],
@@ -124,7 +124,7 @@ describe('LoggerSetupConfig', () => {
     let config: LoggerSetupConfig;
 
     beforeEach(() => {
-      config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
     });
 
     it('logs a failed request as error', () => {
@@ -166,7 +166,7 @@ describe('LoggerSetupConfig', () => {
     it('drops an info line of a noisy Nest context outside production', () => {
       process.env.NODE_ENV = 'development';
 
-      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
       config.pinoHttp.hooks?.logMethod?.call(
         {} as never,
@@ -181,7 +181,7 @@ describe('LoggerSetupConfig', () => {
     it('keeps a warn line of a noisy Nest context', () => {
       process.env.NODE_ENV = 'development';
 
-      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
       config.pinoHttp.hooks?.logMethod?.call(
         {} as never,
@@ -196,7 +196,7 @@ describe('LoggerSetupConfig', () => {
     it('keeps an info line of any other context', () => {
       process.env.NODE_ENV = 'development';
 
-      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
       config.pinoHttp.hooks?.logMethod?.call(
         {} as never,
@@ -211,7 +211,7 @@ describe('LoggerSetupConfig', () => {
     it('keeps an info line without an object first', () => {
       process.env.NODE_ENV = 'development';
 
-      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
       config.pinoHttp.hooks?.logMethod?.call({} as never, ['RoutesResolver'], method, 30);
 
@@ -221,7 +221,7 @@ describe('LoggerSetupConfig', () => {
     it('keeps an info line of a noisy Nest context in production', () => {
       process.env.NODE_ENV = 'production';
 
-      const config = new LoggerSetupConfig(AppNameEnum.ADMIN_API);
+      const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
 
       config.pinoHttp.hooks?.logMethod?.call(
         {} as never,

@@ -1,6 +1,6 @@
 # 12 — Note feature
 
-`apps/admin-api/src/features/note` keeps back-office notes behind `/notes`: free text that an admin
+`apps/staff-app/src/features/note` keeps back-office notes behind `/notes`: free text that an admin
 attaches to any subject, edits, and finally resolves. Every edit keeps the body it replaced as a
 revision. This note covers the `NoteModel` aggregate, the frozen `NoteRevisionModel`, and the one
 write that spans two tables.
@@ -156,5 +156,5 @@ string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, 
 
 `NoteModule` imports `NoteTypeOrmModule.forFeature()`, binds every port with
 `{ provide, useClass }` and reads `NOTE_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The entity
-list of admin-api includes `Note` and `NoteRevision`. The feature exists only in admin-api: the
-client app has no `/notes` route.
+list of staff-app includes `Note` and `NoteRevision`. The feature exists only in staff-app: the
+customer-app has no `/notes` route.

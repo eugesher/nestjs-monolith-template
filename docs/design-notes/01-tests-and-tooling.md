@@ -46,6 +46,6 @@ added together with the aliases.
 modules). Both `eslint-plugin-boundaries` and the `typescript-eslint` project service default to
 `process.cwd()`, so from a sub-folder every file pattern misses and the project service finds no
 `tsconfig.json`. `boundaries/root-path` and `tsconfigRootDir` are pinned to the repository root,
-and `repo.spec.ts` lints from `migrations/` and `apps/admin-api/` in a child process to keep it
+and `repo.spec.ts` lints from `migrations/` and `apps/staff-app/` in a child process to keep it
 that way: an in-process `new ESLint({ cwd })` does not change `process.cwd()` and would pass
 either way.

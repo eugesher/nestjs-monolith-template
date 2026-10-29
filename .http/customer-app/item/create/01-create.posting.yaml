@@ -1,0 +1,27 @@
+name: 01-create
+description: |-
+  e2e: Item › POST /api/items › should create a draft, record the key and the ledger entry under the correlation id
+
+  Expect: 201 Created; item, a completed idempotency_key row and a ledger entry item-created with correlation_id e2e-item-create
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/items
+body:
+  content: |-
+    {
+      "sku": "E2E-0001",
+      "name": "Created item"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-create-key
+  - name: x-correlation-id
+    value: e2e-item-create
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

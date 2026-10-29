@@ -22,20 +22,24 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@acme-admin-app": ["./apps/admin-api/src/app/app.module"],
-      "@acme-admin-features": ["./apps/admin-api/src/features"],
-      "@acme-client-app": ["./apps/client-api/src/app/app.module"],
-      "@acme-client-common/modules/idempotency": [
-        "./apps/client-api/src/common/modules/idempotency"
+      "@acme-staff-app": ["./apps/staff-app/src/app/app.module"],
+      "@acme-staff-features": ["./apps/staff-app/src/features"],
+      "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
+      "@acme-customer-common/modules/idempotency": [
+        "./apps/customer-app/src/common/modules/idempotency"
       ],
-      "@acme-client-common/shared/concurrency": ["./apps/client-api/src/common/shared/concurrency"],
-      "@acme-client-common/shared/idempotency": ["./apps/client-api/src/common/shared/idempotency"],
-      "@acme-client-contracts/idempotency": ["./apps/client-api/src/contracts/idempotency"],
-      "@acme-client-contracts/ledger-catalog-events": [
-        "./apps/client-api/src/contracts/ledger-catalog-events"
+      "@acme-customer-common/shared/concurrency": [
+        "./apps/customer-app/src/common/shared/concurrency"
       ],
-      "@acme-client-features": ["./apps/client-api/src/features"],
-      "@acme-client-processors": ["./apps/client-api/src/processors"],
+      "@acme-customer-common/shared/idempotency": [
+        "./apps/customer-app/src/common/shared/idempotency"
+      ],
+      "@acme-customer-contracts/idempotency": ["./apps/customer-app/src/contracts/idempotency"],
+      "@acme-customer-contracts/ledger-catalog-events": [
+        "./apps/customer-app/src/contracts/ledger-catalog-events"
+      ],
+      "@acme-customer-features": ["./apps/customer-app/src/features"],
+      "@acme-customer-processors": ["./apps/customer-app/src/processors"],
       "@acme-core/contracts/identity": ["./core/contracts/src/identity"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],
       "@acme-core/entities": ["./core/entities/src"],

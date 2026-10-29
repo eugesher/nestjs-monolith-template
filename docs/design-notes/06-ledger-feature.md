@@ -1,14 +1,14 @@
 # 06 — Ledger feature
 
-`apps/admin-api/src/features/ledger` serves `GET /ledger`, the back office view of the journal that
+`apps/staff-app/src/features/ledger` serves `GET /ledger`, the back office view of the journal that
 `core/modules/src/ledger` keeps (see `05-core-ledger.md`). It has the same layers as `session` (see
 `03-session-feature.md`): `LedgerListEntriesUseCase`, `LEDGER_QUERY_PORT`, and
 `LedgerQueryCoreAdapter` over `LEDGER_CORE_QUERY_PORT`.
 
-## Read-only, and only admin-api
+## Read-only, and only staff-app
 
 The feature binds the query port and nothing else. Recording facts is the job of whoever caused
-them, never of an HTTP client, so no endpoint can write to the journal. client-api does not mount
+them, never of an HTTP client, so no endpoint can write to the journal. customer-app does not mount
 the feature at all.
 
 Access needs `ledger:read`. A principal without it gets a 403, and one without a token gets a 401.

@@ -27,7 +27,7 @@ describe('HealthLibModule', () => {
       imports: [
         LoggerModule.forRoot({ pinoHttp: { level: 'silent' } }),
         DependenciesModule,
-        HealthLibModule.forRoot(AppNameEnum.ADMIN_API),
+        HealthLibModule.forRoot(AppNameEnum.STAFF_APP),
       ],
     })
     class TestModule {}
@@ -46,7 +46,7 @@ describe('HealthLibModule', () => {
 
     expect(view).toEqual({
       status: 'ok',
-      app: 'admin-api',
+      app: 'staff-app',
       uptimeSeconds: expect.any(Number) as number,
     });
   });

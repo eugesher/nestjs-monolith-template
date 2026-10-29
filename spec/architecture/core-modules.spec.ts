@@ -268,7 +268,7 @@ describe('core modules', () => {
   });
 
   describe('identity ports by app', () => {
-    it.each(['admin-api', 'client-api'])(
+    it.each(['staff-app', 'customer-app'])(
       'a %s core adapter MAY import the identity session port',
       async (app) => {
         await expect({
@@ -278,16 +278,16 @@ describe('core modules', () => {
       },
     );
 
-    it('an admin-api core adapter MAY import the identity admin port', async () => {
+    it('an staff-app core adapter MAY import the identity admin port', async () => {
       await expect({
-        file: 'apps/admin-api/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
+        file: 'apps/staff-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
         code: 'import { IDENTITY_CORE_ADMIN_PORT, IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
       }).toPassArchitectureLint();
     });
 
     it.each([
-      'apps/client-api/src/features/session/infrastructure/core-adapters/__fixture__.ts',
-      'apps/client-api/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+      'apps/customer-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
+      'apps/customer-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
     ])('%s may NOT import the identity admin port', async (file) => {
       await expect({
         file,
@@ -295,9 +295,9 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a client-api core adapter may NOT slip the admin port type in next to the session port', async () => {
+    it('a customer-app core adapter may NOT slip the admin port type in next to the session port', async () => {
       await expect({
-        file: 'apps/client-api/src/features/session/infrastructure/core-adapters/__fixture__.ts',
+        file: 'apps/customer-app/src/features/session/infrastructure/core-adapters/__fixture__.ts',
         code: 'import { IDENTITY_CORE_SESSION_PORT, IIdentityCoreAdminPort } from "@acme-core/contracts/identity";',
       }).toBreakRule('boundaries/dependencies');
     });

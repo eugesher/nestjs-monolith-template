@@ -14,14 +14,14 @@ attaches to the test infrastructure.
 
 ## Scripts
 
-| Script                              | What it does                                                         |
-| ----------------------------------- | -------------------------------------------------------------------- |
-| `test:e2e:infra:up`                 | builds and starts MySQL, Redis and the `node` container, attached    |
-| `test:e2e:infra:down`               | removes the containers and their volumes                             |
-| `test:e2e:infra:reload`             | `down`, then `up`                                                    |
-| `test:e2e:infra:reseed`             | resets the data of running infrastructure, see below                 |
-| `test:e2e:seed`                     | loads the seed files into `DATABASE_URL`                             |
-| `test:e2e:admin`, `test:e2e:client` | the e2e suite of one app, `--runInBand --ci`, see `15-e2e-suites.md` |
+| Script                                | What it does                                                         |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| `test:e2e:infra:up`                   | builds and starts MySQL, Redis and the `node` container, attached    |
+| `test:e2e:infra:down`                 | removes the containers and their volumes                             |
+| `test:e2e:infra:reload`               | `down`, then `up`                                                    |
+| `test:e2e:infra:reseed`               | resets the data of running infrastructure, see below                 |
+| `test:e2e:seed`                       | loads the seed files into `DATABASE_URL`                             |
+| `test:e2e:staff`, `test:e2e:customer` | the e2e suite of one app, `--runInBand --ci`, see `15-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`:

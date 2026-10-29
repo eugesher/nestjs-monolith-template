@@ -3,15 +3,15 @@
 Two [Posting](https://posting.sh) collections for checking the apps by hand, one per app:
 
 ```bash
-posting --collection .http/admin-api --env .http/dev.env
+posting --collection .http/staff-app --env .http/dev.env
 ```
 
 ```bash
-posting --collection .http/client-api --env .http/dev.env
+posting --collection .http/customer-app --env .http/dev.env
 ```
 
 Script paths in the requests are relative to the collection root, so the root must be
-`.http/admin-api` or `.http/client-api` itself.
+`.http/staff-app` or `.http/customer-app` itself.
 
 ## What is inside
 
@@ -23,7 +23,7 @@ test, so the test can be found in `apps/<app>/test`.
 
 Three e2e cases are not one request:
 
-- the schema check of admin-api compares the migrated database with the entities and has no
+- the schema check of staff-app compares the migrated database with the entities and has no
   request;
 - the concurrent renames of an item send six requests at once, `item/rename/05-concurrent` sends
   one;
@@ -41,11 +41,11 @@ Start each app with the database and Redis of the e2e infrastructure. The variab
 take precedence over `.env.local`:
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:admin-api
+DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:staff-app
 ```
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:client-api
+DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:customer-app
 ```
 
 The expected result in a description holds for fresh seeds and the first run. Write requests change

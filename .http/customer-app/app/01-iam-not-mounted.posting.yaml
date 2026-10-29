@@ -1,0 +1,13 @@
+name: 01-iam-not-mounted
+description: |-
+  e2e: should not mount the staff-app route /api/iam/roles
+
+  Expect: 404 Not Found
+  User: admin@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/iam/roles
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

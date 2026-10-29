@@ -10,22 +10,22 @@
     "tsConfigPath": "tsconfig.json"
   },
   "projects": {
-    "admin-api": {
+    "staff-app": {
       "type": "application",
-      "root": "apps/admin-api",
+      "root": "apps/staff-app",
       "entryFile": "main",
-      "sourceRoot": "apps/admin-api/src",
+      "sourceRoot": "apps/staff-app/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/admin-api/tsconfig.app.json"
+        "tsConfigPath": "apps/staff-app/tsconfig.app.json"
       }
     },
-    "client-api": {
+    "customer-app": {
       "type": "application",
-      "root": "apps/client-api",
+      "root": "apps/customer-app",
       "entryFile": "main",
-      "sourceRoot": "apps/client-api/src",
+      "sourceRoot": "apps/customer-app/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/client-api/tsconfig.app.json"
+        "tsConfigPath": "apps/customer-app/tsconfig.app.json"
       }
     },
     "auth": {

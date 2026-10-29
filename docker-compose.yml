@@ -32,11 +32,11 @@ services:
     networks:
       - backend
 
-  client-api:
+  customer-app:
     build:
       context: .
       args:
-        APP_NAME: client-api
+        APP_NAME: customer-app
     ports:
       - '3000:3000'
     depends_on:
@@ -46,8 +46,8 @@ services:
         condition: service_healthy
     environment: &api-env
       NODE_ENV: production
-      ADMIN_API_PORT: 3001
-      CLIENT_API_PORT: 3000
+      STAFF_APP_PORT: 3001
+      CUSTOMER_APP_PORT: 3000
       API_PREFIX: api
       API_USE_API_REFERENCE: 'true'
       DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
@@ -61,11 +61,11 @@ services:
     networks:
       - backend
 
-  admin-api:
+  staff-app:
     build:
       context: .
       args:
-        APP_NAME: admin-api
+        APP_NAME: staff-app
     ports:
       - '3001:3001'
     depends_on:
