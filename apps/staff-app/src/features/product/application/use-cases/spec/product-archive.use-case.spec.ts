@@ -9,8 +9,8 @@ import { ProductArchiveUseCase } from '../product-archive.use-case';
 
 describe('ProductArchiveUseCase', () => {
   let write: jest.Mock;
+  let enqueue: jest.Mock;
   let recordArchived: jest.Mock;
-  let publish: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductArchiveUseCase;
 
@@ -27,19 +27,18 @@ describe('ProductArchiveUseCase', () => {
       }),
       events: [new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE)],
     });
+    enqueue = jest.fn().mockResolvedValue(undefined);
     recordArchived = jest.fn().mockResolvedValue(undefined);
-    publish = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
     useCase = new ProductArchiveUseCase(
       { write } as unknown as ProductWriteService,
-      { recordArchived } as unknown as ProductLedgerService,
-      { publish },
+      { enqueue, recordArchived } as unknown as ProductLedgerService,
       logger as unknown as PinoLogger,
     );
   });
 
   describe('execute', () => {
-    it('archives, publishes the events, records the archive in the ledger and answers the stored product', async () => {
+    it('archives, enqueues the ledger records, records the archive in the ledger and answers the stored product', async () => {
       const view = await useCase.execute({
         productId: '12',
         expectedVersion: undefined,
@@ -49,7 +48,7 @@ describe('ProductArchiveUseCase', () => {
         { productId: '12', expectedVersion: undefined },
         expect.any(Function),
       );
-      expect(publish).toHaveBeenCalledWith({
+      expect(enqueue).toHaveBeenCalledWith({
         productId: '12',
         events: [expect.any(ProductArchivedEvent)],
       });
@@ -57,7 +56,7 @@ describe('ProductArchiveUseCase', () => {
         productId: '12',
         events: [expect.any(ProductArchivedEvent)],
       });
-      expect(publish.mock.invocationCallOrder[0]).toBeLessThan(
+      expect(enqueue.mock.invocationCallOrder[0]).toBeLessThan(
         recordArchived.mock.invocationCallOrder[0],
       );
       expect(view).toEqual({

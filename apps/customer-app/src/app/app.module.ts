@@ -9,7 +9,6 @@ import {
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { EventsModule } from '@acme-libs/messaging';
 import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
 import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
@@ -21,7 +20,6 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
     TypeOrmSetupModule.forRoot(),
     CacheModule,
-    EventsModule,
     AuthGlobalModule,
     HealthModule,
     ReminderModule,

@@ -21,7 +21,6 @@ describe('unused edges', () => {
       'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
       'libs/contracts/src/database/index.ts',
-      'libs/contracts/src/messaging/index.ts',
     ]);
   });
 
@@ -190,9 +189,9 @@ describe('unused edges', () => {
         '../../../common/shared/concurrency',
       ],
       [
-        'feature infrastructure may NOT reach the messaging contracts: events are published from infrastructure/events',
+        'feature persistence may NOT reach Bull: jobs are enqueued from infrastructure/queue',
         'apps/__unused-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
-        '../../../../../../../libs/contracts/src/messaging',
+        '@nestjs/bull',
       ],
       [
         'feature presentation may NOT reach the observability lib: the middleware of the app sets the correlation id',

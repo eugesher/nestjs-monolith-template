@@ -12,7 +12,6 @@ export const acmeLibs = [
       'database',
       'health',
       'http',
-      'messaging',
       'observability',
       'openapi',
     ],
@@ -51,10 +50,6 @@ export const acmeLibs = [
   ]),
   fromLib('openapi', [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/swagger', '@scalar/nestjs-api-reference'),
-  ]),
-  fromLib('messaging', [
-    libs('observability'),
-    packages('@nestjs/common', '@nestjs/core', '@nestjs/event-emitter', 'nestjs-pino'),
   ]),
   fromLib('observability', [libs('config')]),
   fromLib('config', [packages('@nestjs/common', '@nestjs/config', 'fs', 'path')]),

@@ -26,18 +26,19 @@ export const acmeApp = [
   from('acme-app:app:module', [
     to('acme-app:app', own('app')),
     ...appIndexes,
-    baseLibs('cache', 'http', 'messaging', 'observability'),
+    baseLibs('cache', 'http', 'observability'),
     packages('@nestjs/common', '@nestjs/core'),
   ]),
   from('acme-app:app', [
     to('acme-app:app', own('app')),
     ...appIndexes,
     to('acme-core:entities'),
-    baseLibs('cache', 'config', 'database', 'messaging'),
+    baseLibs('cache', 'config', 'database'),
     libContracts('database'),
     packages(
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/bull',
       '@nestjs/common',
       '@nestjs/config',
       '@nestjs/schedule',
@@ -52,7 +53,7 @@ export const acmeApp = [
     appContracts,
     baseLibs('http', 'observability'),
     libContracts('cache'),
-    packages('@nestjs/common', 'nestjs-pino'),
+    packages('@nestjs/bull', '@nestjs/common', 'nestjs-pino'),
   ]),
   from('acme-app:common:shared:index', [to('acme-app:common:shared', own('app'))]),
   from('acme-app:app:global:index', [
@@ -91,10 +92,12 @@ export const acmeApp = [
     to('acme-core:entities'),
     baseLibs('cache', 'database', 'observability'),
     packages(
+      '@nestjs/bull',
       '@nestjs/common',
       '@nestjs/config',
       '@nestjs/jwt',
       '@nestjs/testing',
+      'bull',
       'ioredis',
       'nestjs-pino',
       'supertest',

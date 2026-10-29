@@ -15,7 +15,6 @@ describe('libs', () => {
       'libs/http/src/index.ts',
       'libs/http/src/exceptions/unauthorized-http.exception.ts',
       'libs/kernel/src/index.ts',
-      'libs/messaging/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
       'libs/toolkit/src/index.ts',
@@ -24,7 +23,6 @@ describe('libs', () => {
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
-      'libs/contracts/src/messaging/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
     ]);
@@ -65,7 +63,6 @@ describe('libs', () => {
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'database', 'observability']],
-    ['messaging', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {
@@ -78,7 +75,6 @@ describe('libs', () => {
       'health',
       'http',
       'kernel',
-      'messaging',
       'observability',
       'openapi',
       'toolkit',
@@ -108,12 +104,11 @@ describe('libs', () => {
     ['health', ['cache', 'health']],
     ['http', []],
     ['kernel', []],
-    ['messaging', ['messaging']],
     ['observability', []],
     ['openapi', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'messaging'];
+    const contracts = ['auth', 'cache', 'credentials', 'database', 'health'];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {
@@ -130,7 +125,7 @@ describe('libs', () => {
     }
   });
 
-  it.each(['auth', 'cache', 'credentials', 'database', 'health', 'messaging'])(
+  it.each(['auth', 'cache', 'credentials', 'database', 'health'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {
       await expect({

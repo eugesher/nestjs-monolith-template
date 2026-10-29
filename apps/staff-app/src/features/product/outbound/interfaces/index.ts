@@ -1,8 +1,8 @@
-export * from './commands/product-events-publish.command';
 export * from './commands/product-idempotency-claim.command';
 export * from './commands/product-idempotency-complete.command';
 export * from './commands/product-idempotency-release.command';
 export * from './commands/product-ledger-append.command';
+export * from './commands/product-ledger-record-enqueue.command';
 export * from './commands/product-write-update.command';
 
 export * from './queries/product-page.query';

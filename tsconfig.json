@@ -26,10 +26,11 @@
       "@acme-staff-common/modules/idempotency": ["./apps/staff-app/src/common/modules/idempotency"],
       "@acme-staff-common/shared/concurrency": ["./apps/staff-app/src/common/shared/concurrency"],
       "@acme-staff-common/shared/idempotency": ["./apps/staff-app/src/common/shared/idempotency"],
-      "@acme-staff-contracts/idempotency": ["./apps/staff-app/src/contracts/idempotency"],
-      "@acme-staff-contracts/ledger-catalog-events": [
-        "./apps/staff-app/src/contracts/ledger-catalog-events"
+      "@acme-staff-common/shared/ledger-record": [
+        "./apps/staff-app/src/common/shared/ledger-record"
       ],
+      "@acme-staff-contracts/idempotency": ["./apps/staff-app/src/contracts/idempotency"],
+      "@acme-staff-contracts/ledger-record": ["./apps/staff-app/src/contracts/ledger-record"],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
       "@acme-staff-processors": ["./apps/staff-app/src/processors"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
@@ -50,13 +51,11 @@
       "@acme-libs/contracts/credentials": ["./libs/contracts/src/credentials"],
       "@acme-libs/contracts/database": ["./libs/contracts/src/database"],
       "@acme-libs/contracts/health": ["./libs/contracts/src/health"],
-      "@acme-libs/contracts/messaging": ["./libs/contracts/src/messaging"],
       "@acme-libs/credentials": ["./libs/credentials/src"],
       "@acme-libs/database": ["./libs/database/src"],
       "@acme-libs/health": ["./libs/health/src"],
       "@acme-libs/http": ["./libs/http/src"],
       "@acme-libs/kernel": ["./libs/kernel/src"],
-      "@acme-libs/messaging": ["./libs/messaging/src"],
       "@acme-libs/observability": ["./libs/observability/src"],
       "@acme-libs/observability/testing": ["./libs/observability/src/testing"],
       "@acme-libs/observability/tracer": ["./libs/observability/src/tracer/tracer"],
