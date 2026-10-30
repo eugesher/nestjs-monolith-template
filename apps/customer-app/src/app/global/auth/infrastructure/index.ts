@@ -1,1 +1,1 @@
-export * from './core-adapters/auth-global-customer-identity-core.adapter';
+export * from './common-adapters/auth-global-customer-identity-common.adapter';

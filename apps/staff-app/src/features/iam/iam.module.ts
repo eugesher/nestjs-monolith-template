@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
+import { StaffIdentityCommonModule } from '@acme-staff-common/modules/staff-identity';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import {
   IamAssignRoleUseCase,
@@ -8,12 +8,12 @@ import {
   IamRegisterUserUseCase,
   IamUpdateRolePermissionsUseCase,
 } from './application';
-import { IamStaffIdentityCoreAdapter } from './infrastructure';
+import { IamStaffIdentityCommonAdapter } from './infrastructure';
 import { IAM_IDENTITY_PORT } from './outbound';
 import { IamController } from './presentation';
 
 @Module({
-  imports: [StaffIdentityCoreModule],
+  imports: [StaffIdentityCommonModule],
   controllers: [IamController],
   providers: [
     HttpExceptionFilter,
@@ -21,7 +21,7 @@ import { IamController } from './presentation';
     IamAssignRoleUseCase,
     IamListRolesUseCase,
     IamUpdateRolePermissionsUseCase,
-    { provide: IAM_IDENTITY_PORT, useClass: IamStaffIdentityCoreAdapter },
+    { provide: IAM_IDENTITY_PORT, useClass: IamStaffIdentityCommonAdapter },
   ],
 })
 export class IamModule {}

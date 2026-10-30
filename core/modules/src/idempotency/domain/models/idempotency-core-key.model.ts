@@ -5,7 +5,6 @@ import { IIdempotencyCoreKeyRecord } from '../interfaces/idempotency-core-key-re
 
 export class IdempotencyCoreKeyModel {
   private static readonly MAX_KEY_LENGTH = 128;
-  private static readonly HOUR_MS = 60 * 60 * 1000;
 
   private constructor(
     public readonly id: Maybe<string>,
@@ -50,12 +49,6 @@ export class IdempotencyCoreKeyModel {
       responseBody,
       createdAt,
     );
-  }
-
-  public static expiryCutoff(now: Date, ttlHours: number): Date {
-    const cutoffMs = now.getTime() - ttlHours * IdempotencyCoreKeyModel.HOUR_MS;
-
-    return new Date(cutoffMs);
   }
 
   public matches(requestFingerprint: string): boolean {

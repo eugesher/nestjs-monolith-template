@@ -113,7 +113,15 @@ export const moduleAreas = [
   }),
   ...areaPolicies('processors', {
     application: [],
-    infrastructure: [],
+    infrastructure: [
+      packages(
+        '@nestjs-cls/transactional',
+        '@nestjs-cls/transactional-adapter-typeorm',
+        '@nestjs/common',
+        '@nestjs/typeorm',
+        'typeorm',
+      ),
+    ],
     commonAdapters: [],
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [

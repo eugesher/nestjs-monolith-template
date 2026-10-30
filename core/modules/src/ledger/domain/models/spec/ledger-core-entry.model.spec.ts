@@ -2,7 +2,7 @@ import { LedgerCoreEntryModel } from '../ledger-core-entry.model';
 
 describe('LedgerCoreEntryModel', () => {
   describe('create', () => {
-    it('trims the operation key and the action and leaves the id and the record time to storage', () => {
+    it('trims the operation key and the action', () => {
       const entry = LedgerCoreEntryModel.create({
         operationKey: '  product-archived:12 ',
         subjectType: 'product',
@@ -14,7 +14,6 @@ describe('LedgerCoreEntryModel', () => {
       });
 
       expect({ ...entry }).toEqual({
-        id: undefined,
         operationKey: 'product-archived:12',
         subjectType: 'product',
         subjectId: '12',
@@ -22,7 +21,6 @@ describe('LedgerCoreEntryModel', () => {
         payload: { previousStatus: 'active' },
         correlationId: 'corr-1',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
-        recordedAt: undefined,
       });
     });
 
@@ -75,35 +73,6 @@ describe('LedgerCoreEntryModel', () => {
         });
 
       expect(create).toThrow(message);
-    });
-  });
-
-  describe('reconstitute', () => {
-    it('restores a stored entry as it is, frozen', () => {
-      const entry = LedgerCoreEntryModel.reconstitute({
-        id: '4210',
-        operationKey: 'product-archived:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { previousStatus: 'active' },
-        correlationId: 'corr-1',
-        occurredAt: new Date('2026-01-01T00:00:00.000Z'),
-        recordedAt: new Date('2026-01-01T00:00:00.120Z'),
-      });
-
-      expect({ ...entry }).toEqual({
-        id: '4210',
-        operationKey: 'product-archived:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { previousStatus: 'active' },
-        correlationId: 'corr-1',
-        occurredAt: new Date('2026-01-01T00:00:00.000Z'),
-        recordedAt: new Date('2026-01-01T00:00:00.120Z'),
-      });
-      expect(Object.isFrozen(entry)).toBe(true);
     });
   });
 });

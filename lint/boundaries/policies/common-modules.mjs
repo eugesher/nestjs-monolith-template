@@ -21,7 +21,7 @@ export const commonModules = [
     layer('application'),
     appContracts,
     baseLibs('observability'),
-    libContracts('database'),
+    libContracts('credentials', 'database'),
     packages('nestjs-pino'),
   ]),
   from('acme-app:common:modules:infrastructure', [
@@ -64,7 +64,7 @@ export const commonModules = [
     to('acme-app:common:modules:index', own('app')),
     to('acme-app:common:shared:index', own('app')),
     to('acme-core:modules:index'),
-    baseLibs('config'),
+    baseLibs('config', 'credentials'),
   ]),
   from('acme-app:common:modules:index', [layer('module')]),
 ];

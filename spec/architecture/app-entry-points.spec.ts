@@ -246,7 +246,7 @@ describe('app entry points', () => {
   ])('%s may NOT import a core contract other than the ledger', async (file) => {
     await expect({
       file,
-      code: 'import { x } from "@acme-core/contracts/customer-identity";',
+      code: 'import { x } from "@acme-customer-contracts/customer-identity";',
     }).toBreakRule('boundaries/dependencies');
   });
 

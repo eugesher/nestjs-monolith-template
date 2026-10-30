@@ -1,19 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage } from '@acme-libs/toolkit';
-import { type ILedgerQueryPort, LEDGER_QUERY_PORT } from '../../outbound';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import {
+  type ILedgerListEntriesRepositoryPort,
+  LEDGER_LIST_ENTRIES_REPOSITORY_PORT,
+} from '../../outbound';
 import { ILedgerEntryView, ILedgerListEntriesQuery } from '../interfaces';
 
 @Injectable()
 export class LedgerListEntriesUseCase {
   constructor(
-    @Inject(LEDGER_QUERY_PORT)
-    private readonly ledger: ILedgerQueryPort,
+    @Inject(LEDGER_LIST_ENTRIES_REPOSITORY_PORT)
+    private readonly repository: ILedgerListEntriesRepositoryPort,
   ) {}
 
   public execute(query: ILedgerListEntriesQuery): Promise<IPage<ILedgerEntryView>> {
     const { page, size, subjectType, subjectId, correlationId } = query;
+    const window = PaginationHelper.clampPageWindow(page, size);
 
-    return this.ledger.list({ page, size, subjectType, subjectId, correlationId });
+    return this.repository.list({ ...window, subjectType, subjectId, correlationId });
   }
 }

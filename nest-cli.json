@@ -109,24 +109,6 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
-    "core-contracts-customer-identity": {
-      "type": "library",
-      "root": "core/contracts/src/customer-identity",
-      "entryFile": "index",
-      "sourceRoot": "core/contracts/src/customer-identity",
-      "compilerOptions": {
-        "tsConfigPath": "core/contracts/tsconfig.lib.json"
-      }
-    },
-    "core-contracts-staff-identity": {
-      "type": "library",
-      "root": "core/contracts/src/staff-identity",
-      "entryFile": "index",
-      "sourceRoot": "core/contracts/src/staff-identity",
-      "compilerOptions": {
-        "tsConfigPath": "core/contracts/tsconfig.lib.json"
-      }
-    },
     "core-contracts-idempotency": {
       "type": "library",
       "root": "core/contracts/src/idempotency",
@@ -161,24 +143,6 @@
       "sourceRoot": "core/entities/src",
       "compilerOptions": {
         "tsConfigPath": "core/entities/tsconfig.lib.json"
-      }
-    },
-    "core-modules-customer-identity": {
-      "type": "library",
-      "root": "core/modules/src/customer-identity",
-      "entryFile": "index",
-      "sourceRoot": "core/modules/src/customer-identity",
-      "compilerOptions": {
-        "tsConfigPath": "core/modules/tsconfig.lib.json"
-      }
-    },
-    "core-modules-staff-identity": {
-      "type": "library",
-      "root": "core/modules/src/staff-identity",
-      "entryFile": "index",
-      "sourceRoot": "core/modules/src/staff-identity",
-      "compilerOptions": {
-        "tsConfigPath": "core/modules/tsconfig.lib.json"
       }
     },
     "core-modules-idempotency": {

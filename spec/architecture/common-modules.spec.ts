@@ -435,4 +435,83 @@ describe('common modules (common/modules/<module>)', () => {
       );
     });
   });
+
+  describe('identity modules by app', () => {
+    it('a staff-app common adapter MAY import the staff identity auth and admin ports', async () => {
+      await expect({
+        file: 'apps/staff-app/src/features/iam/infrastructure/common-adapters/__fixture__.ts',
+        code: 'import { STAFF_IDENTITY_COMMON_ADMIN_PORT, STAFF_IDENTITY_COMMON_AUTH_PORT } from "@acme-staff-contracts/staff-identity";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a customer-app common adapter MAY import the customer identity auth port', async () => {
+      await expect({
+        file: 'apps/customer-app/src/features/auth/infrastructure/common-adapters/__fixture__.ts',
+        code: 'import { CUSTOMER_IDENTITY_COMMON_AUTH_PORT, ICustomerIdentityCommonAuthPort } from "@acme-customer-contracts/customer-identity";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      [
+        'apps/customer-app/src/features/auth/infrastructure/common-adapters/__fixture__.ts',
+        'import { STAFF_IDENTITY_COMMON_AUTH_PORT } from "@acme-staff-contracts/staff-identity";',
+      ],
+      [
+        'apps/customer-app/src/app/global/auth/infrastructure/common-adapters/__fixture__.ts',
+        'import { STAFF_IDENTITY_COMMON_AUTH_PORT } from "@acme-staff-contracts/staff-identity";',
+      ],
+      [
+        'apps/customer-app/src/features/auth/auth.module.ts',
+        'import { StaffIdentityCommonModule } from "@acme-staff-common/modules/staff-identity";',
+      ],
+      [
+        'apps/customer-app/src/app/setup/orm/entities/index.ts',
+        'import { Customer, StaffUser } from "@acme-core/entities";',
+      ],
+    ])('%s may NOT reach staff identity — it belongs to staff-app', async (file, code) => {
+      await expect({ file, code }).toBreakRule('boundaries/dependencies');
+    });
+
+    it.each([
+      [
+        'apps/staff-app/src/features/auth/infrastructure/common-adapters/__fixture__.ts',
+        'import { CUSTOMER_IDENTITY_COMMON_AUTH_PORT } from "@acme-customer-contracts/customer-identity";',
+      ],
+      [
+        'apps/staff-app/src/app/global/auth/infrastructure/common-adapters/__fixture__.ts',
+        'import { CUSTOMER_IDENTITY_COMMON_AUTH_PORT } from "@acme-customer-contracts/customer-identity";',
+      ],
+      [
+        'apps/staff-app/src/features/auth/auth.module.ts',
+        'import { CustomerIdentityCommonModule } from "@acme-customer-common/modules/customer-identity";',
+      ],
+      [
+        'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
+        'import { Customer, Product } from "@acme-core/entities";',
+      ],
+      [
+        'apps/staff-app/src/app/setup/orm/__fixture__.ts',
+        'import { Customer } from "@acme-core/entities";',
+      ],
+    ])('%s may NOT reach customer identity — it belongs to customer-app', async (file, code) => {
+      await expect({ file, code }).toBreakRule('boundaries/dependencies');
+    });
+
+    it.each([
+      ['apps/customer-app/src/app/setup/orm/entities/index.ts', 'Customer'],
+      ['apps/staff-app/src/app/setup/orm/entities/index.ts', 'StaffUser'],
+    ])('%s MAY register the %s entity of its own identity module', async (file, entity) => {
+      await expect({
+        file,
+        code: `import { ${entity} } from "@acme-core/entities";`,
+      }).toPassArchitectureLint();
+    });
+
+    it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
+      await expect({
+        file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
+        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
+      }).toPassArchitectureLint();
+    });
+  });
 });

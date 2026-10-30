@@ -49,10 +49,10 @@ describe('core modules', () => {
     });
 
     it.each([
-      '@acme-core/contracts/customer-identity',
-      '@acme-core/contracts/staff-identity',
-      '@acme-core/modules/customer-identity',
-      '@acme-core/modules/staff-identity',
+      '@acme-customer-contracts/customer-identity',
+      '@acme-staff-contracts/staff-identity',
+      '@acme-customer-common/modules/customer-identity',
+      '@acme-staff-common/modules/staff-identity',
     ])(
       'ledger may NOT reach %s — the journal records facts, it never asks who the user is',
       async (alias) => {
@@ -229,26 +229,18 @@ describe('core modules', () => {
       },
     );
 
-    it('application MAY take the credentials ports', async () => {
-      await expect({
-        file: 'core/modules/src/customer-identity/application/use-cases/__fixture__.ts',
-        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT, ICredentialsPasswordHasherPort } from "@acme-libs/contracts/credentials";',
-      }).toPassArchitectureLint();
-    });
-
-    it('the module root MAY mount the credentials lib', async () => {
-      await expect({
-        file: 'core/modules/src/customer-identity/module/__fixture__.ts',
-        code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
-      }).toPassArchitectureLint();
-    });
-
-    it.each(['application', 'infrastructure'])(
-      '%s may NOT mount the credentials lib, only the module root does',
-      async (layer) => {
+    it.each([
+      [
+        'application/use-cases',
+        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+      ],
+      ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
+    ])(
+      '%s may NOT reach the credentials — sign-in belongs to the identity module of each app',
+      async (layer, code) => {
         await expect({
-          file: `core/modules/src/customer-identity/${layer}/__fixture__.ts`,
-          code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
+          file: `core/modules/src/__ledger-fixture__/${layer}/__fixture__.ts`,
+          code,
         }).toBreakRule('boundaries/dependencies');
       },
     );
@@ -272,7 +264,7 @@ describe('core modules', () => {
 
     it('application MAY take the transaction port and the logger', async () => {
       await expect({
-        file: 'core/modules/src/staff-identity/application/use-cases/__fixture__.ts',
+        file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
           'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
           'import { PinoLogger } from "nestjs-pino";',
@@ -281,14 +273,14 @@ describe('core modules', () => {
 
     it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
       await expect({
-        file: 'core/modules/src/staff-identity/application/use-cases/__fixture__.ts',
+        file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('the module root MAY bind config values with the config lib', async () => {
       await expect({
-        file: 'core/modules/src/staff-identity/module/__fixture__.ts',
+        file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
         code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
       }).toPassArchitectureLint();
     });
@@ -297,90 +289,11 @@ describe('core modules', () => {
       '%s may NOT read the config, values come in as tokens',
       async (layer) => {
         await expect({
-          file: `core/modules/src/staff-identity/${layer}/__fixture__.ts`,
+          file: `core/modules/src/__ledger-fixture__/${layer}/__fixture__.ts`,
           code: 'import { ConfigService } from "@nestjs/config";',
         }).toBreakRule('boundaries/dependencies');
       },
     );
-  });
-
-  describe('identity modules by app', () => {
-    it('a staff-app core adapter MAY import the staff identity auth and admin ports', async () => {
-      await expect({
-        file: 'apps/staff-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
-      }).toPassArchitectureLint();
-    });
-
-    it('a customer-app core adapter MAY import the customer identity auth port', async () => {
-      await expect({
-        file: 'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT, ICustomerIdentityCoreAuthPort } from "@acme-core/contracts/customer-identity";',
-      }).toPassArchitectureLint();
-    });
-
-    it.each([
-      [
-        'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
-      ],
-      [
-        'apps/customer-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
-      ],
-      [
-        'apps/customer-app/src/features/auth/auth.module.ts',
-        'import { StaffIdentityCoreModule } from "@acme-core/modules/staff-identity";',
-      ],
-      [
-        'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { Customer, StaffUser } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach staff identity — it belongs to staff-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      [
-        'apps/staff-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";',
-      ],
-      [
-        'apps/staff-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";',
-      ],
-      [
-        'apps/staff-app/src/features/auth/auth.module.ts',
-        'import { CustomerIdentityCoreModule } from "@acme-core/modules/customer-identity";',
-      ],
-      [
-        'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
-        'import { Customer, Product } from "@acme-core/entities";',
-      ],
-      [
-        'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-        'import { Customer } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach customer identity — it belongs to customer-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      ['apps/customer-app/src/app/setup/orm/entities/index.ts', 'Customer'],
-      ['apps/staff-app/src/app/setup/orm/entities/index.ts', 'StaffUser'],
-    ])('%s MAY register the %s entity of its own identity module', async (file, entity) => {
-      await expect({
-        file,
-        code: `import { ${entity} } from "@acme-core/entities";`,
-      }).toPassArchitectureLint();
-    });
-
-    it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
-      await expect({
-        file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
-      }).toPassArchitectureLint();
-    });
   });
 
   describe('core entities', () => {

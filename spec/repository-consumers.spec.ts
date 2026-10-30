@@ -6,13 +6,13 @@ describe('one repository per use case, service or facade', () => {
 
     expect(names).toEqual(
       expect.arrayContaining([
-        'StaffIdentityCoreAssignRoleUseCase',
-        'StaffIdentityCoreFindPermissionCodesUseCase',
-        'StaffIdentityCoreListRolesUseCase',
-        'StaffIdentityCoreLoginUseCase',
-        'StaffIdentityCoreRegisterUserUseCase',
-        'StaffIdentityCoreUpdateRolePermissionsUseCase',
-        'StaffIdentityCoreValidateSubjectUseCase',
+        'StaffIdentityCommonAssignRoleUseCase',
+        'StaffIdentityCommonFindPermissionCodesUseCase',
+        'StaffIdentityCommonListRolesUseCase',
+        'StaffIdentityCommonLoginUseCase',
+        'StaffIdentityCommonRegisterUserUseCase',
+        'StaffIdentityCommonUpdateRolePermissionsUseCase',
+        'StaffIdentityCommonValidateSubjectUseCase',
       ]),
     );
   });

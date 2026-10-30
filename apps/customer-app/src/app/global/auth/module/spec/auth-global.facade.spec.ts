@@ -1,4 +1,4 @@
-import { AuthGlobalCustomerIdentityCoreAdapter } from '../../infrastructure';
+import { AuthGlobalCustomerIdentityCommonAdapter } from '../../infrastructure';
 import { AuthGlobalFacade } from '../auth-global.facade';
 
 describe('AuthGlobalFacade', () => {
@@ -9,7 +9,7 @@ describe('AuthGlobalFacade', () => {
     findSubject = jest.fn();
     facade = new AuthGlobalFacade({
       findSubject,
-    } as unknown as AuthGlobalCustomerIdentityCoreAdapter);
+    } as unknown as AuthGlobalCustomerIdentityCommonAdapter);
   });
 
   describe('validate', () => {

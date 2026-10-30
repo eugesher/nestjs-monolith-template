@@ -1,4 +1,4 @@
-import { AuthGlobalStaffIdentityCoreAdapter } from '../../infrastructure';
+import { AuthGlobalStaffIdentityCommonAdapter } from '../../infrastructure';
 import { AuthGlobalClaimsFacade } from '../auth-global-claims.facade';
 
 describe('AuthGlobalClaimsFacade', () => {
@@ -12,7 +12,7 @@ describe('AuthGlobalClaimsFacade', () => {
     facade = new AuthGlobalClaimsFacade({
       findRoles,
       findPermissionCodes,
-    } as unknown as AuthGlobalStaffIdentityCoreAdapter);
+    } as unknown as AuthGlobalStaffIdentityCommonAdapter);
   });
 
   describe('findRoles', () => {

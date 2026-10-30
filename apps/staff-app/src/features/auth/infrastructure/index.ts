@@ -1,1 +1,1 @@
-export * from './core-adapters/auth-staff-identity-core.adapter';
+export * from './common-adapters/auth-staff-identity-common.adapter';

@@ -6,11 +6,11 @@ import {
   IAuthFindRolesQuery,
 } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
-import { AuthGlobalStaffIdentityCoreAdapter } from '../infrastructure';
+import { AuthGlobalStaffIdentityCommonAdapter } from '../infrastructure';
 
 @Injectable()
 export class AuthGlobalClaimsFacade implements IAuthClaimsPort {
-  constructor(private readonly identity: AuthGlobalStaffIdentityCoreAdapter) {}
+  constructor(private readonly identity: AuthGlobalStaffIdentityCommonAdapter) {}
 
   public findRoles(query: IAuthFindRolesQuery): Promise<RoleEnum[]> {
     return this.identity.findRoles(query);

@@ -39,29 +39,6 @@ describe('app → core', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a customer-app feature may NOT reach the staff identity admin port — customer-app has no back office, IAM lives in staff-app only', async () => {
-      await expect({
-        file: 'apps/customer-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, type IStaffIdentityCoreAdminPort } from "@acme-core/contracts/staff-identity";',
-      }).toBreakRule('boundaries/dependencies');
-    });
-
-    it('a customer-app feature may NOT slip a staff identity port in next to a customer identity one', async () => {
-      await expect({
-        file: 'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        code:
-          'import { CUSTOMER_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/customer-identity";\n' +
-          'import { STAFF_IDENTITY_CORE_AUTH_PORT } from "@acme-core/contracts/staff-identity";',
-      }).toBreakRule('boundaries/dependencies');
-    });
-
-    it('an staff-app feature MAY reach the staff identity admin port — the back office is staff-app', async () => {
-      await expect({
-        file: 'apps/staff-app/src/features/iam/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { STAFF_IDENTITY_CORE_ADMIN_PORT, type IStaffIdentityCoreAdminPort } from "@acme-core/contracts/staff-identity";',
-      }).toPassArchitectureLint();
-    });
-
     it('infrastructure/core-adapters may NOT reach entities — it talks to the core module, not its tables', async () => {
       await expect({
         file: 'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/__fixture__.ts',

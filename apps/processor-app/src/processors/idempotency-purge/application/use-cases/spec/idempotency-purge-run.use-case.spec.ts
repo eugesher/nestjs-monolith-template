@@ -4,30 +4,49 @@ import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/tes
 import { IdempotencyPurgeRunUseCase } from '../idempotency-purge-run.use-case';
 
 describe('IdempotencyPurgeRunUseCase', () => {
-  let purgeExpired: jest.Mock;
+  let deleteCreatedBefore: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: IdempotencyPurgeRunUseCase;
 
   beforeEach(() => {
-    purgeExpired = jest.fn().mockResolvedValue(undefined);
+    jest.useFakeTimers({ now: new Date('2026-01-02T12:00:00.000Z') });
+    deleteCreatedBefore = jest.fn().mockResolvedValue(3);
     logger = makePinoLoggerMock();
-    useCase = new IdempotencyPurgeRunUseCase({ purgeExpired }, 24, logger as unknown as PinoLogger);
+    useCase = new IdempotencyPurgeRunUseCase(
+      { deleteCreatedBefore },
+      24,
+      logger as unknown as PinoLogger,
+    );
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('execute', () => {
-    it('purges the keys older than the TTL and leaves the outcome log to the core module', async () => {
+    it('deletes the keys created more than the TTL ago', async () => {
       await useCase.execute();
 
-      expect(purgeExpired.mock.calls).toEqual([[24]]);
-      expect(logger.info).not.toHaveBeenCalled();
+      expect(deleteCreatedBefore.mock.calls).toEqual([[new Date('2026-01-01T12:00:00.000Z')]]);
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
-    it('skips a tick that arrives while the previous purge is still running', async () => {
-      let finish: () => void = () => undefined;
+    it('logs the cutoff, the count and the TTL', async () => {
+      await useCase.execute();
 
-      purgeExpired.mockReturnValueOnce(
-        new Promise<void>((resolve) => {
+      expect(logger.info.mock.calls).toEqual([
+        [
+          { cutoff: '2026-01-01T12:00:00.000Z', removed: 3, ttlHours: 24 },
+          'Expired idempotency keys purged',
+        ],
+      ]);
+    });
+
+    it('skips a tick that arrives while the previous purge is still running', async () => {
+      let finish: (removed: number) => void = () => undefined;
+
+      deleteCreatedBefore.mockReturnValueOnce(
+        new Promise<number>((resolve) => {
           finish = resolve;
         }),
       );
@@ -35,12 +54,13 @@ describe('IdempotencyPurgeRunUseCase', () => {
       const first = useCase.execute();
 
       await useCase.execute();
-      finish();
+      finish(0);
       await first;
 
-      expect(purgeExpired).toHaveBeenCalledTimes(1);
-      expect(logger.info.mock.calls).toEqual([
-        [{}, 'Idempotency purge still running, this tick is skipped'],
+      expect(deleteCreatedBefore).toHaveBeenCalledTimes(1);
+      expect(logger.info.mock.calls[0]).toEqual([
+        {},
+        'Idempotency purge still running, this tick is skipped',
       ]);
     });
 
@@ -48,30 +68,29 @@ describe('IdempotencyPurgeRunUseCase', () => {
       await useCase.execute();
       await useCase.execute();
 
-      expect(purgeExpired).toHaveBeenCalledTimes(2);
-      expect(logger.info).not.toHaveBeenCalled();
+      expect(deleteCreatedBefore).toHaveBeenCalledTimes(2);
     });
 
     it('logs a failed purge as a warning instead of throwing', async () => {
       const error = new Error('database is down');
 
-      purgeExpired.mockRejectedValue(error);
+      deleteCreatedBefore.mockRejectedValue(error);
 
       await useCase.execute();
 
       expect(logger.warn.mock.calls).toEqual([
         [{ err: error }, 'Idempotency purge failed, the next tick retries'],
       ]);
+      expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('purges again on the tick after a failed purge', async () => {
-      purgeExpired.mockRejectedValueOnce(new Error('database is down'));
+      deleteCreatedBefore.mockRejectedValueOnce(new Error('database is down'));
 
       await useCase.execute();
       await useCase.execute();
 
-      expect(purgeExpired).toHaveBeenCalledTimes(2);
-      expect(logger.info).not.toHaveBeenCalled();
+      expect(deleteCreatedBefore).toHaveBeenCalledTimes(2);
     });
   });
 });
