@@ -45,6 +45,12 @@ The policy `customer-claims.mjs` keeps the claim machinery out of customer-app: 
 `PermissionCodeEnum`. `spec/architecture/core-modules.spec.ts` and
 `spec/architecture/libs-by-layer.spec.ts` hold the cases in both directions.
 
+**One file of staff-app registers `Customer`.** An order references its customer by a foreign key,
+and TypeORM needs the target of every relation in the entity list of the connection. staff-app
+reads orders, so `apps/staff-app/src/app/setup/orm/entities/index.ts` lists `Customer` next to
+`Order`. The exception in `identity-modules.mjs` names that file alone and the `Customer` specifier
+alone: no other file of staff-app may import the entity (see `20-order-and-stock-schema.md`).
+
 ## Shared credentials
 
 **Code used by two core modules moves to a lib.** While one module hashed passwords and signed

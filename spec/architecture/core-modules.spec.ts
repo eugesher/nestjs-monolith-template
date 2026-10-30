@@ -354,8 +354,12 @@ describe('core modules', () => {
         'import { CustomerIdentityCoreModule } from "@acme-core/modules/customer-identity";',
       ],
       [
-        'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        'import { Customer, StaffUser } from "@acme-core/entities";',
+        'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
+        'import { Customer, Product } from "@acme-core/entities";',
+      ],
+      [
+        'apps/staff-app/src/app/setup/orm/__fixture__.ts',
+        'import { Customer } from "@acme-core/entities";',
       ],
     ])('%s may NOT reach customer identity — it belongs to customer-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -368,6 +372,13 @@ describe('core modules', () => {
       await expect({
         file,
         code: `import { ${entity} } from "@acme-core/entities";`,
+      }).toPassArchitectureLint();
+    });
+
+    it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
+      await expect({
+        file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
+        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
       }).toPassArchitectureLint();
     });
   });

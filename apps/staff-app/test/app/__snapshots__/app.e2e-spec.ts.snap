@@ -961,6 +961,15 @@ exports[`App Product GET /api/products should list the catalog, newest first 1`]
       "items": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "106",
+          "name": "Sold out product",
+          "sku": "SKU-0007",
+          "status": "active",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "105",
           "name": "Archived product",
           "sku": "SKU-0006",
@@ -1016,7 +1025,7 @@ exports[`App Product GET /api/products should list the catalog, newest first 1`]
       ],
       "page": 1,
       "size": 20,
-      "total": 6,
+      "total": 7,
     },
   },
 }
