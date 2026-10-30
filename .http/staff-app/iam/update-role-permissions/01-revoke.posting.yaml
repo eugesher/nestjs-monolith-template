@@ -4,7 +4,7 @@ description: |-
 
   Expect: 200 OK, viewer holds product:write instead of ledger:read; the same viewer token gets 200 from GET /ledger before and 403 after
   User: admin@example.com (token signed by scripts.py)
-  After: SQL: DELETE FROM staff_role_permissions WHERE role_id = 3; INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1)
+  After: SQL: DELETE FROM staff_role_permissions WHERE role_id = 3; INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1), (3, 7), (3, 10)
 method: PUT
 url: $STAFF_APP_BASE_URL/iam/roles/viewer/permissions
 body:
