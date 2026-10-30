@@ -1,0 +1,90 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { OrderDomainException, OrderErrorCodeEnum, OrderModel } from '../../domain';
+import {
+  type IOrderIdempotencyPort,
+  type IOrderPlaceRepositoryPort,
+  ORDER_IDEMPOTENCY_PORT,
+  ORDER_PLACE_REPOSITORY_PORT,
+} from '../../outbound';
+import { IOrderPlaceCommand, IOrderView } from '../interfaces';
+import { OrderViewMapper } from '../mappers/order-view.mapper';
+import { OrderLedgerService } from '../services/order-ledger.service';
+
+@Injectable()
+export class OrderPlaceUseCase {
+  constructor(
+    private readonly ledgerService: OrderLedgerService,
+    @Inject(ORDER_PLACE_REPOSITORY_PORT)
+    private readonly repository: IOrderPlaceRepositoryPort,
+    @Inject(ORDER_IDEMPOTENCY_PORT)
+    private readonly idempotency: IOrderIdempotencyPort,
+    @Inject(TRANSACTION_PORT)
+    private readonly transaction: ITransactionPort,
+    @InjectPinoLogger(OrderPlaceUseCase.name)
+    private readonly logger: PinoLogger,
+  ) {}
+
+  public async execute(command: IOrderPlaceCommand): Promise<IOrderView> {
+    const { customerId, productIds, idempotencyKey } = command;
+    const claim = await this.idempotency.claim<IOrderView>({
+      key: idempotencyKey,
+      body: { customerId, productIds },
+    });
+
+    if (claim.outcome === 'replay') {
+      this.logger.info({ idempotencyKey }, 'Order placement replayed from the idempotency store');
+
+      return claim.storedResponse;
+    }
+
+    if (claim.outcome === 'in-flight') {
+      throw new OrderDomainException(
+        OrderErrorCodeEnum.ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT,
+        `Idempotency-Key ${idempotencyKey} is still being processed, retry shortly`,
+      );
+    }
+
+    if (claim.outcome === 'mismatch') {
+      throw new OrderDomainException(
+        OrderErrorCodeEnum.ORDER_IDEMPOTENCY_KEY_REUSED,
+        `Idempotency-Key ${idempotencyKey} was already used with a different request body`,
+      );
+    }
+
+    try {
+      return await this.place(command);
+    } catch (error) {
+      await this.idempotency.release({ key: idempotencyKey });
+
+      throw error;
+    }
+  }
+
+  private async place(command: IOrderPlaceCommand): Promise<IOrderView> {
+    const { customerId } = command;
+    const view = await this.transaction.run(() => this.persist(command));
+    const productIds = view.products.map((product) => product.productId);
+
+    await this.ledgerService.recordPlaced({ orderId: view.id, customerId, productIds });
+
+    this.logger.info({ orderId: view.id, customerId, units: productIds.length }, 'Order placed');
+
+    return view;
+  }
+
+  private async persist(command: IOrderPlaceCommand): Promise<IOrderView> {
+    const { customerId, productIds, idempotencyKey } = command;
+    const distinctIds = [...new Set(productIds)];
+    const stock = await this.repository.lockStock(distinctIds);
+    const draft = OrderModel.place({ customerId, productIds, stock });
+    const placed = await this.repository.insert(draft);
+    const view = OrderViewMapper.toView(placed);
+
+    await this.idempotency.complete({ key: idempotencyKey, response: view });
+
+    return view;
+  }
+}
