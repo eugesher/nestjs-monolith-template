@@ -1,36 +1,115 @@
-import { RoleEnum } from '@acme-libs/kernel';
+import { PinoLogger } from 'nestjs-pino';
+
+import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { IamDomainException } from '../../../domain';
 import { IamRegisterUserUseCase } from '../iam-register-user.use-case';
 
 describe('IamRegisterUserUseCase', () => {
-  let registerUser: jest.Mock;
+  let outcomes: string[];
+  let repository: { insert: jest.Mock };
+  let transaction: { run: jest.Mock };
+  let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
+  let logger: PinoLoggerMock;
   let useCase: IamRegisterUserUseCase;
 
   beforeEach(() => {
-    registerUser = jest.fn();
-    useCase = new IamRegisterUserUseCase({
-      registerUser,
-      assignRole: jest.fn(),
-      listRoles: jest.fn(),
-      updateRolePermissions: jest.fn(),
-    });
+    outcomes = [];
+    repository = { insert: jest.fn().mockResolvedValue(undefined) };
+    transaction = {
+      run: jest.fn(async (work: () => Promise<unknown>) => {
+        outcomes.push('begin');
+
+        const result = await work();
+
+        outcomes.push('commit');
+
+        return result;
+      }),
+    };
+    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
+    logger = makePinoLoggerMock();
+    useCase = new IamRegisterUserUseCase(
+      repository,
+      transaction,
+      passwordHasher,
+      logger as unknown as PinoLogger,
+    );
+    jest.spyOn(crypto, 'randomUUID').mockReturnValue('5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f');
   });
 
-  describe('execute', () => {
-    it('registers the user through identity and answers its id and email', async () => {
-      registerUser.mockResolvedValue({ id: 'user-1', email: 'ann@example.com' });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-      const user = await useCase.execute({
-        email: 'ann@example.com',
-        password: 'long-enough-password',
-        roles: [RoleEnum.EDITOR],
-      });
-
-      expect(user).toEqual({ id: 'user-1', email: 'ann@example.com' });
-      expect(registerUser).toHaveBeenCalledWith({
-        email: 'ann@example.com',
-        password: 'long-enough-password',
-        roles: ['editor'],
-      });
+  it('hashes the password and stores the user with its roles in one transaction', async () => {
+    const view = await useCase.execute({
+      email: 'Editor@Example.com',
+      password: 'correct-horse-battery',
+      roles: [RoleEnum.EDITOR],
     });
+
+    expect(view).toEqual({
+      id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
+      email: 'editor@example.com',
+    });
+    expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
+    expect(repository.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
+        email: 'editor@example.com',
+        passwordHash: 'argon-hash',
+        roles: ['editor'],
+      }),
+    );
+    expect(outcomes).toEqual(['begin', 'commit']);
+    expect(logger.info).toHaveBeenCalledWith(
+      { userId: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f' },
+      'User registered',
+    );
+  });
+
+  it('rejects a weak password before hashing it', async () => {
+    const register = useCase.execute({ email: 'editor@example.com', password: 'short', roles: [] });
+
+    await expect(register).rejects.toMatchObject({
+      code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
+    });
+    expect(passwordHasher.hash).not.toHaveBeenCalled();
+  });
+
+  it('rejects a malformed email before opening the transaction', async () => {
+    const register = useCase.execute({
+      email: 'not-an-email',
+      password: 'correct-horse-battery',
+      roles: [],
+    });
+
+    await expect(register).rejects.toMatchObject({
+      code: IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
+    });
+    expect(transaction.run).not.toHaveBeenCalled();
+  });
+
+  it('lets the taken email refusal of the repository roll the transaction back', async () => {
+    repository.insert.mockRejectedValue(
+      new IamDomainException(
+        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+        'Email editor@example.com is already registered',
+      ),
+    );
+
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'correct-horse-battery',
+      roles: [],
+    });
+
+    await expect(register).rejects.toMatchObject({
+      code: IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+      message: 'Email editor@example.com is already registered',
+    });
+    expect(outcomes).toEqual(['begin']);
+    expect(logger.info).not.toHaveBeenCalled();
   });
 });

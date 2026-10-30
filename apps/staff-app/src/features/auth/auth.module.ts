@@ -1,20 +1,27 @@
 import { Module } from '@nestjs/common';
 
-import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
+import { AuthCommonModule } from '@acme-staff-common/modules/auth';
+import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { AuthLoginUseCase, AuthMeUseCase } from './application';
-import { AuthStaffIdentityCoreAdapter } from './infrastructure';
-import { AUTH_IDENTITY_PORT } from './outbound';
+import { AuthAccessTokenService, AuthLoginUseCase, AuthMeUseCase } from './application';
+import {
+  AuthIdentityCommonAdapter,
+  AuthLoginRepository,
+  AuthTypeOrmModule,
+} from './infrastructure';
+import { AUTH_IDENTITY_PORT, AUTH_LOGIN_REPOSITORY_PORT } from './outbound';
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [StaffIdentityCoreModule],
+  imports: [AuthTypeOrmModule.forFeature(), CredentialsLibModule, AuthCommonModule],
   controllers: [AuthController],
   providers: [
     HttpExceptionFilter,
     AuthLoginUseCase,
     AuthMeUseCase,
-    { provide: AUTH_IDENTITY_PORT, useClass: AuthStaffIdentityCoreAdapter },
+    AuthAccessTokenService,
+    { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
+    { provide: AUTH_IDENTITY_PORT, useClass: AuthIdentityCommonAdapter },
   ],
 })
 export class AuthModule {}

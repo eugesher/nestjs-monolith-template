@@ -1,4 +1,4 @@
-import { AuthGlobalStaffIdentityCoreAdapter } from '../../infrastructure';
+import { AuthGlobalValidateSubjectUseCase } from '../../application';
 import { AuthGlobalFacade } from '../auth-global.facade';
 
 describe('AuthGlobalFacade', () => {
@@ -7,20 +7,20 @@ describe('AuthGlobalFacade', () => {
 
   beforeEach(() => {
     findSubject = jest.fn();
-    facade = new AuthGlobalFacade({ findSubject } as unknown as AuthGlobalStaffIdentityCoreAdapter);
+    facade = new AuthGlobalFacade(new AuthGlobalValidateSubjectUseCase({ findSubject }));
   });
 
   describe('validate', () => {
-    it('answers the user identity re-derives for the token subject', async () => {
-      findSubject.mockResolvedValue({ id: 'user-1', email: 'ann@example.com' });
+    it('answers the user the common auth module re-derives for the token subject', async () => {
+      findSubject.mockResolvedValue({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
 
       const user = await facade.validate({ sub: 'user-1' });
 
       expect(user).toEqual({ id: 'user-1', email: 'ann@example.com' });
-      expect(findSubject).toHaveBeenCalledWith({ sub: 'user-1' });
+      expect(findSubject).toHaveBeenCalledWith('user-1');
     });
 
-    it('answers no user when identity rejects the subject', async () => {
+    it('answers no user when the subject is not an active staff user', async () => {
       findSubject.mockResolvedValue(undefined);
 
       const user = await facade.validate({ sub: 'user-1' });

@@ -30,6 +30,34 @@ describe('LedgerListEntriesUseCase', () => {
       });
     });
 
+    it('reads the first page of 20 when the query names no window', async () => {
+      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
+
+      await useCase.execute({ subjectType: 'product' });
+
+      expect(list).toHaveBeenCalledWith({
+        page: 1,
+        size: 20,
+        subjectType: 'product',
+        subjectId: undefined,
+        correlationId: undefined,
+      });
+    });
+
+    it('caps the page size at 100', async () => {
+      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 100 });
+
+      await useCase.execute({ size: 500 });
+
+      expect(list).toHaveBeenCalledWith({
+        page: 1,
+        size: 100,
+        subjectType: undefined,
+        subjectId: undefined,
+        correlationId: undefined,
+      });
+    });
+
     it('answers the page of the ledger', async () => {
       list.mockResolvedValue({
         items: [

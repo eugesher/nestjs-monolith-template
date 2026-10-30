@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { StaffIdentityCoreModule } from '@acme-core/modules/staff-identity';
+import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import {
   IamAssignRoleUseCase,
@@ -8,12 +8,23 @@ import {
   IamRegisterUserUseCase,
   IamUpdateRolePermissionsUseCase,
 } from './application';
-import { IamStaffIdentityCoreAdapter } from './infrastructure';
-import { IAM_IDENTITY_PORT } from './outbound';
+import {
+  IamAssignRoleRepository,
+  IamListRolesRepository,
+  IamRegisterUserRepository,
+  IamTypeOrmModule,
+  IamUpdateRolePermissionsRepository,
+} from './infrastructure';
+import {
+  IAM_ASSIGN_ROLE_REPOSITORY_PORT,
+  IAM_LIST_ROLES_REPOSITORY_PORT,
+  IAM_REGISTER_USER_REPOSITORY_PORT,
+  IAM_UPDATE_ROLE_PERMISSIONS_REPOSITORY_PORT,
+} from './outbound';
 import { IamController } from './presentation';
 
 @Module({
-  imports: [StaffIdentityCoreModule],
+  imports: [IamTypeOrmModule.forFeature(), CredentialsLibModule],
   controllers: [IamController],
   providers: [
     HttpExceptionFilter,
@@ -21,7 +32,13 @@ import { IamController } from './presentation';
     IamAssignRoleUseCase,
     IamListRolesUseCase,
     IamUpdateRolePermissionsUseCase,
-    { provide: IAM_IDENTITY_PORT, useClass: IamStaffIdentityCoreAdapter },
+    { provide: IAM_ASSIGN_ROLE_REPOSITORY_PORT, useClass: IamAssignRoleRepository },
+    { provide: IAM_LIST_ROLES_REPOSITORY_PORT, useClass: IamListRolesRepository },
+    { provide: IAM_REGISTER_USER_REPOSITORY_PORT, useClass: IamRegisterUserRepository },
+    {
+      provide: IAM_UPDATE_ROLE_PERMISSIONS_REPOSITORY_PORT,
+      useClass: IamUpdateRolePermissionsRepository,
+    },
   ],
 })
 export class IamModule {}

@@ -6,13 +6,15 @@ import {
   IAuthUserValidatorPort,
 } from '@acme-libs/contracts/auth';
 import { Maybe } from '@acme-libs/toolkit';
-import { AuthGlobalStaffIdentityCoreAdapter } from '../infrastructure';
+import { AuthGlobalValidateSubjectUseCase } from '../application';
 
 @Injectable()
 export class AuthGlobalFacade implements IAuthUserValidatorPort {
-  constructor(private readonly identity: AuthGlobalStaffIdentityCoreAdapter) {}
+  constructor(private readonly authGlobalValidateSubject: AuthGlobalValidateSubjectUseCase) {}
 
   public validate(query: IAuthJwtPayloadQuery): Promise<Maybe<IAuthCurrentUserView>> {
-    return this.identity.findSubject(query);
+    const { sub } = query;
+
+    return this.authGlobalValidateSubject.execute({ userId: sub });
   }
 }

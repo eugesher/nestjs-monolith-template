@@ -1,18 +1,23 @@
 import { Global, Module } from '@nestjs/common';
 
-import { CustomerIdentityCoreModule } from '@acme-core/modules/customer-identity';
 import { AuthLibModule } from '@acme-libs/auth';
 import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
-import { AuthGlobalCustomerIdentityCoreAdapter } from '../infrastructure';
+import { AuthGlobalValidateSubjectUseCase } from '../application';
+import { AuthGlobalTypeOrmModule, AuthGlobalValidateSubjectRepository } from '../infrastructure';
+import { AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT } from '../outbound';
 import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
 @Module({
-  imports: [AuthLibModule, CustomerIdentityCoreModule],
+  imports: [AuthGlobalTypeOrmModule.forFeature(), AuthLibModule],
   exports: [AUTH_USER_VALIDATOR_PORT],
   providers: [
     { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },
-    AuthGlobalCustomerIdentityCoreAdapter,
+    AuthGlobalValidateSubjectUseCase,
+    {
+      provide: AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
+      useClass: AuthGlobalValidateSubjectRepository,
+    },
   ],
 })
 export class AuthGlobalModule {}

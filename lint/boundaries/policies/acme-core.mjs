@@ -13,7 +13,7 @@ export const acmeCore = [
     layer('application'),
     ownContracts,
     baseLibs('observability'),
-    libContracts('credentials', 'database'),
+    libContracts('database'),
     packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [
@@ -38,7 +38,7 @@ export const acmeCore = [
     layer('module:facade'),
     layer('module'),
     ownContracts,
-    baseLibs('config', 'credentials'),
+    baseLibs('config'),
   ]),
   from('acme-core:modules:index', [layer('module')]),
   from('acme-core:contracts', [ownContracts, baseLibs()]),

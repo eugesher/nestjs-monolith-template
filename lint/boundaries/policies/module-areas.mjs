@@ -91,7 +91,7 @@ const areaPolicies = (area, sharedFacing) => {
 
 export const moduleAreas = [
   ...areaPolicies('features', {
-    application: [packages('@nestjs/common')],
+    application: [libContracts('credentials'), packages('@nestjs/common')],
     infrastructure: [
       packages(
         '@nestjs-cls/transactional',
@@ -109,11 +109,22 @@ export const moduleAreas = [
       baseLibs('auth', 'http'),
       packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
-    module: [baseLibs('auth', 'config', 'health', 'http'), packages('@nestjs/common')],
+    module: [
+      baseLibs('auth', 'config', 'credentials', 'health', 'http'),
+      packages('@nestjs/common'),
+    ],
   }),
   ...areaPolicies('processors', {
     application: [],
-    infrastructure: [],
+    infrastructure: [
+      packages(
+        '@nestjs-cls/transactional',
+        '@nestjs-cls/transactional-adapter-typeorm',
+        '@nestjs/common',
+        '@nestjs/typeorm',
+        'typeorm',
+      ),
+    ],
     commonAdapters: [],
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [

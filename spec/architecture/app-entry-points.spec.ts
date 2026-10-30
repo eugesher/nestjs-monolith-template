@@ -18,8 +18,10 @@ describe('app entry points', () => {
 
     expect(appAliases).toEqual([
       '@acme-staff-app',
+      '@acme-staff-common/modules/auth',
       '@acme-staff-common/shared/concurrency',
       '@acme-staff-common/shared/ledger-record',
+      '@acme-staff-contracts/auth',
       '@acme-staff-features',
       '@acme-customer-app',
       '@acme-customer-common/shared/ledger-record',
@@ -33,8 +35,10 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff-app',
+    '@acme-staff-common/modules/auth',
     '@acme-staff-common/shared/concurrency',
     '@acme-staff-common/shared/ledger-record',
+    '@acme-staff-contracts/auth',
     '@acme-staff-features',
     '@acme-customer-app',
     '@acme-customer-common/shared/ledger-record',
@@ -54,6 +58,7 @@ describe('app entry points', () => {
     '@acme-customer-features/health/health.module',
     '@acme-staff-features/index',
     '@acme-staff-common/shared/concurrency/decorators/if-match.decorator',
+    '@acme-staff-common/modules/auth/module/auth-common.module',
     '@acme-staff-common/shared/ledger-record/queues/ledger-record-queue.module',
     '@acme-customer-common/shared/ledger-record/queues/ledger-record-queue.module',
     '@acme-processor-processors/ledger-record/ledger-record.module',
@@ -246,7 +251,7 @@ describe('app entry points', () => {
   ])('%s may NOT import a core contract other than the ledger', async (file) => {
     await expect({
       file,
-      code: 'import { x } from "@acme-core/contracts/customer-identity";',
+      code: 'import { x } from "@acme-core/contracts/idempotency";',
     }).toBreakRule('boundaries/dependencies');
   });
 

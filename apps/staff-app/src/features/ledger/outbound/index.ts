@@ -1,3 +1,3 @@
 export * from './interfaces';
 
-export * from './ports/ledger-query.port';
+export * from './ports/ledger-list-entries-repository.port';

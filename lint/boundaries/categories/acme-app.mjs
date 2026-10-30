@@ -4,10 +4,12 @@ export const acmeApp = [
   ['acme-app:main', 'apps/*/src/main.ts', ['app']],
   ['acme-app:app:global:index', 'apps/*/src/app/global/index.ts', ['app']],
   [
-    'acme-app:app:global:infrastructure:core-adapters',
-    'apps/*/src/app/global/*/infrastructure/core-adapters/**',
+    'acme-app:app:global:infrastructure:common-adapters',
+    'apps/*/src/app/global/*/infrastructure/common-adapters/**',
     ['app', 'module'],
   ],
+  ['acme-app:app:global:application', 'apps/*/src/app/global/*/application/**', ['app', 'module']],
+  ['acme-app:app:global:outbound', 'apps/*/src/app/global/*/outbound/**', ['app', 'module']],
   [
     'acme-app:app:global:infrastructure',
     'apps/*/src/app/global/*/infrastructure/**',

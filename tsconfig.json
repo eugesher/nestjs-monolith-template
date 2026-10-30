@@ -23,10 +23,12 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@acme-staff-app": ["./apps/staff-app/src/app/app.module"],
+      "@acme-staff-common/modules/auth": ["./apps/staff-app/src/common/modules/auth"],
       "@acme-staff-common/shared/concurrency": ["./apps/staff-app/src/common/shared/concurrency"],
       "@acme-staff-common/shared/ledger-record": [
         "./apps/staff-app/src/common/shared/ledger-record"
       ],
+      "@acme-staff-contracts/auth": ["./apps/staff-app/src/contracts/auth"],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
       "@acme-customer-common/shared/ledger-record": [
@@ -39,17 +41,13 @@
       ],
       "@acme-processor-features": ["./apps/processor-app/src/features"],
       "@acme-processor-processors": ["./apps/processor-app/src/processors"],
-      "@acme-core/contracts/customer-identity": ["./core/contracts/src/customer-identity"],
       "@acme-core/contracts/idempotency": ["./core/contracts/src/idempotency"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],
       "@acme-core/contracts/product-stock": ["./core/contracts/src/product-stock"],
-      "@acme-core/contracts/staff-identity": ["./core/contracts/src/staff-identity"],
       "@acme-core/entities": ["./core/entities/src"],
-      "@acme-core/modules/customer-identity": ["./core/modules/src/customer-identity"],
       "@acme-core/modules/idempotency": ["./core/modules/src/idempotency"],
       "@acme-core/modules/ledger": ["./core/modules/src/ledger"],
       "@acme-core/modules/product-stock": ["./core/modules/src/product-stock"],
-      "@acme-core/modules/staff-identity": ["./core/modules/src/staff-identity"],
       "@acme-libs/auth": ["./libs/auth/src"],
       "@acme-libs/cache": ["./libs/cache/src"],
       "@acme-libs/cache/testing": ["./libs/cache/src/testing"],

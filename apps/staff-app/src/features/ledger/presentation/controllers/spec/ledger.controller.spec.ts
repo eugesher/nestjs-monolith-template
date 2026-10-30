@@ -18,8 +18,8 @@ describe('LedgerController', () => {
 
       expect(response).toEqual({ items: [], total: 0, page: 1, size: 20 });
       expect(list).toHaveBeenCalledWith({
-        page: undefined,
-        size: undefined,
+        page: 1,
+        size: 20,
         subjectType: 'product',
         subjectId: '12',
         correlationId: undefined,

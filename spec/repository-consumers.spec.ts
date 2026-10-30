@@ -6,13 +6,11 @@ describe('one repository per use case, service or facade', () => {
 
     expect(names).toEqual(
       expect.arrayContaining([
-        'StaffIdentityCoreAssignRoleUseCase',
-        'StaffIdentityCoreFindPermissionCodesUseCase',
-        'StaffIdentityCoreListRolesUseCase',
-        'StaffIdentityCoreLoginUseCase',
-        'StaffIdentityCoreRegisterUserUseCase',
-        'StaffIdentityCoreUpdateRolePermissionsUseCase',
-        'StaffIdentityCoreValidateSubjectUseCase',
+        'IamAssignRoleUseCase',
+        'AuthCommonValidateSubjectUseCase',
+        'AuthGlobalFindPermissionCodesUseCase',
+        'IdempotencyPurgeRunUseCase',
+        'IdempotencyCoreClaimUseCase',
       ]),
     );
   });
@@ -65,6 +63,21 @@ describe('one repository per use case, service or facade', () => {
             name: 'ProductDeleteOneUseCase',
             file: 'x',
             params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
+          },
+        ],
+      ],
+      [
+        'two apps with a namesake repository port each',
+        [
+          {
+            name: 'AuthLoginUseCase',
+            file: 'apps/staff-app/src/features/auth/application/use-cases/auth-login.use-case.ts',
+            params: [{ name: 'repository', type: 'IAuthLoginRepositoryPort' }],
+          },
+          {
+            name: 'AuthLoginUseCase',
+            file: 'apps/customer-app/src/features/auth/application/use-cases/auth-login.use-case.ts',
+            params: [{ name: 'repository', type: 'IAuthLoginRepositoryPort' }],
           },
         ],
       ],
