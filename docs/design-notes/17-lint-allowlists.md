@@ -40,6 +40,9 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
 - the e2e code that reaches app contracts and the test helpers of the observability lib;
+- a feature queue adapter and a processor consumer that reach app contracts: a queue between the
+  modules of one app keeps its contract in the app, while the `ledger-record` queue, written by
+  both apps, keeps it in `@acme-core/contracts/ledger`;
 - the core-adapters and common-adapters of a common module, and a common module root that mounts
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the

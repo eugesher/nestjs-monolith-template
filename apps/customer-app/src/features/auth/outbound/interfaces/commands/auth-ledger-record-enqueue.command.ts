@@ -1,6 +1,4 @@
-export const LEDGER_RECORD_QUEUE = 'ledger-record';
-
-export interface ILedgerRecordProcessorPayload {
+export interface IAuthLedgerRecordEnqueueCommand {
   operationKey: string;
   subjectType: string;
   subjectId: string;

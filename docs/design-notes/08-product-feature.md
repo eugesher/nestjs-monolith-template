@@ -91,8 +91,8 @@ between them would make the row depend on that order. `ProductArchivedEvent` car
 this reason.
 
 The archive is already committed, so a failing append must not undo it. `ProductLedgerService` tries
-three times through `ReplayRetryHelper` and then logs the record at `error` for a replay instead of
-throwing.
+`LEDGER_RETRY_ATTEMPTS` times (3 by default) through `ReplayRetryHelper` and then logs the record at
+`error` for a replay instead of throwing.
 
 ## The ledger records of the queue
 
@@ -111,7 +111,8 @@ because a created product has no id in its event. A rename is not a ledger fact,
 from the context in the application: the job runs in another async chain.
 
 The product is already committed, so a failing enqueue must not undo it either. The service tries
-three times through `ReplayRetryHelper` and then logs the record at `error` for a replay.
+`LEDGER_RETRY_ATTEMPTS` times through `ReplayRetryHelper` and then logs the record at `error` for a
+replay.
 
 **An enqueue has a deadline.** While Redis is down, Bull keeps the command in the offline queue of
 its client and `add` never settles, so the request would hang after the commit. The adapter races
@@ -154,8 +155,8 @@ The idempotency adapter turns the claim outcome enum of the common module into t
 the port and hands a replay's stored response back as the type the use case expects.
 
 **The queue adapter speaks the contract of its consumer.** The queue name and the job type live in
-`@acme-staff-contracts/ledger-record`, next to the processor that reads them. The adapter adds the
-record as one job and nothing else: the job options come with the queue registration of
+`@acme-core/contracts/ledger`, which customer-app writes to as well. The adapter adds the record as
+one job and nothing else: the job options come with the queue registration of
 `@acme-staff-common/shared/ledger-record`.
 
 The adapter lives in `infrastructure/queue`, a layer of its own. It is the only place in the feature
@@ -219,6 +220,7 @@ the update, and its conflict arrives as `VERSION_MISMATCH` above.
 
 `ProductModule` imports `ProductTypeOrmModule.forFeature()`, `IdempotencyCommonModule`,
 `LedgerRecordQueueModule` and `LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
-`PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
+`PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS` and `PRODUCT_LEDGER_RETRY_ATTEMPTS` from
+`LEDGER_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
 `IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's
 connection. The queue adapter relies on the Bull connection of `QueueSetupModule`.

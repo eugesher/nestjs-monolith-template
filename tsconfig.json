@@ -30,10 +30,12 @@
         "./apps/staff-app/src/common/shared/ledger-record"
       ],
       "@acme-staff-contracts/idempotency": ["./apps/staff-app/src/contracts/idempotency"],
-      "@acme-staff-contracts/ledger-record": ["./apps/staff-app/src/contracts/ledger-record"],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
       "@acme-staff-processors": ["./apps/staff-app/src/processors"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
+      "@acme-customer-common/shared/ledger-record": [
+        "./apps/customer-app/src/common/shared/ledger-record"
+      ],
       "@acme-customer-features": ["./apps/customer-app/src/features"],
       "@acme-core/contracts/customer-identity": ["./core/contracts/src/customer-identity"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],

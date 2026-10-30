@@ -17,7 +17,7 @@ describe('ProductLedgerService', () => {
     enqueue = jest.fn().mockResolvedValue(undefined);
     append = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new ProductLedgerService({ enqueue }, { append }, logger as unknown as PinoLogger);
+    service = new ProductLedgerService({ enqueue }, { append }, 2, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -95,7 +95,7 @@ describe('ProductLedgerService', () => {
       expect(logger.error).not.toHaveBeenCalled();
     });
 
-    it('logs the record for replay after three failures instead of throwing', async () => {
+    it('logs the record for replay after the configured attempts instead of throwing', async () => {
       enqueue.mockRejectedValue(new Error('redis is down'));
 
       await CorrelationContextHelper.run('corr-1', () =>
@@ -105,7 +105,7 @@ describe('ProductLedgerService', () => {
         }),
       );
 
-      expect(enqueue).toHaveBeenCalledTimes(3);
+      expect(enqueue).toHaveBeenCalledTimes(2);
       expect(logger.error).toHaveBeenCalledWith(
         {
           err: new Error('redis is down'),
@@ -170,7 +170,7 @@ describe('ProductLedgerService', () => {
       expect(logger.error).not.toHaveBeenCalled();
     });
 
-    it('logs the record for replay after three failures instead of throwing', async () => {
+    it('logs the record for replay after the configured attempts instead of throwing', async () => {
       append.mockRejectedValue(new Error('deadlock'));
 
       await CorrelationContextHelper.run('corr-1', () =>
@@ -180,7 +180,7 @@ describe('ProductLedgerService', () => {
         }),
       );
 
-      expect(append).toHaveBeenCalledTimes(3);
+      expect(append).toHaveBeenCalledTimes(2);
       expect(logger.error).toHaveBeenCalledWith(
         {
           err: new Error('deadlock'),

@@ -1,2 +1,3 @@
 export * from './core-adapters/auth-customer-identity-core.adapter';
-export * from './core-adapters/auth-ledger-core.adapter';
+
+export * from './queue/auth-ledger-record-queue.adapter';

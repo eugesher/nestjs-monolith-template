@@ -205,7 +205,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it('a consumer may NOT reach core contracts — core is called by the application through a port', async () => {
+    it('a consumer may NOT reach a core contract other than the ledger queue — core is called by the application through a port', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { x } from "../../../../../../core/contracts/src/__ledger-fixture__";',

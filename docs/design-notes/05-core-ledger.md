@@ -1,7 +1,8 @@
 # 05 — Core ledger
 
 `core/modules/src/ledger` is an append-only journal of business facts: what happened to which
-subject, and under which correlation id. Its contract `core/contracts/src/ledger` has two ports:
+subject, and under which correlation id. Its contract `core/contracts/src/ledger` has two ports
+and the contract of the `ledger-record` queue:
 
 | Port                      | Facade                   | Consumer                               |
 | ------------------------- | ------------------------ | -------------------------------------- |
@@ -11,14 +12,19 @@ subject, and under which correlation id. Its contract `core/contracts/src/ledger
 Two ports instead of one let each app bind only what it uses. The ledger is the core module both
 apps share:
 
-| App          | Writer                        | Facts                               |
-| ------------ | ----------------------------- | ----------------------------------- |
-| customer-app | the `auth` feature            | `CustomerRegistered`                |
-| staff-app    | the `product` feature         | `ProductArchived`                   |
-| staff-app    | the `ledger-record` processor | `ProductCreated`, `ProductArchived` |
+| App       | Writer                        | Facts                                                     |
+| --------- | ----------------------------- | --------------------------------------------------------- |
+| staff-app | the `product` feature         | `ProductArchived`                                         |
+| staff-app | the `ledger-record` processor | `ProductCreated`, `ProductArchived`, `CustomerRegistered` |
 
-customer-app binds the append port alone. staff-app binds both and serves the journal through its
-`ledger` feature (see `06-ledger-feature.md`).
+customer-app binds no port: its `auth` feature enqueues `CustomerRegistered` into the
+`ledger-record` queue, and the processor of staff-app appends it. staff-app binds both ports and
+serves the journal through its `ledger` feature (see `06-ledger-feature.md`).
+
+**The queue contract lives with the ledger.** `LEDGER_RECORD_QUEUE`, the job type
+`ILedgerRecordProcessorPayload` and `LEDGER_RECORD_JOB_OPTIONS` are in `@acme-core/contracts/ledger`,
+because two apps write to the queue and an app may not import another. A job is a ledger entry with
+a correlation id, so the ledger contract is its natural home.
 
 ## Append is the only verb
 

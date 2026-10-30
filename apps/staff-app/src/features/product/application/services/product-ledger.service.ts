@@ -11,18 +11,19 @@ import {
   type IProductLedgerRecordPort,
   PRODUCT_LEDGER_PORT,
   PRODUCT_LEDGER_RECORD_PORT,
+  PRODUCT_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
 import { IProductLedgerRecordCommand } from '../interfaces/commands/product-ledger-record.command';
 
 @Injectable()
 export class ProductLedgerService {
-  private static readonly LEDGER_ATTEMPTS = 3;
-
   constructor(
     @Inject(PRODUCT_LEDGER_RECORD_PORT)
     private readonly queue: IProductLedgerRecordPort,
     @Inject(PRODUCT_LEDGER_PORT)
     private readonly ledger: IProductLedgerPort,
+    @Inject(PRODUCT_LEDGER_RETRY_ATTEMPTS)
+    private readonly ledgerRetryAttempts: number,
     @InjectPinoLogger(ProductLedgerService.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -95,7 +96,7 @@ export class ProductLedgerService {
     const { operationKey, subjectId, correlationId } = record;
 
     return ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
-      maxAttempts: ProductLedgerService.LEDGER_ATTEMPTS,
+      maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,
       label: 'Ledger enqueue (product)',
@@ -119,7 +120,7 @@ export class ProductLedgerService {
     const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
 
     return ReplayRetryHelper.retryThenLogForReplay(() => this.ledger.append(record), {
-      maxAttempts: ProductLedgerService.LEDGER_ATTEMPTS,
+      maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,
       label: 'Ledger append (product archived)',

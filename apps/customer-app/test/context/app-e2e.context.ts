@@ -1,11 +1,17 @@
+import { getQueueToken } from '@nestjs/bull';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import type { Queue } from 'bull';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '@acme-customer-app';
+import {
+  type ILedgerRecordProcessorPayload,
+  LEDGER_RECORD_QUEUE,
+} from '@acme-core/contracts/ledger';
 import { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
@@ -70,6 +76,17 @@ export class AppE2EContext {
 
   public close(): Promise<void> {
     return this.app.close();
+  }
+
+  public async takeLedgerRecords(): Promise<ILedgerRecordProcessorPayload[]> {
+    const queue = this.moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
+      getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const jobs = await queue.getWaiting();
+
+    await queue.empty();
+
+    return jobs.map((job) => job.data);
   }
 
   public takeRootWarnings(): unknown[][] {

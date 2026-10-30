@@ -9,4 +9,5 @@ export * from './ports/product-ledger-record.port';
 export * from './ports/product-write-repository.port';
 
 export * from './tokens/product-ledger-record-timeout-ms.token';
+export * from './tokens/product-ledger-retry-attempts.token';
 export * from './tokens/product-occ-retry-attempts.token';

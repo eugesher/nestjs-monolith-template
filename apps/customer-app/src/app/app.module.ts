@@ -13,12 +13,14 @@ import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observabili
 import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
+import { QueueSetupModule } from './setup/queue/queue-setup.module';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
     TypeOrmSetupModule.forRoot(),
+    QueueSetupModule,
     CacheModule,
     AuthGlobalModule,
     HealthModule,

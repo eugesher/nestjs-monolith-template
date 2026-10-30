@@ -16,7 +16,7 @@ export class AuthRegisterUseCase {
     const { email, password } = command;
     const customer = await this.identity.register({ email, password });
 
-    await this.ledgerService.recordRegistered({ customerId: customer.id });
+    await this.ledgerService.recordRegistered({ customerId: customer.id, email: customer.email });
 
     return customer;
   }

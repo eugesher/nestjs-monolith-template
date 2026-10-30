@@ -9,6 +9,7 @@ Object.assign(process.env, {
   REDIS_COMMAND_TIMEOUT_MS: '500',
   CACHE_TTL_MS_DEFAULT: '60000',
   OCC_RETRY_ATTEMPTS: '5',
+  LEDGER_RETRY_ATTEMPTS: '3',
   IDEMPOTENCY_KEY_TTL_HOURS: '24',
   JWT_SECRET: 'e2e-secret-at-least-32-characters-long',
   AUTH_ARGON2_MEMORY_COST: '19456',

@@ -65,6 +65,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('domain'),
       layer('outbound'),
       to('acme-app:contracts', own('app')),
+      to('acme-core:contracts', { module: 'ledger' }),
       baseLibs(),
       ...sharedFacing.queue,
     ]),
@@ -117,6 +118,7 @@ export const moduleAreas = [
     queue: [],
     presentation: [
       to('acme-app:contracts', own('app')),
+      to('acme-core:contracts', { module: 'ledger' }),
       baseLibs('observability'),
       packages('@nestjs/bull', '@nestjs/schedule', 'bull'),
     ],

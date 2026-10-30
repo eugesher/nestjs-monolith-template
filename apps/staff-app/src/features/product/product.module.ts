@@ -33,6 +33,7 @@ import {
   PRODUCT_LEDGER_PORT,
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
+  PRODUCT_LEDGER_RETRY_ATTEMPTS,
   PRODUCT_OCC_RETRY_ATTEMPTS,
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from './outbound';
@@ -65,6 +66,7 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },
     ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
     ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
+    ConfigProviderHelper.value(PRODUCT_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],
 })
 export class ProductModule {}

@@ -64,18 +64,30 @@ repository inserts at once and turns the duplicate-key error of the driver (`Mys
 `18-staff-identity.md`), and the e2e of each app sends two such requests at once and expects one 201
 and one 409.
 
-**Sign-up records a fact in the ledger.** After the insert, `AuthRegisterUseCase` asks
-`AuthLedgerService` to append `CustomerRegistered` under the operation key
-`customer-registered:<id>`, through `AUTH_LEDGER_PORT` and `AuthLedgerCoreAdapter` over
-`LEDGER_CORE_APPEND_PORT`. The customer is already stored, so a failing append must not turn the
-sign-up into an error: the service tries three times through `ReplayRetryHelper` and then logs the
-record at `error` for a replay, like the archive of a product (see `08-product-feature.md`). The
-payload is empty: the email is personal data, and an append-only journal cannot forget it.
+**Sign-up records a fact in the ledger through the queue.** After the insert,
+`AuthRegisterUseCase` asks `AuthLedgerService` to enqueue `CustomerRegistered` under the operation
+key `customer-registered:<id>`, with `{ email }` as the payload and the correlation id of the
+request. `AUTH_LEDGER_RECORD_PORT` and `AuthLedgerRecordQueueAdapter` put the record into the
+`ledger-record` queue, the queue product writes to in staff-app. customer-app has no processor:
+the `ledger-record` processor of staff-app appends the record (see `09-ledger-record-processor.md`),
+so both apps must point `REDIS_URL` at one Redis.
 
-The e2e signs a customer up, logs in with the same credentials, reads `me` and finds one ledger
-entry of the new customer under the correlation id of the sign-up.
+The customer is already stored, so a failing enqueue must not turn the sign-up into an error. The
+adapter gives up after `REDIS_COMMAND_TIMEOUT_MS`, because Bull waits for a lost Redis without end,
+and the service tries `LEDGER_RETRY_ATTEMPTS` times (3 by default) through `ReplayRetryHelper` and
+then logs the record at `error` for a replay, like the product feature (see
+`08-product-feature.md`).
+
+The e2e signs a customer up, logs in with the same credentials, reads `me`, finds no ledger entry
+yet and one waiting job of the new customer with the email and the correlation id of the sign-up.
+The e2e context takes the waiting jobs and empties the queue.
 
 ## Open questions
+
+**The ledger holds the email of a customer.** The ledger is append-only, so an email in a payload
+outlives the account: erasing a customer on request means rewriting entries that were meant never to
+change. A project bound by such a duty keeps the id alone in the payload or encrypts the email with a
+key it can destroy.
 
 **Login and sign-up have no rate limit.** Both routes are public, and the template has no throttler.
 A client can guess passwords at the speed of argon2 or create accounts in bulk. Two ways out:
