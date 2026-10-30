@@ -10,6 +10,7 @@ ENV_FILE = ENV_DIR / "customer-app" / ".env.local"
 STAFF_ENV_FILE = ENV_DIR / "staff-app" / ".env.local"
 ANN_ID = "00000000-0000-4000-8000-000000000101"
 BOB_ID = "00000000-0000-4000-8000-000000000102"
+CAROL_ID = "00000000-0000-4000-8000-000000000103"
 DORA_ID = "00000000-0000-4000-8000-000000000104"
 STAFF_EDITOR_ID = "00000000-0000-4000-8000-000000000002"
 
@@ -19,8 +20,16 @@ def capture_login(response, posting) -> None:
     posting.set_variable("access_token", data["accessToken"])
 
 
+def as_ann(posting) -> None:
+    sign(posting, {"sub": ANN_ID})
+
+
 def as_bob(posting) -> None:
     sign(posting, {"sub": BOB_ID})
+
+
+def as_carol(posting) -> None:
+    sign(posting, {"sub": CAROL_ID})
 
 
 def as_dora(posting) -> None:

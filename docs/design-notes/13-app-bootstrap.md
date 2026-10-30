@@ -79,8 +79,8 @@ header. Inside the request, `CorrelationContextHelper.current()` answers that id
 written by the request carries the id the client got back.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
-no `Product`, no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and
-mounts no core ledger.
+no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
+ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module.
 
 ## Logs
 

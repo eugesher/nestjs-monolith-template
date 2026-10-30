@@ -1,0 +1,27 @@
+name: 06-stock-insufficient
+description: |-
+  e2e: Order › POST /api/orders › should refuse more units than in stock with 409 and the details, write nothing and release the key
+
+  Expect: 409 Conflict, code ORDER_STOCK_INSUFFICIENT with details of product 106 (1 requested, 0 available), no order, no idempotency_key row
+  User: ann@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100",
+        "106"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-stock-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_ann

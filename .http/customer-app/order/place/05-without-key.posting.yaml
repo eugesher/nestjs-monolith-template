@@ -1,0 +1,24 @@
+name: 05-without-key
+description: |-
+  e2e: Order › POST /api/orders › should refuse a placement without a key with 400
+
+  Expect: 400 Bad Request, code IDEMPOTENCY_KEY_REQUIRED, no order
+  User: ann@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_ann

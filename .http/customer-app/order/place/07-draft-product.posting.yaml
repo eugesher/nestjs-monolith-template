@@ -1,0 +1,26 @@
+name: 07-draft-product
+description: |-
+  e2e: Order › POST /api/orders › should refuse a draft product with 404 and write nothing
+
+  Expect: 404 Not Found, code ORDER_PRODUCT_NOT_FOUND with details.productId 101, no order
+  User: ann@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "101"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-missing-101
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_ann

@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { HealthModule, AuthModule, CatalogModule } from '@acme-customer-features';
+import { HealthModule, AuthModule, CatalogModule, OrderModule } from '@acme-customer-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
@@ -26,6 +26,7 @@ import { QueueSetupModule } from './setup/queue/queue-setup.module';
     HealthModule,
     AuthModule,
     CatalogModule,
+    OrderModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },

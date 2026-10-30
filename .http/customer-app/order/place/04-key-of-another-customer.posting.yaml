@@ -1,0 +1,28 @@
+name: 04-key-of-another-customer
+description: |-
+  e2e: Order › POST /api/orders › should refuse the key of another customer with 422 rather than replay their order
+
+  Expect: 422 Unprocessable Entity, code ORDER_IDEMPOTENCY_KEY_REUSED, bob still has order 601 alone
+  User: bob@example.com (token signed by scripts.py)
+  Note: send place/01-place first
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100",
+        "100"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-place-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_bob

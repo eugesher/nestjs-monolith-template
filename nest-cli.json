@@ -118,6 +118,15 @@
         "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }
     },
+    "core-contracts-idempotency": {
+      "type": "library",
+      "root": "core/contracts/src/idempotency",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/idempotency",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
+      }
+    },
     "core-contracts-ledger": {
       "type": "library",
       "root": "core/contracts/src/ledger",
@@ -150,6 +159,15 @@
       "root": "core/modules/src/staff-identity",
       "entryFile": "index",
       "sourceRoot": "core/modules/src/staff-identity",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
+    },
+    "core-modules-idempotency": {
+      "type": "library",
+      "root": "core/modules/src/idempotency",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/idempotency",
       "compilerOptions": {
         "tsConfigPath": "core/modules/tsconfig.lib.json"
       }

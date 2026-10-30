@@ -23,13 +23,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@acme-staff-app": ["./apps/staff-app/src/app/app.module"],
-      "@acme-staff-common/modules/idempotency": ["./apps/staff-app/src/common/modules/idempotency"],
       "@acme-staff-common/shared/concurrency": ["./apps/staff-app/src/common/shared/concurrency"],
-      "@acme-staff-common/shared/idempotency": ["./apps/staff-app/src/common/shared/idempotency"],
       "@acme-staff-common/shared/ledger-record": [
         "./apps/staff-app/src/common/shared/ledger-record"
       ],
-      "@acme-staff-contracts/idempotency": ["./apps/staff-app/src/contracts/idempotency"],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
       "@acme-staff-processors": ["./apps/staff-app/src/processors"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
@@ -38,10 +35,12 @@
       ],
       "@acme-customer-features": ["./apps/customer-app/src/features"],
       "@acme-core/contracts/customer-identity": ["./core/contracts/src/customer-identity"],
+      "@acme-core/contracts/idempotency": ["./core/contracts/src/idempotency"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],
       "@acme-core/contracts/staff-identity": ["./core/contracts/src/staff-identity"],
       "@acme-core/entities": ["./core/entities/src"],
       "@acme-core/modules/customer-identity": ["./core/modules/src/customer-identity"],
+      "@acme-core/modules/idempotency": ["./core/modules/src/idempotency"],
       "@acme-core/modules/ledger": ["./core/modules/src/ledger"],
       "@acme-core/modules/staff-identity": ["./core/modules/src/staff-identity"],
       "@acme-libs/auth": ["./libs/auth/src"],

@@ -1,0 +1,13 @@
+name: 04-id-not-a-number
+description: |-
+  e2e: Order › GET /api/orders/:orderId › should refuse an order id that is not a number with 400 from validation
+
+  Expect: 400 Bad Request
+  User: bob@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/orders/latest
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

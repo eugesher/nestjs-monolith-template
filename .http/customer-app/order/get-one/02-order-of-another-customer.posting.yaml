@@ -1,0 +1,13 @@
+name: 02-order-of-another-customer
+description: |-
+  e2e: Order › GET /api/orders/:orderId › should answer the order of another customer with the same 404
+
+  Expect: 404 Not Found, code ORDER_NOT_FOUND
+  User: bob@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/orders/600
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

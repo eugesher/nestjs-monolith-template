@@ -8,8 +8,8 @@ import {
 } from '@nestjs/swagger';
 
 import { IfMatch } from '@acme-staff-common/shared/concurrency';
-import { IdempotencyKey } from '@acme-staff-common/shared/idempotency';
 import { RequiresPermission } from '@acme-libs/auth';
+import { IdempotencyKey } from '@acme-libs/http';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import type { Maybe } from '@acme-libs/toolkit';
 import {

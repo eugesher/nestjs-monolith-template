@@ -1,0 +1,24 @@
+name: 11-empty-list
+description: |-
+  e2e: Order › POST /api/orders › should refuse an empty list with 400 from validation
+
+  Expect: 400 Bad Request
+  User: ann@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": []
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-invalid-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_ann

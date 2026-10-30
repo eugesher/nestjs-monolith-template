@@ -15,11 +15,8 @@ describe('app entry points', () => {
 
     expect(appAliases).toEqual([
       '@acme-staff-app',
-      '@acme-staff-common/modules/idempotency',
       '@acme-staff-common/shared/concurrency',
-      '@acme-staff-common/shared/idempotency',
       '@acme-staff-common/shared/ledger-record',
-      '@acme-staff-contracts/idempotency',
       '@acme-staff-features',
       '@acme-staff-processors',
       '@acme-customer-app',
@@ -30,11 +27,8 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff-app',
-    '@acme-staff-common/modules/idempotency',
     '@acme-staff-common/shared/concurrency',
-    '@acme-staff-common/shared/idempotency',
     '@acme-staff-common/shared/ledger-record',
-    '@acme-staff-contracts/idempotency',
     '@acme-staff-features',
     '@acme-staff-processors',
     '@acme-customer-app',
@@ -50,10 +44,7 @@ describe('app entry points', () => {
     '@acme-staff-features/health/health.module',
     '@acme-customer-features/health/health.module',
     '@acme-staff-features/index',
-    '@acme-staff-common/modules/idempotency/application',
     '@acme-staff-common/shared/concurrency/decorators/if-match.decorator',
-    '@acme-staff-common/shared/idempotency/helpers/idempotency-key.helper',
-    '@acme-staff-contracts/idempotency/ports/idempotency-common.port',
     '@acme-staff-common/shared/ledger-record/queues/ledger-record-queue.module',
     '@acme-customer-common/shared/ledger-record/queues/ledger-record-queue.module',
     '@acme-staff-processors/ledger-record/ledger-record.module',
@@ -195,10 +186,14 @@ describe('app entry points', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('a staff-app feature root MAY mount the idempotency common module by its alias', async () => {
+  it.each([
+    'apps/staff-app/src/features/health/health.module.ts',
+    'apps/customer-app/src/features/health/health.module.ts',
+    'apps/staff-app/src/processors/idempotency-purge/idempotency-purge.module.ts',
+  ])('%s MAY mount the idempotency core module by its alias', async (file) => {
     await expect({
-      file: 'apps/staff-app/src/features/health/health.module.ts',
-      code: 'import { IdempotencyCommonModule } from "@acme-staff-common/modules/idempotency";',
+      file,
+      code: 'import { IdempotencyCoreModule } from "@acme-core/modules/idempotency";',
     }).toPassArchitectureLint();
   });
 
@@ -207,7 +202,7 @@ describe('app entry points', () => {
       file: 'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
       code:
         'import { IfMatch } from "@acme-staff-common/shared/concurrency";\n' +
-        'import { IdempotencyKey } from "@acme-staff-common/shared/idempotency";',
+        'import { IdempotencyKey } from "@acme-libs/http";',
     }).toPassArchitectureLint();
   });
 
@@ -258,21 +253,25 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it('a staff-app feature common-adapter MAY import the idempotency contracts by their alias', async () => {
+  it.each([
+    'apps/staff-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
+    'apps/customer-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
+    'apps/staff-app/src/processors/idempotency-purge/infrastructure/core-adapters/__fixture__.ts',
+  ])('%s MAY import the idempotency core contracts by their alias', async (file) => {
     await expect({
-      file: 'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      code: 'import { IDEMPOTENCY_COMMON_PORT } from "@acme-staff-contracts/idempotency";',
+      file,
+      code: 'import { IDEMPOTENCY_CORE_KEY_PORT } from "@acme-core/contracts/idempotency";',
     }).toPassArchitectureLint();
   });
 
   it.each([
     [
       'apps/staff-app/src/features/health/application/__fixture__.ts',
-      '@acme-staff-contracts/idempotency',
+      '@acme-core/contracts/idempotency',
     ],
     [
-      'apps/staff-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      '@acme-staff-common/modules/idempotency',
+      'apps/staff-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
+      '@acme-core/modules/idempotency',
     ],
     [
       'apps/staff-app/src/features/product/infrastructure/queue/__fixture__.ts',
@@ -287,11 +286,7 @@ describe('app entry points', () => {
   it.each([
     [
       'apps/customer-app/src/features/health/health.module.ts',
-      '@acme-staff-common/modules/idempotency',
-    ],
-    [
-      'apps/customer-app/src/features/health/infrastructure/common-adapters/__fixture__.ts',
-      '@acme-staff-contracts/idempotency',
+      '@acme-staff-common/shared/concurrency',
     ],
     [
       'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',

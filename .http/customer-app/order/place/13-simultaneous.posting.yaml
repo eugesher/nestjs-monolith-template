@@ -1,0 +1,28 @@
+name: 13-simultaneous
+description: |-
+  e2e: Order › POST /api/orders › should let one of two simultaneous orders for the last units through and refuse the other with 409
+
+  Expect: one 201 Created and one 409 Conflict ORDER_STOCK_INSUFFICIENT; product 103 keeps 1 on hand
+  User: carol@example.com (token signed by scripts.py)
+  Note: send it with the keys e2e-order-race-key-1 and e2e-order-race-key-2 at once
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "103",
+        "103"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-race-key-1
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_carol

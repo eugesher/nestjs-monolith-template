@@ -1,0 +1,29 @@
+name: 01-place
+description: |-
+  e2e: Order › POST /api/orders › should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id
+
+  Expect: 201 Created, two lines of product 100; an order, two order_product rows, two product_stock rows of -1, a completed idempotency_key row and a ledger record order-placed with correlation_id e2e-order-place; product 100 has 6 on hand in the catalog
+  User: ann@example.com (token signed by scripts.py)
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100",
+        "100"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-place-key
+  - name: x-correlation-id
+    value: e2e-order-place
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_ann
