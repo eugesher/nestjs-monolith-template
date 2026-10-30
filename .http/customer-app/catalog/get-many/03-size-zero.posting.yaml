@@ -1,10 +1,13 @@
-name: 04-products-not-mounted
+name: 03-size-zero
 description: |-
-  e2e: should not mount the staff-app route /api/products
+  e2e: Catalog › GET /api/products › should refuse a size of zero with 400 from validation
 
-  Expect: 404 Not Found
+  Expect: 400 Bad Request
   User: bob@example.com (token signed by scripts.py)
 url: $CUSTOMER_APP_BASE_URL/products
+params:
+  - name: size
+    value: '0'
 auth:
   type: bearer_token
   bearer_token:

@@ -1,0 +1,18 @@
+name: 02-page-window
+description: |-
+  e2e: Catalog › GET /api/products › should answer the page of the window with the total of every page
+
+  Expect: 200 OK, product 103 alone, total 2
+  User: bob@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/products
+params:
+  - name: page
+    value: '2'
+  - name: size
+    value: '1'
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob
