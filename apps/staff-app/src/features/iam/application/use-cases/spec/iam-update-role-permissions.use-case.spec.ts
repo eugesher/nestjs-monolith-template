@@ -1,37 +1,103 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PinoLogger } from 'nestjs-pino';
+
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { IamPermissionModel, IamRoleModel } from '../../../domain';
 import { IamUpdateRolePermissionsUseCase } from '../iam-update-role-permissions.use-case';
 
 describe('IamUpdateRolePermissionsUseCase', () => {
-  let updateRolePermissions: jest.Mock;
+  let outcomes: string[];
+  let repository: {
+    findRole: jest.Mock;
+    findPermissions: jest.Mock;
+    replacePermissions: jest.Mock;
+  };
+  let transaction: { run: jest.Mock };
+  let logger: PinoLoggerMock;
   let useCase: IamUpdateRolePermissionsUseCase;
 
   beforeEach(() => {
-    updateRolePermissions = jest.fn();
-    useCase = new IamUpdateRolePermissionsUseCase({
-      registerUser: jest.fn(),
-      assignRole: jest.fn(),
-      listRoles: jest.fn(),
-      updateRolePermissions,
-    });
+    outcomes = [];
+    repository = {
+      findRole: jest.fn().mockResolvedValue(
+        IamRoleModel.reconstitute({
+          id: 2,
+          name: RoleEnum.EDITOR,
+          permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+        }),
+      ),
+      findPermissions: jest.fn().mockResolvedValue([
+        IamPermissionModel.reconstitute({
+          id: 2,
+          code: PermissionCodeEnum.IAM_ROLE_EDIT,
+        }),
+        IamPermissionModel.reconstitute({
+          id: 8,
+          code: PermissionCodeEnum.PRODUCT_READ,
+        }),
+      ]),
+      replacePermissions: jest.fn().mockResolvedValue(undefined),
+    };
+    transaction = {
+      run: jest.fn(async (work: () => Promise<unknown>) => {
+        outcomes.push('begin');
+
+        const result = await work();
+
+        outcomes.push('commit');
+
+        return result;
+      }),
+    };
+    logger = makePinoLoggerMock();
+    useCase = new IamUpdateRolePermissionsUseCase(
+      repository,
+      transaction,
+      logger as unknown as PinoLogger,
+    );
   });
 
-  describe('execute', () => {
-    it('replaces the permissions of the role through identity and answers the role', async () => {
-      updateRolePermissions.mockResolvedValue({
-        name: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
-      });
-
-      const role = await useCase.execute({
-        role: RoleEnum.VIEWER,
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
-      });
-
-      expect(role).toEqual({ name: 'viewer', permissionCodes: ['iam:assign', 'ledger:read'] });
-      expect(updateRolePermissions).toHaveBeenCalledWith({
-        role: 'viewer',
-        permissionCodes: ['iam:assign', 'ledger:read'],
-      });
+  it('replaces the permissions of the role in one transaction', async () => {
+    const view = await useCase.execute({
+      role: RoleEnum.EDITOR,
+      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.PRODUCT_READ],
     });
+
+    expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
+    expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
+    expect(repository.replacePermissions).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'product:read'] }),
+    );
+    expect(outcomes).toEqual(['begin', 'commit']);
+    expect(logger.info).toHaveBeenCalledWith(
+      { role: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] },
+      'Role permissions replaced',
+    );
+  });
+
+  it('rejects an unknown role', async () => {
+    repository.findRole.mockResolvedValue(undefined);
+
+    const update = useCase.execute({ role: RoleEnum.ADMIN, permissionCodes: [] });
+
+    await expect(update).rejects.toMatchObject({
+      code: IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND,
+      message: 'Role admin was not found',
+    });
+    expect(repository.findPermissions).not.toHaveBeenCalled();
+  });
+
+  it('rejects unknown permission codes and writes nothing', async () => {
+    const update = useCase.execute({
+      role: RoleEnum.EDITOR,
+      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.LEDGER_READ],
+    });
+
+    await expect(update).rejects.toMatchObject({
+      code: IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND,
+      message: 'Unknown permission codes: ledger:read',
+    });
+    expect(repository.replacePermissions).not.toHaveBeenCalled();
+    expect(outcomes).toEqual(['begin']);
   });
 });

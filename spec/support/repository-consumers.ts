@@ -80,13 +80,15 @@ export const repositoryConsumerViolations = (consumers: IRepositoryConsumer[]): 
   const violations: string[] = [];
   const owners = new Map<string, string[]>();
 
-  for (const { name, params } of consumers) {
+  for (const { name, file, params } of consumers) {
     const [param] = params;
     const [, repository] = REPOSITORY_TYPE.exec(param.type) ?? [];
     const expected = expectedRepositoryOf(name);
-    const owned = owners.get(param.type) ?? [];
+    const scope = file.split(/[\\/]/).slice(0, 2).join('/');
+    const key = `${scope} ${param.type}`;
+    const owned = owners.get(key) ?? [];
 
-    owners.set(param.type, [...owned, name]);
+    owners.set(key, [...owned, name]);
 
     if (params.length > 1) {
       violations.push(`${name} has ${params.length} repositories, at most one is allowed`);
@@ -101,8 +103,10 @@ export const repositoryConsumerViolations = (consumers: IRepositoryConsumer[]): 
     }
   }
 
-  for (const [type, names] of owners) {
+  for (const [key, names] of owners) {
     if (names.length > 1 && !names.every((name) => CRUD_USE_CASE.test(name))) {
+      const [, type] = key.split(' ');
+
       violations.push(`${type} is shared by ${names.join(', ')}`);
     }
   }

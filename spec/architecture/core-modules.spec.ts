@@ -48,12 +48,7 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it.each([
-      '@acme-customer-contracts/customer-identity',
-      '@acme-staff-contracts/staff-identity',
-      '@acme-customer-common/modules/customer-identity',
-      '@acme-staff-common/modules/staff-identity',
-    ])(
+    it.each(['@acme-staff-contracts/auth', '@acme-staff-common/modules/auth'])(
       'ledger may NOT reach %s — the journal records facts, it never asks who the user is',
       async (alias) => {
         await expect({
@@ -236,7 +231,7 @@ describe('core modules', () => {
       ],
       ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
     ])(
-      '%s may NOT reach the credentials — sign-in belongs to the identity module of each app',
+      '%s may NOT reach the credentials — sign-in belongs to the auth modules of each app',
       async (layer, code) => {
         await expect({
           file: `core/modules/src/__ledger-fixture__/${layer}/__fixture__.ts`,

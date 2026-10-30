@@ -3,15 +3,17 @@
 `core/modules/src/idempotency` keeps the `idempotency_key` table: which `Idempotency-Key` a client
 has used, for which request body, and what the first request answered. It is a core module because
 both apps write through it: the staff `product` feature and the customer `order` feature claim keys
-while serving writes, and the `idempotency-purge` processor of processor-app deletes expired ones on a
-schedule. Its contract `core/contracts/src/idempotency` has two ports:
+while serving writes. Its contract `core/contracts/src/idempotency` has one port:
 
-| Port                          | Facade                       | Consumer                                    |
-| ----------------------------- | ---------------------------- | ------------------------------------------- |
-| `IDEMPOTENCY_CORE_KEY_PORT`   | `IdempotencyCoreKeyFacade`   | a feature that serves an idempotent write   |
-| `IDEMPOTENCY_CORE_PURGE_PORT` | `IdempotencyCorePurgeFacade` | the processor that deletes the expired keys |
+| Port                        | Facade                     | Consumer                                  |
+| --------------------------- | -------------------------- | ----------------------------------------- |
+| `IDEMPOTENCY_CORE_KEY_PORT` | `IdempotencyCoreKeyFacade` | a feature that serves an idempotent write |
 
-A feature or a processor root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency`
+Deleting the expired keys has one caller, the `idempotency-purge` processor of processor-app, so it
+lives in the processor with a repository of its own (see `10-idempotency-purge-processor.md` and
+`26-code-placement.md`).
+
+A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency`
 and reaches a port only from a core-adapter, like any core module. The `IdempotencyKey` decorator
 that reads the header lives in `@acme-libs/http`, so both apps parse the key the same way.
 
@@ -43,17 +45,14 @@ module reads it, the holder has just released it. The answer is `in-flight`: the
 claims it properly. Answering `claimed` would let the caller work without holding a row, so a
 concurrent duplicate could work too.
 
-## Complete, release, purge
+## Complete and release
 
 - **`complete` stores the response as JSON**, and `claim` parses it back for a replay. The caller
   hands over the object it is about to return and never sees the serialized form.
 - **`release` deletes only an in-flight row.** A completed key survives a late release, so a replay
   stays possible.
-- **`purgeExpired` deletes rows older than the TTL its command carries**, whatever their status,
-  and logs the cutoff, the count and the TTL. The module reads no configuration: the
-  `idempotency-purge` processor of processor-app owns `IDEMPOTENCY_KEY_TTL_HOURS` (24 by default)
-  and calls it every hour (see `10-idempotency-purge-processor.md`). So staff-app and customer-app
-  mount the module without that variable. Until the purge runs, an expired key still replays.
+- **The module never expires a key.** It reads no configuration, so staff-app and customer-app
+  mount it without a TTL. Until the purge of processor-app runs, an expired key still replays.
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.

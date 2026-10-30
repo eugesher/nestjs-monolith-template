@@ -37,7 +37,7 @@ products }`, where a line is `{ id, productId, sku, name }`, the shape customer-
 `sku` and `name` of a line come from the product as it is now, soft-deleted or not, because the
 schema keeps no copy.
 
-The answer names the customer by id only. Their email is a read of the customer identity module that
+The answer names the customer by id only. Their email is a read of the `customer` table that
 no route needs yet.
 
 ## Wiring

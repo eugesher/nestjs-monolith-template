@@ -1,29 +1,32 @@
-import { AuthGlobalCustomerIdentityCommonAdapter } from '../../infrastructure';
+import { UserStatusEnum } from '@acme-libs/kernel';
+import { AuthGlobalValidateSubjectUseCase } from '../../application';
 import { AuthGlobalFacade } from '../auth-global.facade';
 
 describe('AuthGlobalFacade', () => {
-  let findSubject: jest.Mock;
+  let findById: jest.Mock;
   let facade: AuthGlobalFacade;
 
   beforeEach(() => {
-    findSubject = jest.fn();
-    facade = new AuthGlobalFacade({
-      findSubject,
-    } as unknown as AuthGlobalCustomerIdentityCommonAdapter);
+    findById = jest.fn();
+    facade = new AuthGlobalFacade(new AuthGlobalValidateSubjectUseCase({ findById }));
   });
 
   describe('validate', () => {
-    it('answers the customer identity re-derives for the token subject', async () => {
-      findSubject.mockResolvedValue({ id: 'customer-1', email: 'ann@example.com' });
+    it('answers the active customer of the token subject', async () => {
+      findById.mockResolvedValue({
+        id: 'customer-1',
+        email: 'ann@example.com',
+        status: UserStatusEnum.ACTIVE,
+      });
 
       const user = await facade.validate({ sub: 'customer-1' });
 
       expect(user).toEqual({ id: 'customer-1', email: 'ann@example.com' });
-      expect(findSubject).toHaveBeenCalledWith({ sub: 'customer-1' });
+      expect(findById).toHaveBeenCalledWith('customer-1');
     });
 
-    it('answers no user when identity rejects the subject', async () => {
-      findSubject.mockResolvedValue(undefined);
+    it('answers no user when the subject is not an active customer', async () => {
+      findById.mockResolvedValue(undefined);
 
       const user = await facade.validate({ sub: 'customer-1' });
 

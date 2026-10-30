@@ -4,11 +4,11 @@ import { acmeLibs } from './acme-libs.mjs';
 import { commonModules } from './common-modules.mjs';
 import { customerClaims } from './customer-claims.mjs';
 import { httpSurface } from './http-surface.mjs';
-import { identityModules } from './identity-modules.mjs';
 import { moduleAreas } from './module-areas.mjs';
 import { queue } from './queue.mjs';
 import { repo } from './repo.mjs';
 import { scheduler } from './scheduler.mjs';
+import { userEntities } from './user-entities.mjs';
 
 export const policies = [
   ...acmeApp,
@@ -18,7 +18,7 @@ export const policies = [
   ...acmeLibs,
   ...repo,
   httpSurface,
-  ...identityModules,
+  ...userEntities,
   customerClaims,
   ...scheduler,
   ...queue,

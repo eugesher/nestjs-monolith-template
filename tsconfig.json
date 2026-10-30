@@ -23,24 +23,16 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@acme-staff-app": ["./apps/staff-app/src/app/app.module"],
-      "@acme-staff-common/modules/staff-identity": [
-        "./apps/staff-app/src/common/modules/staff-identity"
-      ],
+      "@acme-staff-common/modules/auth": ["./apps/staff-app/src/common/modules/auth"],
       "@acme-staff-common/shared/concurrency": ["./apps/staff-app/src/common/shared/concurrency"],
       "@acme-staff-common/shared/ledger-record": [
         "./apps/staff-app/src/common/shared/ledger-record"
       ],
-      "@acme-staff-contracts/staff-identity": ["./apps/staff-app/src/contracts/staff-identity"],
+      "@acme-staff-contracts/auth": ["./apps/staff-app/src/contracts/auth"],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
-      "@acme-customer-common/modules/customer-identity": [
-        "./apps/customer-app/src/common/modules/customer-identity"
-      ],
       "@acme-customer-common/shared/ledger-record": [
         "./apps/customer-app/src/common/shared/ledger-record"
-      ],
-      "@acme-customer-contracts/customer-identity": [
-        "./apps/customer-app/src/contracts/customer-identity"
       ],
       "@acme-customer-features": ["./apps/customer-app/src/features"],
       "@acme-processor-app": ["./apps/processor-app/src/app/app.module"],

@@ -1,33 +1,30 @@
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IamRoleModel } from '../../../domain';
 import { IamListRolesUseCase } from '../iam-list-roles.use-case';
 
 describe('IamListRolesUseCase', () => {
-  let listRoles: jest.Mock;
-  let useCase: IamListRolesUseCase;
+  it('returns every role with its permission codes', async () => {
+    const repository = {
+      list: jest.fn().mockResolvedValue([
+        IamRoleModel.reconstitute({
+          id: 1,
+          name: RoleEnum.ADMIN,
+          permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+        }),
+        IamRoleModel.reconstitute({
+          id: 3,
+          name: RoleEnum.VIEWER,
+          permissionCodes: [],
+        }),
+      ]),
+    };
+    const useCase = new IamListRolesUseCase(repository);
 
-  beforeEach(() => {
-    listRoles = jest.fn();
-    useCase = new IamListRolesUseCase({
-      registerUser: jest.fn(),
-      assignRole: jest.fn(),
-      listRoles,
-      updateRolePermissions: jest.fn(),
-    });
-  });
+    const views = await useCase.execute();
 
-  describe('execute', () => {
-    it('answers the roles of identity with the permissions they grant', async () => {
-      listRoles.mockResolvedValue([
-        { name: RoleEnum.ADMIN, permissionCodes: [PermissionCodeEnum.IAM_ASSIGN] },
-        { name: RoleEnum.VIEWER, permissionCodes: [] },
-      ]);
-
-      const roles = await useCase.execute();
-
-      expect(roles).toEqual([
-        { name: 'admin', permissionCodes: ['iam:assign'] },
-        { name: 'viewer', permissionCodes: [] },
-      ]);
-    });
+    expect(views).toEqual([
+      { name: 'admin', permissionCodes: ['iam:assign'] },
+      { name: 'viewer', permissionCodes: [] },
+    ]);
   });
 });

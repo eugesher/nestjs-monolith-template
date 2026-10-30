@@ -1,17 +1,18 @@
 # 04 — IAM feature
 
-`apps/staff-app/src/features/iam` is the back office over `staff-identity`: `POST /iam/users`,
-`POST /iam/users/:userId/roles`, `GET /iam/roles` and `PUT /iam/roles/:role/permissions`. It has
-the same layers as `auth` (see `03-auth-feature.md`): one use case per endpoint,
-`IAM_IDENTITY_PORT`, and `IamStaffIdentityCoreAdapter` over `STAFF_IDENTITY_CORE_ADMIN_PORT`.
+`apps/staff-app/src/features/iam` is the back office of staff users: `POST /iam/users`,
+`POST /iam/users/:userId/roles`, `GET /iam/roles` and `PUT /iam/roles/:role/permissions`. No other
+module manages users, so the feature owns the code (see `26-code-placement.md`): one use case per
+endpoint, one repository port per use case, and the models `IamStaffUserModel`, `IamRoleModel` and
+`IamPermissionModel` over the `staff_*` tables.
 IAM manages staff only: a customer signs up on their own through `POST /auth/register` of
 customer-app (see `03-auth-feature.md`).
 
 ## Only staff-app has it
 
-**customer-app cannot even import the admin port.** The lint policy `identity-modules.mjs` keeps
-`staff-identity` out of customer-app altogether, its contracts, its module and its entities, so
-copying the feature there fails the lint before it can fail a review. Over HTTP, `/iam/*` on customer-app is a
+**customer-app cannot even read the staff tables.** The lint policy `user-entities.mjs` refuses the
+`Staff*` entities anywhere in customer-app, so copying the feature there fails the lint before it
+can fail a review. Over HTTP, `/iam/*` on customer-app is a
 404, not a 403: the route does not exist, and the answer does not confirm that it exists elsewhere.
 
 ## Three permission codes, on purpose
@@ -38,7 +39,7 @@ what it carries.
   `02-global-auth-guards.md`). A token that passed a moment before the `PUT` is refused right after
   it, with no re-login.
 - **Unknown role or user is a 404.** The path `:role` is not validated against `RoleEnum` in
-  presentation: `staff-identity` looks the role up and answers `AUTH_ROLE_NOT_FOUND`.
-- **Refusals reuse the auth pattern.** The core adapter rethrows identity refusals as
-  `IamDomainException`, and `IamHttpExceptionFilter` maps them with the same status table and
+  presentation: the use case looks the role up and answers `AUTH_ROLE_NOT_FOUND`.
+- **Refusals reuse the auth pattern.** The models and repositories throw `IamDomainException`, and
+  `IamHttpExceptionFilter` maps them with the same status table and
   delegates to the shared `HttpExceptionFilter`.

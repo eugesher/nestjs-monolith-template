@@ -247,6 +247,30 @@ describe('features', () => {
       },
     );
 
+    it('application MAY take the credentials ports — a feature signs its users in', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the module root MAY mount the credentials lib', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',
+        code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application', 'infrastructure'])(
+      '%s may NOT mount the credentials lib, only the module root does',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/product/${layer}/__fixture__.ts`,
+          code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('the module root may NOT import a package off its allowlist', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',

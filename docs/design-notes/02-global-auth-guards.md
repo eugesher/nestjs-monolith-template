@@ -2,28 +2,31 @@
 
 ## Where the pieces live
 
-| Piece                      | Location                         | Knows about                                                 |
-| -------------------------- | -------------------------------- | ----------------------------------------------------------- |
-| Guards, route decorators   | `libs/auth`                      | the token, the request, the two ports below                 |
-| Validator and claims ports | `libs/contracts/src/auth`        | kernel enums only                                           |
-| Port implementations       | `apps/<app>/src/app/global/auth` | the identity core module of the app, through a core adapter |
+| Piece                      | Location                         | Knows about                                  |
+| -------------------------- | -------------------------------- | -------------------------------------------- |
+| Guards, route decorators   | `libs/auth`                      | the token, the request, the two ports below  |
+| Validator and claims ports | `libs/contracts/src/auth`        | kernel enums only                            |
+| Port implementations       | `apps/<app>/src/app/global/auth` | the users of the app, through its own layers |
 
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in
-its global `AuthGlobalModule`: the facade calls the app's core adapter, which calls the auth port of
-the identity module of that app.
+its global `AuthGlobalModule`, which has the layers of a feature (see `26-code-placement.md`):
+every facade method calls a use case, and the use case reaches the data through an outbound port.
 
-| App          | Core adapter                            | Identity module     | Ports bound                                    |
-| ------------ | --------------------------------------- | ------------------- | ---------------------------------------------- |
-| staff-app    | `AuthGlobalStaffIdentityCoreAdapter`    | `staff-identity`    | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
-| customer-app | `AuthGlobalCustomerIdentityCoreAdapter` | `customer-identity` | `AUTH_USER_VALIDATOR_PORT`                     |
+| App          | Subject and roles                                                                                                                                                                            | Permission codes                                          | Ports bound                                    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------- |
+| staff-app    | `AuthGlobalValidateSubjectUseCase`, `AuthGlobalFindRolesUseCase` over `AUTH_GLOBAL_SUBJECT_PORT`, which `AuthGlobalSubjectCommonAdapter` implements with `AUTH_COMMON_PORT` of common `auth` | `AuthGlobalFindPermissionCodesUseCase` and its repository | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
+| customer-app | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                                                                        | none                                                      | `AUTH_USER_VALIDATOR_PORT`                     |
+
+The subject check of staff-app lives in a common module because `GET /auth/me` asks the same
+question; the permission codes and the customer check have one caller each, so they live here.
 
 The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.
 
 **Global classes carry the `AuthGlobal` prefix.** The folder stays `app/global/auth`, paired with
 the lib contract below, but the feature `features/auth` owns the plain names: `AuthModule`, and
-`AuthStaffIdentityCoreAdapter` for the core adapter of its own. The prefix keeps the two apart in
+`AuthIdentityCommonAdapter` for the common adapter of its own. The prefix keeps the two apart in
 imports, in stack traces and in DI errors.
 
 **A global module pairs with the lib contract of its own name.** `app/global/auth` may import
@@ -71,7 +74,7 @@ credentials.
 
 ## The user is re-derived
 
-**The token names the subject and nothing else.** The identity module of the app signs `{ sub }`,
+**The token names the subject and nothing else.** The `auth` feature of the app signs `{ sub }`,
 and the verified payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the
 token, so there is no stale copy of them to trust or to refresh.
 
@@ -85,8 +88,8 @@ without its decorator. On a route with it, the guard asks the claims port for th
 permission codes of the user, one read, and checks them. A revoked permission therefore refuses the
 very next gated request, while an ungated request pays for the user alone.
 
-**One secret per app.** The guard verifies with `JWT_SECRET` of the app, the secret its identity
-module signs the access token with. The two apps have different secrets, so a token of one app
+**One secret per app.** The guard verifies with `JWT_SECRET` of the app, the secret its `auth`
+feature signs the access token with. The two apps have different secrets, so a token of one app
 fails the signature check in the other. Even with a shared secret it would fail: the subject of a
 customer is not a row of `staff_user`, and the other way round. The auth e2e of each app sends
 both kinds of foreign token and expects 401.

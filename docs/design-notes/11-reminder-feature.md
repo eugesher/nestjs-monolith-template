@@ -43,8 +43,8 @@ of everyone.
 private record of one staff user, so any signed-in staff user works with their own reminders and
 never sees anyone else's.
 
-**`owner_id` has no foreign key.** `reminder` belongs to its feature and `staff_user` to
-staff-identity. A foreign key across modules would tie the migrations and the deletes of one module
+**`owner_id` has no foreign key.** `reminder` belongs to its feature and `staff_user` to the
+modules that sign staff in and manage them. A foreign key across modules would tie the migrations and the deletes of one module
 to the tables of another. The owner is checked where it is set: it is the subject of a verified
 token that `validateSubject` accepted.
 

@@ -10,8 +10,8 @@ describe('AuthController', () => {
     login = jest.fn();
     findSubject = jest.fn();
     controller = new AuthController(
-      new AuthLoginUseCase({ login, findSubject }),
-      new AuthMeUseCase({ login, findSubject }),
+      { execute: login } as unknown as AuthLoginUseCase,
+      new AuthMeUseCase({ findSubject }),
     );
   });
 

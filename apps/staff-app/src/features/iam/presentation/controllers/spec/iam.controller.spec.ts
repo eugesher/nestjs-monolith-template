@@ -20,13 +20,11 @@ describe('IamController', () => {
     listRoles = jest.fn();
     updateRolePermissions = jest.fn();
 
-    const identity = { registerUser, assignRole, listRoles, updateRolePermissions };
-
     controller = new IamController(
-      new IamRegisterUserUseCase(identity),
-      new IamAssignRoleUseCase(identity),
-      new IamListRolesUseCase(identity),
-      new IamUpdateRolePermissionsUseCase(identity),
+      { execute: registerUser } as unknown as IamRegisterUserUseCase,
+      { execute: assignRole } as unknown as IamAssignRoleUseCase,
+      { execute: listRoles } as unknown as IamListRolesUseCase,
+      { execute: updateRolePermissions } as unknown as IamUpdateRolePermissionsUseCase,
     );
   });
 

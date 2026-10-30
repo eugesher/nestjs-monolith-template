@@ -60,8 +60,20 @@ export const acmeApp = [
   from('acme-app:app:global:index', [
     to('acme-app:app:global:module', { ...own('app'), module: '*' }),
   ]),
+  from('acme-app:app:global:outbound', [
+    to('acme-app:app:global:outbound', own('app', 'module')),
+    baseLibs(),
+  ]),
+  from('acme-app:app:global:application', [
+    to('acme-app:app:global:application', own('app', 'module')),
+    to('acme-app:app:global:outbound', own('app', 'module')),
+    baseLibs(),
+    packages('@nestjs/common'),
+  ]),
   from('acme-app:app:global:module', [
     to('acme-app:app:global:module', own('app', 'module')),
+    to('acme-app:app:global:application', own('app', 'module')),
+    to('acme-app:app:global:outbound', own('app', 'module')),
     to('acme-app:app:global:infrastructure', own('app', 'module')),
     appContracts,
     to('acme-app:common:modules:index', own('app')),
@@ -72,12 +84,21 @@ export const acmeApp = [
   from('acme-app:app:global:infrastructure', [
     to('acme-app:app:global:infrastructure', own('app', 'module')),
     to('acme-app:app:global:infrastructure:common-adapters', own('app', 'module')),
+    to('acme-app:app:global:outbound', own('app', 'module')),
     appContracts,
     to('acme-core:entities'),
     baseLibs('database'),
+    packages(
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+      '@nestjs/common',
+      '@nestjs/typeorm',
+      'typeorm',
+    ),
   ]),
   from('acme-app:app:global:infrastructure:common-adapters', [
     to('acme-app:app:global:infrastructure:common-adapters', own('app', 'module')),
+    to('acme-app:app:global:outbound', own('app', 'module')),
     to('acme-app:contracts', own('app')),
     baseLibs(),
     namesakeLibContracts,

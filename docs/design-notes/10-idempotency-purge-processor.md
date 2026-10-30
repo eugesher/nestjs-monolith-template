@@ -1,20 +1,22 @@
 # 10 — Idempotency purge processor
 
 `apps/processor-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
-hour through the core idempotency module (see `07-core-idempotency.md`). It is a
-processor: a schedule enters it, not an HTTP request.
+hour. The keys are written by the core idempotency module (see `07-core-idempotency.md`), but
+nothing else deletes them, so the delete lives here with a repository of its own (see
+`26-code-placement.md`). It is a processor: a schedule enters it, not an HTTP request.
 
-| Layer                          | What it holds                                                               |
-| ------------------------------ | --------------------------------------------------------------------------- |
-| `presentation`                 | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`              |
-| `application`                  | `IdempotencyPurgeRunUseCase`                                                |
-| `outbound`                     | `IDEMPOTENCY_PURGE_IDEMPOTENCY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`     |
-| `infrastructure/core-adapters` | `IdempotencyPurgeIdempotencyCoreAdapter` over `IDEMPOTENCY_CORE_PURGE_PORT` |
+| Layer                        | What it holds                                                              |
+| ---------------------------- | -------------------------------------------------------------------------- |
+| `presentation`               | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`             |
+| `application`                | `IdempotencyPurgeRunUseCase`                                               |
+| `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                      |
+| `outbound`                   | `IDEMPOTENCY_PURGE_RUN_REPOSITORY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS` |
+| `infrastructure/persistence` | `IdempotencyPurgeRunRepository`, `IdempotencyPurgeTypeOrmModule`           |
 
 The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
-`IDEMPOTENCY_PURGE_KEY_TTL_HOURS`, and the use case passes it to the port on every tick. The core
-module computes the cutoff and reads no configuration, so staff-app and customer-app, which mount the
-module but never purge, need no TTL. The port answers nothing: the processor does not use the count.
+`IDEMPOTENCY_PURGE_KEY_TTL_HOURS`. On every tick the use case computes the cutoff, the instant the
+TTL before now, and the repository deletes every key created before it, whatever its status. The
+core module reads no configuration, so staff-app and customer-app need no TTL.
 
 ## The schedule decides only when
 
@@ -40,12 +42,12 @@ log: outcomes are logged by the application.
 - **A failed purge is logged, not thrown.** It logs `Idempotency purge failed, the next tick
 retries` at `warn` with the error. Expired keys only cost space until the next tick.
 
-A successful purge logs nothing here. The core module already logs
-`Expired idempotency keys purged` with the cutoff, the count and the TTL.
+- **A successful purge logs one line**, `Expired idempotency keys purged`, with the cutoff, the
+  count of deleted keys and the TTL.
 
 ## Wiring
 
-`IdempotencyPurgeModule` imports `IdempotencyCoreModule`, and processor-app mounts it through
+`IdempotencyPurgeModule` imports `IdempotencyPurgeTypeOrmModule`, and processor-app mounts it through
 `@acme-processor-processors`. `@Cron` only marks the method: the tick fires because processor-app
 imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
 `idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.

@@ -25,8 +25,8 @@ an application layer, `baseLibs('database')` for infrastructure.
 ### A layer may import itself
 
 A layer split over several files imports its own files. The entry stays even where every layer of
-that kind is one file today: the module root of a common or core module, the infrastructure of a
-global module, the domain and infrastructure of a processor.
+that kind is one file today: the module root of a common or core module, the application and
+outbound of a global module.
 
 ### Positive cases of the architecture specs
 
@@ -56,8 +56,9 @@ Removing one of them turns its spec red.
 ### `module-areas.mjs` — processors share the layer model of features
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
-(`categories/module-layers.mjs`). A processor uses fewer of them: today none has a domain or a plain
-infrastructure layer. Their entries stay, so a processor that grows a domain follows the same rules
+(`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency-purge` has a domain
+helper and a repository, `ledger-record` neither. The entries stay, so a processor that grows a layer
+follows the same rules
 a feature does.
 
 `infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger-record`
@@ -72,3 +73,19 @@ common module may (a positive case of the common modules spec).
 A core-adapter and a common-adapter have the same shape: they implement an outbound port of their
 module and call a contract outside it. Both may reach the domain and the outbound layer of their
 module, though today only feature core-adapters reach the domain.
+
+### Where the credentials and the persistence packages are allowed
+
+Code lives with its only caller (see `26-code-placement.md`), so the edges follow the code:
+
+- **A feature signs its users in.** The application of a feature may take
+  `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No
+  core module and no common module signs anyone in today, so neither may.
+- **A processor and a global module read tables.** Their infrastructure may import the persistence
+  packages (`@nestjs-cls/transactional`, its TypeORM adapter, `@nestjs/typeorm`, `typeorm`) and
+  `@nestjs/common`, as feature infrastructure does.
+- **A global module has the layers of a feature.** `application/` sees its own outbound, the base
+  libs and `@nestjs/common`; `outbound/` sees itself and the base libs; the module root sees both.
+- **A global common-adapter reaches any contract of its app and its own outbound.** It implements
+  a port of its module's outbound with the port of a common module, which is named after that
+  module, not after the global module, so the namesake rule of `appContracts` would refuse it.

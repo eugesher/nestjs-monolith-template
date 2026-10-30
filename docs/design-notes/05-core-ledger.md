@@ -1,16 +1,14 @@
 # 05 — Core ledger
 
 `core/modules/src/ledger` is an append-only journal of business facts: what happened to which
-subject, and under which correlation id. Its contract `core/contracts/src/ledger` has two ports
+subject, and under which correlation id. Its contract `core/contracts/src/ledger` has one port
 and the contract of the `ledger-record` queue:
 
-| Port                      | Facade                   | Consumer                               |
-| ------------------------- | ------------------------ | -------------------------------------- |
-| `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact                 |
-| `LEDGER_CORE_QUERY_PORT`  | `LedgerCoreQueryFacade`  | the back office that reads the journal |
+| Port                      | Facade                   | Consumer               |
+| ------------------------- | ------------------------ | ---------------------- |
+| `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact |
 
-Two ports instead of one let each app bind only what it uses. The ledger is the core module the
-apps share:
+Appending is the core: two apps do it.
 
 | App           | Writer                        | Facts                                                     |
 | ------------- | ----------------------------- | --------------------------------------------------------- |
@@ -18,8 +16,9 @@ apps share:
 | processor-app | the `ledger-record` processor | `ProductCreated`, `ProductArchived`, `CustomerRegistered` |
 
 customer-app binds no port: its `auth` feature enqueues `CustomerRegistered` into the
-`ledger-record` queue, and the processor of processor-app appends it. processor-app binds only the
-append port. staff-app binds both ports and serves the journal through its `ledger` feature (see `06-ledger-feature.md`).
+`ledger-record` queue, and the processor of processor-app appends it. Reading the journal has one
+caller, the `ledger` feature of staff-app, so it lives there and reads `ledger_entry` with a
+repository of its own (see `06-ledger-feature.md` and `26-code-placement.md`).
 
 **The queue contract lives with the ledger.** `LEDGER_RECORD_QUEUE`, the job type
 `ILedgerRecordProcessorPayload` and `LEDGER_RECORD_JOB_OPTIONS` are in `@acme-core/contracts/ledger`,
@@ -46,7 +45,8 @@ meaning into them.
 **An instant must carry its zone.** `LedgerCoreHelper.parseInstant` refuses `2026-01-01T00:00:00`,
 because `Date` would read it in the server's zone. With `Z` or an offset, every server stores the
 same instant. `occurredAt` is when the fact happened; `recordedAt` is set by the database and
-shows how long delivery took.
+shows how long delivery took. The module never reads an entry back, so its model holds the fields of
+an append and no id or record time.
 
 **The correlation id comes from the context.** The append command has no `correlationId` field.
 `LedgerCoreAppendEntryUseCase` takes it from `CorrelationContextHelper.current()`, so a fact
