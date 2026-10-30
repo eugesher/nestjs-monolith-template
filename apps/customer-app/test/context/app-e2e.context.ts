@@ -20,7 +20,9 @@ interface IAppE2EState {
   dataSource: DataSource;
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
   jwt: JwtService;
+  annToken: string;
   bobToken: string;
+  carolToken: string;
 }
 
 export class AppE2EContext {
@@ -42,8 +44,16 @@ export class AppE2EContext {
     return this.started.jwt;
   }
 
+  public get annToken(): string {
+    return this.started.annToken;
+  }
+
   public get bobToken(): string {
     return this.started.bobToken;
+  }
+
+  public get carolToken(): string {
+    return this.started.carolToken;
   }
 
   public async init(): Promise<void> {
@@ -62,7 +72,9 @@ export class AppE2EContext {
     await app.init();
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
+    const annToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000101' });
     const bobToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000102' });
+    const carolToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000103' });
 
     this.state = {
       app,
@@ -70,7 +82,9 @@ export class AppE2EContext {
       dataSource,
       rootLoggerWarn,
       jwt,
+      annToken,
       bobToken,
+      carolToken,
     };
   }
 

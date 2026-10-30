@@ -1,1 +1,1 @@
-export * from './common-adapters/idempotency-purge-idempotency-common.adapter';
+export * from './core-adapters/idempotency-purge-idempotency-core.adapter';

@@ -1,0 +1,27 @@
+name: 02-replay
+description: |-
+  e2e: Order › POST /api/orders › should replay the same response for the same key and body without a second order
+
+  Expect: 201 Created both times with the same body, one order of carol, one ledger record
+  User: carol@example.com (token signed by scripts.py)
+  Note: send it twice
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100"
+      ]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-replay-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_carol

@@ -1,0 +1,19 @@
+name: 14-without-token
+description: |-
+  e2e: Order › POST /api/orders › should refuse a caller without a token
+
+  Expect: 401 Unauthorized
+method: POST
+url: $CUSTOMER_APP_BASE_URL/orders
+body:
+  content: |-
+    {
+      "productIds": [
+        "100"
+      ]
+    }
+headers:
+  - name: Idempotency-Key
+    value: e2e-order-anonymous-key
+  - name: Content-Type
+    value: application/json

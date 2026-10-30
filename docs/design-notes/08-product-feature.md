@@ -145,13 +145,13 @@ the use case answers when it sees the sku first.
 
 ## Adapters
 
-| Port                         | Adapter                           | Target                    |
-| ---------------------------- | --------------------------------- | ------------------------- |
-| `PRODUCT_LEDGER_PORT`        | `ProductLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT` |
-| `PRODUCT_IDEMPOTENCY_PORT`   | `ProductIdempotencyCommonAdapter` | `IDEMPOTENCY_COMMON_PORT` |
-| `PRODUCT_LEDGER_RECORD_PORT` | `ProductLedgerRecordQueueAdapter` | the `ledger-record` queue |
+| Port                         | Adapter                           | Target                      |
+| ---------------------------- | --------------------------------- | --------------------------- |
+| `PRODUCT_LEDGER_PORT`        | `ProductLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT`   |
+| `PRODUCT_IDEMPOTENCY_PORT`   | `ProductIdempotencyCoreAdapter`   | `IDEMPOTENCY_CORE_KEY_PORT` |
+| `PRODUCT_LEDGER_RECORD_PORT` | `ProductLedgerRecordQueueAdapter` | the `ledger-record` queue   |
 
-The idempotency adapter turns the claim outcome enum of the common module into the plain outcomes of
+The idempotency adapter turns the claim outcome enum of the core module into the plain outcomes of
 the port and hands a replay's stored response back as the type the use case expects.
 
 **The queue adapter speaks the contract of its consumer.** The queue name and the job type live in
@@ -160,8 +160,8 @@ one job and nothing else: the job options come with the queue registration of
 `@acme-staff-common/shared/ledger-record`.
 
 The adapter lives in `infrastructure/queue`, a layer of its own. It is the only place in the feature
-that reaches both the contracts of the app and Bull, so persistence cannot import the idempotency
-contract around its common-adapter.
+that reaches both the ledger contract and Bull, so persistence cannot import a core contract
+around the core-adapters.
 
 ## HTTP
 
@@ -185,18 +185,19 @@ viewer only `product:read`.
 
 ### Headers
 
-The two header decorators live in `common/shared`, because only features use them:
+`IfMatch` lives in `common/shared`, because only staff features use it. `IdempotencyKey` lives in
+`libs/http`, because the customer `order` feature reads the same header:
 
 | Alias                                   | Decorator        | Refusal                                                     |
 | --------------------------------------- | ---------------- | ----------------------------------------------------------- |
 | `@acme-staff-common/shared/concurrency` | `IfMatch`        | `IF_MATCH_INVALID` (400)                                    |
-| `@acme-staff-common/shared/idempotency` | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
+| `@acme-libs/http`                       | `IdempotencyKey` | `IDEMPOTENCY_KEY_REQUIRED`, `IDEMPOTENCY_KEY_INVALID` (400) |
 
 - **`If-Match` is a version, not an entity tag.** `3` and `"3"` both mean version 3; a missing or
   empty header means "no expectation". Anything that is not a non-negative integer, including a weak
   tag `W/"3"`, is refused rather than ignored, so a typo cannot turn into an unconditional write.
 - **`Idempotency-Key` is trimmed and at most 128 characters**, the width of the
-  `idempotency_key` column. The common module refuses a longer key with a plain `Error`, which
+  `idempotency_key` column. The core module refuses a longer key with a plain `Error`, which
   would be a 500, so the decorator answers 400 first.
 
 ### Errors
@@ -218,8 +219,8 @@ the update, and its conflict arrives as `VERSION_MISMATCH` above.
 
 ## Wiring
 
-`ProductModule` imports `ProductTypeOrmModule.forFeature()`, `IdempotencyCommonModule`,
-`LedgerRecordQueueModule` and `LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
+`ProductModule` imports `ProductTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
+`IdempotencyCoreModule` and `LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
 `PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS` and `PRODUCT_LEDGER_RETRY_ATTEMPTS` from
 `LEDGER_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
 `IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's

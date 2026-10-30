@@ -11,14 +11,14 @@ describe('IdempotencyPurgeRunUseCase', () => {
   beforeEach(() => {
     purgeExpired = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    useCase = new IdempotencyPurgeRunUseCase({ purgeExpired }, logger as unknown as PinoLogger);
+    useCase = new IdempotencyPurgeRunUseCase({ purgeExpired }, 24, logger as unknown as PinoLogger);
   });
 
   describe('execute', () => {
-    it('purges the expired keys and leaves the outcome log to the common module', async () => {
+    it('purges the keys older than the TTL and leaves the outcome log to the core module', async () => {
       await useCase.execute();
 
-      expect(purgeExpired).toHaveBeenCalledTimes(1);
+      expect(purgeExpired.mock.calls).toEqual([[24]]);
       expect(logger.info).not.toHaveBeenCalled();
       expect(logger.warn).not.toHaveBeenCalled();
     });

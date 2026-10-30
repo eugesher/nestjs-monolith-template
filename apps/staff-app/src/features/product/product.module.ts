@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { IdempotencyCommonModule } from '@acme-staff-common/modules/idempotency';
 import { LedgerRecordQueueModule } from '@acme-staff-common/shared/ledger-record';
+import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { LedgerCoreModule } from '@acme-core/modules/ledger';
 import { ConfigProviderHelper } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
@@ -19,7 +19,7 @@ import {
   ProductAccessRepository,
   ProductCreateRepository,
   ProductCrudRepository,
-  ProductIdempotencyCommonAdapter,
+  ProductIdempotencyCoreAdapter,
   ProductLedgerCoreAdapter,
   ProductLedgerRecordQueueAdapter,
   ProductTypeOrmModule,
@@ -42,8 +42,8 @@ import { ProductController } from './presentation';
 @Module({
   imports: [
     ProductTypeOrmModule.forFeature(),
-    IdempotencyCommonModule,
     LedgerRecordQueueModule,
+    IdempotencyCoreModule,
     LedgerCoreModule,
   ],
   controllers: [ProductController],
@@ -62,7 +62,7 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_CRUD_REPOSITORY_PORT, useClass: ProductCrudRepository },
     { provide: PRODUCT_WRITE_REPOSITORY_PORT, useClass: ProductWriteRepository },
     { provide: PRODUCT_LEDGER_PORT, useClass: ProductLedgerCoreAdapter },
-    { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCommonAdapter },
+    { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },
     ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
     ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),

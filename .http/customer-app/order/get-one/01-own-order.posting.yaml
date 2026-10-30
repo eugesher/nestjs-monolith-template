@@ -1,0 +1,13 @@
+name: 01-own-order
+description: |-
+  e2e: Order › GET /api/orders/:orderId › should read an order of the caller with a line per unit
+
+  Expect: 200 OK, order 601 with line 602 of product 100
+  User: bob@example.com (token signed by scripts.py)
+url: $CUSTOMER_APP_BASE_URL/orders/601
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

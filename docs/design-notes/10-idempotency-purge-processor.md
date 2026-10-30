@@ -1,18 +1,20 @@
 # 10 — Idempotency purge processor
 
 `apps/staff-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
-hour through the idempotency common module (see `07-idempotency-common-module.md`). It is a
+hour through the core idempotency module (see `07-core-idempotency.md`). It is a
 processor: a schedule enters it, not an HTTP request.
 
-| Layer                            | What it holds                                                             |
-| -------------------------------- | ------------------------------------------------------------------------- |
-| `presentation`                   | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`            |
-| `application`                    | `IdempotencyPurgeRunUseCase`                                              |
-| `outbound`                       | `IDEMPOTENCY_PURGE_IDEMPOTENCY_PORT`                                      |
-| `infrastructure/common-adapters` | `IdempotencyPurgeIdempotencyCommonAdapter` over `IDEMPOTENCY_COMMON_PORT` |
+| Layer                          | What it holds                                                               |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `presentation`                 | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`              |
+| `application`                  | `IdempotencyPurgeRunUseCase`                                                |
+| `outbound`                     | `IDEMPOTENCY_PURGE_IDEMPOTENCY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`     |
+| `infrastructure/core-adapters` | `IdempotencyPurgeIdempotencyCoreAdapter` over `IDEMPOTENCY_CORE_PURGE_PORT` |
 
-The common module owns the TTL (`IDEMPOTENCY_KEY_TTL_HOURS`) and the cutoff, so the port takes no
-argument. It answers nothing either: the processor does not use the count.
+The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
+`IDEMPOTENCY_PURGE_KEY_TTL_HOURS`, and the use case passes it to the port on every tick. The core
+module computes the cutoff and reads no configuration, so customer-app, which mounts the module but
+never purges, needs no TTL. The port answers nothing: the processor does not use the count.
 
 ## The schedule decides only when
 
@@ -38,12 +40,12 @@ log: outcomes are logged by the application.
 - **A failed purge is logged, not thrown.** It logs `Idempotency purge failed, the next tick
 retries` at `warn` with the error. Expired keys only cost space until the next tick.
 
-A successful purge logs nothing here. The common module already logs
+A successful purge logs nothing here. The core module already logs
 `Expired idempotency keys purged` with the cutoff, the count and the TTL.
 
 ## Wiring
 
-`IdempotencyPurgeModule` imports `IdempotencyCommonModule`, and the app mounts it through
+`IdempotencyPurgeModule` imports `IdempotencyCoreModule`, and the app mounts it through
 `@acme-staff-processors`. `@Cron` only marks the method: the tick fires because staff-app imports
 `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`.
 

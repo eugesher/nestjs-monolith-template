@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, AuthE2E, CatalogE2E } from '../features';
+import { HealthE2E, AuthE2E, CatalogE2E, OrderE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -12,6 +12,7 @@ describe('App', () => {
   const healthE2E = HealthE2E.of(ctx);
   const authE2E = AuthE2E.of(ctx);
   const catalogE2E = CatalogE2E.of(ctx);
+  const orderE2E = OrderE2E.of(ctx);
 
   beforeAll(async () => {
     await ctx.init();
@@ -48,5 +49,11 @@ describe('App', () => {
 
   describe('Catalog', () => {
     catalogE2E.handleGetMany();
+  });
+
+  describe('Order', () => {
+    orderE2E.handlePlace();
+    orderE2E.handleGetMany();
+    orderE2E.handleGetOne();
   });
 });

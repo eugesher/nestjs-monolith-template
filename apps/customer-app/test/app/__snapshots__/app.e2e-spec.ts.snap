@@ -331,3 +331,419 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
   },
 }
 `;
+
+exports[`App Order GET /api/orders should list only the orders of the caller, newest first, without their products 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "601",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should answer an unknown order with the same 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should answer the order of another customer with the same 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 600 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should read an order of the caller with a line per unit 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "601",
+      "products": [
+        {
+          "id": "602",
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should refuse an order id that is not a number with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "orderId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should let one of two simultaneous orders for the last units through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "product_stock": {
+      "quantity": 1,
+    },
+  },
+  "refused": {
+    "body": {
+      "code": "ORDER_STOCK_INSUFFICIENT",
+      "details": {
+        "available": 1,
+        "productId": "103",
+        "requested": 2,
+      },
+      "message": "Product 103 has 1 in stock, 2 requested",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
+exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id 1`] = `
+{
+  "catalog": [
+    {
+      "id": "100",
+      "name": "Seeded reference product",
+      "quantity": 6,
+      "sku": "SKU-0001",
+    },
+  ],
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "e2e-order-place-key",
+        "request_fingerprint": "85f48343f793ac732a6e9db667951f5ab91e79a907a711c4eaa5cb8eaa827b42",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "order": [
+      {
+        "created_at": Any<Date>,
+        "customer_id": "00000000-0000-4000-8000-000000000101",
+        "id": Any<String>,
+      },
+    ],
+    "order_product": [
+      {
+        "id": Any<String>,
+        "order_id": Any<String>,
+        "product_id": "100",
+      },
+      {
+        "id": Any<String>,
+        "order_id": Any<String>,
+        "product_id": "100",
+      },
+    ],
+    "product_stock": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": Any<String>,
+        "product_id": "100",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": Any<String>,
+        "product_id": "100",
+        "quantity": -1,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "OrderPlaced",
+      "correlationId": "e2e-order-place",
+      "occurredAt": Any<String>,
+      "operationKey": Any<String>,
+      "payload": {
+        "customerId": "00000000-0000-4000-8000-000000000101",
+        "productIds": [
+          "100",
+          "100",
+        ],
+      },
+      "subjectId": Any<String>,
+      "subjectType": "order",
+    },
+  ],
+  "response": {
+    "body": {
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "products": [
+        {
+          "id": Any<String>,
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+        {
+          "id": Any<String>,
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse a deleted product with 404 and write nothing 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_PRODUCT_NOT_FOUND",
+      "details": {
+        "productId": "107",
+      },
+      "message": "Product 107 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse a draft product with 404 and write nothing 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_PRODUCT_NOT_FOUND",
+      "details": {
+        "productId": "101",
+      },
+      "message": "Product 101 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse a placement without a key with 400 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "IDEMPOTENCY_KEY_REQUIRED",
+      "message": "The Idempotency-Key header is required for this operation",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse an archived product with 404 and write nothing 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_PRODUCT_NOT_FOUND",
+      "details": {
+        "productId": "105",
+      },
+      "message": "Product 105 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse an empty list with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "productIds must contain at least 1 elements",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse an id that is not a number with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each productId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse an unknown product with 404 and write nothing 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_PRODUCT_NOT_FOUND",
+      "details": {
+        "productId": "999",
+      },
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse more units than in stock with 409 and the details, write nothing and release the key 1`] = `
+{
+  "db": {
+    "idempotency_key": [],
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_STOCK_INSUFFICIENT",
+      "details": {
+        "available": 0,
+        "productId": "106",
+        "requested": 1,
+      },
+      "message": "Product 106 has 0 in stock, 1 requested",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse the key of another customer with 422 rather than replay their order 1`] = `
+{
+  "db": {
+    "order": [
+      {
+        "id": "601",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_IDEMPOTENCY_KEY_REUSED",
+      "message": "Idempotency-Key e2e-order-place-key was already used with a different request body",
+      "statusCode": 422,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should refuse the same key with another body with 422 1`] = `
+{
+  "db": {
+    "order": [],
+  },
+  "response": {
+    "body": {
+      "code": "ORDER_IDEMPOTENCY_KEY_REUSED",
+      "message": "Idempotency-Key e2e-order-reuse-key was already used with a different request body",
+      "statusCode": 422,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should replay the same response for the same key and body without a second order 1`] = `
+{
+  "db": {
+    "order": [
+      {
+        "customer_id": "00000000-0000-4000-8000-000000000103",
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    "OrderPlaced",
+  ],
+}
+`;
