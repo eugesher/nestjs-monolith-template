@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { LedgerRecordQueueModule } from '@acme-customer-common/shared/ledger-record';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
+import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 import { ConfigProviderHelper } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import {
@@ -15,6 +16,7 @@ import {
   OrderIdempotencyCoreAdapter,
   OrderLedgerRecordQueueAdapter,
   OrderPlaceRepository,
+  OrderProductStockCoreAdapter,
   OrderTypeOrmModule,
 } from './infrastructure';
 import {
@@ -24,11 +26,17 @@ import {
   ORDER_LEDGER_RECORD_TIMEOUT_MS,
   ORDER_LEDGER_RETRY_ATTEMPTS,
   ORDER_PLACE_REPOSITORY_PORT,
+  ORDER_PRODUCT_STOCK_PORT,
 } from './outbound';
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [OrderTypeOrmModule.forFeature(), LedgerRecordQueueModule, IdempotencyCoreModule],
+  imports: [
+    OrderTypeOrmModule.forFeature(),
+    LedgerRecordQueueModule,
+    IdempotencyCoreModule,
+    ProductStockCoreModule,
+  ],
   controllers: [OrderController],
   providers: [
     HttpExceptionFilter,
@@ -38,6 +46,7 @@ import { OrderController } from './presentation';
     OrderLedgerService,
     { provide: ORDER_CRUD_REPOSITORY_PORT, useClass: OrderCrudRepository },
     { provide: ORDER_PLACE_REPOSITORY_PORT, useClass: OrderPlaceRepository },
+    { provide: ORDER_PRODUCT_STOCK_PORT, useClass: OrderProductStockCoreAdapter },
     { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },
     { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerRecordQueueAdapter },
     ConfigProviderHelper.value(ORDER_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),

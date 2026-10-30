@@ -20,7 +20,8 @@ price attaches to a row and never splits a count.
 
 **The quantity on hand is a sum.** `product_stock` stores signed movements, and the stock of a
 product is `SUM(quantity)` over its rows. A restock writes `+N` with no order line. An ordered unit
-writes `-1` with the id of its `order_product` row. No column holds the current stock, so no update
+writes `-1` with the id of its `order_product` row. Only the core product stock module writes these
+rows (see `24-core-product-stock.md`). No column holds the current stock, so no update
 can lose a movement, and the history of a product is its rows in id order.
 
 **A unit leaves the warehouse once.** `uq_product_stock_order_product` is unique on

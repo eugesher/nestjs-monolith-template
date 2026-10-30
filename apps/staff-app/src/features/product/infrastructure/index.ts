@@ -1,5 +1,6 @@
 export * from './core-adapters/product-idempotency-core.adapter';
 export * from './core-adapters/product-ledger-core.adapter';
+export * from './core-adapters/product-stock-core.adapter';
 
 export * from './persistence/orm/product-type-orm.module';
 

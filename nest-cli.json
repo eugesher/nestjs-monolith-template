@@ -136,6 +136,15 @@
         "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }
     },
+    "core-contracts-product-stock": {
+      "type": "library",
+      "root": "core/contracts/src/product-stock",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/product-stock",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
+      }
+    },
     "core-entities": {
       "type": "library",
       "root": "core/entities",
@@ -177,6 +186,15 @@
       "root": "core/modules/src/ledger",
       "entryFile": "index",
       "sourceRoot": "core/modules/src/ledger",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
+    },
+    "core-modules-product-stock": {
+      "type": "library",
+      "root": "core/modules/src/product-stock",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/product-stock",
       "compilerOptions": {
         "tsConfigPath": "core/modules/tsconfig.lib.json"
       }

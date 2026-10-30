@@ -6,10 +6,13 @@ import { OrderDomainException, OrderErrorCodeEnum, OrderModel } from '../../doma
 import {
   type IOrderIdempotencyPort,
   type IOrderPlaceRepositoryPort,
+  type IOrderProductStockPort,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
+  ORDER_PRODUCT_STOCK_PORT,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
+import { OrderStockMapper } from '../mappers/order-stock.mapper';
 import { OrderViewMapper } from '../mappers/order-view.mapper';
 import { OrderLedgerService } from '../services/order-ledger.service';
 
@@ -19,6 +22,8 @@ export class OrderPlaceUseCase {
     private readonly ledgerService: OrderLedgerService,
     @Inject(ORDER_PLACE_REPOSITORY_PORT)
     private readonly repository: IOrderPlaceRepositoryPort,
+    @Inject(ORDER_PRODUCT_STOCK_PORT)
+    private readonly productStock: IOrderProductStockPort,
     @Inject(ORDER_IDEMPOTENCY_PORT)
     private readonly idempotency: IOrderIdempotencyPort,
     @Inject(TRANSACTION_PORT)
@@ -78,11 +83,18 @@ export class OrderPlaceUseCase {
   private async persist(command: IOrderPlaceCommand): Promise<IOrderView> {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
-    const stock = await this.repository.lockStock(distinctIds);
+    const quantities = await this.productStock.lock({ productIds: distinctIds });
+    const products = await this.repository.findProducts(distinctIds);
+    const stock = OrderStockMapper.toStock(products, quantities);
     const draft = OrderModel.place({ customerId, productIds, stock });
     const placed = await this.repository.insert(draft);
     const view = OrderViewMapper.toView(placed);
+    const movements = view.products.map((product) => ({
+      productId: product.productId,
+      orderProductId: product.id,
+    }));
 
+    await this.productStock.withdraw({ movements });
     await this.idempotency.complete({ key: idempotencyKey, response: view });
 
     return view;

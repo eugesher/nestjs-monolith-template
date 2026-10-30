@@ -29,7 +29,7 @@ refuses an empty list again with `ORDER_EMPTY`, so the rule holds for a caller t
 
 ## Placing an order
 
-`OrderModel.place` takes the units and the stock the repository locked, and checks every unit:
+`OrderModel.place` takes the units and the locked products with their stock, and checks every unit:
 
 - **The product must be `active`.** A `draft`, an `archived`, a soft-deleted or an unknown product
   is the same `ORDER_PRODUCT_NOT_FOUND`, with `details.productId`. A customer cannot tell a draft
@@ -43,18 +43,24 @@ One refused unit refuses the whole order: nothing is written.
 
 `OrderPlaceUseCase` runs the placement in one transaction:
 
-1. `lockStock` reads the products of the order with `SELECT … FOR UPDATE`, in `id` order, and the
-   sum of their stock movements with `FOR SHARE`.
-2. The domain checks the units.
-3. `insert` writes the `order` row, an `order_product` row per unit and a `-1` movement per line.
-4. The idempotency key is completed with the answer.
+1. `ORDER_PRODUCT_STOCK_PORT.lock` locks the products of the order with `SELECT … FOR UPDATE`, in
+   `id` order, and sums their stock movements with `FOR SHARE`.
+2. `findProducts` reads the `sku`, `name` and `status` of the locked products, and
+   `OrderStockMapper` joins them with the stock.
+3. The domain checks the units.
+4. `insert` writes the `order` row and an `order_product` row per unit.
+5. `ORDER_PRODUCT_STOCK_PORT.withdraw` writes a `-1` movement per line.
+6. The idempotency key is completed with the answer.
+
+Both stock calls go through `OrderProductStockCoreAdapter` to the core product stock module (see
+`24-core-product-stock.md`), which owns `product_stock` and the lock order.
 
 **The product rows are the lock.** Two orders for the same product queue on its row, so the second
 one sums the stock after the first one committed and cannot sell a unit twice. The rows are locked
 in `id` order, so two orders that share several products wait for each other instead of
 deadlocking. The sum is a locking read too, so it sees the latest committed movements whatever the
-transaction read before. `lockStock([])` answers `[]` without a query, and the domain refuses the
-empty order.
+transaction read before. Locking an empty list answers `[]` without a query, and the domain refuses
+the empty order.
 
 ### Idempotency
 
@@ -112,9 +118,10 @@ them:
 | ----------------------------- | ------------------------------- |
 | `ORDER_PLACE_REPOSITORY_PORT` | `OrderPlaceRepository`          |
 | `ORDER_CRUD_REPOSITORY_PORT`  | `OrderCrudRepository`           |
+| `ORDER_PRODUCT_STOCK_PORT`    | `OrderProductStockCoreAdapter`  |
 | `ORDER_IDEMPOTENCY_PORT`      | `OrderIdempotencyCoreAdapter`   |
 | `ORDER_LEDGER_RECORD_PORT`    | `OrderLedgerRecordQueueAdapter` |
 
-`OrderModule` imports `OrderTypeOrmModule.forFeature()`, `LedgerRecordQueueModule` and
-`IdempotencyCoreModule`. It reads `ORDER_LEDGER_RECORD_TIMEOUT_MS` from `REDIS_COMMAND_TIMEOUT_MS`
-and `ORDER_LEDGER_RETRY_ATTEMPTS` from `LEDGER_RETRY_ATTEMPTS`.
+`OrderModule` imports `OrderTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
+`IdempotencyCoreModule` and `ProductStockCoreModule`. It reads `ORDER_LEDGER_RECORD_TIMEOUT_MS` from
+`REDIS_COMMAND_TIMEOUT_MS` and `ORDER_LEDGER_RETRY_ATTEMPTS` from `LEDGER_RETRY_ATTEMPTS`.
