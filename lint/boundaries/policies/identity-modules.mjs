@@ -20,4 +20,14 @@ export const identityModules = [
     message:
       'customer-identity belongs to customer-app: staff-app knows its staff through staff-identity',
   },
+  {
+    from: {
+      file: {
+        categories: 'acme-app:app',
+        captured: { app: 'staff-app' },
+        path: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
+      },
+    },
+    allow: [{ ...to('acme-core:entities'), dependency: { specifiers: ['Customer'] } }],
+  },
 ];

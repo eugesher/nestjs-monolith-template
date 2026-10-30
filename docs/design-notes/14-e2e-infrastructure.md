@@ -84,6 +84,8 @@ Customers, in `customer.sql`:
 The hashes are argon2id with the cost parameters of the app env examples. Roles get the ids of their
 order in `RoleEnum`. Permission ids are stable: a code dropped from `PermissionCodeEnum` leaves its
 id unused, so the product codes keep 7 to 9. The products belong to the catalog and have no owner.
+Product 100 has 8 units on hand and product 106 is sold out: ann ordered its last unit. Ann and bob
+own one order each, so every order case has an order of another customer to be refused.
 The reminders belong to staff users: editor owns one reminder and admin most of them, so every case
 has a record of another staff user to be refused. Every note belongs to admin, so viewer, who owns
 none, is the other staff user of the note cases.
@@ -105,6 +107,8 @@ the call, never by a literal.
 | reminder    | `reminder`                       | 300–399                                                   |
 | ledger      | `ledger_entry`                   | 400–499                                                   |
 | idempotency | `idempotency_key`                | 500–599                                                   |
+| order       | `order`, `order_product`         | 600–699                                                   |
+| stock       | `product_stock`                  | 700–799                                                   |
 
 ## Images
 
