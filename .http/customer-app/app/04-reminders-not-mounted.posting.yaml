@@ -1,4 +1,4 @@
-name: 05-reminders-not-mounted
+name: 04-reminders-not-mounted
 description: |-
   e2e: should not mount the staff-app route /api/reminders
 

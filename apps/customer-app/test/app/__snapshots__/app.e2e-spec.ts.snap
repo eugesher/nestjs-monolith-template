@@ -229,6 +229,77 @@ exports[`App Auth POST /api/auth/register should refuse a taken email in another
 }
 `;
 
+exports[`App Catalog GET /api/products should answer the page of the window with the total of every page 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "id": "103",
+          "name": "Product to archive",
+          "quantity": 3,
+          "sku": "SKU-0004",
+        },
+      ],
+      "page": 2,
+      "size": 1,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog GET /api/products should list only the active products in stock, by id, with the quantity on hand 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "id": "100",
+          "name": "Seeded reference product",
+          "quantity": 8,
+          "sku": "SKU-0001",
+        },
+        {
+          "id": "103",
+          "name": "Product to archive",
+          "quantity": 3,
+          "sku": "SKU-0004",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog GET /api/products should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Catalog GET /api/products should refuse a size of zero with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "size must not be less than 1",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
