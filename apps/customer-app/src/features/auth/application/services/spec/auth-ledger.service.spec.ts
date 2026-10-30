@@ -5,15 +5,15 @@ import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/tes
 import { AuthLedgerService } from '../auth-ledger.service';
 
 describe('AuthLedgerService', () => {
-  let append: jest.Mock;
+  let enqueue: jest.Mock;
   let logger: PinoLoggerMock;
   let service: AuthLedgerService;
 
   beforeEach(() => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
-    append = jest.fn().mockResolvedValue(undefined);
+    enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new AuthLedgerService({ append }, logger as unknown as PinoLogger);
+    service = new AuthLedgerService({ enqueue }, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -21,57 +21,65 @@ describe('AuthLedgerService', () => {
   });
 
   describe('recordRegistered', () => {
-    it('appends the registration under the operation key of the customer', async () => {
-      await service.recordRegistered({ customerId: 'customer-1' });
+    it('enqueues the registration with the email under the operation key and correlation id of the request', async () => {
+      await CorrelationContextHelper.run('corr-1', () =>
+        service.recordRegistered({ customerId: 'customer-1', email: 'eve@example.com' }),
+      );
 
-      expect(append).toHaveBeenCalledTimes(1);
-      expect(append).toHaveBeenCalledWith({
+      expect(enqueue).toHaveBeenCalledTimes(1);
+      expect(enqueue).toHaveBeenCalledWith({
         operationKey: 'customer-registered:customer-1',
         subjectType: 'customer',
         subjectId: 'customer-1',
         action: 'CustomerRegistered',
-        payload: {},
+        payload: { email: 'eve@example.com' },
         occurredAt: '2026-01-05T08:00:00.000Z',
+        correlationId: 'corr-1',
       });
+      expect(logger.info).toHaveBeenCalledWith(
+        { customerId: 'customer-1', operationKey: 'customer-registered:customer-1' },
+        'Ledger record enqueued',
+      );
     });
 
-    it('retries a failed append and logs each retry', async () => {
-      append.mockRejectedValueOnce(new Error('deadlock')).mockResolvedValue(undefined);
+    it('retries a failed enqueue and logs each retry', async () => {
+      enqueue.mockRejectedValueOnce(new Error('redis is down')).mockResolvedValue(undefined);
 
       await CorrelationContextHelper.run('corr-1', () =>
-        service.recordRegistered({ customerId: 'customer-1' }),
+        service.recordRegistered({ customerId: 'customer-1', email: 'eve@example.com' }),
       );
 
-      expect(append).toHaveBeenCalledTimes(2);
+      expect(enqueue).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
         {
-          err: new Error('deadlock'),
+          err: new Error('redis is down'),
           correlationId: 'corr-1',
           attempt: 1,
           customerId: 'customer-1',
           operationKey: 'customer-registered:customer-1',
         },
-        'Ledger append (customer registered) failed — retrying',
+        'Ledger enqueue (customer registered) failed — retrying',
       );
       expect(logger.error).not.toHaveBeenCalled();
     });
 
     it('logs the record for replay after three failures instead of throwing', async () => {
-      append.mockRejectedValue(new Error('deadlock'));
+      enqueue.mockRejectedValue(new Error('redis is down'));
 
       await CorrelationContextHelper.run('corr-1', () =>
-        service.recordRegistered({ customerId: 'customer-1' }),
+        service.recordRegistered({ customerId: 'customer-1', email: 'eve@example.com' }),
       );
 
-      expect(append).toHaveBeenCalledTimes(3);
+      expect(enqueue).toHaveBeenCalledTimes(3);
+      expect(logger.info).not.toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalledWith(
         {
-          err: new Error('deadlock'),
+          err: new Error('redis is down'),
           correlationId: 'corr-1',
           customerId: 'customer-1',
           operationKey: 'customer-registered:customer-1',
         },
-        'Ledger append failed permanently: the customer is registered but absent from the ledger, replay this record',
+        'Ledger enqueue failed permanently: the customer is registered but absent from the queue and the ledger, replay this record',
       );
     });
   });

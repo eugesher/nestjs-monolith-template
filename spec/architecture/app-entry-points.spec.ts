@@ -20,10 +20,10 @@ describe('app entry points', () => {
       '@acme-staff-common/shared/idempotency',
       '@acme-staff-common/shared/ledger-record',
       '@acme-staff-contracts/idempotency',
-      '@acme-staff-contracts/ledger-record',
       '@acme-staff-features',
       '@acme-staff-processors',
       '@acme-customer-app',
+      '@acme-customer-common/shared/ledger-record',
       '@acme-customer-features',
     ]);
   });
@@ -35,10 +35,10 @@ describe('app entry points', () => {
     '@acme-staff-common/shared/idempotency',
     '@acme-staff-common/shared/ledger-record',
     '@acme-staff-contracts/idempotency',
-    '@acme-staff-contracts/ledger-record',
     '@acme-staff-features',
     '@acme-staff-processors',
     '@acme-customer-app',
+    '@acme-customer-common/shared/ledger-record',
     '@acme-customer-features',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -55,7 +55,7 @@ describe('app entry points', () => {
     '@acme-staff-common/shared/idempotency/helpers/idempotency-key.helper',
     '@acme-staff-contracts/idempotency/ports/idempotency-common.port',
     '@acme-staff-common/shared/ledger-record/queues/ledger-record-queue.module',
-    '@acme-staff-contracts/ledger-record/queues/ledger-record.queue',
+    '@acme-customer-common/shared/ledger-record/queues/ledger-record-queue.module',
     '@acme-staff-processors/ledger-record/ledger-record.module',
     '@acme-staff-processors/index',
   ])('a deep path into an app does not resolve: %s', (source) => {
@@ -211,20 +211,50 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it('a staff-app processor consumer MAY import the ledger record contract by its alias', async () => {
+  it.each([
+    'apps/staff-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
+    'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/staff-app/test/context/app-e2e.context.ts',
+    'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
+    'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/customer-app/test/context/app-e2e.context.ts',
+  ])('%s MAY import the ledger record contract of the core ledger', async (file) => {
     await expect({
-      file: 'apps/staff-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
-      code: 'import { LEDGER_RECORD_QUEUE } from "@acme-staff-contracts/ledger-record";',
+      file,
+      code: 'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
     }).toPassArchitectureLint();
   });
 
   it.each([
-    'apps/staff-app/src/processors/ledger-record/ledger-record.module.ts',
-    'apps/staff-app/src/features/product/product.module.ts',
-  ])('%s MAY register the ledger record queue by its alias', async (file) => {
+    'apps/staff-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
+    'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/customer-app/test/context/app-e2e.context.ts',
+  ])('%s may NOT import a core contract other than the ledger', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerRecordQueueModule } from "@acme-staff-common/shared/ledger-record";',
+      code: 'import { x } from "@acme-core/contracts/customer-identity";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    [
+      'apps/staff-app/src/processors/ledger-record/ledger-record.module.ts',
+      '@acme-staff-common/shared/ledger-record',
+    ],
+    [
+      'apps/staff-app/src/features/product/product.module.ts',
+      '@acme-staff-common/shared/ledger-record',
+    ],
+    [
+      'apps/customer-app/src/features/auth/auth.module.ts',
+      '@acme-customer-common/shared/ledger-record',
+    ],
+  ])('%s MAY register the ledger record queue by %s', async (file, source) => {
+    await expect({
+      file,
+      code: `import { LedgerRecordQueueModule } from "${source}";`,
     }).toPassArchitectureLint();
   });
 
@@ -268,6 +298,10 @@ describe('app entry points', () => {
       '@acme-staff-common/shared/concurrency',
     ],
     ['apps/customer-app/src/app/app.module.ts', '@acme-staff-common/shared/ledger-record'],
+    [
+      'apps/customer-app/src/features/auth/auth.module.ts',
+      '@acme-staff-common/shared/ledger-record',
+    ],
   ])('customer-app (%s) may NOT reach the staff-app %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
       'boundaries/dependencies',

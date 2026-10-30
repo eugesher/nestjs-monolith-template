@@ -1,8 +1,8 @@
 name: 01-register
 description: |-
-  e2e: Auth › POST /api/auth/register › should create a customer who logs in and record the registration in the ledger under the correlation id
+  e2e: Auth › POST /api/auth/register › should create a customer who logs in and enqueue the ledger record of the registration with the email under the correlation id
 
-  Expect: 201 Created, {id, email} without a token; a customer row eve@example.com, active, with an argon2id hash; a ledger entry customer-registered:<id> with correlation_id e2e-customer-register
+  Expect: 201 Created, {id, email} without a token; a customer row eve@example.com, active, with an argon2id hash; a ledger-record job customer-registered:<id> with payload {email} and correlationId e2e-customer-register; staff-app appends it to the ledger when it runs on the same Redis
   Note: then log in as eve@example.com with the same password and GET /auth/me with that token: 200 and 200
 method: POST
 url: $CUSTOMER_APP_BASE_URL/auth/register

@@ -19,19 +19,23 @@ it is:
 | Field           | Meaning                                                   |
 | --------------- | --------------------------------------------------------- |
 | `operationKey`  | the key the ledger deduplicates on, `<fact>:<subject id>` |
-| `subjectType`   | what the record is about, `product` today                 |
+| `subjectType`   | what the record is about, `product` or `customer` today   |
 | `subjectId`     | the id of that subject                                    |
 | `action`        | the fact, such as `ProductCreated`                        |
 | `payload`       | the details of the fact                                   |
 | `occurredAt`    | when the fact happened, an ISO string                     |
 | `correlationId` | the id of the request that produced the record            |
 
-The producer turns its domain events into records, so a new writer needs no change here. The
-product feature is the only producer today (see `08-product-feature.md`).
+The producer turns its facts into records, so a new writer needs no change here. Two producers
+write today: the product feature of staff-app (see `08-product-feature.md`) and the `auth` feature
+of customer-app, which has no processor of its own (see `03-auth-feature.md`). Both apps reach the
+queue through one Redis.
 
-The queue name and the job type live in `@acme-staff-contracts/ledger-record`. The queue is
-registered once, in `@acme-staff-common/shared/ledger-record`, and both the producer and this
-processor import that module, so every producer enqueues with the same job options.
+The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
+app may not import another. Each app registers the queue once, in its
+`common/shared/ledger-record`, with `LEDGER_RECORD_JOB_OPTIONS`. Bull applies the job options of
+the producer, so every producer enqueues with the same `attempts` and `backoff` only because both
+registrations read the one constant.
 
 ## Job options
 

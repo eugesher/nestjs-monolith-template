@@ -13,7 +13,7 @@ export class AuthE2E {
 
   public handleRegister(): void {
     describe('POST /api/auth/register', () => {
-      it('should create a customer who logs in and record the registration in the ledger under the correlation id', async () => {
+      it('should create a customer who logs in and enqueue the ledger record of the registration with the email under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/register')
           .set('x-correlation-id', 'e2e-customer-register')
@@ -30,6 +30,8 @@ export class AuthE2E {
           .auth(login.body.accessToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
+        const records = await this.ctx.takeLedgerRecords();
+
         const actual = {
           response: { body: response.body },
           me: me.body,
@@ -43,6 +45,7 @@ export class AuthE2E {
               ['customer', response.body.id],
             ),
           },
+          ledger_record_queue: records.filter((record) => record.subjectId === response.body.id),
         };
 
         expect(actual).toMatchSnapshot({
@@ -56,28 +59,26 @@ export class AuthE2E {
                 created_at: expect.any(Date),
               },
             ],
-            ledger_entry: [
-              {
-                id: expect.any(String),
-                operation_key: expect.any(String),
-                subject_id: expect.any(String),
-                occurred_at: expect.any(Date),
-                recorded_at: expect.any(Date),
-              },
-            ],
           },
+          ledger_record_queue: [
+            {
+              operationKey: expect.any(String),
+              subjectId: expect.any(String),
+              occurredAt: expect.any(String),
+            },
+          ],
         });
         expect(actual).toMatchObject({
           me: { id: response.body.id },
           db: {
             customer: [{ id: response.body.id }],
-            ledger_entry: [
-              {
-                operation_key: `customer-registered:${response.body.id}`,
-                subject_id: response.body.id,
-              },
-            ],
           },
+          ledger_record_queue: [
+            {
+              operationKey: `customer-registered:${response.body.id}`,
+              subjectId: response.body.id,
+            },
+          ],
         });
         expect(response.body.id).toMatch(
           /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,

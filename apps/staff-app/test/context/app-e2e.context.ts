@@ -9,7 +9,7 @@ import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '@acme-staff-app';
-import { LEDGER_RECORD_QUEUE } from '@acme-staff-contracts/ledger-record';
+import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import { REDIS_CLIENT } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 

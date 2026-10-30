@@ -154,8 +154,8 @@ The idempotency adapter turns the claim outcome enum of the common module into t
 the port and hands a replay's stored response back as the type the use case expects.
 
 **The queue adapter speaks the contract of its consumer.** The queue name and the job type live in
-`@acme-staff-contracts/ledger-record`, next to the processor that reads them. The adapter adds the
-record as one job and nothing else: the job options come with the queue registration of
+`@acme-core/contracts/ledger`, which customer-app writes to as well. The adapter adds the record as
+one job and nothing else: the job options come with the queue registration of
 `@acme-staff-common/shared/ledger-record`.
 
 The adapter lives in `infrastructure/queue`, a layer of its own. It is the only place in the feature

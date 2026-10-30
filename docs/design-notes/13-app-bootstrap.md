@@ -58,7 +58,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
 | `ScheduleSetupModule`              | `app/setup/schedule`, staff-app only                 | `ScheduleModule.forRoot()` for `@Cron`                      |
-| `QueueSetupModule`                 | `app/setup/queue`, staff-app only                    | the Bull connection to `REDIS_URL`, `removeOnComplete`      |
+| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`      |
 | `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                         |
 | `AuthGlobalModule`                 | `app/global/auth`                                    | the three global guards                                     |
 | features, processors               | `@acme-<app>-features`, `@acme-staff-processors`     | the routes and the consumers                                |
@@ -79,7 +79,8 @@ header. Inside the request, `CorrelationContextHelper.current()` answers that id
 written by the request carries the id the client got back.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
-no `Product` and no `Reminder`. Both list `LedgerEntry`, because both mount the core ledger.
+no `Product`, no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and
+mounts no core ledger.
 
 ## Logs
 

@@ -29,7 +29,10 @@ describe('AuthRegisterUseCase', () => {
         email: 'eve@example.com',
         password: 'long-enough-password',
       });
-      expect(recordRegistered).toHaveBeenCalledWith({ customerId: 'customer-1' });
+      expect(recordRegistered).toHaveBeenCalledWith({
+        customerId: 'customer-1',
+        email: 'eve@example.com',
+      });
     });
 
     it('lets a refusal of identity through and records nothing', async () => {

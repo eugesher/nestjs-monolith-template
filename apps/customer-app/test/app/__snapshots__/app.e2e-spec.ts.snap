@@ -112,7 +112,7 @@ exports[`App Auth POST /api/auth/login should refuse the credentials of a staff 
 }
 `;
 
-exports[`App Auth POST /api/auth/register should create a customer who logs in and record the registration in the ledger under the correlation id 1`] = `
+exports[`App Auth POST /api/auth/register should create a customer who logs in and enqueue the ledger record of the registration with the email under the correlation id 1`] = `
 {
   "db": {
     "customer": [
@@ -124,20 +124,21 @@ exports[`App Auth POST /api/auth/register should create a customer who logs in a
         "status": "active",
       },
     ],
-    "ledger_entry": [
-      {
-        "action": "CustomerRegistered",
-        "correlation_id": "e2e-customer-register",
-        "id": Any<String>,
-        "occurred_at": Any<Date>,
-        "operation_key": Any<String>,
-        "payload": {},
-        "recorded_at": Any<Date>,
-        "subject_id": Any<String>,
-        "subject_type": "customer",
-      },
-    ],
+    "ledger_entry": [],
   },
+  "ledger_record_queue": [
+    {
+      "action": "CustomerRegistered",
+      "correlationId": "e2e-customer-register",
+      "occurredAt": Any<String>,
+      "operationKey": Any<String>,
+      "payload": {
+        "email": "eve@example.com",
+      },
+      "subjectId": Any<String>,
+      "subjectType": "customer",
+    },
+  ],
   "me": {
     "email": "eve@example.com",
     "id": Any<String>,

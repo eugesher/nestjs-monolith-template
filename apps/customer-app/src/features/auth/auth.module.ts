@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
 
+import { LedgerRecordQueueModule } from '@acme-customer-common/shared/ledger-record';
 import { CustomerIdentityCoreModule } from '@acme-core/modules/customer-identity';
-import { LedgerCoreModule } from '@acme-core/modules/ledger';
+import { ConfigProviderHelper } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { AuthLedgerService, AuthLoginUseCase, AuthRegisterUseCase } from './application';
-import { AuthCustomerIdentityCoreAdapter, AuthLedgerCoreAdapter } from './infrastructure';
-import { AUTH_IDENTITY_PORT, AUTH_LEDGER_PORT } from './outbound';
+import { AuthCustomerIdentityCoreAdapter, AuthLedgerRecordQueueAdapter } from './infrastructure';
+import {
+  AUTH_IDENTITY_PORT,
+  AUTH_LEDGER_RECORD_PORT,
+  AUTH_LEDGER_RECORD_TIMEOUT_MS,
+} from './outbound';
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [CustomerIdentityCoreModule, LedgerCoreModule],
+  imports: [CustomerIdentityCoreModule, LedgerRecordQueueModule],
   controllers: [AuthController],
   providers: [
     HttpExceptionFilter,
@@ -17,7 +22,8 @@ import { AuthController } from './presentation';
     AuthRegisterUseCase,
     AuthLedgerService,
     { provide: AUTH_IDENTITY_PORT, useClass: AuthCustomerIdentityCoreAdapter },
-    { provide: AUTH_LEDGER_PORT, useClass: AuthLedgerCoreAdapter },
+    { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerRecordQueueAdapter },
+    ConfigProviderHelper.value(AUTH_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
   ],
 })
 export class AuthModule {}
