@@ -28,12 +28,17 @@
         "./apps/staff-app/src/common/shared/ledger-record"
       ],
       "@acme-staff-features": ["./apps/staff-app/src/features"],
-      "@acme-staff-processors": ["./apps/staff-app/src/processors"],
       "@acme-customer-app": ["./apps/customer-app/src/app/app.module"],
       "@acme-customer-common/shared/ledger-record": [
         "./apps/customer-app/src/common/shared/ledger-record"
       ],
       "@acme-customer-features": ["./apps/customer-app/src/features"],
+      "@acme-processor-app": ["./apps/processor-app/src/app/app.module"],
+      "@acme-processor-common/shared/ledger-record": [
+        "./apps/processor-app/src/common/shared/ledger-record"
+      ],
+      "@acme-processor-features": ["./apps/processor-app/src/features"],
+      "@acme-processor-processors": ["./apps/processor-app/src/processors"],
       "@acme-core/contracts/customer-identity": ["./core/contracts/src/customer-identity"],
       "@acme-core/contracts/idempotency": ["./core/contracts/src/idempotency"],
       "@acme-core/contracts/ledger": ["./core/contracts/src/ledger"],

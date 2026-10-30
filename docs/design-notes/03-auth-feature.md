@@ -68,9 +68,9 @@ and one 409.
 `AuthRegisterUseCase` asks `AuthLedgerService` to enqueue `CustomerRegistered` under the operation
 key `customer-registered:<id>`, with `{ email }` as the payload and the correlation id of the
 request. `AUTH_LEDGER_RECORD_PORT` and `AuthLedgerRecordQueueAdapter` put the record into the
-`ledger-record` queue, the queue product writes to in staff-app. customer-app has no processor:
-the `ledger-record` processor of staff-app appends the record (see `09-ledger-record-processor.md`),
-so both apps must point `REDIS_URL` at one Redis.
+`ledger-record` queue, the queue product writes to in staff-app. Neither app consumes it: the
+`ledger-record` processor of processor-app appends the record (see `09-ledger-record-processor.md`),
+so every app must point `REDIS_URL` at one Redis.
 
 The customer is already stored, so a failing enqueue must not turn the sign-up into an error. The
 adapter gives up after `REDIS_COMMAND_TIMEOUT_MS`, because Bull waits for a lost Redis without end,

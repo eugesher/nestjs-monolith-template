@@ -16,6 +16,11 @@ export class ApiReference {
       title: 'ACME customer API',
       description: 'The customer-facing surface: sign-up and sign-in.',
     },
+    [AppNameEnum.PROCESSOR_APP]: {
+      title: 'ACME processor app',
+      description:
+        'The background worker: health probes only; its work comes from queues and schedules.',
+    },
   };
 
   public static setup(app: INestApplication, appName: AppNameEnum, port: number): void {

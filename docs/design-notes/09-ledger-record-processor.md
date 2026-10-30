@@ -1,15 +1,17 @@
 # 09 — Ledger record processor
 
-`apps/staff-app/src/processors/ledger-record` appends records to the ledger of
+`apps/processor-app/src/processors/ledger-record` appends records to the ledger of
 `core/modules/src/ledger` (see `05-core-ledger.md`). It is a processor, not a feature: a job of the
-Bull queue `ledger-record` enters it, not an HTTP request, and it has no controller.
+Bull queue `ledger-record` or a daily schedule enters it, not an HTTP request, and it has no
+controller.
 
-| Layer                          | What it holds                                                                   |
-| ------------------------------ | ------------------------------------------------------------------------------- |
-| `presentation`                 | `LedgerRecordConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one |
-| `application`                  | `LedgerRecordAppendUseCase` and `LedgerRecordReportFailureUseCase`              |
-| `outbound`                     | `LEDGER_RECORD_LEDGER_PORT`                                                     |
-| `infrastructure/core-adapters` | `LedgerRecordLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT`                  |
+| Layer                          | What it holds                                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `presentation`                 | `LedgerRecordConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
+| `application`                  | `LedgerRecordAppendUseCase`, `LedgerRecordReportFailureUseCase`, `LedgerRecordRetryFailedUseCase`            |
+| `outbound`                     | `LEDGER_RECORD_LEDGER_PORT`, `LEDGER_RECORD_QUEUE_PORT`                                                      |
+| `infrastructure/core-adapters` | `LedgerRecordLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT`                                               |
+| `infrastructure/queue`         | `LedgerRecordQueueAdapter` over the `ledger-record` queue                                                    |
 
 ## A job is a ready record
 
@@ -28,8 +30,8 @@ it is:
 
 The producer turns its facts into records, so a new writer needs no change here. Two producers
 write today: the product feature of staff-app (see `08-product-feature.md`) and the `auth` feature
-of customer-app, which has no processor of its own (see `03-auth-feature.md`). Both apps reach the
-queue through one Redis.
+of customer-app (see `03-auth-feature.md`). Neither consumes the queue: processor-app does (see
+`25-processor-app.md`), and the three apps reach the queue through one Redis.
 
 The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
 app may not import another. Each app registers the queue once, in its
@@ -62,9 +64,39 @@ the same context, so its log lines carry the id too.
 `LedgerRecordAppendUseCase` lets a failed append throw, so Bull retries the job. Every failed attempt
 reaches `@OnQueueFailed`, and `LedgerRecordReportFailureUseCase` logs it: at `warn` while attempts are
 left, at `error` after the last one. A job that ran out of attempts stays in the failed set of the
-queue, and replaying it means retrying that job.
+queue until the daily retry returns it to the queue (see below).
 
 A retry of a job that did append is harmless: the ledger answers `appended: false` for a known key.
+
+## Retrying the failed records
+
+**One consumer serves the queue and its failures.** `handleRetryTick` of `LedgerRecordConsumer`
+runs once a day at 03:00 under `@Cron` named `ledger-record-retry`, and
+`LedgerRecordRetryFailedUseCase` moves every job of the failed set back to the waiting list through
+`LEDGER_RECORD_QUEUE_PORT`. `LedgerRecordQueueAdapter` calls `getFailed()`, then `job.retry()` on
+each.
+
+**Every failed job is retried, whatever its age.** A job lands in the failed set only after its last
+attempt, and `@OnQueueFailed` has already logged it at `error`. A job that fails for good fails
+again every night and logs again: the log keeps showing it until someone fixes its cause or removes
+it.
+
+**A retried job gets one attempt.** Bull keeps `attemptsMade` on `retry()`, so the job is past its
+`attempts` and the next failure sends it straight back to the failed set, without backoff. The retry
+is a daily second chance, not a new round of attempts.
+
+**A retry never duplicates a record.** The ledger deduplicates on the operation key: a job that
+appended and then failed answers `appended: false` on its retry.
+
+**The use case logs one line.** A tick logs `Failed ledger records are back in the queue` at `info`
+with the count, zero included. A failing retry logs `Ledger record retry failed, the next tick
+retries` at `warn` and does not throw. The consumer opens a correlation context of its own, like
+the purge.
+
+**The queue adapter lives in the processor.** Lint lets `infrastructure/queue` of a processor take
+`InjectQueue` and the `Queue` type, as it lets a feature queue adapter. The consumer still takes
+only `Processor`, `Process` and `OnQueueFailed` from Bull, and `Cron` and `CronExpression` from the
+scheduler.
 
 ## Logs
 

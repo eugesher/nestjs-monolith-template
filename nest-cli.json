@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/customer-app/tsconfig.app.json"
       }
     },
+    "processor-app": {
+      "type": "application",
+      "root": "apps/processor-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/processor-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/processor-app/tsconfig.app.json"
+      }
+    },
     "auth": {
       "type": "library",
       "root": "libs/auth",

@@ -56,11 +56,13 @@ Removing one of them turns its spec red.
 ### `module-areas.mjs` — processors share the layer model of features
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
-(`categories/module-layers.mjs`). A processor uses fewer of them: today none has a domain, a plain
-infrastructure layer or `infrastructure/queue`. Their entries stay, so a processor that grows a
-domain or enqueues a job follows the same rules a feature does.
+(`categories/module-layers.mjs`). A processor uses fewer of them: today none has a domain or a plain
+infrastructure layer. Their entries stay, so a processor that grows a domain follows the same rules
+a feature does.
 
-`infrastructure:queue` of a processor is a category without files for the same reason.
+`infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger-record`
+returns the failed jobs to the queue. It takes `InjectQueue` and the `Queue` type and nothing else of
+Bull, under the same rule as a feature queue adapter in `queue.mjs`.
 
 The module root of a feature or a processor may reach a shared barrel, as the module root of a
 common module may (a positive case of the common modules spec).

@@ -1224,25 +1224,9 @@ exports[`App Product GET /api/products/:productId should read a product 1`] = `
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/archive should archive and record one ledger entry under the correlation id 1`] = `
+exports[`App Product PATCH /api/products/:productId/archive should archive and queue one ledger record under the correlation id 1`] = `
 {
   "db": {
-    "ledger_entry": [
-      {
-        "action": "ProductArchived",
-        "correlation_id": "e2e-product-archive",
-        "id": Any<String>,
-        "occurred_at": Any<Date>,
-        "operation_key": "product-archived:103",
-        "payload": {
-          "previousStatus": "active",
-          "sku": "SKU-0004",
-        },
-        "recorded_at": Any<Date>,
-        "subject_id": "103",
-        "subject_type": "product",
-      },
-    ],
     "product": [
       {
         "created_at": 2026-01-01T00:00:00.000Z,
@@ -1256,6 +1240,20 @@ exports[`App Product PATCH /api/products/:productId/archive should archive and r
       },
     ],
   },
+  "ledger_record_queue": [
+    {
+      "action": "ProductArchived",
+      "correlationId": "e2e-product-archive",
+      "occurredAt": Any<String>,
+      "operationKey": "product-archived:103",
+      "payload": {
+        "previousStatus": "active",
+        "sku": "SKU-0004",
+      },
+      "subjectId": "103",
+      "subjectType": "product",
+    },
+  ],
   "response": {
     "body": {
       "createdAt": "2026-01-01T00:00:00.000Z",
@@ -1273,7 +1271,6 @@ exports[`App Product PATCH /api/products/:productId/archive should archive and r
 exports[`App Product PATCH /api/products/:productId/archive should refuse to archive an archived product with 409 1`] = `
 {
   "db": {
-    "ledger_entry": [],
     "product": [
       {
         "created_at": 2026-01-01T00:00:00.000Z,
@@ -1287,6 +1284,7 @@ exports[`App Product PATCH /api/products/:productId/archive should refuse to arc
       },
     ],
   },
+  "ledger_record_queue": [],
   "response": {
     "body": {
       "code": "PRODUCT_ALREADY_ARCHIVED",
@@ -1415,7 +1413,7 @@ exports[`App Product PATCH /api/products/:productId/name should rename with a qu
 }
 `;
 
-exports[`App Product POST /api/products should create a draft, record the key and the ledger entry under the correlation id 1`] = `
+exports[`App Product POST /api/products should create a draft, record the key and queue the ledger record under the correlation id 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -1426,22 +1424,6 @@ exports[`App Product POST /api/products should create a draft, record the key an
         "request_fingerprint": "82a8511f3c67094f4f710211c50d8c6c1efb4b4438480ab3b50ea2e78d7915fd",
         "response_body": Any<String>,
         "status": "completed",
-      },
-    ],
-    "ledger_entry": [
-      {
-        "action": "ProductCreated",
-        "correlation_id": "e2e-product-create",
-        "id": Any<String>,
-        "occurred_at": Any<Date>,
-        "operation_key": Any<String>,
-        "payload": {
-          "name": "Created product",
-          "sku": "E2E-0001",
-        },
-        "recorded_at": Any<Date>,
-        "subject_id": Any<String>,
-        "subject_type": "product",
       },
     ],
     "product": [
@@ -1457,6 +1439,20 @@ exports[`App Product POST /api/products should create a draft, record the key an
       },
     ],
   },
+  "ledger_record_queue": [
+    {
+      "action": "ProductCreated",
+      "correlationId": "e2e-product-create",
+      "occurredAt": Any<String>,
+      "operationKey": Any<String>,
+      "payload": {
+        "name": "Created product",
+        "sku": "E2E-0001",
+      },
+      "subjectId": Any<String>,
+      "subjectType": "product",
+    },
+  ],
   "response": {
     "body": {
       "createdAt": Any<String>,
@@ -1545,11 +1541,6 @@ exports[`App Product POST /api/products should refuse the same key with another 
 exports[`App Product POST /api/products should replay the same response for the same key and body without a second product 1`] = `
 {
   "db": {
-    "ledger_entry": [
-      {
-        "action": "ProductCreated",
-      },
-    ],
     "product": [
       {
         "name": "Replayed product",
@@ -1557,10 +1548,13 @@ exports[`App Product POST /api/products should replay the same response for the 
       },
     ],
   },
+  "ledger_record_queue": [
+    "ProductCreated",
+  ],
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should add the units to a sold-out product, record the key and the ledger entry under the correlation id 1`] = `
+exports[`App Product POST /api/products/:productId/stock should add the units to a sold-out product, record the key and queue the ledger record under the correlation id 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -1571,22 +1565,6 @@ exports[`App Product POST /api/products/:productId/stock should add the units to
         "request_fingerprint": "f221eaac047dc3cc80d8c9ee9d9c752481cb15973ff880c71519f4158a3ec24e",
         "response_body": Any<String>,
         "status": "completed",
-      },
-    ],
-    "ledger_entry": [
-      {
-        "action": "ProductRestocked",
-        "correlation_id": "e2e-product-restock",
-        "id": Any<String>,
-        "occurred_at": Any<Date>,
-        "operation_key": Any<String>,
-        "payload": {
-          "quantity": 5,
-          "sku": "SKU-0007",
-        },
-        "recorded_at": Any<Date>,
-        "subject_id": "106",
-        "subject_type": "product",
       },
     ],
     "product_stock": [
@@ -1613,6 +1591,20 @@ exports[`App Product POST /api/products/:productId/stock should add the units to
       },
     ],
   },
+  "ledger_record_queue": [
+    {
+      "action": "ProductRestocked",
+      "correlationId": "e2e-product-restock",
+      "occurredAt": Any<String>,
+      "operationKey": Any<String>,
+      "payload": {
+        "quantity": 5,
+        "sku": "SKU-0007",
+      },
+      "subjectId": "106",
+      "subjectType": "product",
+    },
+  ],
   "response": {
     "body": {
       "productId": "106",

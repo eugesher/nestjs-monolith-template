@@ -1,6 +1,6 @@
 # 10 — Idempotency purge processor
 
-`apps/staff-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
+`apps/processor-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
 hour through the core idempotency module (see `07-core-idempotency.md`). It is a
 processor: a schedule enters it, not an HTTP request.
 
@@ -13,8 +13,8 @@ processor: a schedule enters it, not an HTTP request.
 
 The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
 `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`, and the use case passes it to the port on every tick. The core
-module computes the cutoff and reads no configuration, so customer-app, which mounts the module but
-never purges, needs no TTL. The port answers nothing: the processor does not use the count.
+module computes the cutoff and reads no configuration, so staff-app and customer-app, which mount the
+module but never purge, need no TTL. The port answers nothing: the processor does not use the count.
 
 ## The schedule decides only when
 
@@ -45,9 +45,11 @@ A successful purge logs nothing here. The core module already logs
 
 ## Wiring
 
-`IdempotencyPurgeModule` imports `IdempotencyCoreModule`, and the app mounts it through
-`@acme-staff-processors`. `@Cron` only marks the method: the tick fires because staff-app imports
-`ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`.
+`IdempotencyPurgeModule` imports `IdempotencyCoreModule`, and processor-app mounts it through
+`@acme-processor-processors`. `@Cron` only marks the method: the tick fires because processor-app
+imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
+`idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.
 
-Lint lets a processor consumer take only `Cron` and `CronExpression` from `@nestjs/schedule`, and
-the app only `ScheduleModule`. No other layer imports the package.
+Lint lets a processor consumer take only `Cron` and `CronExpression` from `@nestjs/schedule`, the
+app only `ScheduleModule`, and the e2e code only `SchedulerRegistry`. No other layer imports the
+package.

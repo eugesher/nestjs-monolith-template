@@ -98,6 +98,7 @@ export const acmeApp = [
       '@nestjs/common',
       '@nestjs/config',
       '@nestjs/jwt',
+      '@nestjs/schedule',
       '@nestjs/testing',
       'bull',
       'ioredis',

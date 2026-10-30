@@ -11,7 +11,6 @@ import {
   ReminderModule,
   AuthModule,
 } from '@acme-staff-features';
-import { IdempotencyPurgeModule, LedgerRecordModule } from '@acme-staff-processors';
 import { CacheModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
@@ -24,14 +23,12 @@ import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
 import { QueueSetupModule } from './setup/queue/queue-setup.module';
-import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.STAFF_APP),
     TypeOrmSetupModule.forRoot(),
-    ScheduleSetupModule,
     QueueSetupModule,
     CacheModule,
     AuthGlobalModule,
@@ -43,8 +40,6 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     OrderModule,
     ProductModule,
     ReminderModule,
-    IdempotencyPurgeModule,
-    LedgerRecordModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },

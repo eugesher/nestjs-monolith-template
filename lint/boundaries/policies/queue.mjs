@@ -14,7 +14,14 @@ export const queue = [
       'a processor consumer only takes Processor, Process and OnQueueFailed from @nestjs/bull and the Job type from bull; queues are registered in common/shared',
   },
   {
-    from: { file: { categories: 'acme-app:features:infrastructure:queue' } },
+    from: {
+      file: {
+        categories: [
+          'acme-app:features:infrastructure:queue',
+          'acme-app:processors:infrastructure:queue',
+        ],
+      },
+    },
     disallow: [
       { ...packages('@nestjs/bull'), dependency: { specifiers: ['!InjectQueue'] } },
       { ...packages('bull'), dependency: { specifiers: ['!Queue'] } },

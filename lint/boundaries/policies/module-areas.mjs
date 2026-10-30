@@ -115,7 +115,7 @@ export const moduleAreas = [
     application: [],
     infrastructure: [],
     commonAdapters: [],
-    queue: [],
+    queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:contracts', own('app')),
       to('acme-core:contracts', { module: 'ledger' }),
