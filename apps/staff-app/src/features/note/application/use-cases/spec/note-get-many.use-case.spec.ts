@@ -28,13 +28,14 @@ describe('NoteGetManyUseCase', () => {
   });
 
   describe('execute', () => {
-    it('lists every note on the default page when nothing is filtered', async () => {
+    it('lists the notes of the author on the default page when nothing else is filtered', async () => {
       const page = await useCase.execute({
         page: undefined,
         size: undefined,
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
+        authorId: 'admin-1',
       });
 
       expect(list).toHaveBeenCalledWith({
@@ -43,6 +44,7 @@ describe('NoteGetManyUseCase', () => {
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
+        authorId: 'admin-1',
       });
       expect(page).toEqual({
         items: [
@@ -71,6 +73,7 @@ describe('NoteGetManyUseCase', () => {
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
+        authorId: 'admin-1',
       });
 
       expect(list).toHaveBeenCalledWith({
@@ -79,6 +82,7 @@ describe('NoteGetManyUseCase', () => {
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
+        authorId: 'admin-1',
       });
     });
 
@@ -93,6 +97,7 @@ describe('NoteGetManyUseCase', () => {
           subjectType,
           subjectId,
           resolved: undefined,
+          authorId: 'admin-1',
         }),
       ).rejects.toMatchObject({
         code: 'NOTE_SUBJECT_INVALID',

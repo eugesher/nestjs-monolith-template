@@ -30,14 +30,14 @@ export class NoteResolveUseCase {
   }
 
   private async attempt(command: INoteResolveCommand): Promise<NoteModel> {
-    const { noteId } = command;
-    const note = await this.accessService.load({ noteId });
+    const { noteId, authorId } = command;
+    const note = await this.accessService.loadOwned({ noteId, authorId });
     const versionAsRead = note.version;
 
     note.resolve();
 
     const saved = await this.repository.update({ note, versionAsRead });
 
-    return this.writeService.reload({ noteId, saved });
+    return this.writeService.reload({ noteId, authorId, saved });
   }
 }

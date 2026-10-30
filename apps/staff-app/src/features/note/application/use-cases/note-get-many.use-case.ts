@@ -14,7 +14,7 @@ export class NoteGetManyUseCase {
   ) {}
 
   public async execute(query: INoteGetManyQuery): Promise<IPage<INoteView>> {
-    const { page, size, subjectType, subjectId, resolved } = query;
+    const { page, size, subjectType, subjectId, resolved, authorId } = query;
 
     if ((subjectType === undefined) !== (subjectId === undefined)) {
       throw new NoteDomainException(
@@ -24,7 +24,13 @@ export class NoteGetManyUseCase {
     }
 
     const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list({ ...window, subjectType, subjectId, resolved });
+    const result = await this.repository.list({
+      ...window,
+      subjectType,
+      subjectId,
+      resolved,
+      authorId,
+    });
     const items = result.items.map((note) => NoteViewMapper.toView(note));
 
     return { items, total: result.total, page: result.page, size: result.size };

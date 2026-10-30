@@ -1,0 +1,16 @@
+name: 01-register-not-mounted
+description: |-
+  e2e: should not mount the customer-app route POST /api/auth/register
+
+  Expect: 404 Not Found
+method: POST
+url: $STAFF_APP_BASE_URL/auth/register
+body:
+  content: |-
+    {
+      "email": "new@example.com",
+      "password": "secret-password"
+    }
+headers:
+  - name: Content-Type
+    value: application/json

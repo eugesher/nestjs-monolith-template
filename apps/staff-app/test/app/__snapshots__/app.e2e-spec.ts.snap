@@ -183,8 +183,6 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
           "iam:role-edit",
           "iam:user-create",
           "ledger:read",
-          "note:read",
-          "note:write",
           "product:archive",
           "product:read",
           "product:write",
@@ -194,8 +192,6 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
         "name": "editor",
         "permissionCodes": [
           "ledger:read",
-          "note:read",
-          "note:write",
           "product:archive",
           "product:read",
           "product:write",
@@ -364,7 +360,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, note:read, note:write, product:read, product:write, product:archive",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive",
       ],
       "statusCode": 400,
     },
@@ -380,7 +376,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permiss
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": 5,
+        "permission_id": 8,
         "role_id": 3,
       },
     ],
@@ -394,7 +390,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permiss
     "body": {
       "name": "viewer",
       "permissionCodes": [
-        "note:read",
+        "product:write",
       ],
     },
   },
@@ -469,6 +465,19 @@ exports[`App Note GET /api/notes should filter by resolution 1`] = `
 }
 `;
 
+exports[`App Note GET /api/notes should list only the notes of the caller, with no permission needed 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [],
+      "page": 1,
+      "size": 20,
+      "total": 0,
+    },
+  },
+}
+`;
+
 exports[`App Note GET /api/notes should list the notes of one subject, newest first 1`] = `
 {
   "response": {
@@ -500,18 +509,6 @@ exports[`App Note GET /api/notes should list the notes of one subject, newest fi
       "page": 1,
       "size": 20,
       "total": 2,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should refuse a caller without note:read 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
     },
   },
 }
@@ -549,6 +546,18 @@ exports[`App Note GET /api/notes/:noteId should answer 404 for a missing note 1`
     "body": {
       "code": "NOTE_NOT_FOUND",
       "message": "Note 299 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Note GET /api/notes/:noteId should hide the note of another staff user with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 200 was not found",
       "statusCode": 404,
     },
   },
@@ -599,6 +608,18 @@ exports[`App Note GET /api/notes/:noteId/revisions should answer 404 for the rev
 }
 `;
 
+exports[`App Note GET /api/notes/:noteId/revisions should hide the revisions of a note of another staff user with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 202 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
 exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of a note 1`] = `
 {
   "response": {
@@ -618,6 +639,35 @@ exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of 
       "page": 1,
       "size": 20,
       "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Note PATCH /api/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 204 was not found",
+      "statusCode": 404,
     },
   },
 }
@@ -685,7 +735,7 @@ exports[`App Note PATCH /api/notes/:noteId should rewrite the body and record a 
         "body_after": "Customer called twice; refunded manually.",
         "body_before": "Customer called about this.",
         "correlation_id": "e2e-note-edit",
-        "editor_id": "00000000-0000-4000-8000-000000000002",
+        "editor_id": "00000000-0000-4000-8000-000000000001",
         "id": Any<String>,
         "note_id": "200",
         "note_version": 2,
@@ -780,6 +830,34 @@ exports[`App Note PATCH /api/notes/:noteId should write nothing for an edit to t
 }
 `;
 
+exports[`App Note PATCH /api/notes/:noteId/resolve should hide the note of another staff user with 404 and resolve nothing 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 204 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
 exports[`App Note PATCH /api/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
 {
   "db": {
@@ -847,7 +925,7 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000002",
+        "author_id": "00000000-0000-4000-8000-000000000001",
         "body": "Customer called.",
         "created_at": Any<Date>,
         "deleted_at": null,
@@ -862,7 +940,7 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
   },
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000002",
+      "authorId": "00000000-0000-4000-8000-000000000001",
       "body": "Customer called.",
       "createdAt": Any<String>,
       "id": Any<String>,
@@ -1304,6 +1382,360 @@ exports[`App Product POST /api/products should replay the same response for the 
         "sku": "E2E-0002",
       },
     ],
+  },
+}
+`;
+
+exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a reminder and drop the cached summary 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": Any<Date>,
+        "due_on": "2026-08-01",
+        "id": "304",
+        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "status": "pending",
+        "title": "Cancel the trial",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {},
+  },
+}
+`;
+
+exports[`App Reminder GET /api/reminders should filter by status 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-04-01",
+          "id": "302",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "done",
+          "title": "Book the venue",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 2,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Reminder GET /api/reminders should list the own reminders of the caller, soonest first, without deleted ones 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-04-01",
+          "id": "302",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "done",
+          "title": "Book the venue",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 2,
+        },
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-05-15",
+          "id": "301",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "pending",
+          "title": "Pay the invoice",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-06-01",
+          "id": "300",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "pending",
+          "title": "Renew the subscription",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-08-01",
+          "id": "304",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "pending",
+          "title": "Cancel the trial",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "body": "",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "dueOn": "2026-09-01",
+          "id": "305",
+          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "status": "pending",
+          "title": "Water the plants",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 5,
+    },
+  },
+}
+`;
+
+exports[`App Reminder GET /api/reminders/summary should answer the cached summary 1`] = `
+{
+  "response": {
+    "body": {
+      "nextDueOn": "2030-01-01",
+      "pending": 99,
+    },
+  },
+}
+`;
+
+exports[`App Reminder GET /api/reminders/summary should compute the summary of the caller and cache it 1`] = `
+{
+  "cache": {
+    "keys": [
+      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__",
+    ],
+    "values": {
+      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__": "{"pending":4,"nextDueOn":"2026-05-15"}",
+    },
+  },
+  "response": {
+    "body": {
+      "nextDueOn": "2026-05-15",
+      "pending": 4,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should answer 404 for a deleted reminder 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "REMINDER_NOT_FOUND",
+      "message": "Reminder 306 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a reminder and drop the cached summary 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "due_on": "2026-05-15",
+        "id": "301",
+        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "status": "done",
+        "title": "Pay the invoice",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "body": "",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "dueOn": "2026-05-15",
+      "id": "301",
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "status": "done",
+      "title": "Pay the invoice",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the reminder of another staff user with 404 1`] = `
+{
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "due_on": "2026-06-01",
+        "id": "300",
+        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "status": "pending",
+        "title": "Renew the subscription",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "REMINDER_NOT_FOUND",
+      "message": "Reminder 300 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse a done reminder with 409 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "REMINDER_ALREADY_DONE",
+      "message": "Reminder 302 is already done",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id that is not a number with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "reminderId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "due_on": "2026-10-01",
+        "id": "305",
+        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "status": "pending",
+        "title": "Water the plants",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "body": "",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "dueOn": "2026-10-01",
+      "id": "305",
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "status": "pending",
+      "title": "Water the plants",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Reminder POST /api/reminders should create a pending reminder on the date sent and drop the cached summary 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "reminder": [
+      {
+        "body": "",
+        "created_at": Any<Date>,
+        "deleted_at": null,
+        "due_on": "2026-06-01",
+        "id": Any<String>,
+        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "status": "pending",
+        "title": "Renew the domain",
+        "updated_at": Any<Date>,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "body": "",
+      "createdAt": Any<String>,
+      "dueOn": "2026-06-01",
+      "id": Any<String>,
+      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "status": "pending",
+      "title": "Renew the domain",
+      "updatedAt": Any<String>,
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Reminder POST /api/reminders should refuse a date that does not exist with 400 from the model 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "REMINDER_DUE_ON_INVALID",
+      "message": "Reminder.dueOn is not a real calendar date: 2026-02-30",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Reminder POST /api/reminders should refuse an instant with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "dueOn must be a calendar date formatted YYYY-MM-DD",
+      ],
+      "statusCode": 400,
+    },
   },
 }
 `;

@@ -3,7 +3,7 @@ description: |-
   e2e: Note › GET /api/notes › should filter by resolution
 
   Expect: 200 OK, note 202
-  User: editor@example.com (token signed by scripts.py)
+  User: admin@example.com (token signed by scripts.py)
 url: $STAFF_APP_BASE_URL/notes
 params:
   - name: resolved
@@ -13,4 +13,4 @@ auth:
   bearer_token:
     token: $token
 scripts:
-  setup: scripts.py:as_editor
+  setup: scripts.py:as_admin

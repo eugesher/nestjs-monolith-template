@@ -1,0 +1,22 @@
+name: 04-foreign
+description: |-
+  e2e: Note › PATCH /api/notes/:noteId › should hide the note of another staff user with 404 and write nothing
+
+  Expect: 404 Not Found, code NOTE_NOT_FOUND; note 204 and its revisions unchanged
+  User: viewer@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/notes/204
+body:
+  content: |-
+    {
+      "body": "Not my note."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_viewer

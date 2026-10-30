@@ -18,11 +18,11 @@ export class NoteCrudRepository implements INoteCrudRepositoryPort {
   }
 
   public async list(query: INotePageQuery): Promise<IPage<NoteModel>> {
-    const { page, size, subjectType, subjectId, resolved } = query;
+    const { page, size, subjectType, subjectId, resolved, authorId } = query;
     const bySubject = subjectType === undefined ? {} : { subjectType, subjectId };
     const byResolved = resolved === undefined ? {} : { resolved };
     const [notes, total] = await this.notes.findAndCount({
-      where: { ...bySubject, ...byResolved },
+      where: { authorId, ...bySubject, ...byResolved },
       order: { id: 'DESC' },
       skip: (page - 1) * size,
       take: size,

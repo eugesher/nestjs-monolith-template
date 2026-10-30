@@ -81,10 +81,12 @@ Customers, in `customer.sql`:
 | `00000000-0000-4000-8000-000000000103` | `carol@example.com` | `carol-password-please-change` | active   |
 | `00000000-0000-4000-8000-000000000104` | `dora@example.com`  | `dora-password-please-change`  | disabled |
 
-The hashes are argon2id with the cost parameters of the app env examples. Roles and permissions get
-the ids of their order in `RoleEnum` and `PermissionCodeEnum`. The products belong to the catalog
-and have no owner. The reminders belong to customers: ann owns one reminder and carol most of them,
-so every case has a record of another customer to be refused.
+The hashes are argon2id with the cost parameters of the app env examples. Roles get the ids of their
+order in `RoleEnum`. Permission ids are stable: a code dropped from `PermissionCodeEnum` leaves its
+id unused, so the product codes keep 7 to 9. The products belong to the catalog and have no owner.
+The reminders belong to staff users: editor owns one reminder and admin most of them, so every case
+has a record of another staff user to be refused. Every note belongs to admin, so viewer, who owns
+none, is the other staff user of the note cases.
 
 ### Id ranges
 

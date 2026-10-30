@@ -67,7 +67,7 @@ describe('NoteEditUseCase', () => {
   describe('execute', () => {
     it('saves the note and appends its revision in one transaction, then answers the stored note', async () => {
       const view = await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-2' }),
+        useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-1' }),
       );
       const [command] = update.mock.calls[0] as [{ note: NoteModel; versionAsRead: number }];
       const [revision] = appendRevision.mock.calls[0] as [NoteRevisionModel];
@@ -82,7 +82,7 @@ describe('NoteEditUseCase', () => {
         noteVersion: 3,
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
-        editorId: 'admin-2',
+        editorId: 'admin-1',
         correlationId: 'corr-1',
         recordedAt: undefined,
       });
@@ -98,14 +98,14 @@ describe('NoteEditUseCase', () => {
         updatedAt: '2026-01-03T00:00:00.000Z',
       });
       expect(logger.info).toHaveBeenCalledWith(
-        { noteId: '7', editorId: 'admin-2', version: 3, edited: true },
+        { noteId: '7', editorId: 'admin-1', version: 3, edited: true },
         'Note edited',
       );
     });
 
     it('reads before the transaction and reads the stored note after it', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       );
 
       expect(findById.mock.invocationCallOrder[0]).toBeLessThan(run.mock.invocationCallOrder[0]);
@@ -122,7 +122,7 @@ describe('NoteEditUseCase', () => {
       const view = await useCase.execute({
         noteId: '7',
         body: ' Check the supplier ',
-        editorId: 'admin-2',
+        editorId: 'admin-1',
       });
 
       expect(run).not.toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('NoteEditUseCase', () => {
       expect(findById).toHaveBeenCalledTimes(1);
       expect(view.version).toBe(2);
       expect(logger.info).toHaveBeenCalledWith(
-        { noteId: '7', editorId: 'admin-2', version: 2, edited: false },
+        { noteId: '7', editorId: 'admin-1', version: 2, edited: false },
         'Note edit was a no-op',
       );
     });
@@ -141,7 +141,7 @@ describe('NoteEditUseCase', () => {
 
       await expect(
         CorrelationContextHelper.run('corr-1', () =>
-          useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
+          useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
         ),
       ).rejects.toThrow('deadlock');
       await expect(run.mock.results[0].value).rejects.toThrow('deadlock');
@@ -170,7 +170,7 @@ describe('NoteEditUseCase', () => {
       );
 
       await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       );
 
       expect(run).toHaveBeenCalledTimes(2);
@@ -201,7 +201,7 @@ describe('NoteEditUseCase', () => {
       );
 
       await expect(
-        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       ).rejects.toMatchObject({
         code: 'VERSION_MISMATCH',
         details: { currentVersion: 2 },
@@ -226,7 +226,7 @@ describe('NoteEditUseCase', () => {
       );
 
       await expect(
-        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       ).rejects.toMatchObject({ code: 'NOTE_RESOLVED' });
       expect(run).not.toHaveBeenCalled();
     });
@@ -234,6 +234,13 @@ describe('NoteEditUseCase', () => {
     it('refuses a missing note with NOTE_NOT_FOUND', async () => {
       findById.mockReset().mockResolvedValue(null);
 
+      await expect(
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
+      ).rejects.toMatchObject({ code: 'NOTE_NOT_FOUND' });
+      expect(run).not.toHaveBeenCalled();
+    });
+
+    it('refuses an editor who is not the author with NOTE_NOT_FOUND', async () => {
       await expect(
         useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
       ).rejects.toMatchObject({ code: 'NOTE_NOT_FOUND' });

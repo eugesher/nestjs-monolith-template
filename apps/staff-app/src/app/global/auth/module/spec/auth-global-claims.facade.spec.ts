@@ -28,11 +28,11 @@ describe('AuthGlobalClaimsFacade', () => {
 
   describe('findPermissionCodes', () => {
     it('answers the permission codes identity reads for the user', async () => {
-      findPermissionCodes.mockResolvedValue(['note:read']);
+      findPermissionCodes.mockResolvedValue(['product:read']);
 
       const codes = await facade.findPermissionCodes({ userId: 'user-1' });
 
-      expect(codes).toEqual(['note:read']);
+      expect(codes).toEqual(['product:read']);
       expect(findPermissionCodes).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });

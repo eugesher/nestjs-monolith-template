@@ -9,8 +9,8 @@ export class NoteGetOneUseCase {
   constructor(private readonly accessService: NoteAccessService) {}
 
   public async execute(query: INoteGetOneQuery): Promise<INoteView> {
-    const { noteId } = query;
-    const note = await this.accessService.load({ noteId });
+    const { noteId, authorId } = query;
+    const note = await this.accessService.loadOwned({ noteId, authorId });
 
     return NoteViewMapper.toView(note);
   }

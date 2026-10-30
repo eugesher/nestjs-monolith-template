@@ -63,11 +63,11 @@ describe('AuthGlobalStaffIdentityCoreAdapter', () => {
 
   describe('findPermissionCodes', () => {
     it('answers the permission codes identity reads for the user', async () => {
-      findPermissionCodes.mockResolvedValue(['note:write']);
+      findPermissionCodes.mockResolvedValue(['product:write']);
 
       const codes = await adapter.findPermissionCodes({ userId: 'user-1' });
 
-      expect(codes).toEqual(['note:write']);
+      expect(codes).toEqual(['product:write']);
       expect(findPermissionCodes).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });

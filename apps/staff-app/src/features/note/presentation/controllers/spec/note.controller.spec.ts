@@ -55,16 +55,13 @@ describe('NoteController', () => {
   });
 
   describe('handleGetMany', () => {
-    it('lists the notes of the query', async () => {
+    it('lists the notes of the query written by the caller', async () => {
       getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
 
-      const response = await controller.handleGetMany({
-        page: 2,
-        size: 5,
-        subjectType: 'product',
-        subjectId: '42',
-        resolved: false,
-      });
+      const response = await controller.handleGetMany(
+        { page: 2, size: 5, subjectType: 'product', subjectId: '42', resolved: false },
+        { id: 'user-1', email: 'ann@example.com' },
+      );
 
       expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
       expect(getMany).toHaveBeenCalledWith({
@@ -73,18 +70,22 @@ describe('NoteController', () => {
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
+        authorId: 'user-1',
       });
     });
   });
 
   describe('handleGetOne', () => {
-    it('reads the note of the path', async () => {
+    it('reads the note of the path for the caller', async () => {
       getOne.mockResolvedValue({ id: '17' });
 
-      const response = await controller.handleGetOne({ noteId: '17' });
+      const response = await controller.handleGetOne(
+        { noteId: '17' },
+        { id: 'user-1', email: 'ann@example.com' },
+      );
 
       expect(response).toEqual({ id: '17' });
-      expect(getOne).toHaveBeenCalledWith({ noteId: '17' });
+      expect(getOne).toHaveBeenCalledWith({ noteId: '17', authorId: 'user-1' });
     });
   });
 
@@ -108,24 +109,36 @@ describe('NoteController', () => {
   });
 
   describe('handleResolve', () => {
-    it('resolves the note of the path', async () => {
+    it('resolves the note of the path for the caller', async () => {
       resolve.mockResolvedValue({ id: '17', resolved: true });
 
-      const response = await controller.handleResolve({ noteId: '17' });
+      const response = await controller.handleResolve(
+        { noteId: '17' },
+        { id: 'user-1', email: 'ann@example.com' },
+      );
 
       expect(response).toEqual({ id: '17', resolved: true });
-      expect(resolve).toHaveBeenCalledWith({ noteId: '17' });
+      expect(resolve).toHaveBeenCalledWith({ noteId: '17', authorId: 'user-1' });
     });
   });
 
   describe('handleGetRevisions', () => {
-    it('lists the revisions of the note of the path', async () => {
+    it('lists the revisions of the note of the path for the caller', async () => {
       getRevisions.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
 
-      const response = await controller.handleGetRevisions({ noteId: '17' }, { page: 1, size: 20 });
+      const response = await controller.handleGetRevisions(
+        { noteId: '17' },
+        { page: 1, size: 20 },
+        { id: 'user-1', email: 'ann@example.com' },
+      );
 
       expect(response).toEqual({ items: [], total: 0, page: 1, size: 20 });
-      expect(getRevisions).toHaveBeenCalledWith({ noteId: '17', page: 1, size: 20 });
+      expect(getRevisions).toHaveBeenCalledWith({
+        noteId: '17',
+        authorId: 'user-1',
+        page: 1,
+        size: 20,
+      });
     });
   });
 });

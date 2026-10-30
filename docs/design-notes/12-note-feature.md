@@ -1,7 +1,7 @@
 # 12 — Note feature
 
-`apps/staff-app/src/features/note` keeps back-office notes behind `/notes`: free text that an admin
-attaches to any subject, edits, and finally resolves. Every edit keeps the body it replaced as a
+`apps/staff-app/src/features/note` keeps back-office notes behind `/notes`: free text that a staff
+user attaches to any subject, edits, and finally resolves. Every edit keeps the body it replaced as a
 revision. This note covers the `NoteModel` aggregate, the frozen `NoteRevisionModel`, and the one
 write that spans two tables.
 
@@ -24,8 +24,10 @@ writes nothing: no update and no revision.
 
 **The id is a string**, like the product and reminder ids: the column is `bigint unsigned`.
 
-Notes have no owner. Any caller with `note:read` reads every note, and any caller with
-`note:write` edits or resolves any note. A missing note is `NOTE_NOT_FOUND`.
+A note belongs to its author. `NoteAccessService.loadOwned` refuses a missing note and a note of
+another staff user with the same `NOTE_NOT_FOUND` (404), so an id never reveals whether someone
+else's note exists, as for reminders (see `11-reminder-feature.md`). No route names a permission:
+any signed-in staff user works with their own notes only.
 
 ## Revisions
 
@@ -73,7 +75,7 @@ lost the race would still see the snapshot from before the winner's commit, and 
 - `run(command, attempt)` retries `attempt` through `OccRetryHelper` on `NoteWriteConflictError`,
   with the budget `NOTE_OCC_RETRY_ATTEMPTS`. A spent budget is `VERSION_MISMATCH` (409) with
   `details.currentVersion`.
-- `reload({ noteId, saved })` reads the note through `NoteAccessService` and answers it, or throws
+- `reload({ noteId, authorId, saved })` reads the note through `NoteAccessService` and answers it, or throws
   `NoteWriteConflictError` with its current version when `saved` is false.
 
 Each use case runs its own attempt, because only editing appends a revision and opens a
@@ -84,11 +86,11 @@ transaction. Resolving is one statement and runs without one.
 | Use case                  | Repository port                      | What it does                                                     |
 | ------------------------- | ------------------------------------ | ---------------------------------------------------------------- |
 | `NoteCreateUseCase`       | `NOTE_CREATE_REPOSITORY_PORT`        | inserts an unresolved note at version 1                          |
-| `NoteGetOneUseCase`       | none, through `NoteAccessService`    | answers one note                                                 |
+| `NoteGetOneUseCase`       | none, through `NoteAccessService`    | answers one note of the caller                                   |
 | `NoteGetManyUseCase`      | `NOTE_CRUD_REPOSITORY_PORT`          | a page of notes, optionally of one subject and of one resolution |
 | `NoteEditUseCase`         | `NOTE_EDIT_REPOSITORY_PORT`          | edits the body and appends a revision                            |
 | `NoteResolveUseCase`      | `NOTE_RESOLVE_REPOSITORY_PORT`       | resolves the note                                                |
-| `NoteGetRevisionsUseCase` | `NOTE_GET_REVISIONS_REPOSITORY_PORT` | a page of the revisions of an existing note                      |
+| `NoteGetRevisionsUseCase` | `NOTE_GET_REVISIONS_REPOSITORY_PORT` | a page of the revisions of a note of the caller                  |
 
 `NoteAccessService` has its own port, `NOTE_ACCESS_REPOSITORY_PORT`. No consumer holds more than one
 repository.
@@ -117,22 +119,25 @@ changed.
 `appendRevision` inserts one `note_revision` row. `UNIQUE (note_id, note_version)` is the last
 guard: two edits that both passed the version check could not record the same version twice.
 
-`list` returns the notes newest first, by id, optionally of one subject and of one resolution.
+`list` returns the notes of one author newest first, by id, optionally of one subject and of one
+resolution. The author is a required filter, and `idx_note_author` serves it.
 `listForNote` returns the revisions of one note, newest version first.
 
 ## HTTP
 
-| Method and path                | Permission   | Answer                   |
-| ------------------------------ | ------------ | ------------------------ |
-| `POST /notes`                  | `note:write` | 201, the note            |
-| `GET /notes`                   | `note:read`  | 200, a page of notes     |
-| `GET /notes/:noteId`           | `note:read`  | 200, the note            |
-| `PATCH /notes/:noteId`         | `note:write` | 200, the note            |
-| `PATCH /notes/:noteId/resolve` | `note:write` | 200, the note            |
-| `GET /notes/:noteId/revisions` | `note:read`  | 200, a page of revisions |
+| Method and path                | Answer                   |
+| ------------------------------ | ------------------------ |
+| `POST /notes`                  | 201, the note            |
+| `GET /notes`                   | 200, a page of notes     |
+| `GET /notes/:noteId`           | 200, the note            |
+| `PATCH /notes/:noteId`         | 200, the note            |
+| `PATCH /notes/:noteId/resolve` | 200, the note            |
+| `GET /notes/:noteId/revisions` | 200, a page of revisions |
 
-The caller is the author of a note they create and the editor of a revision they cause. Nothing
-else in a route depends on the caller.
+**Every route needs a staff token, no permission, and is scoped to the caller.** The caller is the
+author of a note they create; every other route passes the caller's id as `authorId` and reaches
+only the notes of that author. Only the author edits a note, so the editor of every revision is the
+author too.
 
 **Half a subject filter is a domain error, not a validation error.** The query DTO checks each
 half on its own; the pair rule lives in `NoteGetManyUseCase` only, and answers

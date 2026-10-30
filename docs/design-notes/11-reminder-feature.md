@@ -1,6 +1,6 @@
 # 11 — Reminder feature
 
-`apps/customer-app/src/features/reminder` is the per-owner list behind `/reminders`, with a summary of
+`apps/staff-app/src/features/reminder` is the per-owner list behind `/reminders`, with a summary of
 it: how many reminders are pending and when the next one is due. This note covers the
 `ReminderModel` aggregate, ownership, optimistic concurrency, the cache-aside summary, the
 persistence and the HTTP surface.
@@ -31,12 +31,22 @@ The aggregate records no events. Nothing outside the feature reacts to a reminde
 ## Ownership
 
 `ReminderAccessService` loads a reminder of the caller or refuses it with `REMINDER_NOT_FOUND`
-(404): a missing reminder and a reminder of another customer get the same answer, so an id never
-reveals whether someone else's reminder exists. The `ownerId` is always required. Reminders are the
-ownership example of the template: products are a shared catalog (see `08-product-feature.md`).
+(404): a missing reminder and a reminder of another staff user get the same answer, so an id never
+reveals whether someone else's reminder exists. The `ownerId` is always required. The owner is the
+staff user who created the reminder. Reminders and notes are the ownership examples of the template
+(see `12-note-feature.md`): products are a shared catalog (see `08-product-feature.md`).
 
 Listing and the summary take the owner as a required filter, so no query can return the reminders
 of everyone.
+
+**Ownership replaces permissions.** No route of the feature names a permission: a reminder is the
+private record of one staff user, so any signed-in staff user works with their own reminders and
+never sees anyone else's.
+
+**`owner_id` has no foreign key.** `reminder` belongs to its feature and `staff_user` to
+staff-identity. A foreign key across modules would tie the migrations and the deletes of one module
+to the tables of another. The owner is checked where it is set: it is the subject of a verified
+token that `validateSubject` accepted.
 
 ## Optimistic concurrency
 
@@ -133,8 +143,8 @@ single-flight and no fallback of its own. It logs nothing either: the cache lib 
 | `PATCH /reminders/:reminderId/due-on` | 200, the reminder             |
 | `DELETE /reminders/:reminderId`       | 204                           |
 
-**Every route needs a customer token and is scoped to that customer.** The controller always passes
-the caller's own id as `ownerId`.
+**Every route needs a staff token, no permission, and is scoped to the caller.** The controller
+always passes the caller's own id as `ownerId`.
 
 **`dueOn` is checked twice.** The DTO refuses anything that is not written `YYYY-MM-DD`, such as an
 instant, with a 400 from validation. A well-formed date that does not exist, such as `2026-02-30`,

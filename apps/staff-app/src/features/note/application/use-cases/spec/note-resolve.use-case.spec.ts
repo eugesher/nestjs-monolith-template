@@ -60,7 +60,7 @@ describe('NoteResolveUseCase', () => {
 
   describe('execute', () => {
     it('saves the resolved note against the version as read and answers the stored note', async () => {
-      const view = await useCase.execute({ noteId: '7' });
+      const view = await useCase.execute({ noteId: '7', authorId: 'admin-1' });
       const [command] = update.mock.calls[0] as [{ note: NoteModel; versionAsRead: number }];
 
       expect(command.versionAsRead).toBe(2);
@@ -90,7 +90,7 @@ describe('NoteResolveUseCase', () => {
         ),
       );
 
-      await useCase.execute({ noteId: '7' });
+      await useCase.execute({ noteId: '7', authorId: 'admin-1' });
 
       expect(update).toHaveBeenCalledTimes(2);
       expect(logger.info).toHaveBeenCalledWith(
@@ -114,7 +114,7 @@ describe('NoteResolveUseCase', () => {
         }),
       );
 
-      await expect(useCase.execute({ noteId: '7' })).rejects.toMatchObject({
+      await expect(useCase.execute({ noteId: '7', authorId: 'admin-1' })).rejects.toMatchObject({
         code: 'NOTE_RESOLVED',
       });
       expect(update).not.toHaveBeenCalled();

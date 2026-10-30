@@ -33,7 +33,7 @@ describe('StaffIdentityCoreUpdateRolePermissionsUseCase', () => {
         }),
         StaffIdentityCorePermissionModel.reconstitute({
           id: 8,
-          code: PermissionCodeEnum.NOTE_READ,
+          code: PermissionCodeEnum.PRODUCT_READ,
         }),
       ]),
       replacePermissions: jest.fn().mockResolvedValue(undefined),
@@ -60,17 +60,17 @@ describe('StaffIdentityCoreUpdateRolePermissionsUseCase', () => {
   it('replaces the permissions of the role in one transaction', async () => {
     const view = await useCase.execute({
       role: RoleEnum.EDITOR,
-      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.NOTE_READ],
+      permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.PRODUCT_READ],
     });
 
-    expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'note:read'] });
-    expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'note:read']);
+    expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
+    expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
     expect(repository.replacePermissions).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'note:read'] }),
+      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'product:read'] }),
     );
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
-      { role: 'editor', permissionCodes: ['iam:role-edit', 'note:read'] },
+      { role: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] },
       'Role permissions replaced',
     );
   });
