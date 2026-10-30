@@ -7,16 +7,17 @@ import {
   type IAuthLedgerRecordEnqueueCommand,
   type IAuthLedgerRecordPort,
   AUTH_LEDGER_RECORD_PORT,
+  AUTH_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
 import { IAuthLedgerRecordRegisteredCommand } from '../interfaces/commands/auth-ledger-record-registered.command';
 
 @Injectable()
 export class AuthLedgerService {
-  private static readonly LEDGER_ENQUEUE_ATTEMPTS = 3;
-
   constructor(
     @Inject(AUTH_LEDGER_RECORD_PORT)
     private readonly queue: IAuthLedgerRecordPort,
+    @Inject(AUTH_LEDGER_RETRY_ATTEMPTS)
+    private readonly ledgerRetryAttempts: number,
     @InjectPinoLogger(AuthLedgerService.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -37,7 +38,7 @@ export class AuthLedgerService {
     };
 
     return ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
-      maxAttempts: AuthLedgerService.LEDGER_ENQUEUE_ATTEMPTS,
+      maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,
       label: 'Ledger enqueue (customer registered)',

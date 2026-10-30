@@ -13,7 +13,7 @@ describe('AuthLedgerService', () => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new AuthLedgerService({ enqueue }, logger as unknown as PinoLogger);
+    service = new AuthLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -63,14 +63,14 @@ describe('AuthLedgerService', () => {
       expect(logger.error).not.toHaveBeenCalled();
     });
 
-    it('logs the record for replay after three failures instead of throwing', async () => {
+    it('logs the record for replay after the configured attempts instead of throwing', async () => {
       enqueue.mockRejectedValue(new Error('redis is down'));
 
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordRegistered({ customerId: 'customer-1', email: 'eve@example.com' }),
       );
 
-      expect(enqueue).toHaveBeenCalledTimes(3);
+      expect(enqueue).toHaveBeenCalledTimes(2);
       expect(logger.info).not.toHaveBeenCalled();
       expect(logger.error).toHaveBeenCalledWith(
         {

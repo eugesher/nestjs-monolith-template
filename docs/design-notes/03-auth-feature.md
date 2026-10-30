@@ -74,8 +74,9 @@ so both apps must point `REDIS_URL` at one Redis.
 
 The customer is already stored, so a failing enqueue must not turn the sign-up into an error. The
 adapter gives up after `REDIS_COMMAND_TIMEOUT_MS`, because Bull waits for a lost Redis without end,
-and the service tries three times through `ReplayRetryHelper` and then logs the record at `error`
-for a replay, like the product feature (see `08-product-feature.md`).
+and the service tries `LEDGER_RETRY_ATTEMPTS` times (3 by default) through `ReplayRetryHelper` and
+then logs the record at `error` for a replay, like the product feature (see
+`08-product-feature.md`).
 
 The e2e signs a customer up, logs in with the same credentials, reads `me`, finds no ledger entry
 yet and one waiting job of the new customer with the email and the correlation id of the sign-up.

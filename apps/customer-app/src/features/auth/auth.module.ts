@@ -10,6 +10,7 @@ import {
   AUTH_IDENTITY_PORT,
   AUTH_LEDGER_RECORD_PORT,
   AUTH_LEDGER_RECORD_TIMEOUT_MS,
+  AUTH_LEDGER_RETRY_ATTEMPTS,
 } from './outbound';
 import { AuthController } from './presentation';
 
@@ -24,6 +25,7 @@ import { AuthController } from './presentation';
     { provide: AUTH_IDENTITY_PORT, useClass: AuthCustomerIdentityCoreAdapter },
     { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerRecordQueueAdapter },
     ConfigProviderHelper.value(AUTH_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
+    ConfigProviderHelper.value(AUTH_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],
 })
 export class AuthModule {}
