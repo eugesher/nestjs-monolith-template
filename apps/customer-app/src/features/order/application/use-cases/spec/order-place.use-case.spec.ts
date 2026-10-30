@@ -7,8 +7,10 @@ import { OrderLedgerService } from '../../services/order-ledger.service';
 import { OrderPlaceUseCase } from '../order-place.use-case';
 
 describe('OrderPlaceUseCase', () => {
-  let lockStock: jest.Mock;
+  let findProducts: jest.Mock;
   let insert: jest.Mock;
+  let lock: jest.Mock;
+  let withdraw: jest.Mock;
   let claim: jest.Mock;
   let complete: jest.Mock;
   let release: jest.Mock;
@@ -18,21 +20,9 @@ describe('OrderPlaceUseCase', () => {
   let useCase: OrderPlaceUseCase;
 
   beforeEach(() => {
-    lockStock = jest.fn().mockResolvedValue([
-      {
-        productId: '100',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: ProductStatusEnum.ACTIVE,
-        quantity: 8,
-      },
-      {
-        productId: '103',
-        sku: 'SKU-0004',
-        name: 'Chair',
-        status: ProductStatusEnum.ACTIVE,
-        quantity: 3,
-      },
+    findProducts = jest.fn().mockResolvedValue([
+      { productId: '100', sku: 'SKU-0001', name: 'Lamp', status: ProductStatusEnum.ACTIVE },
+      { productId: '103', sku: 'SKU-0004', name: 'Chair', status: ProductStatusEnum.ACTIVE },
     ]);
     insert = jest.fn().mockResolvedValue(
       OrderModel.reconstitute({
@@ -46,6 +36,11 @@ describe('OrderPlaceUseCase', () => {
         ],
       }),
     );
+    lock = jest.fn().mockResolvedValue([
+      { productId: '100', quantity: 8 },
+      { productId: '103', quantity: 3 },
+    ]);
+    withdraw = jest.fn().mockResolvedValue(undefined);
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
@@ -54,7 +49,8 @@ describe('OrderPlaceUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new OrderPlaceUseCase(
       { recordPlaced } as unknown as OrderLedgerService,
-      { lockStock, insert },
+      { findProducts, insert },
+      { lock, withdraw },
       { claim, complete, release },
       { run },
       logger as unknown as PinoLogger,
@@ -62,7 +58,7 @@ describe('OrderPlaceUseCase', () => {
   });
 
   describe('execute', () => {
-    it('claims the key, locks the distinct products, places the order and completes the key in one transaction', async () => {
+    it('claims the key, locks the distinct products, places the order, withdraws the stock and completes the key in one transaction', async () => {
       const view = await useCase.execute({
         customerId: 'customer-1',
         productIds: ['100', '103', '100'],
@@ -74,7 +70,11 @@ describe('OrderPlaceUseCase', () => {
         key: 'key-1',
         body: { customerId: 'customer-1', productIds: ['100', '103', '100'] },
       });
-      expect(lockStock).toHaveBeenCalledWith(['100', '103']);
+      expect(lock).toHaveBeenCalledWith({ productIds: ['100', '103'] });
+      expect(findProducts).toHaveBeenCalledWith(['100', '103']);
+      expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
+        findProducts.mock.invocationCallOrder[0],
+      );
       expect(draft.id).toBeUndefined();
       expect(draft.customerId).toBe('customer-1');
       expect(draft.products.map((product) => product.productId)).toEqual(['100', '103', '100']);
@@ -85,6 +85,13 @@ describe('OrderPlaceUseCase', () => {
           { id: '620', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
           { id: '621', productId: '103', sku: 'SKU-0004', name: 'Chair' },
           { id: '622', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+        ],
+      });
+      expect(withdraw).toHaveBeenCalledWith({
+        movements: [
+          { productId: '100', orderProductId: '620' },
+          { productId: '103', orderProductId: '621' },
+          { productId: '100', orderProductId: '622' },
         ],
       });
       expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
@@ -123,7 +130,7 @@ describe('OrderPlaceUseCase', () => {
       });
 
       expect(view).toEqual({ id: '610' });
-      expect(lockStock).not.toHaveBeenCalled();
+      expect(lock).not.toHaveBeenCalled();
       expect(insert).not.toHaveBeenCalled();
       expect(recordPlaced).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
@@ -153,7 +160,7 @@ describe('OrderPlaceUseCase', () => {
           idempotencyKey: 'key-1',
         }),
       ).rejects.toMatchObject({ code, message });
-      expect(lockStock).not.toHaveBeenCalled();
+      expect(lock).not.toHaveBeenCalled();
       expect(release).not.toHaveBeenCalled();
     });
 
@@ -170,6 +177,7 @@ describe('OrderPlaceUseCase', () => {
       });
       expect(run).toHaveBeenCalledTimes(1);
       expect(insert).not.toHaveBeenCalled();
+      expect(withdraw).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(recordPlaced).not.toHaveBeenCalled();
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });

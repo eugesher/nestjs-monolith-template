@@ -94,11 +94,14 @@ restocked, so its stock is ready when it becomes active. An archived product is
 `ProductRestockUseCase` claims the `Idempotency-Key` on `{ productId, quantity }`, with the outcomes of
 a creation, and then runs one transaction:
 
-1. `lockById` reads the product with `SELECT … FOR UPDATE`;
-2. the aggregate checks the quantity and the status;
-3. `insertStock` writes the movement;
-4. `sumStock` reads the stock on hand with `FOR SHARE`;
+1. `PRODUCT_STOCK_PORT.lock` locks the product row with `SELECT … FOR UPDATE`;
+2. `findById` reads the product, now that nobody else can change it;
+3. the aggregate checks the quantity and the status;
+4. `PRODUCT_STOCK_PORT.restock` writes the movement and sums the stock on hand with `FOR SHARE`;
 5. the key is completed with the answer.
+
+Both stock calls go through `ProductStockCoreAdapter` to the core product stock module (see
+`24-core-product-stock.md`), which owns `product_stock`.
 
 **The product row is the lock, as for an order** (see `22-order-feature.md`). The lock on it is taken
 before anything else, so a restock and an order never wait for each other in opposite orders.
@@ -163,11 +166,12 @@ Reads log nothing. The correlation id comes from the context.
 ## Persistence
 
 Each port has its own repository: `ProductAccessRepository`, `ProductCreateRepository`,
-`ProductCrudRepository`, `ProductRestockRepository` and `ProductWriteRepository`. The access and write repositories share `findById`
-through `ProductFindByIdBaseRepository`. Every repository reads the `product` table through
-`TransactionHost`, so a query inside `TRANSACTION_PORT.run` joins that transaction.
-`ProductRestockRepository` also writes and sums `product_stock`, and `ProductTypeOrmModule`
-registers `ProductStock` for it.
+`ProductCrudRepository`, `ProductRestockRepository` and `ProductWriteRepository`. The access,
+restock and write repositories share `findById` through `ProductFindByIdBaseRepository`. Every
+repository reads the `product` table through `TransactionHost`, so a query inside
+`TRANSACTION_PORT.run` joins that transaction. No repository of the feature touches
+`product_stock`: the core product stock module writes it, and `ProductTypeOrmModule` registers
+`Product` only.
 
 **The version check is in the `WHERE`.** `update` runs
 `UPDATE product SET name, status, version = <new> WHERE id = ? AND version = <as read>` and answers
@@ -257,7 +261,7 @@ the update, and its conflict arrives as `VERSION_MISMATCH` above.
 ## Wiring
 
 `ProductModule` imports `ProductTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
-`IdempotencyCoreModule` and `LedgerCoreModule`, binds every port with `{ provide, useClass }` and reads
+`IdempotencyCoreModule`, `LedgerCoreModule` and `ProductStockCoreModule`, binds every port with `{ provide, useClass }` and reads
 `PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS` and `PRODUCT_LEDGER_RETRY_ATTEMPTS` from
 `LEDGER_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
 `IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's

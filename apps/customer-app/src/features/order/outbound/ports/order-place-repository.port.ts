@@ -1,7 +1,8 @@
-import { IOrderStock, OrderModel } from '../../domain';
+import { OrderModel } from '../../domain';
+import { IOrderPlaceProductView } from '../interfaces';
 
 export interface IOrderPlaceRepositoryPort {
-  lockStock(productIds: string[]): Promise<IOrderStock[]>;
+  findProducts(productIds: string[]): Promise<IOrderPlaceProductView[]>;
   insert(order: OrderModel): Promise<OrderModel>;
 }
 

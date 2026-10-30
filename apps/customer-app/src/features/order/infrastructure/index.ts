@@ -1,4 +1,5 @@
 export * from './core-adapters/order-idempotency-core.adapter';
+export * from './core-adapters/order-product-stock-core.adapter';
 
 export * from './persistence/orm/order-type-orm.module';
 

@@ -6,8 +6,10 @@ import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
 import {
   type IProductIdempotencyPort,
   type IProductRestockRepositoryPort,
+  type IProductStockPort,
   PRODUCT_IDEMPOTENCY_PORT,
   PRODUCT_RESTOCK_REPOSITORY_PORT,
+  PRODUCT_STOCK_PORT,
 } from '../../outbound';
 import { IProductRestockCommand, IProductStockView } from '../interfaces';
 import { IProductRestockWriteView } from '../interfaces/views/product-restock-write.view';
@@ -19,6 +21,8 @@ export class ProductRestockUseCase {
     private readonly ledgerService: ProductLedgerService,
     @Inject(PRODUCT_RESTOCK_REPOSITORY_PORT)
     private readonly repository: IProductRestockRepositoryPort,
+    @Inject(PRODUCT_STOCK_PORT)
+    private readonly productStock: IProductStockPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
     @Inject(TRANSACTION_PORT)
@@ -77,7 +81,9 @@ export class ProductRestockUseCase {
 
   private async persist(command: IProductRestockCommand): Promise<IProductRestockWriteView> {
     const { productId, quantity, idempotencyKey } = command;
-    const product = await this.repository.lockById(productId);
+    await this.productStock.lock({ productId });
+
+    const product = await this.repository.findById(productId);
 
     if (product === null) {
       throw new ProductDomainException(
@@ -89,9 +95,9 @@ export class ProductRestockUseCase {
     product.restock(quantity);
 
     const events = product.pullDomainEvents();
-    const productStockId = await this.repository.insertStock({ productId, quantity });
-    const onHand = await this.repository.sumStock(productId);
-    const stock = { productId, quantity: onHand };
+    const restocked = await this.productStock.restock({ productId, quantity });
+    const { productStockId } = restocked;
+    const stock = { productId, quantity: restocked.quantity };
 
     await this.idempotency.complete({ key: idempotencyKey, response: stock });
 
