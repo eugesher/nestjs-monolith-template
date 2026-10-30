@@ -2,6 +2,7 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { ProductArchivedEvent } from '../../events/product-archived.event';
 import { ProductCreatedEvent } from '../../events/product-created.event';
 import { ProductRenamedEvent } from '../../events/product-renamed.event';
+import { ProductRestockedEvent } from '../../events/product-restocked.event';
 import { ProductModel } from '../product.model';
 
 describe('ProductModel', () => {
@@ -224,6 +225,7 @@ describe('ProductModel', () => {
       ['rename', (product: ProductModel) => product.rename('Desk')],
       ['activate', (product: ProductModel) => product.activate()],
       ['archive', (product: ProductModel) => product.archive()],
+      ['restock', (product: ProductModel) => product.restock(5)],
     ])('refuses to %s an archived product with PRODUCT_ALREADY_ARCHIVED', (_, change) => {
       const product = ProductModel.reconstitute({
         id: '12',
@@ -239,6 +241,57 @@ describe('ProductModel', () => {
         expect.objectContaining({
           code: 'PRODUCT_ALREADY_ARCHIVED',
           message: 'Product 12 is archived and can no longer be modified',
+        }) as Error,
+      );
+    });
+  });
+
+  describe('restock', () => {
+    it.each([
+      ['a draft', ProductStatusEnum.DRAFT],
+      ['an active product', ProductStatusEnum.ACTIVE],
+    ])('records the restock of %s and keeps its version', (_, status) => {
+      const product = ProductModel.reconstitute({
+        id: '12',
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status,
+        version: 3,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+
+      product.restock(5);
+
+      const events = product.pullDomainEvents();
+
+      expect(product.status).toBe(status);
+      expect(product.version).toBe(3);
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(ProductRestockedEvent);
+      expect(events[0]).toMatchObject({ aggregateId: '12', sku: 'SKU-0001', quantity: 5 });
+    });
+
+    it.each([
+      ['zero', 0],
+      ['a negative quantity', -1],
+      ['a fraction', 2.5],
+      ['more than 100000', 100_001],
+    ])('refuses %s with PRODUCT_QUANTITY_INVALID', (_, quantity) => {
+      const product = ProductModel.reconstitute({
+        id: '12',
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status: ProductStatusEnum.ACTIVE,
+        version: 3,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+
+      expect(() => product.restock(quantity)).toThrow(
+        expect.objectContaining({
+          code: 'PRODUCT_QUANTITY_INVALID',
+          message: `Product restock quantity must be an integer from 1 to 100000, got ${quantity}`,
         }) as Error,
       );
     });

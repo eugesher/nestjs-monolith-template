@@ -3,7 +3,12 @@ import { PinoLogger } from 'nestjs-pino';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { ProductArchivedEvent, ProductCreatedEvent, ProductRenamedEvent } from '../../../domain';
+import {
+  ProductArchivedEvent,
+  ProductCreatedEvent,
+  ProductRenamedEvent,
+  ProductRestockedEvent,
+} from '../../../domain';
 import { ProductLedgerService } from '../product-ledger.service';
 
 describe('ProductLedgerService', () => {
@@ -116,6 +121,44 @@ describe('ProductLedgerService', () => {
         'Ledger enqueue failed permanently: the record is absent from the queue and the ledger, replay this record',
       );
       expect(logger.info).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('enqueueRestocked', () => {
+    it('enqueues a restock under the id of its stock row with the correlation id of the request', async () => {
+      await CorrelationContextHelper.run('corr-1', () =>
+        service.enqueueRestocked({
+          productId: '12',
+          productStockId: '700',
+          events: [new ProductRestockedEvent('12', 'SKU-0001', 5)],
+        }),
+      );
+
+      expect(enqueue).toHaveBeenCalledWith({
+        operationKey: 'product-restocked:700',
+        subjectType: 'product',
+        subjectId: '12',
+        action: 'ProductRestocked',
+        payload: { sku: 'SKU-0001', quantity: 5 },
+        occurredAt: '2026-01-05T08:00:00.000Z',
+        correlationId: 'corr-1',
+      });
+      expect(logger.info).toHaveBeenCalledWith(
+        { productId: '12', operationKey: 'product-restocked:700' },
+        'Ledger record enqueued',
+      );
+    });
+
+    it('enqueues nothing without a restock', async () => {
+      await CorrelationContextHelper.run('corr-1', () =>
+        service.enqueueRestocked({
+          productId: '12',
+          productStockId: '700',
+          events: [new ProductRenamedEvent('12', 'Desk lamp', 'Lamp')],
+        }),
+      );
+
+      expect(enqueue).not.toHaveBeenCalled();
     });
   });
 

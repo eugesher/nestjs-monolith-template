@@ -1,0 +1,24 @@
+name: 05-archived
+description: |-
+  e2e: Product › POST /api/products/:productId/stock › should refuse to restock an archived product with 409
+
+  Expect: 409 Conflict, code PRODUCT_ALREADY_ARCHIVED, no row and no idempotency_key row
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/products/105/stock
+body:
+  content: |-
+    {
+      "quantity": 5
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-restock-archived-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

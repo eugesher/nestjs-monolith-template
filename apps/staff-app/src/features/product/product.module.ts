@@ -13,6 +13,7 @@ import {
   ProductGetOneUseCase,
   ProductLedgerService,
   ProductRenameUseCase,
+  ProductRestockUseCase,
   ProductWriteService,
 } from './application';
 import {
@@ -22,6 +23,7 @@ import {
   ProductIdempotencyCoreAdapter,
   ProductLedgerCoreAdapter,
   ProductLedgerRecordQueueAdapter,
+  ProductRestockRepository,
   ProductTypeOrmModule,
   ProductWriteRepository,
 } from './infrastructure';
@@ -35,6 +37,7 @@ import {
   PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
   PRODUCT_OCC_RETRY_ATTEMPTS,
+  PRODUCT_RESTOCK_REPOSITORY_PORT,
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from './outbound';
 import { ProductController } from './presentation';
@@ -54,6 +57,7 @@ import { ProductController } from './presentation';
     ProductGetOneUseCase,
     ProductRenameUseCase,
     ProductArchiveUseCase,
+    ProductRestockUseCase,
     ProductAccessService,
     ProductWriteService,
     ProductLedgerService,
@@ -61,6 +65,7 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_CREATE_REPOSITORY_PORT, useClass: ProductCreateRepository },
     { provide: PRODUCT_CRUD_REPOSITORY_PORT, useClass: ProductCrudRepository },
     { provide: PRODUCT_WRITE_REPOSITORY_PORT, useClass: ProductWriteRepository },
+    { provide: PRODUCT_RESTOCK_REPOSITORY_PORT, useClass: ProductRestockRepository },
     { provide: PRODUCT_LEDGER_PORT, useClass: ProductLedgerCoreAdapter },
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },

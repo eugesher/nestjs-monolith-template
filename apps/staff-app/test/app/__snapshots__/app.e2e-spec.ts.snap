@@ -186,6 +186,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
           "order:read",
           "product:archive",
           "product:read",
+          "product:restock",
           "product:write",
         ],
       },
@@ -196,6 +197,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
           "order:read",
           "product:archive",
           "product:read",
+          "product:restock",
           "product:write",
         ],
       },
@@ -367,7 +369,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, order:read",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read",
       ],
       "statusCode": 400,
     },
@@ -1554,6 +1556,231 @@ exports[`App Product POST /api/products should replay the same response for the 
         "sku": "E2E-0002",
       },
     ],
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should add the units to a sold-out product, record the key and the ledger entry under the correlation id 1`] = `
+{
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "e2e-restock-key",
+        "request_fingerprint": "f221eaac047dc3cc80d8c9ee9d9c752481cb15973ff880c71519f4158a3ec24e",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "ledger_entry": [
+      {
+        "action": "ProductRestocked",
+        "correlation_id": "e2e-product-restock",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": Any<String>,
+        "payload": {
+          "quantity": 5,
+          "sku": "SKU-0007",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "106",
+        "subject_type": "product",
+      },
+    ],
+    "product_stock": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "701",
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 1,
+      },
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "703",
+        "order_product_id": "601",
+        "product_id": "106",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 5,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "productId": "106",
+      "quantity": 5,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should answer a deleted product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 107 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should answer an unknown product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "quantity must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "quantity must not be less than 1",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse a restock without a key with 400 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "IDEMPOTENCY_KEY_REQUIRED",
+      "message": "The Idempotency-Key header is required for this operation",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
+{
+  "db": {
+    "product_stock": [
+      {
+        "product_id": "102",
+        "quantity": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "PRODUCT_IDEMPOTENCY_KEY_REUSED",
+      "message": "Idempotency-Key e2e-restock-reuse-key was already used with a different request body",
+      "statusCode": 422,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should refuse to restock an archived product with 409 1`] = `
+{
+  "db": {
+    "idempotency_key": [],
+    "product_stock": [
+      {
+        "id": "707",
+        "quantity": 4,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "PRODUCT_ALREADY_ARCHIVED",
+      "message": "Product 105 is archived and can no longer be modified",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
+{
+  "db": {
+    "product_stock": [
+      {
+        "order_product_id": null,
+        "product_id": "100",
+        "quantity": 10,
+      },
+      {
+        "order_product_id": "600",
+        "product_id": "100",
+        "quantity": -1,
+      },
+      {
+        "order_product_id": "602",
+        "product_id": "100",
+        "quantity": -1,
+      },
+      {
+        "order_product_id": null,
+        "product_id": "100",
+        "quantity": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "productId": "100",
+      "quantity": 10,
+    },
+  },
+}
+`;
+
+exports[`App Product POST /api/products/:productId/stock should restock a draft 1`] = `
+{
+  "response": {
+    "body": {
+      "productId": "101",
+      "quantity": 8,
+    },
   },
 }
 `;

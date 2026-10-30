@@ -1,19 +1,20 @@
 # 08 — Product feature
 
 `apps/staff-app/src/features/product` is the back office catalog behind `/products`. This note covers the
-`ProductModel` aggregate, optimistic concurrency, idempotent creation, the ledger record of an archive,
-the adapters behind the ports and the HTTP surface.
+`ProductModel` aggregate, optimistic concurrency, idempotent creation, restocking, the ledger record
+of an archive, the adapters behind the ports and the HTTP surface.
 
 ## The aggregate
 
 `ProductModel` walks `draft → active → archived`. Every change that reaches the database bumps
 `version`, and an archived product refuses every further change with `PRODUCT_ALREADY_ARCHIVED`.
 
-| Rule                                         | Code                      |
-| -------------------------------------------- | ------------------------- |
-| `sku` matches `^[A-Z0-9][A-Z0-9-]{2,63}$`    | `PRODUCT_SKU_INVALID`     |
-| `name` is 1 to 255 characters after trimming | `PRODUCT_NAME_INVALID`    |
-| `version` is a positive integer              | `PRODUCT_VERSION_INVALID` |
+| Rule                                         | Code                       |
+| -------------------------------------------- | -------------------------- |
+| `sku` matches `^[A-Z0-9][A-Z0-9-]{2,63}$`    | `PRODUCT_SKU_INVALID`      |
+| `name` is 1 to 255 characters after trimming | `PRODUCT_NAME_INVALID`     |
+| `version` is a positive integer              | `PRODUCT_VERSION_INVALID`  |
+| a restock adds 1 to 100 000 units            | `PRODUCT_QUANTITY_INVALID` |
 
 **The id is a string.** The column is `bigint unsigned`, which may exceed the safe integer range of
 a JavaScript number, so the id stays a string from the row to the response.
@@ -22,8 +23,12 @@ a JavaScript number, so the id stays a string from the row to the response.
 the write service does not touch the database either. A client that repeats a rename does not
 invalidate the `If-Match` version of everyone else.
 
-**Events are recorded, not published.** `create`, `rename` and `archive` add `ProductCreatedEvent`,
-`ProductRenamedEvent` and `ProductArchivedEvent`. A use case pulls them after the write and hands them to
+**A restock does not change the product.** `restock(quantity)` checks the quantity and that the
+product is not archived, keeps the version and records `ProductRestockedEvent`. The units live in
+`product_stock` (see Restock below), so `If-Match` has nothing to guard.
+
+**Events are recorded, not published.** `create`, `rename`, `archive` and `restock` add
+`ProductCreatedEvent`, `ProductRenamedEvent`, `ProductArchivedEvent` and `ProductRestockedEvent`. A use case pulls them after the write and hands them to
 `ProductLedgerService` together with the stored id, because a created product has no id until the
 insert. The service turns them into ledger records (see below).
 
@@ -78,6 +83,33 @@ Any failure after the claim releases the key, so an honest retry can take it aga
 after the commit, such as enqueueing the ledger record, leaves a completed key that `release` does
 not delete, so the retry is a replay.
 
+## Restock
+
+`POST /products/:productId/stock` with `{ quantity }` writes a `+quantity` row to `product_stock`
+without an order line (see `20-order-and-stock-schema.md`) and answers 201 with
+`{ productId, quantity }`, where `quantity` is the stock on hand after the restock. A draft can be
+restocked, so its stock is ready when it becomes active. An archived product is
+`PRODUCT_ALREADY_ARCHIVED` (409), and an unknown or soft-deleted one is `PRODUCT_NOT_FOUND` (404).
+
+`ProductRestockUseCase` claims the `Idempotency-Key` on `{ productId, quantity }`, with the outcomes of
+a creation, and then runs one transaction:
+
+1. `lockById` reads the product with `SELECT … FOR UPDATE`;
+2. the aggregate checks the quantity and the status;
+3. `insertStock` writes the movement;
+4. `sumStock` reads the stock on hand with `FOR SHARE`;
+5. the key is completed with the answer.
+
+**The product row is the lock, as for an order** (see `22-order-feature.md`). The lock on it is taken
+before anything else, so a restock and an order never wait for each other in opposite orders.
+An archive updates the same row, so it waits for the restock to commit or the restock waits for the
+archive and then sees the archived status. Two restocks of one product queue on the row too, so the
+sum in each answer counts every movement committed before it.
+
+After the commit, `ProductLedgerService.enqueueRestocked` puts the record on the `ledger-record`
+queue. Every restock is a fact of its own, so the operation key is the id of the stock row,
+`product-restocked:<productStockId>`, not the product id.
+
 ## The ledger record of an archive
 
 `ProductArchiveUseCase` writes the product, enqueues its ledger records and then asks
@@ -97,13 +129,15 @@ The archive is already committed, so a failing append must not undo it. `Product
 ## The ledger records of the queue
 
 After the commit, `ProductCreateUseCase` and `ProductArchiveUseCase` hand their domain events to
-`ProductLedgerService.enqueue`, which turns each into a ready record and puts it on the
-`ledger-record` queue through `PRODUCT_LEDGER_RECORD_PORT`:
+`ProductLedgerService.enqueue`, and `ProductRestockUseCase` hands its events and the id of the new
+stock row to `ProductLedgerService.enqueueRestocked`. The service turns each event into a ready
+record and puts it on the `ledger-record` queue through `PRODUCT_LEDGER_RECORD_PORT`:
 
-| Domain event           | Operation key           | Action            | Payload                 |
-| ---------------------- | ----------------------- | ----------------- | ----------------------- |
-| `ProductCreatedEvent`  | `product-created:<id>`  | `ProductCreated`  | `sku`, `name`           |
-| `ProductArchivedEvent` | `product-archived:<id>` | `ProductArchived` | `sku`, `previousStatus` |
+| Domain event            | Operation key                        | Action             | Payload                 |
+| ----------------------- | ------------------------------------ | ------------------ | ----------------------- |
+| `ProductCreatedEvent`   | `product-created:<id>`               | `ProductCreated`   | `sku`, `name`           |
+| `ProductArchivedEvent`  | `product-archived:<id>`              | `ProductArchived`  | `sku`, `previousStatus` |
+| `ProductRestockedEvent` | `product-restocked:<productStockId>` | `ProductRestocked` | `sku`, `quantity`       |
 
 The subject type is `product` and the subject id is the product id, which comes from the command,
 because a created product has no id in its event. A rename is not a ledger fact, so
@@ -123,15 +157,17 @@ keeps the first row of the key, so the copies append nothing.
 ## Logs
 
 A write logs its outcome at `info` after the work: `Product created`, `Product renamed`,
-`Product archived`, or a replay of a creation. A lost race logs at `info` and a spent budget at `warn`.
+`Product archived`, `Product restocked`, or a replay of a creation or a restock. A lost race logs at `info` and a spent budget at `warn`.
 Reads log nothing. The correlation id comes from the context.
 
 ## Persistence
 
 Each port has its own repository: `ProductAccessRepository`, `ProductCreateRepository`,
-`ProductCrudRepository` and `ProductWriteRepository`. The access and write repositories share `findById`
+`ProductCrudRepository`, `ProductRestockRepository` and `ProductWriteRepository`. The access and write repositories share `findById`
 through `ProductFindByIdBaseRepository`. Every repository reads the `product` table through
 `TransactionHost`, so a query inside `TRANSACTION_PORT.run` joins that transaction.
+`ProductRestockRepository` also writes and sums `product_stock`, and `ProductTypeOrmModule`
+registers `ProductStock` for it.
 
 **The version check is in the `WHERE`.** `update` runs
 `UPDATE product SET name, status, version = <new> WHERE id = ? AND version = <as read>` and answers
@@ -172,13 +208,14 @@ around the core-adapters.
 | `GET /products/:productId`           | `product:read`    |                             | 200, the product        |
 | `PATCH /products/:productId/name`    | `product:write`   | `If-Match`, optional        | 200, the product        |
 | `PATCH /products/:productId/archive` | `product:archive` | `If-Match`, optional        | 200, the product        |
+| `POST /products/:productId/stock`    | `product:restock` | `Idempotency-Key`, required | 201, the stock on hand  |
 
-A replay of a creation answers 201 with the stored body, exactly like the first request.
+A replay of a creation or a restock answers 201 with the stored body, exactly like the first request.
 
 **Every route names its permission.** `@RequiresPermission` refuses a caller without the code with
 403 before the use case runs (see `02-global-auth-guards.md`). Archiving has a code of its own,
-because it is the one change that cannot be undone: the seeded admin and editor hold all three codes, the
-viewer only `product:read`.
+because it is the one change that cannot be undone, and so has restocking, because it changes what
+customers can buy. The seeded admin and editor hold all four codes, the viewer only `product:read`.
 
 **`productId` is a string of digits**, from 1 to 20 of them without a leading zero, checked by
 `ProductIdRequestDto`. Anything else is a 400 at the edge instead of a lookup that cannot match.

@@ -21,14 +21,14 @@ test, so the test can be found in `apps/<app>/test`.
 
 `app` holds the cases that check a route of the other app is not mounted.
 
-Eight e2e cases are not one request:
+Nine e2e cases are not one request:
 
 - the schema check of staff-app compares the migrated database with the entities and has no
   request;
 - the concurrent renames of a product send six requests at once, `product/rename/05-concurrent` sends
   one;
-- the replay of a product create and of an order send the same request twice, as
-  `product/create/02-replay` and `order/place/02-replay` say;
+- the replays of a product create, a restock and an order send the same request twice, as
+  `product/create/02-replay`, `product/restock/03-replay` and `order/place/02-replay` say;
 - two simultaneous orders for the last units of a product send the same request twice at once with
   two keys, as `customer-app/order/place/13-simultaneous` says;
 - two simultaneous registrations with one email send the same request twice at once, in
