@@ -14,6 +14,9 @@ presentation.
 Every route needs a customer token. The customer is always the caller: `@CurrentUser()` gives the
 id, and no route takes a customer id from the request.
 
+The back office reads the orders of every customer through its own feature in staff-app (see
+`23-staff-order-feature.md`).
+
 ## One line per unit
 
 The body is `{ productIds }` with one id per unit: `["100", "100"]` is two units of product 100.

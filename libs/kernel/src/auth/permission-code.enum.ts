@@ -6,4 +6,5 @@ export enum PermissionCodeEnum {
   PRODUCT_READ = 'product:read',
   PRODUCT_WRITE = 'product:write',
   PRODUCT_ARCHIVE = 'product:archive',
+  ORDER_READ = 'order:read',
 }

@@ -1,0 +1,15 @@
+name: 04-without-permission
+description: |-
+  e2e: Order › GET /api/orders › should refuse a role without order:read with 403
+
+  Expect: 403 Forbidden
+  User: viewer@example.com (token signed by scripts.py)
+  Before: SQL: DELETE FROM staff_role_permissions WHERE role_id = 3 AND permission_id = 10
+  After: SQL: INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 10)
+url: $STAFF_APP_BASE_URL/orders
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

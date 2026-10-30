@@ -1,0 +1,16 @@
+name: 03-malformed-page
+description: |-
+  e2e: Order › GET /api/orders › should refuse a malformed page with 400 from validation
+
+  Expect: 400 Bad Request, messages of page
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/orders
+params:
+  - name: page
+    value: first
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

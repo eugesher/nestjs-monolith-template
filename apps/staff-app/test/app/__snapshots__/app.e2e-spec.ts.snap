@@ -183,6 +183,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
           "iam:role-edit",
           "iam:user-create",
           "ledger:read",
+          "order:read",
           "product:archive",
           "product:read",
           "product:write",
@@ -192,6 +193,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
         "name": "editor",
         "permissionCodes": [
           "ledger:read",
+          "order:read",
           "product:archive",
           "product:read",
           "product:write",
@@ -201,6 +203,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
         "name": "viewer",
         "permissionCodes": [
           "ledger:read",
+          "order:read",
           "product:read",
         ],
       },
@@ -354,13 +357,17 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
         "permission_id": 7,
         "role_id": 3,
       },
+      {
+        "permission_id": 10,
+        "role_id": 3,
+      },
     ],
   },
   "response": {
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, order:read",
       ],
       "statusCode": 400,
     },
@@ -949,6 +956,162 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
       "subjectType": "support-ticket",
       "updatedAt": Any<String>,
       "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should answer the page window it was asked for 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000101",
+          "id": "600",
+        },
+      ],
+      "page": 2,
+      "size": 1,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should list the orders of every customer, newest first 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000102",
+          "id": "601",
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000101",
+          "id": "600",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should refuse a caller without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders should refuse a role without order:read with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should answer an unknown order with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should read the order of any customer with its products 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "customerId": "00000000-0000-4000-8000-000000000101",
+      "id": "600",
+      "products": [
+        {
+          "id": "600",
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+        {
+          "id": "601",
+          "name": "Sold out product",
+          "productId": "106",
+          "sku": "SKU-0007",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should refuse a caller without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should refuse a malformed order id with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "orderId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should refuse a role without order:read with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
     },
   },
 }

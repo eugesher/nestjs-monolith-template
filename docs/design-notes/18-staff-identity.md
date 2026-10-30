@@ -44,9 +44,9 @@ same, so both kinds of account are hashed and signed by one piece of code, each 
 `AUTH_ARGON2_*` and `JWT_*` values of its own app (see `19-customer-identity.md`).
 
 **The kernel enums are staff vocabulary.** `RoleEnum` lists staff roles and `PermissionCodeEnum`
-lists the codes those roles grant: `ledger:read`, the three `iam:*` codes and the two `note:*`
-codes. A customer holds none of them. `IdentityErrorCodeEnum` and `UserStatusEnum` are shared by
-both identity modules.
+lists the codes those roles grant: `ledger:read`, the three `iam:*` codes, the three `product:*`
+codes and `order:read`. A customer holds none of them. `IdentityErrorCodeEnum` and
+`UserStatusEnum` are shared by both identity modules.
 
 ## A taken email
 

@@ -6,4 +6,5 @@ VALUES
   (4, 'iam:role-edit'),
   (7, 'product:read'),
   (8, 'product:write'),
-  (9, 'product:archive');
+  (9, 'product:archive'),
+  (10, 'order:read');

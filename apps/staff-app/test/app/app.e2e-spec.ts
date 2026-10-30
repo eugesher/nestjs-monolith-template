@@ -11,6 +11,7 @@ import {
   IamE2E,
   LedgerE2E,
   NoteE2E,
+  OrderE2E,
   ProductE2E,
   ReminderE2E,
   AuthE2E,
@@ -26,6 +27,7 @@ describe('App', () => {
   const iamE2E = IamE2E.of(ctx);
   const ledgerE2E = LedgerE2E.of(ctx);
   const noteE2E = NoteE2E.of(ctx);
+  const orderE2E = OrderE2E.of(ctx);
   const productE2E = ProductE2E.of(ctx);
   const reminderE2E = ReminderE2E.of(ctx);
 
@@ -95,6 +97,11 @@ describe('App', () => {
     noteE2E.handleCreate();
     noteE2E.handleEdit();
     noteE2E.handleResolve();
+  });
+
+  describe('Order', () => {
+    orderE2E.handleGetMany();
+    orderE2E.handleGetOne();
   });
 
   describe('Product', () => {
