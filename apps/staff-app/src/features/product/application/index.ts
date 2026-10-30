@@ -9,3 +9,4 @@ export * from './use-cases/product-create.use-case';
 export * from './use-cases/product-get-many.use-case';
 export * from './use-cases/product-get-one.use-case';
 export * from './use-cases/product-rename.use-case';
+export * from './use-cases/product-restock.use-case';

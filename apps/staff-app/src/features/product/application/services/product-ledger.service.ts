@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs/toolkit';
-import { ProductArchivedEvent, ProductCreatedEvent } from '../../domain';
+import { ProductArchivedEvent, ProductCreatedEvent, ProductRestockedEvent } from '../../domain';
 import {
   type IProductLedgerAppendCommand,
   type IProductLedgerPort,
@@ -14,6 +14,7 @@ import {
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
 import { IProductLedgerRecordCommand } from '../interfaces/commands/product-ledger-record.command';
+import { IProductLedgerRestockRecordCommand } from '../interfaces/commands/product-ledger-restock-record.command';
 
 @Injectable()
 export class ProductLedgerService {
@@ -38,6 +39,18 @@ export class ProductLedgerService {
       if (record !== undefined) {
         await this.enqueueWithRetry({ ...record, correlationId });
       }
+    }
+  }
+
+  public async enqueueRestocked(command: IProductLedgerRestockRecordCommand): Promise<void> {
+    const { productId, productStockId, events } = command;
+    const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
+    const restocked = events.filter((event) => event instanceof ProductRestockedEvent);
+
+    for (const event of restocked) {
+      const record = this.toRestockedRecord(productId, productStockId, event);
+
+      await this.enqueueWithRetry({ ...record, correlationId });
     }
   }
 
@@ -88,6 +101,24 @@ export class ProductLedgerService {
       subjectId: productId,
       action: 'ProductArchived',
       payload: { sku, previousStatus },
+      occurredAt,
+    };
+  }
+
+  private toRestockedRecord(
+    productId: string,
+    productStockId: string,
+    event: ProductRestockedEvent,
+  ): IProductLedgerAppendCommand {
+    const { sku, quantity } = event;
+    const occurredAt = event.occurredAt.toISOString();
+
+    return {
+      operationKey: `product-restocked:${productStockId}`,
+      subjectType: 'product',
+      subjectId: productId,
+      action: 'ProductRestocked',
+      payload: { sku, quantity },
       occurredAt,
     };
   }

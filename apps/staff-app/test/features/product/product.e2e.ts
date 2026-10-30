@@ -380,4 +380,200 @@ export class ProductE2E {
       });
     });
   }
+  public handleRestock(): void {
+    describe('POST /api/products/:productId/stock', () => {
+      it('should add the units to a sold-out product, record the key and the ledger entry under the correlation id', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/106/stock')
+          .set('Idempotency-Key', 'e2e-restock-key')
+          .set('x-correlation-id', 'e2e-product-restock')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 5 })
+          .expect(HttpStatus.CREATED);
+
+        await this.ctx.drainLedgerRecordQueue();
+
+        const actual = {
+          response: { body: response.body },
+          db: {
+            product_stock: await this.ctx.dataSource.query(
+              'SELECT * FROM product_stock WHERE product_id = 106 ORDER BY id',
+            ),
+            idempotency_key: await this.ctx.dataSource.query(
+              'SELECT * FROM idempotency_key WHERE idempotency_key = ? ORDER BY id',
+              ['e2e-restock-key'],
+            ),
+            ledger_entry: await this.ctx.dataSource.query(
+              'SELECT * FROM ledger_entry WHERE subject_id = ? AND action = ? ORDER BY id',
+              ['106', 'ProductRestocked'],
+            ),
+          },
+        };
+
+        expect(actual).toMatchSnapshot({
+          db: {
+            product_stock: [{}, {}, { id: expect.any(String), created_at: expect.any(Date) }],
+            idempotency_key: [
+              {
+                id: expect.any(String),
+                response_body: expect.any(String),
+                created_at: expect.any(Date),
+              },
+            ],
+            ledger_entry: [
+              {
+                id: expect.any(String),
+                operation_key: expect.any(String),
+                occurred_at: expect.any(Date),
+                recorded_at: expect.any(Date),
+              },
+            ],
+          },
+        });
+        expect(actual.db.ledger_entry[0].operation_key).toBe(
+          `product-restocked:${actual.db.product_stock[2].id}`,
+        );
+        expect(JSON.parse(actual.db.idempotency_key[0].response_body)).toEqual(response.body);
+      });
+
+      it('should restock a draft', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/101/stock')
+          .set('Idempotency-Key', 'e2e-restock-draft-key')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ quantity: 3 })
+          .expect(HttpStatus.CREATED);
+
+        await this.ctx.drainLedgerRecordQueue();
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should replay the same response for the same key and body without a second movement', async () => {
+        const first = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/100/stock')
+          .set('Idempotency-Key', 'e2e-restock-replay-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 2 })
+          .expect(HttpStatus.CREATED);
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/100/stock')
+          .set('Idempotency-Key', 'e2e-restock-replay-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 2 })
+          .expect(HttpStatus.CREATED);
+
+        await this.ctx.drainLedgerRecordQueue();
+
+        expect(response.body).toEqual(first.body);
+        expect({
+          response: { body: response.body },
+          db: {
+            product_stock: await this.ctx.dataSource.query(
+              'SELECT product_id, quantity, order_product_id FROM product_stock WHERE product_id = 100 ORDER BY id',
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should refuse the same key with another quantity with 422', async () => {
+        await request(this.ctx.app.getHttpServer())
+          .post('/api/products/102/stock')
+          .set('Idempotency-Key', 'e2e-restock-reuse-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 1 })
+          .expect(HttpStatus.CREATED);
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/102/stock')
+          .set('Idempotency-Key', 'e2e-restock-reuse-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 4 })
+          .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        await this.ctx.drainLedgerRecordQueue();
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product_stock: await this.ctx.dataSource.query(
+              'SELECT product_id, quantity FROM product_stock WHERE product_id = 102 ORDER BY id',
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should refuse to restock an archived product with 409', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/105/stock')
+          .set('Idempotency-Key', 'e2e-restock-archived-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 5 })
+          .expect(HttpStatus.CONFLICT);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product_stock: await this.ctx.dataSource.query(
+              'SELECT id, quantity FROM product_stock WHERE product_id = 105 ORDER BY id',
+            ),
+            idempotency_key: await this.ctx.dataSource.query(
+              'SELECT id FROM idempotency_key WHERE idempotency_key = ?',
+              ['e2e-restock-archived-key'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it.each([
+        ['an unknown product', '999'],
+        ['a deleted product', '107'],
+      ])('should answer %s with 404', async (_, productId) => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post(`/api/products/${productId}/stock`)
+          .set('Idempotency-Key', `e2e-restock-missing-${productId}`)
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 5 })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it.each([
+        ['zero', 0],
+        ['a fraction', 2.5],
+      ])('should refuse a quantity of %s with 400 from validation', async (_, quantity) => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/100/stock')
+          .set('Idempotency-Key', 'e2e-restock-invalid-key')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity })
+          .expect(HttpStatus.BAD_REQUEST);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a restock without a key with 400', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/100/stock')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ quantity: 5 })
+          .expect(HttpStatus.BAD_REQUEST);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a restock by a viewer with 403', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/products/100/stock')
+          .set('Idempotency-Key', 'e2e-restock-viewer-key')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .send({ quantity: 5 })
+          .expect(HttpStatus.FORBIDDEN);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+    });
+  }
 }

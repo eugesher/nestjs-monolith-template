@@ -1,0 +1,24 @@
+name: 02-draft
+description: |-
+  e2e: Product › POST /api/products/:productId/stock › should restock a draft
+
+  Expect: 201 Created, draft 101 at 8 units
+  User: admin@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/products/101/stock
+body:
+  content: |-
+    {
+      "quantity": 3
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-restock-draft-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

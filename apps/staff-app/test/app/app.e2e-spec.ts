@@ -110,6 +110,7 @@ describe('App', () => {
     productE2E.handleCreate();
     productE2E.handleRename();
     productE2E.handleArchive();
+    productE2E.handleRestock();
   });
 
   describe('Reminder', () => {
