@@ -15,8 +15,12 @@ yarn test:e2e:infra:reseed && yarn test:e2e:staff
 yarn test:e2e:infra:reseed && yarn test:e2e:customer
 ```
 
+```bash
+yarn test:e2e:infra:reseed && yarn test:e2e:processor
+```
+
 Each suite starts from a reseed: the cases write the fixtures, and a second run on the same data
-fails. Both scripts pass `--ci`, so a run never writes a snapshot; a new or changed snapshot is
+fails. Every script passes `--ci`, so a run never writes a snapshot; a new or changed snapshot is
 written by running Jest without it, then read before it is kept.
 
 ## Layout
@@ -29,7 +33,12 @@ apps/<app>/test/
   context/app-e2e.context.ts
   features/index.ts
   features/<feature>/<feature>.e2e.ts
+  processors/index.ts
+  processors/<processor>/<processor>.e2e.ts
 ```
+
+`processors/` exists in processor-app only: a processor class has one public method per entry,
+`handleRecord()` for a queue and `handleTick()` or `handleRetryTick()` for a schedule.
 
 **`app.e2e-spec.ts` is the only Jest entry.** The app boots once, in `beforeAll`. The entry holds
 one `describe` per feature and calls the methods of the feature class inside it:
@@ -50,7 +59,8 @@ feature that needs a hook before each case has `hooks()`, as `ReminderE2E` delet
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
 the logger and the global prefix, and signs one access token for each seeded account the cases use
-with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app. Everything the cases read is a getter that throws before
+with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app.
+processor-app has no auth and signs nothing. Everything the cases read is a getter that throws before
 `init()`. The staff-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
@@ -58,14 +68,18 @@ records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. 
 `acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull writes its
 own keys at any moment.
 
-**A case waits for the ledger record queue before it reads the ledger.** The staff-app context has
-`drainLedgerRecordQueue()`: it polls `getJobCounts()` of the `ledger-record` queue every 100 ms until
-no job is waiting, active or delayed, and throws after 100 polls. The jobs run in the e2e process,
-so a drained queue means the rows are written.
+**staff-app and customer-app read the job, not the ledger.** Neither consumes the queue, so their
+contexts have `takeLedgerRecords()`: it returns the data of the waiting jobs of the `ledger-record`
+queue and empties the queue, as `takeRootWarnings()` takes the warnings. A case that enqueues takes
+the jobs, so the next case starts from an empty queue.
 
-**customer-app reads the job, not the ledger.** It has no processor, so its context has
-`takeLedgerRecords()`: it returns the data of the waiting jobs of the `ledger-record` queue and
-empties the queue, as `takeRootWarnings()` takes the warnings.
+**processor-app waits for the queue and the schedules.** Its cases add jobs to the queue themselves
+and read the ledger. `waitForLedgerRecordQueue()` polls `getJobCounts()` every 100 ms until no job is
+waiting, active or delayed, and throws after 100 polls; the jobs run in the e2e process, so a drained
+queue means the rows are written. `fireSchedule(name)` fires a schedule through `SchedulerRegistry`
+without waiting for it, and `waitFor(description, settled)` polls until the outcome shows. A failing
+job is a record whose `subjectType` is longer than its column, enqueued with `attempts: 1`; the retry
+case fixes it with `job.update` before it fires `ledger-record-retry`.
 
 The Jest files outside the apps live in `jest/`:
 
@@ -116,20 +130,24 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 
 ## What the suites cover
 
-| App          | Feature  | Cases                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| staff-app    | app      | the schema of every entity matches the migrated database; the customer-app sign-up is not mounted                                                                                                                                                                                                                                                                                                                                            |
-| staff-app    | auth     | login answers one access token of the subject alone for the app lifetime, `me` with roles; claims in a token are ignored; a disabled user is refused; customer tokens are refused                                                                                                                                                                                                                                                            |
-| staff-app    | iam      | roles from the database; a new user logs in at once; of two simultaneous registrations with one email one is 409; a revoked permission refuses a token that passed a moment before                                                                                                                                                                                                                                                           |
-| staff-app    | ledger   | a page of one subject; validation                                                                                                                                                                                                                                                                                                                                                                                                            |
-| staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back; the note of another staff user is a 404 and no route needs a permission                                                                                                                                                                                                                                           |
-| staff-app    | order    | every order of every customer, newest first, and the page window; one order with its lines; an unknown order is 404; validation; a role without `order:read` is 403 and a caller without a token 401                                                                                                                                                                                                                                         |
-| staff-app    | product  | the catalog and an unknown product; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; a viewer may not rename; concurrent renames; archive with one ledger entry; restock writes a +N movement, the key and a ledger record per stock row, a draft too, replay and reuse of a key, an archived product is 409, unknown and deleted products are 404, a viewer may not restock |
-| staff-app    | reminder | the summary is cached and every write drops it; dates under `TZ`; another staff user's reminder is a 404; soft delete                                                                                                                                                                                                                                                                                                                        |
-| customer-app | app      | staff-app routes are not mounted                                                                                                                                                                                                                                                                                                                                                                                                             |
-| customer-app | auth     | sign-up creates an active customer who logs in and a ledger record job with the email, a taken email is 409 even for two simultaneous sign-ups, invalid input is 400; login answers one access token of the subject alone for the app lifetime, `me`; staff credentials, a disabled customer and staff tokens are refused                                                                                                                    |
-| customer-app | catalog  | only active products with stock on hand above zero, in `id` order with the quantity; the page window and the total; invalid input is 400; a caller without a token is refused                                                                                                                                                                                                                                                                |
-| customer-app | order    | placement writes a line and a -1 movement per unit, the key and a ledger record job, and the catalog shows less stock; replay, reuse and the key of another customer; too little stock is 409 and writes nothing; draft, archived, deleted and unknown products are 404; of two simultaneous orders for the last units one is 409; only own orders are listed and read                                                                       |
+| App           | Feature               | Cases                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| staff-app     | app                   | the schema of every entity matches the migrated database; the customer-app sign-up is not mounted                                                                                                                                                                                                                                                                                                                                                      |
+| staff-app     | auth                  | login answers one access token of the subject alone for the app lifetime, `me` with roles; claims in a token are ignored; a disabled user is refused; customer tokens are refused                                                                                                                                                                                                                                                                      |
+| staff-app     | iam                   | roles from the database; a new user logs in at once; of two simultaneous registrations with one email one is 409; a revoked permission refuses a token that passed a moment before                                                                                                                                                                                                                                                                     |
+| staff-app     | ledger                | a page of one subject; validation                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| staff-app     | note                  | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back; the note of another staff user is a 404 and no route needs a permission                                                                                                                                                                                                                                                     |
+| staff-app     | order                 | every order of every customer, newest first, and the page window; one order with its lines; an unknown order is 404; validation; a role without `order:read` is 403 and a caller without a token 401                                                                                                                                                                                                                                                   |
+| staff-app     | product               | the catalog and an unknown product; create with the idempotency key, a ledger record job under the correlation id; replay and reuse of a key; `If-Match`; a viewer may not rename; concurrent renames; archive with one ledger record job; restock writes a +N movement, the key and a ledger record per stock row, a draft too, replay and reuse of a key, an archived product is 409, unknown and deleted products are 404, a viewer may not restock |
+| staff-app     | reminder              | the summary is cached and every write drops it; dates under `TZ`; another staff user's reminder is a 404; soft delete                                                                                                                                                                                                                                                                                                                                  |
+| customer-app  | app                   | staff-app routes are not mounted                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| customer-app  | auth                  | sign-up creates an active customer who logs in and a ledger record job with the email, a taken email is 409 even for two simultaneous sign-ups, invalid input is 400; login answers one access token of the subject alone for the app lifetime, `me`; staff credentials, a disabled customer and staff tokens are refused                                                                                                                              |
+| customer-app  | catalog               | only active products with stock on hand above zero, in `id` order with the quantity; the page window and the total; invalid input is 400; a caller without a token is refused                                                                                                                                                                                                                                                                          |
+| customer-app  | order                 | placement writes a line and a -1 movement per unit, the key and a ledger record job, and the catalog shows less stock; replay, reuse and the key of another customer; too little stock is 409 and writes nothing; draft, archived, deleted and unknown products are 404; of two simultaneous orders for the last units one is 409; only own orders are listed and read                                                                                 |
+| processor-app | app                   | only the health routes are mounted                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| processor-app | ledger-record         | a job becomes a ledger entry under its correlation id; a job replayed with one operation key appends once; a job that fails its last attempt stays among the failed jobs                                                                                                                                                                                                                                                                               |
+| processor-app | ledger-record (retry) | the daily retry returns a failed job to the queue, and it is appended once its cause is gone                                                                                                                                                                                                                                                                                                                                                           |
+| processor-app | idempotency-purge     | the keys older than the TTL are deleted and the fresh ones stay                                                                                                                                                                                                                                                                                                                                                                                        |
 
 **The schema check needs decorators.** It builds a `DataSource` of every entity in
 `@acme-core/entities` with `SnakeNamingStrategy`, and expects

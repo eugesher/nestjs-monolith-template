@@ -1,0 +1,13 @@
+Object.assign(process.env, {
+  NODE_ENV: 'test',
+  PORT: '3002',
+  API_PREFIX: 'api',
+  API_USE_API_REFERENCE: 'false',
+  DATABASE_URL: 'mysql://root:root@127.0.0.1:3307/acme_db',
+  DATABASE_LOGGING: 'false',
+  REDIS_URL: 'redis://:e2e-redis-password@127.0.0.1:6380',
+  REDIS_COMMAND_TIMEOUT_MS: '500',
+  IDEMPOTENCY_KEY_TTL_HOURS: '24',
+  LOG_LEVEL: 'error',
+  OTEL_SDK_DISABLED: 'true',
+});

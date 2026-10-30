@@ -9,17 +9,17 @@ and the contract of the `ledger-record` queue:
 | `LEDGER_CORE_APPEND_PORT` | `LedgerCoreAppendFacade` | whoever records a fact                 |
 | `LEDGER_CORE_QUERY_PORT`  | `LedgerCoreQueryFacade`  | the back office that reads the journal |
 
-Two ports instead of one let each app bind only what it uses. The ledger is the core module both
+Two ports instead of one let each app bind only what it uses. The ledger is the core module the
 apps share:
 
-| App       | Writer                        | Facts                                                     |
-| --------- | ----------------------------- | --------------------------------------------------------- |
-| staff-app | the `product` feature         | `ProductArchived`                                         |
-| staff-app | the `ledger-record` processor | `ProductCreated`, `ProductArchived`, `CustomerRegistered` |
+| App           | Writer                        | Facts                                                     |
+| ------------- | ----------------------------- | --------------------------------------------------------- |
+| staff-app     | the `product` feature         | `ProductArchived`                                         |
+| processor-app | the `ledger-record` processor | `ProductCreated`, `ProductArchived`, `CustomerRegistered` |
 
 customer-app binds no port: its `auth` feature enqueues `CustomerRegistered` into the
-`ledger-record` queue, and the processor of staff-app appends it. staff-app binds both ports and
-serves the journal through its `ledger` feature (see `06-ledger-feature.md`).
+`ledger-record` queue, and the processor of processor-app appends it. processor-app binds only the
+append port. staff-app binds both ports and serves the journal through its `ledger` feature (see `06-ledger-feature.md`).
 
 **The queue contract lives with the ledger.** `LEDGER_RECORD_QUEUE`, the job type
 `ILedgerRecordProcessorPayload` and `LEDGER_RECORD_JOB_OPTIONS` are in `@acme-core/contracts/ledger`,

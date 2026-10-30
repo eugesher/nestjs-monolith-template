@@ -274,6 +274,32 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('a processor infrastructure/queue MAY inject a Bull queue to manage its jobs', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/__fixture__.ts',
+        code: [
+          'import { InjectQueue } from "@nestjs/bull";',
+          'import { Injectable } from "@nestjs/common";',
+          'import type { Queue } from "bull";',
+          'import { x } from "../../../../contracts/ledger-record";',
+        ].join('\n'),
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      'import { BullModule } from "@nestjs/bull";',
+      'import { Processor } from "@nestjs/bull";',
+      'import type { Job } from "bull";',
+    ])(
+      'a processor infrastructure/queue may NOT take more than InjectQueue and the Queue type (%s)',
+      async (code) => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
     it('common/shared MAY register a queue with BullModule', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
@@ -332,6 +358,23 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       await expect({
         file,
         code: 'import { Cron } from "@nestjs/schedule";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('the e2e code MAY take SchedulerRegistry to fire a schedule by its name', async () => {
+      await expect({
+        file: 'apps/__processors-fixture__/test/context/__fixture__.ts',
+        code: 'import { SchedulerRegistry } from "@nestjs/schedule";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      'import { Cron } from "@nestjs/schedule";',
+      'import { ScheduleModule } from "@nestjs/schedule";',
+    ])('the e2e code may NOT take more than SchedulerRegistry (%s)', async (code) => {
+      await expect({
+        file: 'apps/__processors-fixture__/test/context/__fixture__.ts',
+        code,
       }).toBreakRule('boundaries/dependencies');
     });
 

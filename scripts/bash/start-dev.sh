@@ -10,7 +10,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-for app in staff-app customer-app; do
+for app in staff-app customer-app processor-app; do
   setsid yarn "start:dev:${app}" &
   pids+=("$!")
 done

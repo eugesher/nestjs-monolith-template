@@ -1,8 +1,9 @@
 # 13 — App bootstrap
 
-staff-app and customer-app are two deployables over one module graph: each has its own `main.ts`,
-its own `AppModule` and its own port, and both read the same database, Redis and JWT secrets. A
-token issued by one app is accepted by the other.
+staff-app, customer-app and processor-app are three deployables over one module graph: each has its
+own `main.ts`, its own `AppModule` and its own port, and all three read the same database and Redis.
+staff-app and customer-app serve HTTP; processor-app serves only the health probes and runs the
+queue consumers and the schedules (see `25-processor-app.md`).
 
 ## main.ts
 
@@ -23,13 +24,14 @@ token issued by one app is accepted by the other.
 
 Each app has its own env file, and the migrations have theirs, all in `env/`:
 
-| Example                              | Read by                            | Holds                                     |
-| ------------------------------------ | ---------------------------------- | ----------------------------------------- |
-| `env/apps/staff-app/.env.example`    | staff-app                          | every variable of the staff-app schema    |
-| `env/apps/customer-app/.env.example` | customer-app                       | every variable of the customer-app schema |
-| `env/migrations/.env.example`        | `migrations/config/data-source.ts` | `DATABASE_URL` only                       |
+| Example                               | Read by                            | Holds                                      |
+| ------------------------------------- | ---------------------------------- | ------------------------------------------ |
+| `env/apps/staff-app/.env.example`     | staff-app                          | every variable of the staff-app schema     |
+| `env/apps/customer-app/.env.example`  | customer-app                       | every variable of the customer-app schema  |
+| `env/apps/processor-app/.env.example` | processor-app                      | every variable of the processor-app schema |
+| `env/migrations/.env.example`         | `migrations/config/data-source.ts` | `DATABASE_URL` only                        |
 
-A variable with the same meaning has the same name in both apps: `PORT`, `DATABASE_URL`, the JWT
+A variable with the same meaning has the same name in every app: `PORT`, `DATABASE_URL`, the JWT
 secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
 its own `.env.local` filled in.
 
@@ -52,19 +54,19 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 
 ## AppModule
 
-| Piece                              | Where                                                | What it does                                                |
-| ---------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
-| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi               |
-| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                     |
-| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` |
-| `ScheduleSetupModule`              | `app/setup/schedule`, staff-app only                 | `ScheduleModule.forRoot()` for `@Cron`                      |
-| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`      |
-| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                         |
-| `AuthGlobalModule`                 | `app/global/auth`                                    | the three global guards                                     |
-| features, processors               | `@acme-<app>-features`, `@acme-staff-processors`     | the routes and the consumers                                |
-| `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform             |
-| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log                                  |
-| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                |
+| Piece                              | Where                                                | What it does                                                 |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                |
+| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                      |
+| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT`  |
+| `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                       |
+| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`       |
+| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                          |
+| `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                      |
+| features, processors               | `@acme-<app>-features`, `@acme-processor-processors` | the routes and the consumers                                 |
+| `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform              |
+| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first |
+| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                 |
 
 Every module in `app/setup/` is named `*SetupModule`.
 
@@ -81,6 +83,8 @@ written by the request carries the id the client got back.
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
 no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
 ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module.
+processor-app has only `IdempotencyKey` and `LedgerEntry`, the tables of the purge and of the ledger
+append.
 
 ## Logs
 
@@ -91,7 +95,7 @@ still pass, and production keeps everything.
 
 ## Entry points
 
-`@acme-staff-app` and `@acme-customer-app` resolve to the FILE `app/app.module.ts`, not to a folder:
+`@acme-staff-app`, `@acme-customer-app` and `@acme-processor-app` resolve to the FILE `app/app.module.ts`, not to a folder:
 `app/` has no barrel next to the module. `main.ts` and the e2e context import `AppModule` by them.
 
 Lint gives `app.module.ts` its own category, `acme-app:app:module`:

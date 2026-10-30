@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
+{
+  "response": {
+    "body": {
+      "app": "processor-app",
+      "status": "ok",
+      "uptimeSeconds": Any<Number>,
+    },
+  },
+}
+`;
+
+exports[`App Health GET /api/health/ready should report readiness of the database and the cache 1`] = `
+{
+  "response": {
+    "body": {
+      "dependencies": {
+        "cache": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+        "database": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+      },
+      "status": "ready",
+    },
+  },
+}
+`;
+
+exports[`App IdempotencyPurge schedule idempotency-purge should purge the keys older than the TTL and keep the fresh ones 1`] = `
+{
+  "db": {
+    "idempotency_key": [
+      {
+        "idempotency_key": "e2e-purge-fresh",
+        "status": "completed",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App LedgerRecord queue ledger-record should append a record replayed under the same operation key only once 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "operation_key": "e2e-record:2",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App LedgerRecord queue ledger-record should append the record as a ledger entry under its correlation id 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductCreated",
+        "correlation_id": "e2e-processor-record",
+        "id": Any<String>,
+        "occurred_at": 2026-01-05T08:00:00.000Z,
+        "operation_key": "e2e-record:1",
+        "payload": {
+          "name": "Recorded product",
+          "sku": "SKU-0001",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "100",
+        "subject_type": "product",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App LedgerRecord queue ledger-record should keep a record that fails its last attempt among the failed jobs 1`] = `
+{
+  "db": {
+    "ledger_entry": [],
+  },
+  "failed": [
+    {
+      "action": "ProductCreated",
+      "correlationId": "e2e-processor-failure",
+      "occurredAt": "2026-01-05T10:00:00.000Z",
+      "operationKey": "e2e-record:3",
+      "payload": {},
+      "subjectId": "102",
+      "subjectType": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+    },
+  ],
+}
+`;
+
+exports[`App LedgerRecord schedule ledger-record-retry should return a failed record to the queue and append it once its cause is gone 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "correlation_id": "e2e-processor-retry",
+        "id": Any<String>,
+        "occurred_at": 2026-01-05T11:00:00.000Z,
+        "operation_key": "e2e-retry:1",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0004",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "103",
+        "subject_type": "product",
+      },
+    ],
+  },
+}
+`;

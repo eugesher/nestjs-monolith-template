@@ -13,7 +13,7 @@ describe('core entities (@acme-core/entities)', () => {
     'apps/staff-app/src/app/setup/orm/entities/index.ts',
     'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/__fixture__.ts',
-    'apps/staff-app/src/processors/purge/infrastructure/__fixture__.ts',
+    'apps/processor-app/src/processors/purge/infrastructure/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
   ])('%s MAY import the entities', async (file) => {
     await expect({
@@ -28,7 +28,7 @@ describe('core entities (@acme-core/entities)', () => {
     'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
     'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
     'apps/staff-app/src/features/product/product.module.ts',
-    'apps/staff-app/src/processors/purge/application/__fixture__.ts',
+    'apps/processor-app/src/processors/purge/application/__fixture__.ts',
     'apps/staff-app/src/common/shared/auth/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',

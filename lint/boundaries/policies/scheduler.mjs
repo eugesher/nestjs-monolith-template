@@ -20,4 +20,12 @@ export const scheduler = [
     message:
       'the app only sets up ScheduleModule from @nestjs/schedule; schedules belong to processor consumers',
   },
+  {
+    from: { file: { categories: 'acme-app:test' } },
+    disallow: [
+      { ...packages('@nestjs/schedule'), dependency: { specifiers: ['!SchedulerRegistry'] } },
+    ],
+    message:
+      'the e2e code only takes SchedulerRegistry from @nestjs/schedule, to fire a schedule by its name',
+  },
 ];

@@ -38,7 +38,8 @@ Nine e2e cases are not one request:
 
 ## Environment
 
-The requests expect both apps running against the e2e infrastructure with fresh seeds:
+The requests expect staff-app and customer-app running against the e2e infrastructure with fresh
+seeds, and processor-app for the requests that read the ledger records the others enqueue:
 
 ```bash
 yarn test:e2e:infra:reload
@@ -53,6 +54,10 @@ DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-red
 
 ```bash
 DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:customer-app
+```
+
+```bash
+DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:processor-app
 ```
 
 The expected result in a description holds for fresh seeds and the first run. Write requests change

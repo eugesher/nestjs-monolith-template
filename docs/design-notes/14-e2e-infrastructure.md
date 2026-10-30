@@ -120,7 +120,7 @@ then keeps only the production dependencies with `yarn workspaces focus --all --
 runtime stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with
 `NODE_ENV=production`.
 
-Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs both apps
+Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs all three apps
 with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the reference page.
 
 `docker-compose.observability.yml` adds Jaeger and an OpenTelemetry collector:

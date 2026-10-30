@@ -3,7 +3,7 @@
 `core/modules/src/idempotency` keeps the `idempotency_key` table: which `Idempotency-Key` a client
 has used, for which request body, and what the first request answered. It is a core module because
 both apps write through it: the staff `product` feature and the customer `order` feature claim keys
-while serving writes, and the staff `idempotency-purge` processor deletes expired ones on a
+while serving writes, and the `idempotency-purge` processor of processor-app deletes expired ones on a
 schedule. Its contract `core/contracts/src/idempotency` has two ports:
 
 | Port                          | Facade                       | Consumer                                    |
@@ -51,9 +51,9 @@ concurrent duplicate could work too.
   stays possible.
 - **`purgeExpired` deletes rows older than the TTL its command carries**, whatever their status,
   and logs the cutoff, the count and the TTL. The module reads no configuration: the
-  `idempotency-purge` processor of staff-app owns `IDEMPOTENCY_KEY_TTL_HOURS` (24 by default) and
-  calls it every hour (see `10-idempotency-purge-processor.md`). So customer-app mounts the module
-  without that variable. Until the purge runs, an expired key still replays.
+  `idempotency-purge` processor of processor-app owns `IDEMPOTENCY_KEY_TTL_HOURS` (24 by default)
+  and calls it every hour (see `10-idempotency-purge-processor.md`). So staff-app and customer-app
+  mount the module without that variable. Until the purge runs, an expired key still replays.
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.

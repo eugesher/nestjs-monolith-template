@@ -9,7 +9,10 @@ import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '@acme-staff-app';
-import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import {
+  LEDGER_RECORD_QUEUE,
+  type ILedgerRecordProcessorPayload,
+} from '@acme-core/contracts/ledger';
 import { REDIS_CLIENT } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 
@@ -26,9 +29,6 @@ interface IAppE2EState {
 }
 
 export class AppE2EContext {
-  private static readonly POLL_INTERVAL_MS = 100;
-  private static readonly POLL_ATTEMPTS = 100;
-
   private state: Maybe<IAppE2EState>;
 
   public get app(): INestApplication {
@@ -101,20 +101,15 @@ export class AppE2EContext {
     return this.app.close();
   }
 
-  public async drainLedgerRecordQueue(): Promise<void> {
-    const queue = this.moduleFixture.get<Queue>(getQueueToken(LEDGER_RECORD_QUEUE));
+  public async takeLedgerRecords(): Promise<ILedgerRecordProcessorPayload[]> {
+    const queue = this.moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
+      getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const jobs = await queue.getWaiting();
 
-    for (let attempt = 1; attempt <= AppE2EContext.POLL_ATTEMPTS; attempt++) {
-      const counts = await queue.getJobCounts();
+    await queue.empty();
 
-      if (counts.waiting + counts.active + counts.delayed === 0) {
-        return;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, AppE2EContext.POLL_INTERVAL_MS));
-    }
-
-    throw new Error(`The ${LEDGER_RECORD_QUEUE} queue did not drain`);
+    return jobs.map((job) => job.data);
   }
 
   public takeRootWarnings(): unknown[][] {

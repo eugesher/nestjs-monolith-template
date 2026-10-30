@@ -47,7 +47,7 @@ export class ProductE2E {
 
   public handleCreate(): void {
     describe('POST /api/products', () => {
-      it('should create a draft, record the key and the ledger entry under the correlation id', async () => {
+      it('should create a draft, record the key and queue the ledger record under the correlation id', async () => {
         const [{ lastId }] = await this.ctx.dataSource.query(
           'SELECT MAX(id) AS lastId FROM product',
         );
@@ -60,7 +60,7 @@ export class ProductE2E {
           .send({ sku: 'E2E-0001', name: 'Created product' })
           .expect(HttpStatus.CREATED);
 
-        await this.ctx.drainLedgerRecordQueue();
+        const records = await this.ctx.takeLedgerRecords();
 
         const actual = {
           response: { body: response.body },
@@ -73,11 +73,8 @@ export class ProductE2E {
               'SELECT * FROM idempotency_key WHERE idempotency_key = ? ORDER BY id',
               ['e2e-create-key'],
             ),
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT * FROM ledger_entry WHERE subject_id = ? ORDER BY id',
-              [response.body.id],
-            ),
           },
+          ledger_record_queue: records.filter((record) => record.subjectId === response.body.id),
         };
 
         expect(actual).toMatchSnapshot({
@@ -103,27 +100,23 @@ export class ProductE2E {
                 created_at: expect.any(Date),
               },
             ],
-            ledger_entry: [
-              {
-                id: expect.any(String),
-                operation_key: expect.any(String),
-                subject_id: expect.any(String),
-                occurred_at: expect.any(Date),
-                recorded_at: expect.any(Date),
-              },
-            ],
           },
+          ledger_record_queue: [
+            {
+              operationKey: expect.any(String),
+              subjectId: expect.any(String),
+              occurredAt: expect.any(String),
+            },
+          ],
         });
         expect(actual).toMatchObject({
-          db: {
-            product: [{ id: response.body.id }],
-            ledger_entry: [
-              {
-                operation_key: `product-created:${response.body.id}`,
-                subject_id: response.body.id,
-              },
-            ],
-          },
+          db: { product: [{ id: response.body.id }] },
+          ledger_record_queue: [
+            {
+              operationKey: `product-created:${response.body.id}`,
+              subjectId: response.body.id,
+            },
+          ],
         });
         expect(Number(response.body.id)).toBeGreaterThan(Number(lastId));
         expect(JSON.parse(actual.db.idempotency_key[0].response_body)).toEqual(response.body);
@@ -144,7 +137,7 @@ export class ProductE2E {
           .send({ sku: 'E2E-0002', name: 'Replayed product' })
           .expect(HttpStatus.CREATED);
 
-        await this.ctx.drainLedgerRecordQueue();
+        const records = await this.ctx.takeLedgerRecords();
 
         expect(response.body).toEqual(first.body);
         expect({
@@ -153,11 +146,8 @@ export class ProductE2E {
               'SELECT sku, name FROM product WHERE sku = ? ORDER BY id',
               ['E2E-0002'],
             ),
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT action FROM ledger_entry WHERE subject_id = ? ORDER BY id',
-              [first.body.id],
-            ),
           },
+          ledger_record_queue: records.map((record) => record.action),
         }).toMatchSnapshot();
       });
 
@@ -175,6 +165,8 @@ export class ProductE2E {
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ sku: 'E2E-0004', name: 'Another body' })
           .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        await this.ctx.takeLedgerRecords();
 
         expect({
           response: { body: response.body },
@@ -327,7 +319,7 @@ export class ProductE2E {
 
   public handleArchive(): void {
     describe('PATCH /api/products/:productId/archive', () => {
-      it('should archive and record one ledger entry under the correlation id', async () => {
+      it('should archive and queue one ledger record under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/products/103/archive')
           .set('If-Match', '1')
@@ -335,29 +327,18 @@ export class ProductE2E {
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        await this.ctx.drainLedgerRecordQueue();
+        const records = await this.ctx.takeLedgerRecords();
 
         expect({
           response: { body: response.body },
           db: {
             product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 103'),
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT * FROM ledger_entry WHERE subject_id = ? ORDER BY id',
-              ['103'],
-            ),
           },
+          ledger_record_queue: records,
         }).toMatchSnapshot({
           response: { body: { updatedAt: expect.any(String) } },
-          db: {
-            product: [{ updated_at: expect.any(Date) }],
-            ledger_entry: [
-              {
-                id: expect.any(String),
-                occurred_at: expect.any(Date),
-                recorded_at: expect.any(Date),
-              },
-            ],
-          },
+          db: { product: [{ updated_at: expect.any(Date) }] },
+          ledger_record_queue: [{ occurredAt: expect.any(String) }],
         });
       });
 
@@ -371,18 +352,15 @@ export class ProductE2E {
           response: { body: response.body },
           db: {
             product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 105'),
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT * FROM ledger_entry WHERE subject_id = ? ORDER BY id',
-              ['105'],
-            ),
           },
+          ledger_record_queue: await this.ctx.takeLedgerRecords(),
         }).toMatchSnapshot();
       });
     });
   }
   public handleRestock(): void {
     describe('POST /api/products/:productId/stock', () => {
-      it('should add the units to a sold-out product, record the key and the ledger entry under the correlation id', async () => {
+      it('should add the units to a sold-out product, record the key and queue the ledger record under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/products/106/stock')
           .set('Idempotency-Key', 'e2e-restock-key')
@@ -391,7 +369,7 @@ export class ProductE2E {
           .send({ quantity: 5 })
           .expect(HttpStatus.CREATED);
 
-        await this.ctx.drainLedgerRecordQueue();
+        const records = await this.ctx.takeLedgerRecords();
 
         const actual = {
           response: { body: response.body },
@@ -403,11 +381,8 @@ export class ProductE2E {
               'SELECT * FROM idempotency_key WHERE idempotency_key = ? ORDER BY id',
               ['e2e-restock-key'],
             ),
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT * FROM ledger_entry WHERE subject_id = ? AND action = ? ORDER BY id',
-              ['106', 'ProductRestocked'],
-            ),
           },
+          ledger_record_queue: records,
         };
 
         expect(actual).toMatchSnapshot({
@@ -420,17 +395,12 @@ export class ProductE2E {
                 created_at: expect.any(Date),
               },
             ],
-            ledger_entry: [
-              {
-                id: expect.any(String),
-                operation_key: expect.any(String),
-                occurred_at: expect.any(Date),
-                recorded_at: expect.any(Date),
-              },
-            ],
           },
+          ledger_record_queue: [
+            { operationKey: expect.any(String), occurredAt: expect.any(String) },
+          ],
         });
-        expect(actual.db.ledger_entry[0].operation_key).toBe(
+        expect(actual.ledger_record_queue[0].operationKey).toBe(
           `product-restocked:${actual.db.product_stock[2].id}`,
         );
         expect(JSON.parse(actual.db.idempotency_key[0].response_body)).toEqual(response.body);
@@ -444,7 +414,7 @@ export class ProductE2E {
           .send({ quantity: 3 })
           .expect(HttpStatus.CREATED);
 
-        await this.ctx.drainLedgerRecordQueue();
+        await this.ctx.takeLedgerRecords();
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
@@ -464,7 +434,7 @@ export class ProductE2E {
           .send({ quantity: 2 })
           .expect(HttpStatus.CREATED);
 
-        await this.ctx.drainLedgerRecordQueue();
+        await this.ctx.takeLedgerRecords();
 
         expect(response.body).toEqual(first.body);
         expect({
@@ -492,7 +462,7 @@ export class ProductE2E {
           .send({ quantity: 4 })
           .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
-        await this.ctx.drainLedgerRecordQueue();
+        await this.ctx.takeLedgerRecords();
 
         expect({
           response: { body: response.body },

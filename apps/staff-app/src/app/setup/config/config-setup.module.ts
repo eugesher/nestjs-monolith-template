@@ -28,7 +28,6 @@ export class ConfigSetupModule {
 
         OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(5),
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
-        IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).default(24),
 
         JWT_SECRET: Joi.string().min(32).required(),
         JWT_EXPIRES_IN: Joi.string().default('30d'),

@@ -164,7 +164,7 @@ describe('lib entry points', () => {
   it.each([
     'apps/staff-app/src/app/setup/orm/__fixture__.ts',
     'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-    'apps/staff-app/src/processors/purge/application/services/__fixture__.ts',
+    'apps/processor-app/src/processors/purge/application/services/__fixture__.ts',
     'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
   ])('%s MAY import the transaction port by its alias', async (file) => {
