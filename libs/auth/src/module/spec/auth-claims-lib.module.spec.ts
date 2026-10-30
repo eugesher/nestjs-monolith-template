@@ -26,7 +26,7 @@ describe('AuthClaimsLibModule', () => {
         return 'plain';
       }
 
-      @RequiresPermission(PermissionCodeEnum.NOTE_WRITE, PermissionCodeEnum.NOTE_READ)
+      @RequiresPermission(PermissionCodeEnum.PRODUCT_WRITE, PermissionCodeEnum.PRODUCT_READ)
       @Get('note')
       public note(): string {
         return 'note';
@@ -75,7 +75,7 @@ describe('AuthClaimsLibModule', () => {
             },
             findPermissionCodes: (query: { userId: string }) => {
               const permissions: Record<string, PermissionCodeEnum[]> = {
-                ann: [PermissionCodeEnum.NOTE_READ],
+                ann: [PermissionCodeEnum.PRODUCT_READ],
                 bob: [PermissionCodeEnum.LEDGER_READ],
               };
 

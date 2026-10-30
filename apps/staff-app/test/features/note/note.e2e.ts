@@ -16,7 +16,7 @@ export class NoteE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
           .query({ subjectType: 'product', subjectId: '100' })
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -26,7 +26,7 @@ export class NoteE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
           .query({ resolved: 'true' })
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -36,7 +36,7 @@ export class NoteE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
           .query({ subjectType: 'product' })
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -46,17 +46,17 @@ export class NoteE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
           .query({ resolved: 'yes' })
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse a caller without note:read', async () => {
+      it('should list only the notes of the caller, with no permission needed', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes')
           .auth(this.ctx.viewerToken, { type: 'bearer' })
-          .expect(HttpStatus.FORBIDDEN);
+          .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
@@ -68,7 +68,7 @@ export class NoteE2E {
       it('should read one note', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes/202')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -77,7 +77,16 @@ export class NoteE2E {
       it('should answer 404 for a missing note', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes/299')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should hide the note of another staff user with 404', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/notes/200')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
           .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -86,7 +95,7 @@ export class NoteE2E {
       it('should refuse an id that is not a number with 400 from validation', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes/abc')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -99,7 +108,7 @@ export class NoteE2E {
       it('should list the revisions of a note', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes/202/revisions')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -108,7 +117,16 @@ export class NoteE2E {
       it('should answer 404 for the revisions of a missing note', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/notes/299/revisions')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should hide the revisions of a note of another staff user with 404', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/notes/202/revisions')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
           .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
@@ -123,7 +141,7 @@ export class NoteE2E {
 
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/notes')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ subjectType: 'support-ticket', subjectId: 'T-900', body: 'Customer called.' })
           .expect(HttpStatus.CREATED);
 
@@ -170,7 +188,7 @@ export class NoteE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/notes/200')
           .set('x-correlation-id', 'e2e-note-edit')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ body: 'Customer called twice; refunded manually.' })
           .expect(HttpStatus.OK);
 
@@ -197,7 +215,7 @@ export class NoteE2E {
       it('should write nothing for an edit to the current body', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/notes/204')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ body: 'Edited with the same body.' })
           .expect(HttpStatus.OK);
 
@@ -221,7 +239,7 @@ export class NoteE2E {
         try {
           const response = await request(this.ctx.app.getHttpServer())
             .patch('/api/notes/203')
-            .auth(this.ctx.editorToken, { type: 'bearer' })
+            .auth(this.ctx.adminToken, { type: 'bearer' })
             .send({ body: 'This edit is rolled back.' })
             .expect(HttpStatus.CONFLICT);
 
@@ -239,10 +257,28 @@ export class NoteE2E {
         }
       });
 
+      it('should hide the note of another staff user with 404 and write nothing', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .patch('/api/notes/204')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .send({ body: 'Not my note.' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            note: await this.ctx.dataSource.query('SELECT * FROM note WHERE id = 204'),
+            note_revision: await this.ctx.dataSource.query(
+              'SELECT * FROM note_revision WHERE note_id = 204 ORDER BY id',
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
       it('should refuse to edit a resolved note with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/notes/202')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ body: 'Too late.' })
           .expect(HttpStatus.CONFLICT);
 
@@ -264,7 +300,7 @@ export class NoteE2E {
       it('should resolve a note', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/notes/201/resolve')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
         expect({
@@ -276,10 +312,22 @@ export class NoteE2E {
         });
       });
 
+      it('should hide the note of another staff user with 404 and resolve nothing', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .patch('/api/notes/204/resolve')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({
+          response: { body: response.body },
+          db: { note: await this.ctx.dataSource.query('SELECT * FROM note WHERE id = 204') },
+        }).toMatchSnapshot();
+      });
+
       it('should refuse to resolve a resolved note with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/notes/202/resolve')
-          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.CONFLICT);
 
         expect({

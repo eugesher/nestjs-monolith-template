@@ -18,9 +18,9 @@ export class NoteGetRevisionsUseCase {
   ) {}
 
   public async execute(query: INoteGetRevisionsQuery): Promise<IPage<INoteRevisionView>> {
-    const { noteId, page, size } = query;
+    const { noteId, authorId, page, size } = query;
 
-    await this.accessService.load({ noteId });
+    await this.accessService.loadOwned({ noteId, authorId });
 
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.listForNote({ ...window, noteId });

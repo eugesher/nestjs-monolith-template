@@ -6,7 +6,15 @@ import { DataSource } from 'typeorm';
 import * as entities from '@acme-core/entities';
 import { SnakeNamingStrategy } from '@acme-libs/database';
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, IamE2E, LedgerE2E, NoteE2E, ProductE2E, AuthE2E } from '../features';
+import {
+  HealthE2E,
+  IamE2E,
+  LedgerE2E,
+  NoteE2E,
+  ProductE2E,
+  ReminderE2E,
+  AuthE2E,
+} from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -19,6 +27,7 @@ describe('App', () => {
   const ledgerE2E = LedgerE2E.of(ctx);
   const noteE2E = NoteE2E.of(ctx);
   const productE2E = ProductE2E.of(ctx);
+  const reminderE2E = ReminderE2E.of(ctx);
 
   beforeAll(async () => {
     await ctx.init();
@@ -51,10 +60,10 @@ describe('App', () => {
     }
   });
 
-  it.each(['/api/reminders'])('should not mount the customer-app route %s', async (path) => {
+  it('should not mount the customer-app route POST /api/auth/register', async () => {
     await request(ctx.app.getHttpServer())
-      .get(path)
-      .auth(ctx.adminToken, { type: 'bearer' })
+      .post('/api/auth/register')
+      .send({ email: 'new@example.com', password: 'secret-password' })
       .expect(HttpStatus.NOT_FOUND);
   });
 
@@ -94,5 +103,15 @@ describe('App', () => {
     productE2E.handleCreate();
     productE2E.handleRename();
     productE2E.handleArchive();
+  });
+
+  describe('Reminder', () => {
+    reminderE2E.hooks();
+    reminderE2E.handleGetSummary();
+    reminderE2E.handleGetMany();
+    reminderE2E.handleCreate();
+    reminderE2E.handleComplete();
+    reminderE2E.handleReschedule();
+    reminderE2E.handleDelete();
   });
 });

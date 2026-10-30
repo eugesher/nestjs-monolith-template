@@ -10,11 +10,11 @@ export class ApiReference {
     [AppNameEnum.STAFF_APP]: {
       title: 'ACME staff API',
       description:
-        'The back-office surface: identity administration, the product catalog and the audit log.',
+        'The back-office surface: identity administration, the product catalog, the audit log, and the notes and reminders of each staff user.',
     },
     [AppNameEnum.CUSTOMER_APP]: {
       title: 'ACME customer API',
-      description: 'The customer-facing surface: sign-up, sign-in and reminders.',
+      description: 'The customer-facing surface: sign-up and sign-in.',
     },
   };
 

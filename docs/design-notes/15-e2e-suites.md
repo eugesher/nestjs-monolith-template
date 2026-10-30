@@ -46,13 +46,17 @@ before the cases that write into it.
 
 **A feature class has one public method per endpoint**, named after the controller method, and the
 method wraps the `describe` of that endpoint. `ProductE2E.of(ctx)` builds it over the context. A
-feature that needs a hook before each case has `hooks()`, as `ReminderE2E` flushes Redis.
+feature that needs a hook before each case has `hooks()`, as `ReminderE2E` deletes the `acme:` keys from Redis.
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
 the logger and the global prefix, and signs one access token for each seeded account the cases use
-with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, ann, bob and carol in
-customer-app. Everything the cases read is a getter that throws before
-`init()`. The customer-app context also holds the Redis client, through `@acme-libs/cache/testing`.
+with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app. Everything the cases read is a getter that throws before
+`init()`. The staff-app context also holds the Redis client, through `@acme-libs/cache/testing`.
+
+**A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
+records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes the
+`acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull writes its
+own keys at any moment.
 
 **A case waits for the ledger record queue before it reads the ledger.** The staff-app context has
 `drainLedgerRecordQueue()`: it polls `getJobCounts()` of the `ledger-record` queue every 100 ms until
@@ -110,15 +114,15 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 
 | App          | Feature  | Cases                                                                                                                                                                                                                                                                                                                |
 | ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| staff-app    | app      | the schema of every entity matches the migrated database; customer-app routes are not mounted                                                                                                                                                                                                                        |
+| staff-app    | app      | the schema of every entity matches the migrated database; the customer-app sign-up is not mounted                                                                                                                                                                                                                    |
 | staff-app    | auth     | login answers one access token of the subject alone for the app lifetime, `me` with roles; claims in a token are ignored; a disabled user is refused; customer tokens are refused                                                                                                                                    |
 | staff-app    | iam      | roles from the database; a new user logs in at once; of two simultaneous registrations with one email one is 409; a revoked permission refuses a token that passed a moment before                                                                                                                                   |
 | staff-app    | ledger   | a page of one subject; validation                                                                                                                                                                                                                                                                                    |
-| staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back                                                                                                                                                                                            |
+| staff-app    | note     | filters and validation; an edit records a revision under the correlation id; a failed revision insert rolls the note back; the note of another staff user is a 404 and no route needs a permission                                                                                                                   |
 | staff-app    | product  | the catalog and an unknown product; create with the idempotency key, the ledger entry and the correlation id; replay and reuse of a key; `If-Match`; a viewer may not rename; concurrent renames; archive with one ledger entry                                                                                      |
+| staff-app    | reminder | the summary is cached and every write drops it; dates under `TZ`; another staff user's reminder is a 404; soft delete                                                                                                                                                                                                |
 | customer-app | app      | staff-app routes are not mounted                                                                                                                                                                                                                                                                                     |
 | customer-app | auth     | sign-up creates an active customer who logs in and a ledger entry of the sign-up, a taken email is 409 even for two simultaneous sign-ups, invalid input is 400; login answers one access token of the subject alone for the app lifetime, `me`; staff credentials, a disabled customer and staff tokens are refused |
-| customer-app | reminder | the summary is cached and every write drops it; dates under `TZ`; another customer's reminder is a 404; soft delete                                                                                                                                                                                                  |
 
 **The schema check needs decorators.** It builds a `DataSource` of every entity in
 `@acme-core/entities` with `SnakeNamingStrategy`, and expects

@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { HealthModule, ReminderModule, AuthModule } from '@acme-customer-features';
+import { HealthModule, AuthModule } from '@acme-customer-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
@@ -22,7 +22,6 @@ import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
     CacheModule,
     AuthGlobalModule,
     HealthModule,
-    ReminderModule,
     AuthModule,
   ],
   providers: [

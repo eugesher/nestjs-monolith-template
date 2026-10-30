@@ -1,0 +1,23 @@
+name: 03-not-a-day
+description: |-
+  e2e: Reminder › POST /api/reminders › should refuse a date that does not exist with 400 from the model
+
+  Expect: 400 Bad Request, code REMINDER_DUE_ON_INVALID
+  User: admin@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/reminders
+body:
+  content: |-
+    {
+      "title": "Not a day",
+      "dueOn": "2026-02-30"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

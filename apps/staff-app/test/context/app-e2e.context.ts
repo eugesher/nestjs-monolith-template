@@ -4,11 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { Queue } from 'bull';
+import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '@acme-staff-app';
 import { LEDGER_RECORD_QUEUE } from '@acme-staff-contracts/ledger-record';
+import { REDIS_CLIENT } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
@@ -16,6 +18,7 @@ interface IAppE2EState {
   moduleFixture: TestingModule;
   dataSource: DataSource;
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
+  redis: Redis;
   jwt: JwtService;
   adminToken: string;
   editorToken: string;
@@ -40,6 +43,10 @@ export class AppE2EContext {
     return this.started.dataSource;
   }
 
+  public get redis(): Redis {
+    return this.started.redis;
+  }
+
   public get jwt(): JwtService {
     return this.started.jwt;
   }
@@ -59,6 +66,7 @@ export class AppE2EContext {
   public async init(): Promise<void> {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
+    const redis = moduleFixture.get<Redis>(REDIS_CLIENT);
     const config = moduleFixture.get(ConfigService);
     const secret = config.getOrThrow<string>('JWT_SECRET');
     const prefix = config.getOrThrow<string>('API_PREFIX');
@@ -81,6 +89,7 @@ export class AppE2EContext {
       moduleFixture,
       dataSource,
       rootLoggerWarn,
+      redis,
       jwt,
       adminToken,
       editorToken,

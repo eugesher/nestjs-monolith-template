@@ -6,4 +6,5 @@ export interface INoteGetManyQuery {
   subjectType: Maybe<string>;
   subjectId: Maybe<string>;
   resolved: Maybe<boolean>;
+  authorId: string;
 }

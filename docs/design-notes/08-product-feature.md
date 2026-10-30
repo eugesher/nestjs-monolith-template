@@ -34,8 +34,8 @@ or refuses it with `PRODUCT_NOT_FOUND` (404), and `GET /products` lists the whol
 read and who may change the catalog is a question of permissions, answered before the use case runs
 (see HTTP below).
 
-Ownership, a 404 for the record of another user, is shown by the reminders of customer-app (see
-`11-reminder-feature.md`).
+Ownership, a 404 for the record of another user, is shown by the reminders and the notes of
+staff-app (see `11-reminder-feature.md` and `12-note-feature.md`).
 
 ## Optimistic concurrency
 

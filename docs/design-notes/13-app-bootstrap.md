@@ -78,9 +78,8 @@ it on the request and the response. Whichever runs first decides, and the other 
 header. Inside the request, `CorrelationContextHelper.current()` answers that id, so a ledger entry
 written by the request carries the id the client got back.
 
-The entity list of each app holds exactly the entities of the modules it mounts. staff-app has no
-`Reminder`, customer-app has no `Product`. Both list `LedgerEntry`, because both mount the core
-ledger.
+The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
+no `Product` and no `Reminder`. Both list `LedgerEntry`, because both mount the core ledger.
 
 ## Logs
 

@@ -1,9 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, UseFilters } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser } from '@acme-libs/auth';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
 import {
   NoteCreateUseCase,
   NoteEditUseCase,
@@ -36,7 +35,6 @@ export class NoteController {
   ) {}
 
   @Post()
-  @RequiresPermission(PermissionCodeEnum.NOTE_WRITE)
   @ApiOperation({ summary: 'Attach a back-office note to any subject' })
   @ApiCreatedResponse({ type: NoteResponseDto })
   public handleCreate(
@@ -49,28 +47,40 @@ export class NoteController {
   }
 
   @Get()
-  @RequiresPermission(PermissionCodeEnum.NOTE_READ)
-  @ApiOperation({ summary: 'Browse notes, newest first, optionally of one subject' })
+  @ApiOperation({ summary: 'Browse your notes, newest first, optionally of one subject' })
   @ApiOkResponse({ type: NotePageResponseDto })
-  public handleGetMany(@Query() query: NoteGetManyRequestDto): Promise<NotePageResponseDto> {
+  public handleGetMany(
+    @Query() query: NoteGetManyRequestDto,
+    @CurrentUser() user: IAuthCurrentUserView,
+  ): Promise<NotePageResponseDto> {
     const { page, size, subjectType, subjectId, resolved } = query;
 
-    return this.getMany.execute({ page, size, subjectType, subjectId, resolved });
+    return this.getMany.execute({
+      page,
+      size,
+      subjectType,
+      subjectId,
+      resolved,
+      authorId: user.id,
+    });
   }
 
   @Get(':noteId')
-  @RequiresPermission(PermissionCodeEnum.NOTE_READ)
-  @ApiOperation({ summary: 'Read one note' })
+  @ApiOperation({ summary: 'Read one of your notes' })
   @ApiOkResponse({ type: NoteResponseDto })
-  public handleGetOne(@Param() params: NoteIdRequestDto): Promise<NoteResponseDto> {
+  public handleGetOne(
+    @Param() params: NoteIdRequestDto,
+    @CurrentUser() user: IAuthCurrentUserView,
+  ): Promise<NoteResponseDto> {
     const { noteId } = params;
 
-    return this.getOne.execute({ noteId });
+    return this.getOne.execute({ noteId, authorId: user.id });
   }
 
   @Patch(':noteId')
-  @RequiresPermission(PermissionCodeEnum.NOTE_WRITE)
-  @ApiOperation({ summary: 'Rewrite the body of a note and record the revision with it' })
+  @ApiOperation({
+    summary: 'Rewrite the body of one of your notes and record the revision with it',
+  })
   @ApiOkResponse({ type: NoteResponseDto })
   public handleEdit(
     @Param() params: NoteIdRequestDto,
@@ -84,26 +94,28 @@ export class NoteController {
   }
 
   @Patch(':noteId/resolve')
-  @RequiresPermission(PermissionCodeEnum.NOTE_WRITE)
-  @ApiOperation({ summary: 'Resolve a note for good; it can no longer be edited' })
+  @ApiOperation({ summary: 'Resolve one of your notes for good; it can no longer be edited' })
   @ApiOkResponse({ type: NoteResponseDto })
-  public handleResolve(@Param() params: NoteIdRequestDto): Promise<NoteResponseDto> {
+  public handleResolve(
+    @Param() params: NoteIdRequestDto,
+    @CurrentUser() user: IAuthCurrentUserView,
+  ): Promise<NoteResponseDto> {
     const { noteId } = params;
 
-    return this.resolve.execute({ noteId });
+    return this.resolve.execute({ noteId, authorId: user.id });
   }
 
   @Get(':noteId/revisions')
-  @RequiresPermission(PermissionCodeEnum.NOTE_READ)
-  @ApiOperation({ summary: 'Read the edit history of one note, newest first' })
+  @ApiOperation({ summary: 'Read the edit history of one of your notes, newest first' })
   @ApiOkResponse({ type: NoteRevisionPageResponseDto })
   public handleGetRevisions(
     @Param() params: NoteIdRequestDto,
     @Query() query: NoteGetRevisionsRequestDto,
+    @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteRevisionPageResponseDto> {
     const { noteId } = params;
     const { page, size } = query;
 
-    return this.getRevisions.execute({ noteId, page, size });
+    return this.getRevisions.execute({ noteId, authorId: user.id, page, size });
   }
 }

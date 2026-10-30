@@ -11,8 +11,8 @@ describe('AuthPermissionsGuard', () => {
   let guard: AuthPermissionsGuard;
 
   beforeEach(() => {
-    findPermissionCodes = jest.fn().mockResolvedValue(['note:write']);
-    getAllAndOverride = jest.fn().mockReturnValue(['note:write']);
+    findPermissionCodes = jest.fn().mockResolvedValue(['product:write']);
+    getAllAndOverride = jest.fn().mockReturnValue(['product:write']);
     request = { user: { id: 'user-1' } };
     context = {
       getHandler: () => 'handler',
@@ -44,7 +44,7 @@ describe('AuthPermissionsGuard', () => {
   });
 
   it('refuses a user holding none of the required permissions with 403', async () => {
-    findPermissionCodes.mockResolvedValue(['note:read']);
+    findPermissionCodes.mockResolvedValue(['product:read']);
 
     const allowed = guard.canActivate(context);
 

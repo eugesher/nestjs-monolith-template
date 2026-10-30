@@ -1,0 +1,13 @@
+name: 04-id-not-number
+description: |-
+  e2e: Note › GET /api/notes/:noteId › should refuse an id that is not a number with 400 from validation
+
+  Expect: 400 Bad Request, noteId must be a positive integer
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/notes/abc
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

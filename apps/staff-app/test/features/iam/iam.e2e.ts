@@ -192,7 +192,7 @@ export class IamE2E {
           const response = await request(this.ctx.app.getHttpServer())
             .put('/api/iam/roles/viewer/permissions')
             .auth(this.ctx.adminToken, { type: 'bearer' })
-            .send({ permissionCodes: ['note:read'] })
+            .send({ permissionCodes: ['product:write'] })
             .expect(HttpStatus.OK);
 
           const ledger = await request(this.ctx.app.getHttpServer())

@@ -20,15 +20,10 @@ these and only ever sees their own records. One `user` table with a kind would m
 one kind filter out the other, and every lint rule about the admin port would need a second look at
 which kind of user is behind it. Two modules keep each app's view of identity whole.
 
-**A customer holds no roles or permissions.** Authorization in customer-app is ownership: every
-reminder carries `owner_id`, and every query of the feature filters by the caller (see
-`11-reminder-feature.md`). customer-app mounts `AuthLibModule` alone, so no
+**A customer holds no roles or permissions.** Authorization in customer-app is ownership: a record
+of a customer carries the id of its owner, and every query filters by the caller, as the reminders
+of staff-app do (see `11-reminder-feature.md`). customer-app mounts `AuthLibModule` alone, so no
 claim guard runs there (see `02-global-auth-guards.md`).
-
-**`owner_id` has no foreign key.** `reminder` belongs to its feature and `customer` to
-this module. A foreign key across modules would tie the migrations and the deletes of one module to
-the tables of another. The owner is checked where it is set: it is the subject of a verified token
-that `validateSubject` accepted.
 
 | Entity     | Table      | Keys                |
 | ---------- | ---------- | ------------------- |

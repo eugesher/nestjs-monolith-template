@@ -38,7 +38,7 @@ export class NoteEditUseCase {
 
   private async attempt(command: INoteEditCommand): Promise<INoteEditOutcomeView> {
     const { noteId, body, editorId } = command;
-    const note = await this.accessService.load({ noteId });
+    const note = await this.accessService.loadOwned({ noteId, authorId: editorId });
     const versionAsRead = note.version;
     const bodyBefore = note.body;
 
@@ -51,7 +51,7 @@ export class NoteEditUseCase {
     const saved = await this.transaction.run(() =>
       this.save({ noteId, note, versionAsRead, bodyBefore, editorId }),
     );
-    const stored = await this.writeService.reload({ noteId, saved });
+    const stored = await this.writeService.reload({ noteId, authorId: editorId, saved });
 
     return { note: stored, edited: true };
   }

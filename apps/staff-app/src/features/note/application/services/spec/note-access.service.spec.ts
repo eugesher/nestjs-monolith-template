@@ -22,9 +22,9 @@ describe('NoteAccessService', () => {
     service = new NoteAccessService({ findById });
   });
 
-  describe('load', () => {
-    it('answers the note of any author', async () => {
-      const note = await service.load({ noteId: '7' });
+  describe('loadOwned', () => {
+    it('answers the note of its author', async () => {
+      const note = await service.loadOwned({ noteId: '7', authorId: 'admin-1' });
 
       expect(findById).toHaveBeenCalledWith('7');
       expect(note.id).toBe('7');
@@ -34,7 +34,14 @@ describe('NoteAccessService', () => {
     it('refuses a missing note with NOTE_NOT_FOUND', async () => {
       findById.mockResolvedValue(null);
 
-      await expect(service.load({ noteId: '7' })).rejects.toMatchObject({
+      await expect(service.loadOwned({ noteId: '7', authorId: 'admin-1' })).rejects.toMatchObject({
+        code: 'NOTE_NOT_FOUND',
+        message: 'Note 7 was not found',
+      });
+    });
+
+    it('refuses a note of another author with the same NOTE_NOT_FOUND, hiding that it exists', async () => {
+      await expect(service.loadOwned({ noteId: '7', authorId: 'editor-1' })).rejects.toMatchObject({
         code: 'NOTE_NOT_FOUND',
         message: 'Note 7 was not found',
       });

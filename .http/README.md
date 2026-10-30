@@ -56,13 +56,13 @@ The expected result in a description holds for fresh seeds and the first run. Wr
 the fixtures, and a second run gets another answer: for example, a second create of the same user
 hits the taken email. Run `yarn test:e2e:infra:reseed` to start over.
 
-The e2e flushes Redis before every reminder case. When a description checks cache keys, run
-`FLUSHDB` first.
+The e2e deletes the `acme:*` keys of Redis before every reminder case and leaves the keys of the Bull
+queue alone. When a description checks cache keys, delete the `acme:*` keys first.
 
 ## Tokens
 
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
-(`as_admin`, `as_editor` and `as_viewer` for staff, `as_ann`, `as_bob` and `as_carol` for customers,
+(`as_admin`, `as_editor` and `as_viewer` for staff, `as_bob` and `as_dora` for customers,
 and so on). The function signs an HS256 token of a seeded user (`sub`, `iat`) with `JWT_SECRET` from
 `env/apps/<app>/.env.local` and puts it into the variable `token`, as `ctx.jwt.sign` does in the e2e.
 This also covers tokens that no login issues:

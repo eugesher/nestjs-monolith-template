@@ -7,12 +7,12 @@ import { NoteAccessService } from '../note-access.service';
 import { NoteWriteService } from '../note-write.service';
 
 describe('NoteWriteService', () => {
-  let load: jest.Mock;
+  let loadOwned: jest.Mock;
   let logger: PinoLoggerMock;
   let service: NoteWriteService;
 
   beforeEach(() => {
-    load = jest.fn().mockResolvedValue(
+    loadOwned = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
         subjectType: 'product',
@@ -27,7 +27,7 @@ describe('NoteWriteService', () => {
     );
     logger = makePinoLoggerMock();
     service = new NoteWriteService(
-      { load } as unknown as NoteAccessService,
+      { loadOwned } as unknown as NoteAccessService,
       5,
       logger as unknown as PinoLogger,
     );
@@ -85,17 +85,17 @@ describe('NoteWriteService', () => {
 
   describe('reload', () => {
     it('answers the stored note after a saved write', async () => {
-      const note = await service.reload({ noteId: '7', saved: true });
+      const note = await service.reload({ noteId: '7', authorId: 'admin-1', saved: true });
 
-      expect(load).toHaveBeenCalledWith({ noteId: '7' });
+      expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
       expect(note.version).toBe(4);
       expect(note.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
     });
 
     it('turns a lost race into a conflict carrying the stored version', async () => {
-      await expect(service.reload({ noteId: '7', saved: false })).rejects.toEqual(
-        new NoteWriteConflictError('7', 4),
-      );
+      await expect(
+        service.reload({ noteId: '7', authorId: 'admin-1', saved: false }),
+      ).rejects.toEqual(new NoteWriteConflictError('7', 4));
     });
   });
 });

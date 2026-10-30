@@ -136,7 +136,7 @@ describe('libs by layer', () => {
     'customer-app presentation may NOT take %s — a customer holds no roles or permissions',
     async (code) => {
       await expect({
-        file: 'apps/customer-app/src/features/reminder/presentation/controllers/__fixture__.ts',
+        file: 'apps/customer-app/src/features/auth/presentation/controllers/__fixture__.ts',
         code,
       }).toBreakRule('boundaries/dependencies');
     },

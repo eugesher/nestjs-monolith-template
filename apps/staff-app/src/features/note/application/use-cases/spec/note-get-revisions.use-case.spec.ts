@@ -3,12 +3,12 @@ import { NoteAccessService } from '../../services/note-access.service';
 import { NoteGetRevisionsUseCase } from '../note-get-revisions.use-case';
 
 describe('NoteGetRevisionsUseCase', () => {
-  let load: jest.Mock;
+  let loadOwned: jest.Mock;
   let listForNote: jest.Mock;
   let useCase: NoteGetRevisionsUseCase;
 
   beforeEach(() => {
-    load = jest.fn().mockResolvedValue(
+    loadOwned = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
         subjectType: 'product',
@@ -38,16 +38,16 @@ describe('NoteGetRevisionsUseCase', () => {
       page: 2,
       size: 5,
     });
-    useCase = new NoteGetRevisionsUseCase({ load } as unknown as NoteAccessService, {
+    useCase = new NoteGetRevisionsUseCase({ loadOwned } as unknown as NoteAccessService, {
       listForNote,
     });
   });
 
   describe('execute', () => {
     it('answers a page of the revisions of an existing note', async () => {
-      const page = await useCase.execute({ noteId: '7', page: 2, size: 5 });
+      const page = await useCase.execute({ noteId: '7', authorId: 'admin-1', page: 2, size: 5 });
 
-      expect(load).toHaveBeenCalledWith({ noteId: '7' });
+      expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
       expect(listForNote).toHaveBeenCalledWith({ page: 2, size: 5, noteId: '7' });
       expect(page).toEqual({
         items: [
@@ -69,10 +69,10 @@ describe('NoteGetRevisionsUseCase', () => {
     });
 
     it('refuses the revisions of a missing note before listing them', async () => {
-      load.mockRejectedValue(new Error('Note 7 was not found'));
+      loadOwned.mockRejectedValue(new Error('Note 7 was not found'));
 
       await expect(
-        useCase.execute({ noteId: '7', page: undefined, size: undefined }),
+        useCase.execute({ noteId: '7', authorId: 'admin-1', page: undefined, size: undefined }),
       ).rejects.toThrow('Note 7 was not found');
       expect(listForNote).not.toHaveBeenCalled();
     });

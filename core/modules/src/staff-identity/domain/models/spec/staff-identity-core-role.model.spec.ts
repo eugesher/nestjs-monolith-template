@@ -24,7 +24,7 @@ describe('StaffIdentityCoreRoleModel', () => {
       role.replacePermissions(
         [
           PermissionCodeEnum.IAM_ROLE_EDIT,
-          PermissionCodeEnum.NOTE_READ,
+          PermissionCodeEnum.PRODUCT_READ,
           PermissionCodeEnum.IAM_ROLE_EDIT,
         ],
         [
@@ -34,12 +34,12 @@ describe('StaffIdentityCoreRoleModel', () => {
           }),
           StaffIdentityCorePermissionModel.reconstitute({
             id: 8,
-            code: PermissionCodeEnum.NOTE_READ,
+            code: PermissionCodeEnum.PRODUCT_READ,
           }),
         ],
       );
 
-      expect(role.permissionCodes).toEqual(['iam:role-edit', 'note:read']);
+      expect(role.permissionCodes).toEqual(['iam:role-edit', 'product:read']);
     });
 
     it('clears the codes with an empty list', () => {
@@ -53,7 +53,7 @@ describe('StaffIdentityCoreRoleModel', () => {
         role.replacePermissions(
           [
             PermissionCodeEnum.IAM_ROLE_EDIT,
-            PermissionCodeEnum.NOTE_READ,
+            PermissionCodeEnum.PRODUCT_READ,
             PermissionCodeEnum.LEDGER_READ,
           ],
           [
@@ -67,7 +67,7 @@ describe('StaffIdentityCoreRoleModel', () => {
       expect(replace).toThrow(
         expect.objectContaining({
           code: IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND,
-          message: 'Unknown permission codes: note:read, ledger:read',
+          message: 'Unknown permission codes: product:read, ledger:read',
         }) as Error,
       );
       expect(role.permissionCodes).toEqual(['iam:assign']);

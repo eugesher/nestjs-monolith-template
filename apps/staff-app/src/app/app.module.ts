@@ -7,6 +7,7 @@ import {
   LedgerModule,
   NoteModule,
   ProductModule,
+  ReminderModule,
   AuthModule,
 } from '@acme-staff-features';
 import { IdempotencyPurgeModule, LedgerRecordModule } from '@acme-staff-processors';
@@ -39,6 +40,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     LedgerModule,
     NoteModule,
     ProductModule,
+    ReminderModule,
     IdempotencyPurgeModule,
     LedgerRecordModule,
   ],

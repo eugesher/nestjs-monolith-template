@@ -3,11 +3,11 @@ import { NoteAccessService } from '../../services/note-access.service';
 import { NoteGetOneUseCase } from '../note-get-one.use-case';
 
 describe('NoteGetOneUseCase', () => {
-  let load: jest.Mock;
+  let loadOwned: jest.Mock;
   let useCase: NoteGetOneUseCase;
 
   beforeEach(() => {
-    load = jest.fn().mockResolvedValue(
+    loadOwned = jest.fn().mockResolvedValue(
       NoteModel.reconstitute({
         id: '7',
         subjectType: 'product',
@@ -20,14 +20,14 @@ describe('NoteGetOneUseCase', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       }),
     );
-    useCase = new NoteGetOneUseCase({ load } as unknown as NoteAccessService);
+    useCase = new NoteGetOneUseCase({ loadOwned } as unknown as NoteAccessService);
   });
 
   describe('execute', () => {
     it('answers the note', async () => {
-      const view = await useCase.execute({ noteId: '7' });
+      const view = await useCase.execute({ noteId: '7', authorId: 'admin-1' });
 
-      expect(load).toHaveBeenCalledWith({ noteId: '7' });
+      expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
       expect(view).toEqual({
         id: '7',
         subjectType: 'product',

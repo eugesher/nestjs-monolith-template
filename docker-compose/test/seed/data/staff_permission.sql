@@ -4,8 +4,6 @@ VALUES
   (2, 'iam:user-create'),
   (3, 'iam:assign'),
   (4, 'iam:role-edit'),
-  (5, 'note:read'),
-  (6, 'note:write'),
   (7, 'product:read'),
   (8, 'product:write'),
   (9, 'product:archive');

@@ -1,0 +1,16 @@
+name: 02-cached
+description: |-
+  e2e: Reminder › GET /api/reminders/summary › should answer the cached summary
+
+  Expect: 200 OK, pending 99, nextDueOn 2030-01-01
+  User: admin@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:* key
+  Before: Redis: SET acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__ '{"pending":99,"nextDueOn":"2030-01-01"}' PX 60000
+  After: Redis: DEL every acme:* key
+url: $STAFF_APP_BASE_URL/reminders/summary
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

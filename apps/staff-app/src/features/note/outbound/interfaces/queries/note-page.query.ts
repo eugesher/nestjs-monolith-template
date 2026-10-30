@@ -6,4 +6,5 @@ export interface INotePageQuery {
   subjectType: Maybe<string>;
   subjectId: Maybe<string>;
   resolved: Maybe<boolean>;
+  authorId: string;
 }
