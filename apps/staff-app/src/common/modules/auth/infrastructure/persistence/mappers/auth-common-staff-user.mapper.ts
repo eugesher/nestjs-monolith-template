@@ -9,7 +9,6 @@ export class AuthCommonStaffUserMapper {
     return AuthCommonStaffUserModel.reconstitute({
       id: user.id,
       email: user.email,
-      status: user.status,
       roles,
     });
   }

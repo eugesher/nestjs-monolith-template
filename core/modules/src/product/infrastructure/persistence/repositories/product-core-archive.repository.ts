@@ -14,14 +14,14 @@ import { ProductCoreMapper } from '../mappers/product-core.mapper';
 
 @Injectable()
 export class ProductCoreArchiveRepository implements IProductCoreArchiveRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
   public async lockById(productId: string): Promise<Nullable<ProductCoreModel>> {
-    const product = await this.products
+    const product = await this.productRepository
       .createQueryBuilder('product')
       .where('product.id = :productId', { productId })
       .setLock('pessimistic_write')
@@ -33,7 +33,7 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
   public async update(command: IProductCoreWriteUpdateCommand): Promise<void> {
     const { product, versionAsRead } = command;
 
-    await this.products.update(
+    await this.productRepository.update(
       { id: product.id, version: versionAsRead },
       { status: product.status, version: product.version },
     );

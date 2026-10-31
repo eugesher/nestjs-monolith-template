@@ -8,14 +8,14 @@ import { type IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get keys(): Repository<IdempotencyKey> {
-    return this.txHost.tx.getRepository(IdempotencyKey);
+  private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
+    return this.transactionHost.tx.getRepository(IdempotencyKey);
   }
 
   public async deleteCreatedBefore(cutoff: Date): Promise<number> {
-    const result = await this.keys.delete({ createdAt: LessThan(cutoff) });
+    const result = await this.idempotencyKeyRepository.delete({ createdAt: LessThan(cutoff) });
 
     return result.affected ?? 0;
   }

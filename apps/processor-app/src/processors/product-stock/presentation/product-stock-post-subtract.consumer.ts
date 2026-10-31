@@ -13,11 +13,11 @@ export class ProductStockPostSubtractConsumer {
   constructor(private readonly archiveOutOfStock: ProductStockArchiveOutOfStockUseCase) {}
 
   @Process()
-  public handleRecord(job: Job<IProductStockPostSubtractPayload>): Promise<void> {
+  public async handleRecord(job: Job<IProductStockPostSubtractPayload>): Promise<void> {
     const { data } = job;
     const { productIds, correlationId } = data;
 
-    return CorrelationContextHelper.run(correlationId, () =>
+    await CorrelationContextHelper.run(correlationId, () =>
       this.archiveOutOfStock.execute({ productIds }),
     );
   }

@@ -24,8 +24,10 @@ export class AuthController {
   @Public()
   @ApiOperation({ summary: 'Sign up as a customer; log in afterwards for a token' })
   @ApiCreatedResponse({ type: AuthRegisterResponseDto })
-  public handleRegister(@Body() body: AuthRegisterRequestDto): Promise<AuthRegisterResponseDto> {
-    return this.register.execute(body);
+  public async handleRegister(
+    @Body() body: AuthRegisterRequestDto,
+  ): Promise<AuthRegisterResponseDto> {
+    return await this.register.execute(body);
   }
 
   @Post('login')
@@ -33,8 +35,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange credentials for an access token' })
   @ApiOkResponse({ type: AuthAccessTokenResponseDto })
-  public handleLogin(@Body() body: AuthLoginRequestDto): Promise<AuthAccessTokenResponseDto> {
-    return this.login.execute(body);
+  public async handleLogin(@Body() body: AuthLoginRequestDto): Promise<AuthAccessTokenResponseDto> {
+    return await this.login.execute(body);
   }
 
   @Get('me')

@@ -11,14 +11,14 @@ import { AuthCustomerMapper } from '../mappers/auth-customer.mapper';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get customers(): Repository<Customer> {
-    return this.txHost.tx.getRepository(Customer);
+  private get customerRepository(): Repository<Customer> {
+    return this.transactionHost.tx.getRepository(Customer);
   }
 
   public async findByEmail(email: string): Promise<Maybe<AuthCustomerModel>> {
-    const customer = await this.customers.findOne({ where: { email } });
+    const customer = await this.customerRepository.findOne({ where: { email } });
 
     return customer ? AuthCustomerMapper.toModel(customer) : undefined;
   }

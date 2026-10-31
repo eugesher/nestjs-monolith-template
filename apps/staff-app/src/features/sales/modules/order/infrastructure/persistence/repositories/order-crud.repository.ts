@@ -15,19 +15,19 @@ import {
 
 @Injectable()
 export class OrderCrudRepository implements IOrderCrudRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get orders(): Repository<Order> {
-    return this.txHost.tx.getRepository(Order);
+  private get orderRepository(): Repository<Order> {
+    return this.transactionHost.tx.getRepository(Order);
   }
 
-  private get orderProducts(): Repository<OrderProduct> {
-    return this.txHost.tx.getRepository(OrderProduct);
+  private get orderProductRepository(): Repository<OrderProduct> {
+    return this.transactionHost.tx.getRepository(OrderProduct);
   }
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
     const { page, size } = query;
-    const [orders, total] = await this.orders.findAndCount({
+    const [orders, total] = await this.orderRepository.findAndCount({
       select: { id: true, customerId: true, createdAt: true },
       order: { id: 'DESC' },
       skip: (page - 1) * size,
@@ -43,13 +43,13 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
   }
 
   public async findById(orderId: string): Promise<Nullable<IOrderFoundView>> {
-    const order = await this.orders.findOneBy({ id: orderId });
+    const order = await this.orderRepository.findOneBy({ id: orderId });
 
     if (order === null) {
       return null;
     }
 
-    const products = await this.orderProducts
+    const products = await this.orderProductRepository
       .createQueryBuilder('line')
       .select('line.id', 'id')
       .addSelect('line.productId', 'productId')

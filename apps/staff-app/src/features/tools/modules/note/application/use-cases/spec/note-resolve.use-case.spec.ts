@@ -7,13 +7,13 @@ import { NoteWriteService } from '../../services/note-write.service';
 import { NoteResolveUseCase } from '../note-resolve.use-case';
 
 describe('NoteResolveUseCase', () => {
-  let findById: jest.Mock;
+  let findOwned: jest.Mock;
   let update: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: NoteResolveUseCase;
 
   beforeEach(() => {
-    findById = jest
+    findOwned = jest
       .fn()
       .mockImplementationOnce(() =>
         Promise.resolve(
@@ -48,7 +48,7 @@ describe('NoteResolveUseCase', () => {
     update = jest.fn().mockResolvedValue(true);
     logger = makePinoLoggerMock();
 
-    const accessService = new NoteAccessService({ findById });
+    const accessService = new NoteAccessService({ findOwned });
 
     useCase = new NoteResolveUseCase(
       accessService,
@@ -74,7 +74,7 @@ describe('NoteResolveUseCase', () => {
 
     it('retries a lost race with a fresh read', async () => {
       update.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
-      findById.mockReset().mockImplementation(() =>
+      findOwned.mockReset().mockImplementation(() =>
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
@@ -100,7 +100,7 @@ describe('NoteResolveUseCase', () => {
     });
 
     it('refuses a resolved note with NOTE_RESOLVED and writes nothing', async () => {
-      findById.mockReset().mockResolvedValue(
+      findOwned.mockReset().mockResolvedValue(
         NoteModel.reconstitute({
           id: '7',
           subjectType: 'product',

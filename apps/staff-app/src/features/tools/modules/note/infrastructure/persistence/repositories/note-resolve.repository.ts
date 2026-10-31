@@ -10,7 +10,7 @@ export class NoteResolveRepository
   extends NoteUpdateBaseRepository
   implements INoteResolveRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 }

@@ -13,8 +13,8 @@ export class CredentialsPasswordHasherAdapter implements ICredentialsPasswordHas
     this.options = new CredentialsPasswordHasherOptions(config);
   }
 
-  public hash(password: string): Promise<string> {
-    return hash(password, this.options);
+  public async hash(password: string): Promise<string> {
+    return await hash(password, this.options);
   }
 
   public async verify(passwordHash: string, password: string): Promise<boolean> {

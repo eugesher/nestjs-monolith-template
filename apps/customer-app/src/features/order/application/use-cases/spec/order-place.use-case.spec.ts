@@ -1,13 +1,12 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { OrderModel } from '../../../domain';
 import { OrderLedgerService } from '../../services/order-ledger.service';
 import { OrderPlaceUseCase } from '../order-place.use-case';
 
 describe('OrderPlaceUseCase', () => {
-  let findProducts: jest.Mock;
+  let findActiveProducts: jest.Mock;
   let insert: jest.Mock;
   let lock: jest.Mock;
   let withdraw: jest.Mock;
@@ -20,9 +19,9 @@ describe('OrderPlaceUseCase', () => {
   let useCase: OrderPlaceUseCase;
 
   beforeEach(() => {
-    findProducts = jest.fn().mockResolvedValue([
-      { productId: '100', sku: 'SKU-0001', name: 'Lamp', status: ProductStatusEnum.ACTIVE },
-      { productId: '103', sku: 'SKU-0004', name: 'Chair', status: ProductStatusEnum.ACTIVE },
+    findActiveProducts = jest.fn().mockResolvedValue([
+      { productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+      { productId: '103', sku: 'SKU-0004', name: 'Chair' },
     ]);
     insert = jest.fn().mockResolvedValue(
       OrderModel.reconstitute({
@@ -49,7 +48,7 @@ describe('OrderPlaceUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new OrderPlaceUseCase(
       { recordPlaced } as unknown as OrderLedgerService,
-      { findProducts, insert },
+      { findActiveProducts, insert },
       { lock, withdraw },
       { claim, complete, release },
       { run, afterCommit: jest.fn() },
@@ -71,9 +70,9 @@ describe('OrderPlaceUseCase', () => {
         body: { customerId: 'customer-1', productIds: ['100', '103', '100'] },
       });
       expect(lock).toHaveBeenCalledWith({ productIds: ['100', '103'] });
-      expect(findProducts).toHaveBeenCalledWith(['100', '103']);
+      expect(findActiveProducts).toHaveBeenCalledWith(['100', '103']);
       expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
-        findProducts.mock.invocationCallOrder[0],
+        findActiveProducts.mock.invocationCallOrder[0],
       );
       expect(draft.id).toBeUndefined();
       expect(draft.customerId).toBe('customer-1');

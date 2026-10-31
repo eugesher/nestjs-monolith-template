@@ -23,16 +23,16 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange staff credentials for an access token' })
   @ApiOkResponse({ type: AuthAccessTokenResponseDto })
-  public handleLogin(@Body() body: AuthLoginRequestDto): Promise<AuthAccessTokenResponseDto> {
-    return this.login.execute(body);
+  public async handleLogin(@Body() body: AuthLoginRequestDto): Promise<AuthAccessTokenResponseDto> {
+    return await this.login.execute(body);
   }
 
   @Get('me')
   @ApiOperation({ summary: 'The authenticated staff user and the roles they hold' })
   @ApiOkResponse({ type: AuthMeResponseDto })
-  public handleMe(@CurrentUser() user: IAuthCurrentUserView): Promise<AuthMeResponseDto> {
+  public async handleMe(@CurrentUser() user: IAuthCurrentUserView): Promise<AuthMeResponseDto> {
     const { id } = user;
 
-    return this.me.execute({ userId: id });
+    return await this.me.execute({ userId: id });
   }
 }

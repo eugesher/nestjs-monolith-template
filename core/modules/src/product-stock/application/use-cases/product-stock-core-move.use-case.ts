@@ -62,10 +62,12 @@ export class ProductStockCoreMoveUseCase {
     return { productStockIds, stock };
   }
 
-  private announceSubtract(command: IProductStockCorePostSubtractEnqueueCommand): Promise<void> {
+  private async announceSubtract(
+    command: IProductStockCorePostSubtractEnqueueCommand,
+  ): Promise<void> {
     const { productIds, correlationId } = command;
 
-    return ReplayRetryHelper.retryThenLogForReplay(() => this.postSubtract.enqueue(command), {
+    await ReplayRetryHelper.retryThenLogForReplay(() => this.postSubtract.enqueue(command), {
       maxAttempts: this.postSubtractRetryAttempts,
       logger: this.logger,
       correlationId,

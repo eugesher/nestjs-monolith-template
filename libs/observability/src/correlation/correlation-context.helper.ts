@@ -5,10 +5,10 @@ import { Maybe } from '@acme-libs/toolkit';
 import { correlationStorage } from './correlation.storage';
 
 export class CorrelationContextHelper {
-  public static run<T>(inbound: Maybe<string>, callback: () => Promise<T>): Promise<T> {
+  public static async run<T>(inbound: Maybe<string>, callback: () => Promise<T>): Promise<T> {
     const correlationId = inbound === undefined || inbound === '' ? randomUUID() : inbound;
 
-    return correlationStorage.run(correlationId, () => {
+    return await correlationStorage.run(correlationId, () => {
       if (!PinoLogger.root) {
         return callback();
       }

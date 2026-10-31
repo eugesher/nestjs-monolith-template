@@ -21,15 +21,15 @@ export class IdempotencyCoreKeyFacade implements IIdempotencyCoreKeyPort {
     private readonly idempotencyCoreRelease: IdempotencyCoreReleaseUseCase,
   ) {}
 
-  public claim(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
-    return this.idempotencyCoreClaim.execute(command);
+  public async claim(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
+    return await this.idempotencyCoreClaim.execute(command);
   }
 
-  public complete(command: IIdempotencyCoreCompleteCommand): Promise<void> {
-    return this.idempotencyCoreComplete.execute(command);
+  public async complete(command: IIdempotencyCoreCompleteCommand): Promise<void> {
+    await this.idempotencyCoreComplete.execute(command);
   }
 
-  public release(command: IIdempotencyCoreReleaseCommand): Promise<void> {
-    return this.idempotencyCoreRelease.execute(command);
+  public async release(command: IIdempotencyCoreReleaseCommand): Promise<void> {
+    await this.idempotencyCoreRelease.execute(command);
   }
 }

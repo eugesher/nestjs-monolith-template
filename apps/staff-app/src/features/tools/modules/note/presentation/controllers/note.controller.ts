@@ -37,25 +37,25 @@ export class NoteController {
   @Post()
   @ApiOperation({ summary: 'Attach a back-office note to any subject' })
   @ApiCreatedResponse({ type: NoteResponseDto })
-  public handleCreate(
+  public async handleCreate(
     @Body() request: NoteCreateRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
     const { subjectType, subjectId, body } = request;
 
-    return this.create.execute({ subjectType, subjectId, body, authorId: user.id });
+    return await this.create.execute({ subjectType, subjectId, body, authorId: user.id });
   }
 
   @Get()
   @ApiOperation({ summary: 'Browse your notes, newest first, optionally of one subject' })
   @ApiOkResponse({ type: NotePageResponseDto })
-  public handleGetMany(
+  public async handleGetMany(
     @Query() query: NoteGetManyRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NotePageResponseDto> {
     const { page, size, subjectType, subjectId, resolved } = query;
 
-    return this.getMany.execute({
+    return await this.getMany.execute({
       page,
       size,
       subjectType,
@@ -68,13 +68,13 @@ export class NoteController {
   @Get(':noteId')
   @ApiOperation({ summary: 'Read one of your notes' })
   @ApiOkResponse({ type: NoteResponseDto })
-  public handleGetOne(
+  public async handleGetOne(
     @Param() params: NoteIdRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
     const { noteId } = params;
 
-    return this.getOne.execute({ noteId, authorId: user.id });
+    return await this.getOne.execute({ noteId, authorId: user.id });
   }
 
   @Patch(':noteId')
@@ -82,7 +82,7 @@ export class NoteController {
     summary: 'Rewrite the body of one of your notes and record the revision with it',
   })
   @ApiOkResponse({ type: NoteResponseDto })
-  public handleEdit(
+  public async handleEdit(
     @Param() params: NoteIdRequestDto,
     @Body() request: NoteEditRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
@@ -90,25 +90,25 @@ export class NoteController {
     const { noteId } = params;
     const { body } = request;
 
-    return this.edit.execute({ noteId, body, editorId: user.id });
+    return await this.edit.execute({ noteId, body, editorId: user.id });
   }
 
   @Patch(':noteId/resolve')
   @ApiOperation({ summary: 'Resolve one of your notes for good; it can no longer be edited' })
   @ApiOkResponse({ type: NoteResponseDto })
-  public handleResolve(
+  public async handleResolve(
     @Param() params: NoteIdRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
     const { noteId } = params;
 
-    return this.resolve.execute({ noteId, authorId: user.id });
+    return await this.resolve.execute({ noteId, authorId: user.id });
   }
 
   @Get(':noteId/revisions')
   @ApiOperation({ summary: 'Read the edit history of one of your notes, newest first' })
   @ApiOkResponse({ type: NoteRevisionPageResponseDto })
-  public handleGetRevisions(
+  public async handleGetRevisions(
     @Param() params: NoteIdRequestDto,
     @Query() query: NoteGetRevisionsRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
@@ -116,6 +116,6 @@ export class NoteController {
     const { noteId } = params;
     const { page, size } = query;
 
-    return this.getRevisions.execute({ noteId, authorId: user.id, page, size });
+    return await this.getRevisions.execute({ noteId, authorId: user.id, page, size });
   }
 }

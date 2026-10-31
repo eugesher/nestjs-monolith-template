@@ -30,14 +30,14 @@ export class ProductWriteService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public write(
+  public async write(
     command: IProductWriteCommand,
     mutate: (product: ProductModel) => void,
   ): Promise<IProductWriteView> {
     const { productId, expectedVersion } = command;
     const maxAttempts = expectedVersion === undefined ? this.occRetryAttempts : 1;
 
-    return OccRetryHelper.run(() => this.attempt(command, mutate), {
+    return await OccRetryHelper.run(() => this.attempt(command, mutate), {
       subject: 'Product',
       logger: this.logger,
       maxAttempts,

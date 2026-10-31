@@ -10,13 +10,13 @@ export class ProductWriteRepository
   extends ProductFindByIdBaseRepository
   implements IProductWriteRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 
   public async update(command: IProductWriteUpdateCommand): Promise<boolean> {
     const { product, versionAsRead } = command;
-    const result = await this.products.update(
+    const result = await this.productRepository.update(
       { id: product.id, version: versionAsRead },
       { name: product.name, status: product.status, version: product.version },
     );

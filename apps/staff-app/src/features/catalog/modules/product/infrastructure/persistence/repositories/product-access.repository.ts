@@ -10,7 +10,7 @@ export class ProductAccessRepository
   extends ProductFindByIdBaseRepository
   implements IProductAccessRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 }

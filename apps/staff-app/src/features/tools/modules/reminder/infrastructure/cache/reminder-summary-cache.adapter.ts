@@ -17,11 +17,11 @@ export class ReminderSummaryCacheAdapter implements IReminderSummaryPort {
     private readonly cache: ICachePort,
   ) {}
 
-  public read(query: IReminderSummaryReadQuery): Promise<IReminderSummarySnapshotView> {
+  public async read(query: IReminderSummaryReadQuery): Promise<IReminderSummarySnapshotView> {
     const { ownerId, compute } = query;
     const key = CACHE_KEYS.reminderSummary(ownerId);
 
-    return this.cache.wrap(key, this.ttlMs, compute);
+    return await this.cache.wrap(key, this.ttlMs, compute);
   }
 
   public async invalidate(ownerId: string): Promise<void> {

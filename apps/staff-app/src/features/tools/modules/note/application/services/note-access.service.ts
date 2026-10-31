@@ -13,9 +13,9 @@ export class NoteAccessService {
 
   public async loadOwned(query: INoteAccessLoadOwnedQuery): Promise<NoteModel> {
     const { noteId, authorId } = query;
-    const note = await this.repository.findById(noteId);
+    const note = await this.repository.findOwned({ noteId, authorId });
 
-    if (note?.authorId !== authorId) {
+    if (note === null) {
       throw new NoteDomainException(
         NoteErrorCodeEnum.NOTE_NOT_FOUND,
         `Note ${noteId} was not found`,

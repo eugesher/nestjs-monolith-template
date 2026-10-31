@@ -4,6 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { Customer } from '@acme-core/entities';
+import { UserStatusEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import {
   IAuthGlobalCustomerView,
@@ -12,16 +13,16 @@ import {
 
 @Injectable()
 export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateSubjectRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get customers(): Repository<Customer> {
-    return this.txHost.tx.getRepository(Customer);
+  private get customerRepository(): Repository<Customer> {
+    return this.transactionHost.tx.getRepository(Customer);
   }
 
-  public async findById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
-    const customer = await this.customers.findOne({
-      select: { id: true, email: true, status: true },
-      where: { id },
+  public async findActiveById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
+    const customer = await this.customerRepository.findOne({
+      select: { id: true, email: true },
+      where: { id, status: UserStatusEnum.ACTIVE },
     });
 
     return customer ?? undefined;

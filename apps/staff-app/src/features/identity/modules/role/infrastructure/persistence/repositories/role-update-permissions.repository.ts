@@ -13,22 +13,22 @@ import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get permissions(): Repository<StaffPermission> {
-    return this.txHost.tx.getRepository(StaffPermission);
+  private get staffPermissionRepository(): Repository<StaffPermission> {
+    return this.transactionHost.tx.getRepository(StaffPermission);
   }
 
-  private get rolePermissions(): Repository<StaffRolePermission> {
-    return this.txHost.tx.getRepository(StaffRolePermission);
+  private get staffRolePermissionRepository(): Repository<StaffRolePermission> {
+    return this.transactionHost.tx.getRepository(StaffRolePermission);
   }
 
-  private get roles(): Repository<StaffRole> {
-    return this.txHost.tx.getRepository(StaffRole);
+  private get staffRoleRepository(): Repository<StaffRole> {
+    return this.transactionHost.tx.getRepository(StaffRole);
   }
 
   public async findRole(name: RoleEnum): Promise<Maybe<RoleModel>> {
-    const role = await this.roles.findOne({
+    const role = await this.staffRoleRepository.findOne({
       where: { name },
       relations: { rolePermissions: { permission: true } },
     });
@@ -41,13 +41,13 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       return [];
     }
 
-    const permissions = await this.permissions.find({ where: { code: In(codes) } });
+    const permissions = await this.staffPermissionRepository.find({ where: { code: In(codes) } });
 
     return permissions.map((permission) => RolePermissionMapper.toModel(permission));
   }
 
   public async replacePermissions(role: RoleModel): Promise<void> {
-    await this.rolePermissions.delete({ roleId: role.id });
+    await this.staffRolePermissionRepository.delete({ roleId: role.id });
 
     const permissions = await this.findPermissions([...role.permissionCodes]);
     const rows = permissions.map((permission) => ({
@@ -56,7 +56,7 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     }));
 
     if (rows.length > 0) {
-      await this.rolePermissions.insert(rows);
+      await this.staffRolePermissionRepository.insert(rows);
     }
   }
 }

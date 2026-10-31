@@ -84,7 +84,7 @@ export class OrderPlaceUseCase {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
     const quantities = await this.productStock.lock({ productIds: distinctIds });
-    const products = await this.repository.findProducts(distinctIds);
+    const products = await this.repository.findActiveProducts(distinctIds);
     const stock = OrderStockMapper.toStock(products, quantities);
     const draft = OrderModel.place({ customerId, productIds, stock });
     const placed = await this.repository.insert(draft);

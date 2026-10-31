@@ -12,9 +12,9 @@ import { AuthGlobalValidateSubjectUseCase } from '../application';
 export class AuthGlobalFacade implements IAuthUserValidatorPort {
   constructor(private readonly authGlobalValidateSubject: AuthGlobalValidateSubjectUseCase) {}
 
-  public validate(query: IAuthJwtPayloadQuery): Promise<Maybe<IAuthCurrentUserView>> {
+  public async validate(query: IAuthJwtPayloadQuery): Promise<Maybe<IAuthCurrentUserView>> {
     const { sub } = query;
 
-    return this.authGlobalValidateSubject.execute({ customerId: sub });
+    return await this.authGlobalValidateSubject.execute({ customerId: sub });
   }
 }

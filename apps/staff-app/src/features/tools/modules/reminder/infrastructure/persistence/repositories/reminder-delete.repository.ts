@@ -8,13 +8,13 @@ import { type IReminderDeleteRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderDeleteRepository implements IReminderDeleteRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get reminders(): Repository<Reminder> {
-    return this.txHost.tx.getRepository(Reminder);
+  private get reminderRepository(): Repository<Reminder> {
+    return this.transactionHost.tx.getRepository(Reminder);
   }
 
   public async softDelete(reminderId: string): Promise<void> {
-    await this.reminders.softDelete({ id: reminderId });
+    await this.reminderRepository.softDelete({ id: reminderId });
   }
 }
