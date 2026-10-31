@@ -1,6 +1,5 @@
 export * from './interfaces';
 
-export * from './ports/order-catalog-cache.port';
 export * from './ports/order-crud-repository.port';
 export * from './ports/order-idempotency.port';
 export * from './ports/order-ledger-record.port';

@@ -3,11 +3,12 @@
 `apps/processor-app` runs the background work of the template: the queue consumers and the
 schedules. staff-app and customer-app only enqueue. All three apps share one database and one Redis.
 
-| Processor           | Entered by                         | What it does                                                                   |
-| ------------------- | ---------------------------------- | ------------------------------------------------------------------------------ |
-| `ledger-record`     | a job of the `ledger-record` queue | appends the record to the ledger (see `09-ledger-record-processor.md`)         |
-| `ledger-record`     | `@Cron(EVERY_DAY_AT_3AM)`          | returns every failed `ledger-record` job to the queue (same note)              |
-| `idempotency-purge` | `@Cron(EVERY_HOUR)`                | deletes the expired idempotency keys (see `10-idempotency-purge-processor.md`) |
+| Processor           | Entered by                                       | What it does                                                                   |
+| ------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `ledger-record`     | a job of the `ledger-record` queue               | appends the record to the ledger (see `09-ledger-record-processor.md`)         |
+| `ledger-record`     | `@Cron(EVERY_DAY_AT_3AM)`                        | returns every failed `ledger-record` job to the queue (same note)              |
+| `idempotency-purge` | `@Cron(EVERY_HOUR)`                              | deletes the expired idempotency keys (see `10-idempotency-purge-processor.md`) |
+| `product-stock`     | a job of the `product-stock-post-subtract` queue | archives the published products that have no stock left (see below)            |
 
 ## Why a third app
 
@@ -30,7 +31,7 @@ The app has the folders of an HTTP app and uses fewer of them:
 | `src/app/setup`                   | config, ORM, queue and schedule; processor-app is the only app with `ScheduleSetupModule` |
 | `src/common/shared/ledger-record` | the registration of the `ledger-record` queue, as in the producers                        |
 | `src/features/health`             | `GET /health` and `GET /health/ready` for the orchestrator                                |
-| `src/processors`                  | the two processors                                                                        |
+| `src/processors`                  | the three processors                                                                      |
 
 **HTTP serves only the probes.** There is no `AuthGlobalModule`: the health routes are public in
 every app, and nothing else is mounted. The health controller carries no `@Public()`, because no
@@ -38,10 +39,39 @@ guard reads it here. `APP_FILTER` keeps `HttpExceptionFilter`, so a 404 has the 
 apps; there is no validation pipe, as no route takes a body.
 
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
-the logger and tracing. No JWT, argon2, cache TTL or retry variables.
+`LEDGER_RETRY_ATTEMPTS` and `QUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and
+tracing. No JWT, argon2 or cache TTL.
 
-**The entity list holds `IdempotencyKey` and `LedgerEntry`**, the tables of the purge and of the
-ledger append.
+**The entity list holds `IdempotencyKey`, `LedgerEntry`, `Product` and `ProductStock`**, the tables
+of the purge, the ledger append and the stock check, with `Order`, `OrderProduct` and `Customer`,
+which the relations of `ProductStock` need on the connection.
+
+## The product-stock processor
+
+`ProductStockPostSubtractConsumer` reads the `product-stock-post-subtract` queue, which the core
+product stock module fills after every committed subtraction (see `24-core-product-stock.md`), and
+runs `ProductStockArchiveOutOfStockUseCase` under the correlation id of the job. One transaction:
+
+1. `PRODUCT_STOCK_ON_HAND_PORT.lock` locks the product rows and sums their stock through the core
+   product stock module;
+2. the products with a sum of 0 or less are narrowed to the `active` ones by the processor's own
+   repository;
+3. each of them is archived through `PRODUCT_STOCK_ARCHIVE_PORT` and the core product module (see
+   `29-core-product.md`), which drops the cached catalog and enqueues the ledger record after the
+   commit.
+
+**Only a published product is archived.** A draft without stock stays a draft: it was never in the
+catalog, and its stock may still be on the way. An archived product stays as it is.
+
+**The lock makes the check exact.** A restock that commits between the subtraction and the job is
+counted by the sum, and a restock that comes after the lock waits for it. The status is read under
+the same lock, so a publication or an archive cannot slip in between.
+
+**A replay changes nothing.** A product the job already archived is no longer `active`, so a second
+run of the same job archives nothing and Bull does not retry a job that has nothing to do.
+
+**The trigger is the subtraction, not the order.** The job carries no order and no reason, so a
+manual write-off that subtracts stock triggers the same check.
 
 ## Running
 

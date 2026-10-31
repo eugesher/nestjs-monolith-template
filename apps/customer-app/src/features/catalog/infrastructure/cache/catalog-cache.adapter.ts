@@ -6,7 +6,7 @@ import {
   CATALOG_CACHE_TTL_MS,
   type ICatalogCachePort,
   ICatalogCacheReadQuery,
-  ICatalogProductStockView,
+  ICatalogProductRowView,
 } from '../../outbound';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
     private readonly cache: ICachePort,
   ) {}
 
-  public read(query: ICatalogCacheReadQuery): Promise<IPage<ICatalogProductStockView>> {
+  public read(query: ICatalogCacheReadQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size, compute } = query;
     const key = CACHE_KEYS.catalogPage(page, size);
 

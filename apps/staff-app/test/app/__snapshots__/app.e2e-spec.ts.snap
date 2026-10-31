@@ -397,10 +397,12 @@ exports[`App Catalog Product POST /api/catalog/products should replay the same r
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and drop the cached customer catalog 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
 {
   "cache": {
-    "keys": [],
+    "keys": [
+      "acme:catalog:v1:page:1:size:20",
+    ],
   },
   "db": {
     "idempotency_key": [
@@ -556,27 +558,6 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse to restock an archived product with 409 1`] = `
-{
-  "db": {
-    "idempotency_key": [],
-    "product_stock": [
-      {
-        "id": "707",
-        "quantity": 4,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "PRODUCT_ALREADY_ARCHIVED",
-      "message": "Product 105 is archived and can no longer be modified",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
 exports[`App Catalog Product POST /api/catalog/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
 {
   "db": {
@@ -623,6 +604,37 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock an archived product and leave it archived 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "id": "105",
+        "status": "archived",
+        "version": 2,
+      },
+    ],
+    "product_stock": [
+      {
+        "quantity": 4,
+      },
+      {
+        "quantity": 5,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    "ProductRestocked",
+  ],
+  "response": {
+    "body": {
+      "productId": "105",
+      "quantity": 9,
+    },
+  },
+}
+`;
+
 exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should archive, queue one ledger record under the correlation id and drop the cached customer catalog 1`] = `
 {
   "cache": {
@@ -647,7 +659,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should
       "action": "ProductArchived",
       "correlationId": "e2e-product-archive",
       "occurredAt": Any<String>,
-      "operationKey": "product-archived:103",
+      "operationKey": "product-archived:103:2",
       "payload": {
         "previousStatus": "active",
         "sku": "SKU-0004",
@@ -690,7 +702,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should
   "response": {
     "body": {
       "code": "PRODUCT_ALREADY_ARCHIVED",
-      "message": "Product 105 is archived and can no longer be modified",
+      "message": "Product 105 is already archived",
       "statusCode": 409,
     },
   },
@@ -764,8 +776,9 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
       "action": "ProductPublished",
       "correlationId": "e2e-product-publish",
       "occurredAt": Any<String>,
-      "operationKey": "product-published:101",
+      "operationKey": "product-published:101:2",
       "payload": {
+        "previousStatus": "draft",
         "sku": "SKU-0002",
       },
       "subjectId": "101",
@@ -781,6 +794,50 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
       "status": "active",
       "updatedAt": Any<String>,
       "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should publish an archived product again under a ledger record of its new version 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "105",
+        "name": "Archived product",
+        "sku": "SKU-0006",
+        "status": "active",
+        "updated_at": Any<Date>,
+        "version": 3,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "ProductPublished",
+      "correlationId": "e2e-product-republish",
+      "occurredAt": Any<String>,
+      "operationKey": "product-published:105:3",
+      "payload": {
+        "previousStatus": "archived",
+        "sku": "SKU-0006",
+      },
+      "subjectId": "105",
+      "subjectType": "product",
+    },
+  ],
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "105",
+      "name": "Archived product",
+      "sku": "SKU-0006",
+      "status": "active",
+      "updatedAt": Any<String>,
+      "version": 3,
     },
   },
 }
@@ -807,33 +864,6 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
       "error": "Forbidden",
       "message": "Insufficient permissions",
       "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should refuse to publish an archived product with 409 1`] = `
-{
-  "db": {
-    "product": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "105",
-        "name": "Archived product",
-        "sku": "SKU-0006",
-        "status": "archived",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 2,
-      },
-    ],
-  },
-  "ledger_record_queue": [],
-  "response": {
-    "body": {
-      "code": "PRODUCT_ALREADY_ARCHIVED",
-      "message": "Product 105 is archived and can no longer be modified",
-      "statusCode": 409,
     },
   },
 }

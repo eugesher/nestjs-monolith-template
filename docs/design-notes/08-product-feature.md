@@ -7,8 +7,11 @@ of an archive, the cached customer catalog, the adapters behind the ports and th
 
 ## The aggregate
 
-`ProductModel` walks `draft → active → archived`. Every change that reaches the database bumps
-`version`, and an archived product refuses every further change with `PRODUCT_ALREADY_ARCHIVED`.
+A product is `draft`, `active` or `archived`. Every change that reaches the database bumps
+`version`. No status freezes a product: a draft, an active and an archived product are updated and
+restocked alike, and an archived product can be published again. Archiving itself lives in the core
+product module (see `29-core-product.md`), because the staff app and the processor app both
+archive.
 
 | Rule                                         | Code                       |
 | -------------------------------------------- | -------------------------- |
@@ -26,17 +29,18 @@ nothing: it records no event and keeps the version, so the write service does no
 database either. A client that repeats an update does not invalidate the `If-Match` version of
 everyone else.
 
-**Publishing puts a draft in front of customers.** `publish()` moves a `draft` to `active`, bumps
-the version and records `ProductPublishedEvent`. Publishing an active product changes nothing, and
-an archived product refuses it. There is no way back to `draft`: a published product leaves the
-catalog only through an archive.
+**Publishing puts a product in front of customers.** `publish()` moves a `draft` or an `archived`
+product to `active`, bumps the version and records `ProductPublishedEvent` with the version it
+produced and the status it left. Publishing an active product changes nothing. There is no way back
+to `draft`: a published product leaves the catalog only through an archive, and an archived one
+returns through a new publication.
 
-**A restock does not change the product.** `restock(quantity)` checks the quantity and that the
-product is not archived, keeps the version and records `ProductRestockedEvent`. The units live in
+**A restock does not change the product.** `restock(quantity)` checks the quantity, keeps the
+version and records `ProductRestockedEvent`, whatever the status. The units live in
 `product_stock` (see Restock below), so `If-Match` has nothing to guard.
 
-**Events are recorded, not published.** `create`, `update`, `publish`, `archive` and `restock` add
-`ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductPublishedEvent`, `ProductArchivedEvent` and
+**Events are recorded, not published.** `create`, `update`, `publish` and `restock` add
+`ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductPublishedEvent` and
 `ProductRestockedEvent`. A use case pulls them after the write and hands them to
 `ProductLedgerService` together with the stored id, because a created product has no id until the
 insert. The service turns them into ledger records (see below).
@@ -97,15 +101,16 @@ not delete, so the retry is a replay.
 `POST /catalog/products/:productId/stock` with `{ quantity }` writes a `+quantity` row to `product_stock`
 without an order line (see `20-order-and-stock-schema.md`) and answers 201 with
 `{ productId, quantity }`, where `quantity` is the stock on hand after the restock. A draft can be
-restocked, so its stock is ready when it becomes active. An archived product is
-`PRODUCT_ALREADY_ARCHIVED` (409), and an unknown or soft-deleted one is `PRODUCT_NOT_FOUND` (404).
+restocked, so its stock is ready when it becomes active, and so can an archived one, so its stock
+is ready when it is published again. An unknown or soft-deleted product is `PRODUCT_NOT_FOUND`
+(404).
 
 `ProductRestockUseCase` claims the `Idempotency-Key` on `{ productId, quantity }`, with the outcomes of
 a creation, and then runs one transaction:
 
 1. `PRODUCT_STOCK_PORT.lock` locks the product row with `SELECT … FOR UPDATE`;
 2. `findById` reads the product, now that nobody else can change it;
-3. the aggregate checks the quantity and the status;
+3. the aggregate checks the quantity;
 4. `PRODUCT_STOCK_PORT.restock` writes the movement and sums the stock on hand with `FOR SHARE`;
 5. the key is completed with the answer.
 
@@ -114,33 +119,31 @@ Both stock calls go through `ProductStockCoreAdapter` to the core product stock 
 
 **The product row is the lock, as for an order** (see `22-order-feature.md`). The lock on it is taken
 before anything else, so a restock and an order never wait for each other in opposite orders.
-An archive updates the same row, so it waits for the restock to commit or the restock waits for the
-archive and then sees the archived status. Two restocks of one product queue on the row too, so the
+An archive locks the same row, so it waits for the restock to commit or the restock waits for the
+archive. Two restocks of one product queue on the row too, so the
 sum in each answer counts every movement committed before it.
 
 After the commit, `ProductLedgerService.enqueueRestocked` puts the record on the `ledger-record`
 queue. Every restock is a fact of its own, so the operation key is the id of the stock row,
 `product-restocked:<productStockId>`, not the product id.
 
-## The ledger record of an archive
+## Archiving
 
-`ProductArchiveUseCase` writes the product, enqueues its ledger records and then asks
-`ProductLedgerService` to append the archive itself under the operation key `product-archived:<id>`.
-The `ledger-record` processor appends the same record from the queue (see
-`09-ledger-record-processor.md`), and the ledger keeps one row.
+`ProductArchiveUseCase` hands the archive to the core product module through `PRODUCT_STATUS_PORT`
+and `ProductStatusCoreAdapter` (see `29-core-product.md`). The core module locks the row, archives,
+and after the commit drops the cached customer catalog and enqueues the ledger record
+`product-archived:<id>:<version>` itself. The feature turns the outcome into its own answer:
 
-**Both paths write the same record**: `ProductLedgerService` builds it once, with the payload
-`{ sku, previousStatus }`. Whichever append comes first wins the key, so a payload that differed
-between them would make the row depend on that order. `ProductArchivedEvent` carries the `sku` for
-this reason.
-
-The archive is already committed, so a failing append must not undo it. `ProductLedgerService` tries
-`LEDGER_RETRY_ATTEMPTS` times (3 by default) through `ReplayRetryHelper` and then logs the record at
-`error` for a replay instead of throwing.
+| Core outcome       | Answer                                                     |
+| ------------------ | ---------------------------------------------------------- |
+| `archived`         | 200, the product read again through `ProductAccessService` |
+| `not-found`        | `PRODUCT_NOT_FOUND` (404)                                  |
+| `version-mismatch` | `VERSION_MISMATCH` (409), with `details.currentVersion`    |
+| `already-archived` | `PRODUCT_ALREADY_ARCHIVED` (409)                           |
 
 ## The ledger records of the queue
 
-After the commit, `ProductCreateUseCase`, `ProductPublishUseCase` and `ProductArchiveUseCase` hand their domain events to
+After the commit, `ProductCreateUseCase` and `ProductPublishUseCase` hand their domain events to
 `ProductLedgerService.enqueue`, and `ProductRestockUseCase` hands its events and the id of the new
 stock row to `ProductLedgerService.enqueueRestocked`. The service turns each event into a ready
 record and puts it on the `ledger-record` queue through `PRODUCT_LEDGER_RECORD_PORT`:
@@ -148,14 +151,14 @@ record and puts it on the `ledger-record` queue through `PRODUCT_LEDGER_RECORD_P
 | Domain event            | Operation key                        | Action             | Payload                 |
 | ----------------------- | ------------------------------------ | ------------------ | ----------------------- |
 | `ProductCreatedEvent`   | `product-created:<id>`               | `ProductCreated`   | `sku`, `name`           |
-| `ProductPublishedEvent` | `product-published:<id>`             | `ProductPublished` | `sku`                   |
-| `ProductArchivedEvent`  | `product-archived:<id>`              | `ProductArchived`  | `sku`, `previousStatus` |
+| `ProductPublishedEvent` | `product-published:<id>:<version>`   | `ProductPublished` | `sku`, `previousStatus` |
 | `ProductRestockedEvent` | `product-restocked:<productStockId>` | `ProductRestocked` | `sku`, `quantity`       |
 
 The subject type is `product` and the subject id is the product id, which comes from the command,
 because a created product has no id in its event. An update is not a ledger fact, so
-`ProductUpdateUseCase` enqueues nothing. A product is published once, so its id alone keys the
-publication. The record carries the correlation id of the request, read
+`ProductUpdateUseCase` enqueues nothing. A product may be published again after an archive, so the
+version the publication produced is part of its key: a key of the id alone would let the ledger
+drop the second publication as a replay of the first. The record carries the correlation id of the request, read
 from the context in the application: the job runs in another async chain.
 
 The product is already committed, so a failing enqueue must not undo it either. The service tries
@@ -171,17 +174,17 @@ keeps the first row of the key, so the copies append nothing.
 ## Logs
 
 A write logs its outcome at `info` after the work: `Product created`, `Product updated`,
-`Product published`, `Product archived`, `Product restocked`, or a replay of a creation or a restock. A lost race logs at `info` and a spent budget at `warn`.
+`Product published`, `Product restocked`, or a replay of a creation or a restock. A lost race logs at `info` and a spent budget at `warn`.
 Reads log nothing. The correlation id comes from the context.
 
 ## The customer catalog
 
 customer-app caches the pages of its catalog (see `21-catalog-feature.md`), and every write here
-that changes what a customer sees drops them: `ProductUpdateUseCase`, `ProductPublishUseCase`,
-`ProductArchiveUseCase` and `ProductRestockUseCase` call `PRODUCT_CATALOG_CACHE_PORT.invalidate()`
-once their write has returned. A creation drops nothing, because a draft is not in the catalog. A
-write that fails or is refused drops nothing, and a replay of a restock drops nothing either: its
-movement was written, and dropped the pages, the first time.
+that changes the list drops them: `ProductUpdateUseCase` and `ProductPublishUseCase` call
+`PRODUCT_CATALOG_CACHE_PORT.invalidate()` once their write has returned, and the core product module
+drops them after an archive. A creation drops nothing, because a draft is not in the catalog, and
+neither does a restock: the catalog shows no quantities. A write that fails or is refused drops
+nothing.
 
 `ProductCatalogCacheAdapter` deletes every key under `CACHE_KEYS.catalogPrefix()` through
 `CACHE_PORT`. The key lives in `@acme-libs/contracts/cache`, which both apps read, and both apps
@@ -212,10 +215,10 @@ the use case answers when it sees the sku first.
 
 | Port                         | Adapter                           | Target                      |
 | ---------------------------- | --------------------------------- | --------------------------- |
-| `PRODUCT_LEDGER_PORT`        | `ProductLedgerCoreAdapter`        | `LEDGER_CORE_APPEND_PORT`   |
 | `PRODUCT_IDEMPOTENCY_PORT`   | `ProductIdempotencyCoreAdapter`   | `IDEMPOTENCY_CORE_KEY_PORT` |
 | `PRODUCT_LEDGER_RECORD_PORT` | `ProductLedgerRecordQueueAdapter` | the `ledger-record` queue   |
 | `PRODUCT_CATALOG_CACHE_PORT` | `ProductCatalogCacheAdapter`      | `CACHE_PORT`                |
+| `PRODUCT_STATUS_PORT`        | `ProductStatusCoreAdapter`        | `PRODUCT_CORE_PORT`         |
 
 The idempotency adapter turns the claim outcome enum of the core module into the plain outcomes of
 the port and hands a replay's stored response back as the type the use case expects.
@@ -246,11 +249,12 @@ A replay of a creation or a restock answers 201 with the stored body, exactly li
 **`PATCH` edits fields, `PUT` sets a state.** The body of `PATCH /catalog/products/:productId`
 names the fields to change, every one optional, and an empty body answers the product as it is.
 Publishing and archiving have no body: `PUT` on the state resource says what the product becomes,
-and publishing a published product again changes nothing. An archived product refuses both.
+and publishing a published product again changes nothing. Archiving an archived product is the
+one refusal.
 
 **Every route names its permission.** `@RequiresPermission` refuses a caller without the code with
 403 before the use case runs (see `02-global-auth-guards.md`). Publishing goes with `product:write`, like an update. Archiving has a code of its own,
-because it is the one change that cannot be undone, and so has restocking, because it changes what
+because it takes a product away from customers, and so has restocking, because it changes what
 customers can buy. The seeded admin and editor hold all four codes, the viewer only `product:read`.
 
 **`productId` is a string of digits**, from 1 to 20 of them without a leading zero, checked by
@@ -293,7 +297,7 @@ the update, and its conflict arrives as `VERSION_MISMATCH` above.
 ## Wiring
 
 `ProductModule` imports `ProductTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
-`IdempotencyCoreModule`, `LedgerCoreModule` and `ProductStockCoreModule`, binds every port with `{ provide, useClass }` and reads
+`IdempotencyCoreModule`, `ProductCoreModule` and `ProductStockCoreModule`, binds every port with `{ provide, useClass }` and reads
 `PRODUCT_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS` and `PRODUCT_LEDGER_RETRY_ATTEMPTS` from
 `LEDGER_RETRY_ATTEMPTS`. The app's entity list includes `Product`,
 `IdempotencyKey` and `LedgerEntry`, because the modules the feature mounts need them on the app's

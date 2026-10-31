@@ -22,7 +22,7 @@ export class CatalogE2E {
 
   public handleGetMany(): void {
     describe('GET /api/products', () => {
-      it('should list only the active products in stock, by id, with the quantity on hand', async () => {
+      it('should list every active product by id, whatever its stock', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/products')
           .auth(this.ctx.bobToken, { type: 'bearer' })
@@ -61,7 +61,7 @@ export class CatalogE2E {
         await this.ctx.redis.set(
           'acme:catalog:v1:page:1:size:20',
           JSON.stringify({
-            items: [{ id: '999', sku: 'SKU-CACHED', name: 'Cached product', quantity: 1 }],
+            items: [{ id: '999', sku: 'SKU-CACHED', name: 'Cached product' }],
             total: 1,
             page: 1,
             size: 20,

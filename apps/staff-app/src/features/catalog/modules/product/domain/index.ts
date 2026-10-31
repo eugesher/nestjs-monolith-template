@@ -1,6 +1,5 @@
 export * from './enums/product-error-code.enum';
 
-export * from './events/product-archived.event';
 export * from './events/product-created.event';
 export * from './events/product-published.event';
 export * from './events/product-restocked.event';

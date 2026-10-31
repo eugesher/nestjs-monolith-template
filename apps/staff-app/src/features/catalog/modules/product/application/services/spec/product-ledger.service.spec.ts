@@ -4,7 +4,6 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import {
-  ProductArchivedEvent,
   ProductCreatedEvent,
   ProductPublishedEvent,
   ProductRestockedEvent,
@@ -14,16 +13,14 @@ import { ProductLedgerService } from '../product-ledger.service';
 
 describe('ProductLedgerService', () => {
   let enqueue: jest.Mock;
-  let append: jest.Mock;
   let logger: PinoLoggerMock;
   let service: ProductLedgerService;
 
   beforeEach(() => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
-    append = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new ProductLedgerService({ enqueue }, { append }, 2, logger as unknown as PinoLogger);
+    service = new ProductLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -54,43 +51,31 @@ describe('ProductLedgerService', () => {
       );
     });
 
-    it('enqueues an archive and leaves an update out of the ledger', async () => {
+    it('leaves an update out of the ledger', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.enqueue({
           productId: '12',
-          events: [
-            new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' }),
-            new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE),
-          ],
+          events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
         }),
       );
 
-      expect(enqueue).toHaveBeenCalledTimes(1);
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-archived:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { sku: 'SKU-0001', previousStatus: 'active' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
-      });
+      expect(enqueue).not.toHaveBeenCalled();
     });
 
-    it('enqueues a publication under the operation key of the product', async () => {
+    it('enqueues a publication under the product and the version it produced', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.enqueue({
           productId: '12',
-          events: [new ProductPublishedEvent('12', 'SKU-0001')],
+          events: [new ProductPublishedEvent('12', 'SKU-0001', 6, ProductStatusEnum.ARCHIVED)],
         }),
       );
 
       expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-published:12',
+        operationKey: 'product-published:12:6',
         subjectType: 'product',
         subjectId: '12',
         action: 'ProductPublished',
-        payload: { sku: 'SKU-0001' },
+        payload: { sku: 'SKU-0001', previousStatus: 'archived' },
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
@@ -179,80 +164,6 @@ describe('ProductLedgerService', () => {
       );
 
       expect(enqueue).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('recordArchived', () => {
-    it('appends the archive under the operation key of the product', async () => {
-      await service.recordArchived({
-        productId: '12',
-        events: [
-          new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' }),
-          new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE),
-        ],
-      });
-
-      expect(append).toHaveBeenCalledTimes(1);
-      expect(append).toHaveBeenCalledWith({
-        operationKey: 'product-archived:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { sku: 'SKU-0001', previousStatus: 'active' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-      });
-    });
-
-    it('appends nothing without an archive', async () => {
-      await service.recordArchived({ productId: '12', events: [] });
-
-      expect(append).not.toHaveBeenCalled();
-    });
-
-    it('retries a failed append and logs each retry', async () => {
-      append.mockRejectedValueOnce(new Error('deadlock')).mockResolvedValue(undefined);
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordArchived({
-          productId: '12',
-          events: [new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.DRAFT)],
-        }),
-      );
-
-      expect(append).toHaveBeenCalledTimes(2);
-      expect(logger.warn).toHaveBeenCalledWith(
-        {
-          err: new Error('deadlock'),
-          correlationId: 'corr-1',
-          attempt: 1,
-          productId: '12',
-          operationKey: 'product-archived:12',
-        },
-        'Ledger append (product archived) failed — retrying',
-      );
-      expect(logger.error).not.toHaveBeenCalled();
-    });
-
-    it('logs the record for replay after the configured attempts instead of throwing', async () => {
-      append.mockRejectedValue(new Error('deadlock'));
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordArchived({
-          productId: '12',
-          events: [new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE)],
-        }),
-      );
-
-      expect(append).toHaveBeenCalledTimes(2);
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          err: new Error('deadlock'),
-          correlationId: 'corr-1',
-          productId: '12',
-          operationKey: 'product-archived:12',
-        },
-        'Ledger append failed permanently: the product is archived but absent from the ledger, replay this record',
-      );
     });
   });
 });

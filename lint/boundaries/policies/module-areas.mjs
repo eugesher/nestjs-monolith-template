@@ -129,7 +129,7 @@ export const moduleAreas = [
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:contracts', own('app')),
-      to('acme-core:contracts', { module: 'ledger' }),
+      to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
       baseLibs('observability'),
       packages('@nestjs/bull', '@nestjs/schedule', 'bull'),
     ],

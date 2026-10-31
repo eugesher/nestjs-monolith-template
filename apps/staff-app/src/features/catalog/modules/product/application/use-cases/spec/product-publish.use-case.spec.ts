@@ -25,7 +25,7 @@ describe('ProductPublishUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ProductPublishedEvent('12', 'SKU-0001')],
+      events: [new ProductPublishedEvent('12', 'SKU-0001', 2, ProductStatusEnum.DRAFT)],
     });
     enqueue = jest.fn().mockResolvedValue(undefined);
     invalidate = jest.fn().mockResolvedValue(undefined);

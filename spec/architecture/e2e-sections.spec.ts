@@ -44,6 +44,23 @@ describe('e2e sections', () => {
     }).toPassArchitectureLint();
   });
 
+  it.each(['ledger', 'product-stock'])(
+    'the e2e context MAY read the queue contract of the core module %s',
+    async (module) => {
+      await expect({
+        file: 'apps/processor-app/test/context/__fixture__.ts',
+        code: `import { x } from "@acme-core/contracts/${module}";`,
+      }).toPassArchitectureLint();
+    },
+  );
+
+  it('the e2e context may NOT read the contracts of a core module without a queue', async () => {
+    await expect({
+      file: 'apps/processor-app/test/context/__fixture__.ts',
+      code: 'import { x } from "@acme-core/contracts/idempotency";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it('an e2e spec MAY read the entities of core', async () => {
     await expect({
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',

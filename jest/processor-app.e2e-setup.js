@@ -8,6 +8,8 @@ Object.assign(process.env, {
   REDIS_URL: 'redis://:e2e-redis-password@127.0.0.1:6380',
   REDIS_COMMAND_TIMEOUT_MS: '500',
   IDEMPOTENCY_KEY_TTL_HOURS: '24',
+  LEDGER_RETRY_ATTEMPTS: '3',
+  QUEUE_RETRY_ATTEMPTS: '3',
   LOG_LEVEL: 'error',
   OTEL_SDK_DISABLED: 'true',
 });

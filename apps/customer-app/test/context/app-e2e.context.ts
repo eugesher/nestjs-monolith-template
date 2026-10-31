@@ -13,6 +13,10 @@ import {
   type ILedgerRecordProcessorPayload,
   LEDGER_RECORD_QUEUE,
 } from '@acme-core/contracts/ledger';
+import {
+  type IProductStockPostSubtractPayload,
+  PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
+} from '@acme-core/contracts/product-stock';
 import { REDIS_CLIENT } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 
@@ -104,6 +108,17 @@ export class AppE2EContext {
   public async takeLedgerRecords(): Promise<ILedgerRecordProcessorPayload[]> {
     const queue = this.moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
       getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const jobs = await queue.getWaiting();
+
+    await queue.empty();
+
+    return jobs.map((job) => job.data);
+  }
+
+  public async takePostSubtractJobs(): Promise<IProductStockPostSubtractPayload[]> {
+    const queue = this.moduleFixture.get<Queue<IProductStockPostSubtractPayload>>(
+      getQueueToken(PRODUCT_STOCK_POST_SUBTRACT_QUEUE),
     );
     const jobs = await queue.getWaiting();
 

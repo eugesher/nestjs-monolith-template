@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { LedgerRecordQueueModule } from '@acme-staff-common/shared/ledger-record';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
-import { LedgerCoreModule } from '@acme-core/modules/ledger';
+import { ProductCoreModule } from '@acme-core/modules/product';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 import { ConfigProviderHelper } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
@@ -24,9 +24,9 @@ import {
   ProductCreateRepository,
   ProductCrudRepository,
   ProductIdempotencyCoreAdapter,
-  ProductLedgerCoreAdapter,
   ProductLedgerRecordQueueAdapter,
   ProductRestockRepository,
+  ProductStatusCoreAdapter,
   ProductStockCoreAdapter,
   ProductTypeOrmModule,
   ProductWriteRepository,
@@ -37,12 +37,12 @@ import {
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_CRUD_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
-  PRODUCT_LEDGER_PORT,
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
   PRODUCT_OCC_RETRY_ATTEMPTS,
   PRODUCT_RESTOCK_REPOSITORY_PORT,
+  PRODUCT_STATUS_PORT,
   PRODUCT_STOCK_PORT,
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from './outbound';
@@ -53,7 +53,7 @@ import { ProductController } from './presentation';
     ProductTypeOrmModule.forFeature(),
     LedgerRecordQueueModule,
     IdempotencyCoreModule,
-    LedgerCoreModule,
+    ProductCoreModule,
     ProductStockCoreModule,
   ],
   controllers: [ProductController],
@@ -74,7 +74,7 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_CRUD_REPOSITORY_PORT, useClass: ProductCrudRepository },
     { provide: PRODUCT_WRITE_REPOSITORY_PORT, useClass: ProductWriteRepository },
     { provide: PRODUCT_RESTOCK_REPOSITORY_PORT, useClass: ProductRestockRepository },
-    { provide: PRODUCT_LEDGER_PORT, useClass: ProductLedgerCoreAdapter },
+    { provide: PRODUCT_STATUS_PORT, useClass: ProductStatusCoreAdapter },
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
     { provide: PRODUCT_STOCK_PORT, useClass: ProductStockCoreAdapter },
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },

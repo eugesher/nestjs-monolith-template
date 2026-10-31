@@ -1,17 +1,18 @@
 # 09 — Ledger record processor
 
-`apps/processor-app/src/processors/ledger-record` appends records to the ledger of
-`core/modules/src/ledger` (see `05-core-ledger.md`). It is a processor, not a feature: a job of the
+`apps/processor-app/src/processors/ledger-record` appends records to the ledger, the
+`ledger_entry` table (see `05-ledger.md`). It is the only writer of the table. It is a processor, not a feature: a job of the
 Bull queue `ledger-record` or a daily schedule enters it, not an HTTP request, and it has no
 controller.
 
-| Layer                          | What it holds                                                                                                |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `presentation`                 | `LedgerRecordConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
-| `application`                  | `LedgerRecordAppendUseCase`, `LedgerRecordReportFailureUseCase`, `LedgerRecordRetryFailedUseCase`            |
-| `outbound`                     | `LEDGER_RECORD_LEDGER_PORT`, `LEDGER_RECORD_QUEUE_PORT`                                                      |
-| `infrastructure/core-adapters` | `LedgerRecordLedgerCoreAdapter` over `LEDGER_CORE_APPEND_PORT`                                               |
-| `infrastructure/queue`         | `LedgerRecordQueueAdapter` over the `ledger-record` queue                                                    |
+| Layer                        | What it holds                                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `presentation`               | `LedgerRecordConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
+| `application`                | `LedgerRecordAppendUseCase`, `LedgerRecordReportFailureUseCase`, `LedgerRecordRetryFailedUseCase`            |
+| `domain`                     | `LedgerRecordEntryModel`, `LedgerRecordHelper`                                                               |
+| `outbound`                   | `LEDGER_RECORD_APPEND_REPOSITORY_PORT`, `LEDGER_RECORD_QUEUE_PORT`                                           |
+| `infrastructure/persistence` | `LedgerRecordAppendRepository` over `ledger_entry`                                                           |
+| `infrastructure/queue`       | `LedgerRecordQueueAdapter` over the `ledger-record` queue                                                    |
 
 ## A job is a ready record
 
@@ -28,16 +29,17 @@ it is:
 | `occurredAt`    | when the fact happened, an ISO string                     |
 | `correlationId` | the id of the request that produced the record            |
 
-The producer turns its facts into records, so a new writer needs no change here. Two producers
-write today: the product feature of staff-app (see `08-product-feature.md`) and the `auth` feature
-of customer-app (see `03-auth-feature.md`). Neither consumes the queue: processor-app does (see
-`25-processor-app.md`), and the three apps reach the queue through one Redis.
+The producer turns its facts into records, so a new writer needs no change here. The writers are
+listed in `05-ledger.md`: features of staff-app and customer-app and the core product module. None
+of them consumes the queue: processor-app does (see `25-processor-app.md`), and the three apps reach
+the queue through one Redis.
 
 The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
-app may not import another. Each app registers the queue once, in its
-`common/shared/ledger-record`, with `LEDGER_RECORD_JOB_OPTIONS`. Bull applies the job options of
-the producer, so every producer enqueues with the same `attempts` and `backoff` only because both
-registrations read the one constant.
+app may not import another. Each app registers the queue in its `common/shared/ledger-record`, and
+the core product module registers it once more for the archives it records, every time with
+`LEDGER_RECORD_JOB_OPTIONS`. Bull applies the job options of the producer, so every producer
+enqueues with the same `attempts` and `backoff` only because every registration reads the one
+constant.
 
 ## Job options
 
@@ -61,7 +63,9 @@ the same context, so its log lines carry the id too.
 
 ## Failures
 
-`LedgerRecordAppendUseCase` lets a failed append throw, so Bull retries the job. Every failed attempt
+`LedgerRecordAppendUseCase` parses the instant, builds the entry under the correlation id of the
+job and appends it through `LEDGER_RECORD_APPEND_REPOSITORY_PORT`. It lets a failed append throw,
+so Bull retries the job. Every failed attempt
 reaches `@OnQueueFailed`, and `LedgerRecordReportFailureUseCase` logs it: at `warn` while attempts are
 left, at `error` after the last one. A job that ran out of attempts stays in the failed set of the
 queue until the daily retry returns it to the queue (see below).

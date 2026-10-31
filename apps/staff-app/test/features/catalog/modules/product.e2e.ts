@@ -380,7 +380,7 @@ export class ProductE2E {
 
   public handleRestock(): void {
     describe('POST /api/catalog/products/:productId/stock', () => {
-      it('should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and drop the cached customer catalog', async () => {
+      it('should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog', async () => {
         await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
 
         const response = await request(this.ctx.app.getHttpServer())
@@ -497,25 +497,27 @@ export class ProductE2E {
         }).toMatchSnapshot();
       });
 
-      it('should refuse to restock an archived product with 409', async () => {
+      it('should restock an archived product and leave it archived', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/catalog/products/105/stock')
           .set('Idempotency-Key', 'e2e-restock-archived-key')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ quantity: 5 })
-          .expect(HttpStatus.CONFLICT);
+          .expect(HttpStatus.CREATED);
+
+        const records = await this.ctx.takeLedgerRecords();
 
         expect({
           response: { body: response.body },
           db: {
-            product_stock: await this.ctx.dataSource.query(
-              'SELECT id, quantity FROM product_stock WHERE product_id = 105 ORDER BY id',
+            product: await this.ctx.dataSource.query(
+              'SELECT id, status, version FROM product WHERE id = 105',
             ),
-            idempotency_key: await this.ctx.dataSource.query(
-              'SELECT id FROM idempotency_key WHERE idempotency_key = ?',
-              ['e2e-restock-archived-key'],
+            product_stock: await this.ctx.dataSource.query(
+              'SELECT quantity FROM product_stock WHERE product_id = 105 ORDER BY id',
             ),
           },
+          ledger_record_queue: records.map((record) => record.action),
         }).toMatchSnapshot();
       });
 
@@ -613,11 +615,12 @@ export class ProductE2E {
         }).toMatchSnapshot();
       });
 
-      it('should refuse to publish an archived product with 409', async () => {
+      it('should publish an archived product again under a ledger record of its new version', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/105/publish')
+          .set('x-correlation-id', 'e2e-product-republish')
           .auth(this.ctx.editorToken, { type: 'bearer' })
-          .expect(HttpStatus.CONFLICT);
+          .expect(HttpStatus.OK);
 
         expect({
           response: { body: response.body },
@@ -625,7 +628,11 @@ export class ProductE2E {
             product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 105'),
           },
           ledger_record_queue: await this.ctx.takeLedgerRecords(),
-        }).toMatchSnapshot();
+        }).toMatchSnapshot({
+          response: { body: { updatedAt: expect.any(String) } },
+          db: { product: [{ updated_at: expect.any(Date) }] },
+          ledger_record_queue: [{ occurredAt: expect.any(String) }],
+        });
       });
 
       it('should answer 404 for an unknown product', async () => {

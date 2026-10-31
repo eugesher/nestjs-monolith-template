@@ -1,8 +1,8 @@
 name: 01-sold-out
 description: |-
-  e2e: Catalog › Product › POST /api/catalog/products/:productId/stock › should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and drop the cached customer catalog
+  e2e: Catalog › Product › POST /api/catalog/products/:productId/stock › should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog
 
-  Expect: 201 Created, product 106 at 5 units; a +5 product_stock row, a completed idempotency_key row and a ledger entry product-restocked:<row id> with correlation_id e2e-product-restock; no acme:catalog:* key left
+  Expect: 201 Created, product 106 at 5 units; a +5 product_stock row, a completed idempotency_key row and a ledger entry product-restocked:<row id> with correlation_id e2e-product-restock, the key acme:catalog:v1:page:1:size:20 still cached
   User: editor@example.com (token signed by scripts.py)
   Before: Redis: SET acme:catalog:v1:page:1:size:20 '{}'
 method: POST

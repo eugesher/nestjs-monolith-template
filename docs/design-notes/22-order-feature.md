@@ -90,11 +90,13 @@ After the commit, `OrderLedgerService` enqueues the record `order-placed:<orderI
 `auth`. A failed enqueue is retried `LEDGER_RETRY_ATTEMPTS` times and then logged for a replay by
 hand. The order stays placed: the queue is not part of the transaction.
 
-### The catalog
+### The stock check
 
-An order changes the quantity on hand, so after the commit `OrderPlaceUseCase` drops the cached
-pages of the catalog through `ORDER_CATALOG_CACHE_PORT`, which `OrderCatalogCacheAdapter` binds to
-`CACHE_PORT` (see `21-catalog-feature.md`). A refused order and a replay drop nothing.
+Writing the units off is a `SUBTRACT` of the core product stock module, and that module announces
+every subtraction after the commit on the `product-stock-post-subtract` queue (see
+`24-core-product-stock.md`). The processor app then archives the published products that have no
+stock left (see `25-processor-app.md`). The order feature does nothing for it: the announcement
+belongs to the write, so a future manual write-off triggers the same check.
 
 ## Reading orders
 
@@ -127,7 +129,6 @@ them:
 | `ORDER_PRODUCT_STOCK_PORT`    | `OrderProductStockCoreAdapter`  |
 | `ORDER_IDEMPOTENCY_PORT`      | `OrderIdempotencyCoreAdapter`   |
 | `ORDER_LEDGER_RECORD_PORT`    | `OrderLedgerRecordQueueAdapter` |
-| `ORDER_CATALOG_CACHE_PORT`    | `OrderCatalogCacheAdapter`      |
 
 `OrderModule` imports `OrderTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
 `IdempotencyCoreModule` and `ProductStockCoreModule`. It reads `ORDER_LEDGER_RECORD_TIMEOUT_MS` from

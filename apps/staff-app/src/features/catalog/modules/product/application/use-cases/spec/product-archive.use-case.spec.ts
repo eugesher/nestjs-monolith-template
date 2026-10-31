@@ -1,23 +1,16 @@
-import { PinoLogger } from 'nestjs-pino';
-
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { ProductArchivedEvent, ProductModel } from '../../../domain';
-import { ProductLedgerService } from '../../services/product-ledger.service';
-import { ProductWriteService } from '../../services/product-write.service';
+import { ProductModel } from '../../../domain';
+import { ProductAccessService } from '../../services/product-access.service';
 import { ProductArchiveUseCase } from '../product-archive.use-case';
 
 describe('ProductArchiveUseCase', () => {
-  let write: jest.Mock;
-  let enqueue: jest.Mock;
-  let recordArchived: jest.Mock;
-  let invalidate: jest.Mock;
-  let logger: PinoLoggerMock;
+  let load: jest.Mock;
+  let archive: jest.Mock;
   let useCase: ProductArchiveUseCase;
 
   beforeEach(() => {
-    write = jest.fn().mockResolvedValue({
-      product: ProductModel.reconstitute({
+    load = jest.fn().mockResolvedValue(
+      ProductModel.reconstitute({
         id: '12',
         sku: 'SKU-0001',
         name: 'Lamp',
@@ -26,42 +19,18 @@ describe('ProductArchiveUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE)],
-    });
-    enqueue = jest.fn().mockResolvedValue(undefined);
-    recordArchived = jest.fn().mockResolvedValue(undefined);
-    invalidate = jest.fn().mockResolvedValue(undefined);
-    logger = makePinoLoggerMock();
-    useCase = new ProductArchiveUseCase(
-      { write } as unknown as ProductWriteService,
-      { enqueue, recordArchived } as unknown as ProductLedgerService,
-      { invalidate },
-      logger as unknown as PinoLogger,
     );
+    archive = jest.fn().mockResolvedValue({ outcome: 'archived', currentVersion: 4 });
+    useCase = new ProductArchiveUseCase({ load } as unknown as ProductAccessService, { archive });
   });
 
   describe('execute', () => {
-    it('archives, enqueues the ledger records, records the archive in the ledger and answers the stored product', async () => {
-      const view = await useCase.execute({
-        productId: '12',
-        expectedVersion: undefined,
-      });
+    it('archives through the status port and answers the product as stored', async () => {
+      const view = await useCase.execute({ productId: '12', expectedVersion: 3 });
 
-      expect(write).toHaveBeenCalledWith(
-        { productId: '12', expectedVersion: undefined },
-        expect.any(Function),
-      );
-      expect(enqueue).toHaveBeenCalledWith({
-        productId: '12',
-        events: [expect.any(ProductArchivedEvent)],
-      });
-      expect(recordArchived).toHaveBeenCalledWith({
-        productId: '12',
-        events: [expect.any(ProductArchivedEvent)],
-      });
-      expect(enqueue.mock.invocationCallOrder[0]).toBeLessThan(
-        recordArchived.mock.invocationCallOrder[0],
-      );
+      expect(archive).toHaveBeenCalledWith({ productId: '12', expectedVersion: 3 });
+      expect(load).toHaveBeenCalledWith({ productId: '12' });
+      expect(archive.mock.invocationCallOrder[0]).toBeLessThan(load.mock.invocationCallOrder[0]);
       expect(view).toEqual({
         id: '12',
         sku: 'SKU-0001',
@@ -71,39 +40,39 @@ describe('ProductArchiveUseCase', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-03T00:00:00.000Z',
       });
-      expect(logger.info).toHaveBeenCalledWith({ productId: '12' }, 'Product archived');
     });
 
-    it('invalidates the customer catalog after the write and before the ledger', async () => {
-      await useCase.execute({ productId: '12', expectedVersion: undefined });
+    it('refuses an unknown product with PRODUCT_NOT_FOUND', async () => {
+      archive.mockResolvedValue({ outcome: 'not-found', currentVersion: undefined });
 
-      expect(invalidate).toHaveBeenCalledTimes(1);
-      expect(write.mock.invocationCallOrder[0]).toBeLessThan(
-        invalidate.mock.invocationCallOrder[0],
-      );
-      expect(invalidate.mock.invocationCallOrder[0]).toBeLessThan(
-        enqueue.mock.invocationCallOrder[0],
-      );
-    });
-
-    it('hands the write service a change that archives the product', async () => {
-      const product = ProductModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: ProductStatusEnum.ACTIVE,
-        version: 3,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      await expect(
+        useCase.execute({ productId: '99', expectedVersion: undefined }),
+      ).rejects.toMatchObject({
+        code: 'PRODUCT_NOT_FOUND',
+        message: 'Product 99 was not found',
       });
+      expect(load).not.toHaveBeenCalled();
+    });
 
-      await useCase.execute({ productId: '12', expectedVersion: 3 });
+    it('refuses a stale If-Match with PRODUCT_VERSION_MISMATCH and the current version', async () => {
+      archive.mockResolvedValue({ outcome: 'version-mismatch', currentVersion: 3 });
 
-      const [, mutate] = write.mock.calls[0] as [unknown, (product: ProductModel) => void];
+      await expect(useCase.execute({ productId: '12', expectedVersion: 2 })).rejects.toMatchObject({
+        code: 'VERSION_MISMATCH',
+        message: 'Product 12: If-Match version 2 does not match the current version 3',
+        details: { currentVersion: 3 },
+      });
+    });
 
-      mutate(product);
+    it('refuses an archived product with PRODUCT_ALREADY_ARCHIVED', async () => {
+      archive.mockResolvedValue({ outcome: 'already-archived', currentVersion: 5 });
 
-      expect(product.status).toBe('archived');
+      await expect(
+        useCase.execute({ productId: '12', expectedVersion: undefined }),
+      ).rejects.toMatchObject({
+        code: 'PRODUCT_ALREADY_ARCHIVED',
+        message: 'Product 12 is already archived',
+      });
     });
   });
 });

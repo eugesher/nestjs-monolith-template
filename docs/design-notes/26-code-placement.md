@@ -13,17 +13,18 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 
 ## What lives where today
 
-| Module               | Methods                        | Callers                                                         |
-| -------------------- | ------------------------------ | --------------------------------------------------------------- |
-| core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                               |
-| core `ledger`        | `append`                       | staff `product`, the processor `ledger-record`                  |
-| core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`                               |
-| staff common `auth`  | `validateSubject`              | staff `auth` (`GET /identity/auth/me`), staff `app/global/auth` |
+| Module               | Methods                        | Callers                                                                      |
+| -------------------- | ------------------------------ | ---------------------------------------------------------------------------- |
+| core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                                            |
+| core `product`       | `archive`                      | staff `product`, the processor `product-stock`                               |
+| core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`, `lock` also the processor `product-stock` |
+| staff common `auth`  | `validateSubject`              | staff `auth` (`GET /identity/auth/me`), staff `app/global/auth`              |
 
 Everything else sits with its only caller:
 
 | Code                                  | Lives in                                                                    |
 | ------------------------------------- | --------------------------------------------------------------------------- |
+| appending to the ledger               | the processor `ledger-record` (see `09-ledger-record-processor.md`)         |
 | reading the ledger                    | staff `ledger` (see `06-ledger-feature.md`)                                 |
 | deleting the expired idempotency keys | the processor `idempotency-purge` (see `10-idempotency-purge-processor.md`) |
 | staff login                           | staff `auth` (see `18-staff-identity.md`)                                   |

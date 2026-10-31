@@ -56,7 +56,12 @@ ledger records are (see `08-product-feature.md`).
 ## When to use it
 
 A use case that opens the transaction itself already knows when it has committed: the line after
-`await transaction.run(...)` runs after the commit, and the use cases of the template call
-`invalidate()` and the ledger services there. `afterCommit` is for an effect declared deeper, in a
-service or a repository that runs inside a transaction someone else opened and cannot tell when it
-commits.
+`await transaction.run(...)` runs after the commit, and the feature use cases call `invalidate()`
+and their ledger services there. `afterCommit` is for an effect declared deeper, in a module that
+runs inside a transaction someone else opened and cannot tell when it commits. The core modules are
+those:
+
+| Module               | Write                | After the commit                                                 |
+| -------------------- | -------------------- | ---------------------------------------------------------------- |
+| core `product-stock` | `move` with SUBTRACT | the job of the `product-stock-post-subtract` queue               |
+| core `product`       | `archive`            | the cached catalog dropped, the `product-archived` record queued |

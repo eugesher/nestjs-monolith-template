@@ -50,7 +50,7 @@ describe('CatalogGetManyUseCase', () => {
 
     it('answers a cached page without asking the repository', async () => {
       read.mockResolvedValue({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp', quantity: 7 }],
+        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
         total: 1,
         page: 1,
         size: 20,
@@ -59,7 +59,7 @@ describe('CatalogGetManyUseCase', () => {
       const page = await useCase.execute({ page: undefined, size: undefined });
 
       expect(page).toEqual({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp', quantity: 7 }],
+        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
         total: 1,
         page: 1,
         size: 20,

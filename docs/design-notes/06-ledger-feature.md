@@ -1,7 +1,7 @@
 # 06 — Ledger feature
 
-`apps/staff-app/src/features/ledger` serves `GET /ledger`, the back office view of the journal that
-`core/modules/src/ledger` keeps (see `05-core-ledger.md`). Only this feature reads the journal, so it
+`apps/staff-app/src/features/ledger` serves `GET /ledger`, the back office view of the journal in
+`ledger_entry` (see `05-ledger.md`). Only this feature reads the journal, so it
 reads `ledger_entry` itself (see `26-code-placement.md`): `LedgerListEntriesUseCase`,
 `LEDGER_LIST_ENTRIES_REPOSITORY_PORT`, `LedgerListEntriesRepository` and `LedgerEntryMapper`, which
 turns a row into a view with ISO instants.

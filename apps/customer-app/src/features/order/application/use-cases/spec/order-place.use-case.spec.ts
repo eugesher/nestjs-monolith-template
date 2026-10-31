@@ -15,7 +15,6 @@ describe('OrderPlaceUseCase', () => {
   let complete: jest.Mock;
   let release: jest.Mock;
   let recordPlaced: jest.Mock;
-  let invalidate: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: OrderPlaceUseCase;
@@ -46,7 +45,6 @@ describe('OrderPlaceUseCase', () => {
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
     recordPlaced = jest.fn().mockResolvedValue(undefined);
-    invalidate = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new OrderPlaceUseCase(
@@ -54,7 +52,6 @@ describe('OrderPlaceUseCase', () => {
       { findProducts, insert },
       { lock, withdraw },
       { claim, complete, release },
-      { invalidate },
       { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
@@ -123,17 +120,6 @@ describe('OrderPlaceUseCase', () => {
       );
     });
 
-    it('invalidates the cached catalog after the commit', async () => {
-      await useCase.execute({
-        customerId: 'customer-1',
-        productIds: ['100', '103', '100'],
-        idempotencyKey: 'key-1',
-      });
-
-      expect(invalidate).toHaveBeenCalledTimes(1);
-      expect(run.mock.invocationCallOrder[0]).toBeLessThan(invalidate.mock.invocationCallOrder[0]);
-    });
-
     it('answers a replay with the stored response and does nothing else', async () => {
       claim.mockResolvedValue({ outcome: 'replay', storedResponse: { id: '610' } });
 
@@ -147,7 +133,6 @@ describe('OrderPlaceUseCase', () => {
       expect(lock).not.toHaveBeenCalled();
       expect(insert).not.toHaveBeenCalled();
       expect(recordPlaced).not.toHaveBeenCalled();
-      expect(invalidate).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Order placement replayed from the idempotency store',
@@ -195,7 +180,6 @@ describe('OrderPlaceUseCase', () => {
       expect(withdraw).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(recordPlaced).not.toHaveBeenCalled();
-      expect(invalidate).not.toHaveBeenCalled();
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
     });
 

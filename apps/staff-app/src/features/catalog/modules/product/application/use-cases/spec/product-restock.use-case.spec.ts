@@ -14,7 +14,6 @@ describe('ProductRestockUseCase', () => {
   let complete: jest.Mock;
   let release: jest.Mock;
   let enqueueRestocked: jest.Mock;
-  let invalidate: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductRestockUseCase;
@@ -37,7 +36,6 @@ describe('ProductRestockUseCase', () => {
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
     enqueueRestocked = jest.fn().mockResolvedValue(undefined);
-    invalidate = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductRestockUseCase(
@@ -45,7 +43,6 @@ describe('ProductRestockUseCase', () => {
       { findById },
       { lock, restock },
       { claim, complete, release },
-      { invalidate },
       { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
@@ -83,13 +80,6 @@ describe('ProductRestockUseCase', () => {
       );
     });
 
-    it('invalidates the customer catalog after the commit', async () => {
-      await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
-
-      expect(invalidate).toHaveBeenCalledTimes(1);
-      expect(run.mock.invocationCallOrder[0]).toBeLessThan(invalidate.mock.invocationCallOrder[0]);
-    });
-
     it('answers a replay with the stored response and does nothing else', async () => {
       claim.mockResolvedValue({
         outcome: 'replay',
@@ -101,7 +91,6 @@ describe('ProductRestockUseCase', () => {
       expect(view).toEqual({ productId: '12', quantity: 10 });
       expect(lock).not.toHaveBeenCalled();
       expect(enqueueRestocked).not.toHaveBeenCalled();
-      expect(invalidate).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Product restock replayed from the idempotency store',
@@ -142,7 +131,7 @@ describe('ProductRestockUseCase', () => {
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
     });
 
-    it('refuses an archived product with PRODUCT_ALREADY_ARCHIVED and releases the key', async () => {
+    it('restocks an archived product too', async () => {
       findById.mockResolvedValue(
         ProductModel.reconstitute({
           id: '12',
@@ -155,11 +144,11 @@ describe('ProductRestockUseCase', () => {
         }),
       );
 
-      await expect(
-        useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' }),
-      ).rejects.toMatchObject({ code: 'PRODUCT_ALREADY_ARCHIVED' });
-      expect(restock).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      const view = await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
+
+      expect(view).toEqual({ productId: '12', quantity: 15 });
+      expect(restock).toHaveBeenCalledWith({ productId: '12', quantity: 5 });
+      expect(release).not.toHaveBeenCalled();
     });
 
     it('releases the key when the transaction fails and rethrows', async () => {

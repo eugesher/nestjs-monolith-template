@@ -1,8 +1,8 @@
 # 24 — Core product stock
 
 `core/modules/src/product-stock` is the only writer of `product_stock`. It is a core module because
-both apps move stock: the customer `order` feature writes units off, and the staff `product` feature
-restocks. Its contract `core/contracts/src/product-stock` has one port:
+every app touches stock: the customer `order` feature writes units off, the staff `product` feature
+restocks, and the processor app locks and sums the stock of a product before it archives it. Its contract `core/contracts/src/product-stock` has one port:
 
 | Port                      | Facade                   | Consumer                            |
 | ------------------------- | ------------------------ | ----------------------------------- |
@@ -57,24 +57,47 @@ would end with the statement.
 
 - **No rules.** The module checks neither the status of a product, nor whether the stock covers an
   order, nor the range of a restock. Those are rules of the features: `OrderModel.place` refuses a
-  short order, and `ProductModel.restock` refuses an archived product or a bad quantity.
+  short order, and `ProductModel.restock` refuses a bad quantity.
 - **No product fields.** `lock` answers the stock only. A feature reads `sku`, `name` or `status`
   through its own repository, so the stock contract does not follow the catalog.
 - **No error for a missing product.** `lock` skips an unknown or soft-deleted id: it is simply not
   in the answer. The feature turns the gap into its own error code.
-- **No reads for listings.** The customer catalog sums stock in its own grouped query, because it
-  filters and pages by the sum. The module is for the transactions that move stock.
+- **No reads for listings.** The module is for the transactions that move stock; no listing
+  shows a quantity.
+- **No reaction to the stock it leaves.** Whether a product without stock is archived is decided by
+  the processor app, after the commit (see below).
+
+## The announcement of a subtraction
+
+**Every `SUBTRACT` is announced after the commit.** `move` registers a hook with
+`TRANSACTION_PORT.afterCommit` (see `28-transaction-port.md`), and the hook puts
+`{ productIds, correlationId }` on the `product-stock-post-subtract` queue through
+`PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT`. An `ADD` announces nothing. A rollback drops the hook, so
+no job names a movement that did not happen, and a `move` outside `TRANSACTION_PORT.run` throws,
+which the module required anyway.
+
+The queue contract, `PRODUCT_STOCK_POST_SUBTRACT_QUEUE`, its job options and the payload type, lives
+in `@acme-core/contracts/product-stock`, next to the port: the module writes to it in every app that
+moves stock, and the processor app reads it. The module registers the queue itself, so a feature that
+mounts `ProductStockCoreModule` brings the queue with it.
+
+**The enqueue cannot fail the order.** The adapter in `infrastructure/queue` races `add` against
+`REDIS_COMMAND_TIMEOUT_MS`, and the hook retries `QUEUE_RETRY_ATTEMPTS` times through
+`ReplayRetryHelper` before it logs the job at `error` for a replay. A lost job leaves a product
+without stock listed until the next subtraction of it announces it again.
 
 ## Wiring
 
-| Port                                      | Implementation                   |
-| ----------------------------------------- | -------------------------------- |
-| `PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT` | `ProductStockCoreLockRepository` |
-| `PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT` | `ProductStockCoreMoveRepository` |
+| Port                                      | Implementation                             |
+| ----------------------------------------- | ------------------------------------------ |
+| `PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT` | `ProductStockCoreLockRepository`           |
+| `PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT` | `ProductStockCoreMoveRepository`           |
+| `PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT`   | `ProductStockCorePostSubtractQueueAdapter` |
 
 `ProductStockCoreTypeOrmModule` registers `Product` and `ProductStock`.
 
-| Feature              | Feature port               | Core-adapter                   |
-| -------------------- | -------------------------- | ------------------------------ |
-| customer-app `order` | `ORDER_PRODUCT_STOCK_PORT` | `OrderProductStockCoreAdapter` |
-| staff-app `product`  | `PRODUCT_STOCK_PORT`       | `ProductStockCoreAdapter`      |
+| Feature                       | Feature port                 | Core-adapter                    |
+| ----------------------------- | ---------------------------- | ------------------------------- |
+| customer-app `order`          | `ORDER_PRODUCT_STOCK_PORT`   | `OrderProductStockCoreAdapter`  |
+| staff-app `product`           | `PRODUCT_STOCK_PORT`         | `ProductStockCoreAdapter`       |
+| processor-app `product-stock` | `PRODUCT_STOCK_ON_HAND_PORT` | `ProductStockOnHandCoreAdapter` |

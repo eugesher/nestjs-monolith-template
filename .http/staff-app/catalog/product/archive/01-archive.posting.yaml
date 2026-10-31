@@ -2,7 +2,7 @@ name: 01-archive
 description: |-
   e2e: Catalog › Product › PUT /api/catalog/products/:productId/archive › should archive, queue one ledger record under the correlation id and drop the cached customer catalog
 
-  Expect: 200 OK, product 103 archived at version 2, one ledger entry product-archived:103 with correlation_id e2e-product-archive; no acme:catalog:* key left
+  Expect: 200 OK, product 103 archived at version 2, one ledger record product-archived:103:2 with correlation_id e2e-product-archive; no acme:catalog:* key left
   User: editor@example.com (token signed by scripts.py)
   Before: Redis: SET acme:catalog:v1:page:1:size:20 '{}'
 method: PUT

@@ -3,18 +3,10 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs/toolkit';
+import { ProductCreatedEvent, ProductPublishedEvent, ProductRestockedEvent } from '../../domain';
 import {
-  ProductArchivedEvent,
-  ProductCreatedEvent,
-  ProductPublishedEvent,
-  ProductRestockedEvent,
-} from '../../domain';
-import {
-  type IProductLedgerAppendCommand,
-  type IProductLedgerPort,
   type IProductLedgerRecordEnqueueCommand,
   type IProductLedgerRecordPort,
-  PRODUCT_LEDGER_PORT,
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
@@ -26,8 +18,6 @@ export class ProductLedgerService {
   constructor(
     @Inject(PRODUCT_LEDGER_RECORD_PORT)
     private readonly queue: IProductLedgerRecordPort,
-    @Inject(PRODUCT_LEDGER_PORT)
-    private readonly ledger: IProductLedgerPort,
     @Inject(PRODUCT_LEDGER_RETRY_ATTEMPTS)
     private readonly ledgerRetryAttempts: number,
     @InjectPinoLogger(ProductLedgerService.name)
@@ -39,10 +29,10 @@ export class ProductLedgerService {
     const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
 
     for (const event of events) {
-      const record = this.toRecord(productId, event);
+      const record = this.toRecord(productId, event, correlationId);
 
       if (record !== undefined) {
-        await this.enqueueWithRetry({ ...record, correlationId });
+        await this.enqueueWithRetry(record);
       }
     }
   }
@@ -53,25 +43,17 @@ export class ProductLedgerService {
     const restocked = events.filter((event) => event instanceof ProductRestockedEvent);
 
     for (const event of restocked) {
-      const record = this.toRestockedRecord(productId, productStockId, event);
+      const record = this.toRestockedRecord(productId, productStockId, event, correlationId);
 
-      await this.enqueueWithRetry({ ...record, correlationId });
-    }
-  }
-
-  public async recordArchived(command: IProductLedgerRecordCommand): Promise<void> {
-    const { productId, events } = command;
-    const archived = events.filter((event) => event instanceof ProductArchivedEvent);
-
-    for (const event of archived) {
-      await this.appendArchived(productId, event);
+      await this.enqueueWithRetry(record);
     }
   }
 
   private toRecord(
     productId: string,
     event: DomainEvent<Maybe<string>>,
-  ): Maybe<IProductLedgerAppendCommand> {
+    correlationId: string,
+  ): Maybe<IProductLedgerRecordEnqueueCommand> {
     if (event instanceof ProductCreatedEvent) {
       const { sku, name } = event;
       const occurredAt = event.occurredAt.toISOString();
@@ -83,52 +65,34 @@ export class ProductLedgerService {
         action: 'ProductCreated',
         payload: { sku, name },
         occurredAt,
+        correlationId,
       };
     }
 
     if (event instanceof ProductPublishedEvent) {
-      const { sku } = event;
+      const { sku, version, previousStatus } = event;
       const occurredAt = event.occurredAt.toISOString();
 
       return {
-        operationKey: `product-published:${productId}`,
+        operationKey: `product-published:${productId}:${version}`,
         subjectType: 'product',
         subjectId: productId,
         action: 'ProductPublished',
-        payload: { sku },
+        payload: { sku, previousStatus },
         occurredAt,
+        correlationId,
       };
     }
 
-    if (event instanceof ProductArchivedEvent) {
-      return this.toArchivedRecord(productId, event);
-    }
-
     return undefined;
-  }
-
-  private toArchivedRecord(
-    productId: string,
-    event: ProductArchivedEvent,
-  ): IProductLedgerAppendCommand {
-    const { sku, previousStatus } = event;
-    const occurredAt = event.occurredAt.toISOString();
-
-    return {
-      operationKey: `product-archived:${productId}`,
-      subjectType: 'product',
-      subjectId: productId,
-      action: 'ProductArchived',
-      payload: { sku, previousStatus },
-      occurredAt,
-    };
   }
 
   private toRestockedRecord(
     productId: string,
     productStockId: string,
     event: ProductRestockedEvent,
-  ): IProductLedgerAppendCommand {
+    correlationId: string,
+  ): IProductLedgerRecordEnqueueCommand {
     const { sku, quantity } = event;
     const occurredAt = event.occurredAt.toISOString();
 
@@ -139,6 +103,7 @@ export class ProductLedgerService {
       action: 'ProductRestocked',
       payload: { sku, quantity },
       occurredAt,
+      correlationId,
     };
   }
 
@@ -162,21 +127,5 @@ export class ProductLedgerService {
     await this.queue.enqueue(record);
 
     this.logger.info({ productId: subjectId, operationKey }, 'Ledger record enqueued');
-  }
-
-  private appendArchived(productId: string, event: ProductArchivedEvent): Promise<void> {
-    const record = this.toArchivedRecord(productId, event);
-    const { operationKey } = record;
-    const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
-
-    return ReplayRetryHelper.retryThenLogForReplay(() => this.ledger.append(record), {
-      maxAttempts: this.ledgerRetryAttempts,
-      logger: this.logger,
-      correlationId,
-      label: 'Ledger append (product archived)',
-      context: { productId, operationKey },
-      replayMessage:
-        'Ledger append failed permanently: the product is archived but absent from the ledger, replay this record',
-    });
   }
 }

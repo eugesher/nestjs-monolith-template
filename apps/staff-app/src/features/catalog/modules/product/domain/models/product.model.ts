@@ -1,7 +1,6 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
-import { ProductArchivedEvent } from '../events/product-archived.event';
 import { ProductCreatedEvent } from '../events/product-created.event';
 import { ProductPublishedEvent } from '../events/product-published.event';
 import { ProductRestockedEvent } from '../events/product-restocked.event';
@@ -120,8 +119,6 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
   }
 
   public update(changes: IProductChanges): void {
-    this.assertNotArchived();
-
     const { name } = changes;
 
     if (name === undefined) {
@@ -145,48 +142,24 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
   }
 
   public publish(): void {
-    this.assertNotArchived();
-
     if (this.currentStatus === ProductStatusEnum.ACTIVE) {
       return;
     }
 
+    const previousStatus = this.currentStatus;
+
     this.currentStatus = ProductStatusEnum.ACTIVE;
     this.currentVersion += 1;
 
-    const event = new ProductPublishedEvent(this.id, this.sku);
-
-    this.addDomainEvent(event);
-  }
-
-  public archive(): void {
-    this.assertNotArchived();
-
-    const previousStatus = this.currentStatus;
-
-    this.currentStatus = ProductStatusEnum.ARCHIVED;
-    this.currentVersion += 1;
-
-    const event = new ProductArchivedEvent(this.id, this.sku, previousStatus);
+    const event = new ProductPublishedEvent(this.id, this.sku, this.currentVersion, previousStatus);
 
     this.addDomainEvent(event);
   }
 
   public restock(quantity: number): void {
-    this.assertNotArchived();
-
     const validQuantity = ProductModel.validQuantity(quantity);
     const event = new ProductRestockedEvent(this.id, this.sku, validQuantity);
 
     this.addDomainEvent(event);
-  }
-
-  private assertNotArchived(): void {
-    if (this.currentStatus === ProductStatusEnum.ARCHIVED) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_ALREADY_ARCHIVED,
-        `Product ${String(this.id)} is archived and can no longer be modified`,
-      );
-    }
   }
 }

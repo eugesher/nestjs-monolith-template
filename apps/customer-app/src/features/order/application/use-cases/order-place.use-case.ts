@@ -4,11 +4,9 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import { OrderDomainException, OrderErrorCodeEnum, OrderModel } from '../../domain';
 import {
-  type IOrderCatalogCachePort,
   type IOrderIdempotencyPort,
   type IOrderPlaceRepositoryPort,
   type IOrderProductStockPort,
-  ORDER_CATALOG_CACHE_PORT,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
@@ -28,8 +26,6 @@ export class OrderPlaceUseCase {
     private readonly productStock: IOrderProductStockPort,
     @Inject(ORDER_IDEMPOTENCY_PORT)
     private readonly idempotency: IOrderIdempotencyPort,
-    @Inject(ORDER_CATALOG_CACHE_PORT)
-    private readonly catalogCache: IOrderCatalogCachePort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
     @InjectPinoLogger(OrderPlaceUseCase.name)
@@ -77,7 +73,6 @@ export class OrderPlaceUseCase {
     const view = await this.transaction.run(() => this.persist(command));
     const productIds = view.products.map((product) => product.productId);
 
-    await this.catalogCache.invalidate();
     await this.ledgerService.recordPlaced({ orderId: view.id, customerId, productIds });
 
     this.logger.info({ orderId: view.id, customerId, units: productIds.length }, 'Order placed');

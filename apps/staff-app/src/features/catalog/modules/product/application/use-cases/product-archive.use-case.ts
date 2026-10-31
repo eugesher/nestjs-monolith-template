@@ -1,38 +1,48 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
+import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
+import { type IProductStatusPort, PRODUCT_STATUS_PORT } from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductViewMapper } from '../mappers/product-view.mapper';
-import { ProductLedgerService } from '../services/product-ledger.service';
-import { ProductWriteService } from '../services/product-write.service';
+import { ProductAccessService } from '../services/product-access.service';
 
 @Injectable()
 export class ProductArchiveUseCase {
   constructor(
-    private readonly writeService: ProductWriteService,
-    private readonly ledgerService: ProductLedgerService,
-    @Inject(PRODUCT_CATALOG_CACHE_PORT)
-    private readonly catalogCache: IProductCatalogCachePort,
-    @InjectPinoLogger(ProductArchiveUseCase.name)
-    private readonly logger: PinoLogger,
+    private readonly accessService: ProductAccessService,
+    @Inject(PRODUCT_STATUS_PORT)
+    private readonly status: IProductStatusPort,
   ) {}
 
   public async execute(command: IProductArchiveCommand): Promise<IProductView> {
     const { productId, expectedVersion } = command;
-    const written = await this.writeService.write({ productId, expectedVersion }, (product) =>
-      product.archive(),
-    );
-    const { product, events } = written;
+    const archived = await this.status.archive({ productId, expectedVersion });
+    const { outcome, currentVersion } = archived;
 
-    await this.catalogCache.invalidate();
-    await this.ledgerService.enqueue({ productId, events });
-    await this.ledgerService.recordArchived({ productId, events });
+    if (outcome === 'not-found') {
+      throw new ProductDomainException(
+        ProductErrorCodeEnum.PRODUCT_NOT_FOUND,
+        `Product ${productId} was not found`,
+      );
+    }
 
-    const view = ProductViewMapper.toView(product);
+    if (outcome === 'version-mismatch') {
+      throw new ProductDomainException(
+        ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH,
+        `Product ${productId}: If-Match version ${String(expectedVersion)} does not match the current version ${String(currentVersion)}`,
+        { currentVersion },
+      );
+    }
 
-    this.logger.info({ productId }, 'Product archived');
+    if (outcome === 'already-archived') {
+      throw new ProductDomainException(
+        ProductErrorCodeEnum.PRODUCT_ALREADY_ARCHIVED,
+        `Product ${productId} is already archived`,
+      );
+    }
 
-    return view;
+    const product = await this.accessService.load({ productId });
+
+    return ProductViewMapper.toView(product);
   }
 }

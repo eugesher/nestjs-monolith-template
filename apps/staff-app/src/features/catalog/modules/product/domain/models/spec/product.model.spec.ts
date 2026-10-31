@@ -1,5 +1,4 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { ProductArchivedEvent } from '../../events/product-archived.event';
 import { ProductCreatedEvent } from '../../events/product-created.event';
 import { ProductPublishedEvent } from '../../events/product-published.event';
 import { ProductUpdatedEvent } from '../../events/product-updated.event';
@@ -193,7 +192,12 @@ describe('ProductModel', () => {
       expect(product.version).toBe(2);
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(ProductPublishedEvent);
-      expect(events[0]).toMatchObject({ aggregateId: '12', sku: 'SKU-0001' });
+      expect(events[0]).toMatchObject({
+        aggregateId: '12',
+        sku: 'SKU-0001',
+        version: 2,
+        previousStatus: 'draft',
+      });
     });
 
     it('changes nothing on an active product', () => {
@@ -215,39 +219,12 @@ describe('ProductModel', () => {
     });
   });
 
-  describe('archive', () => {
-    it('archives, bumps the version and records the previous status', () => {
-      const product = ProductModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: ProductStatusEnum.ACTIVE,
-        version: 3,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      });
-
-      product.archive();
-
-      const events = product.pullDomainEvents();
-
-      expect(product.status).toBe('archived');
-      expect(product.version).toBe(4);
-      expect(events).toHaveLength(1);
-      expect(events[0]).toBeInstanceOf(ProductArchivedEvent);
-      expect(events[0]).toMatchObject({
-        aggregateId: '12',
-        sku: 'SKU-0001',
-        previousStatus: 'active',
-      });
-    });
-
+  describe('a change of an archived product', () => {
     it.each([
-      ['update', (product: ProductModel) => product.update({ name: 'Desk' })],
-      ['publish', (product: ProductModel) => product.publish()],
-      ['archive', (product: ProductModel) => product.archive()],
-      ['restock', (product: ProductModel) => product.restock(5)],
-    ])('refuses to %s an archived product with PRODUCT_ALREADY_ARCHIVED', (_, change) => {
+      ['update', (product: ProductModel) => product.update({ name: 'Desk' }), 'archived', 6],
+      ['publish', (product: ProductModel) => product.publish(), 'active', 6],
+      ['restock', (product: ProductModel) => product.restock(5), 'archived', 5],
+    ])('is allowed: %s', (_, change, status, version) => {
       const product = ProductModel.reconstitute({
         id: '12',
         sku: 'SKU-0001',
@@ -258,12 +235,11 @@ describe('ProductModel', () => {
         updatedAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
-      expect(() => change(product)).toThrow(
-        expect.objectContaining({
-          code: 'PRODUCT_ALREADY_ARCHIVED',
-          message: 'Product 12 is archived and can no longer be modified',
-        }) as Error,
-      );
+      change(product);
+
+      expect(product.status).toBe(status);
+      expect(product.version).toBe(version);
+      expect(product.pullDomainEvents()).toHaveLength(1);
     });
   });
 

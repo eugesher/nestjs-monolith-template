@@ -12,12 +12,7 @@ export class OrderE2E {
 
   public handlePlace(): void {
     describe('POST /api/orders', () => {
-      it('should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record under the correlation id and drop the cached catalog', async () => {
-        await request(this.ctx.app.getHttpServer())
-          .get('/api/products')
-          .auth(this.ctx.annToken, { type: 'bearer' })
-          .expect(HttpStatus.OK);
-
+      it('should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record and the stock check of its products under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/orders')
           .set('Idempotency-Key', 'e2e-order-place-key')
@@ -27,17 +22,10 @@ export class OrderE2E {
           .expect(HttpStatus.CREATED);
 
         const records = await this.ctx.takeLedgerRecords();
-
-        const catalog = await request(this.ctx.app.getHttpServer())
-          .get('/api/products')
-          .auth(this.ctx.annToken, { type: 'bearer' })
-          .expect(HttpStatus.OK);
-
-        const { items } = catalog.body as { items: { id: string }[] };
+        const postSubtractJobs = await this.ctx.takePostSubtractJobs();
 
         const actual = {
           response: { body: response.body },
-          catalog: items.filter((item) => item.id === '100'),
           db: {
             order: await this.ctx.dataSource.query('SELECT * FROM `order` WHERE id = ?', [
               response.body.id,
@@ -56,6 +44,7 @@ export class OrderE2E {
             ),
           },
           ledger_record_queue: records.filter((record) => record.subjectId === response.body.id),
+          product_stock_post_subtract_queue: postSubtractJobs,
         };
 
         expect(actual).toMatchSnapshot({

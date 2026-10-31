@@ -39,10 +39,12 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   database libs;
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
-- the e2e code that reaches app contracts and the test helpers of the observability lib;
+- the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
+  and the test helpers of the observability lib;
 - a feature queue adapter and a processor consumer that reach app contracts: a queue between the
-  modules of one app keeps its contract in the app, while the `ledger-record` queue, written by
-  both apps, keeps it in `@acme-core/contracts/ledger`;
+  modules of one app keeps its contract in the app, while a queue written by more than one app
+  keeps it in core, `ledger-record` in `@acme-core/contracts/ledger` and
+  `product-stock-post-subtract` in `@acme-core/contracts/product-stock`;
 - the core-adapters and common-adapters of a common module, and a common module root that mounts
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
@@ -73,6 +75,20 @@ common module may (a positive case of the common modules spec).
 A core-adapter and a common-adapter have the same shape: they implement an outbound port of their
 module and call a contract outside it. Both may reach the domain and the outbound layer of their
 module, though today only feature core-adapters reach the domain.
+
+### `acme-core.mjs` — a core module that writes to a queue or a cache
+
+A core module announces what it wrote after the commit (see `28-transaction-port.md`), so three
+edges exist for it:
+
+- **`infrastructure/queue`**, a category of its own, holds the queue adapters. It takes
+  `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`), its own contracts and
+  the contracts of `ledger`, whose queue every module that writes ledger records shares.
+- **The module root registers the queues it writes to** with `BullModule` and nothing else of Bull.
+  A core module is mounted by features of several apps, so the queue comes with it rather than with
+  the `common/shared` of each app.
+- **Core infrastructure may take `@acme-libs/contracts/cache`**, to drop the keys a write makes
+  stale; the application still may not, so caching stays an adapter behind a port.
 
 ### Where the credentials and the persistence packages are allowed
 

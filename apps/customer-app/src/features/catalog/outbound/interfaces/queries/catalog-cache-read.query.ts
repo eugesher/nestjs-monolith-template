@@ -1,8 +1,8 @@
 import { IPage } from '@acme-libs/toolkit';
-import { ICatalogProductStockView } from '../views/catalog-product-stock.view';
+import { ICatalogProductRowView } from '../views/catalog-product-row.view';
 
 export interface ICatalogCacheReadQuery {
   page: number;
   size: number;
-  compute: () => Promise<IPage<ICatalogProductStockView>>;
+  compute: () => Promise<IPage<ICatalogProductRowView>>;
 }
