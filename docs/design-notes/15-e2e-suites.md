@@ -33,7 +33,8 @@ apps/<app>/test/
   context/app-e2e.context.ts
   features/index.ts
   features/<feature>/<feature>.e2e.ts
-  features/<group>/<feature>/<feature>.e2e.ts
+  features/<group>/<group>.e2e.ts
+  features/<group>/modules/<feature>.e2e.ts
   processors/index.ts
   processors/<processor>/<processor>.e2e.ts
 ```
@@ -51,9 +52,18 @@ describe('Note', () => {
 });
 ```
 
-A feature of a group (see `27-feature-groups.md`) sits in `features/<group>/<feature>/`, and its
-`describe` is nested in the `describe` of the group, so the name of a case starts with both:
-`Identity › Role › GET /api/identity/roles`.
+**A group of features has a class of its own** (see `27-feature-groups.md`). `IdentityE2E.of(ctx)`
+builds the classes of its modules from `modules/`, and `execute()` holds one `describe` per module
+with the calls of that module. The entry calls only `execute()` inside the `describe` of the group,
+and `features/index.ts` exports the group, not its modules:
+
+```ts
+describe('Identity', () => {
+  identityE2E.execute();
+});
+```
+
+The name of a case starts with the group and the module: `Identity › Role › GET /api/identity/roles`.
 
 The order of the calls is the order of the database states: the cases that read a whole list come
 before the cases that write into it.
