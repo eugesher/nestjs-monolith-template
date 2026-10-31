@@ -1,14 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ILedgerRecordLedgerPort, LEDGER_RECORD_LEDGER_PORT } from '../../outbound';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { LedgerRecordEntryModel, LedgerRecordHelper } from '../../domain';
+import {
+  type ILedgerRecordAppendRepositoryPort,
+  LEDGER_RECORD_APPEND_REPOSITORY_PORT,
+} from '../../outbound';
 import { ILedgerRecordAppendCommand } from '../interfaces';
 
 @Injectable()
 export class LedgerRecordAppendUseCase {
   constructor(
-    @Inject(LEDGER_RECORD_LEDGER_PORT)
-    private readonly ledger: ILedgerRecordLedgerPort,
+    @Inject(LEDGER_RECORD_APPEND_REPOSITORY_PORT)
+    private readonly repository: ILedgerRecordAppendRepositoryPort,
     @InjectPinoLogger(LedgerRecordAppendUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -18,17 +23,21 @@ export class LedgerRecordAppendUseCase {
 
     this.logger.info({ operationKey, action }, 'Ledger record received');
 
-    const view = await this.ledger.append({
+    const instant = LedgerRecordHelper.parseInstant(occurredAt, 'occurredAt');
+    const correlationId = CorrelationContextHelper.current(LedgerRecordAppendUseCase.name);
+    const entry = LedgerRecordEntryModel.create({
       operationKey,
       subjectType,
       subjectId,
       action,
       payload,
-      occurredAt,
+      correlationId,
+      occurredAt: instant,
     });
-    const { appended } = view;
+    const outcome = await this.repository.append(entry);
+    const { id, appended } = outcome;
     const message = appended ? 'Ledger record appended' : 'Ledger record already appended';
 
-    this.logger.info({ operationKey, appended }, message);
+    this.logger.info({ id, operationKey: entry.operationKey, appended }, message);
   }
 }

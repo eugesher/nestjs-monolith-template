@@ -109,7 +109,7 @@ export const acmeApp = [
     to('acme-app:test', own('app')),
     to('acme-app:app:module', own('app')),
     to('acme-app:contracts', own('app')),
-    to('acme-core:contracts', { module: 'ledger' }),
+    to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
     to('acme-core:entities'),
     baseLibs('cache', 'database', 'observability'),
     packages(

@@ -1,0 +1,14 @@
+name: 02-foreign
+description: |-
+  e2e: Tools › Reminder › PATCH /api/tools/reminders/:reminderId/done › should hide the reminder of another staff user with 404
+
+  Expect: 404 Not Found, code REMINDER_NOT_FOUND
+  User: editor@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/tools/reminders/300/done
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_editor

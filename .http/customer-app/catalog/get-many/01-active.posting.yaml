@@ -1,0 +1,14 @@
+name: 01-active
+description: |-
+  e2e: Catalog › GET /api/products › should list every active product by id, whatever its stock
+
+  Expect: 200 OK, products 100, 103 and the sold-out 106, without quantities
+  User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
+url: $CUSTOMER_APP_BASE_URL/products
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

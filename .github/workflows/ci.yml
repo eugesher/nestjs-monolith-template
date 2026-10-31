@@ -8,7 +8,7 @@ permissions:
 
 env:
   NODE_VERSION: '24'
-  E2E_COMPOSE_FILE: docker-compose/test/docker-compose.yml
+  E2E_COMPOSE_FILE: test/infra/docker-compose.yml
 
 jobs:
   lint:

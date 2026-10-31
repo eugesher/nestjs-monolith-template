@@ -1,0 +1,24 @@
+name: 01-reschedule
+description: |-
+  e2e: Tools › Reminder › PATCH /api/tools/reminders/:reminderId/due-on › should move a reminder to the date sent and drop the cached summary
+
+  Expect: 200 OK, reminder 305 due on 2026-10-01; the summary key is gone
+  User: admin@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:* key
+  Before: send tools/reminder/get-summary/01-compute-and-cache
+method: PATCH
+url: $STAFF_APP_BASE_URL/tools/reminders/305/due-on
+body:
+  content: |-
+    {
+      "dueOn": "2026-10-01"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

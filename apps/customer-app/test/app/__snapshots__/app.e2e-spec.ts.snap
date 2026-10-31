@@ -229,6 +229,25 @@ exports[`App Auth POST /api/auth/register should refuse a taken email in another
 }
 `;
 
+exports[`App Catalog GET /api/products should answer a cached page without reading the database 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "id": "999",
+          "name": "Cached product",
+          "sku": "SKU-CACHED",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
 exports[`App Catalog GET /api/products should answer the page of the window with the total of every page 1`] = `
 {
   "response": {
@@ -237,19 +256,18 @@ exports[`App Catalog GET /api/products should answer the page of the window with
         {
           "id": "103",
           "name": "Product to archive",
-          "quantity": 3,
           "sku": "SKU-0004",
         },
       ],
       "page": 2,
       "size": 1,
-      "total": 2,
+      "total": 3,
     },
   },
 }
 `;
 
-exports[`App Catalog GET /api/products should list only the active products in stock, by id, with the quantity on hand 1`] = `
+exports[`App Catalog GET /api/products should list every active product by id, whatever its stock 1`] = `
 {
   "response": {
     "body": {
@@ -257,19 +275,22 @@ exports[`App Catalog GET /api/products should list only the active products in s
         {
           "id": "100",
           "name": "Seeded reference product",
-          "quantity": 8,
           "sku": "SKU-0001",
         },
         {
           "id": "103",
           "name": "Product to archive",
-          "quantity": 3,
           "sku": "SKU-0004",
+        },
+        {
+          "id": "106",
+          "name": "Sold out product",
+          "sku": "SKU-0007",
         },
       ],
       "page": 1,
       "size": 20,
-      "total": 2,
+      "total": 3,
     },
   },
 }
@@ -455,16 +476,8 @@ exports[`App Order POST /api/orders should let one of two simultaneous orders fo
 }
 `;
 
-exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id 1`] = `
+exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record and the stock check of its products under the correlation id 1`] = `
 {
-  "catalog": [
-    {
-      "id": "100",
-      "name": "Seeded reference product",
-      "quantity": 6,
-      "sku": "SKU-0001",
-    },
-  ],
   "db": {
     "idempotency_key": [
       {
@@ -527,6 +540,14 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
       },
       "subjectId": Any<String>,
       "subjectType": "order",
+    },
+  ],
+  "product_stock_post_subtract_queue": [
+    {
+      "correlationId": "e2e-order-place",
+      "productIds": [
+        "100",
+      ],
     },
   ],
   "response": {

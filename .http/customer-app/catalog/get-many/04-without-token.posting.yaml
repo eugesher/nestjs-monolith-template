@@ -1,6 +1,0 @@
-name: 04-without-token
-description: |-
-  e2e: Catalog › GET /api/products › should refuse a caller without a token
-
-  Expect: 401 Unauthorized
-url: $CUSTOMER_APP_BASE_URL/products

@@ -1,0 +1,19 @@
+name: 03-cached-window
+description: |-
+  e2e: Catalog › GET /api/products › should keep the page in the cache under the key of its window for the TTL
+
+  Expect: 200 OK; key acme:catalog:v1:page:1:size:2 holds the same page for 60 s
+  User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
+url: $CUSTOMER_APP_BASE_URL/products
+params:
+  - name: page
+    value: '1'
+  - name: size
+    value: '2'
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

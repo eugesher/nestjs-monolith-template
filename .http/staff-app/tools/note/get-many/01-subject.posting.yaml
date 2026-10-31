@@ -1,0 +1,18 @@
+name: 01-subject
+description: |-
+  e2e: Tools › Note › GET /api/tools/notes › should list the notes of one subject, newest first
+
+  Expect: 200 OK, notes 201 and 200
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/tools/notes
+params:
+  - name: subjectType
+    value: product
+  - name: subjectId
+    value: '100'
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

@@ -4,7 +4,7 @@ const nodeModules = builtinModules.map((name) => name.replace('/', '\\/')).join(
 const message = 'runs under plain node as an ES module';
 
 export const plainNode = {
-  files: ['migrations/**/*.ts', 'scripts/**/*.ts', 'docker-compose/**/*.ts'],
+  files: ['migrations/**/*.ts', 'scripts/**/*.ts', 'test/**/*.ts'],
   rules: {
     'no-restricted-globals': [
       'error',

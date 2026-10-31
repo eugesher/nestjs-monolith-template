@@ -207,6 +207,16 @@ describe('libs', () => {
     }).toPassArchitectureLint();
   });
 
+  it('the database lib MAY import the transaction, async context and logging packages', async () => {
+    await expect({
+      file: 'libs/database/src/__fixture__.ts',
+      code:
+        'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
+        'import { ClsService } from "nestjs-cls";\n' +
+        'import { PinoLogger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
+
   it('the health lib MAY import the packages its probes and use cases need', async () => {
     await expect({
       file: 'libs/health/src/infrastructure/probes/__fixture__.ts',

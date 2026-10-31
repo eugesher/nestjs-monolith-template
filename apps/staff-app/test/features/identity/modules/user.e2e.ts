@@ -1,0 +1,160 @@
+import { HttpStatus } from '@nestjs/common';
+import request from 'supertest';
+
+import { AppE2EContext } from '../../../context/app-e2e.context';
+
+export class UserE2E {
+  private constructor(private readonly ctx: AppE2EContext) {}
+
+  public static of(ctx: AppE2EContext): UserE2E {
+    return new UserE2E(ctx);
+  }
+
+  public handleRegister(): void {
+    describe('POST /api/identity/users', () => {
+      it('should create a user who can log in at once', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/users')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({
+            email: 'new-viewer@example.com',
+            password: 'new-viewer-password-please-change',
+            roles: ['viewer'],
+          })
+          .expect(HttpStatus.CREATED);
+
+        const login = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/auth/login')
+          .send({ email: 'new-viewer@example.com', password: 'new-viewer-password-please-change' })
+          .expect(HttpStatus.OK);
+
+        const actual = {
+          response: { body: response.body },
+          db: {
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user WHERE email = ? ORDER BY id',
+              ['new-viewer@example.com'],
+            ),
+            staff_user_roles: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
+              [response.body.id],
+            ),
+          },
+        };
+
+        expect(actual).toMatchSnapshot({
+          response: { body: { id: expect.any(String) } },
+          db: {
+            staff_user: [
+              {
+                id: expect.any(String),
+                password_hash: expect.any(String),
+                created_at: expect.any(Date),
+              },
+            ],
+            staff_user_roles: [{ user_id: expect.any(String) }],
+          },
+        });
+        expect(actual).toMatchObject({
+          db: {
+            staff_user: [{ id: response.body.id }],
+            staff_user_roles: [{ user_id: response.body.id }],
+          },
+        });
+        expect(response.body.id).toMatch(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+        );
+        expect(actual.db.staff_user[0].password_hash).toMatch(
+          /^\$argon2id\$v=19\$m=19456,p=1,t=2\$/,
+        );
+        expect(login.body).toEqual({ accessToken: expect.any(String) });
+      });
+
+      it('should let one of two simultaneous registrations with one email through and refuse the other with 409', async () => {
+        const body = {
+          email: 'race-viewer@example.com',
+          password: 'race-viewer-password-please-change',
+          roles: ['viewer'],
+        };
+
+        const responses = await Promise.all([
+          request(this.ctx.app.getHttpServer())
+            .post('/api/identity/users')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send(body),
+          request(this.ctx.app.getHttpServer())
+            .post('/api/identity/users')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send(body),
+        ]);
+        const statuses = responses.map((response) => response.status).sort();
+        const refused = responses.find((response) => 'code' in response.body);
+
+        expect({
+          statuses,
+          refused: { body: refused?.body },
+          db: {
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT email FROM staff_user WHERE email = ? ORDER BY id',
+              ['race-viewer@example.com'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should refuse a taken email in another case with 409', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/users')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({
+            email: 'EDITOR@example.com',
+            password: 'another-password-please-change',
+            roles: ['viewer'],
+          })
+          .expect(HttpStatus.CONFLICT);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT id, email FROM staff_user WHERE email = ? ORDER BY id',
+              ['editor@example.com'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+    });
+  }
+
+  public handleAssignRole(): void {
+    describe('POST /api/identity/users/:userId/roles', () => {
+      it('should grant a role and answer 200', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/users/00000000-0000-4000-8000-000000000004/roles')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ role: 'editor' })
+          .expect(HttpStatus.OK);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            staff_user_roles: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
+              ['00000000-0000-4000-8000-000000000004'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should answer 404 for an unknown user', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/users/00000000-0000-4000-8000-000000000099/roles')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ role: 'editor' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+    });
+  }
+}

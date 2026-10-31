@@ -1,1125 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
-{
-  "response": {
-    "body": {
-      "email": "viewer@example.com",
-      "id": "00000000-0000-4000-8000-000000000003",
-      "roles": [
-        "viewer",
-      ],
-    },
-  },
-  "roles": {
-    "error": "Forbidden",
-    "message": "Insufficient permissions",
-    "statusCode": 403,
-  },
-}
-`;
-
-exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
-{
-  "claims": [
-    "exp",
-    "iat",
-    "sub",
-  ],
-  "lifetime": 2592000,
-  "me": {
-    "email": "editor@example.com",
-    "id": "00000000-0000-4000-8000-000000000002",
-    "roles": [
-      "editor",
-    ],
-  },
-  "response": {
-    "body": {
-      "accessToken": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_INACTIVE",
-      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "email must be shorter than or equal to 255 characters",
-        "email must be an email",
-        "password must be shorter than or equal to 256 characters",
-        "password must be longer than or equal to 1 characters",
-        "password must be a string",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
-{
-  "response": {
-    "body": {
-      "app": "staff-app",
-      "status": "ok",
-      "uptimeSeconds": Any<Number>,
-    },
-  },
-}
-`;
-
-exports[`App Health GET /api/health/ready should report readiness of the database and the cache 1`] = `
-{
-  "response": {
-    "body": {
-      "dependencies": {
-        "cache": {
-          "latencyMs": Any<Number>,
-          "status": "ok",
-        },
-        "database": {
-          "latencyMs": Any<Number>,
-          "status": "ok",
-        },
-      },
-      "status": "ready",
-    },
-  },
-}
-`;
-
-exports[`App Iam GET /api/iam/roles should list the roles with their permissions from the database 1`] = `
-{
-  "response": {
-    "body": [
-      {
-        "name": "admin",
-        "permissionCodes": [
-          "iam:assign",
-          "iam:role-edit",
-          "iam:user-create",
-          "ledger:read",
-          "order:read",
-          "product:archive",
-          "product:read",
-          "product:restock",
-          "product:write",
-        ],
-      },
-      {
-        "name": "editor",
-        "permissionCodes": [
-          "ledger:read",
-          "order:read",
-          "product:archive",
-          "product:read",
-          "product:restock",
-          "product:write",
-        ],
-      },
-      {
-        "name": "viewer",
-        "permissionCodes": [
-          "ledger:read",
-          "order:read",
-          "product:read",
-        ],
-      },
-    ],
-  },
-}
-`;
-
-exports[`App Iam GET /api/iam/roles should refuse a caller without iam:assign 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Iam POST /api/iam/users should create a user who can log in at once 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "created_at": Any<Date>,
-        "email": "new-viewer@example.com",
-        "id": Any<String>,
-        "password_hash": Any<String>,
-        "status": "active",
-      },
-    ],
-    "staff_user_roles": [
-      {
-        "role_id": 3,
-        "user_id": Any<String>,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "email": "new-viewer@example.com",
-      "id": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Iam POST /api/iam/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "email": "race-viewer@example.com",
-      },
-    ],
-  },
-  "refused": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email race-viewer@example.com is already registered",
-      "statusCode": 409,
-    },
-  },
-  "statuses": [
-    201,
-    409,
-  ],
-}
-`;
-
-exports[`App Iam POST /api/iam/users should refuse a taken email in another case with 409 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "email": "editor@example.com",
-        "id": "00000000-0000-4000-8000-000000000002",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email editor@example.com is already registered",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Iam POST /api/iam/users/:userId/roles should answer 404 for an unknown user 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_NOT_FOUND",
-      "message": "User 00000000-0000-4000-8000-000000000099 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Iam POST /api/iam/users/:userId/roles should grant a role and answer 200 1`] = `
-{
-  "db": {
-    "staff_user_roles": [
-      {
-        "role_id": 2,
-        "user_id": "00000000-0000-4000-8000-000000000004",
-      },
-      {
-        "role_id": 3,
-        "user_id": "00000000-0000-4000-8000-000000000004",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "id": "00000000-0000-4000-8000-000000000004",
-      "roles": [
-        "viewer",
-        "editor",
-      ],
-    },
-  },
-}
-`;
-
-exports[`App Iam PUT /api/iam/roles/:role/permissions should answer 404 for an unknown role 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_ROLE_NOT_FOUND",
-      "message": "Role auditor was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
-{
-  "db": {
-    "staff_role_permissions": [
-      {
-        "permission_id": 1,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 7,
-        "role_id": 3,
-      },
-      {
-        "permission_id": 10,
-        "role_id": 3,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
-{
-  "before": {
-    "status": 200,
-  },
-  "db": {
-    "staff_role_permissions": [
-      {
-        "permission_id": 8,
-        "role_id": 3,
-      },
-    ],
-  },
-  "ledger": {
-    "error": "Forbidden",
-    "message": "Insufficient permissions",
-    "statusCode": 403,
-  },
-  "response": {
-    "body": {
-      "name": "viewer",
-      "permissionCodes": [
-        "product:write",
-      ],
-    },
-  },
-}
-`;
-
-exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "action": "ProductCreated",
-          "correlationId": "seed-correlation-id",
-          "id": "400",
-          "occurredAt": "2026-01-01T00:00:00.000Z",
-          "operationKey": "product-created:100",
-          "payload": {
-            "name": "Seeded reference product",
-            "sku": "SKU-0001",
-          },
-          "recordedAt": "2026-01-01T00:00:00.000Z",
-          "subjectId": "100",
-          "subjectType": "product",
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 1,
-    },
-  },
-}
-`;
-
-exports[`App Ledger GET /api/ledger should refuse a malformed page with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "page must not be less than 1",
-        "page must be an integer number",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should filter by resolution 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "authorId": "00000000-0000-4000-8000-000000000001",
-          "body": "Already handled.",
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "202",
-          "resolved": true,
-          "subjectId": "101",
-          "subjectType": "product",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 2,
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 1,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should list only the notes of the caller, with no permission needed 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [],
-      "page": 1,
-      "size": 20,
-      "total": 0,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should list the notes of one subject, newest first 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "authorId": "00000000-0000-4000-8000-000000000001",
-          "body": "Check the supplier.",
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "201",
-          "resolved": false,
-          "subjectId": "100",
-          "subjectType": "product",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-        {
-          "authorId": "00000000-0000-4000-8000-000000000001",
-          "body": "Customer called about this.",
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "id": "200",
-          "resolved": false,
-          "subjectId": "100",
-          "subjectType": "product",
-          "updatedAt": "2026-01-01T00:00:00.000Z",
-          "version": 1,
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 2,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should refuse a resolution that is not a boolean with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "resolved must be a boolean value",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes should refuse half of a subject filter with 400 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "NOTE_SUBJECT_INVALID",
-      "message": "A subject filter needs both subjectType and subjectId, or neither",
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId should answer 404 for a missing note 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 299 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId should hide the note of another staff user with 404 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 200 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId should read one note 1`] = `
-{
-  "response": {
-    "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
-      "body": "Already handled.",
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "id": "202",
-      "resolved": true,
-      "subjectId": "101",
-      "subjectType": "product",
-      "updatedAt": "2026-01-01T00:00:00.000Z",
-      "version": 2,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId should refuse an id that is not a number with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "noteId must be a positive integer",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId/revisions should answer 404 for the revisions of a missing note 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 299 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId/revisions should hide the revisions of a note of another staff user with 404 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 202 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of a note 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "bodyAfter": "Already handled.",
-          "bodyBefore": "Handled soon.",
-          "correlationId": "seed-correlation-id",
-          "editorId": "00000000-0000-4000-8000-000000000001",
-          "id": "200",
-          "noteId": "202",
-          "noteVersion": 2,
-          "recordedAt": "2026-01-01T00:00:00.000Z",
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 1,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Edited with the same body.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "204",
-        "resolved": 0,
-        "subject_id": "T-2",
-        "subject_type": "ticket",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-    "note_revision": [],
-  },
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 204 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId should refuse to edit a resolved note with 409 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Already handled.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "202",
-        "resolved": 1,
-        "subject_id": "101",
-        "subject_type": "product",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 2,
-      },
-    ],
-    "note_revision": [
-      {
-        "body_after": "Already handled.",
-        "body_before": "Handled soon.",
-        "correlation_id": "seed-correlation-id",
-        "editor_id": "00000000-0000-4000-8000-000000000001",
-        "id": "200",
-        "note_id": "202",
-        "note_version": 2,
-        "recorded_at": 2026-01-01T00:00:00.000Z,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "NOTE_RESOLVED",
-      "message": "Note 202 is resolved and can no longer be modified",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId should rewrite the body and record a revision under the correlation id 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Customer called twice; refunded manually.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "200",
-        "resolved": 0,
-        "subject_id": "100",
-        "subject_type": "product",
-        "updated_at": Any<Date>,
-        "version": 2,
-      },
-    ],
-    "note_revision": [
-      {
-        "body_after": "Customer called twice; refunded manually.",
-        "body_before": "Customer called about this.",
-        "correlation_id": "e2e-note-edit",
-        "editor_id": "00000000-0000-4000-8000-000000000001",
-        "id": Any<String>,
-        "note_id": "200",
-        "note_version": 2,
-        "recorded_at": Any<Date>,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
-      "body": "Customer called twice; refunded manually.",
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "id": "200",
-      "resolved": false,
-      "subjectId": "100",
-      "subjectType": "product",
-      "updatedAt": Any<String>,
-      "version": 2,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId should roll the note back when the revision insert fails 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Edited while a revision is taken.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "203",
-        "resolved": 0,
-        "subject_id": "T-1",
-        "subject_type": "ticket",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-    "note_revision": [
-      {
-        "body_after": "Taken after.",
-        "id": "299",
-        "note_id": "203",
-        "note_version": 2,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "error": "Conflict",
-      "message": "Resource already exists",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId should write nothing for an edit to the current body 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Edited with the same body.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "204",
-        "resolved": 0,
-        "subject_id": "T-2",
-        "subject_type": "ticket",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-    "note_revision": [],
-  },
-  "response": {
-    "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
-      "body": "Edited with the same body.",
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "id": "204",
-      "resolved": false,
-      "subjectId": "T-2",
-      "subjectType": "ticket",
-      "updatedAt": "2026-01-01T00:00:00.000Z",
-      "version": 1,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId/resolve should hide the note of another staff user with 404 and resolve nothing 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Edited with the same body.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "204",
-        "resolved": 0,
-        "subject_id": "T-2",
-        "subject_type": "ticket",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "NOTE_NOT_FOUND",
-      "message": "Note 204 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Already handled.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "202",
-        "resolved": 1,
-        "subject_id": "101",
-        "subject_type": "product",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 2,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "NOTE_RESOLVED",
-      "message": "Note 202 is resolved and can no longer be modified",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Note PATCH /api/notes/:noteId/resolve should resolve a note 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Check the supplier.",
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "201",
-        "resolved": 1,
-        "subject_id": "100",
-        "subject_type": "product",
-        "updated_at": Any<Date>,
-        "version": 2,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
-      "body": "Check the supplier.",
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "id": "201",
-      "resolved": true,
-      "subjectId": "100",
-      "subjectType": "product",
-      "updatedAt": Any<String>,
-      "version": 2,
-    },
-  },
-}
-`;
-
-exports[`App Note POST /api/notes should create an unresolved note on an opaque subject 1`] = `
-{
-  "db": {
-    "note": [
-      {
-        "author_id": "00000000-0000-4000-8000-000000000001",
-        "body": "Customer called.",
-        "created_at": Any<Date>,
-        "deleted_at": null,
-        "id": Any<String>,
-        "resolved": 0,
-        "subject_id": "T-900",
-        "subject_type": "support-ticket",
-        "updated_at": Any<Date>,
-        "version": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
-      "body": "Customer called.",
-      "createdAt": Any<String>,
-      "id": Any<String>,
-      "resolved": false,
-      "subjectId": "T-900",
-      "subjectType": "support-ticket",
-      "updatedAt": Any<String>,
-      "version": 1,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders should answer the page window it was asked for 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000101",
-          "id": "600",
-        },
-      ],
-      "page": 2,
-      "size": 1,
-      "total": 2,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders should list the orders of every customer, newest first 1`] = `
-{
-  "response": {
-    "body": {
-      "items": [
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000102",
-          "id": "601",
-        },
-        {
-          "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000101",
-          "id": "600",
-        },
-      ],
-      "page": 1,
-      "size": 20,
-      "total": 2,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders should refuse a caller without a token with 401 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders should refuse a malformed page with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "page must not be less than 1",
-        "page must be an integer number",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders should refuse a role without order:read with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders/:orderId should answer an unknown order with 404 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "ORDER_NOT_FOUND",
-      "message": "Order 999 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders/:orderId should read the order of any customer with its products 1`] = `
-{
-  "response": {
-    "body": {
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "customerId": "00000000-0000-4000-8000-000000000101",
-      "id": "600",
-      "products": [
-        {
-          "id": "600",
-          "name": "Seeded reference product",
-          "productId": "100",
-          "sku": "SKU-0001",
-        },
-        {
-          "id": "601",
-          "name": "Sold out product",
-          "productId": "106",
-          "sku": "SKU-0007",
-        },
-      ],
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders/:orderId should refuse a caller without a token with 401 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders/:orderId should refuse a malformed order id with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "orderId must be a positive integer",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Order GET /api/orders/:orderId should refuse a role without order:read with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Product GET /api/products should list the catalog, newest first 1`] = `
+exports[`App Catalog Product GET /api/catalog/products should list the catalog, newest first 1`] = `
 {
   "response": {
     "body": {
@@ -1196,7 +77,7 @@ exports[`App Product GET /api/products should list the catalog, newest first 1`]
 }
 `;
 
-exports[`App Product GET /api/products/:productId should answer an unknown product with 404 1`] = `
+exports[`App Catalog Product GET /api/catalog/products/:productId should answer an unknown product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1208,7 +89,7 @@ exports[`App Product GET /api/products/:productId should answer an unknown produ
 }
 `;
 
-exports[`App Product GET /api/products/:productId should read a product 1`] = `
+exports[`App Catalog Product GET /api/catalog/products/:productId should read a product 1`] = `
 {
   "response": {
     "body": {
@@ -1224,78 +105,7 @@ exports[`App Product GET /api/products/:productId should read a product 1`] = `
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/archive should archive and queue one ledger record under the correlation id 1`] = `
-{
-  "db": {
-    "product": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "103",
-        "name": "Product to archive",
-        "sku": "SKU-0004",
-        "status": "archived",
-        "updated_at": Any<Date>,
-        "version": 2,
-      },
-    ],
-  },
-  "ledger_record_queue": [
-    {
-      "action": "ProductArchived",
-      "correlationId": "e2e-product-archive",
-      "occurredAt": Any<String>,
-      "operationKey": "product-archived:103",
-      "payload": {
-        "previousStatus": "active",
-        "sku": "SKU-0004",
-      },
-      "subjectId": "103",
-      "subjectType": "product",
-    },
-  ],
-  "response": {
-    "body": {
-      "createdAt": "2026-01-01T00:00:00.000Z",
-      "id": "103",
-      "name": "Product to archive",
-      "sku": "SKU-0004",
-      "status": "archived",
-      "updatedAt": Any<String>,
-      "version": 2,
-    },
-  },
-}
-`;
-
-exports[`App Product PATCH /api/products/:productId/archive should refuse to archive an archived product with 409 1`] = `
-{
-  "db": {
-    "product": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "105",
-        "name": "Archived product",
-        "sku": "SKU-0006",
-        "status": "archived",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 2,
-      },
-    ],
-  },
-  "ledger_record_queue": [],
-  "response": {
-    "body": {
-      "code": "PRODUCT_ALREADY_ARCHIVED",
-      "message": "Product 105 is archived and can no longer be modified",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Product PATCH /api/products/:productId/name should apply every one of concurrent renames without If-Match 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should apply every one of concurrent updates without If-Match 1`] = `
 {
   "db": {
     "product": [
@@ -1316,7 +126,37 @@ exports[`App Product PATCH /api/products/:productId/name should apply every one 
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should refuse a malformed If-Match with 400 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should keep the product as is for a body without fields 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "101",
+        "name": "Seeded draft product",
+        "sku": "SKU-0002",
+        "status": "draft",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "101",
+      "name": "Seeded draft product",
+      "sku": "SKU-0002",
+      "status": "draft",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should refuse a malformed If-Match with 400 1`] = `
 {
   "response": {
     "body": {
@@ -1328,33 +168,7 @@ exports[`App Product PATCH /api/products/:productId/name should refuse a malform
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should refuse a rename by a viewer with 403 1`] = `
-{
-  "db": {
-    "product": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "deleted_at": null,
-        "id": "103",
-        "name": "Product to archive",
-        "sku": "SKU-0004",
-        "status": "active",
-        "updated_at": 2026-01-01T00:00:00.000Z,
-        "version": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Product PATCH /api/products/:productId/name should refuse a stale If-Match with 409 and the current version 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should refuse a stale If-Match with 409 and the current version 1`] = `
 {
   "db": {
     "product": [
@@ -1383,8 +197,37 @@ exports[`App Product PATCH /api/products/:productId/name should refuse a stale I
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should rename with a quoted If-Match and bump the version 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should refuse an update by a viewer with 403 1`] = `
 {
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "103",
+        "name": "Product to archive",
+        "sku": "SKU-0004",
+        "status": "active",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PATCH /api/catalog/products/:productId should update the name with a quoted If-Match, bump the version and drop the cached customer catalog 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
   "db": {
     "product": [
       {
@@ -1413,7 +256,7 @@ exports[`App Product PATCH /api/products/:productId/name should rename with a qu
 }
 `;
 
-exports[`App Product POST /api/products should create a draft, record the key and queue the ledger record under the correlation id 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should create a draft, record the key and queue the ledger record under the correlation id 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -1467,7 +310,7 @@ exports[`App Product POST /api/products should create a draft, record the key an
 }
 `;
 
-exports[`App Product POST /api/products should refuse a create without a key with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a create without a key with 400 1`] = `
 {
   "db": {
     "product": [],
@@ -1482,7 +325,7 @@ exports[`App Product POST /api/products should refuse a create without a key wit
 }
 `;
 
-exports[`App Product POST /api/products should refuse a key of 129 characters with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a key of 129 characters with 400 1`] = `
 {
   "db": {
     "product": [],
@@ -1497,7 +340,7 @@ exports[`App Product POST /api/products should refuse a key of 129 characters wi
 }
 `;
 
-exports[`App Product POST /api/products should refuse a taken sku with 409 and release the key 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a taken sku with 409 and release the key 1`] = `
 {
   "db": {
     "idempotency_key": [],
@@ -1518,7 +361,7 @@ exports[`App Product POST /api/products should refuse a taken sku with 409 and r
 }
 `;
 
-exports[`App Product POST /api/products should refuse the same key with another body with 422 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse the same key with another body with 422 1`] = `
 {
   "db": {
     "product": [
@@ -1538,7 +381,7 @@ exports[`App Product POST /api/products should refuse the same key with another 
 }
 `;
 
-exports[`App Product POST /api/products should replay the same response for the same key and body without a second product 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should replay the same response for the same key and body without a second product 1`] = `
 {
   "db": {
     "product": [
@@ -1554,8 +397,13 @@ exports[`App Product POST /api/products should replay the same response for the 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should add the units to a sold-out product, record the key and queue the ledger record under the correlation id 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
 {
+  "cache": {
+    "keys": [
+      "acme:catalog:v1:page:1:size:20",
+    ],
+  },
   "db": {
     "idempotency_key": [
       {
@@ -1614,7 +462,7 @@ exports[`App Product POST /api/products/:productId/stock should add the units to
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should answer a deleted product with 404 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer a deleted product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1626,7 +474,7 @@ exports[`App Product POST /api/products/:productId/stock should answer a deleted
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should answer an unknown product with 404 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer an unknown product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1638,7 +486,7 @@ exports[`App Product POST /api/products/:productId/stock should answer an unknow
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1652,7 +500,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a quantit
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1666,7 +514,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a quantit
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
 {
   "response": {
     "body": {
@@ -1678,7 +526,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a restock
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a restock without a key with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock without a key with 400 1`] = `
 {
   "response": {
     "body": {
@@ -1690,7 +538,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a restock
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
 {
   "db": {
     "product_stock": [
@@ -1710,28 +558,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse the same 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse to restock an archived product with 409 1`] = `
-{
-  "db": {
-    "idempotency_key": [],
-    "product_stock": [
-      {
-        "id": "707",
-        "quantity": 4,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "PRODUCT_ALREADY_ARCHIVED",
-      "message": "Product 105 is archived and can no longer be modified",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Product POST /api/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
 {
   "db": {
     "product_stock": [
@@ -1766,7 +593,7 @@ exports[`App Product POST /api/products/:productId/stock should replay the same 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should restock a draft 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock a draft 1`] = `
 {
   "response": {
     "body": {
@@ -1777,7 +604,1391 @@ exports[`App Product POST /api/products/:productId/stock should restock a draft 
 }
 `;
 
-exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a reminder and drop the cached summary 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock an archived product and leave it archived 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "id": "105",
+        "status": "archived",
+        "version": 2,
+      },
+    ],
+    "product_stock": [
+      {
+        "quantity": 4,
+      },
+      {
+        "quantity": 5,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    "ProductRestocked",
+  ],
+  "response": {
+    "body": {
+      "productId": "105",
+      "quantity": 9,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should archive, queue one ledger record under the correlation id and drop the cached customer catalog 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "103",
+        "name": "Product to archive",
+        "sku": "SKU-0004",
+        "status": "archived",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "ProductArchived",
+      "correlationId": "e2e-product-archive",
+      "occurredAt": Any<String>,
+      "operationKey": "product-archived:103:2",
+      "payload": {
+        "previousStatus": "active",
+        "sku": "SKU-0004",
+      },
+      "subjectId": "103",
+      "subjectType": "product",
+    },
+  ],
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "103",
+      "name": "Product to archive",
+      "sku": "SKU-0004",
+      "status": "archived",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should refuse to archive an archived product with 409 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "105",
+        "name": "Archived product",
+        "sku": "SKU-0006",
+        "status": "archived",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 2,
+      },
+    ],
+  },
+  "ledger_record_queue": [],
+  "response": {
+    "body": {
+      "code": "PRODUCT_ALREADY_ARCHIVED",
+      "message": "Product 105 is already archived",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should answer 404 for an unknown product 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should keep a published product as is and queue nothing 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "100",
+        "name": "Seeded reference product",
+        "sku": "SKU-0001",
+        "status": "active",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "ledger_record_queue": [],
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "100",
+      "name": "Seeded reference product",
+      "sku": "SKU-0001",
+      "status": "active",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should publish a draft, queue one ledger record under the correlation id and drop the cached customer catalog 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "101",
+        "name": "Seeded draft product",
+        "sku": "SKU-0002",
+        "status": "active",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "ProductPublished",
+      "correlationId": "e2e-product-publish",
+      "occurredAt": Any<String>,
+      "operationKey": "product-published:101:2",
+      "payload": {
+        "previousStatus": "draft",
+        "sku": "SKU-0002",
+      },
+      "subjectId": "101",
+      "subjectType": "product",
+    },
+  ],
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "101",
+      "name": "Seeded draft product",
+      "sku": "SKU-0002",
+      "status": "active",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should publish an archived product again under a ledger record of its new version 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "105",
+        "name": "Archived product",
+        "sku": "SKU-0006",
+        "status": "active",
+        "updated_at": Any<Date>,
+        "version": 3,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "ProductPublished",
+      "correlationId": "e2e-product-republish",
+      "occurredAt": Any<String>,
+      "operationKey": "product-published:105:3",
+      "payload": {
+        "previousStatus": "archived",
+        "sku": "SKU-0006",
+      },
+      "subjectId": "105",
+      "subjectType": "product",
+    },
+  ],
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "105",
+      "name": "Archived product",
+      "sku": "SKU-0006",
+      "status": "active",
+      "updatedAt": Any<String>,
+      "version": 3,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should refuse a publication by a viewer with 403 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "102",
+        "name": "Renamed product",
+        "sku": "SKU-0003",
+        "status": "draft",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
+{
+  "response": {
+    "body": {
+      "app": "staff-app",
+      "status": "ok",
+      "uptimeSeconds": Any<Number>,
+    },
+  },
+}
+`;
+
+exports[`App Health GET /api/health/ready should report readiness of the database and the cache 1`] = `
+{
+  "response": {
+    "body": {
+      "dependencies": {
+        "cache": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+        "database": {
+          "latencyMs": Any<Number>,
+          "status": "ok",
+        },
+      },
+      "status": "ready",
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth GET /api/identity/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a disabled user 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth GET /api/identity/auth/me should take the roles from the database, not from the token claims 1`] = `
+{
+  "response": {
+    "body": {
+      "email": "viewer@example.com",
+      "id": "00000000-0000-4000-8000-000000000003",
+      "roles": [
+        "viewer",
+      ],
+    },
+  },
+  "roles": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+}
+`;
+
+exports[`App Identity Auth POST /api/identity/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+{
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
+  "lifetime": 2592000,
+  "me": {
+    "email": "editor@example.com",
+    "id": "00000000-0000-4000-8000-000000000002",
+    "roles": [
+      "editor",
+    ],
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth POST /api/identity/auth/login should refuse a disabled user with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth POST /api/identity/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth POST /api/identity/auth/login should refuse an empty body with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be shorter than or equal to 255 characters",
+        "email must be an email",
+        "password must be shorter than or equal to 256 characters",
+        "password must be longer than or equal to 1 characters",
+        "password must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Identity Auth POST /api/identity/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Identity Role GET /api/identity/roles should list the roles with their permissions from the database 1`] = `
+{
+  "response": {
+    "body": [
+      {
+        "name": "admin",
+        "permissionCodes": [
+          "iam:assign",
+          "iam:role-edit",
+          "iam:user-create",
+          "ledger:read",
+          "order:read",
+          "product:archive",
+          "product:read",
+          "product:restock",
+          "product:write",
+        ],
+      },
+      {
+        "name": "editor",
+        "permissionCodes": [
+          "ledger:read",
+          "order:read",
+          "product:archive",
+          "product:read",
+          "product:restock",
+          "product:write",
+        ],
+      },
+      {
+        "name": "viewer",
+        "permissionCodes": [
+          "ledger:read",
+          "order:read",
+          "product:read",
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Identity Role GET /api/identity/roles should refuse a caller without iam:assign 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should answer 404 for an unknown role 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role auditor was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
+{
+  "db": {
+    "staff_role_permissions": [
+      {
+        "permission_id": 1,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 7,
+        "role_id": 3,
+      },
+      {
+        "permission_id": 10,
+        "role_id": 3,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
+{
+  "before": {
+    "status": 200,
+  },
+  "db": {
+    "staff_role_permissions": [
+      {
+        "permission_id": 8,
+        "role_id": 3,
+      },
+    ],
+  },
+  "ledger": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+  "response": {
+    "body": {
+      "name": "viewer",
+      "permissionCodes": [
+        "product:write",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Identity User POST /api/identity/users should create a user who can log in at once 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "created_at": Any<Date>,
+        "email": "new-viewer@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "staff_user_roles": [
+      {
+        "role_id": 3,
+        "user_id": Any<String>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "email": "new-viewer@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Identity User POST /api/identity/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "email": "race-viewer@example.com",
+      },
+    ],
+  },
+  "refused": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email race-viewer@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
+exports[`App Identity User POST /api/identity/users should refuse a taken email in another case with 409 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "email": "editor@example.com",
+        "id": "00000000-0000-4000-8000-000000000002",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email editor@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Identity User POST /api/identity/users/:userId/roles should answer 404 for an unknown user 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_NOT_FOUND",
+      "message": "User 00000000-0000-4000-8000-000000000099 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Identity User POST /api/identity/users/:userId/roles should grant a role and answer 200 1`] = `
+{
+  "db": {
+    "staff_user_roles": [
+      {
+        "role_id": 2,
+        "user_id": "00000000-0000-4000-8000-000000000004",
+      },
+      {
+        "role_id": 3,
+        "user_id": "00000000-0000-4000-8000-000000000004",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "roles": [
+        "viewer",
+        "editor",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "action": "ProductCreated",
+          "correlationId": "seed-correlation-id",
+          "id": "400",
+          "occurredAt": "2026-01-01T00:00:00.000Z",
+          "operationKey": "product-created:100",
+          "payload": {
+            "name": "Seeded reference product",
+            "sku": "SKU-0001",
+          },
+          "recordedAt": "2026-01-01T00:00:00.000Z",
+          "subjectId": "100",
+          "subjectType": "product",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Ledger GET /api/ledger should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should answer the page window it was asked for 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000101",
+          "id": "600",
+        },
+      ],
+      "page": 2,
+      "size": 1,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should list the orders of every customer, newest first 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000102",
+          "id": "601",
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "00000000-0000-4000-8000-000000000101",
+          "id": "600",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should refuse a caller without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should refuse a role without order:read with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should answer an unknown order with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should read the order of any customer with its products 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "customerId": "00000000-0000-4000-8000-000000000101",
+      "id": "600",
+      "products": [
+        {
+          "id": "600",
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+        {
+          "id": "601",
+          "name": "Sold out product",
+          "productId": "106",
+          "sku": "SKU-0007",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a caller without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a malformed order id with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "orderId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a role without order:read with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes should filter by resolution 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Already handled.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "202",
+          "resolved": true,
+          "subjectId": "101",
+          "subjectType": "product",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 2,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes should list only the notes of the caller, with no permission needed 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [],
+      "page": 1,
+      "size": 20,
+      "total": 0,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes should list the notes of one subject, newest first 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Check the supplier.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "201",
+          "resolved": false,
+          "subjectId": "100",
+          "subjectType": "product",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "authorId": "00000000-0000-4000-8000-000000000001",
+          "body": "Customer called about this.",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "200",
+          "resolved": false,
+          "subjectId": "100",
+          "subjectType": "product",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 2,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes should refuse a resolution that is not a boolean with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "resolved must be a boolean value",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes should refuse half of a subject filter with 400 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_SUBJECT_INVALID",
+      "message": "A subject filter needs both subjectType and subjectId, or neither",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId should answer 404 for a missing note 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 299 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId should hide the note of another staff user with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 200 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId should read one note 1`] = `
+{
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Already handled.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "202",
+      "resolved": true,
+      "subjectId": "101",
+      "subjectType": "product",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId should refuse an id that is not a number with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "noteId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should answer 404 for the revisions of a missing note 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 299 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should hide the revisions of a note of another staff user with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 202 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the revisions of a note 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "bodyAfter": "Already handled.",
+          "bodyBefore": "Handled soon.",
+          "correlationId": "seed-correlation-id",
+          "editorId": "00000000-0000-4000-8000-000000000001",
+          "id": "200",
+          "noteId": "202",
+          "noteVersion": 2,
+          "recordedAt": "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 204 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should refuse to edit a resolved note with 409 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Already handled.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "202",
+        "resolved": 1,
+        "subject_id": "101",
+        "subject_type": "product",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 2,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Already handled.",
+        "body_before": "Handled soon.",
+        "correlation_id": "seed-correlation-id",
+        "editor_id": "00000000-0000-4000-8000-000000000001",
+        "id": "200",
+        "note_id": "202",
+        "note_version": 2,
+        "recorded_at": 2026-01-01T00:00:00.000Z,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_RESOLVED",
+      "message": "Note 202 is resolved and can no longer be modified",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body and record a revision under the correlation id 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Customer called twice; refunded manually.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "200",
+        "resolved": 0,
+        "subject_id": "100",
+        "subject_type": "product",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Customer called twice; refunded manually.",
+        "body_before": "Customer called about this.",
+        "correlation_id": "e2e-note-edit",
+        "editor_id": "00000000-0000-4000-8000-000000000001",
+        "id": Any<String>,
+        "note_id": "200",
+        "note_version": 2,
+        "recorded_at": Any<Date>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Customer called twice; refunded manually.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "200",
+      "resolved": false,
+      "subjectId": "100",
+      "subjectType": "product",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should roll the note back when the revision insert fails 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited while a revision is taken.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "203",
+        "resolved": 0,
+        "subject_id": "T-1",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [
+      {
+        "body_after": "Taken after.",
+        "id": "299",
+        "note_id": "203",
+        "note_version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Conflict",
+      "message": "Resource already exists",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should write nothing for an edit to the current body 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+    "note_revision": [],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Edited with the same body.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "204",
+      "resolved": false,
+      "subjectId": "T-2",
+      "subjectType": "ticket",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should hide the note of another staff user with 404 and resolve nothing 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Edited with the same body.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "204",
+        "resolved": 0,
+        "subject_id": "T-2",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_NOT_FOUND",
+      "message": "Note 204 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Already handled.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "202",
+        "resolved": 1,
+        "subject_id": "101",
+        "subject_type": "product",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "NOTE_RESOLVED",
+      "message": "Note 202 is resolved and can no longer be modified",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should resolve a note 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Check the supplier.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "201",
+        "resolved": 1,
+        "subject_id": "100",
+        "subject_type": "product",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Check the supplier.",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "201",
+      "resolved": true,
+      "subjectId": "100",
+      "subjectType": "product",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Tools Note POST /api/tools/notes should create an unresolved note on an opaque subject 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "00000000-0000-4000-8000-000000000001",
+        "body": "Customer called.",
+        "created_at": Any<Date>,
+        "deleted_at": null,
+        "id": Any<String>,
+        "resolved": 0,
+        "subject_id": "T-900",
+        "subject_type": "support-ticket",
+        "updated_at": Any<Date>,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "authorId": "00000000-0000-4000-8000-000000000001",
+      "body": "Customer called.",
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "resolved": false,
+      "subjectId": "T-900",
+      "subjectType": "support-ticket",
+      "updatedAt": Any<String>,
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Tools Reminder DELETE /api/tools/reminders/:reminderId should soft-delete a reminder and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -1804,7 +2015,7 @@ exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a rem
 }
 `;
 
-exports[`App Reminder GET /api/reminders should filter by status 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders should filter by status 1`] = `
 {
   "response": {
     "body": {
@@ -1829,7 +2040,7 @@ exports[`App Reminder GET /api/reminders should filter by status 1`] = `
 }
 `;
 
-exports[`App Reminder GET /api/reminders should list the own reminders of the caller, soonest first, without deleted ones 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders should list the own reminders of the caller, soonest first, without deleted ones 1`] = `
 {
   "response": {
     "body": {
@@ -1898,7 +2109,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
 }
 `;
 
-exports[`App Reminder GET /api/reminders/summary should answer the cached summary 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders/summary should answer the cached summary 1`] = `
 {
   "response": {
     "body": {
@@ -1909,7 +2120,7 @@ exports[`App Reminder GET /api/reminders/summary should answer the cached summar
 }
 `;
 
-exports[`App Reminder GET /api/reminders/summary should compute the summary of the caller and cache it 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders/summary should compute the summary of the caller and cache it 1`] = `
 {
   "cache": {
     "keys": [
@@ -1928,7 +2139,7 @@ exports[`App Reminder GET /api/reminders/summary should compute the summary of t
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should answer 404 for a deleted reminder 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should answer 404 for a deleted reminder 1`] = `
 {
   "response": {
     "body": {
@@ -1940,7 +2151,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should answer 404 fo
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a reminder and drop the cached summary 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should complete a reminder and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -1977,7 +2188,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a re
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the reminder of another staff user with 404 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should hide the reminder of another staff user with 404 1`] = `
 {
   "db": {
     "reminder": [
@@ -2005,7 +2216,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the remi
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse a done reminder with 409 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should refuse a done reminder with 409 1`] = `
 {
   "response": {
     "body": {
@@ -2017,7 +2228,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse a done
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id that is not a number with 400 from validation 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should refuse an id that is not a number with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -2031,7 +2242,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id 
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -2068,7 +2279,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a remi
 }
 `;
 
-exports[`App Reminder POST /api/reminders should create a pending reminder on the date sent and drop the cached summary 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should create a pending reminder on the date sent and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -2105,7 +2316,7 @@ exports[`App Reminder POST /api/reminders should create a pending reminder on th
 }
 `;
 
-exports[`App Reminder POST /api/reminders should refuse a date that does not exist with 400 from the model 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should refuse a date that does not exist with 400 from the model 1`] = `
 {
   "response": {
     "body": {
@@ -2117,7 +2328,7 @@ exports[`App Reminder POST /api/reminders should refuse a date that does not exi
 }
 `;
 
-exports[`App Reminder POST /api/reminders should refuse an instant with 400 from validation 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should refuse an instant with 400 from validation 1`] = `
 {
   "response": {
     "body": {

@@ -1,0 +1,6 @@
+name: 05-without-token
+description: |-
+  e2e: Sales › Order › GET /api/sales/orders › should refuse a caller without a token with 401
+
+  Expect: 401 Unauthorized
+url: $STAFF_APP_BASE_URL/sales/orders

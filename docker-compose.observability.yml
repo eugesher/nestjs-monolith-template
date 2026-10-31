@@ -10,7 +10,7 @@ services:
     image: otel/opentelemetry-collector-contrib:0.164.0
     command: ['--config=/etc/otelcol-contrib/config.yaml']
     volumes:
-      - ./docker-compose/observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - ./opentelemetry-collector.config.yaml:/etc/otelcol-contrib/config.yaml:ro
     ports:
       - '4317:4317'
       - '4318:4318'
