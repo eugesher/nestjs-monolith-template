@@ -6,7 +6,7 @@ import { EnvHelper } from '@acme-libs/config';
 import { AppNameEnum } from '@acme-libs/kernel';
 
 export class ConfigSetupModule {
-  public static forRoot(): Promise<DynamicModule> {
+  public static async forRoot(): Promise<DynamicModule> {
     const development = !EnvHelper.isProduction();
     const envFilePath = EnvHelper.appEnvFilePaths(AppNameEnum.STAFF_APP);
     const options: ConfigModuleOptions = {
@@ -49,6 +49,6 @@ export class ConfigSetupModule {
       }),
     };
 
-    return ConfigModule.forRoot(options);
+    return await ConfigModule.forRoot(options);
   }
 }

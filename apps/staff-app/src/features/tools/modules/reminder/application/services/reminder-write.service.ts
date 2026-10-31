@@ -24,13 +24,13 @@ export class ReminderWriteService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public write(
+  public async write(
     command: IReminderWriteCommand,
     mutate: (reminder: ReminderModel) => void,
   ): Promise<ReminderModel> {
     const { reminderId } = command;
 
-    return OccRetryHelper.run(() => this.attempt(command, mutate), {
+    return await OccRetryHelper.run(() => this.attempt(command, mutate), {
       subject: 'Reminder',
       logger: this.logger,
       maxAttempts: this.occRetryAttempts,
@@ -70,7 +70,7 @@ export class ReminderWriteService {
       throw new ReminderWriteConflictError(reminderId, current.version);
     }
 
-    return this.load(reminderId);
+    return await this.load(reminderId);
   }
 
   private async load(reminderId: string): Promise<ReminderModel> {

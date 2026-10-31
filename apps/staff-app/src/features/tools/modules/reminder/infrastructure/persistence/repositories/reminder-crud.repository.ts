@@ -11,16 +11,16 @@ import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderCrudRepository implements IReminderCrudRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get reminders(): Repository<Reminder> {
-    return this.txHost.tx.getRepository(Reminder);
+  private get reminderRepository(): Repository<Reminder> {
+    return this.transactionHost.tx.getRepository(Reminder);
   }
 
   public async list(query: IReminderPageQuery): Promise<IPage<ReminderModel>> {
     const { page, size, ownerId, status } = query;
     const byStatus = status === undefined ? {} : { status };
-    const [reminders, total] = await this.reminders.findAndCount({
+    const [reminders, total] = await this.reminderRepository.findAndCount({
       where: { ownerId, ...byStatus },
       order: { dueOn: 'ASC', id: 'ASC' },
       skip: (page - 1) * size,

@@ -23,8 +23,6 @@ export class AuthMeUseCase {
       );
     }
 
-    const { id, email, roles } = subject;
-
-    return { id, email, roles };
+    return subject;
   }
 }

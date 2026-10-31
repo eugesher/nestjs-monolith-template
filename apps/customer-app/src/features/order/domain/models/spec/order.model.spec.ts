@@ -1,4 +1,3 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
 import { OrderModel } from '../order.model';
 
 describe('OrderModel', () => {
@@ -12,14 +11,12 @@ describe('OrderModel', () => {
             productId: '100',
             sku: 'SKU-0001',
             name: 'Lamp',
-            status: ProductStatusEnum.ACTIVE,
             quantity: 2,
           },
           {
             productId: '103',
             sku: 'SKU-0004',
             name: 'Chair',
-            status: ProductStatusEnum.ACTIVE,
             quantity: 3,
           },
         ],
@@ -58,24 +55,6 @@ describe('OrderModel', () => {
       );
     });
 
-    it.each([ProductStatusEnum.DRAFT, ProductStatusEnum.ARCHIVED])(
-      'refuses a %s product with ORDER_PRODUCT_NOT_FOUND',
-      (status) => {
-        expect(() =>
-          OrderModel.place({
-            customerId: 'customer-1',
-            productIds: ['101'],
-            stock: [{ productId: '101', sku: 'SKU-0002', name: 'Desk', status, quantity: 5 }],
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: 'ORDER_PRODUCT_NOT_FOUND',
-            message: 'Product 101 was not found',
-          }) as Error,
-        );
-      },
-    );
-
     it('refuses more units than in stock with ORDER_STOCK_INSUFFICIENT', () => {
       expect(() =>
         OrderModel.place({
@@ -86,7 +65,6 @@ describe('OrderModel', () => {
               productId: '100',
               sku: 'SKU-0001',
               name: 'Lamp',
-              status: ProductStatusEnum.ACTIVE,
               quantity: 2,
             },
           ],
@@ -109,7 +87,6 @@ describe('OrderModel', () => {
             productId: '100',
             sku: 'SKU-0001',
             name: 'Lamp',
-            status: ProductStatusEnum.ACTIVE,
             quantity: 2,
           },
         ],

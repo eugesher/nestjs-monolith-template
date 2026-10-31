@@ -14,15 +14,15 @@ import {
 
 @Injectable()
 export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
   public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size } = query;
-    const [products, total] = await this.products.findAndCount({
+    const [products, total] = await this.productRepository.findAndCount({
       select: { id: true, sku: true, name: true },
       where: { status: ProductStatusEnum.ACTIVE },
       order: { id: 'ASC' },

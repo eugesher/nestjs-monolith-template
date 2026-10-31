@@ -13,11 +13,11 @@ export class CatalogController {
   @Get()
   @ApiOperation({ summary: 'List the active products, by id' })
   @ApiOkResponse({ type: CatalogProductPageResponseDto })
-  public handleGetMany(
+  public async handleGetMany(
     @Query() query: CatalogGetManyRequestDto,
   ): Promise<CatalogProductPageResponseDto> {
     const { page, size } = query;
 
-    return this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, size });
   }
 }

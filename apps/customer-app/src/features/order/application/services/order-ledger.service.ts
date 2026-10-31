@@ -22,7 +22,7 @@ export class OrderLedgerService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public recordPlaced(command: IOrderLedgerRecordPlacedCommand): Promise<void> {
+  public async recordPlaced(command: IOrderLedgerRecordPlacedCommand): Promise<void> {
     const { orderId, customerId, productIds } = command;
     const operationKey = `order-placed:${orderId}`;
     const occurredAt = new Date().toISOString();
@@ -37,7 +37,7 @@ export class OrderLedgerService {
       correlationId,
     };
 
-    return ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
+    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
       maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,

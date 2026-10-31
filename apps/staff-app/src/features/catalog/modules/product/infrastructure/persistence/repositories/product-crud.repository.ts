@@ -11,15 +11,15 @@ import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCrudRepository implements IProductCrudRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
   public async list(query: IProductPageQuery): Promise<IPage<ProductModel>> {
     const { page, size } = query;
-    const [items, total] = await this.products.findAndCount({
+    const [items, total] = await this.productRepository.findAndCount({
       order: { id: 'DESC' },
       skip: (page - 1) * size,
       take: size,

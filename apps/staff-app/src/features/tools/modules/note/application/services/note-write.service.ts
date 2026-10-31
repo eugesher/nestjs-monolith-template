@@ -19,10 +19,10 @@ export class NoteWriteService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public run<T>(command: INoteWriteCommand, attempt: () => Promise<T>): Promise<T> {
+  public async run<T>(command: INoteWriteCommand, attempt: () => Promise<T>): Promise<T> {
     const { noteId } = command;
 
-    return OccRetryHelper.run(attempt, {
+    return await OccRetryHelper.run(attempt, {
       subject: 'Note',
       logger: this.logger,
       maxAttempts: this.occRetryAttempts,

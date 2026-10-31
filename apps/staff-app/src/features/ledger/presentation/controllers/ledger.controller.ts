@@ -16,9 +16,9 @@ export class LedgerController {
   @RequiresPermission(PermissionCodeEnum.LEDGER_READ)
   @ApiOperation({ summary: 'Browse the append-only ledger, newest first' })
   @ApiOkResponse({ type: LedgerEntryPageResponseDto })
-  public handleList(
+  public async handleList(
     @Query() query: LedgerListEntriesRequestDto,
   ): Promise<LedgerEntryPageResponseDto> {
-    return this.listEntries.execute(query);
+    return await this.listEntries.execute(query);
   }
 }

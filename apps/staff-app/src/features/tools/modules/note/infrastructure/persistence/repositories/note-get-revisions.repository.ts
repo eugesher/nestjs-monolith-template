@@ -11,15 +11,15 @@ import { NoteRevisionMapper } from '../mappers/note-revision.mapper';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get revisions(): Repository<NoteRevision> {
-    return this.txHost.tx.getRepository(NoteRevision);
+  private get noteRevisionRepository(): Repository<NoteRevision> {
+    return this.transactionHost.tx.getRepository(NoteRevision);
   }
 
   public async listForNote(query: INoteRevisionPageQuery): Promise<IPage<NoteRevisionModel>> {
     const { page, size, noteId } = query;
-    const [revisions, total] = await this.revisions.findAndCount({
+    const [revisions, total] = await this.noteRevisionRepository.findAndCount({
       where: { noteId },
       order: { noteVersion: 'DESC' },
       skip: (page - 1) * size,

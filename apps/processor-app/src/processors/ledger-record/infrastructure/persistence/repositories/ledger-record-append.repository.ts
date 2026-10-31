@@ -13,15 +13,15 @@ import {
 
 @Injectable()
 export class LedgerRecordAppendRepository implements ILedgerRecordAppendRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get entries(): Repository<LedgerEntry> {
-    return this.txHost.tx.getRepository(LedgerEntry);
+  private get ledgerEntryRepository(): Repository<LedgerEntry> {
+    return this.transactionHost.tx.getRepository(LedgerEntry);
   }
 
   public async append(entry: LedgerRecordEntryModel): Promise<ILedgerRecordAppendOutcomeView> {
     try {
-      const draft = this.entries.create({
+      const draft = this.ledgerEntryRepository.create({
         operationKey: entry.operationKey,
         subjectType: entry.subjectType,
         subjectId: entry.subjectId,
@@ -30,7 +30,7 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
         correlationId: entry.correlationId,
         occurredAt: entry.occurredAt,
       });
-      const saved = await this.entries.save(draft);
+      const saved = await this.ledgerEntryRepository.save(draft);
 
       return { id: String(saved.id), appended: true };
     } catch (error) {
@@ -38,7 +38,7 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
         throw error;
       }
 
-      const existing = await this.entries.findOneOrFail({
+      const existing = await this.ledgerEntryRepository.findOneOrFail({
         select: { id: true },
         where: { operationKey: entry.operationKey },
       });

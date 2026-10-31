@@ -12,16 +12,16 @@ import {
 
 @Injectable()
 export class IdempotencyCoreCompleteRepository implements IIdempotencyCoreCompleteRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get keys(): Repository<IdempotencyKey> {
-    return this.txHost.tx.getRepository(IdempotencyKey);
+  private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
+    return this.transactionHost.tx.getRepository(IdempotencyKey);
   }
 
   public async complete(command: IIdempotencyCoreKeyCompletionCommand): Promise<void> {
     const { key, responseBody } = command;
 
-    await this.keys.update(
+    await this.idempotencyKeyRepository.update(
       { idempotencyKey: key },
       { status: IdempotencyStatusEnum.COMPLETED, responseBody },
     );

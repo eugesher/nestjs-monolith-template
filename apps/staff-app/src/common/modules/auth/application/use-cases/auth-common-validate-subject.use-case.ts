@@ -21,12 +21,8 @@ export class AuthCommonValidateSubjectUseCase {
     query: IAuthCommonValidateSubjectQuery,
   ): Promise<Maybe<IAuthCommonSubjectView>> {
     const { userId } = query;
-    const user = await this.repository.findById(userId);
+    const user = await this.repository.findActiveById(userId);
 
-    if (!user?.isActive) {
-      return undefined;
-    }
-
-    return { id: user.id, email: user.email, roles: [...user.roles] };
+    return user ? { id: user.id, email: user.email, roles: [...user.roles] } : undefined;
   }
 }

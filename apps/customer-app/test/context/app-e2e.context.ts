@@ -101,8 +101,8 @@ export class AppE2EContext {
     };
   }
 
-  public close(): Promise<void> {
-    return this.app.close();
+  public async close(): Promise<void> {
+    await this.app.close();
   }
 
   public async takeLedgerRecords(): Promise<ILedgerRecordProcessorPayload[]> {

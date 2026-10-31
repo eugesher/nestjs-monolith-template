@@ -1,4 +1,3 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
 import { OrderModel } from '../../../domain';
 import { OrderViewMapper } from '../order-view.mapper';
 
@@ -39,7 +38,6 @@ describe('OrderViewMapper', () => {
               productId: '100',
               sku: 'SKU-0001',
               name: 'Lamp',
-              status: ProductStatusEnum.ACTIVE,
               quantity: 1,
             },
           ],

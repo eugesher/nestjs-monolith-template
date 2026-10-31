@@ -16,11 +16,11 @@ export class ProductStockCoreFacade implements IProductStockCorePort {
     private readonly productStockCoreMove: ProductStockCoreMoveUseCase,
   ) {}
 
-  public lock(command: IProductStockCoreLockCommand): Promise<IProductStockCoreOnHandView[]> {
-    return this.productStockCoreLock.execute(command);
+  public async lock(command: IProductStockCoreLockCommand): Promise<IProductStockCoreOnHandView[]> {
+    return await this.productStockCoreLock.execute(command);
   }
 
-  public move(command: IProductStockCoreMoveCommand): Promise<IProductStockCoreMoveView> {
-    return this.productStockCoreMove.execute(command);
+  public async move(command: IProductStockCoreMoveCommand): Promise<IProductStockCoreMoveView> {
+    return await this.productStockCoreMove.execute(command);
   }
 }

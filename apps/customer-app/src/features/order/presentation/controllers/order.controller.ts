@@ -32,7 +32,7 @@ export class OrderController {
   @ApiHeader({ name: 'Idempotency-Key', required: true, description: 'At most 128 characters' })
   @ApiOperation({ summary: 'Place an order for active products in stock (idempotent)' })
   @ApiCreatedResponse({ type: OrderResponseDto })
-  public handlePlace(
+  public async handlePlace(
     @CurrentUser() user: IAuthCurrentUserView,
     @Body() body: OrderPlaceRequestDto,
     @IdempotencyKey() idempotencyKey: string,
@@ -40,32 +40,32 @@ export class OrderController {
     const { id: customerId } = user;
     const { productIds } = body;
 
-    return this.place.execute({ customerId, productIds, idempotencyKey });
+    return await this.place.execute({ customerId, productIds, idempotencyKey });
   }
 
   @Get()
   @ApiOperation({ summary: 'List the orders of the caller, newest first' })
   @ApiOkResponse({ type: OrderSummaryPageResponseDto })
-  public handleGetMany(
+  public async handleGetMany(
     @CurrentUser() user: IAuthCurrentUserView,
     @Query() query: OrderGetManyRequestDto,
   ): Promise<OrderSummaryPageResponseDto> {
     const { id: customerId } = user;
     const { page, size } = query;
 
-    return this.getMany.execute({ customerId, page, size });
+    return await this.getMany.execute({ customerId, page, size });
   }
 
   @Get(':orderId')
   @ApiOperation({ summary: 'Read one order of the caller with its products' })
   @ApiOkResponse({ type: OrderResponseDto })
-  public handleGetOne(
+  public async handleGetOne(
     @CurrentUser() user: IAuthCurrentUserView,
     @Param() params: OrderIdRequestDto,
   ): Promise<OrderResponseDto> {
     const { id: customerId } = user;
     const { orderId } = params;
 
-    return this.getOne.execute({ customerId, orderId });
+    return await this.getOne.execute({ customerId, orderId });
   }
 }

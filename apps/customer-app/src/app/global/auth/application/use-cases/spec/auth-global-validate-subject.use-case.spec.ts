@@ -1,17 +1,15 @@
-import { UserStatusEnum } from '@acme-libs/kernel';
 import { AuthGlobalValidateSubjectUseCase } from '../auth-global-validate-subject.use-case';
 
 describe('AuthGlobalValidateSubjectUseCase', () => {
-  let findById: jest.Mock;
+  let findActiveById: jest.Mock;
   let useCase: AuthGlobalValidateSubjectUseCase;
 
   beforeEach(() => {
-    findById = jest.fn().mockResolvedValue({
+    findActiveById = jest.fn().mockResolvedValue({
       id: 'customer-1',
       email: 'ann@example.com',
-      status: UserStatusEnum.ACTIVE,
     });
-    useCase = new AuthGlobalValidateSubjectUseCase({ findById });
+    useCase = new AuthGlobalValidateSubjectUseCase({ findActiveById });
   });
 
   describe('execute', () => {
@@ -19,25 +17,13 @@ describe('AuthGlobalValidateSubjectUseCase', () => {
       const subject = await useCase.execute({ customerId: 'customer-1' });
 
       expect(subject).toEqual({ id: 'customer-1', email: 'ann@example.com' });
-      expect(findById).toHaveBeenCalledWith('customer-1');
+      expect(findActiveById).toHaveBeenCalledWith('customer-1');
     });
 
-    it('returns nothing for an unknown customer', async () => {
-      findById.mockResolvedValue(undefined);
+    it('returns nothing when no active customer matches', async () => {
+      findActiveById.mockResolvedValue(undefined);
 
       const subject = await useCase.execute({ customerId: 'ghost' });
-
-      expect(subject).toBeUndefined();
-    });
-
-    it('returns nothing for a disabled customer', async () => {
-      findById.mockResolvedValue({
-        id: 'customer-1',
-        email: 'ann@example.com',
-        status: UserStatusEnum.DISABLED,
-      });
-
-      const subject = await useCase.execute({ customerId: 'customer-1' });
 
       expect(subject).toBeUndefined();
     });

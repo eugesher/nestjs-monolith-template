@@ -54,52 +54,52 @@ export class ReminderController {
   @Post()
   @ApiOperation({ summary: 'Create a reminder for yourself' })
   @ApiCreatedResponse({ type: ReminderResponseDto })
-  public handleCreate(
+  public async handleCreate(
     @Body() request: ReminderCreateRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderResponseDto> {
     const { title, body, dueOn } = request;
 
-    return this.create.execute({ ownerId: user.id, title, body, dueOn });
+    return await this.create.execute({ ownerId: user.id, title, body, dueOn });
   }
 
   @Get()
   @ApiOperation({ summary: 'List your reminders, soonest first' })
   @ApiOkResponse({ type: ReminderPageResponseDto })
-  public handleGetMany(
+  public async handleGetMany(
     @Query() query: ReminderGetManyRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderPageResponseDto> {
     const { page, size, status } = query;
 
-    return this.getMany.execute({ page, size, ownerId: user.id, status });
+    return await this.getMany.execute({ page, size, ownerId: user.id, status });
   }
 
   @Get('summary')
   @ApiOperation({ summary: 'How many of your reminders are pending, and when the next is due' })
   @ApiOkResponse({ type: ReminderSummaryResponseDto })
-  public handleGetSummary(
+  public async handleGetSummary(
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderSummaryResponseDto> {
-    return this.getSummary.execute({ ownerId: user.id });
+    return await this.getSummary.execute({ ownerId: user.id });
   }
 
   @Patch(':reminderId/done')
   @ApiOperation({ summary: 'Mark one of your reminders as done' })
   @ApiOkResponse({ type: ReminderResponseDto })
-  public handleComplete(
+  public async handleComplete(
     @Param() params: ReminderIdRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderResponseDto> {
     const { reminderId } = params;
 
-    return this.complete.execute({ reminderId, ownerId: user.id });
+    return await this.complete.execute({ reminderId, ownerId: user.id });
   }
 
   @Patch(':reminderId/due-on')
   @ApiOperation({ summary: 'Move one of your reminders to another day' })
   @ApiOkResponse({ type: ReminderResponseDto })
-  public handleReschedule(
+  public async handleReschedule(
     @Param() params: ReminderIdRequestDto,
     @Body() body: ReminderRescheduleRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
@@ -107,19 +107,19 @@ export class ReminderController {
     const { reminderId } = params;
     const { dueOn } = body;
 
-    return this.reschedule.execute({ reminderId, ownerId: user.id, dueOn });
+    return await this.reschedule.execute({ reminderId, ownerId: user.id, dueOn });
   }
 
   @Delete(':reminderId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete one of your reminders' })
   @ApiNoContentResponse()
-  public handleDelete(
+  public async handleDelete(
     @Param() params: ReminderIdRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<void> {
     const { reminderId } = params;
 
-    return this.remove.execute({ reminderId, ownerId: user.id });
+    await this.remove.execute({ reminderId, ownerId: user.id });
   }
 }

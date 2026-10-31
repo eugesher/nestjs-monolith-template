@@ -12,22 +12,22 @@ import { UserStaffUserMapper } from '../mappers/user-staff-user.mapper';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get roles(): Repository<StaffRole> {
-    return this.txHost.tx.getRepository(StaffRole);
+  private get staffRoleRepository(): Repository<StaffRole> {
+    return this.transactionHost.tx.getRepository(StaffRole);
   }
 
-  private get userRoles(): Repository<StaffUserRole> {
-    return this.txHost.tx.getRepository(StaffUserRole);
+  private get staffUserRoleRepository(): Repository<StaffUserRole> {
+    return this.transactionHost.tx.getRepository(StaffUserRole);
   }
 
-  private get users(): Repository<StaffUser> {
-    return this.txHost.tx.getRepository(StaffUser);
+  private get staffUserRepository(): Repository<StaffUser> {
+    return this.transactionHost.tx.getRepository(StaffUser);
   }
 
   public async findById(id: string): Promise<Maybe<UserStaffUserModel>> {
-    const user = await this.users.findOne({
+    const user = await this.staffUserRepository.findOne({
       where: { id },
       relations: { userRoles: { role: true } },
     });
@@ -36,13 +36,16 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
   }
 
   public async addRole(userId: string, role: RoleEnum): Promise<boolean> {
-    const stored = await this.roles.findOne({ select: { id: true }, where: { name: role } });
+    const stored = await this.staffRoleRepository.findOne({
+      select: { id: true },
+      where: { name: role },
+    });
 
     if (!stored) {
       return false;
     }
 
-    await this.userRoles.insert({ userId, roleId: stored.id });
+    await this.staffUserRoleRepository.insert({ userId, roleId: stored.id });
 
     return true;
   }

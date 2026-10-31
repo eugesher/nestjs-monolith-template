@@ -44,15 +44,15 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
     return { outcome: OrderIdempotencyCoreAdapter.OUTCOMES[outcome] };
   }
 
-  public complete(command: IOrderIdempotencyCompleteCommand): Promise<void> {
+  public async complete(command: IOrderIdempotencyCompleteCommand): Promise<void> {
     const { key, response } = command;
 
-    return this.idempotency.complete({ key, response });
+    await this.idempotency.complete({ key, response });
   }
 
-  public release(command: IOrderIdempotencyReleaseCommand): Promise<void> {
+  public async release(command: IOrderIdempotencyReleaseCommand): Promise<void> {
     const { key } = command;
 
-    return this.idempotency.release({ key });
+    await this.idempotency.release({ key });
   }
 }

@@ -15,11 +15,11 @@ export class AuthIdentityCommonAdapter implements IAuthIdentityPort {
     private readonly authCommon: IAuthCommonPort,
   ) {}
 
-  public findSubject(
+  public async findSubject(
     query: IAuthIdentityFindSubjectQuery,
   ): Promise<Maybe<IAuthIdentitySubjectView>> {
     const { userId } = query;
 
-    return this.authCommon.validateSubject({ userId });
+    return await this.authCommon.validateSubject({ userId });
   }
 }

@@ -13,10 +13,10 @@ export class IdempotencyCoreCompleteUseCase {
     private readonly repository: IIdempotencyCoreCompleteRepositoryPort,
   ) {}
 
-  public execute(command: IIdempotencyCoreCompleteCommand): Promise<void> {
+  public async execute(command: IIdempotencyCoreCompleteCommand): Promise<void> {
     const { key, response } = command;
     const responseBody = JSON.stringify(response);
 
-    return this.repository.complete({ key, responseBody });
+    await this.repository.complete({ key, responseBody });
   }
 }

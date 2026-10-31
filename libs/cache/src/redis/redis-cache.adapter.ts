@@ -21,8 +21,8 @@ export class RedisCacheAdapter implements ICachePort {
     private readonly logger: PinoLogger,
   ) {}
 
-  public get<T>(key: string): Promise<Maybe<T>> {
-    return this.traced('cache.get', { 'cache.key': key }, async (attributes) => {
+  public async get<T>(key: string): Promise<Maybe<T>> {
+    return await this.traced('cache.get', { 'cache.key': key }, async (attributes) => {
       const raw = await this.redis.get(key);
       const value = raw === null ? null : (JSON.parse(raw) as T | null);
       const hit = value !== null;
@@ -33,44 +33,48 @@ export class RedisCacheAdapter implements ICachePort {
     });
   }
 
-  public set<T>(key: string, value: T, ttlMs: number): Promise<void> {
-    return this.traced('cache.set', { 'cache.key': key, 'cache.ttl_ms': ttlMs }, async () => {
+  public async set<T>(key: string, value: T, ttlMs: number): Promise<void> {
+    await this.traced('cache.set', { 'cache.key': key, 'cache.ttl_ms': ttlMs }, async () => {
       const raw = JSON.stringify(value);
 
       await this.redis.set(key, raw, 'PX', ttlMs);
     });
   }
 
-  public del(key: string): Promise<void> {
-    return this.traced('cache.del', { 'cache.key': key }, async () => {
+  public async del(key: string): Promise<void> {
+    await this.traced('cache.del', { 'cache.key': key }, async () => {
       await this.redis.del(key);
     });
   }
 
-  public delByPrefix(prefix: string): Promise<number> {
-    return this.traced('cache.delByPrefix', { 'cache.prefix': prefix }, async (attributes) => {
-      try {
-        const unlinked = await this.unlinkByPrefix(prefix);
+  public async delByPrefix(prefix: string): Promise<number> {
+    return await this.traced(
+      'cache.delByPrefix',
+      { 'cache.prefix': prefix },
+      async (attributes) => {
+        try {
+          const unlinked = await this.unlinkByPrefix(prefix);
 
-        attributes['cache.keys_unlinked'] = unlinked;
+          attributes['cache.keys_unlinked'] = unlinked;
 
-        return unlinked;
-      } catch (error) {
-        this.logger.warn(
-          { err: error, prefix },
-          'Cache invalidation failed, entries expire on TTL',
-        );
+          return unlinked;
+        } catch (error) {
+          this.logger.warn(
+            { err: error, prefix },
+            'Cache invalidation failed, entries expire on TTL',
+          );
 
-        return 0;
-      }
-    });
+          return 0;
+        }
+      },
+    );
   }
 
-  public wrap<T>(key: string, ttlMs: number, compute: () => Promise<T>): Promise<T> {
+  public async wrap<T>(key: string, ttlMs: number, compute: () => Promise<T>): Promise<T> {
     const pending = this.inFlight.get(key) as Maybe<Promise<T>>;
 
     if (pending) {
-      return pending;
+      return await pending;
     }
 
     const promise = this.traced('cache.wrap', { 'cache.key': key }, (attributes) =>
@@ -81,7 +85,7 @@ export class RedisCacheAdapter implements ICachePort {
 
     this.inFlight.set(key, promise);
 
-    return promise;
+    return await promise;
   }
 
   private async readThrough<T>(
@@ -101,7 +105,7 @@ export class RedisCacheAdapter implements ICachePort {
       );
       attributes['cache.hit'] = false;
 
-      return compute();
+      return await compute();
     }
 
     if (cached !== undefined) {
@@ -151,14 +155,14 @@ export class RedisCacheAdapter implements ICachePort {
     return unlinked;
   }
 
-  private traced<T>(
+  private async traced<T>(
     name: string,
     initial: Attributes,
     work: (attributes: Attributes) => Promise<T>,
   ): Promise<T> {
     const tracer = trace.getTracer(RedisCacheAdapter.TRACER_NAME);
 
-    return tracer.startActiveSpan(name, async (span) => {
+    return await tracer.startActiveSpan(name, async (span) => {
       const attributes: Attributes = { ...initial };
 
       try {

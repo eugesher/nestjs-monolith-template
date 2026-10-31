@@ -27,8 +27,8 @@ export class ProductStockArchiveOutOfStockUseCase {
     private readonly logger: PinoLogger,
   ) {}
 
-  public execute(command: IProductStockArchiveOutOfStockCommand): Promise<void> {
-    return this.transaction.run(() => this.archiveOutOfStock(command));
+  public async execute(command: IProductStockArchiveOutOfStockCommand): Promise<void> {
+    await this.transaction.run(() => this.archiveOutOfStock(command));
   }
 
   private async archiveOutOfStock(command: IProductStockArchiveOutOfStockCommand): Promise<void> {

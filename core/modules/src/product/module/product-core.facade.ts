@@ -11,7 +11,7 @@ import { ProductCoreArchiveUseCase } from '../application';
 export class ProductCoreFacade implements IProductCorePort {
   constructor(private readonly productCoreArchive: ProductCoreArchiveUseCase) {}
 
-  public archive(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
-    return this.productCoreArchive.execute(command);
+  public async archive(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
+    return await this.productCoreArchive.execute(command);
   }
 }

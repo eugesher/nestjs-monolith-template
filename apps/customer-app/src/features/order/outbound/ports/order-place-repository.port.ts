@@ -2,7 +2,7 @@ import { OrderModel } from '../../domain';
 import { IOrderPlaceProductView } from '../interfaces';
 
 export interface IOrderPlaceRepositoryPort {
-  findProducts(productIds: string[]): Promise<IOrderPlaceProductView[]>;
+  findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]>;
   insert(order: OrderModel): Promise<OrderModel>;
 }
 

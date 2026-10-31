@@ -16,9 +16,9 @@ export class ReminderAccessService {
 
   public async loadOwned(query: IReminderAccessLoadOwnedQuery): Promise<ReminderModel> {
     const { reminderId, ownerId } = query;
-    const reminder = await this.repository.findById(reminderId);
+    const reminder = await this.repository.findOwned({ reminderId, ownerId });
 
-    if (reminder?.ownerId !== ownerId) {
+    if (reminder === null) {
       throw new ReminderDomainException(
         ReminderErrorCodeEnum.REMINDER_NOT_FOUND,
         `Reminder ${reminderId} was not found`,

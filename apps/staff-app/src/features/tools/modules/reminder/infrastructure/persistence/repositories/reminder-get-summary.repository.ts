@@ -13,14 +13,14 @@ import {
 
 @Injectable()
 export class ReminderGetSummaryRepository implements IReminderGetSummaryRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get reminders(): Repository<Reminder> {
-    return this.txHost.tx.getRepository(Reminder);
+  private get reminderRepository(): Repository<Reminder> {
+    return this.transactionHost.tx.getRepository(Reminder);
   }
 
   public async summarize(ownerId: string): Promise<IReminderSummarySnapshotView> {
-    const row = await this.reminders
+    const row = await this.reminderRepository
       .createQueryBuilder('reminder')
       .select('COUNT(*)', 'pending')
       .addSelect('MIN(reminder.dueOn)', 'nextDueOn')

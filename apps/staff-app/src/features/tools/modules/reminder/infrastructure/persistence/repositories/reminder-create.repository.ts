@@ -10,17 +10,17 @@ import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get reminders(): Repository<Reminder> {
-    return this.txHost.tx.getRepository(Reminder);
+  private get reminderRepository(): Repository<Reminder> {
+    return this.transactionHost.tx.getRepository(Reminder);
   }
 
   public async insert(reminder: ReminderModel): Promise<ReminderModel> {
     const { ownerId, title, body, dueOn, status, version } = reminder;
-    const draft = this.reminders.create({ ownerId, title, body, dueOn, status, version });
-    const saved = await this.reminders.save(draft);
-    const stored = await this.reminders.findOneOrFail({ where: { id: String(saved.id) } });
+    const draft = this.reminderRepository.create({ ownerId, title, body, dueOn, status, version });
+    const saved = await this.reminderRepository.save(draft);
+    const stored = await this.reminderRepository.findOneOrFail({ where: { id: String(saved.id) } });
 
     return ReminderMapper.toModel(stored);
   }

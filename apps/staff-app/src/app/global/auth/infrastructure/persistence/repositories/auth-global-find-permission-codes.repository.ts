@@ -9,14 +9,14 @@ import { type IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outb
 
 @Injectable()
 export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindPermissionCodesRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get permissions(): Repository<StaffPermission> {
-    return this.txHost.tx.getRepository(StaffPermission);
+  private get staffPermissionRepository(): Repository<StaffPermission> {
+    return this.transactionHost.tx.getRepository(StaffPermission);
   }
 
   public async findPermissionCodes(userId: string): Promise<PermissionCodeEnum[]> {
-    const rows = await this.permissions
+    const rows = await this.staffPermissionRepository
       .createQueryBuilder('permission')
       .select('permission.code', 'code')
       .distinct(true)

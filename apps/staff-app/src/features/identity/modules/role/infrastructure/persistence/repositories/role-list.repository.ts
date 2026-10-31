@@ -10,14 +10,14 @@ import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleListRepository implements IRoleListRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get roles(): Repository<StaffRole> {
-    return this.txHost.tx.getRepository(StaffRole);
+  private get staffRoleRepository(): Repository<StaffRole> {
+    return this.transactionHost.tx.getRepository(StaffRole);
   }
 
   public async list(): Promise<RoleModel[]> {
-    const roles = await this.roles.find({
+    const roles = await this.staffRoleRepository.find({
       relations: { rolePermissions: { permission: true } },
       order: { id: 'ASC' },
     });

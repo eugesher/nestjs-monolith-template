@@ -11,7 +11,7 @@ export class AuthGlobalSubjectCommonAdapter implements IAuthGlobalSubjectPort {
     private readonly authCommon: IAuthCommonPort,
   ) {}
 
-  public findSubject(userId: string): Promise<Maybe<IAuthGlobalStaffUserView>> {
-    return this.authCommon.validateSubject({ userId });
+  public async findSubject(userId: string): Promise<Maybe<IAuthGlobalStaffUserView>> {
+    return await this.authCommon.validateSubject({ userId });
   }
 }

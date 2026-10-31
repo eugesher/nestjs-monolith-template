@@ -14,9 +14,9 @@ export class AuthGlobalFindPermissionCodesUseCase {
     private readonly repository: IAuthGlobalFindPermissionCodesRepositoryPort,
   ) {}
 
-  public execute(query: IAuthGlobalFindPermissionCodesQuery): Promise<PermissionCodeEnum[]> {
+  public async execute(query: IAuthGlobalFindPermissionCodesQuery): Promise<PermissionCodeEnum[]> {
     const { userId } = query;
 
-    return this.repository.findPermissionCodes(userId);
+    return await this.repository.findPermissionCodes(userId);
   }
 }

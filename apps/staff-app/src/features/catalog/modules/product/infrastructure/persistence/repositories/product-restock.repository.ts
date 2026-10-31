@@ -10,7 +10,7 @@ export class ProductRestockRepository
   extends ProductFindByIdBaseRepository
   implements IProductRestockRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 }

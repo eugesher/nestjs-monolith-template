@@ -11,18 +11,18 @@ export class TransactionAdapter implements ITransactionPort {
   private static readonly AFTER_COMMIT_HOOKS = Symbol('TRANSACTION_AFTER_COMMIT_HOOKS');
 
   constructor(
-    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
+    private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
     private readonly cls: ClsService,
     @InjectPinoLogger(TransactionAdapter.name)
     private readonly logger: PinoLogger,
   ) {}
 
-  public run<T>(work: () => Promise<T>): Promise<T> {
-    if (this.txHost.isTransactionActive()) {
-      return this.txHost.withTransaction(work);
+  public async run<T>(work: () => Promise<T>): Promise<T> {
+    if (this.transactionHost.isTransactionActive()) {
+      return await this.transactionHost.withTransaction(work);
     }
 
-    return this.cls.run({ ifNested: 'inherit' }, () => this.runOutermost(work));
+    return await this.cls.run({ ifNested: 'inherit' }, () => this.runOutermost(work));
   }
 
   public afterCommit(hook: () => Promise<void>): void {
@@ -30,7 +30,7 @@ export class TransactionAdapter implements ITransactionPort {
       ? this.cls.get<(() => Promise<void>)[]>(TransactionAdapter.AFTER_COMMIT_HOOKS)
       : undefined;
 
-    if (!this.txHost.isTransactionActive() || hooks === undefined) {
+    if (!this.transactionHost.isTransactionActive() || hooks === undefined) {
       throw new Error('afterCommit must be called inside TRANSACTION_PORT.run');
     }
 
@@ -42,7 +42,7 @@ export class TransactionAdapter implements ITransactionPort {
 
     this.cls.set(TransactionAdapter.AFTER_COMMIT_HOOKS, hooks);
 
-    const result = await this.txHost.withTransaction(work);
+    const result = await this.transactionHost.withTransaction(work);
 
     for (const hook of hooks) {
       await this.runHook(hook);

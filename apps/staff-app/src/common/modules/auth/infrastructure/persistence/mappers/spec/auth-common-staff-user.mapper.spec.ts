@@ -26,7 +26,6 @@ describe('AuthCommonStaffUserMapper', () => {
       expect(model).toMatchObject({
         id: 'user-1',
         email: 'editor@example.com',
-        status: 'active',
         roles: ['editor', 'viewer'],
       });
     });

@@ -11,21 +11,21 @@ import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCreateRepository implements IProductCreateRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
-  public existsBySku(sku: string): Promise<boolean> {
-    return this.products.exists({ where: { sku } });
+  public async existsBySku(sku: string): Promise<boolean> {
+    return await this.productRepository.exists({ where: { sku } });
   }
 
   public async insert(product: ProductModel): Promise<ProductModel> {
     const { sku, name, status, version } = product;
 
     try {
-      await this.products.insert({ sku, name, status, version });
+      await this.productRepository.insert({ sku, name, status, version });
     } catch (error) {
       if (!MysqlErrorHelper.isDuplicateKey(error)) {
         throw error;
@@ -37,7 +37,7 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       );
     }
 
-    const stored = await this.products.findOneOrFail({ where: { sku } });
+    const stored = await this.productRepository.findOneOrFail({ where: { sku } });
 
     return ProductMapper.toModel(stored);
   }

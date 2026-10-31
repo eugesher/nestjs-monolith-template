@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { UserStatusEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
@@ -19,12 +18,7 @@ export class AuthGlobalValidateSubjectUseCase {
     query: IAuthGlobalValidateSubjectQuery,
   ): Promise<Maybe<IAuthGlobalSubjectView>> {
     const { customerId } = query;
-    const customer = await this.repository.findById(customerId);
 
-    if (customer?.status !== UserStatusEnum.ACTIVE) {
-      return undefined;
-    }
-
-    return { id: customer.id, email: customer.email };
+    return await this.repository.findActiveById(customerId);
   }
 }

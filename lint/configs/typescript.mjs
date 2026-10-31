@@ -34,6 +34,8 @@ export const typescript = {
         custom: { regex: '[A-Za-z]Enum$', match: true },
       },
     ],
+    '@typescript-eslint/promise-function-async': ['error', { checkArrowFunctions: false }],
+    '@typescript-eslint/return-await': ['error', 'always'],
     'no-restricted-syntax': ['error', ...barrelBypassSelectors, ...awaitedArgumentSelectors],
   },
 };

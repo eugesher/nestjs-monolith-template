@@ -12,9 +12,9 @@ import { AuthCommonValidateSubjectUseCase } from '../application';
 export class AuthCommonFacade implements IAuthCommonPort {
   constructor(private readonly authCommonValidateSubject: AuthCommonValidateSubjectUseCase) {}
 
-  public validateSubject(
+  public async validateSubject(
     query: IAuthCommonValidateSubjectQuery,
   ): Promise<Maybe<IAuthCommonSubjectView>> {
-    return this.authCommonValidateSubject.execute(query);
+    return await this.authCommonValidateSubject.execute(query);
   }
 }

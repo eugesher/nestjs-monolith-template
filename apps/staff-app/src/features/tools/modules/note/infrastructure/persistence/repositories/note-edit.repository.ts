@@ -13,18 +13,18 @@ export class NoteEditRepository
   extends NoteUpdateBaseRepository
   implements INoteEditRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 
-  private get revisions(): Repository<NoteRevision> {
-    return this.txHost.tx.getRepository(NoteRevision);
+  private get noteRevisionRepository(): Repository<NoteRevision> {
+    return this.transactionHost.tx.getRepository(NoteRevision);
   }
 
   public async appendRevision(revision: NoteRevisionModel): Promise<void> {
     const { noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId } = revision;
 
-    await this.revisions.insert({
+    await this.noteRevisionRepository.insert({
       noteId,
       noteVersion,
       bodyBefore,

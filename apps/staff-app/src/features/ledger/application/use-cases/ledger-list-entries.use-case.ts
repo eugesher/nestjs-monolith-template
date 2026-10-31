@@ -14,10 +14,10 @@ export class LedgerListEntriesUseCase {
     private readonly repository: ILedgerListEntriesRepositoryPort,
   ) {}
 
-  public execute(query: ILedgerListEntriesQuery): Promise<IPage<ILedgerEntryView>> {
+  public async execute(query: ILedgerListEntriesQuery): Promise<IPage<ILedgerEntryView>> {
     const { page, size, subjectType, subjectId, correlationId } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
 
-    return this.repository.list({ ...window, subjectType, subjectId, correlationId });
+    return await this.repository.list({ ...window, subjectType, subjectId, correlationId });
   }
 }
