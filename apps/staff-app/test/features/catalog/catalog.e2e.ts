@@ -13,9 +13,10 @@ export class CatalogE2E {
       this.productE2E.handleGetMany();
       this.productE2E.handleGetOne();
       this.productE2E.handleCreate();
-      this.productE2E.handleRename();
+      this.productE2E.handleUpdate();
       this.productE2E.handleArchive();
       this.productE2E.handleRestock();
+      this.productE2E.handlePublish();
     });
   }
 }

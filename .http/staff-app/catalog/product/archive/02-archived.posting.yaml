@@ -1,10 +1,10 @@
 name: 02-archived
 description: |-
-  e2e: Catalog › Product › PATCH /api/catalog/products/:productId/archive › should refuse to archive an archived product with 409
+  e2e: Catalog › Product › PUT /api/catalog/products/:productId/archive › should refuse to archive an archived product with 409
 
   Expect: 409 Conflict, code PRODUCT_ALREADY_ARCHIVED, no ledger entry
   User: editor@example.com (token signed by scripts.py)
-method: PATCH
+method: PUT
 url: $STAFF_APP_BASE_URL/catalog/products/105/archive
 auth:
   type: bearer_token

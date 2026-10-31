@@ -1,11 +1,19 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-import { ProductRenameRequestDto } from '../product-rename-request.dto';
+import { ProductUpdateRequestDto } from '../product-update-request.dto';
 
-describe('ProductRenameRequestDto', () => {
+describe('ProductUpdateRequestDto', () => {
   it('accepts a name of 255 characters', () => {
-    const dto = plainToInstance(ProductRenameRequestDto, { name: 'n'.repeat(255) });
+    const dto = plainToInstance(ProductUpdateRequestDto, { name: 'n'.repeat(255) });
+
+    const errors = validateSync(dto);
+
+    expect(errors).toEqual([]);
+  });
+
+  it('accepts a body without a name', () => {
+    const dto = plainToInstance(ProductUpdateRequestDto, {});
 
     const errors = validateSync(dto);
 
@@ -17,7 +25,7 @@ describe('ProductRenameRequestDto', () => {
     ['a name of 256 characters', 'n'.repeat(256), ['maxLength']],
     ['a number', 7, ['maxLength', 'minLength', 'isString']],
   ])('rejects %s', (_case, name, constraints) => {
-    const dto = plainToInstance(ProductRenameRequestDto, { name });
+    const dto = plainToInstance(ProductUpdateRequestDto, { name });
 
     const errors = validateSync(dto);
 

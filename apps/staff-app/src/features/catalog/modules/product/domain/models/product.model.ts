@@ -3,9 +3,11 @@ import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
 import { ProductArchivedEvent } from '../events/product-archived.event';
 import { ProductCreatedEvent } from '../events/product-created.event';
-import { ProductRenamedEvent } from '../events/product-renamed.event';
+import { ProductPublishedEvent } from '../events/product-published.event';
 import { ProductRestockedEvent } from '../events/product-restocked.event';
+import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductDomainException } from '../exceptions/product-domain.exception';
+import { IProductChanges } from '../interfaces/product-changes.interface';
 import { IProductDraft } from '../interfaces/product-draft.interface';
 import { IProductRecord } from '../interfaces/product-record.interface';
 
@@ -117,8 +119,14 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     return this.currentVersion;
   }
 
-  public rename(name: string): void {
+  public update(changes: IProductChanges): void {
     this.assertNotArchived();
+
+    const { name } = changes;
+
+    if (name === undefined) {
+      return;
+    }
 
     const validName = ProductModel.validName(name);
 
@@ -131,12 +139,12 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     this.currentName = validName;
     this.currentVersion += 1;
 
-    const event = new ProductRenamedEvent(this.id, validName, previousName);
+    const event = new ProductUpdatedEvent(this.id, { name: validName }, { name: previousName });
 
     this.addDomainEvent(event);
   }
 
-  public activate(): void {
+  public publish(): void {
     this.assertNotArchived();
 
     if (this.currentStatus === ProductStatusEnum.ACTIVE) {
@@ -145,6 +153,10 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
 
     this.currentStatus = ProductStatusEnum.ACTIVE;
     this.currentVersion += 1;
+
+    const event = new ProductPublishedEvent(this.id, this.sku);
+
+    this.addDomainEvent(event);
   }
 
   public archive(): void {

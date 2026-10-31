@@ -1,4 +1,4 @@
-name: 04-without-token
+name: 06-without-token
 description: |-
   e2e: Catalog › GET /api/products › should refuse a caller without a token
 

@@ -14,6 +14,7 @@ describe('ProductRestockUseCase', () => {
   let complete: jest.Mock;
   let release: jest.Mock;
   let enqueueRestocked: jest.Mock;
+  let invalidate: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductRestockUseCase;
@@ -36,6 +37,7 @@ describe('ProductRestockUseCase', () => {
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
     enqueueRestocked = jest.fn().mockResolvedValue(undefined);
+    invalidate = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductRestockUseCase(
@@ -43,6 +45,7 @@ describe('ProductRestockUseCase', () => {
       { findById },
       { lock, restock },
       { claim, complete, release },
+      { invalidate },
       { run },
       logger as unknown as PinoLogger,
     );
@@ -80,6 +83,13 @@ describe('ProductRestockUseCase', () => {
       );
     });
 
+    it('invalidates the customer catalog after the commit', async () => {
+      await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
+
+      expect(invalidate).toHaveBeenCalledTimes(1);
+      expect(run.mock.invocationCallOrder[0]).toBeLessThan(invalidate.mock.invocationCallOrder[0]);
+    });
+
     it('answers a replay with the stored response and does nothing else', async () => {
       claim.mockResolvedValue({
         outcome: 'replay',
@@ -91,6 +101,7 @@ describe('ProductRestockUseCase', () => {
       expect(view).toEqual({ productId: '12', quantity: 10 });
       expect(lock).not.toHaveBeenCalled();
       expect(enqueueRestocked).not.toHaveBeenCalled();
+      expect(invalidate).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Product restock replayed from the idempotency store',

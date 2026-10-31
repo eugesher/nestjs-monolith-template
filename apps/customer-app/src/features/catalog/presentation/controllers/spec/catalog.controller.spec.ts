@@ -3,11 +3,13 @@ import { CatalogController } from '../catalog.controller';
 
 describe('CatalogController', () => {
   let list: jest.Mock;
+  let read: jest.Mock;
   let controller: CatalogController;
 
   beforeEach(() => {
     list = jest.fn();
-    controller = new CatalogController(new CatalogGetManyUseCase({ list }));
+    read = jest.fn((query: { compute: () => Promise<unknown> }) => query.compute());
+    controller = new CatalogController(new CatalogGetManyUseCase({ list }, { read }));
   });
 
   describe('handleGetMany', () => {

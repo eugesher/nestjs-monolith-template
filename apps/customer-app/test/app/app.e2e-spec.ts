@@ -48,6 +48,7 @@ describe('App', () => {
   });
 
   describe('Catalog', () => {
+    catalogE2E.hooks();
     catalogE2E.handleGetMany();
   });
 

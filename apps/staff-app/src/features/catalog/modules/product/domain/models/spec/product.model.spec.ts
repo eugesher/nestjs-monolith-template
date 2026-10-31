@@ -1,7 +1,8 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { ProductArchivedEvent } from '../../events/product-archived.event';
 import { ProductCreatedEvent } from '../../events/product-created.event';
-import { ProductRenamedEvent } from '../../events/product-renamed.event';
+import { ProductPublishedEvent } from '../../events/product-published.event';
+import { ProductUpdatedEvent } from '../../events/product-updated.event';
 import { ProductRestockedEvent } from '../../events/product-restocked.event';
 import { ProductModel } from '../product.model';
 
@@ -119,7 +120,7 @@ describe('ProductModel', () => {
     });
   });
 
-  describe('rename', () => {
+  describe('update', () => {
     let product: ProductModel;
 
     beforeEach(() => {
@@ -134,46 +135,65 @@ describe('ProductModel', () => {
       });
     });
 
-    it('renames, bumps the version and records the previous name', () => {
-      product.rename('  Desk lamp ');
+    it('renames, bumps the version and records the change with the previous name', () => {
+      product.update({ name: '  Desk lamp ' });
 
       const events = product.pullDomainEvents();
 
       expect(product.name).toBe('Desk lamp');
       expect(product.version).toBe(4);
       expect(events).toHaveLength(1);
-      expect(events[0]).toBeInstanceOf(ProductRenamedEvent);
+      expect(events[0]).toBeInstanceOf(ProductUpdatedEvent);
       expect(events[0]).toMatchObject({
         aggregateId: '12',
-        name: 'Desk lamp',
-        previousName: 'Lamp',
+        changes: { name: 'Desk lamp' },
+        previous: { name: 'Lamp' },
       });
     });
 
+    it('changes nothing without a name', () => {
+      product.update({ name: undefined });
+
+      expect(product.name).toBe('Lamp');
+      expect(product.version).toBe(3);
+      expect(product.pullDomainEvents()).toEqual([]);
+    });
+
     it('changes nothing when the trimmed name is the current one', () => {
-      product.rename(' Lamp ');
+      product.update({ name: ' Lamp ' });
 
       expect(product.version).toBe(3);
       expect(product.pullDomainEvents()).toEqual([]);
     });
 
     it('refuses a blank name with PRODUCT_NAME_INVALID', () => {
-      expect(() => product.rename(' ')).toThrow(
+      expect(() => product.update({ name: ' ' })).toThrow(
         expect.objectContaining({ code: 'PRODUCT_NAME_INVALID' }) as Error,
       );
     });
   });
 
-  describe('activate', () => {
-    it('activates a draft and bumps the version without recording anything', () => {
-      const product = ProductModel.create({ sku: 'SKU-0001', name: 'Lamp' });
+  describe('publish', () => {
+    it('publishes a draft, bumps the version and records the publication', () => {
+      const product = ProductModel.reconstitute({
+        id: '12',
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status: ProductStatusEnum.DRAFT,
+        version: 1,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
 
-      product.pullDomainEvents();
-      product.activate();
+      product.publish();
+
+      const events = product.pullDomainEvents();
 
       expect(product.status).toBe('active');
       expect(product.version).toBe(2);
-      expect(product.pullDomainEvents()).toEqual([]);
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(ProductPublishedEvent);
+      expect(events[0]).toMatchObject({ aggregateId: '12', sku: 'SKU-0001' });
     });
 
     it('changes nothing on an active product', () => {
@@ -187,10 +207,11 @@ describe('ProductModel', () => {
         updatedAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
-      product.activate();
+      product.publish();
 
       expect(product.status).toBe('active');
       expect(product.version).toBe(3);
+      expect(product.pullDomainEvents()).toEqual([]);
     });
   });
 
@@ -222,8 +243,8 @@ describe('ProductModel', () => {
     });
 
     it.each([
-      ['rename', (product: ProductModel) => product.rename('Desk')],
-      ['activate', (product: ProductModel) => product.activate()],
+      ['update', (product: ProductModel) => product.update({ name: 'Desk' })],
+      ['publish', (product: ProductModel) => product.publish()],
       ['archive', (product: ProductModel) => product.archive()],
       ['restock', (product: ProductModel) => product.restock(5)],
     ])('refuses to %s an archived product with PRODUCT_ALREADY_ARCHIVED', (_, change) => {

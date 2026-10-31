@@ -11,6 +11,7 @@ describe('ProductArchiveUseCase', () => {
   let write: jest.Mock;
   let enqueue: jest.Mock;
   let recordArchived: jest.Mock;
+  let invalidate: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductArchiveUseCase;
 
@@ -29,10 +30,12 @@ describe('ProductArchiveUseCase', () => {
     });
     enqueue = jest.fn().mockResolvedValue(undefined);
     recordArchived = jest.fn().mockResolvedValue(undefined);
+    invalidate = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
     useCase = new ProductArchiveUseCase(
       { write } as unknown as ProductWriteService,
       { enqueue, recordArchived } as unknown as ProductLedgerService,
+      { invalidate },
       logger as unknown as PinoLogger,
     );
   });
@@ -69,6 +72,18 @@ describe('ProductArchiveUseCase', () => {
         updatedAt: '2026-01-03T00:00:00.000Z',
       });
       expect(logger.info).toHaveBeenCalledWith({ productId: '12' }, 'Product archived');
+    });
+
+    it('invalidates the customer catalog after the write and before the ledger', async () => {
+      await useCase.execute({ productId: '12', expectedVersion: undefined });
+
+      expect(invalidate).toHaveBeenCalledTimes(1);
+      expect(write.mock.invocationCallOrder[0]).toBeLessThan(
+        invalidate.mock.invocationCallOrder[0],
+      );
+      expect(invalidate.mock.invocationCallOrder[0]).toBeLessThan(
+        enqueue.mock.invocationCallOrder[0],
+      );
     });
 
     it('hands the write service a change that archives the product', async () => {

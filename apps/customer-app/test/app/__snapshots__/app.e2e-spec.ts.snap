@@ -229,6 +229,26 @@ exports[`App Auth POST /api/auth/register should refuse a taken email in another
 }
 `;
 
+exports[`App Catalog GET /api/products should answer a cached page without reading the database 1`] = `
+{
+  "response": {
+    "body": {
+      "items": [
+        {
+          "id": "999",
+          "name": "Cached product",
+          "quantity": 1,
+          "sku": "SKU-CACHED",
+        },
+      ],
+      "page": 1,
+      "size": 20,
+      "total": 1,
+    },
+  },
+}
+`;
+
 exports[`App Catalog GET /api/products should answer the page of the window with the total of every page 1`] = `
 {
   "response": {
@@ -455,7 +475,7 @@ exports[`App Order POST /api/orders should let one of two simultaneous orders fo
 }
 `;
 
-exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id 1`] = `
+exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record under the correlation id and drop the cached catalog 1`] = `
 {
   "catalog": [
     {

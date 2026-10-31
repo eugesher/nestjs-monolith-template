@@ -1,0 +1,20 @@
+name: 01-draft
+description: |-
+  e2e: Catalog › Product › PUT /api/catalog/products/:productId/publish › should publish a draft, queue one ledger record under the correlation id and drop the cached customer catalog
+
+  Expect: 200 OK, product 101 active at version 2; a ledger record product-published:101 with correlation_id e2e-product-publish; no acme:catalog:* key left
+  User: editor@example.com (token signed by scripts.py)
+  Before: Redis: SET acme:catalog:v1:page:1:size:20 '{}'
+method: PUT
+url: $STAFF_APP_BASE_URL/catalog/products/101/publish
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: If-Match
+    value: '1'
+  - name: x-correlation-id
+    value: e2e-product-publish
+scripts:
+  setup: scripts.py:as_editor

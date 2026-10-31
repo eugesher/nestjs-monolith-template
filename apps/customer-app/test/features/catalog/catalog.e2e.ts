@@ -10,6 +10,16 @@ export class CatalogE2E {
     return new CatalogE2E(ctx);
   }
 
+  public hooks(): void {
+    beforeEach(async () => {
+      const keys = await this.ctx.redis.keys('acme:catalog:*');
+
+      if (keys.length > 0) {
+        await this.ctx.redis.del(...keys);
+      }
+    });
+  }
+
   public handleGetMany(): void {
     describe('GET /api/products', () => {
       it('should list only the active products in stock, by id, with the quantity on hand', async () => {
@@ -25,6 +35,41 @@ export class CatalogE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/products')
           .query({ page: 2, size: 1 })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should keep the page in the cache under the key of its window for the TTL', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/products')
+          .query({ page: 1, size: 2 })
+          .auth(this.ctx.bobToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        const key = 'acme:catalog:v1:page:1:size:2';
+        const cached = await this.ctx.redis.get(key);
+
+        expect(await this.ctx.redis.keys('acme:catalog:*')).toEqual([key]);
+        expect(JSON.parse(cached ?? 'null')).toEqual(response.body);
+        expect(await this.ctx.redis.pttl(key)).toBeGreaterThan(55_000);
+        expect(await this.ctx.redis.pttl(key)).toBeLessThanOrEqual(60_000);
+      });
+
+      it('should answer a cached page without reading the database', async () => {
+        await this.ctx.redis.set(
+          'acme:catalog:v1:page:1:size:20',
+          JSON.stringify({
+            items: [{ id: '999', sku: 'SKU-CACHED', name: 'Cached product', quantity: 1 }],
+            total: 1,
+            page: 1,
+            size: 20,
+          }),
+        );
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/products')
           .auth(this.ctx.bobToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 

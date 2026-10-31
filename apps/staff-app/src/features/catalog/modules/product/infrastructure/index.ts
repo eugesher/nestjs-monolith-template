@@ -1,3 +1,5 @@
+export * from './cache/product-catalog-cache.adapter';
+
 export * from './core-adapters/product-idempotency-core.adapter';
 export * from './core-adapters/product-ledger-core.adapter';
 export * from './core-adapters/product-stock-core.adapter';

@@ -3,7 +3,12 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs/toolkit';
-import { ProductArchivedEvent, ProductCreatedEvent, ProductRestockedEvent } from '../../domain';
+import {
+  ProductArchivedEvent,
+  ProductCreatedEvent,
+  ProductPublishedEvent,
+  ProductRestockedEvent,
+} from '../../domain';
 import {
   type IProductLedgerAppendCommand,
   type IProductLedgerPort,
@@ -77,6 +82,20 @@ export class ProductLedgerService {
         subjectId: productId,
         action: 'ProductCreated',
         payload: { sku, name },
+        occurredAt,
+      };
+    }
+
+    if (event instanceof ProductPublishedEvent) {
+      const { sku } = event;
+      const occurredAt = event.occurredAt.toISOString();
+
+      return {
+        operationKey: `product-published:${productId}`,
+        subjectType: 'product',
+        subjectId: productId,
+        action: 'ProductPublished',
+        payload: { sku },
         occurredAt,
       };
     }

@@ -3,7 +3,8 @@
 `apps/customer-app/src/features/catalog` serves `GET /products`, what a customer may buy: the active
 products that have stock on hand. It has the same layers as `ledger` (see `06-ledger-feature.md`),
 with persistence in place of a core adapter: `CatalogGetManyUseCase`,
-`CATALOG_CRUD_REPOSITORY_PORT`, and `CatalogCrudRepository`.
+`CATALOG_CRUD_REPOSITORY_PORT`, and `CatalogCrudRepository`. The pages are cached, and the writes
+that change them drop the cache.
 
 ## A feature of its own
 
@@ -31,8 +32,43 @@ the groups with `HAVING SUM(quantity) > 0`. TypeORM adds `deleted_at IS NULL` fo
 products on its own. The total counts the same grouped query as a subquery, because a `COUNT` over
 the joined rows would count stock movements, not products.
 
-**No cache.** Every order changes the quantity on hand, so a cached page would offer units that are
-gone.
+## The cache
+
+`CatalogGetManyUseCase` reads a page through `CATALOG_CACHE_PORT`:
+
+```ts
+cache.read({ ...window, compute: () => repository.list({ ...window }) });
+```
+
+As for the reminder summary (see `11-reminder-feature.md`), the use case knows how to compute a
+page and the port knows how to cache it. `CatalogCacheAdapter` calls `CACHE_PORT.wrap` under
+`CACHE_KEYS.catalogPage(page, size)`, `acme:catalog:v1:page:<page>:size:<size>`, for
+`CATALOG_CACHE_TTL_MS`, which comes from `CACHE_TTL_MS_DEFAULT` (60 seconds by default). The key
+holds the clamped window, so `?size=500` and `?size=100` share one entry.
+
+**Every write that changes a page drops them all.** A page shows which products are listed, their
+names and their quantities, so five writes change it:
+
+| Write             | App          | Use case                |
+| ----------------- | ------------ | ----------------------- |
+| publish a product | staff-app    | `ProductPublishUseCase` |
+| archive a product | staff-app    | `ProductArchiveUseCase` |
+| update a product  | staff-app    | `ProductUpdateUseCase`  |
+| restock a product | staff-app    | `ProductRestockUseCase` |
+| place an order    | customer-app | `OrderPlaceUseCase`     |
+
+Each calls a cache port of its own feature once its write has returned, and the adapter deletes
+every key under `CACHE_KEYS.catalogPrefix()`. One write changes the products of many pages and the
+totals of all of them, so the cache drops every page rather than working out which ones changed.
+
+**The key is shared by two apps.** `CACHE_KEYS` lives in `@acme-libs/contracts/cache`, so staff-app
+deletes the keys customer-app writes. It works because every app points `REDIS_URL` at one Redis,
+as the `ledger-record` queue already requires.
+
+**A stale page cannot sell what is gone.** A page read just before a write may be cached again just
+after the delete and live until its TTL. It may then offer units that are sold, but an order locks
+the stock rows and checks the quantity itself (see `22-order-feature.md`), so the worst outcome is
+an `ORDER_STOCK_INSUFFICIENT` that a fresh page would have avoided.
 
 ## Paging and shape
 

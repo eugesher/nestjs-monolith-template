@@ -238,11 +238,13 @@ export class ProductE2E {
     });
   }
 
-  public handleRename(): void {
-    describe('PATCH /api/catalog/products/:productId/name', () => {
-      it('should rename with a quoted If-Match and bump the version', async () => {
+  public handleUpdate(): void {
+    describe('PATCH /api/catalog/products/:productId', () => {
+      it('should update the name with a quoted If-Match, bump the version and drop the cached customer catalog', async () => {
+        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/102/name')
+          .patch('/api/catalog/products/102')
           .set('If-Match', '"1"')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ name: 'Renamed product' })
@@ -251,18 +253,32 @@ export class ProductE2E {
         expect({
           response: { body: response.body },
           db: { product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 102') },
+          cache: { keys: await this.ctx.redis.keys('acme:catalog:*') },
         }).toMatchSnapshot({
           response: { body: { updatedAt: expect.any(String) } },
           db: { product: [{ updated_at: expect.any(Date) }] },
         });
       });
 
+      it('should keep the product as is for a body without fields', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .patch('/api/catalog/products/101')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({})
+          .expect(HttpStatus.OK);
+
+        expect({
+          response: { body: response.body },
+          db: { product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 101') },
+        }).toMatchSnapshot();
+      });
+
       it('should refuse a stale If-Match with 409 and the current version', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/101/name')
+          .patch('/api/catalog/products/101')
           .set('If-Match', '0')
           .auth(this.ctx.editorToken, { type: 'bearer' })
-          .send({ name: 'Stale rename' })
+          .send({ name: 'Stale update' })
           .expect(HttpStatus.CONFLICT);
 
         expect({
@@ -273,20 +289,20 @@ export class ProductE2E {
 
       it('should refuse a malformed If-Match with 400', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/101/name')
+          .patch('/api/catalog/products/101')
           .set('If-Match', 'not-a-number')
           .auth(this.ctx.editorToken, { type: 'bearer' })
-          .send({ name: 'Malformed rename' })
+          .send({ name: 'Malformed update' })
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse a rename by a viewer with 403', async () => {
+      it('should refuse an update by a viewer with 403', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/103/name')
+          .patch('/api/catalog/products/103')
           .auth(this.ctx.viewerToken, { type: 'bearer' })
-          .send({ name: 'Viewer rename' })
+          .send({ name: 'Viewer update' })
           .expect(HttpStatus.FORBIDDEN);
 
         expect({
@@ -295,13 +311,13 @@ export class ProductE2E {
         }).toMatchSnapshot();
       });
 
-      it('should apply every one of concurrent renames without If-Match', async () => {
+      it('should apply every one of concurrent updates without If-Match', async () => {
         const responses = await Promise.all(
           [1, 2, 3, 4, 5, 6].map((index) =>
             request(this.ctx.app.getHttpServer())
-              .patch('/api/catalog/products/104/name')
+              .patch('/api/catalog/products/104')
               .auth(this.ctx.editorToken, { type: 'bearer' })
-              .send({ name: `Concurrent rename ${index}` }),
+              .send({ name: `Concurrent update ${index}` }),
           ),
         );
 
@@ -318,10 +334,12 @@ export class ProductE2E {
   }
 
   public handleArchive(): void {
-    describe('PATCH /api/catalog/products/:productId/archive', () => {
-      it('should archive and queue one ledger record under the correlation id', async () => {
+    describe('PUT /api/catalog/products/:productId/archive', () => {
+      it('should archive, queue one ledger record under the correlation id and drop the cached customer catalog', async () => {
+        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/103/archive')
+          .put('/api/catalog/products/103/archive')
           .set('If-Match', '1')
           .set('x-correlation-id', 'e2e-product-archive')
           .auth(this.ctx.editorToken, { type: 'bearer' })
@@ -335,6 +353,7 @@ export class ProductE2E {
             product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 103'),
           },
           ledger_record_queue: records,
+          cache: { keys: await this.ctx.redis.keys('acme:catalog:*') },
         }).toMatchSnapshot({
           response: { body: { updatedAt: expect.any(String) } },
           db: { product: [{ updated_at: expect.any(Date) }] },
@@ -344,7 +363,7 @@ export class ProductE2E {
 
       it('should refuse to archive an archived product with 409', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .patch('/api/catalog/products/105/archive')
+          .put('/api/catalog/products/105/archive')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.CONFLICT);
 
@@ -358,9 +377,12 @@ export class ProductE2E {
       });
     });
   }
+
   public handleRestock(): void {
     describe('POST /api/catalog/products/:productId/stock', () => {
-      it('should add the units to a sold-out product, record the key and queue the ledger record under the correlation id', async () => {
+      it('should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and drop the cached customer catalog', async () => {
+        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/catalog/products/106/stock')
           .set('Idempotency-Key', 'e2e-restock-key')
@@ -383,6 +405,7 @@ export class ProductE2E {
             ),
           },
           ledger_record_queue: records,
+          cache: { keys: await this.ctx.redis.keys('acme:catalog:*') },
         };
 
         expect(actual).toMatchSnapshot({
@@ -543,6 +566,89 @@ export class ProductE2E {
           .expect(HttpStatus.FORBIDDEN);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+    });
+  }
+
+  public handlePublish(): void {
+    describe('PUT /api/catalog/products/:productId/publish', () => {
+      it('should publish a draft, queue one ledger record under the correlation id and drop the cached customer catalog', async () => {
+        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/101/publish')
+          .set('If-Match', '1')
+          .set('x-correlation-id', 'e2e-product-publish')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        const records = await this.ctx.takeLedgerRecords();
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 101'),
+          },
+          ledger_record_queue: records,
+          cache: { keys: await this.ctx.redis.keys('acme:catalog:*') },
+        }).toMatchSnapshot({
+          response: { body: { updatedAt: expect.any(String) } },
+          db: { product: [{ updated_at: expect.any(Date) }] },
+          ledger_record_queue: [{ occurredAt: expect.any(String) }],
+        });
+      });
+
+      it('should keep a published product as is and queue nothing', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/100/publish')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 100'),
+          },
+          ledger_record_queue: await this.ctx.takeLedgerRecords(),
+        }).toMatchSnapshot();
+      });
+
+      it('should refuse to publish an archived product with 409', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/105/publish')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .expect(HttpStatus.CONFLICT);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 105'),
+          },
+          ledger_record_queue: await this.ctx.takeLedgerRecords(),
+        }).toMatchSnapshot();
+      });
+
+      it('should answer 404 for an unknown product', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/999/publish')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a publication by a viewer with 403', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/102/publish')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.FORBIDDEN);
+
+        expect({
+          response: { body: response.body },
+          db: {
+            product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 102'),
+          },
+        }).toMatchSnapshot({ db: { product: [{ updated_at: expect.any(Date) }] } });
       });
     });
   }

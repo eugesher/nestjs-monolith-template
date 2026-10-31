@@ -3,8 +3,9 @@ import {
   ProductCreateUseCase,
   ProductGetManyUseCase,
   ProductGetOneUseCase,
-  ProductRenameUseCase,
+  ProductPublishUseCase,
   ProductRestockUseCase,
+  ProductUpdateUseCase,
 } from '../../../application';
 import { ProductController } from '../product.controller';
 
@@ -12,7 +13,8 @@ describe('ProductController', () => {
   let create: jest.Mock;
   let getMany: jest.Mock;
   let getOne: jest.Mock;
-  let rename: jest.Mock;
+  let update: jest.Mock;
+  let publish: jest.Mock;
   let archive: jest.Mock;
   let restock: jest.Mock;
   let controller: ProductController;
@@ -21,7 +23,8 @@ describe('ProductController', () => {
     create = jest.fn();
     getMany = jest.fn();
     getOne = jest.fn();
-    rename = jest.fn();
+    update = jest.fn();
+    publish = jest.fn();
     archive = jest.fn();
     restock = jest.fn();
 
@@ -29,7 +32,8 @@ describe('ProductController', () => {
       { execute: create } as unknown as ProductCreateUseCase,
       { execute: getMany } as unknown as ProductGetManyUseCase,
       { execute: getOne } as unknown as ProductGetOneUseCase,
-      { execute: rename } as unknown as ProductRenameUseCase,
+      { execute: update } as unknown as ProductUpdateUseCase,
+      { execute: publish } as unknown as ProductPublishUseCase,
       { execute: archive } as unknown as ProductArchiveUseCase,
       { execute: restock } as unknown as ProductRestockUseCase,
     );
@@ -72,18 +76,41 @@ describe('ProductController', () => {
     });
   });
 
-  describe('handleRename', () => {
-    it('renames the product of the path', async () => {
-      rename.mockResolvedValue({ id: '12', name: 'Desk lamp' });
+  describe('handleUpdate', () => {
+    it('updates the product of the path with the fields of the body', async () => {
+      update.mockResolvedValue({ id: '12', name: 'Desk lamp' });
 
-      const response = await controller.handleRename({ productId: '12' }, { name: 'Desk lamp' }, 3);
+      const response = await controller.handleUpdate({ productId: '12' }, { name: 'Desk lamp' }, 3);
 
       expect(response).toEqual({ id: '12', name: 'Desk lamp' });
-      expect(rename).toHaveBeenCalledWith({
+      expect(update).toHaveBeenCalledWith({
         productId: '12',
         name: 'Desk lamp',
         expectedVersion: 3,
       });
+    });
+
+    it('passes no name for a body without one', async () => {
+      update.mockResolvedValue({ id: '12', name: 'Lamp' });
+
+      await controller.handleUpdate({ productId: '12' }, {}, undefined);
+
+      expect(update).toHaveBeenCalledWith({
+        productId: '12',
+        name: undefined,
+        expectedVersion: undefined,
+      });
+    });
+  });
+
+  describe('handlePublish', () => {
+    it('publishes the product of the path', async () => {
+      publish.mockResolvedValue({ id: '12', status: 'active' });
+
+      const response = await controller.handlePublish({ productId: '12' }, 2);
+
+      expect(response).toEqual({ id: '12', status: 'active' });
+      expect(publish).toHaveBeenCalledWith({ productId: '12', expectedVersion: 2 });
     });
   });
 

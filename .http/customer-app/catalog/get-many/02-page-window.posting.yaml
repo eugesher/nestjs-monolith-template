@@ -4,6 +4,7 @@ description: |-
 
   Expect: 200 OK, product 103 alone, total 2
   User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
 url: $CUSTOMER_APP_BASE_URL/products
 params:
   - name: page

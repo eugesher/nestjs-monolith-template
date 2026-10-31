@@ -1,7 +1,7 @@
 import { Maybe } from '@acme-libs/toolkit';
 
-export interface IProductRenameCommand {
+export interface IProductUpdateCommand {
   productId: string;
-  name: string;
+  name: Maybe<string>;
   expectedVersion: Maybe<number>;
 }

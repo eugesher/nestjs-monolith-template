@@ -90,6 +90,12 @@ After the commit, `OrderLedgerService` enqueues the record `order-placed:<orderI
 `auth`. A failed enqueue is retried `LEDGER_RETRY_ATTEMPTS` times and then logged for a replay by
 hand. The order stays placed: the queue is not part of the transaction.
 
+### The catalog
+
+An order changes the quantity on hand, so after the commit `OrderPlaceUseCase` drops the cached
+pages of the catalog through `ORDER_CATALOG_CACHE_PORT`, which `OrderCatalogCacheAdapter` binds to
+`CACHE_PORT` (see `21-catalog-feature.md`). A refused order and a replay drop nothing.
+
 ## Reading orders
 
 `GET /orders` lists the caller's orders, the newest first, as `{ id, createdAt }`. The page window
@@ -121,6 +127,7 @@ them:
 | `ORDER_PRODUCT_STOCK_PORT`    | `OrderProductStockCoreAdapter`  |
 | `ORDER_IDEMPOTENCY_PORT`      | `OrderIdempotencyCoreAdapter`   |
 | `ORDER_LEDGER_RECORD_PORT`    | `OrderLedgerRecordQueueAdapter` |
+| `ORDER_CATALOG_CACHE_PORT`    | `OrderCatalogCacheAdapter`      |
 
 `OrderModule` imports `OrderTypeOrmModule.forFeature()`, `LedgerRecordQueueModule`,
 `IdempotencyCoreModule` and `ProductStockCoreModule`. It reads `ORDER_LEDGER_RECORD_TIMEOUT_MS` from

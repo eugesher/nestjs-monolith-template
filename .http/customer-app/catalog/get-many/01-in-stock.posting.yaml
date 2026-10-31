@@ -4,6 +4,7 @@ description: |-
 
   Expect: 200 OK, products 100 (8 on hand) and 103 (3 on hand)
   User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
 url: $CUSTOMER_APP_BASE_URL/products
 auth:
   type: bearer_token

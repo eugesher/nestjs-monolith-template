@@ -2,7 +2,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { ProductModel, ProductRenamedEvent } from '../../../domain';
+import { ProductModel, ProductUpdatedEvent } from '../../../domain';
 import { ProductAccessService } from '../product-access.service';
 import { ProductWriteService } from '../product-write.service';
 
@@ -52,7 +52,7 @@ describe('ProductWriteService', () => {
     it('saves the change against the version as read and answers the stored product with the events', async () => {
       const written = await service.write(
         { productId: '12', expectedVersion: undefined },
-        (product) => product.rename('Desk lamp'),
+        (product) => product.update({ name: 'Desk lamp' }),
       );
       const [command] = update.mock.calls[0] as [{ product: ProductModel; versionAsRead: number }];
 
@@ -63,13 +63,13 @@ describe('ProductWriteService', () => {
       expect(findById).toHaveBeenCalledWith('12');
       expect(written.product.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
       expect(written.events).toHaveLength(1);
-      expect(written.events[0]).toBeInstanceOf(ProductRenamedEvent);
+      expect(written.events[0]).toBeInstanceOf(ProductUpdatedEvent);
       expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('writes nothing when the change leaves the version as read', async () => {
       const written = await service.write({ productId: '12', expectedVersion: 3 }, (product) =>
-        product.rename('Lamp'),
+        product.update({ name: 'Lamp' }),
       );
 
       expect(update).not.toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe('ProductWriteService', () => {
 
       const written = await service.write(
         { productId: '12', expectedVersion: undefined },
-        (product) => product.rename('Desk lamp'),
+        (product) => product.update({ name: 'Desk lamp' }),
       );
 
       expect(load).toHaveBeenCalledTimes(2);
@@ -100,7 +100,7 @@ describe('ProductWriteService', () => {
 
       await expect(
         service.write({ productId: '12', expectedVersion: undefined }, (product) =>
-          product.rename('Desk lamp'),
+          product.update({ name: 'Desk lamp' }),
         ),
       ).rejects.toMatchObject({
         code: 'VERSION_MISMATCH',
@@ -119,7 +119,7 @@ describe('ProductWriteService', () => {
 
       await expect(
         service.write({ productId: '12', expectedVersion: 3 }, (product) =>
-          product.rename('Desk lamp'),
+          product.update({ name: 'Desk lamp' }),
         ),
       ).rejects.toMatchObject({
         code: 'VERSION_MISMATCH',
@@ -141,7 +141,7 @@ describe('ProductWriteService', () => {
     it('does not retry a domain refusal', async () => {
       await expect(
         service.write({ productId: '12', expectedVersion: undefined }, (product) =>
-          product.rename(' '),
+          product.update({ name: ' ' }),
         ),
       ).rejects.toMatchObject({ code: 'PRODUCT_NAME_INVALID' });
       expect(load).toHaveBeenCalledTimes(1);
@@ -156,7 +156,7 @@ describe('ProductWriteService', () => {
 
       await expect(
         service.write({ productId: '12', expectedVersion: undefined }, (product) =>
-          product.rename('Desk lamp'),
+          product.update({ name: 'Desk lamp' }),
         ),
       ).rejects.toMatchObject({ code: 'PRODUCT_NOT_FOUND', message: 'Product 12 was not found' });
     });

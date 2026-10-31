@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
+import { type IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductLedgerService } from '../services/product-ledger.service';
@@ -11,6 +12,8 @@ export class ProductArchiveUseCase {
   constructor(
     private readonly writeService: ProductWriteService,
     private readonly ledgerService: ProductLedgerService,
+    @Inject(PRODUCT_CATALOG_CACHE_PORT)
+    private readonly catalogCache: IProductCatalogCachePort,
     @InjectPinoLogger(ProductArchiveUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -22,6 +25,7 @@ export class ProductArchiveUseCase {
     );
     const { product, events } = written;
 
+    await this.catalogCache.invalidate();
     await this.ledgerService.enqueue({ productId, events });
     await this.ledgerService.recordArchived({ productId, events });
 

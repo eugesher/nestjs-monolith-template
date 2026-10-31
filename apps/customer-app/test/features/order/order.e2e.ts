@@ -12,7 +12,12 @@ export class OrderE2E {
 
   public handlePlace(): void {
     describe('POST /api/orders', () => {
-      it('should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id', async () => {
+      it('should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record under the correlation id and drop the cached catalog', async () => {
+        await request(this.ctx.app.getHttpServer())
+          .get('/api/products')
+          .auth(this.ctx.annToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/orders')
           .set('Idempotency-Key', 'e2e-order-place-key')

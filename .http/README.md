@@ -25,7 +25,7 @@ Nine e2e cases are not one request:
 
 - the schema check of staff-app compares the migrated database with the entities and has no
   request;
-- the concurrent renames of a product send six requests at once, `catalog/product/rename/05-concurrent` sends
+- the concurrent renames of a product send six requests at once, `catalog/product/update/06-concurrent` sends
   one;
 - the replays of a product create, a restock and an order send the same request twice, as
   `staff-app/catalog/product/create/02-replay`, `staff-app/catalog/product/restock/03-replay` and

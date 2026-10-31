@@ -32,4 +32,24 @@ describe('CACHE_KEYS', () => {
       expect(key.startsWith(CACHE_KEYS.reminderSummaryPrefix('owner-1'))).toBe(false);
     });
   });
+
+  describe('catalogPage', () => {
+    it('builds a versioned, namespaced key of one page window', () => {
+      const key = CACHE_KEYS.catalogPage(2, 20);
+
+      expect(key).toBe('acme:catalog:v1:page:2:size:20');
+    });
+
+    it('starts with the catalog prefix, so delByPrefix clears every page', () => {
+      const prefix = CACHE_KEYS.catalogPrefix();
+
+      expect(prefix).toBe('acme:catalog:v1:');
+    });
+
+    it('keeps the catalog keys apart from the reminder summaries', () => {
+      const key = CACHE_KEYS.catalogPage(1, 20);
+
+      expect(key.startsWith(CACHE_KEYS.reminderSummaryPrefix(''))).toBe(false);
+    });
+  });
 });

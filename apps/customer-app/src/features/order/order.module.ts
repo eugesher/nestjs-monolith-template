@@ -12,6 +12,7 @@ import {
   OrderPlaceUseCase,
 } from './application';
 import {
+  OrderCatalogCacheAdapter,
   OrderCrudRepository,
   OrderIdempotencyCoreAdapter,
   OrderLedgerRecordQueueAdapter,
@@ -20,6 +21,7 @@ import {
   OrderTypeOrmModule,
 } from './infrastructure';
 import {
+  ORDER_CATALOG_CACHE_PORT,
   ORDER_CRUD_REPOSITORY_PORT,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_LEDGER_RECORD_PORT,
@@ -49,6 +51,7 @@ import { OrderController } from './presentation';
     { provide: ORDER_PRODUCT_STOCK_PORT, useClass: OrderProductStockCoreAdapter },
     { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },
     { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerRecordQueueAdapter },
+    { provide: ORDER_CATALOG_CACHE_PORT, useClass: OrderCatalogCacheAdapter },
     ConfigProviderHelper.value(ORDER_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(ORDER_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, UseFilters } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiHeader,
@@ -17,17 +17,18 @@ import {
   ProductCreateUseCase,
   ProductGetManyUseCase,
   ProductGetOneUseCase,
-  ProductRenameUseCase,
+  ProductPublishUseCase,
   ProductRestockUseCase,
+  ProductUpdateUseCase,
 } from '../../application';
 import { ProductCreateRequestDto } from '../dto/product-create-request.dto';
 import { ProductGetManyRequestDto } from '../dto/product-get-many-request.dto';
 import { ProductIdRequestDto } from '../dto/product-id-request.dto';
 import { ProductPageResponseDto } from '../dto/product-page-response.dto';
-import { ProductRenameRequestDto } from '../dto/product-rename-request.dto';
 import { ProductResponseDto } from '../dto/product-response.dto';
 import { ProductRestockRequestDto } from '../dto/product-restock-request.dto';
 import { ProductStockResponseDto } from '../dto/product-stock-response.dto';
+import { ProductUpdateRequestDto } from '../dto/product-update-request.dto';
 import { ProductHttpExceptionFilter } from '../filters/product-http-exception.filter';
 
 @ApiTags('Catalog/Product')
@@ -38,7 +39,8 @@ export class ProductController {
     private readonly create: ProductCreateUseCase,
     private readonly getMany: ProductGetManyUseCase,
     private readonly getOne: ProductGetOneUseCase,
-    private readonly rename: ProductRenameUseCase,
+    private readonly update: ProductUpdateUseCase,
+    private readonly publish: ProductPublishUseCase,
     private readonly archive: ProductArchiveUseCase,
     private readonly restock: ProductRestockUseCase,
   ) {}
@@ -77,23 +79,39 @@ export class ProductController {
     return this.getOne.execute({ productId });
   }
 
-  @Patch(':productId/name')
+  @Patch(':productId')
   @RequiresPermission(PermissionCodeEnum.PRODUCT_WRITE)
   @ApiHeader({ name: 'If-Match', required: false, description: 'The product version, for OCC' })
-  @ApiOperation({ summary: 'Rename a product (optimistic concurrency)' })
+  @ApiOperation({ summary: 'Update the fields of a product (optimistic concurrency)' })
   @ApiOkResponse({ type: ProductResponseDto })
-  public handleRename(
+  public handleUpdate(
     @Param() params: ProductIdRequestDto,
-    @Body() body: ProductRenameRequestDto,
+    @Body() body: ProductUpdateRequestDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
     const { productId } = params;
     const { name } = body;
 
-    return this.rename.execute({ productId, name, expectedVersion });
+    return this.update.execute({ productId, name, expectedVersion });
   }
 
-  @Patch(':productId/archive')
+  @Put(':productId/publish')
+  @RequiresPermission(PermissionCodeEnum.PRODUCT_WRITE)
+  @ApiHeader({ name: 'If-Match', required: false, description: 'The product version, for OCC' })
+  @ApiOperation({
+    summary: 'Publish a draft product to the customer catalog (optimistic concurrency)',
+  })
+  @ApiOkResponse({ type: ProductResponseDto })
+  public handlePublish(
+    @Param() params: ProductIdRequestDto,
+    @IfMatch() expectedVersion: Maybe<number>,
+  ): Promise<ProductResponseDto> {
+    const { productId } = params;
+
+    return this.publish.execute({ productId, expectedVersion });
+  }
+
+  @Put(':productId/archive')
   @RequiresPermission(PermissionCodeEnum.PRODUCT_ARCHIVE)
   @ApiHeader({ name: 'If-Match', required: false, description: 'The product version, for OCC' })
   @ApiOperation({ summary: 'Archive a product (optimistic concurrency)' })
@@ -106,6 +124,7 @@ export class ProductController {
 
     return this.archive.execute({ productId, expectedVersion });
   }
+
   @Post(':productId/stock')
   @RequiresPermission(PermissionCodeEnum.PRODUCT_RESTOCK)
   @ApiHeader({ name: 'Idempotency-Key', required: true, description: 'At most 128 characters' })

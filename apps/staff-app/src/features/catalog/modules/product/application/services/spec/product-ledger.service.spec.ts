@@ -6,8 +6,9 @@ import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/tes
 import {
   ProductArchivedEvent,
   ProductCreatedEvent,
-  ProductRenamedEvent,
+  ProductPublishedEvent,
   ProductRestockedEvent,
+  ProductUpdatedEvent,
 } from '../../../domain';
 import { ProductLedgerService } from '../product-ledger.service';
 
@@ -53,12 +54,12 @@ describe('ProductLedgerService', () => {
       );
     });
 
-    it('enqueues an archive and leaves a rename out of the ledger', async () => {
+    it('enqueues an archive and leaves an update out of the ledger', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.enqueue({
           productId: '12',
           events: [
-            new ProductRenamedEvent('12', 'Desk lamp', 'Lamp'),
+            new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' }),
             new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE),
           ],
         }),
@@ -71,6 +72,25 @@ describe('ProductLedgerService', () => {
         subjectId: '12',
         action: 'ProductArchived',
         payload: { sku: 'SKU-0001', previousStatus: 'active' },
+        occurredAt: '2026-01-05T08:00:00.000Z',
+        correlationId: 'corr-1',
+      });
+    });
+
+    it('enqueues a publication under the operation key of the product', async () => {
+      await CorrelationContextHelper.run('corr-1', () =>
+        service.enqueue({
+          productId: '12',
+          events: [new ProductPublishedEvent('12', 'SKU-0001')],
+        }),
+      );
+
+      expect(enqueue).toHaveBeenCalledWith({
+        operationKey: 'product-published:12',
+        subjectType: 'product',
+        subjectId: '12',
+        action: 'ProductPublished',
+        payload: { sku: 'SKU-0001' },
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
@@ -154,7 +174,7 @@ describe('ProductLedgerService', () => {
         service.enqueueRestocked({
           productId: '12',
           productStockId: '700',
-          events: [new ProductRenamedEvent('12', 'Desk lamp', 'Lamp')],
+          events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
         }),
       );
 
@@ -167,7 +187,7 @@ describe('ProductLedgerService', () => {
       await service.recordArchived({
         productId: '12',
         events: [
-          new ProductRenamedEvent('12', 'Desk lamp', 'Lamp'),
+          new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' }),
           new ProductArchivedEvent('12', 'SKU-0001', ProductStatusEnum.ACTIVE),
         ],
       });

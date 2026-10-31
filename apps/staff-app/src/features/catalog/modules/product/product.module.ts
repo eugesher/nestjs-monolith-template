@@ -13,12 +13,14 @@ import {
   ProductGetManyUseCase,
   ProductGetOneUseCase,
   ProductLedgerService,
-  ProductRenameUseCase,
+  ProductPublishUseCase,
   ProductRestockUseCase,
+  ProductUpdateUseCase,
   ProductWriteService,
 } from './application';
 import {
   ProductAccessRepository,
+  ProductCatalogCacheAdapter,
   ProductCreateRepository,
   ProductCrudRepository,
   ProductIdempotencyCoreAdapter,
@@ -31,6 +33,7 @@ import {
 } from './infrastructure';
 import {
   PRODUCT_ACCESS_REPOSITORY_PORT,
+  PRODUCT_CATALOG_CACHE_PORT,
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_CRUD_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
@@ -59,7 +62,8 @@ import { ProductController } from './presentation';
     ProductCreateUseCase,
     ProductGetManyUseCase,
     ProductGetOneUseCase,
-    ProductRenameUseCase,
+    ProductUpdateUseCase,
+    ProductPublishUseCase,
     ProductArchiveUseCase,
     ProductRestockUseCase,
     ProductAccessService,
@@ -74,6 +78,7 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
     { provide: PRODUCT_STOCK_PORT, useClass: ProductStockCoreAdapter },
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },
+    { provide: PRODUCT_CATALOG_CACHE_PORT, useClass: ProductCatalogCacheAdapter },
     ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
     ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(PRODUCT_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),

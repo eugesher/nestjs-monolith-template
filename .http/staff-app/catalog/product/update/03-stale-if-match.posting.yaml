@@ -1,11 +1,11 @@
-name: 02-stale-if-match
+name: 03-stale-if-match
 description: |-
-  e2e: Catalog › Product › PATCH /api/catalog/products/:productId/name › should refuse a stale If-Match with 409 and the current version
+  e2e: Catalog › Product › PATCH /api/catalog/products/:productId › should refuse a stale If-Match with 409 and the current version
 
   Expect: 409 Conflict, code VERSION_MISMATCH, details.currentVersion 1
   User: editor@example.com (token signed by scripts.py)
 method: PATCH
-url: $STAFF_APP_BASE_URL/catalog/products/101/name
+url: $STAFF_APP_BASE_URL/catalog/products/101
 body:
   content: |-
     {

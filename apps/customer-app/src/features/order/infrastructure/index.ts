@@ -1,3 +1,5 @@
+export * from './cache/order-catalog-cache.adapter';
+
 export * from './core-adapters/order-idempotency-core.adapter';
 export * from './core-adapters/order-product-stock-core.adapter';
 

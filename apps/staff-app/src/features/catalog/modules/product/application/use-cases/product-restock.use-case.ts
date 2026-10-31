@@ -4,9 +4,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
 import {
+  type IProductCatalogCachePort,
   type IProductIdempotencyPort,
   type IProductRestockRepositoryPort,
   type IProductStockPort,
+  PRODUCT_CATALOG_CACHE_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
   PRODUCT_RESTOCK_REPOSITORY_PORT,
   PRODUCT_STOCK_PORT,
@@ -25,6 +27,8 @@ export class ProductRestockUseCase {
     private readonly productStock: IProductStockPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
+    @Inject(PRODUCT_CATALOG_CACHE_PORT)
+    private readonly catalogCache: IProductCatalogCachePort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
     @InjectPinoLogger(ProductRestockUseCase.name)
@@ -72,6 +76,7 @@ export class ProductRestockUseCase {
     const written = await this.transaction.run(() => this.persist(command));
     const { stock, productStockId, events } = written;
 
+    await this.catalogCache.invalidate();
     await this.ledgerService.enqueueRestocked({ productId, productStockId, events });
 
     this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
