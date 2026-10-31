@@ -9,13 +9,16 @@ import { type IIdempotencyCoreReleaseRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyCoreReleaseRepository implements IIdempotencyCoreReleaseRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get keys(): Repository<IdempotencyKey> {
-    return this.txHost.tx.getRepository(IdempotencyKey);
+  private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
+    return this.transactionHost.tx.getRepository(IdempotencyKey);
   }
 
   public async deleteInFlight(key: string): Promise<void> {
-    await this.keys.delete({ idempotencyKey: key, status: IdempotencyStatusEnum.IN_FLIGHT });
+    await this.idempotencyKeyRepository.delete({
+      idempotencyKey: key,
+      status: IdempotencyStatusEnum.IN_FLIGHT,
+    });
   }
 }

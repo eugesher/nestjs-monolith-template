@@ -10,7 +10,7 @@ export class ProductStockCoreLockRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreLockRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 }

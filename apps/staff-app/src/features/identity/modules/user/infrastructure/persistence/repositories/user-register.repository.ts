@@ -11,25 +11,25 @@ import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get roles(): Repository<StaffRole> {
-    return this.txHost.tx.getRepository(StaffRole);
+  private get staffRoleRepository(): Repository<StaffRole> {
+    return this.transactionHost.tx.getRepository(StaffRole);
   }
 
-  private get userRoles(): Repository<StaffUserRole> {
-    return this.txHost.tx.getRepository(StaffUserRole);
+  private get staffUserRoleRepository(): Repository<StaffUserRole> {
+    return this.transactionHost.tx.getRepository(StaffUserRole);
   }
 
-  private get users(): Repository<StaffUser> {
-    return this.txHost.tx.getRepository(StaffUser);
+  private get staffUserRepository(): Repository<StaffUser> {
+    return this.transactionHost.tx.getRepository(StaffUser);
   }
 
   public async insert(user: UserStaffUserModel): Promise<void> {
     const { id, email, passwordHash, status } = user;
 
     try {
-      await this.users.insert({ id, email, passwordHash, status });
+      await this.staffUserRepository.insert({ id, email, passwordHash, status });
     } catch (error) {
       if (!MysqlErrorHelper.isDuplicateKey(error)) {
         throw error;
@@ -45,12 +45,12 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       return;
     }
 
-    const roles = await this.roles.find({
+    const roles = await this.staffRoleRepository.find({
       select: { id: true },
       where: { name: In([...user.roles]) },
     });
     const rows = roles.map((role) => ({ userId: user.id, roleId: role.id }));
 
-    await this.userRoles.insert(rows);
+    await this.staffUserRoleRepository.insert(rows);
   }
 }

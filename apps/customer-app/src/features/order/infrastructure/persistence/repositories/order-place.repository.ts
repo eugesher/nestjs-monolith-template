@@ -11,18 +11,18 @@ import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get orders(): Repository<Order> {
-    return this.txHost.tx.getRepository(Order);
+  private get orderRepository(): Repository<Order> {
+    return this.transactionHost.tx.getRepository(Order);
   }
 
-  private get orderProducts(): Repository<OrderProduct> {
-    return this.txHost.tx.getRepository(OrderProduct);
+  private get orderProductRepository(): Repository<OrderProduct> {
+    return this.transactionHost.tx.getRepository(OrderProduct);
   }
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
   public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]> {
@@ -30,7 +30,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return [];
     }
 
-    const products = await this.products.find({
+    const products = await this.productRepository.find({
       where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
     });
 
@@ -43,13 +43,13 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
 
   public async insert(order: OrderModel): Promise<OrderModel> {
     const { customerId, products } = order;
-    const draft = this.orders.create({ customerId });
-    const stored = await this.orders.save(draft);
+    const draft = this.orderRepository.create({ customerId });
+    const stored = await this.orderRepository.save(draft);
     const lines = products.map((product) => ({ orderId: stored.id, productId: product.productId }));
 
-    await this.orderProducts.insert(lines);
+    await this.orderProductRepository.insert(lines);
 
-    const rows = await this.orderProducts.find({
+    const rows = await this.orderProductRepository.find({
       where: { orderId: stored.id },
       order: { id: 'ASC' },
     });

@@ -6,14 +6,16 @@ import { Product, ProductStock } from '@acme-core/entities';
 import { IProductStockCoreSumView } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
-  protected constructor(protected readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  protected constructor(
+    protected readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
+  ) {}
 
-  protected get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  protected get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
-  protected get stock(): Repository<ProductStock> {
-    return this.txHost.tx.getRepository(ProductStock);
+  protected get productStockRepository(): Repository<ProductStock> {
+    return this.transactionHost.tx.getRepository(ProductStock);
   }
 
   public async lockProducts(productIds: string[]): Promise<string[]> {
@@ -21,7 +23,7 @@ export abstract class ProductStockCoreBaseRepository {
       return [];
     }
 
-    const products = await this.products
+    const products = await this.productRepository
       .createQueryBuilder('product')
       .where('product.id IN (:...productIds)', { productIds })
       .orderBy('product.id', 'ASC')
@@ -36,7 +38,7 @@ export abstract class ProductStockCoreBaseRepository {
       return [];
     }
 
-    const rows = await this.stock
+    const rows = await this.productStockRepository
       .createQueryBuilder('stock')
       .select('stock.productId', 'productId')
       .addSelect('SUM(stock.quantity)', 'quantity')

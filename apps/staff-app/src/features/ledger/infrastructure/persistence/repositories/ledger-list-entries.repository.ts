@@ -14,10 +14,10 @@ import { LedgerEntryMapper } from '../mappers/ledger-entry.mapper';
 
 @Injectable()
 export class LedgerListEntriesRepository implements ILedgerListEntriesRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get entries(): Repository<LedgerEntry> {
-    return this.txHost.tx.getRepository(LedgerEntry);
+  private get ledgerEntryRepository(): Repository<LedgerEntry> {
+    return this.transactionHost.tx.getRepository(LedgerEntry);
   }
 
   public async list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryView>> {
@@ -25,7 +25,7 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
     const bySubjectType = subjectType === undefined ? {} : { subjectType };
     const bySubjectId = subjectId === undefined ? {} : { subjectId };
     const byCorrelationId = correlationId === undefined ? {} : { correlationId };
-    const [entries, total] = await this.entries.findAndCount({
+    const [entries, total] = await this.ledgerEntryRepository.findAndCount({
       where: { ...bySubjectType, ...bySubjectId, ...byCorrelationId },
       order: { id: 'DESC' },
       skip: (page - 1) * size,

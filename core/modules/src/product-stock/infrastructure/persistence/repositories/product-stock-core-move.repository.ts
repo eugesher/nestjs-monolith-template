@@ -13,8 +13,8 @@ export class ProductStockCoreMoveRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreMoveRepositoryPort
 {
-  constructor(txHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(txHost);
+  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
+    super(transactionHost);
   }
 
   public async insertMany(commands: IProductStockCoreMovementInsertCommand[]): Promise<string[]> {
@@ -22,7 +22,7 @@ export class ProductStockCoreMoveRepository
       return [];
     }
 
-    const result = await this.stock.insert(commands);
+    const result = await this.productStockRepository.insert(commands);
     const identifiers = result.identifiers as { id: number | string }[];
 
     return identifiers.map((identifier) => String(identifier.id));

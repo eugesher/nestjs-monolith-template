@@ -11,17 +11,17 @@ import { type IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get customers(): Repository<Customer> {
-    return this.txHost.tx.getRepository(Customer);
+  private get customerRepository(): Repository<Customer> {
+    return this.transactionHost.tx.getRepository(Customer);
   }
 
   public async insert(customer: AuthCustomerModel): Promise<void> {
     const { id, email, passwordHash, status } = customer;
 
     try {
-      await this.customers.insert({ id, email, passwordHash, status });
+      await this.customerRepository.insert({ id, email, passwordHash, status });
     } catch (error) {
       if (!MysqlErrorHelper.isDuplicateKey(error)) {
         throw error;

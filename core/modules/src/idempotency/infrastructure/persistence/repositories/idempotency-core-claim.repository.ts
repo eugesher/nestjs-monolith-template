@@ -12,15 +12,15 @@ import { IdempotencyCoreKeyMapper } from '../mappers/idempotency-core-key.mapper
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get keys(): Repository<IdempotencyKey> {
-    return this.txHost.tx.getRepository(IdempotencyKey);
+  private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
+    return this.transactionHost.tx.getRepository(IdempotencyKey);
   }
 
   public async insert(key: IdempotencyCoreKeyModel): Promise<boolean> {
     try {
-      await this.keys.insert({
+      await this.idempotencyKeyRepository.insert({
         idempotencyKey: key.key,
         requestFingerprint: key.requestFingerprint,
         status: key.status,
@@ -38,7 +38,7 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
   }
 
   public async findByKey(key: string): Promise<Maybe<IdempotencyCoreKeyModel>> {
-    const entity = await this.keys.findOne({ where: { idempotencyKey: key } });
+    const entity = await this.idempotencyKeyRepository.findOne({ where: { idempotencyKey: key } });
 
     return entity === null ? undefined : IdempotencyCoreKeyMapper.toModel(entity);
   }

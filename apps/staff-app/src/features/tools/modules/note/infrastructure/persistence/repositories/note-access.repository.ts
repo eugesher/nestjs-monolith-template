@@ -11,15 +11,15 @@ import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get notes(): Repository<Note> {
-    return this.txHost.tx.getRepository(Note);
+  private get noteRepository(): Repository<Note> {
+    return this.transactionHost.tx.getRepository(Note);
   }
 
   public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<NoteModel>> {
     const { noteId, authorId } = query;
-    const note = await this.notes.findOne({ where: { id: noteId, authorId } });
+    const note = await this.noteRepository.findOne({ where: { id: noteId, authorId } });
 
     return note === null ? null : NoteMapper.toModel(note);
   }

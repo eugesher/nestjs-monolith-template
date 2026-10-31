@@ -13,7 +13,7 @@ describe('TransactionAdapter', () => {
   let dataSource: { manager: EntityManager; transaction: jest.Mock };
   let context: INestApplicationContext;
   let adapter: TransactionAdapter;
-  let txHost: TransactionHost<TransactionalAdapterTypeOrm>;
+  let transactionHost: TransactionHost<TransactionalAdapterTypeOrm>;
   let logger: { error: jest.Mock };
 
   beforeEach(async () => {
@@ -65,7 +65,7 @@ describe('TransactionAdapter', () => {
 
     context = await NestFactory.createApplicationContext(TestModule, { logger: false });
     adapter = context.get(TransactionAdapter);
-    txHost = context.get(TransactionHost);
+    transactionHost = context.get(TransactionHost);
   });
 
   afterEach(async () => {
@@ -73,7 +73,7 @@ describe('TransactionAdapter', () => {
   });
 
   it('runs the work on the transaction manager, commits and returns its result', async () => {
-    const result = await adapter.run(() => Promise.resolve(txHost.tx));
+    const result = await adapter.run(() => Promise.resolve(transactionHost.tx));
 
     expect(result).toEqual({ name: 'transaction' });
     expect(outcomes).toEqual(['commit']);
@@ -88,8 +88,8 @@ describe('TransactionAdapter', () => {
 
   it('reuses the open transaction for a nested run', async () => {
     const managers = await adapter.run(async () => {
-      const outer = txHost.tx;
-      const inner = await adapter.run(() => Promise.resolve(txHost.tx));
+      const outer = transactionHost.tx;
+      const inner = await adapter.run(() => Promise.resolve(transactionHost.tx));
 
       return [outer, inner];
     });
@@ -100,7 +100,7 @@ describe('TransactionAdapter', () => {
   });
 
   it('falls back to the default manager outside a run', () => {
-    expect(txHost.tx).toEqual({ name: 'default' });
+    expect(transactionHost.tx).toEqual({ name: 'default' });
   });
 
   describe('afterCommit', () => {

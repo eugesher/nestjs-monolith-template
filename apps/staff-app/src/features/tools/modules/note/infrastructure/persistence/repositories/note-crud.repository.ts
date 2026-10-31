@@ -11,17 +11,17 @@ import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCrudRepository implements INoteCrudRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get notes(): Repository<Note> {
-    return this.txHost.tx.getRepository(Note);
+  private get noteRepository(): Repository<Note> {
+    return this.transactionHost.tx.getRepository(Note);
   }
 
   public async list(query: INotePageQuery): Promise<IPage<NoteModel>> {
     const { page, size, subjectType, subjectId, resolved, authorId } = query;
     const bySubject = subjectType === undefined ? {} : { subjectType, subjectId };
     const byResolved = resolved === undefined ? {} : { resolved };
-    const [notes, total] = await this.notes.findAndCount({
+    const [notes, total] = await this.noteRepository.findAndCount({
       where: { authorId, ...bySubject, ...byResolved },
       order: { id: 'DESC' },
       skip: (page - 1) * size,

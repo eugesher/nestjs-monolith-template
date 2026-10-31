@@ -12,14 +12,14 @@ import { AuthCommonStaffUserMapper } from '../mappers/auth-common-staff-user.map
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get users(): Repository<StaffUser> {
-    return this.txHost.tx.getRepository(StaffUser);
+  private get staffUserRepository(): Repository<StaffUser> {
+    return this.transactionHost.tx.getRepository(StaffUser);
   }
 
   public async findActiveById(id: string): Promise<Maybe<AuthCommonStaffUserModel>> {
-    const user = await this.users.findOne({
+    const user = await this.staffUserRepository.findOne({
       where: { id, status: UserStatusEnum.ACTIVE },
       relations: { userRoles: { role: true } },
     });

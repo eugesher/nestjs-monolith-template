@@ -14,15 +14,15 @@ import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get reminders(): Repository<Reminder> {
-    return this.txHost.tx.getRepository(Reminder);
+  private get reminderRepository(): Repository<Reminder> {
+    return this.transactionHost.tx.getRepository(Reminder);
   }
 
   public async findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<ReminderModel>> {
     const { reminderId, ownerId } = query;
-    const reminder = await this.reminders.findOne({ where: { id: reminderId, ownerId } });
+    const reminder = await this.reminderRepository.findOne({ where: { id: reminderId, ownerId } });
 
     return reminder === null ? null : ReminderMapper.toModel(reminder);
   }

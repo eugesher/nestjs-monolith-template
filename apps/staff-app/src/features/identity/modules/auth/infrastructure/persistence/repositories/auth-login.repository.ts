@@ -11,14 +11,14 @@ import { AuthStaffUserMapper } from '../mappers/auth-staff-user.mapper';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get users(): Repository<StaffUser> {
-    return this.txHost.tx.getRepository(StaffUser);
+  private get staffUserRepository(): Repository<StaffUser> {
+    return this.transactionHost.tx.getRepository(StaffUser);
   }
 
   public async findByEmail(email: string): Promise<Maybe<AuthStaffUserModel>> {
-    const user = await this.users.findOne({ where: { email } });
+    const user = await this.staffUserRepository.findOne({ where: { email } });
 
     return user ? AuthStaffUserMapper.toModel(user) : undefined;
   }

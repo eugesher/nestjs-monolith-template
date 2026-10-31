@@ -9,10 +9,10 @@ import { type IProductStockArchiveOutOfStockRepositoryPort } from '../../../outb
 
 @Injectable()
 export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {
-  constructor(private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
 
-  private get products(): Repository<Product> {
-    return this.txHost.tx.getRepository(Product);
+  private get productRepository(): Repository<Product> {
+    return this.transactionHost.tx.getRepository(Product);
   }
 
   public async findActive(productIds: string[]): Promise<string[]> {
@@ -20,7 +20,7 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
       return [];
     }
 
-    const products = await this.products.find({
+    const products = await this.productRepository.find({
       select: { id: true },
       where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
       order: { id: 'ASC' },
