@@ -1,4 +1,4 @@
-# 16 — Quality gates
+# 015 — Quality gates
 
 Three gates stand between a change and the main branch: the git hooks on the developer's machine,
 the coverage thresholds of the unit suite, and the CI workflow.
@@ -72,7 +72,7 @@ lint → typecheck → build → unit → e2e
   outside `.gitignore`;
 - `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
 - `e2e` starts MySQL and Redis of `test/infra` and reseeds before each suite, as
-  `15-e2e-suites.md` requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`,
+  `014-e2e-suites.md` requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`,
   so the `node` service of the compose file is not built. The suites read no env file:
   `jest/<app>.e2e-setup.js` sets the whole environment.
 

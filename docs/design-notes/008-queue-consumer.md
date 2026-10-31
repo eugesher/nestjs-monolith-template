@@ -1,7 +1,7 @@
-# 09 — Ledger record processor
+# 008 — Queue consumer
 
-`apps/processor-app/src/processors/ledger-record` appends records to the ledger, the
-`ledger_entry` table (see `05-ledger.md`). It is the only writer of the table. It is a processor, not a feature: a job of the
+`apps/processor-app/src/processors/ledger-record` consumes the `ledger-record` queue and appends
+each job to `ledger_entry` (see `004-append-only-journal.md`). It is a processor, not a feature: a job of the
 Bull queue `ledger-record` or a daily schedule enters it, not an HTTP request, and it has no
 controller.
 
@@ -16,23 +16,9 @@ controller.
 
 ## A job is a ready record
 
-**The processor knows no subject.** A job carries the whole record, and the processor appends it as
-it is:
-
-| Field           | Meaning                                                   |
-| --------------- | --------------------------------------------------------- |
-| `operationKey`  | the key the ledger deduplicates on, `<fact>:<subject id>` |
-| `subjectType`   | what the record is about, `product` or `customer` today   |
-| `subjectId`     | the id of that subject                                    |
-| `action`        | the fact, such as `ProductCreated`                        |
-| `payload`       | the details of the fact                                   |
-| `occurredAt`    | when the fact happened, an ISO string                     |
-| `correlationId` | the id of the request that produced the record            |
-
-The producer turns its facts into records, so a new writer needs no change here. The writers are
-listed in `05-ledger.md`: features of staff-app and customer-app and the core product module. None
-of them consumes the queue: processor-app does (see `25-processor-app.md`), and the three apps reach
-the queue through one Redis.
+The job type `ILedgerRecordProcessorPayload` carries the whole record, and the processor appends it
+as it is, so a new producer needs no change here. The producers do not consume the queue:
+processor-app does (see `023-processor-app.md`), and the apps reach the queue through one Redis.
 
 The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
 app may not import another. Each app registers the queue in its `common/shared/ledger-record`, and

@@ -1,4 +1,4 @@
-# 14 — E2E infrastructure
+# 013 — E2E infrastructure
 
 The e2e suites run against a real MySQL and a real Redis, started by `test/infra`. The
 development stack in the root `docker-compose.yml` uses other host ports, so a dev server never
@@ -14,14 +14,14 @@ attaches to the test infrastructure.
 
 ## Scripts
 
-| Script                                | What it does                                                         |
-| ------------------------------------- | -------------------------------------------------------------------- |
-| `test:e2e:infra:up`                   | builds and starts MySQL, Redis and the `node` container, attached    |
-| `test:e2e:infra:down`                 | removes the containers and their volumes                             |
-| `test:e2e:infra:reload`               | `down`, then `up`                                                    |
-| `test:e2e:infra:reseed`               | resets the data of running infrastructure, see below                 |
-| `test:e2e:seed`                       | loads the seed files into `DATABASE_URL`                             |
-| `test:e2e:staff`, `test:e2e:customer` | the e2e suite of one app, `--runInBand --ci`, see `15-e2e-suites.md` |
+| Script                                | What it does                                                          |
+| ------------------------------------- | --------------------------------------------------------------------- |
+| `test:e2e:infra:up`                   | builds and starts MySQL, Redis and the `node` container, attached     |
+| `test:e2e:infra:down`                 | removes the containers and their volumes                              |
+| `test:e2e:infra:reload`               | `down`, then `up`                                                     |
+| `test:e2e:infra:reseed`               | resets the data of running infrastructure, see below                  |
+| `test:e2e:seed`                       | loads the seed files into `DATABASE_URL`                              |
+| `test:e2e:staff`, `test:e2e:customer` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`:
@@ -63,34 +63,10 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 
 ### Seeded accounts
 
-Staff, in `staff_user.sql`:
-
-| Id                                     | Email                  | Password                          | Role             |
-| -------------------------------------- | ---------------------- | --------------------------------- | ---------------- |
-| `00000000-0000-4000-8000-000000000001` | `admin@example.com`    | `admin-password-please-change`    | admin            |
-| `00000000-0000-4000-8000-000000000002` | `editor@example.com`   | `editor-password-please-change`   | editor           |
-| `00000000-0000-4000-8000-000000000003` | `viewer@example.com`   | `viewer-password-please-change`   | viewer           |
-| `00000000-0000-4000-8000-000000000004` | `disabled@example.com` | `disabled-password-please-change` | viewer, disabled |
-
-Customers, in `customer.sql`:
-
-| Id                                     | Email               | Password                       | Status   |
-| -------------------------------------- | ------------------- | ------------------------------ | -------- |
-| `00000000-0000-4000-8000-000000000101` | `ann@example.com`   | `ann-password-please-change`   | active   |
-| `00000000-0000-4000-8000-000000000102` | `bob@example.com`   | `bob-password-please-change`   | active   |
-| `00000000-0000-4000-8000-000000000103` | `carol@example.com` | `carol-password-please-change` | active   |
-| `00000000-0000-4000-8000-000000000104` | `dora@example.com`  | `dora-password-please-change`  | disabled |
-
-The hashes are argon2id with the cost parameters of the app env examples. Roles get the ids of their
-order in `RoleEnum`. Permission ids are stable: a code dropped from `PermissionCodeEnum` leaves its
-id unused, so the product codes keep 7 to 9. The products belong to the catalog and have no owner.
-Product 100 has 8 units on hand and product 106 is sold out: ann ordered its last unit. Product 103
-has 3 units on hand, and the draft product 101, the archived product 105, and the soft-deleted
-product 107 have stock too, so the catalog cases show that only active products are listed. Ann and
-bob own one order each, so every order case has an order of another customer to be refused.
-The reminders belong to staff users: editor owns one reminder and admin most of them, so every case
-has a record of another staff user to be refused. Every note belongs to admin, so viewer, who owns
-none, is the other staff user of the note cases.
+The rows of each table are in `test/infra/seed/data/<table>.sql`, and the e2e contexts sign their
+tokens for the seeded accounts (`apps/<app>/test/context/app-e2e.context.ts`). The password hashes
+are argon2id with the cost parameters of the app env examples. Enum-backed rows get stable ids: a
+value dropped from its enum leaves its id unused.
 
 ### Id ranges
 

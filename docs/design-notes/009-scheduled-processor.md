@@ -1,9 +1,9 @@
-# 10 — Idempotency purge processor
+# 009 — Scheduled processor
 
-`apps/processor-app/src/processors/idempotency-purge` deletes expired `Idempotency-Key` rows once an
-hour. The keys are written by the core idempotency module (see `07-core-idempotency.md`), but
+`apps/processor-app/src/processors/idempotency-purge` deletes expired rows of `idempotency_key` on a
+schedule. The keys are written by the core idempotency module (see `006-idempotency-keys.md`), but
 nothing else deletes them, so the delete lives here with a repository of its own (see
-`26-code-placement.md`). It is a processor: a schedule enters it, not an HTTP request.
+`024-code-placement.md`). It is a processor: a schedule enters it, not an HTTP request.
 
 | Layer                        | What it holds                                                              |
 | ---------------------------- | -------------------------------------------------------------------------- |

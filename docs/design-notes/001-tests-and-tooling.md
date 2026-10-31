@@ -1,4 +1,4 @@
-# 01 — Tests and tooling
+# 001 — Tests and tooling
 
 ## `spec/` — architecture lint specs
 

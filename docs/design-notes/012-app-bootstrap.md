@@ -1,9 +1,9 @@
-# 13 — App bootstrap
+# 012 — App bootstrap
 
 staff-app, customer-app and processor-app are three deployables over one module graph: each has its
 own `main.ts`, its own `AppModule` and its own port, and all three read the same database and Redis.
 staff-app and customer-app serve HTTP; processor-app serves only the health probes and runs the
-queue consumers and the schedules (see `25-processor-app.md`).
+queue consumers and the schedules (see `023-processor-app.md`).
 
 ## main.ts
 
@@ -54,19 +54,19 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 
 ## AppModule
 
-| Piece                              | Where                                                | What it does                                                                               |
-| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                                              |
-| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                                                    |
-| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `28-transaction-port.md`) |
-| `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                     |
-| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                     |
-| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                                                        |
-| `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                    |
-| features, processors               | `@acme-<app>-features`, `@acme-processor-processors` | the routes and the consumers                                                               |
-| `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                            |
-| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                               |
-| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                                               |
+| Piece                              | Where                                                | What it does                                                                                |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                                               |
+| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                                                     |
+| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
+| `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
+| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
+| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                                                         |
+| `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
+| features, processors               | `@acme-<app>-features`, `@acme-processor-processors` | the routes and the consumers                                                                |
+| `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
+| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
+| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                                                |
 
 Every module in `app/setup/` is named `*SetupModule`.
 

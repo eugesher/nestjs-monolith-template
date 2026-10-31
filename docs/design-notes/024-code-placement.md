@@ -1,4 +1,4 @@
-# 26 — Code placement
+# 024 — Code placement
 
 Code lives as close to its callers as it can. A method of a facade decides where its code goes:
 
@@ -20,19 +20,15 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 | core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`, `lock` also the processor `product-stock` |
 | staff common `auth`  | `validateSubject`              | staff `auth` (`GET /identity/auth/me`), staff `app/global/auth`              |
 
-Everything else sits with its only caller:
+Everything else sits with its only caller, for example:
 
-| Code                                  | Lives in                                                                    |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| appending to the ledger               | the processor `ledger-record` (see `09-ledger-record-processor.md`)         |
-| reading the ledger                    | staff `ledger` (see `06-ledger-feature.md`)                                 |
-| deleting the expired idempotency keys | the processor `idempotency-purge` (see `10-idempotency-purge-processor.md`) |
-| staff login                           | staff `auth` (see `18-staff-identity.md`)                                   |
-| staff users and their roles           | staff `user` (see `04-user-and-role-features.md`)                           |
-| staff roles and their permissions     | staff `role` (see `04-user-and-role-features.md`)                           |
-| the permission codes of a staff user  | staff `app/global/auth`                                                     |
-| customer sign-up and login            | customer `auth` (see `19-customer-identity.md`)                             |
-| the subject of a customer token       | customer `app/global/auth`                                                  |
+| Code                                   | Lives in                                              |
+| -------------------------------------- | ----------------------------------------------------- |
+| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger-record`     |
+| the read of `ledger_entry`             | `apps/staff-app/src/features/ledger`                  |
+| the delete of expired idempotency keys | `apps/processor-app/src/processors/idempotency-purge` |
+| a login                                | `apps/<app>/src/features/**/auth`                     |
+| the permission codes of a user         | `apps/staff-app/src/app/global/auth`                  |
 
 ## Why per method
 
@@ -46,18 +42,9 @@ are.
 
 ## Copies over shared internals
 
-**Each module keeps its own model.** Staff login, the back office and the subject check all read
-`staff_user`, and each has a model of its own, narrowed to what it uses:
-
-| Module              | Model                      | Holds                                   |
-| ------------------- | -------------------------- | --------------------------------------- |
-| staff `auth`        | `AuthStaffUserModel`       | id, email, password hash, status        |
-| staff `user`        | `UserStaffUserModel`       | id, email, password hash, status, roles |
-| staff common `auth` | `AuthCommonStaffUserModel` | id, email, status, roles                |
-
-A shared model would be a facade method in disguise: a change for one caller would ripple into the
-others. The copies share the table and the kernel enums (`UserStatusEnum`, `RoleEnum`,
-`IdentityErrorCodeEnum`), nothing else.
+**Each module keeps its own model**, narrowed to what it uses, even over one table (see
+`017-credentials-lib.md`). A shared model would be a facade method in disguise: a change for one
+caller would ripple into the others. The copies share the table and the kernel enums, nothing else.
 
 **The names say where a symbol lives.** A symbol of a common module carries `Common`
 (`AuthCommonModule`, `AUTH_COMMON_PORT`), a symbol of a core module carries `Core`, and a feature
@@ -70,4 +57,4 @@ A global module (`app/global/<m>`) used to hold only a module root and infrastru
 logic, it gets `application/` and `outbound/` like a feature: the facade calls a use case, the use
 case calls a repository port, and the repository lives in `infrastructure/persistence`. The lint
 categories `acme-app:app:global:application` and `acme-app:app:global:outbound` cover them (see
-`17-lint-allowlists.md`).
+`016-lint-allowlists.md`).

@@ -1,4 +1,4 @@
-# 28 — Transaction port
+# 026 — Transaction port
 
 The application layer opens a transaction through `TRANSACTION_PORT` of
 `@acme-libs/contracts/database`, never through TypeORM or `@nestjs-cls/transactional`:
@@ -11,7 +11,7 @@ interface ITransactionPort {
 ```
 
 `TransactionAdapter` of `libs/database` implements it, and `TypeOrmSetupModule` of each app binds
-it next to `ClsPluginTransactional` (see `13-app-bootstrap.md`).
+it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 
 ## `run`
 
@@ -51,7 +51,7 @@ effects without a trace.
 
 **A crash between the commit and a hook loses the hook.** The list lives in memory. The template
 uses no outbox, so effects that must survive a crash are retried by their own mechanism, as the
-ledger records are (see `08-product-feature.md`).
+ledger records are (see `007-optimistic-concurrency.md`).
 
 ## When to use it
 

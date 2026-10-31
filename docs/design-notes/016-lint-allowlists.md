@@ -1,4 +1,4 @@
-# 17 — Lint allowlists
+# 016 — Lint allowlists
 
 Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
@@ -78,7 +78,7 @@ module, though today only feature core-adapters reach the domain.
 
 ### `acme-core.mjs` — a core module that writes to a queue or a cache
 
-A core module announces what it wrote after the commit (see `28-transaction-port.md`), so three
+A core module announces what it wrote after the commit (see `026-transaction-port.md`), so three
 edges exist for it:
 
 - **`infrastructure/queue`**, a category of its own, holds the queue adapters. It takes
@@ -92,7 +92,7 @@ edges exist for it:
 
 ### Where the credentials and the persistence packages are allowed
 
-Code lives with its only caller (see `26-code-placement.md`), so the edges follow the code:
+Code lives with its only caller (see `024-code-placement.md`), so the edges follow the code:
 
 - **A feature signs its users in.** The application of a feature may take
   `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No

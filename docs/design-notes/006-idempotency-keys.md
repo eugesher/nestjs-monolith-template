@@ -1,17 +1,17 @@
-# 07 — Core idempotency
+# 006 — Idempotency keys
 
 `core/modules/src/idempotency` keeps the `idempotency_key` table: which `Idempotency-Key` a client
 has used, for which request body, and what the first request answered. It is a core module because
-both apps write through it: the staff `product` feature and the customer `order` feature claim keys
-while serving writes. Its contract `core/contracts/src/idempotency` has one port:
+features of two apps claim keys while serving writes, for example
+`apps/staff-app/src/features/catalog/modules/product/application/use-cases/product-create.use-case.ts`. Its contract `core/contracts/src/idempotency` has one port:
 
 | Port                        | Facade                     | Consumer                                  |
 | --------------------------- | -------------------------- | ----------------------------------------- |
 | `IDEMPOTENCY_CORE_KEY_PORT` | `IdempotencyCoreKeyFacade` | a feature that serves an idempotent write |
 
 Deleting the expired keys has one caller, the `idempotency-purge` processor of processor-app, so it
-lives in the processor with a repository of its own (see `10-idempotency-purge-processor.md` and
-`26-code-placement.md`).
+lives in the processor with a repository of its own (see `009-scheduled-processor.md` and
+`024-code-placement.md`).
 
 A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency`
 and reaches a port only from a core-adapter, like any core module. The `IdempotencyKey` decorator
@@ -19,7 +19,8 @@ that reads the header lives in `@acme-libs/http`, so both apps parse the key the
 
 Keys share one table and one UNIQUE index across the apps. A key that one app or one client already
 used is a `mismatch` for any other body, so a caller that wants keys scoped per user puts the user
-into the body it claims, as the `order` feature does with `customerId`.
+into the body it claims, as
+`apps/customer-app/src/features/order/application/use-cases/order-place.use-case.ts` does.
 
 ## Claim before the work
 
@@ -56,3 +57,10 @@ concurrent duplicate could work too.
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.
+
+## In one transaction with the write
+
+The caller completes the key as the last write of its own transaction (see
+`product-create.use-case.ts`), so the stored answer and the write commit together. Any failure after
+the claim releases the key, so an honest retry can take it again. A failure after the commit, such
+as an enqueue, leaves a completed key that `release` does not delete, so the retry is a replay.

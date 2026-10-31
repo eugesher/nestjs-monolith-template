@@ -1,4 +1,4 @@
-# 02 — Global auth guards
+# 002 — Global auth guards
 
 ## Where the pieces live
 
@@ -10,7 +10,7 @@
 
 **The lib checks, the app decides who the user is.** `libs/auth` never reads a table. It verifies
 the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app binds that port in
-its global `AuthGlobalModule`, which has the layers of a feature (see `26-code-placement.md`):
+its global `AuthGlobalModule`, which has the layers of a feature (see `024-code-placement.md`):
 every facade method calls a use case, and the use case reaches the data through an outbound port.
 
 | App          | Subject and roles                                                                                                                                                                            | Permission codes                                          | Ports bound                                    |
@@ -43,14 +43,13 @@ without a new policy.
 
 **Who the user is and what the user may do are two ports.** `AUTH_USER_VALIDATOR_PORT.validate`
 answers `{ id, email }`, which every principal has. `AUTH_CLAIMS_PORT` answers `findRoles` and
-`findPermissionCodes`, which only staff have. A customer owns their records and holds no roles, so
-customer-app imports `AuthLibModule` alone and binds no claims port.
+`findPermissionCodes`. customer-app imports `AuthLibModule` alone and binds no claims port.
 
 **Two static modules, not a flag.** `AuthLibModule.forRoot({ claims: true })` would hide the choice
 in an argument that no lint can read. An import of `AuthClaimsLibModule` is visible, and the lint
 policy `customer-claims.mjs` refuses it in customer-app, together with `@Roles`,
 `@RequiresPermission`, `AUTH_CLAIMS_PORT`, `RoleEnum` and `PermissionCodeEnum`. Without the claims
-module the decorators would be silently ignored, so a customer route cannot even name them.
+module the decorators would be silently ignored, so a route of customer-app cannot even name them.
 
 ## Order
 

@@ -1,6 +1,6 @@
-# 27 — Feature groups
+# 025 — Feature groups
 
-The features of staff-app that belong to one business area sit in a group: a parent module that
+The features of staff-app sit in groups: a parent module that
 mounts its child modules and holds no code of its own.
 
 | Group      | Modules                | Routes                                                 |
@@ -55,6 +55,6 @@ page lists the modules of a group together.
 
 - The e2e classes of the modules sit in `apps/staff-app/test/features/<group>/modules/<module>.e2e.ts`,
   and `<group>/<group>.e2e.ts` mounts them: its `execute()` holds a `describe` per module, and
-  `app.e2e-spec.ts` calls it inside the `describe` of the group (see `15-e2e-suites.md`).
+  `app.e2e-spec.ts` calls it inside the `describe` of the group (see `014-e2e-suites.md`).
 - The Posting requests sit in `.http/staff-app/<group>/<module>/<endpoint>/`, and the first line of
   a description names the e2e test with the group in it.
