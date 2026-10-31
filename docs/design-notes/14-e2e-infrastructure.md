@@ -1,12 +1,12 @@
 # 14 — E2E infrastructure
 
-The e2e suites run against a real MySQL and a real Redis, started by `docker-compose/test`. The
+The e2e suites run against a real MySQL and a real Redis, started by `test/infra`. The
 development stack in the root `docker-compose.yml` uses other host ports, so a dev server never
 attaches to the test infrastructure.
 
 |              | Development                           | Tests                                           |
 | ------------ | ------------------------------------- | ----------------------------------------------- |
-| Compose file | `docker-compose.yml`                  | `docker-compose/test/docker-compose.yml`        |
+| Compose file | `docker-compose.yml`                  | `test/infra/docker-compose.yml`                 |
 | Project      | `acme`                                | `acme-e2e`                                      |
 | MySQL        | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root`               |
 | Redis        | `localhost:6379`, no password         | `localhost:6380`, password `e2e-redis-password` |
@@ -34,7 +34,7 @@ reseed; the final run of a change starts from a reload.
 
 ## Seeds
 
-`docker-compose/test/seed/data/<table>.sql` holds the rows of one table:
+`test/infra/seed/data/<table>.sql` holds the rows of one table:
 
 - one `INSERT`, the rows sorted by primary key;
 - every row states its primary key, nothing relies on `AUTO_INCREMENT`;
@@ -51,7 +51,7 @@ Seed failed: Seeded rows break foreign keys:
 fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 ```
 
-**The seed runs under plain `node`**, like the migrations: `docker-compose/` has its own
+**The seed runs under plain `node`**, like the migrations: `test/` has its own
 `package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
 It imports no project code, only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from
 the environment of the process and never from an env file, so it cannot seed the development
@@ -129,6 +129,6 @@ with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the 
 docker compose -f docker-compose.yml -f docker-compose.observability.yml up
 ```
 
-The collector reads `docker-compose/observability/otel-collector-config.yaml` and forwards the
+The collector reads `opentelemetry-collector.config.yaml` and forwards the
 traces to Jaeger, whose UI is at `localhost:16686`. Tracing stays off until an app runs with
 `OTEL_SDK_DISABLED=false`.
