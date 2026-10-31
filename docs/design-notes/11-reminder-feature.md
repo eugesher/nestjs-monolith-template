@@ -1,6 +1,6 @@
 # 11 — Reminder feature
 
-`apps/staff-app/src/features/reminder` is the per-owner list behind `/reminders`, with a summary of
+`apps/staff-app/src/features/tools/modules/reminder` is the per-owner list behind `/tools/reminders`, with a summary of
 it: how many reminders are pending and when the next one is due. This note covers the
 `ReminderModel` aggregate, ownership, optimistic concurrency, the cache-aside summary, the
 persistence and the HTTP surface.
@@ -134,14 +134,14 @@ single-flight and no fallback of its own. It logs nothing either: the cache lib 
 
 ## HTTP
 
-| Method and path                       | Answer                        |
-| ------------------------------------- | ----------------------------- |
-| `POST /reminders`                     | 201, the reminder             |
-| `GET /reminders`                      | 200, a page of reminders      |
-| `GET /reminders/summary`              | 200, `{ pending, nextDueOn }` |
-| `PATCH /reminders/:reminderId/done`   | 200, the reminder             |
-| `PATCH /reminders/:reminderId/due-on` | 200, the reminder             |
-| `DELETE /reminders/:reminderId`       | 204                           |
+| Method and path                             | Answer                        |
+| ------------------------------------------- | ----------------------------- |
+| `POST /tools/reminders`                     | 201, the reminder             |
+| `GET /tools/reminders`                      | 200, a page of reminders      |
+| `GET /tools/reminders/summary`              | 200, `{ pending, nextDueOn }` |
+| `PATCH /tools/reminders/:reminderId/done`   | 200, the reminder             |
+| `PATCH /tools/reminders/:reminderId/due-on` | 200, the reminder             |
+| `DELETE /tools/reminders/:reminderId`       | 204                           |
 
 **Every route needs a staff token, no permission, and is scoped to the caller.** The controller
 always passes the caller's own id as `ownerId`.

@@ -1,7 +1,8 @@
 # 03 — Auth feature
 
-`apps/<app>/src/features/auth` serves `POST /auth/login` and `GET /auth/me` in both apps, and
-`POST /auth/register` in customer-app. `auth` also names the lib, its contract and the global
+The `auth` feature serves login and `me` in both apps and sign-up in customer-app. In staff-app it
+is `features/identity/modules/auth` behind `/identity/auth` (see `27-feature-groups.md`), in
+customer-app it is `features/auth` behind `/auth`. `auth` also names the lib, its contract and the global
 module, so the classes of the global module carry the `AuthGlobal` prefix (see
 `02-global-auth-guards.md`) and the feature keeps the plain `Auth` prefix.
 
@@ -37,8 +38,8 @@ auth facade for them explicitly, rather than a read on every request.
 
 **A customer signs up alone, staff are created by an admin.** `POST /auth/register` of customer-app
 is `@Public()` and runs `AuthRegisterUseCase`, which stores the customer itself. staff-app has no
-sign-up: a staff user comes from `POST /iam/users`, behind `iam:user:create` (see
-`04-iam-feature.md`).
+sign-up: a staff user comes from `POST /identity/users`, behind `iam:user-create` (see
+`04-user-and-role-features.md`).
 
 **Sign-up answers who was created, not a token.** The response is `201` with `{ id, email }`, and
 the client logs in next. Login stays the only place that issues a token, checks the status and logs
@@ -56,7 +57,7 @@ new customer is `active`.
 lookup before the insert. A lookup and an insert are two statements: two sign-ups with one email at
 the same moment would both pass the lookup, and the loser would hit the index as a 500. The register
 repository inserts at once and turns the duplicate-key error of the driver (`MysqlErrorHelper`) into
-`AUTH_EMAIL_TAKEN`, which maps to 409. `POST /iam/users` of staff-app does the same (see
+`AUTH_EMAIL_TAKEN`, which maps to 409. `POST /identity/users` of staff-app does the same (see
 `18-staff-identity.md`), and the e2e of each app sends two such requests at once and expects one 201
 and one 409.
 

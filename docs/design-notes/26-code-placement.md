@@ -13,12 +13,12 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 
 ## What lives where today
 
-| Module               | Methods                        | Callers                                                |
-| -------------------- | ------------------------------ | ------------------------------------------------------ |
-| core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                      |
-| core `ledger`        | `append`                       | staff `product`, the processor `ledger-record`         |
-| core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`                      |
-| staff common `auth`  | `validateSubject`              | staff `auth` (`GET /auth/me`), staff `app/global/auth` |
+| Module               | Methods                        | Callers                                                         |
+| -------------------- | ------------------------------ | --------------------------------------------------------------- |
+| core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                               |
+| core `ledger`        | `append`                       | staff `product`, the processor `ledger-record`                  |
+| core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`                               |
+| staff common `auth`  | `validateSubject`              | staff `auth` (`GET /identity/auth/me`), staff `app/global/auth` |
 
 Everything else sits with its only caller:
 
@@ -27,7 +27,8 @@ Everything else sits with its only caller:
 | reading the ledger                    | staff `ledger` (see `06-ledger-feature.md`)                                 |
 | deleting the expired idempotency keys | the processor `idempotency-purge` (see `10-idempotency-purge-processor.md`) |
 | staff login                           | staff `auth` (see `18-staff-identity.md`)                                   |
-| staff users, roles and permissions    | staff `iam` (see `04-iam-feature.md`)                                       |
+| staff users and their roles           | staff `user` (see `04-user-and-role-features.md`)                           |
+| staff roles and their permissions     | staff `role` (see `04-user-and-role-features.md`)                           |
 | the permission codes of a staff user  | staff `app/global/auth`                                                     |
 | customer sign-up and login            | customer `auth` (see `19-customer-identity.md`)                             |
 | the subject of a customer token       | customer `app/global/auth`                                                  |
@@ -50,7 +51,7 @@ are.
 | Module              | Model                      | Holds                                   |
 | ------------------- | -------------------------- | --------------------------------------- |
 | staff `auth`        | `AuthStaffUserModel`       | id, email, password hash, status        |
-| staff `iam`         | `IamStaffUserModel`        | id, email, password hash, status, roles |
+| staff `user`        | `UserStaffUserModel`       | id, email, password hash, status, roles |
 | staff common `auth` | `AuthCommonStaffUserModel` | id, email, status, roles                |
 
 A shared model would be a facade method in disguise: a change for one caller would ripple into the

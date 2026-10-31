@@ -36,7 +36,7 @@ gone.
 
 ## Paging and shape
 
-`page` and `size` work as in `GET /products` of staff-app: the DTO checks that both are positive
+`page` and `size` work as in `GET /catalog/products` of staff-app: the DTO checks that both are positive
 integers, and the use case applies the defaults (page 1, size 20) and caps `size` at 100 with
 `PaginationHelper.clampPageWindow`. The response echoes the window it used.
 

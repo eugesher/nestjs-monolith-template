@@ -1,0 +1,23 @@
+name: 05-concurrent
+description: |-
+  e2e: Catalog › Product › PATCH /api/catalog/products/:productId/name › should apply every one of concurrent renames without If-Match
+
+  Expect: 200 OK, product 104 version + 1
+  User: editor@example.com (token signed by scripts.py)
+  Note: the e2e sends six renames at once and gets version 7; one request shows only a single rename
+method: PATCH
+url: $STAFF_APP_BASE_URL/catalog/products/104/name
+body:
+  content: |-
+    {
+      "name": "Concurrent rename 1"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

@@ -33,6 +33,7 @@ apps/<app>/test/
   context/app-e2e.context.ts
   features/index.ts
   features/<feature>/<feature>.e2e.ts
+  features/<group>/<feature>/<feature>.e2e.ts
   processors/index.ts
   processors/<processor>/<processor>.e2e.ts
 ```
@@ -49,6 +50,10 @@ describe('Note', () => {
   noteE2E.handleEdit();
 });
 ```
+
+A feature of a group (see `27-feature-groups.md`) sits in `features/<group>/<feature>/`, and its
+`describe` is nested in the `describe` of the group, so the name of a case starts with both:
+`Identity › Role › GET /api/identity/roles`.
 
 The order of the calls is the order of the database states: the cases that read a whole list come
 before the cases that write into it.

@@ -1,0 +1,25 @@
+name: 01-create
+description: |-
+  e2e: Tools › Reminder › POST /api/tools/reminders › should create a pending reminder on the date sent and drop the cached summary
+
+  Expect: 201 Created, dueOn 2026-06-01; the summary key is gone
+  User: admin@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:* key
+  Before: send tools/reminder/get-summary/01-compute-and-cache
+method: POST
+url: $STAFF_APP_BASE_URL/tools/reminders
+body:
+  content: |-
+    {
+      "title": "Renew the domain",
+      "dueOn": "2026-06-01"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

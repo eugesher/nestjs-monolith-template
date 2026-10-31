@@ -1,6 +1,7 @@
 # 08 — Product feature
 
-`apps/staff-app/src/features/product` is the back office catalog behind `/products`. This note covers the
+`apps/staff-app/src/features/catalog/modules/product` is the back office catalog behind
+`/catalog/products`. This note covers the
 `ProductModel` aggregate, optimistic concurrency, idempotent creation, restocking, the ledger record
 of an archive, the adapters behind the ports and the HTTP surface.
 
@@ -35,7 +36,7 @@ insert. The service turns them into ledger records (see below).
 ## Access
 
 A product belongs to the catalog, not to a person. `ProductAccessService` loads a product by its id
-or refuses it with `PRODUCT_NOT_FOUND` (404), and `GET /products` lists the whole catalog. Who may
+or refuses it with `PRODUCT_NOT_FOUND` (404), and `GET /catalog/products` lists the whole catalog. Who may
 read and who may change the catalog is a question of permissions, answered before the use case runs
 (see HTTP below).
 
@@ -85,7 +86,7 @@ not delete, so the retry is a replay.
 
 ## Restock
 
-`POST /products/:productId/stock` with `{ quantity }` writes a `+quantity` row to `product_stock`
+`POST /catalog/products/:productId/stock` with `{ quantity }` writes a `+quantity` row to `product_stock`
 without an order line (see `20-order-and-stock-schema.md`) and answers 201 with
 `{ productId, quantity }`, where `quantity` is the stock on hand after the restock. A draft can be
 restocked, so its stock is ready when it becomes active. An archived product is
@@ -205,14 +206,14 @@ around the core-adapters.
 
 ## HTTP
 
-| Method and path                      | Permission        | Headers                     | Answer                  |
-| ------------------------------------ | ----------------- | --------------------------- | ----------------------- |
-| `POST /products`                     | `product:write`   | `Idempotency-Key`, required | 201, the product        |
-| `GET /products`                      | `product:read`    |                             | 200, a page of products |
-| `GET /products/:productId`           | `product:read`    |                             | 200, the product        |
-| `PATCH /products/:productId/name`    | `product:write`   | `If-Match`, optional        | 200, the product        |
-| `PATCH /products/:productId/archive` | `product:archive` | `If-Match`, optional        | 200, the product        |
-| `POST /products/:productId/stock`    | `product:restock` | `Idempotency-Key`, required | 201, the stock on hand  |
+| Method and path                              | Permission        | Headers                     | Answer                  |
+| -------------------------------------------- | ----------------- | --------------------------- | ----------------------- |
+| `POST /catalog/products`                     | `product:write`   | `Idempotency-Key`, required | 201, the product        |
+| `GET /catalog/products`                      | `product:read`    |                             | 200, a page of products |
+| `GET /catalog/products/:productId`           | `product:read`    |                             | 200, the product        |
+| `PATCH /catalog/products/:productId/name`    | `product:write`   | `If-Match`, optional        | 200, the product        |
+| `PATCH /catalog/products/:productId/archive` | `product:archive` | `If-Match`, optional        | 200, the product        |
+| `POST /catalog/products/:productId/stock`    | `product:restock` | `Idempotency-Key`, required | 201, the stock on hand  |
 
 A replay of a creation or a restock answers 201 with the stored body, exactly like the first request.
 

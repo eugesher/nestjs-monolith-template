@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
+exports[`App Identity Auth GET /api/identity/auth/me should refuse a caller without a token 1`] = `
 {
   "response": {
     "body": {
@@ -11,7 +11,7 @@ exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = 
 }
 `;
 
-exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
 {
   "response": {
     "body": {
@@ -22,7 +22,7 @@ exports[`App Auth GET /api/auth/me should refuse the token of a customer signed 
 }
 `;
 
-exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`] = `
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a disabled user 1`] = `
 {
   "response": {
     "body": {
@@ -33,7 +33,7 @@ exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`
 }
 `;
 
-exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
+exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
 {
   "response": {
     "body": {
@@ -44,7 +44,7 @@ exports[`App Auth GET /api/auth/me should refuse the token of a staff user signe
 }
 `;
 
-exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
+exports[`App Identity Auth GET /api/identity/auth/me should take the roles from the database, not from the token claims 1`] = `
 {
   "response": {
     "body": {
@@ -63,7 +63,7 @@ exports[`App Auth GET /api/auth/me should take the roles from the database, not 
 }
 `;
 
-exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+exports[`App Identity Auth POST /api/identity/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
   "claims": [
     "exp",
@@ -86,7 +86,7 @@ exports[`App Auth POST /api/auth/login should issue an access token of the subje
 }
 `;
 
-exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
+exports[`App Identity Auth POST /api/identity/auth/login should refuse a disabled user with 403 1`] = `
 {
   "response": {
     "body": {
@@ -98,7 +98,7 @@ exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`
 }
 `;
 
-exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+exports[`App Identity Auth POST /api/identity/auth/login should refuse a wrong password with the same 401 1`] = `
 {
   "response": {
     "body": {
@@ -110,7 +110,7 @@ exports[`App Auth POST /api/auth/login should refuse a wrong password with the s
 }
 `;
 
-exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
+exports[`App Identity Auth POST /api/identity/auth/login should refuse an empty body with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -128,7 +128,7 @@ exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from
 }
 `;
 
-exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+exports[`App Identity Auth POST /api/identity/auth/login should refuse an unknown email with the same 401 1`] = `
 {
   "response": {
     "body": {
@@ -172,7 +172,7 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 }
 `;
 
-exports[`App Iam GET /api/iam/roles should list the roles with their permissions from the database 1`] = `
+exports[`App Identity Role GET /api/identity/roles should list the roles with their permissions from the database 1`] = `
 {
   "response": {
     "body": [
@@ -214,7 +214,7 @@ exports[`App Iam GET /api/iam/roles should list the roles with their permissions
 }
 `;
 
-exports[`App Iam GET /api/iam/roles should refuse a caller without iam:assign 1`] = `
+exports[`App Identity Role GET /api/identity/roles should refuse a caller without iam:assign 1`] = `
 {
   "response": {
     "body": {
@@ -226,7 +226,7 @@ exports[`App Iam GET /api/iam/roles should refuse a caller without iam:assign 1`
 }
 `;
 
-exports[`App Iam POST /api/iam/users should create a user who can log in at once 1`] = `
+exports[`App Identity User POST /api/identity/users should create a user who can log in at once 1`] = `
 {
   "db": {
     "staff_user": [
@@ -254,7 +254,7 @@ exports[`App Iam POST /api/iam/users should create a user who can log in at once
 }
 `;
 
-exports[`App Iam POST /api/iam/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
+exports[`App Identity User POST /api/identity/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
 {
   "db": {
     "staff_user": [
@@ -277,7 +277,7 @@ exports[`App Iam POST /api/iam/users should let one of two simultaneous registra
 }
 `;
 
-exports[`App Iam POST /api/iam/users should refuse a taken email in another case with 409 1`] = `
+exports[`App Identity User POST /api/identity/users should refuse a taken email in another case with 409 1`] = `
 {
   "db": {
     "staff_user": [
@@ -297,7 +297,7 @@ exports[`App Iam POST /api/iam/users should refuse a taken email in another case
 }
 `;
 
-exports[`App Iam POST /api/iam/users/:userId/roles should answer 404 for an unknown user 1`] = `
+exports[`App Identity User POST /api/identity/users/:userId/roles should answer 404 for an unknown user 1`] = `
 {
   "response": {
     "body": {
@@ -309,7 +309,7 @@ exports[`App Iam POST /api/iam/users/:userId/roles should answer 404 for an unkn
 }
 `;
 
-exports[`App Iam POST /api/iam/users/:userId/roles should grant a role and answer 200 1`] = `
+exports[`App Identity User POST /api/identity/users/:userId/roles should grant a role and answer 200 1`] = `
 {
   "db": {
     "staff_user_roles": [
@@ -335,7 +335,7 @@ exports[`App Iam POST /api/iam/users/:userId/roles should grant a role and answe
 }
 `;
 
-exports[`App Iam PUT /api/iam/roles/:role/permissions should answer 404 for an unknown role 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should answer 404 for an unknown role 1`] = `
 {
   "response": {
     "body": {
@@ -347,7 +347,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should answer 404 for an u
 }
 `;
 
-exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
 {
   "db": {
     "staff_role_permissions": [
@@ -377,7 +377,7 @@ exports[`App Iam PUT /api/iam/roles/:role/permissions should refuse an unknown p
 }
 `;
 
-exports[`App Iam PUT /api/iam/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
 {
   "before": {
     "status": 200,
@@ -449,7 +449,7 @@ exports[`App Ledger GET /api/ledger should refuse a malformed page with 400 from
 }
 `;
 
-exports[`App Note GET /api/notes should filter by resolution 1`] = `
+exports[`App Tools Note GET /api/tools/notes should filter by resolution 1`] = `
 {
   "response": {
     "body": {
@@ -474,7 +474,7 @@ exports[`App Note GET /api/notes should filter by resolution 1`] = `
 }
 `;
 
-exports[`App Note GET /api/notes should list only the notes of the caller, with no permission needed 1`] = `
+exports[`App Tools Note GET /api/tools/notes should list only the notes of the caller, with no permission needed 1`] = `
 {
   "response": {
     "body": {
@@ -487,7 +487,7 @@ exports[`App Note GET /api/notes should list only the notes of the caller, with 
 }
 `;
 
-exports[`App Note GET /api/notes should list the notes of one subject, newest first 1`] = `
+exports[`App Tools Note GET /api/tools/notes should list the notes of one subject, newest first 1`] = `
 {
   "response": {
     "body": {
@@ -523,7 +523,7 @@ exports[`App Note GET /api/notes should list the notes of one subject, newest fi
 }
 `;
 
-exports[`App Note GET /api/notes should refuse a resolution that is not a boolean with 400 from validation 1`] = `
+exports[`App Tools Note GET /api/tools/notes should refuse a resolution that is not a boolean with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -537,7 +537,7 @@ exports[`App Note GET /api/notes should refuse a resolution that is not a boolea
 }
 `;
 
-exports[`App Note GET /api/notes should refuse half of a subject filter with 400 1`] = `
+exports[`App Tools Note GET /api/tools/notes should refuse half of a subject filter with 400 1`] = `
 {
   "response": {
     "body": {
@@ -549,7 +549,7 @@ exports[`App Note GET /api/notes should refuse half of a subject filter with 400
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId should answer 404 for a missing note 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId should answer 404 for a missing note 1`] = `
 {
   "response": {
     "body": {
@@ -561,7 +561,7 @@ exports[`App Note GET /api/notes/:noteId should answer 404 for a missing note 1`
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId should hide the note of another staff user with 404 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId should hide the note of another staff user with 404 1`] = `
 {
   "response": {
     "body": {
@@ -573,7 +573,7 @@ exports[`App Note GET /api/notes/:noteId should hide the note of another staff u
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId should read one note 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId should read one note 1`] = `
 {
   "response": {
     "body": {
@@ -591,7 +591,7 @@ exports[`App Note GET /api/notes/:noteId should read one note 1`] = `
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId should refuse an id that is not a number with 400 from validation 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId should refuse an id that is not a number with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -605,7 +605,7 @@ exports[`App Note GET /api/notes/:noteId should refuse an id that is not a numbe
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId/revisions should answer 404 for the revisions of a missing note 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should answer 404 for the revisions of a missing note 1`] = `
 {
   "response": {
     "body": {
@@ -617,7 +617,7 @@ exports[`App Note GET /api/notes/:noteId/revisions should answer 404 for the rev
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId/revisions should hide the revisions of a note of another staff user with 404 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should hide the revisions of a note of another staff user with 404 1`] = `
 {
   "response": {
     "body": {
@@ -629,7 +629,7 @@ exports[`App Note GET /api/notes/:noteId/revisions should hide the revisions of 
 }
 `;
 
-exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of a note 1`] = `
+exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the revisions of a note 1`] = `
 {
   "response": {
     "body": {
@@ -653,7 +653,7 @@ exports[`App Note GET /api/notes/:noteId/revisions should list the revisions of 
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
 {
   "db": {
     "note": [
@@ -682,7 +682,7 @@ exports[`App Note PATCH /api/notes/:noteId should hide the note of another staff
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId should refuse to edit a resolved note with 409 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should refuse to edit a resolved note with 409 1`] = `
 {
   "db": {
     "note": [
@@ -722,7 +722,7 @@ exports[`App Note PATCH /api/notes/:noteId should refuse to edit a resolved note
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId should rewrite the body and record a revision under the correlation id 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body and record a revision under the correlation id 1`] = `
 {
   "db": {
     "note": [
@@ -768,7 +768,7 @@ exports[`App Note PATCH /api/notes/:noteId should rewrite the body and record a 
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId should roll the note back when the revision insert fails 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should roll the note back when the revision insert fails 1`] = `
 {
   "db": {
     "note": [
@@ -804,7 +804,7 @@ exports[`App Note PATCH /api/notes/:noteId should roll the note back when the re
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId should write nothing for an edit to the current body 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should write nothing for an edit to the current body 1`] = `
 {
   "db": {
     "note": [
@@ -839,7 +839,7 @@ exports[`App Note PATCH /api/notes/:noteId should write nothing for an edit to t
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId/resolve should hide the note of another staff user with 404 and resolve nothing 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should hide the note of another staff user with 404 and resolve nothing 1`] = `
 {
   "db": {
     "note": [
@@ -867,7 +867,7 @@ exports[`App Note PATCH /api/notes/:noteId/resolve should hide the note of anoth
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should refuse to resolve a resolved note with 409 1`] = `
 {
   "db": {
     "note": [
@@ -895,7 +895,7 @@ exports[`App Note PATCH /api/notes/:noteId/resolve should refuse to resolve a re
 }
 `;
 
-exports[`App Note PATCH /api/notes/:noteId/resolve should resolve a note 1`] = `
+exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should resolve a note 1`] = `
 {
   "db": {
     "note": [
@@ -929,7 +929,7 @@ exports[`App Note PATCH /api/notes/:noteId/resolve should resolve a note 1`] = `
 }
 `;
 
-exports[`App Note POST /api/notes should create an unresolved note on an opaque subject 1`] = `
+exports[`App Tools Note POST /api/tools/notes should create an unresolved note on an opaque subject 1`] = `
 {
   "db": {
     "note": [
@@ -963,7 +963,7 @@ exports[`App Note POST /api/notes should create an unresolved note on an opaque 
 }
 `;
 
-exports[`App Order GET /api/orders should answer the page window it was asked for 1`] = `
+exports[`App Sales Order GET /api/sales/orders should answer the page window it was asked for 1`] = `
 {
   "response": {
     "body": {
@@ -982,7 +982,7 @@ exports[`App Order GET /api/orders should answer the page window it was asked fo
 }
 `;
 
-exports[`App Order GET /api/orders should list the orders of every customer, newest first 1`] = `
+exports[`App Sales Order GET /api/sales/orders should list the orders of every customer, newest first 1`] = `
 {
   "response": {
     "body": {
@@ -1006,7 +1006,7 @@ exports[`App Order GET /api/orders should list the orders of every customer, new
 }
 `;
 
-exports[`App Order GET /api/orders should refuse a caller without a token with 401 1`] = `
+exports[`App Sales Order GET /api/sales/orders should refuse a caller without a token with 401 1`] = `
 {
   "response": {
     "body": {
@@ -1017,7 +1017,7 @@ exports[`App Order GET /api/orders should refuse a caller without a token with 4
 }
 `;
 
-exports[`App Order GET /api/orders should refuse a malformed page with 400 from validation 1`] = `
+exports[`App Sales Order GET /api/sales/orders should refuse a malformed page with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1032,7 +1032,7 @@ exports[`App Order GET /api/orders should refuse a malformed page with 400 from 
 }
 `;
 
-exports[`App Order GET /api/orders should refuse a role without order:read with 403 1`] = `
+exports[`App Sales Order GET /api/sales/orders should refuse a role without order:read with 403 1`] = `
 {
   "response": {
     "body": {
@@ -1044,7 +1044,7 @@ exports[`App Order GET /api/orders should refuse a role without order:read with 
 }
 `;
 
-exports[`App Order GET /api/orders/:orderId should answer an unknown order with 404 1`] = `
+exports[`App Sales Order GET /api/sales/orders/:orderId should answer an unknown order with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1056,7 +1056,7 @@ exports[`App Order GET /api/orders/:orderId should answer an unknown order with 
 }
 `;
 
-exports[`App Order GET /api/orders/:orderId should read the order of any customer with its products 1`] = `
+exports[`App Sales Order GET /api/sales/orders/:orderId should read the order of any customer with its products 1`] = `
 {
   "response": {
     "body": {
@@ -1082,7 +1082,7 @@ exports[`App Order GET /api/orders/:orderId should read the order of any custome
 }
 `;
 
-exports[`App Order GET /api/orders/:orderId should refuse a caller without a token with 401 1`] = `
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a caller without a token with 401 1`] = `
 {
   "response": {
     "body": {
@@ -1093,7 +1093,7 @@ exports[`App Order GET /api/orders/:orderId should refuse a caller without a tok
 }
 `;
 
-exports[`App Order GET /api/orders/:orderId should refuse a malformed order id with 400 from validation 1`] = `
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a malformed order id with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1107,7 +1107,7 @@ exports[`App Order GET /api/orders/:orderId should refuse a malformed order id w
 }
 `;
 
-exports[`App Order GET /api/orders/:orderId should refuse a role without order:read with 403 1`] = `
+exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a role without order:read with 403 1`] = `
 {
   "response": {
     "body": {
@@ -1119,7 +1119,7 @@ exports[`App Order GET /api/orders/:orderId should refuse a role without order:r
 }
 `;
 
-exports[`App Product GET /api/products should list the catalog, newest first 1`] = `
+exports[`App Catalog Product GET /api/catalog/products should list the catalog, newest first 1`] = `
 {
   "response": {
     "body": {
@@ -1196,7 +1196,7 @@ exports[`App Product GET /api/products should list the catalog, newest first 1`]
 }
 `;
 
-exports[`App Product GET /api/products/:productId should answer an unknown product with 404 1`] = `
+exports[`App Catalog Product GET /api/catalog/products/:productId should answer an unknown product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1208,7 +1208,7 @@ exports[`App Product GET /api/products/:productId should answer an unknown produ
 }
 `;
 
-exports[`App Product GET /api/products/:productId should read a product 1`] = `
+exports[`App Catalog Product GET /api/catalog/products/:productId should read a product 1`] = `
 {
   "response": {
     "body": {
@@ -1224,7 +1224,7 @@ exports[`App Product GET /api/products/:productId should read a product 1`] = `
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/archive should archive and queue one ledger record under the correlation id 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/archive should archive and queue one ledger record under the correlation id 1`] = `
 {
   "db": {
     "product": [
@@ -1268,7 +1268,7 @@ exports[`App Product PATCH /api/products/:productId/archive should archive and q
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/archive should refuse to archive an archived product with 409 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/archive should refuse to archive an archived product with 409 1`] = `
 {
   "db": {
     "product": [
@@ -1295,7 +1295,7 @@ exports[`App Product PATCH /api/products/:productId/archive should refuse to arc
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should apply every one of concurrent renames without If-Match 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/name should apply every one of concurrent renames without If-Match 1`] = `
 {
   "db": {
     "product": [
@@ -1316,7 +1316,7 @@ exports[`App Product PATCH /api/products/:productId/name should apply every one 
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should refuse a malformed If-Match with 400 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/name should refuse a malformed If-Match with 400 1`] = `
 {
   "response": {
     "body": {
@@ -1328,7 +1328,7 @@ exports[`App Product PATCH /api/products/:productId/name should refuse a malform
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should refuse a rename by a viewer with 403 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/name should refuse a rename by a viewer with 403 1`] = `
 {
   "db": {
     "product": [
@@ -1354,7 +1354,7 @@ exports[`App Product PATCH /api/products/:productId/name should refuse a rename 
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should refuse a stale If-Match with 409 and the current version 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/name should refuse a stale If-Match with 409 and the current version 1`] = `
 {
   "db": {
     "product": [
@@ -1383,7 +1383,7 @@ exports[`App Product PATCH /api/products/:productId/name should refuse a stale I
 }
 `;
 
-exports[`App Product PATCH /api/products/:productId/name should rename with a quoted If-Match and bump the version 1`] = `
+exports[`App Catalog Product PATCH /api/catalog/products/:productId/name should rename with a quoted If-Match and bump the version 1`] = `
 {
   "db": {
     "product": [
@@ -1413,7 +1413,7 @@ exports[`App Product PATCH /api/products/:productId/name should rename with a qu
 }
 `;
 
-exports[`App Product POST /api/products should create a draft, record the key and queue the ledger record under the correlation id 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should create a draft, record the key and queue the ledger record under the correlation id 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -1467,7 +1467,7 @@ exports[`App Product POST /api/products should create a draft, record the key an
 }
 `;
 
-exports[`App Product POST /api/products should refuse a create without a key with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a create without a key with 400 1`] = `
 {
   "db": {
     "product": [],
@@ -1482,7 +1482,7 @@ exports[`App Product POST /api/products should refuse a create without a key wit
 }
 `;
 
-exports[`App Product POST /api/products should refuse a key of 129 characters with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a key of 129 characters with 400 1`] = `
 {
   "db": {
     "product": [],
@@ -1497,7 +1497,7 @@ exports[`App Product POST /api/products should refuse a key of 129 characters wi
 }
 `;
 
-exports[`App Product POST /api/products should refuse a taken sku with 409 and release the key 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse a taken sku with 409 and release the key 1`] = `
 {
   "db": {
     "idempotency_key": [],
@@ -1518,7 +1518,7 @@ exports[`App Product POST /api/products should refuse a taken sku with 409 and r
 }
 `;
 
-exports[`App Product POST /api/products should refuse the same key with another body with 422 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should refuse the same key with another body with 422 1`] = `
 {
   "db": {
     "product": [
@@ -1538,7 +1538,7 @@ exports[`App Product POST /api/products should refuse the same key with another 
 }
 `;
 
-exports[`App Product POST /api/products should replay the same response for the same key and body without a second product 1`] = `
+exports[`App Catalog Product POST /api/catalog/products should replay the same response for the same key and body without a second product 1`] = `
 {
   "db": {
     "product": [
@@ -1554,7 +1554,7 @@ exports[`App Product POST /api/products should replay the same response for the 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should add the units to a sold-out product, record the key and queue the ledger record under the correlation id 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should add the units to a sold-out product, record the key and queue the ledger record under the correlation id 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -1614,7 +1614,7 @@ exports[`App Product POST /api/products/:productId/stock should add the units to
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should answer a deleted product with 404 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer a deleted product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1626,7 +1626,7 @@ exports[`App Product POST /api/products/:productId/stock should answer a deleted
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should answer an unknown product with 404 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer an unknown product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -1638,7 +1638,7 @@ exports[`App Product POST /api/products/:productId/stock should answer an unknow
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1652,7 +1652,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a quantit
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -1666,7 +1666,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a quantit
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
 {
   "response": {
     "body": {
@@ -1678,7 +1678,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a restock
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse a restock without a key with 400 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock without a key with 400 1`] = `
 {
   "response": {
     "body": {
@@ -1690,7 +1690,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse a restock
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
 {
   "db": {
     "product_stock": [
@@ -1710,7 +1710,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse the same 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should refuse to restock an archived product with 409 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse to restock an archived product with 409 1`] = `
 {
   "db": {
     "idempotency_key": [],
@@ -1731,7 +1731,7 @@ exports[`App Product POST /api/products/:productId/stock should refuse to restoc
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
 {
   "db": {
     "product_stock": [
@@ -1766,7 +1766,7 @@ exports[`App Product POST /api/products/:productId/stock should replay the same 
 }
 `;
 
-exports[`App Product POST /api/products/:productId/stock should restock a draft 1`] = `
+exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock a draft 1`] = `
 {
   "response": {
     "body": {
@@ -1777,7 +1777,7 @@ exports[`App Product POST /api/products/:productId/stock should restock a draft 
 }
 `;
 
-exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a reminder and drop the cached summary 1`] = `
+exports[`App Tools Reminder DELETE /api/tools/reminders/:reminderId should soft-delete a reminder and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -1804,7 +1804,7 @@ exports[`App Reminder DELETE /api/reminders/:reminderId should soft-delete a rem
 }
 `;
 
-exports[`App Reminder GET /api/reminders should filter by status 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders should filter by status 1`] = `
 {
   "response": {
     "body": {
@@ -1829,7 +1829,7 @@ exports[`App Reminder GET /api/reminders should filter by status 1`] = `
 }
 `;
 
-exports[`App Reminder GET /api/reminders should list the own reminders of the caller, soonest first, without deleted ones 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders should list the own reminders of the caller, soonest first, without deleted ones 1`] = `
 {
   "response": {
     "body": {
@@ -1898,7 +1898,7 @@ exports[`App Reminder GET /api/reminders should list the own reminders of the ca
 }
 `;
 
-exports[`App Reminder GET /api/reminders/summary should answer the cached summary 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders/summary should answer the cached summary 1`] = `
 {
   "response": {
     "body": {
@@ -1909,7 +1909,7 @@ exports[`App Reminder GET /api/reminders/summary should answer the cached summar
 }
 `;
 
-exports[`App Reminder GET /api/reminders/summary should compute the summary of the caller and cache it 1`] = `
+exports[`App Tools Reminder GET /api/tools/reminders/summary should compute the summary of the caller and cache it 1`] = `
 {
   "cache": {
     "keys": [
@@ -1928,7 +1928,7 @@ exports[`App Reminder GET /api/reminders/summary should compute the summary of t
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should answer 404 for a deleted reminder 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should answer 404 for a deleted reminder 1`] = `
 {
   "response": {
     "body": {
@@ -1940,7 +1940,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should answer 404 fo
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a reminder and drop the cached summary 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should complete a reminder and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -1977,7 +1977,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should complete a re
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the reminder of another staff user with 404 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should hide the reminder of another staff user with 404 1`] = `
 {
   "db": {
     "reminder": [
@@ -2005,7 +2005,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should hide the remi
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse a done reminder with 409 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should refuse a done reminder with 409 1`] = `
 {
   "response": {
     "body": {
@@ -2017,7 +2017,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse a done
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id that is not a number with 400 from validation 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should refuse an id that is not a number with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -2031,7 +2031,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/done should refuse an id 
 }
 `;
 
-exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
+exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/due-on should move a reminder to the date sent and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -2068,7 +2068,7 @@ exports[`App Reminder PATCH /api/reminders/:reminderId/due-on should move a remi
 }
 `;
 
-exports[`App Reminder POST /api/reminders should create a pending reminder on the date sent and drop the cached summary 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should create a pending reminder on the date sent and drop the cached summary 1`] = `
 {
   "cache": {
     "keys": [],
@@ -2105,7 +2105,7 @@ exports[`App Reminder POST /api/reminders should create a pending reminder on th
 }
 `;
 
-exports[`App Reminder POST /api/reminders should refuse a date that does not exist with 400 from the model 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should refuse a date that does not exist with 400 from the model 1`] = `
 {
   "response": {
     "body": {
@@ -2117,7 +2117,7 @@ exports[`App Reminder POST /api/reminders should refuse a date that does not exi
 }
 `;
 
-exports[`App Reminder POST /api/reminders should refuse an instant with 400 from validation 1`] = `
+exports[`App Tools Reminder POST /api/tools/reminders should refuse an instant with 400 from validation 1`] = `
 {
   "response": {
     "body": {

@@ -18,14 +18,14 @@ every facade method calls a use case, and the use case reaches the data through 
 | staff-app    | `AuthGlobalValidateSubjectUseCase`, `AuthGlobalFindRolesUseCase` over `AUTH_GLOBAL_SUBJECT_PORT`, which `AuthGlobalSubjectCommonAdapter` implements with `AUTH_COMMON_PORT` of common `auth` | `AuthGlobalFindPermissionCodesUseCase` and its repository | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
 | customer-app | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                                                                        | none                                                      | `AUTH_USER_VALIDATOR_PORT`                     |
 
-The subject check of staff-app lives in a common module because `GET /auth/me` asks the same
+The subject check of staff-app lives in a common module because `GET /identity/auth/me` asks the same
 question; the permission codes and the customer check have one caller each, so they live here.
 
 The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.
 
 **Global classes carry the `AuthGlobal` prefix.** The folder stays `app/global/auth`, paired with
-the lib contract below, but the feature `features/auth` owns the plain names: `AuthModule`, and
+the lib contract below, but the `auth` feature owns the plain names: `AuthModule`, and
 `AuthIdentityCommonAdapter` for the common adapter of its own. The prefix keeps the two apart in
 imports, in stack traces and in DI errors.
 

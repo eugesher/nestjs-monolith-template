@@ -1,0 +1,14 @@
+name: 01-resolve
+description: |-
+  e2e: Tools › Note › PATCH /api/tools/notes/:noteId/resolve › should resolve a note
+
+  Expect: 200 OK, note 201 resolved at version 2
+  User: admin@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/tools/notes/201/resolve
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

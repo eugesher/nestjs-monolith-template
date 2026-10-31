@@ -1,13 +1,13 @@
 # 23 — Staff order feature
 
-`apps/staff-app/src/features/order` lets the back office read the orders that customers placed
+`apps/staff-app/src/features/sales/modules/order` lets the back office read the orders that customers placed
 through customer-app (see `22-order-feature.md`). It only reads: staff-app cannot place, change or
 cancel an order.
 
-| Method and path        | Permission   | Answer                                                |
-| ---------------------- | ------------ | ----------------------------------------------------- |
-| `GET /orders`          | `order:read` | 200, a page of the orders of every customer, no lines |
-| `GET /orders/:orderId` | `order:read` | 200, the order with a line per unit; 404 when unknown |
+| Method and path              | Permission   | Answer                                                |
+| ---------------------------- | ------------ | ----------------------------------------------------- |
+| `GET /sales/orders`          | `order:read` | 200, a page of the orders of every customer, no lines |
+| `GET /sales/orders/:orderId` | `order:read` | 200, the order with a line per unit; 404 when unknown |
 
 A principal without `order:read` gets a 403, and one without a token gets a 401. The test seeds
 grant `order:read` to admin, editor and viewer, like `product:read`.
@@ -16,7 +16,7 @@ grant `order:read` to admin, editor and viewer, like `product:read`.
 
 The feature has the layers of `ledger` (see `06-ledger-feature.md`): an application, outbound
 ports, infrastructure and presentation. Its domain holds only `OrderErrorCodeEnum` and
-`OrderDomainException`, as in `auth` and `iam`: there is no rule to model, only the
+`OrderDomainException`, as in `auth`, `user` and `role`: there is no rule to model, only the
 `ORDER_NOT_FOUND` code that `OrderHttpExceptionFilter` maps to 404.
 
 `OrderCrudRepository` answers outbound views, not models: `list` gives `{ id, customerId,

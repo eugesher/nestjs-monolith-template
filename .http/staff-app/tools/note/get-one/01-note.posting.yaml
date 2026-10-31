@@ -1,0 +1,13 @@
+name: 01-note
+description: |-
+  e2e: Tools › Note › GET /api/tools/notes/:noteId › should read one note
+
+  Expect: 200 OK, note 202
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/tools/notes/202
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

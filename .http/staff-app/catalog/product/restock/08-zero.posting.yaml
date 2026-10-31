@@ -1,0 +1,24 @@
+name: 08-zero
+description: |-
+  e2e: Catalog › Product › POST /api/catalog/products/:productId/stock › should refuse a quantity of zero with 400 from validation
+
+  Expect: 400 Bad Request, quantity must not be less than 1
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/catalog/products/100/stock
+body:
+  content: |-
+    {
+      "quantity": 0
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-restock-invalid-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

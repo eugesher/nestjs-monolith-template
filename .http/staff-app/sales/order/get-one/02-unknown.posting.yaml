@@ -1,0 +1,13 @@
+name: 02-unknown
+description: |-
+  e2e: Sales › Order › GET /api/sales/orders/:orderId › should answer an unknown order with 404
+
+  Expect: 404 Not Found, code ORDER_NOT_FOUND
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/sales/orders/999
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

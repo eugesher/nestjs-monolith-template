@@ -1,0 +1,26 @@
+name: 01-sold-out
+description: |-
+  e2e: Catalog › Product › POST /api/catalog/products/:productId/stock › should add the units to a sold-out product, record the key and the ledger entry under the correlation id
+
+  Expect: 201 Created, product 106 at 5 units; a +5 product_stock row, a completed idempotency_key row and a ledger entry product-restocked:<row id> with correlation_id e2e-product-restock
+  User: editor@example.com (token signed by scripts.py)
+method: POST
+url: $STAFF_APP_BASE_URL/catalog/products/106/stock
+body:
+  content: |-
+    {
+      "quantity": 5
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-restock-key
+  - name: x-correlation-id
+    value: e2e-product-restock
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

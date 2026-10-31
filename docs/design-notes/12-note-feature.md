@@ -1,6 +1,6 @@
 # 12 — Note feature
 
-`apps/staff-app/src/features/note` keeps back-office notes behind `/notes`: free text that a staff
+`apps/staff-app/src/features/tools/modules/note` keeps back-office notes behind `/tools/notes`: free text that a staff
 user attaches to any subject, edits, and finally resolves. Every edit keeps the body it replaced as a
 revision. This note covers the `NoteModel` aggregate, the frozen `NoteRevisionModel`, and the one
 write that spans two tables.
@@ -125,14 +125,14 @@ resolution. The author is a required filter, and `idx_note_author` serves it.
 
 ## HTTP
 
-| Method and path                | Answer                   |
-| ------------------------------ | ------------------------ |
-| `POST /notes`                  | 201, the note            |
-| `GET /notes`                   | 200, a page of notes     |
-| `GET /notes/:noteId`           | 200, the note            |
-| `PATCH /notes/:noteId`         | 200, the note            |
-| `PATCH /notes/:noteId/resolve` | 200, the note            |
-| `GET /notes/:noteId/revisions` | 200, a page of revisions |
+| Method and path                      | Answer                   |
+| ------------------------------------ | ------------------------ |
+| `POST /tools/notes`                  | 201, the note            |
+| `GET /tools/notes`                   | 200, a page of notes     |
+| `GET /tools/notes/:noteId`           | 200, the note            |
+| `PATCH /tools/notes/:noteId`         | 200, the note            |
+| `PATCH /tools/notes/:noteId/resolve` | 200, the note            |
+| `GET /tools/notes/:noteId/revisions` | 200, a page of revisions |
 
 **Every route needs a staff token, no permission, and is scoped to the caller.** The caller is the
 author of a note they create; every other route passes the caller's id as `authorId` and reaches
@@ -162,4 +162,4 @@ string of 1 to 20 digits without a leading zero, checked by `NoteIdRequestDto`, 
 `NoteModule` imports `NoteTypeOrmModule.forFeature()`, binds every port with
 `{ provide, useClass }` and reads `NOTE_OCC_RETRY_ATTEMPTS` from `OCC_RETRY_ATTEMPTS`. The entity
 list of staff-app includes `Note` and `NoteRevision`. The feature exists only in staff-app: the
-customer-app has no `/notes` route.
+customer-app has no `/tools/notes` route.

@@ -2,14 +2,12 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import {
+  CatalogModule,
   HealthModule,
-  IamModule,
+  IdentityModule,
   LedgerModule,
-  NoteModule,
-  OrderModule,
-  ProductModule,
-  ReminderModule,
-  AuthModule,
+  SalesModule,
+  ToolsModule,
 } from '@acme-staff-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
@@ -33,13 +31,11 @@ import { QueueSetupModule } from './setup/queue/queue-setup.module';
     CacheModule,
     AuthGlobalModule,
     HealthModule,
-    AuthModule,
-    IamModule,
+    IdentityModule,
     LedgerModule,
-    NoteModule,
-    OrderModule,
-    ProductModule,
-    ReminderModule,
+    ToolsModule,
+    CatalogModule,
+    SalesModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },
