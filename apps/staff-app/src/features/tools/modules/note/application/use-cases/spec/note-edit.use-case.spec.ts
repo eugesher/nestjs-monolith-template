@@ -8,7 +8,7 @@ import { NoteWriteService } from '../../services/note-write.service';
 import { NoteEditUseCase } from '../note-edit.use-case';
 
 describe('NoteEditUseCase', () => {
-  let findById: jest.Mock;
+  let findOwned: jest.Mock;
   let update: jest.Mock;
   let appendRevision: jest.Mock;
   let run: jest.Mock;
@@ -16,7 +16,7 @@ describe('NoteEditUseCase', () => {
   let useCase: NoteEditUseCase;
 
   beforeEach(() => {
-    findById = jest
+    findOwned = jest
       .fn()
       .mockImplementationOnce(() =>
         Promise.resolve(
@@ -53,7 +53,7 @@ describe('NoteEditUseCase', () => {
     run = jest.fn((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
 
-    const accessService = new NoteAccessService({ findById });
+    const accessService = new NoteAccessService({ findOwned });
 
     useCase = new NoteEditUseCase(
       accessService,
@@ -108,13 +108,13 @@ describe('NoteEditUseCase', () => {
         useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       );
 
-      expect(findById.mock.invocationCallOrder[0]).toBeLessThan(run.mock.invocationCallOrder[0]);
+      expect(findOwned.mock.invocationCallOrder[0]).toBeLessThan(run.mock.invocationCallOrder[0]);
       expect(run.mock.invocationCallOrder[0]).toBeLessThan(update.mock.invocationCallOrder[0]);
       expect(update.mock.invocationCallOrder[0]).toBeLessThan(
         appendRevision.mock.invocationCallOrder[0],
       );
       expect(appendRevision.mock.invocationCallOrder[0]).toBeLessThan(
-        findById.mock.invocationCallOrder[1],
+        findOwned.mock.invocationCallOrder[1],
       );
     });
 
@@ -128,7 +128,7 @@ describe('NoteEditUseCase', () => {
       expect(run).not.toHaveBeenCalled();
       expect(update).not.toHaveBeenCalled();
       expect(appendRevision).not.toHaveBeenCalled();
-      expect(findById).toHaveBeenCalledTimes(1);
+      expect(findOwned).toHaveBeenCalledTimes(1);
       expect(view.version).toBe(2);
       expect(logger.info).toHaveBeenCalledWith(
         { noteId: '7', editorId: 'admin-1', version: 2, edited: false },
@@ -147,13 +147,13 @@ describe('NoteEditUseCase', () => {
       await expect(run.mock.results[0].value).rejects.toThrow('deadlock');
       expect(update).toHaveBeenCalledTimes(1);
       expect(run).toHaveBeenCalledTimes(1);
-      expect(findById).toHaveBeenCalledTimes(1);
+      expect(findOwned).toHaveBeenCalledTimes(1);
       expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('appends no revision for a lost race and retries the whole edit with a fresh read', async () => {
       update.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
-      findById.mockReset().mockImplementation(() =>
+      findOwned.mockReset().mockImplementation(() =>
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
@@ -184,7 +184,7 @@ describe('NoteEditUseCase', () => {
 
     it('refuses with VERSION_MISMATCH once every attempt lost the race', async () => {
       update.mockResolvedValue(false);
-      findById.mockReset().mockImplementation(() =>
+      findOwned.mockReset().mockImplementation(() =>
         Promise.resolve(
           NoteModel.reconstitute({
             id: '7',
@@ -211,7 +211,7 @@ describe('NoteEditUseCase', () => {
     });
 
     it('refuses a resolved note before opening a transaction', async () => {
-      findById.mockReset().mockResolvedValue(
+      findOwned.mockReset().mockResolvedValue(
         NoteModel.reconstitute({
           id: '7',
           subjectType: 'product',
@@ -231,18 +231,11 @@ describe('NoteEditUseCase', () => {
       expect(run).not.toHaveBeenCalled();
     });
 
-    it('refuses a missing note with NOTE_NOT_FOUND', async () => {
-      findById.mockReset().mockResolvedValue(null);
+    it('refuses a note not found for the editor with NOTE_NOT_FOUND', async () => {
+      findOwned.mockReset().mockResolvedValue(null);
 
       await expect(
         useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
-      ).rejects.toMatchObject({ code: 'NOTE_NOT_FOUND' });
-      expect(run).not.toHaveBeenCalled();
-    });
-
-    it('refuses an editor who is not the author with NOTE_NOT_FOUND', async () => {
-      await expect(
-        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-2' }),
       ).rejects.toMatchObject({ code: 'NOTE_NOT_FOUND' });
       expect(run).not.toHaveBeenCalled();
     });

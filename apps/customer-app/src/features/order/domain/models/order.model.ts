@@ -1,4 +1,3 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
 import { OrderDomainException } from '../exceptions/order-domain.exception';
@@ -27,7 +26,7 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
       );
     }
 
-    const units = productIds.map((productId) => OrderModel.activeStock(productId, stock));
+    const units = productIds.map((productId) => OrderModel.requireStock(productId, stock));
 
     OrderModel.assertInStock(units);
 
@@ -47,10 +46,10 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
     return new OrderModel(id, customerId, products, createdAt);
   }
 
-  private static activeStock(productId: string, stock: IOrderStock[]): IOrderStock {
+  private static requireStock(productId: string, stock: IOrderStock[]): IOrderStock {
     const unit = stock.find((candidate) => candidate.productId === productId);
 
-    if (unit?.status !== ProductStatusEnum.ACTIVE) {
+    if (unit === undefined) {
       throw new OrderDomainException(
         OrderErrorCodeEnum.ORDER_PRODUCT_NOT_FOUND,
         `Product ${productId} was not found`,

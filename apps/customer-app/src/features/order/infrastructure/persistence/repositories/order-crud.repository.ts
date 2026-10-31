@@ -8,6 +8,7 @@ import { IPage, Nullable } from '@acme-libs/toolkit';
 import { IOrderProductRecord, OrderModel } from '../../../domain';
 import {
   type IOrderCrudRepositoryPort,
+  IOrderFindOwnedQuery,
   IOrderListedView,
   IOrderPageQuery,
 } from '../../../outbound';
@@ -39,8 +40,9 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
     return { items, total, page, size };
   }
 
-  public async findById(orderId: string): Promise<Nullable<OrderModel>> {
-    const order = await this.orders.findOneBy({ id: orderId });
+  public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<OrderModel>> {
+    const { orderId, customerId } = query;
+    const order = await this.orders.findOneBy({ id: orderId, customerId });
 
     if (order === null) {
       return null;

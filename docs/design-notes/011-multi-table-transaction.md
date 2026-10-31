@@ -47,13 +47,13 @@ in the use case, so the command carries none.
 
 ## Scoped access
 
-`apps/staff-app/src/features/tools/modules/note/application/services/note-access.service.ts` loads a row of the caller or refuses it with
-one 404 for a missing row and a row of someone else, so an id never reveals that another row
-exists. Every query takes the caller as a required filter. `ReminderAccessService` of the
+`apps/staff-app/src/features/tools/modules/note/application/services/note-access.service.ts` loads a row through a query filtered by the
+caller and refuses an empty result with one 404, so an id never reveals that another row exists.
+Every query takes the caller as a required filter. `ReminderAccessService` of the
 reminder module does the same.
 
 ## Shared update through a base repository
 
 The edit and resolve repositories share `update` through
-`apps/staff-app/src/features/tools/modules/note/infrastructure/persistence/repositories/base/note-update-base.repository.ts`; the reminder
-and product modules share `findById` the same way.
+`apps/staff-app/src/features/tools/modules/note/infrastructure/persistence/repositories/base/note-update-base.repository.ts`; the product
+module shares `findById` the same way.

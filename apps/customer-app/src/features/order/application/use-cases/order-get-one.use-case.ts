@@ -14,9 +14,9 @@ export class OrderGetOneUseCase {
 
   public async execute(query: IOrderGetOneQuery): Promise<IOrderView> {
     const { customerId, orderId } = query;
-    const order = await this.repository.findById(orderId);
+    const order = await this.repository.findOwned({ orderId, customerId });
 
-    if (order?.customerId !== customerId) {
+    if (order === null) {
       throw new OrderDomainException(
         OrderErrorCodeEnum.ORDER_NOT_FOUND,
         `Order ${orderId} was not found`,

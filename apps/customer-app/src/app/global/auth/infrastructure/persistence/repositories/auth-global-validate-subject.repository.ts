@@ -4,6 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { Customer } from '@acme-core/entities';
+import { UserStatusEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import {
   IAuthGlobalCustomerView,
@@ -18,10 +19,10 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
     return this.txHost.tx.getRepository(Customer);
   }
 
-  public async findById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
+  public async findActiveById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
     const customer = await this.customers.findOne({
-      select: { id: true, email: true, status: true },
-      where: { id },
+      select: { id: true, email: true },
+      where: { id, status: UserStatusEnum.ACTIVE },
     });
 
     return customer ?? undefined;

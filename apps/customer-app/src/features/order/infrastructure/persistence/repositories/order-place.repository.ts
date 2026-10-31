@@ -4,6 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { In, Repository } from 'typeorm';
 
 import { Order, OrderProduct, Product } from '@acme-core/entities';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 import { OrderModel } from '../../../domain';
 import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
 import { OrderMapper } from '../mappers/order.mapper';
@@ -24,17 +25,19 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     return this.txHost.tx.getRepository(Product);
   }
 
-  public async findProducts(productIds: string[]): Promise<IOrderPlaceProductView[]> {
+  public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]> {
     if (productIds.length === 0) {
       return [];
     }
 
-    const products = await this.products.find({ where: { id: In(productIds) } });
+    const products = await this.products.find({
+      where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
+    });
 
     return products.map((product) => {
-      const { id, sku, name, status } = product;
+      const { id, sku, name } = product;
 
-      return { productId: id, sku, name, status };
+      return { productId: id, sku, name };
     });
   }
 
