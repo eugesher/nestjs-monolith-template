@@ -50,33 +50,35 @@ export class ProductController {
   @ApiHeader({ name: 'Idempotency-Key', required: true, description: 'At most 128 characters' })
   @ApiOperation({ summary: 'Create a product (idempotent)' })
   @ApiCreatedResponse({ type: ProductResponseDto })
-  public handleCreate(
+  public async handleCreate(
     @Body() body: ProductCreateRequestDto,
     @IdempotencyKey() idempotencyKey: string,
   ): Promise<ProductResponseDto> {
     const { sku, name } = body;
 
-    return this.create.execute({ sku, name, idempotencyKey });
+    return await this.create.execute({ sku, name, idempotencyKey });
   }
 
   @Get()
   @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
   @ApiOperation({ summary: 'List the catalog products, newest first' })
   @ApiOkResponse({ type: ProductPageResponseDto })
-  public handleGetMany(@Query() query: ProductGetManyRequestDto): Promise<ProductPageResponseDto> {
+  public async handleGetMany(
+    @Query() query: ProductGetManyRequestDto,
+  ): Promise<ProductPageResponseDto> {
     const { page, size } = query;
 
-    return this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, size });
   }
 
   @Get(':productId')
   @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
   @ApiOperation({ summary: 'Read one catalog product' })
   @ApiOkResponse({ type: ProductResponseDto })
-  public handleGetOne(@Param() params: ProductIdRequestDto): Promise<ProductResponseDto> {
+  public async handleGetOne(@Param() params: ProductIdRequestDto): Promise<ProductResponseDto> {
     const { productId } = params;
 
-    return this.getOne.execute({ productId });
+    return await this.getOne.execute({ productId });
   }
 
   @Patch(':productId')
@@ -84,7 +86,7 @@ export class ProductController {
   @ApiHeader({ name: 'If-Match', required: false, description: 'The product version, for OCC' })
   @ApiOperation({ summary: 'Update the fields of a product (optimistic concurrency)' })
   @ApiOkResponse({ type: ProductResponseDto })
-  public handleUpdate(
+  public async handleUpdate(
     @Param() params: ProductIdRequestDto,
     @Body() body: ProductUpdateRequestDto,
     @IfMatch() expectedVersion: Maybe<number>,
@@ -92,7 +94,7 @@ export class ProductController {
     const { productId } = params;
     const { name } = body;
 
-    return this.update.execute({ productId, name, expectedVersion });
+    return await this.update.execute({ productId, name, expectedVersion });
   }
 
   @Put(':productId/publish')
@@ -102,13 +104,13 @@ export class ProductController {
     summary: 'Publish a draft product to the customer catalog (optimistic concurrency)',
   })
   @ApiOkResponse({ type: ProductResponseDto })
-  public handlePublish(
+  public async handlePublish(
     @Param() params: ProductIdRequestDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
     const { productId } = params;
 
-    return this.publish.execute({ productId, expectedVersion });
+    return await this.publish.execute({ productId, expectedVersion });
   }
 
   @Put(':productId/archive')
@@ -116,13 +118,13 @@ export class ProductController {
   @ApiHeader({ name: 'If-Match', required: false, description: 'The product version, for OCC' })
   @ApiOperation({ summary: 'Archive a product (optimistic concurrency)' })
   @ApiOkResponse({ type: ProductResponseDto })
-  public handleArchive(
+  public async handleArchive(
     @Param() params: ProductIdRequestDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
     const { productId } = params;
 
-    return this.archive.execute({ productId, expectedVersion });
+    return await this.archive.execute({ productId, expectedVersion });
   }
 
   @Post(':productId/stock')
@@ -132,7 +134,7 @@ export class ProductController {
     summary: 'Add units to the stock of a product that is not archived (idempotent)',
   })
   @ApiCreatedResponse({ type: ProductStockResponseDto })
-  public handleRestock(
+  public async handleRestock(
     @Param() params: ProductIdRequestDto,
     @Body() body: ProductRestockRequestDto,
     @IdempotencyKey() idempotencyKey: string,
@@ -140,6 +142,6 @@ export class ProductController {
     const { productId } = params;
     const { quantity } = body;
 
-    return this.restock.execute({ productId, quantity, idempotencyKey });
+    return await this.restock.execute({ productId, quantity, idempotencyKey });
   }
 }

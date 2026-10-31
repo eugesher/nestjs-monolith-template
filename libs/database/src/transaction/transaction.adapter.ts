@@ -17,12 +17,12 @@ export class TransactionAdapter implements ITransactionPort {
     private readonly logger: PinoLogger,
   ) {}
 
-  public run<T>(work: () => Promise<T>): Promise<T> {
+  public async run<T>(work: () => Promise<T>): Promise<T> {
     if (this.txHost.isTransactionActive()) {
-      return this.txHost.withTransaction(work);
+      return await this.txHost.withTransaction(work);
     }
 
-    return this.cls.run({ ifNested: 'inherit' }, () => this.runOutermost(work));
+    return await this.cls.run({ ifNested: 'inherit' }, () => this.runOutermost(work));
   }
 
   public afterCommit(hook: () => Promise<void>): void {

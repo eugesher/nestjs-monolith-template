@@ -18,8 +18,7 @@ export class AuthGlobalValidateSubjectUseCase {
     query: IAuthGlobalValidateSubjectQuery,
   ): Promise<Maybe<IAuthGlobalSubjectView>> {
     const { customerId } = query;
-    const customer = await this.repository.findActiveById(customerId);
 
-    return customer ? { id: customer.id, email: customer.email } : undefined;
+    return await this.repository.findActiveById(customerId);
   }
 }

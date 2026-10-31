@@ -21,10 +21,10 @@ export class OrderProductStockCoreAdapter implements IOrderProductStockPort {
     private readonly productStock: IProductStockCorePort,
   ) {}
 
-  public lock(command: IOrderProductStockLockCommand): Promise<IOrderProductStockView[]> {
+  public async lock(command: IOrderProductStockLockCommand): Promise<IOrderProductStockView[]> {
     const { productIds } = command;
 
-    return this.productStock.lock({ productIds });
+    return await this.productStock.lock({ productIds });
   }
 
   public async withdraw(command: IOrderProductStockWithdrawCommand): Promise<void> {

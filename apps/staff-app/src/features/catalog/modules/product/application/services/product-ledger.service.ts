@@ -107,10 +107,10 @@ export class ProductLedgerService {
     };
   }
 
-  private enqueueWithRetry(record: IProductLedgerRecordEnqueueCommand): Promise<void> {
+  private async enqueueWithRetry(record: IProductLedgerRecordEnqueueCommand): Promise<void> {
     const { operationKey, subjectId, correlationId } = record;
 
-    return ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
+    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
       maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,

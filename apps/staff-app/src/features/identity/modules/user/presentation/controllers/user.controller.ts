@@ -23,8 +23,8 @@ export class UserController {
   @RequiresPermission(PermissionCodeEnum.IAM_USER_CREATE)
   @ApiOperation({ summary: 'Create a principal' })
   @ApiCreatedResponse({ type: UserResponseDto })
-  public handleRegister(@Body() body: UserRegisterRequestDto): Promise<UserResponseDto> {
-    return this.register.execute(body);
+  public async handleRegister(@Body() body: UserRegisterRequestDto): Promise<UserResponseDto> {
+    return await this.register.execute(body);
   }
 
   @Post(':userId/roles')
@@ -32,12 +32,12 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Grant a role to a principal' })
   @ApiOkResponse({ type: UserRolesResponseDto })
-  public handleAssignRole(
+  public async handleAssignRole(
     @Param('userId') userId: string,
     @Body() body: UserAssignRoleRequestDto,
   ): Promise<UserRolesResponseDto> {
     const { role } = body;
 
-    return this.assignRole.execute({ userId, role });
+    return await this.assignRole.execute({ userId, role });
   }
 }

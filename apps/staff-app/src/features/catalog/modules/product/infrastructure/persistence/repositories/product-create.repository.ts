@@ -17,8 +17,8 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
     return this.txHost.tx.getRepository(Product);
   }
 
-  public existsBySku(sku: string): Promise<boolean> {
-    return this.products.exists({ where: { sku } });
+  public async existsBySku(sku: string): Promise<boolean> {
+    return await this.products.exists({ where: { sku } });
   }
 
   public async insert(product: ProductModel): Promise<ProductModel> {

@@ -22,6 +22,6 @@ export class ProductStockCoreLockUseCase {
     const { productIds } = command;
     const locked = await this.repository.lockProducts(productIds);
 
-    return this.repository.sumStock(locked);
+    return await this.repository.sumStock(locked);
   }
 }

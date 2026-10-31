@@ -9,7 +9,7 @@ export class IdempotencyPurgeConsumer {
   constructor(private readonly run: IdempotencyPurgeRunUseCase) {}
 
   @Cron(CronExpression.EVERY_HOUR, { name: 'idempotency-purge' })
-  public handleTick(): Promise<void> {
-    return CorrelationContextHelper.run(undefined, () => this.run.execute());
+  public async handleTick(): Promise<void> {
+    await CorrelationContextHelper.run(undefined, () => this.run.execute());
   }
 }

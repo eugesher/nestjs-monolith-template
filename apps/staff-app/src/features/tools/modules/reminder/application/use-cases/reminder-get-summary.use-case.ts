@@ -19,11 +19,9 @@ export class ReminderGetSummaryUseCase {
 
   public async execute(query: IReminderGetSummaryQuery): Promise<IReminderSummaryView> {
     const { ownerId } = query;
-    const snapshot = await this.summary.read({
+    return await this.summary.read({
       ownerId,
       compute: () => this.repository.summarize(ownerId),
     });
-
-    return { pending: snapshot.pending, nextDueOn: snapshot.nextDueOn };
   }
 }

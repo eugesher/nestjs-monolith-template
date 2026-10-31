@@ -13,9 +13,9 @@ export class IdempotencyCoreReleaseUseCase {
     private readonly repository: IIdempotencyCoreReleaseRepositoryPort,
   ) {}
 
-  public execute(command: IIdempotencyCoreReleaseCommand): Promise<void> {
+  public async execute(command: IIdempotencyCoreReleaseCommand): Promise<void> {
     const { key } = command;
 
-    return this.repository.deleteInFlight(key);
+    await this.repository.deleteInFlight(key);
   }
 }

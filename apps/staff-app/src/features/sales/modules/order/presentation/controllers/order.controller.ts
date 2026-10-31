@@ -23,21 +23,21 @@ export class OrderController {
   @RequiresPermission(PermissionCodeEnum.ORDER_READ)
   @ApiOperation({ summary: 'List the orders of all customers, newest first' })
   @ApiOkResponse({ type: OrderSummaryPageResponseDto })
-  public handleGetMany(
+  public async handleGetMany(
     @Query() query: OrderGetManyRequestDto,
   ): Promise<OrderSummaryPageResponseDto> {
     const { page, size } = query;
 
-    return this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, size });
   }
 
   @Get(':orderId')
   @RequiresPermission(PermissionCodeEnum.ORDER_READ)
   @ApiOperation({ summary: 'Read one order with its products' })
   @ApiOkResponse({ type: OrderResponseDto })
-  public handleGetOne(@Param() params: OrderIdRequestDto): Promise<OrderResponseDto> {
+  public async handleGetOne(@Param() params: OrderIdRequestDto): Promise<OrderResponseDto> {
     const { orderId } = params;
 
-    return this.getOne.execute({ orderId });
+    return await this.getOne.execute({ orderId });
   }
 }

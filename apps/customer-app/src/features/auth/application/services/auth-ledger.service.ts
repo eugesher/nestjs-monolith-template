@@ -22,7 +22,7 @@ export class AuthLedgerService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public recordRegistered(command: IAuthLedgerRecordRegisteredCommand): Promise<void> {
+  public async recordRegistered(command: IAuthLedgerRecordRegisteredCommand): Promise<void> {
     const { customerId, email } = command;
     const operationKey = `customer-registered:${customerId}`;
     const occurredAt = new Date().toISOString();
@@ -37,7 +37,7 @@ export class AuthLedgerService {
       correlationId,
     };
 
-    return ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
+    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
       maxAttempts: this.ledgerRetryAttempts,
       logger: this.logger,
       correlationId,

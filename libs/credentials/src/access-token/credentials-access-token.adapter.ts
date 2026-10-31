@@ -10,9 +10,9 @@ import {
 export class CredentialsAccessTokenAdapter implements ICredentialsAccessTokenPort {
   constructor(private readonly jwt: JwtService) {}
 
-  public sign(payload: ICredentialsAccessTokenPayloadCommand): Promise<string> {
+  public async sign(payload: ICredentialsAccessTokenPayloadCommand): Promise<string> {
     const { sub } = payload;
 
-    return this.jwt.signAsync({ sub });
+    return await this.jwt.signAsync({ sub });
   }
 }

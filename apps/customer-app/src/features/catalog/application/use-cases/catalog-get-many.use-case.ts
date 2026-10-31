@@ -18,10 +18,10 @@ export class CatalogGetManyUseCase {
     private readonly cache: ICatalogCachePort,
   ) {}
 
-  public execute(query: ICatalogGetManyQuery): Promise<IPage<ICatalogProductView>> {
+  public async execute(query: ICatalogGetManyQuery): Promise<IPage<ICatalogProductView>> {
     const { page, size } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
 
-    return this.cache.read({ ...window, compute: () => this.repository.list({ ...window }) });
+    return await this.cache.read({ ...window, compute: () => this.repository.list({ ...window }) });
   }
 }

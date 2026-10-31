@@ -18,7 +18,7 @@ export class HealthLibFacade implements IHealthLibPort {
     return this.healthLibCheckLiveness.execute();
   }
 
-  public readiness(): Promise<IHealthLibReadinessView> {
-    return this.healthLibCheckReadiness.execute();
+  public async readiness(): Promise<IHealthLibReadinessView> {
+    return await this.healthLibCheckReadiness.execute();
   }
 }

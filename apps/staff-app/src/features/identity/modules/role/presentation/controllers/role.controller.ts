@@ -21,20 +21,20 @@ export class RoleController {
   @RequiresPermission(PermissionCodeEnum.IAM_ASSIGN)
   @ApiOperation({ summary: 'List roles and the permissions they grant' })
   @ApiOkResponse({ type: RoleResponseDto, isArray: true })
-  public handleList(): Promise<RoleResponseDto[]> {
-    return this.list.execute();
+  public async handleList(): Promise<RoleResponseDto[]> {
+    return await this.list.execute();
   }
 
   @Put(':role/permissions')
   @RequiresPermission(PermissionCodeEnum.IAM_ROLE_EDIT)
   @ApiOperation({ summary: 'Replace the permission set of a role' })
   @ApiOkResponse({ type: RoleResponseDto })
-  public handleUpdatePermissions(
+  public async handleUpdatePermissions(
     @Param('role') role: RoleEnum,
     @Body() body: RoleUpdatePermissionsRequestDto,
   ): Promise<RoleResponseDto> {
     const { permissionCodes } = body;
 
-    return this.updatePermissions.execute({ role, permissionCodes });
+    return await this.updatePermissions.execute({ role, permissionCodes });
   }
 }
