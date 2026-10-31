@@ -1,0 +1,25 @@
+name: 04-reused-key
+description: |-
+  e2e: Catalog › Product › POST /api/catalog/products/:productId/stock › should refuse the same key with another quantity with 422
+
+  Expect: 422 Unprocessable Entity, code PRODUCT_IDEMPOTENCY_KEY_REUSED, one +1 row of product 102
+  User: editor@example.com (token signed by scripts.py)
+  Before: send this request with the body {quantity: 1}: 201 Created
+method: POST
+url: $STAFF_APP_BASE_URL/catalog/products/102/stock
+body:
+  content: |-
+    {
+      "quantity": 4
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Idempotency-Key
+    value: e2e-restock-reuse-key
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

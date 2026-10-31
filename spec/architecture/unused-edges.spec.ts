@@ -262,9 +262,9 @@ describe('unused edges', () => {
         '../../../../../contracts/src/__unused-fixture__',
       ],
       [
-        'core infrastructure may NOT reach the contracts of a lib: only feature infrastructure caches',
+        'core infrastructure may NOT reach the auth contracts of a lib: a core module guards no route',
         'core/modules/src/__unused-fixture__/infrastructure/persistence/__fixture__.ts',
-        '../../../../../../libs/contracts/src/cache',
+        '../../../../../../libs/contracts/src/auth',
       ],
       [
         'a core facade may NOT reach the http lib: it hands the call to a use case',

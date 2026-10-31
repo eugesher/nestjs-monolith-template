@@ -1,0 +1,13 @@
+name: 01-catalog
+description: |-
+  e2e: Catalog › Product › GET /api/catalog/products › should list the catalog, newest first
+
+  Expect: 200 OK, products 106 to 100
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/catalog/products
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

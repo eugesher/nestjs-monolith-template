@@ -122,3 +122,48 @@ exports[`App LedgerRecord schedule ledger-record-retry should return a failed re
   },
 }
 `;
+
+exports[`App ProductStock queue product-stock-post-subtract should archive a published product without stock and record the archive in the ledger under the correlation id 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "correlation_id": "e2e-processor-out-of-stock",
+        "operation_key": "product-archived:106:2",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0007",
+        },
+      },
+    ],
+    "product": [
+      {
+        "id": "106",
+        "status": "archived",
+        "version": 2,
+      },
+    ],
+  },
+}
+`;
+
+exports[`App ProductStock queue product-stock-post-subtract should leave a published product with stock and a draft without stock as they are 1`] = `
+{
+  "db": {
+    "ledger_entry": [],
+    "product": [
+      {
+        "id": "100",
+        "status": "active",
+        "version": 1,
+      },
+      {
+        "id": "102",
+        "status": "draft",
+        "version": 1,
+      },
+    ],
+  },
+}
+`;

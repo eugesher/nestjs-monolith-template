@@ -10,6 +10,7 @@ Object.assign(process.env, {
   CACHE_TTL_MS_DEFAULT: '60000',
   OCC_RETRY_ATTEMPTS: '5',
   LEDGER_RETRY_ATTEMPTS: '3',
+  QUEUE_RETRY_ATTEMPTS: '3',
   JWT_SECRET: 'customer-e2e-secret-at-least-32-characters',
   AUTH_ARGON2_MEMORY_COST: '19456',
   AUTH_ARGON2_TIME_COST: '2',

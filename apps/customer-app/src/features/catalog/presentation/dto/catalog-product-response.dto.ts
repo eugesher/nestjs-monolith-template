@@ -9,7 +9,4 @@ export class CatalogProductResponseDto {
 
   @ApiResponseProperty({ example: 'Reference product' })
   public name: string;
-
-  @ApiResponseProperty({ example: 7 })
-  public quantity: number;
 }

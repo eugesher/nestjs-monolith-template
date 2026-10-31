@@ -1,0 +1,20 @@
+name: 02-empty-body
+description: |-
+  e2e: Catalog › Product › PATCH /api/catalog/products/:productId › should keep the product as is for a body without fields
+
+  Expect: 200 OK, product 101 unchanged at version 1
+  User: editor@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/catalog/products/101
+body:
+  content: |-
+    {}
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_editor

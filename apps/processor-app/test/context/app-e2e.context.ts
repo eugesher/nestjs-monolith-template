@@ -12,6 +12,10 @@ import {
   type ILedgerRecordProcessorPayload,
   LEDGER_RECORD_QUEUE,
 } from '@acme-core/contracts/ledger';
+import {
+  type IProductStockPostSubtractPayload,
+  PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
+} from '@acme-core/contracts/product-stock';
 import { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
@@ -19,6 +23,7 @@ interface IAppE2EState {
   moduleFixture: TestingModule;
   dataSource: DataSource;
   ledgerRecordQueue: Queue<ILedgerRecordProcessorPayload>;
+  postSubtractQueue: Queue<IProductStockPostSubtractPayload>;
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
 }
 
@@ -44,11 +49,18 @@ export class AppE2EContext {
     return this.started.ledgerRecordQueue;
   }
 
+  public get postSubtractQueue(): Queue<IProductStockPostSubtractPayload> {
+    return this.started.postSubtractQueue;
+  }
+
   public async init(): Promise<void> {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
     const ledgerRecordQueue = moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
       getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const postSubtractQueue = moduleFixture.get<Queue<IProductStockPostSubtractPayload>>(
+      getQueueToken(PRODUCT_STOCK_POST_SUBTRACT_QUEUE),
     );
     const config = moduleFixture.get(ConfigService);
     const prefix = config.getOrThrow<string>('API_PREFIX');
@@ -62,7 +74,14 @@ export class AppE2EContext {
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
 
-    this.state = { app, moduleFixture, dataSource, ledgerRecordQueue, rootLoggerWarn };
+    this.state = {
+      app,
+      moduleFixture,
+      dataSource,
+      ledgerRecordQueue,
+      postSubtractQueue,
+      rootLoggerWarn,
+    };
   }
 
   public close(): Promise<void> {
@@ -90,6 +109,14 @@ export class AppE2EContext {
   public async waitForLedgerRecordQueue(): Promise<void> {
     await this.waitFor(`the ${LEDGER_RECORD_QUEUE} queue to drain`, async () => {
       const counts = await this.ledgerRecordQueue.getJobCounts();
+
+      return counts.waiting + counts.active + counts.delayed === 0;
+    });
+  }
+
+  public async waitForPostSubtractQueue(): Promise<void> {
+    await this.waitFor(`the ${PRODUCT_STOCK_POST_SUBTRACT_QUEUE} queue to drain`, async () => {
+      const counts = await this.postSubtractQueue.getJobCounts();
 
       return counts.waiting + counts.active + counts.delayed === 0;
     });

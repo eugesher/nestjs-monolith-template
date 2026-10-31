@@ -11,7 +11,7 @@ describe('the config itself (eslint.config.mjs, as ESLint resolves it)', () => {
 
   beforeAll(async () => {
     config = (await lintConfigFor(
-      'apps/staff-app/src/features/product/application/__fixture__.ts',
+      'apps/staff-app/src/features/catalog/modules/product/application/__fixture__.ts',
     )) as IResolvedConfig;
     categories = (config.settings['boundaries/files'] as { category: string }[]).map(
       (file) => file.category,

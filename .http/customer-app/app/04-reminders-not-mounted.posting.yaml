@@ -1,10 +1,10 @@
 name: 04-reminders-not-mounted
 description: |-
-  e2e: should not mount the staff-app route /api/reminders
+  e2e: should not mount the staff-app route /api/tools/reminders
 
   Expect: 404 Not Found
   User: bob@example.com (token signed by scripts.py)
-url: $CUSTOMER_APP_BASE_URL/reminders
+url: $CUSTOMER_APP_BASE_URL/tools/reminders
 auth:
   type: bearer_token
   bearer_token:

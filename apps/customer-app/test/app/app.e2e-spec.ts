@@ -26,7 +26,7 @@ describe('App', () => {
     await ctx.close();
   });
 
-  it.each(['/api/iam/roles', '/api/ledger', '/api/notes', '/api/reminders'])(
+  it.each(['/api/identity/roles', '/api/ledger', '/api/tools/notes', '/api/tools/reminders'])(
     'should not mount the staff-app route %s',
     async (path) => {
       await request(ctx.app.getHttpServer())
@@ -48,6 +48,7 @@ describe('App', () => {
   });
 
   describe('Catalog', () => {
+    catalogE2E.hooks();
     catalogE2E.handleGetMany();
   });
 

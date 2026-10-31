@@ -1,0 +1,22 @@
+name: 02-same-body
+description: |-
+  e2e: Tools › Note › PATCH /api/tools/notes/:noteId › should write nothing for an edit to the current body
+
+  Expect: 200 OK, note 204 stays at version 1, no revision
+  User: admin@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/tools/notes/204
+body:
+  content: |-
+    {
+      "body": "Edited with the same body."
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

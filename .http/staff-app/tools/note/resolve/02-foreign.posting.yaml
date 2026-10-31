@@ -1,0 +1,14 @@
+name: 02-foreign
+description: |-
+  e2e: Tools › Note › PATCH /api/tools/notes/:noteId/resolve › should hide the note of another staff user with 404 and resolve nothing
+
+  Expect: 404 Not Found, code NOTE_NOT_FOUND; note 204 stays unresolved
+  User: viewer@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/tools/notes/204/resolve
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

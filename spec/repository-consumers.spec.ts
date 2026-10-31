@@ -6,7 +6,7 @@ describe('one repository per use case, service or facade', () => {
 
     expect(names).toEqual(
       expect.arrayContaining([
-        'IamAssignRoleUseCase',
+        'UserAssignRoleUseCase',
         'AuthCommonValidateSubjectUseCase',
         'AuthGlobalFindPermissionCodesUseCase',
         'IdempotencyPurgeRunUseCase',
@@ -71,7 +71,7 @@ describe('one repository per use case, service or facade', () => {
         [
           {
             name: 'AuthLoginUseCase',
-            file: 'apps/staff-app/src/features/auth/application/use-cases/auth-login.use-case.ts',
+            file: 'apps/staff-app/src/features/identity/modules/auth/application/use-cases/auth-login.use-case.ts',
             params: [{ name: 'repository', type: 'IAuthLoginRepositoryPort' }],
           },
           {

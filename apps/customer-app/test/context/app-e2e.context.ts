@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { Queue } from 'bull';
+import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
@@ -12,6 +13,11 @@ import {
   type ILedgerRecordProcessorPayload,
   LEDGER_RECORD_QUEUE,
 } from '@acme-core/contracts/ledger';
+import {
+  type IProductStockPostSubtractPayload,
+  PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
+} from '@acme-core/contracts/product-stock';
+import { REDIS_CLIENT } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
@@ -19,6 +25,7 @@ interface IAppE2EState {
   moduleFixture: TestingModule;
   dataSource: DataSource;
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
+  redis: Redis;
   jwt: JwtService;
   annToken: string;
   bobToken: string;
@@ -40,6 +47,10 @@ export class AppE2EContext {
     return this.started.dataSource;
   }
 
+  public get redis(): Redis {
+    return this.started.redis;
+  }
+
   public get jwt(): JwtService {
     return this.started.jwt;
   }
@@ -59,6 +70,7 @@ export class AppE2EContext {
   public async init(): Promise<void> {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
+    const redis = moduleFixture.get<Redis>(REDIS_CLIENT);
     const config = moduleFixture.get(ConfigService);
     const secret = config.getOrThrow<string>('JWT_SECRET');
     const prefix = config.getOrThrow<string>('API_PREFIX');
@@ -81,6 +93,7 @@ export class AppE2EContext {
       moduleFixture,
       dataSource,
       rootLoggerWarn,
+      redis,
       jwt,
       annToken,
       bobToken,
@@ -95,6 +108,17 @@ export class AppE2EContext {
   public async takeLedgerRecords(): Promise<ILedgerRecordProcessorPayload[]> {
     const queue = this.moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
       getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const jobs = await queue.getWaiting();
+
+    await queue.empty();
+
+    return jobs.map((job) => job.data);
+  }
+
+  public async takePostSubtractJobs(): Promise<IProductStockPostSubtractPayload[]> {
+    const queue = this.moduleFixture.get<Queue<IProductStockPostSubtractPayload>>(
+      getQueueToken(PRODUCT_STOCK_POST_SUBTRACT_QUEUE),
     );
     const jobs = await queue.getWaiting();
 

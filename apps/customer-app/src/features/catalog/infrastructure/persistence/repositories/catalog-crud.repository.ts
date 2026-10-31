@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { Product, ProductStock } from '@acme-core/entities';
+import { Product } from '@acme-core/entities';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { IPage } from '@acme-libs/toolkit';
 import {
   type ICatalogCrudRepositoryPort,
   ICatalogPageQuery,
-  ICatalogProductStockView,
+  ICatalogProductRowView,
 } from '../../../outbound';
 
 @Injectable()
@@ -20,40 +20,21 @@ export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
     return this.txHost.tx.getRepository(Product);
   }
 
-  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductStockView>> {
+  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size } = query;
-    const inStock = this.inStock();
-    const rows = await inStock
-      .clone()
-      .orderBy('product.id', 'ASC')
-      .offset((page - 1) * size)
-      .limit(size)
-      .getRawMany<{ id: string; sku: string; name: string; quantity: number | string }>();
-    const count = await this.txHost.tx
-      .createQueryBuilder()
-      .select('COUNT(*)', 'total')
-      .from(`(${inStock.getQuery()})`, 'in_stock')
-      .setParameters(inStock.getParameters())
-      .getRawOne<{ total: number | string }>();
+    const [products, total] = await this.products.findAndCount({
+      select: { id: true, sku: true, name: true },
+      where: { status: ProductStatusEnum.ACTIVE },
+      order: { id: 'ASC' },
+      skip: (page - 1) * size,
+      take: size,
+    });
+    const items = products.map((product) => ({
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+    }));
 
-    return {
-      items: rows.map((row) => ({ ...row, quantity: Number(row.quantity) })),
-      total: Number(count?.total ?? 0),
-      page,
-      size,
-    };
-  }
-
-  private inStock(): SelectQueryBuilder<Product> {
-    return this.products
-      .createQueryBuilder('product')
-      .select('product.id', 'id')
-      .addSelect('product.sku', 'sku')
-      .addSelect('product.name', 'name')
-      .addSelect('SUM(stock.quantity)', 'quantity')
-      .innerJoin(ProductStock, 'stock', 'stock.productId = product.id')
-      .where('product.status = :status', { status: ProductStatusEnum.ACTIVE })
-      .groupBy('product.id')
-      .having('SUM(stock.quantity) > 0');
+    return { items, total, page, size };
   }
 }

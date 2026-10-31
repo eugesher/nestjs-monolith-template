@@ -60,6 +60,7 @@ export const acmeLibs = [
       '@nestjs/common',
       '@nestjs/core',
       'nestjs-cls',
+      'nestjs-pino',
       'typeorm',
     ),
   ]),

@@ -1,8 +1,8 @@
 name: 01-place
 description: |-
-  e2e: Order › POST /api/orders › should place the order with a line and a -1 stock movement per unit, keep the response under the key and enqueue the ledger record under the correlation id
+  e2e: Order › POST /api/orders › should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record and the stock check of its products under the correlation id
 
-  Expect: 201 Created, two lines of product 100; an order, two order_product rows, two product_stock rows of -1, a completed idempotency_key row and a ledger record order-placed with correlation_id e2e-order-place; product 100 has 6 on hand in the catalog
+  Expect: 201 Created, two lines of product 100; an order, two order_product rows, two product_stock rows of -1, a completed idempotency_key row and a ledger record order-placed with correlation_id e2e-order-place; a product-stock-post-subtract job for product 100
   User: ann@example.com (token signed by scripts.py)
 method: POST
 url: $CUSTOMER_APP_BASE_URL/orders

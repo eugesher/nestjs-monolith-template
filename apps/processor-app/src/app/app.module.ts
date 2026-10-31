@@ -2,7 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
 import { HealthModule } from '@acme-processor-features';
-import { IdempotencyPurgeModule, LedgerRecordModule } from '@acme-processor-processors';
+import {
+  IdempotencyPurgeModule,
+  LedgerRecordModule,
+  ProductStockModule,
+} from '@acme-processor-processors';
 import { CacheModule } from '@acme-libs/cache';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
@@ -23,6 +27,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     HealthModule,
     IdempotencyPurgeModule,
     LedgerRecordModule,
+    ProductStockModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],
 })

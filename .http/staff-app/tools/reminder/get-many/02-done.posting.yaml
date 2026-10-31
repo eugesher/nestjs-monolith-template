@@ -1,0 +1,16 @@
+name: 02-done
+description: |-
+  e2e: Tools › Reminder › GET /api/tools/reminders › should filter by status
+
+  Expect: 200 OK, reminder 302
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/tools/reminders
+params:
+  - name: status
+    value: done
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

@@ -2,8 +2,9 @@ name: 02-page-window
 description: |-
   e2e: Catalog › GET /api/products › should answer the page of the window with the total of every page
 
-  Expect: 200 OK, product 103 alone, total 2
+  Expect: 200 OK, product 103 alone, total 3
   User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
 url: $CUSTOMER_APP_BASE_URL/products
 params:
   - name: page

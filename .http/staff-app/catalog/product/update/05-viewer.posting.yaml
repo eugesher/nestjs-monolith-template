@@ -1,0 +1,22 @@
+name: 05-viewer
+description: |-
+  e2e: Catalog › Product › PATCH /api/catalog/products/:productId › should refuse an update by a viewer with 403
+
+  Expect: 403 Forbidden, product 103 unchanged
+  User: viewer@example.com (token signed by scripts.py)
+method: PATCH
+url: $STAFF_APP_BASE_URL/catalog/products/103
+body:
+  content: |-
+    {
+      "name": "Viewer rename"
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_viewer

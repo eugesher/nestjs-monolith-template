@@ -1,0 +1,14 @@
+name: 02-published
+description: |-
+  e2e: Catalog › Product › PUT /api/catalog/products/:productId/publish › should keep a published product as is and queue nothing
+
+  Expect: 200 OK, product 100 unchanged at version 1, no ledger record
+  User: editor@example.com (token signed by scripts.py)
+method: PUT
+url: $STAFF_APP_BASE_URL/catalog/products/100/publish
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_editor

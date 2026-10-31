@@ -1,0 +1,13 @@
+name: 02-missing
+description: |-
+  e2e: Tools › Note › GET /api/tools/notes/:noteId › should answer 404 for a missing note
+
+  Expect: 404 Not Found, code NOTE_NOT_FOUND
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/tools/notes/299
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

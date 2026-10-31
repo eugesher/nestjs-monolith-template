@@ -27,6 +27,9 @@ export class ConfigSetupModule {
 
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).default(24),
 
+        LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
+        QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
+
         LOG_LEVEL: Joi.string()
           .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace')
           .optional(),

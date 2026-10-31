@@ -1,6 +1,0 @@
-name: 02-without-token
-description: |-
-  e2e: Auth › GET /api/auth/me › should refuse a caller without a token
-
-  Expect: 401 Unauthorized
-url: $STAFF_APP_BASE_URL/auth/me

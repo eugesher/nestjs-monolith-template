@@ -11,7 +11,7 @@ export class CatalogController {
   constructor(private readonly getMany: CatalogGetManyUseCase) {}
 
   @Get()
-  @ApiOperation({ summary: 'List the active products in stock, by id' })
+  @ApiOperation({ summary: 'List the active products, by id' })
   @ApiOkResponse({ type: CatalogProductPageResponseDto })
   public handleGetMany(
     @Query() query: CatalogGetManyRequestDto,

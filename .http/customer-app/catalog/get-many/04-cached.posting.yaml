@@ -1,0 +1,16 @@
+name: 04-cached
+description: |-
+  e2e: Catalog › GET /api/products › should answer a cached page without reading the database
+
+  Expect: 200 OK, the cached page with product 999 alone
+  User: bob@example.com (token signed by scripts.py)
+  Before: Redis: DEL every acme:catalog:* key
+  Before: Redis: SET acme:catalog:v1:page:1:size:20 '{"items":[{"id":"999","sku":"SKU-CACHED","name":"Cached product"}],"total":1,"page":1,"size":20}' PX 60000
+  After: Redis: DEL every acme:catalog:* key
+url: $CUSTOMER_APP_BASE_URL/products
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_bob

@@ -1,0 +1,56 @@
+import type { Queue } from 'bull';
+
+import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
+import { ProductStockCorePostSubtractQueueAdapter } from '../product-stock-core-post-subtract-queue.adapter';
+
+describe('ProductStockCorePostSubtractQueueAdapter', () => {
+  let add: jest.Mock;
+  let adapter: ProductStockCorePostSubtractQueueAdapter;
+
+  beforeEach(() => {
+    add = jest.fn().mockResolvedValue({ id: '1' });
+    adapter = new ProductStockCorePostSubtractQueueAdapter(
+      { add } as unknown as Queue<IProductStockPostSubtractPayload>,
+      500,
+    );
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  describe('enqueue', () => {
+    it('adds the products with the correlation id as one job', async () => {
+      await adapter.enqueue({ productIds: ['100', '106'], correlationId: 'corr-1' });
+
+      expect(add).toHaveBeenCalledWith({ productIds: ['100', '106'], correlationId: 'corr-1' });
+    });
+
+    it('passes a failing add through', async () => {
+      add.mockRejectedValue(new Error('redis is down'));
+
+      const enqueueing = adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+
+      await expect(enqueueing).rejects.toThrow('redis is down');
+    });
+
+    it('gives up on an add that hangs, as Bull does while Redis is down', async () => {
+      jest.useFakeTimers();
+      add.mockReturnValue(new Promise(() => undefined));
+
+      const enqueueing = adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+
+      jest.advanceTimersByTime(500);
+
+      await expect(enqueueing).rejects.toThrow('Enqueue timed out after 500 ms');
+    });
+
+    it('clears the timer once the add settles', async () => {
+      jest.useFakeTimers();
+
+      await adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+
+      expect(jest.getTimerCount()).toBe(0);
+    });
+  });
+});
