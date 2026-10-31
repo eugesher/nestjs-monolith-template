@@ -40,7 +40,7 @@ describe('ProductCreateUseCase', () => {
       { enqueue } as unknown as ProductLedgerService,
       { existsBySku, insert },
       { claim, complete, release },
-      { run },
+      { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
   });

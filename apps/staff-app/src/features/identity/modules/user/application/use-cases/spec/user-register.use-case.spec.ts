@@ -8,7 +8,7 @@ import { UserRegisterUseCase } from '../user-register.use-case';
 describe('UserRegisterUseCase', () => {
   let outcomes: string[];
   let repository: { insert: jest.Mock };
-  let transaction: { run: jest.Mock };
+  let transaction: { run: jest.Mock; afterCommit: jest.Mock };
   let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserRegisterUseCase;
@@ -17,6 +17,7 @@ describe('UserRegisterUseCase', () => {
     outcomes = [];
     repository = { insert: jest.fn().mockResolvedValue(undefined) };
     transaction = {
+      afterCommit: jest.fn(),
       run: jest.fn(async (work: () => Promise<unknown>) => {
         outcomes.push('begin');
 

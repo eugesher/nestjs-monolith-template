@@ -55,7 +55,7 @@ describe('OrderPlaceUseCase', () => {
       { lock, withdraw },
       { claim, complete, release },
       { invalidate },
-      { run },
+      { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
   });

@@ -12,7 +12,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     findPermissions: jest.Mock;
     replacePermissions: jest.Mock;
   };
-  let transaction: { run: jest.Mock };
+  let transaction: { run: jest.Mock; afterCommit: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: RoleUpdatePermissionsUseCase;
 
@@ -39,6 +39,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
       replacePermissions: jest.fn().mockResolvedValue(undefined),
     };
     transaction = {
+      afterCommit: jest.fn(),
       run: jest.fn(async (work: () => Promise<unknown>) => {
         outcomes.push('begin');
 

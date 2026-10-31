@@ -46,7 +46,7 @@ describe('ProductRestockUseCase', () => {
       { lock, restock },
       { claim, complete, release },
       { invalidate },
-      { run },
+      { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
   });
