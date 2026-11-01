@@ -3,7 +3,6 @@ import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
 import { ProductCreatedEvent } from '../events/product-created.event';
 import { ProductPublishedEvent } from '../events/product-published.event';
-import { ProductRestockedEvent } from '../events/product-restocked.event';
 import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductDomainException } from '../exceptions/product-domain.exception';
 import { IProductChanges } from '../interfaces/product-changes.interface';
@@ -13,7 +12,6 @@ import { IProductRecord } from '../interfaces/product-record.interface';
 export class ProductModel extends AggregateRoot<Maybe<string>> {
   private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
   private static readonly NAME_MAX_LENGTH = 255;
-  private static readonly RESTOCK_MAX_QUANTITY = 100_000;
 
   private constructor(
     id: Maybe<string>,
@@ -91,21 +89,6 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     return version;
   }
 
-  private static validQuantity(quantity: number): number {
-    if (
-      !Number.isInteger(quantity) ||
-      quantity < 1 ||
-      quantity > ProductModel.RESTOCK_MAX_QUANTITY
-    ) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_QUANTITY_INVALID,
-        `Product restock quantity must be an integer from 1 to ${ProductModel.RESTOCK_MAX_QUANTITY}, got ${quantity}`,
-      );
-    }
-
-    return quantity;
-  }
-
   public get name(): string {
     return this.currentName;
   }
@@ -152,13 +135,6 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     this.currentVersion += 1;
 
     const event = new ProductPublishedEvent(this.id, this.sku, this.currentVersion, previousStatus);
-
-    this.addDomainEvent(event);
-  }
-
-  public restock(quantity: number): void {
-    const validQuantity = ProductModel.validQuantity(quantity);
-    const event = new ProductRestockedEvent(this.id, this.sku, validQuantity);
 
     this.addDomainEvent(event);
   }

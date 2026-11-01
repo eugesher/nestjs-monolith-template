@@ -4,7 +4,6 @@ import {
   ProductGetManyUseCase,
   ProductGetOneUseCase,
   ProductPublishUseCase,
-  ProductRestockUseCase,
   ProductUpdateUseCase,
 } from '../../../application';
 import { ProductController } from '../product.controller';
@@ -16,7 +15,6 @@ describe('ProductController', () => {
   let update: jest.Mock;
   let publish: jest.Mock;
   let archive: jest.Mock;
-  let restock: jest.Mock;
   let controller: ProductController;
 
   beforeEach(() => {
@@ -26,7 +24,6 @@ describe('ProductController', () => {
     update = jest.fn();
     publish = jest.fn();
     archive = jest.fn();
-    restock = jest.fn();
 
     controller = new ProductController(
       { execute: create } as unknown as ProductCreateUseCase,
@@ -35,7 +32,6 @@ describe('ProductController', () => {
       { execute: update } as unknown as ProductUpdateUseCase,
       { execute: publish } as unknown as ProductPublishUseCase,
       { execute: archive } as unknown as ProductArchiveUseCase,
-      { execute: restock } as unknown as ProductRestockUseCase,
     );
   });
 
@@ -124,25 +120,6 @@ describe('ProductController', () => {
       expect(archive).toHaveBeenCalledWith({
         productId: '12',
         expectedVersion: undefined,
-      });
-    });
-  });
-
-  describe('handleRestock', () => {
-    it('restocks the product of the path by the quantity of the body under the idempotency key', async () => {
-      restock.mockResolvedValue({ productId: '12', quantity: 15 });
-
-      const response = await controller.handleRestock(
-        { productId: '12' },
-        { quantity: 5 },
-        'key-1',
-      );
-
-      expect(response).toEqual({ productId: '12', quantity: 15 });
-      expect(restock).toHaveBeenCalledWith({
-        productId: '12',
-        quantity: 5,
-        idempotencyKey: 'key-1',
       });
     });
   });

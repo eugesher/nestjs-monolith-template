@@ -6,7 +6,15 @@ import { DataSource } from 'typeorm';
 import * as entities from '@acme-core/entities';
 import { SnakeNamingStrategy } from '@acme-libs/database';
 import { AppE2EContext } from '../context/app-e2e.context';
-import { CatalogE2E, HealthE2E, IdentityE2E, LedgerE2E, SalesE2E, ToolsE2E } from '../features';
+import {
+  CatalogE2E,
+  HealthE2E,
+  IdentityE2E,
+  LedgerE2E,
+  SalesE2E,
+  ToolsE2E,
+  WarehouseE2E,
+} from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -18,6 +26,7 @@ describe('App', () => {
   const ledgerE2E = LedgerE2E.of(ctx);
   const toolsE2E = ToolsE2E.of(ctx);
   const salesE2E = SalesE2E.of(ctx);
+  const warehouseE2E = WarehouseE2E.of(ctx);
   const catalogE2E = CatalogE2E.of(ctx);
 
   beforeAll(async () => {
@@ -77,6 +86,10 @@ describe('App', () => {
 
   describe('Sales', () => {
     salesE2E.execute();
+  });
+
+  describe('Warehouse', () => {
+    warehouseE2E.execute();
   });
 
   describe('Catalog', () => {

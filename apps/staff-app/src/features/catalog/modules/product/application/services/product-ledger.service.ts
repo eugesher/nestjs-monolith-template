@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs/toolkit';
-import { ProductCreatedEvent, ProductPublishedEvent, ProductRestockedEvent } from '../../domain';
+import { ProductCreatedEvent, ProductPublishedEvent } from '../../domain';
 import {
   type IProductLedgerRecordEnqueueCommand,
   type IProductLedgerRecordPort,
@@ -11,7 +11,6 @@ import {
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
 import { IProductLedgerRecordCommand } from '../interfaces/commands/product-ledger-record.command';
-import { IProductLedgerRestockRecordCommand } from '../interfaces/commands/product-ledger-restock-record.command';
 
 @Injectable()
 export class ProductLedgerService {
@@ -34,18 +33,6 @@ export class ProductLedgerService {
       if (record !== undefined) {
         await this.enqueueWithRetry(record);
       }
-    }
-  }
-
-  public async enqueueRestocked(command: IProductLedgerRestockRecordCommand): Promise<void> {
-    const { productId, productStockId, events } = command;
-    const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
-    const restocked = events.filter((event) => event instanceof ProductRestockedEvent);
-
-    for (const event of restocked) {
-      const record = this.toRestockedRecord(productId, productStockId, event, correlationId);
-
-      await this.enqueueWithRetry(record);
     }
   }
 
@@ -85,26 +72,6 @@ export class ProductLedgerService {
     }
 
     return undefined;
-  }
-
-  private toRestockedRecord(
-    productId: string,
-    productStockId: string,
-    event: ProductRestockedEvent,
-    correlationId: string,
-  ): IProductLedgerRecordEnqueueCommand {
-    const { sku, quantity } = event;
-    const occurredAt = event.occurredAt.toISOString();
-
-    return {
-      operationKey: `product-restocked:${productStockId}`,
-      subjectType: 'product',
-      subjectId: productId,
-      action: 'ProductRestocked',
-      payload: { sku, quantity },
-      occurredAt,
-      correlationId,
-    };
   }
 
   private async enqueueWithRetry(record: IProductLedgerRecordEnqueueCommand): Promise<void> {

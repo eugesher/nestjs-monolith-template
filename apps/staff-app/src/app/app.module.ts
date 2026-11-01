@@ -8,6 +8,7 @@ import {
   LedgerModule,
   SalesModule,
   ToolsModule,
+  WarehouseModule,
 } from '@acme-staff-features';
 import { CacheModule } from '@acme-libs/cache';
 import {
@@ -35,6 +36,7 @@ import { QueueSetupModule } from './setup/queue/queue-setup.module';
     LedgerModule,
     ToolsModule,
     CatalogModule,
+    WarehouseModule,
     SalesModule,
   ],
   providers: [
