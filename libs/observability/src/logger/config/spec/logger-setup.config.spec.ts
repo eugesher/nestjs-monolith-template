@@ -3,6 +3,7 @@ import { trace } from '@opentelemetry/api';
 
 import { AppNameEnum } from '@acme-libs/kernel';
 
+import { CorrelationContextHelper } from '../../../correlation/correlation-context.helper';
 import { LoggerSetupConfig } from '../logger-setup.config';
 
 describe('LoggerSetupConfig', () => {
@@ -103,13 +104,23 @@ describe('LoggerSetupConfig', () => {
     );
   });
 
-  it('adds the correlation id header to the request log', () => {
+  it('adds the correlation id of the context to every log line', async () => {
     const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
-    const req = { headers: { 'x-correlation-id': 'c0ffee00-0000-4000-8000-000000000001' } };
 
-    const props = config.pinoHttp.customProps?.(req as never, {} as never);
+    const mixin = await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
+      Promise.resolve(config.pinoHttp.mixin?.({}, 30, {} as never)),
+    );
 
-    expect(props).toEqual({ correlationId: 'c0ffee00-0000-4000-8000-000000000001' });
+    expect(mixin).toEqual({
+      app: 'staff-app',
+      correlationId: 'c0ffee00-0000-4000-8000-000000000001',
+    });
+  });
+
+  it('leaves the request log props to the context', () => {
+    const config = new LoggerSetupConfig(AppNameEnum.STAFF_APP);
+
+    expect(config.pinoHttp.customProps).toBeUndefined();
   });
 
   it('removes the authorization, cookie and set-cookie headers', () => {

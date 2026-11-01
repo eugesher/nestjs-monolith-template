@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { CacheModule } from '@acme-libs/cache';
@@ -8,7 +8,7 @@ import {
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
+import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
 import { HealthModule, AuthModule, CatalogModule, OrderModule } from '@acme-customer/features';
 
 import { AuthGlobalModule } from './global';
@@ -20,6 +20,7 @@ import { QueueSetupModule } from './setup/queue/queue-setup.module';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
+    CorrelationSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(),
     QueueSetupModule,
     CacheModule,
@@ -35,8 +36,4 @@ import { QueueSetupModule } from './setup/queue/queue-setup.module';
     { provide: APP_FILTER, useClass: DuplicateKeyExceptionFilter },
   ],
 })
-export class AppModule implements NestModule {
-  public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CorrelationMiddleware).forRoutes('*path');
-  }
-}
+export class AppModule {}

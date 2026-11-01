@@ -35,7 +35,7 @@ export class TypeOrmSetupModule {
     return {
       module: TypeOrmSetupModule,
       global: true,
-      imports: [typeOrm, ClsModule.forRoot({ global: true, plugins: [transactional] })],
+      imports: [typeOrm, ClsModule.registerPlugins([transactional])],
       providers: [{ provide: TRANSACTION_PORT, useClass: TransactionAdapter }, RepositoryHost],
       exports: [TRANSACTION_PORT, RepositoryHost],
     };

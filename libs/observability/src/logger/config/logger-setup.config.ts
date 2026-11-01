@@ -1,6 +1,5 @@
 import { RequestMethod } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
-import { IncomingMessage } from 'http';
 import { Params } from 'nestjs-pino';
 import { levels } from 'pino';
 import { Options } from 'pino-http';
@@ -8,7 +7,7 @@ import { Options } from 'pino-http';
 import { EnvHelper } from '@acme-libs/config';
 import { AppNameEnum } from '@acme-libs/kernel';
 
-import { CORRELATION_ID_HEADER } from '../../correlation/correlation-id-header.const';
+import { CorrelationContextHelper } from '../../correlation/correlation-context.helper';
 import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 
 export class LoggerSetupConfig implements Params {
@@ -31,11 +30,12 @@ export class LoggerSetupConfig implements Params {
     const baseOptions: Options = {
       level: process.env.LOG_LEVEL ?? (isProduction ? 'info' : 'debug'),
       mixin: () => {
+        const correlationId = CorrelationContextHelper.peek();
         const span = trace.getActiveSpan()?.spanContext();
+        const correlation = correlationId === undefined ? {} : { correlationId };
+        const tracing = span ? { traceId: span.traceId, spanId: span.spanId } : {};
 
-        return span
-          ? { app: appName, traceId: span.traceId, spanId: span.spanId }
-          : { app: appName };
+        return { app: appName, ...correlation, ...tracing };
       },
       genReqId: (req, res) => CorrelationIdHelper.resolve(req, res),
       customLogLevel: (_req, res, error) => {
@@ -45,9 +45,6 @@ export class LoggerSetupConfig implements Params {
 
         return res.statusCode >= 400 ? 'warn' : 'info';
       },
-      customProps: (req: IncomingMessage) => ({
-        correlationId: req.headers[CORRELATION_ID_HEADER],
-      }),
       redact: {
         paths: ['req.headers.authorization', 'req.headers.cookie', 'res.headers["set-cookie"]'],
         remove: true,

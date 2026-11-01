@@ -105,7 +105,7 @@ describe('lib entry points', () => {
     '@acme-libs/health/module/health-lib.module',
     '@acme-libs/auth/module/auth-lib.module',
     '@acme-libs/credentials/module/credentials-lib.module',
-    '@acme-libs/observability/correlation/correlation.middleware',
+    '@acme-libs/observability/correlation/correlation-setup.module',
     '@acme-libs/contracts/database/ports/transaction.port',
     '@acme-libs/cache/redis/redis-cache.adapter',
     '@acme-libs/contracts/cache/ports/cache.port',

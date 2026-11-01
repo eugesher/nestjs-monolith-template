@@ -204,12 +204,22 @@ describe('libs', () => {
     await expect({
       file: 'libs/observability/src/correlation/__fixture__.ts',
       code:
-        'import { AsyncLocalStorage } from "async_hooks";\n' +
         'import { trace } from "@opentelemetry/api";\n' +
         'import { NodeSDK } from "@opentelemetry/sdk-node";\n' +
+        'import { ClsServiceManager } from "nestjs-cls";\n' +
         'import { PinoLogger } from "nestjs-pino";',
     }).toPassArchitectureLint();
   });
+
+  it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+    'the observability lib may NOT import %s — the database lib owns transactions',
+    async (source) => {
+      await expect({
+        file: 'libs/observability/src/correlation/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
 
   it('the database lib MAY import the transaction, async context and logging packages', async () => {
     await expect({

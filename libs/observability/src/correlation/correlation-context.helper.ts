@@ -1,27 +1,27 @@
 import { randomUUID } from 'crypto';
+import { CLS_ID, ClsServiceManager } from 'nestjs-cls';
 import { PinoLogger } from 'nestjs-pino';
 
 import { Maybe } from '@acme-libs/toolkit';
 
-import { correlationStorage } from './correlation.storage';
-
 export class CorrelationContextHelper {
   public static async run<T>(inbound: Maybe<string>, callback: () => Promise<T>): Promise<T> {
     const correlationId = inbound === undefined || inbound === '' ? randomUUID() : inbound;
+    const cls = ClsServiceManager.getClsService();
 
-    return await correlationStorage.run(correlationId, () => {
-      if (!PinoLogger.root) {
-        return callback();
-      }
+    return await cls.run({ ifNested: 'override' }, () => {
+      cls.set(CLS_ID, correlationId);
 
-      const logger = new PinoLogger({});
-
-      return logger.runInContext(callback, { bindings: { correlationId } });
+      return callback();
     });
   }
 
+  public static peek(): Maybe<string> {
+    return ClsServiceManager.getClsService().getId();
+  }
+
   public static current(context: string): string {
-    const correlationId = correlationStorage.getStore();
+    const correlationId = CorrelationContextHelper.peek();
 
     if (correlationId) {
       return correlationId;
