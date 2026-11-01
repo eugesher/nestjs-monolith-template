@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { PermissionCodeEnum } from '@acme-libs/kernel';
-import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-core/entities';
+import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-staff/common/entities';
 
 import { type IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outbound';
 

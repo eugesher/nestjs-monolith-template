@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { UserStaffUserModel } from '../../../domain';
 import { type IUserAssignRoleRepositoryPort } from '../../../outbound';

@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { Reminder } from '@acme-core/entities';
+import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 import {

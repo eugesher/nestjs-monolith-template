@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { Reminder } from '@acme-core/entities';
+import { Reminder } from '@acme-staff/common/entities';
 
 import {
   type IReminderGetSummaryRepositoryPort,

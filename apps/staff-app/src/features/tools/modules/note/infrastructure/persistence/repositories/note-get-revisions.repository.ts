@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { IPage } from '@acme-libs/toolkit';
-import { NoteRevision } from '@acme-core/entities';
+import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
 import { type INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';

@@ -1,4 +1,4 @@
-import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
+import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
 import { RoleMapper } from '../role.mapper';
 

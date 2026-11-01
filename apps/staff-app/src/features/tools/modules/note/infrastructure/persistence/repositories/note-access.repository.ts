@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { Note } from '@acme-core/entities';
+import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { INoteAccessFindOwnedQuery, type INoteAccessRepositoryPort } from '../../../outbound';

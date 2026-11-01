@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffUser } from '@acme-core/entities';
+import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
 import { type IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';

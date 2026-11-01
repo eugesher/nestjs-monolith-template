@@ -1,6 +1,7 @@
 # 019 — Schema conventions
 
-The entities live in `core/entities/src`, and the migrations in `migrations/`. Examples below use
+An entity that several apps map lives in `core/entities/src`, an entity of one app in
+`apps/<app>/src/common/entities`, and the migrations in `migrations/`. Examples below use
 the tables of `core/entities/src/order` and `core/entities/src/product`.
 
 **A quantity is a sum of signed movements.** `product_stock` stores one row per movement, and the

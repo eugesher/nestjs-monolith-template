@@ -3,7 +3,7 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { StaffRole } from '@acme-core/entities';
+import { StaffRole } from '@acme-staff/common/entities';
 
 import { RoleModel } from '../../../domain';
 import { type IRoleListRepositoryPort } from '../../../outbound';

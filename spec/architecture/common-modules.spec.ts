@@ -467,7 +467,7 @@ describe('common modules (common/modules/<module>)', () => {
       ],
       [
         'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { Customer, StaffUser } from "@acme-core/entities";',
+        'import { StaffUser } from "@acme-staff/common/entities";',
       ],
     ])('%s may NOT reach the staff users — they belong to staff-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');

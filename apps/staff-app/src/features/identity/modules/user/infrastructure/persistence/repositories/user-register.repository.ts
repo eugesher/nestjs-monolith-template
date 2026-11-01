@@ -5,7 +5,7 @@ import { In, Repository } from 'typeorm';
 
 import { MysqlErrorHelper } from '@acme-libs/database';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { UserDomainException, UserStaffUserModel } from '../../../domain';
 import { type IUserRegisterRepositoryPort } from '../../../outbound';

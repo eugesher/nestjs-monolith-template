@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffUser } from '@acme-core/entities';
+import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthStaffUserModel } from '../../../domain';
 import { type IAuthLoginRepositoryPort } from '../../../outbound';

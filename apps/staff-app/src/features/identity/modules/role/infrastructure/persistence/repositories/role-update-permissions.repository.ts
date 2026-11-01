@@ -5,7 +5,7 @@ import { In, Repository } from 'typeorm';
 
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
+import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
 import { RolePermissionModel, RoleModel } from '../../../domain';
 import { type IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';

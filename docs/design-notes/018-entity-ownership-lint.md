@@ -2,13 +2,18 @@
 
 Two lint policies keep entities and decorators out of the app that must not use them.
 
-| Policy                                         | Keeps out of            | What                                                                                                         |
-| ---------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `lint/boundaries/policies/user-entities.mjs`   | customer-app, staff-app | the entities that belong to the other app                                                                    |
-| `lint/boundaries/policies/customer-claims.mjs` | customer-app            | `AuthClaimsLibModule`, `@Roles`, `@RequiresPermission`, `AUTH_CLAIMS_PORT`, `RoleEnum`, `PermissionCodeEnum` |
+| Policy                                         | Keeps out of | What                                                                                                         |
+| ---------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------ |
+| `lint/boundaries/policies/user-entities.mjs`   | staff-app    | `Customer`, which stays in core because the core entity `Order` references it                                |
+| `lint/boundaries/policies/customer-claims.mjs` | customer-app | `AuthClaimsLibModule`, `@Roles`, `@RequiresPermission`, `AUTH_CLAIMS_PORT`, `RoleEnum`, `PermissionCodeEnum` |
 
-`spec/architecture/common-modules.spec.ts` and `spec/architecture/libs-by-layer.spec.ts` hold the
-cases in both directions.
+`spec/architecture/common-modules.spec.ts`, `spec/architecture/libs-by-layer.spec.ts` and
+`spec/architecture/app-entities.spec.ts` hold the cases in both directions.
+
+**An entity of one app needs no rule of its own.** An entity that only one app maps lives in
+`apps/<app>/src/common/entities` (category `acme-app:common:entities`). Only the infrastructure,
+the `app/` folder and the e2e code of the same app may import it, so another app cannot reach it.
+An entity that several apps map stays in `core/entities`.
 
 **Code needs no rule of its own.** An app may import only its own contracts and common modules, so
 one app cannot reach the contracts or common modules of another.

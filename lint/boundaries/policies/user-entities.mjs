@@ -7,11 +7,6 @@ const ownerOf = (app, entities) => ({
 
 export const userEntities = [
   {
-    ...ownerOf('customer-app', ['Staff*']),
-    message:
-      'the Staff* entities belong to staff-app: customer-app signs in its customers through its own auth modules',
-  },
-  {
     ...ownerOf('staff-app', ['Customer']),
     message:
       'the Customer entity belongs to customer-app: staff-app signs in its staff through its own auth modules',
