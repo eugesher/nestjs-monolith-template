@@ -22,11 +22,11 @@ export class ReminderGetSummaryRepository implements IReminderGetSummaryReposito
 
   public async summarize(ownerId: string): Promise<IReminderSummarySnapshotView> {
     const row = await this.reminderRepository
-      .createQueryBuilder('reminder')
+      .createQueryBuilder('Reminder')
       .select('COUNT(*)', 'pending')
-      .addSelect('MIN(reminder.dueOn)', 'nextDueOn')
-      .where('reminder.ownerId = :ownerId', { ownerId })
-      .andWhere('reminder.status = :status', { status: ReminderStatusEnum.PENDING })
+      .addSelect('MIN(Reminder.dueOn)', 'nextDueOn')
+      .where('Reminder.ownerId = :ownerId', { ownerId })
+      .andWhere('Reminder.status = :status', { status: ReminderStatusEnum.PENDING })
       .getRawOne<{ pending: number | string; nextDueOn: Nullable<string> }>();
 
     return { pending: Number(row?.pending ?? 0), nextDueOn: row?.nextDueOn ?? null };

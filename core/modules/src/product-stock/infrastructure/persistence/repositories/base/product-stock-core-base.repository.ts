@@ -25,9 +25,9 @@ export abstract class ProductStockCoreBaseRepository {
     }
 
     const products = await this.productRepository
-      .createQueryBuilder('product')
-      .where('product.id IN (:...productIds)', { productIds })
-      .orderBy('product.id', 'ASC')
+      .createQueryBuilder('Product')
+      .where('Product.id IN (:...productIds)', { productIds })
+      .orderBy('Product.id', 'ASC')
       .setLock('pessimistic_write')
       .getMany();
 
@@ -40,11 +40,11 @@ export abstract class ProductStockCoreBaseRepository {
     }
 
     const rows = await this.productStockRepository
-      .createQueryBuilder('stock')
-      .select('stock.productId', 'productId')
-      .addSelect('SUM(stock.quantity)', 'quantity')
-      .where('stock.productId IN (:...productIds)', { productIds })
-      .groupBy('stock.productId')
+      .createQueryBuilder('ProductStock')
+      .select('ProductStock.productId', 'productId')
+      .addSelect('SUM(ProductStock.quantity)', 'quantity')
+      .where('ProductStock.productId IN (:...productIds)', { productIds })
+      .groupBy('ProductStock.productId')
       .setLock('pessimistic_read')
       .getRawMany<{ productId: string; quantity: number | string }>();
 

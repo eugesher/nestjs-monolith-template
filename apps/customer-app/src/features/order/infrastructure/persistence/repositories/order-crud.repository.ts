@@ -50,14 +50,14 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
     }
 
     const products = await this.orderProductRepository
-      .createQueryBuilder('line')
-      .select('line.id', 'id')
-      .addSelect('line.productId', 'productId')
-      .addSelect('product.sku', 'sku')
-      .addSelect('product.name', 'name')
-      .innerJoin(Product, 'product', 'product.id = line.productId')
-      .where('line.orderId = :orderId', { orderId })
-      .orderBy('line.id', 'ASC')
+      .createQueryBuilder('OrderProduct')
+      .select('OrderProduct.id', 'id')
+      .addSelect('OrderProduct.productId', 'productId')
+      .addSelect('Product.sku', 'sku')
+      .addSelect('Product.name', 'name')
+      .innerJoin(Product, 'Product', 'Product.id = OrderProduct.productId')
+      .where('OrderProduct.orderId = :orderId', { orderId })
+      .orderBy('OrderProduct.id', 'ASC')
       .withDeleted()
       .getRawMany<IOrderProductRecord>();
 

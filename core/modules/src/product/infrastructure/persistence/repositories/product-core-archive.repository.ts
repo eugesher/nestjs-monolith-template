@@ -23,8 +23,8 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
 
   public async lockById(productId: string): Promise<Nullable<ProductCoreModel>> {
     const product = await this.productRepository
-      .createQueryBuilder('product')
-      .where('product.id = :productId', { productId })
+      .createQueryBuilder('Product')
+      .where('Product.id = :productId', { productId })
       .setLock('pessimistic_write')
       .getOne();
 

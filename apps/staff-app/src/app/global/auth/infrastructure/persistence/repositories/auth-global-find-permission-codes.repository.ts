@@ -18,17 +18,21 @@ export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindP
 
   public async findPermissionCodes(userId: string): Promise<PermissionCodeEnum[]> {
     const rows = await this.staffPermissionRepository
-      .createQueryBuilder('permission')
-      .select('permission.code', 'code')
+      .createQueryBuilder('StaffPermission')
+      .select('StaffPermission.code', 'code')
       .distinct(true)
       .innerJoin(
         StaffRolePermission,
-        'rolePermission',
-        'rolePermission.permissionId = permission.id',
+        'StaffRolePermission',
+        'StaffRolePermission.permissionId = StaffPermission.id',
       )
-      .innerJoin(StaffUserRole, 'userRole', 'userRole.roleId = rolePermission.roleId')
-      .where('userRole.userId = :userId', { userId })
-      .orderBy('permission.code')
+      .innerJoin(
+        StaffUserRole,
+        'StaffUserRole',
+        'StaffUserRole.roleId = StaffRolePermission.roleId',
+      )
+      .where('StaffUserRole.userId = :userId', { userId })
+      .orderBy('StaffPermission.code')
       .getRawMany<{ code: PermissionCodeEnum }>();
 
     return rows.map((row) => row.code);
