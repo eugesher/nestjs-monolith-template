@@ -4,8 +4,9 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import {
   CREDENTIALS_PASSWORD_HASHER_PORT,
   type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+} from '@acme-libs-contracts/credentials';
+import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
+
 import { AuthDomainException, AuthStaffUserModel } from '../../domain';
 import { AUTH_LOGIN_REPOSITORY_PORT, type IAuthLoginRepositoryPort } from '../../outbound';
 import { IAuthAccessTokenView, IAuthLoginCommand } from '../interfaces';

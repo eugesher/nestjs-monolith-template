@@ -14,17 +14,17 @@ a threshold.
 
 **What is not counted** is code that has no logic of its own or is covered by the e2e suites only:
 
-| Excluded                                                                           | Why                                                           |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `index.ts`                                                                         | barrels                                                       |
-| `*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts` | declarations                                                  |
-| `*.module.ts`, `apps/*/src/main.ts`                                                | wiring, booted by the e2e suites                              |
-| `infrastructure/persistence/repositories/**`                                       | SQL, checked against the database by the e2e suites           |
-| `presentation/controllers/**`                                                      | routes, guards and pipes, checked over HTTP by the e2e suites |
-| `module/*.facade.ts`                                                               | each method hands the call to a use case                      |
-| `libs/observability/src/tracer/tracer.ts`                                          | a side-effect entry; its logic is in `tracer.helper.ts`       |
-| `libs/openapi/src/api-reference/api-reference.ts`                                  | mounts the reference page                                     |
-| `libs/*/src/testing/**`, `apps/*/test/**`                                          | test code                                                     |
+| Excluded                                                                           | Why                                                             |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `index.ts`                                                                         | barrels                                                         |
+| `*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts` | declarations                                                    |
+| `*.module.ts`, `apps/*/src/main.ts`                                                | wiring, booted by the e2e suites                                |
+| `infrastructure/persistence/repositories/**`                                       | SQL, checked against the database by the e2e suites             |
+| `presentation/controllers/**`                                                      | routes, guards and pipes, checked over HTTP by the e2e suites   |
+| `module/*.facade.ts`                                                               | each method hands the call to a use case                        |
+| `libs/observability/src/tracer/index.ts`                                           | a side-effect entry; its logic is in `helpers/tracer.helper.ts` |
+| `libs/openapi/src/api-reference/api-reference.ts`                                  | mounts the reference page                                       |
+| `libs/*/src/testing/**`, `apps/*/test/**`                                          | test code                                                       |
 
 **The thresholds** are 95% for statements, branches, functions and lines, three times over:
 

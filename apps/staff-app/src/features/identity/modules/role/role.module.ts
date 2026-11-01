@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from './application';
 import {
   RoleListRepository,

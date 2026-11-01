@@ -1,16 +1,18 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
+import { CacheModule } from '@acme-libs-cache';
+import { HttpExceptionFilter } from '@acme-libs-http';
+import { AppNameEnum } from '@acme-libs-kernel';
+import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs-observability';
+
 import { HealthModule } from '@acme-processor-features';
 import {
   IdempotencyPurgeModule,
   LedgerRecordModule,
   ProductStockModule,
 } from '@acme-processor-processors';
-import { CacheModule } from '@acme-libs/cache';
-import { HttpExceptionFilter } from '@acme-libs/http';
-import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
+
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
 import { QueueSetupModule } from './setup/queue/queue-setup.module';

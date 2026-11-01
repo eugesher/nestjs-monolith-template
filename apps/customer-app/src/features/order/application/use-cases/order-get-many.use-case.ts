@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+
 import { type IOrderCrudRepositoryPort, ORDER_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IOrderGetManyQuery, IOrderSummaryView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';

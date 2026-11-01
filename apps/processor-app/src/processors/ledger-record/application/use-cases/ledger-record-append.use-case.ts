@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+
 import { LedgerRecordEntryModel, LedgerRecordHelper } from '../../domain';
 import {
   type ILedgerRecordAppendRepositoryPort,

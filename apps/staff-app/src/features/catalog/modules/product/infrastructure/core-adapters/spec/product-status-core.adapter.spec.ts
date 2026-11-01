@@ -1,4 +1,5 @@
-import { ProductCoreArchiveOutcomeEnum } from '@acme-core/contracts/product';
+import { ProductCoreArchiveOutcomeEnum } from '@acme-core-contracts/product';
+
 import { ProductStatusCoreAdapter } from '../product-status-core.adapter';
 
 describe('ProductStatusCoreAdapter', () => {

@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
-import { IPage } from '@acme-libs/toolkit';
+import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs-contracts/cache';
+import { IPage } from '@acme-libs-toolkit';
+
 import {
   CATALOG_CACHE_TTL_MS,
   type ICatalogCachePort,

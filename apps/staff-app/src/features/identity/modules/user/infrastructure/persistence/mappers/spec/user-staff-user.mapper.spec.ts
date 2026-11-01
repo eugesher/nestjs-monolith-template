@@ -1,5 +1,7 @@
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
-import { UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs-kernel';
+
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-core-entities';
+
 import { UserStaffUserMapper } from '../user-staff-user.mapper';
 
 describe('UserStaffUserMapper', () => {

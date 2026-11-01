@@ -1,4 +1,5 @@
-import { RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs-kernel';
+
 import { IAuthCommonStaffUserRecord } from '../interfaces/auth-common-staff-user-record.interface';
 
 export class AuthCommonStaffUserModel {

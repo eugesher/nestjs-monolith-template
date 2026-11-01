@@ -1,7 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 
-import { AuthLibModule } from '@acme-libs/auth';
-import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
+import { AuthLibModule } from '@acme-libs-auth';
+import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs-contracts/auth';
+
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 import { AuthGlobalTypeOrmModule, AuthGlobalValidateSubjectRepository } from '../infrastructure';
 import { AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT } from '../outbound';

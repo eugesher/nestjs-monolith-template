@@ -1,5 +1,7 @@
-import { Product } from '@acme-core/entities';
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import { ProductStatusEnum } from '@acme-libs-kernel';
+
+import { Product } from '@acme-core-entities';
+
 import { ProductMapper } from '../product.mapper';
 
 describe('ProductMapper', () => {

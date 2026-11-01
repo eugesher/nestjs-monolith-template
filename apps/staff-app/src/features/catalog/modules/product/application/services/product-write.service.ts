@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { OccRetryHelper } from '@acme-libs/toolkit';
+import { OccRetryHelper } from '@acme-libs-toolkit';
+
 import {
   ProductDomainException,
   ProductErrorCodeEnum,

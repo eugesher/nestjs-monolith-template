@@ -1,8 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { RequiresPermission } from '@acme-libs-auth';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+
 import { LedgerListEntriesUseCase } from '../../application';
 import { LedgerEntryPageResponseDto } from '../dto/ledger-entry-page-response.dto';
 import { LedgerListEntriesRequestDto } from '../dto/ledger-list-entries-request.dto';

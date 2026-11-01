@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Product } from '@acme-core/entities';
-import { Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs-toolkit';
+
+import { Product } from '@acme-core-entities';
+
 import { ProductStockModel } from '../../../domain';
 import { type IProductStockAddRepositoryPort } from '../../../outbound';
 import { ProductStockMapper } from '../mappers/product-stock.mapper';

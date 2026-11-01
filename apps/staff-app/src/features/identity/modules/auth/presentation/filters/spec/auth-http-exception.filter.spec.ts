@@ -1,7 +1,8 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { HttpExceptionFilter } from '@acme-libs-http';
+import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
+
 import { AuthDomainException } from '../../../domain';
 import { AuthHttpExceptionFilter } from '../auth-http-exception.filter';
 

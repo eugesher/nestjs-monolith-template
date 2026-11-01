@@ -1,9 +1,10 @@
 import { Body, Controller, Param, Post, UseFilters } from '@nestjs/common';
 import { ApiCreatedResponse, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
-import { IdempotencyKey } from '@acme-libs/http';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { RequiresPermission } from '@acme-libs-auth';
+import { IdempotencyKey } from '@acme-libs-http';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+
 import { ProductStockAddUseCase } from '../../application';
 import { ProductStockAddRequestDto } from '../dto/product-stock-add-request.dto';
 import { ProductStockProductIdRequestDto } from '../dto/product-stock-product-id-request.dto';

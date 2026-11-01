@@ -1,6 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { IdempotencyPurgeRunUseCase } from '../idempotency-purge-run.use-case';
 
 describe('IdempotencyPurgeRunUseCase', () => {

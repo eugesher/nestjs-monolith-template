@@ -1,6 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
+import { CacheModule } from '@acme-libs-cache';
+import {
+  DuplicateKeyExceptionFilter,
+  HttpExceptionFilter,
+  StrictValidationPipe,
+} from '@acme-libs-http';
+import { AppNameEnum } from '@acme-libs-kernel';
+import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs-observability';
+
 import {
   CatalogModule,
   HealthModule,
@@ -10,14 +19,7 @@ import {
   ToolsModule,
   WarehouseModule,
 } from '@acme-staff-features';
-import { CacheModule } from '@acme-libs/cache';
-import {
-  DuplicateKeyExceptionFilter,
-  HttpExceptionFilter,
-  StrictValidationPipe,
-} from '@acme-libs/http';
-import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
+
 import { AuthGlobalModule } from './global';
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';

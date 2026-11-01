@@ -1,4 +1,5 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import { ProductStatusEnum } from '@acme-libs-kernel';
+
 import { ProductModel } from '../../../domain';
 import { ProductGetManyUseCase } from '../product-get-many.use-case';
 

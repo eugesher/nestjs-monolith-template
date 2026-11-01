@@ -1,4 +1,5 @@
-import { Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs-toolkit';
+
 import { ProductStockModel } from '../../domain';
 
 export interface IProductStockAddRepositoryPort {

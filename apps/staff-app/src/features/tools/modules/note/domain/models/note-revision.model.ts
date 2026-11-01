@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
 import { NoteDomainException } from '../exceptions/note-domain.exception';
 import { INoteRevisionDraft } from '../interfaces/note-revision-draft.interface';

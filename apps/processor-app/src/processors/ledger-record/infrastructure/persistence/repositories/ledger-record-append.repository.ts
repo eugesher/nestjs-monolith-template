@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { LedgerEntry } from '@acme-core/entities';
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper } from '@acme-libs-database';
+
+import { LedgerEntry } from '@acme-core-entities';
+
 import { LedgerRecordEntryModel } from '../../../domain';
 import {
   type ILedgerRecordAppendRepositoryPort,

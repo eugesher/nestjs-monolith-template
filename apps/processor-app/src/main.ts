@@ -1,13 +1,14 @@
-import '@acme-libs/observability/tracer';
+import '@acme-libs-observability/tracer';
 
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 
-import { AppModule } from '@acme-processor-app';
-import { AppNameEnum } from '@acme-libs/kernel';
-import { BootstrapLogger } from '@acme-libs/observability';
-import { ApiReference } from '@acme-libs/openapi';
+import { AppNameEnum } from '@acme-libs-kernel';
+import { BootstrapLogger } from '@acme-libs-observability';
+import { ApiReference } from '@acme-libs-openapi';
+
+import { AppModule } from '@acme-processor-app/app.module';
 
 const logger = BootstrapLogger.setup(AppNameEnum.PROCESSOR_APP);
 

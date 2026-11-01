@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { ProductCoreModule } from '@acme-core/modules/product';
-import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
+import { ProductCoreModule } from '@acme-core-modules/product';
+import { ProductStockCoreModule } from '@acme-core-modules/product-stock';
+
 import { ProductStockArchiveOutOfStockUseCase } from './application';
 import {
   ProductStockArchiveCoreAdapter,

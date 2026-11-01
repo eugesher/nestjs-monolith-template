@@ -1,5 +1,6 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { ProductStatusEnum } from '@acme-libs-kernel';
+import { AggregateRoot, Maybe } from '@acme-libs-toolkit';
+
 import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
 import { ProductCreatedEvent } from '../events/product-created.event';
 import { ProductPublishedEvent } from '../events/product-published.event';

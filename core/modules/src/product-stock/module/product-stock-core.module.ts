@@ -1,12 +1,14 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
+import { ConfigProviderHelper } from '@acme-libs-config';
+
 import {
   PRODUCT_STOCK_CORE_PORT,
   PRODUCT_STOCK_POST_SUBTRACT_JOB_OPTIONS,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core/contracts/product-stock';
-import { ConfigProviderHelper } from '@acme-libs/config';
+} from '@acme-core-contracts/product-stock';
+
 import { ProductStockCoreLockUseCase, ProductStockCoreMoveUseCase } from '../application';
 import {
   ProductStockCoreLockRepository,

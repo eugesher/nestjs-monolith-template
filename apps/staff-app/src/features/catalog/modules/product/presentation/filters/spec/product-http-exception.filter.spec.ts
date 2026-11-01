@@ -1,6 +1,7 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { ProductDomainException, ProductErrorCodeEnum } from '../../../domain';
 import { ProductHttpExceptionFilter } from '../product-http-exception.filter';
 

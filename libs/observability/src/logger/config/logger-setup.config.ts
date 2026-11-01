@@ -5,8 +5,9 @@ import { Params } from 'nestjs-pino';
 import { levels } from 'pino';
 import { Options } from 'pino-http';
 
-import { EnvHelper } from '@acme-libs/config';
-import { AppNameEnum } from '@acme-libs/kernel';
+import { EnvHelper } from '@acme-libs-config';
+import { AppNameEnum } from '@acme-libs-kernel';
+
 import { CORRELATION_ID_HEADER } from '../../correlation/correlation-id-header.const';
 import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 

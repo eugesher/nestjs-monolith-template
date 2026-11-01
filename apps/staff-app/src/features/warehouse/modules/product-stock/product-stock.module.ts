@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 
+import { ConfigProviderHelper } from '@acme-libs-config';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
+import { IdempotencyCoreModule } from '@acme-core-modules/idempotency';
+import { ProductStockCoreModule } from '@acme-core-modules/product-stock';
+
 import { LedgerRecordQueueModule } from '@acme-staff-common/shared/ledger-record';
-import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
-import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
-import { ConfigProviderHelper } from '@acme-libs/config';
-import { HttpExceptionFilter } from '@acme-libs/http';
+
 import { ProductStockAddUseCase, ProductStockLedgerService } from './application';
 import {
   ProductStockAddRepository,

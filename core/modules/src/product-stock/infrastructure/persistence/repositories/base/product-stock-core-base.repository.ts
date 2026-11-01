@@ -2,7 +2,8 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Product, ProductStock } from '@acme-core/entities';
+import { Product, ProductStock } from '@acme-core-entities';
+
 import { IProductStockCoreSumView } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {

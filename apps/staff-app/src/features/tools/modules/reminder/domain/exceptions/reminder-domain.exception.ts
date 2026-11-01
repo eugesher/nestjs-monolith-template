@@ -1,4 +1,5 @@
-import { DomainException, Maybe } from '@acme-libs/toolkit';
+import { DomainException, Maybe } from '@acme-libs-toolkit';
+
 import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
 
 export class ReminderDomainException extends DomainException {

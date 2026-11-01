@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+
 import { type IProductCrudRepositoryPort, PRODUCT_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IProductGetManyQuery, IProductView } from '../interfaces';
 import { ProductViewMapper } from '../mappers/product-view.mapper';

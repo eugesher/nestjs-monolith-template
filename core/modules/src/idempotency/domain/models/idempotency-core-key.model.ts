@@ -1,5 +1,6 @@
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { Maybe, Nullable } from '@acme-libs/toolkit';
+import { IdempotencyStatusEnum } from '@acme-libs-kernel';
+import { Maybe, Nullable } from '@acme-libs-toolkit';
+
 import { IIdempotencyCoreKeyDraft } from '../interfaces/idempotency-core-key-draft.interface';
 import { IIdempotencyCoreKeyRecord } from '../interfaces/idempotency-core-key-record.interface';
 

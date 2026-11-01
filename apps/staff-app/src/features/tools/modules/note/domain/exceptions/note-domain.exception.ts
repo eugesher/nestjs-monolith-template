@@ -1,4 +1,5 @@
-import { DomainException, Maybe } from '@acme-libs/toolkit';
+import { DomainException, Maybe } from '@acme-libs-toolkit';
+
 import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
 
 export class NoteDomainException extends DomainException {

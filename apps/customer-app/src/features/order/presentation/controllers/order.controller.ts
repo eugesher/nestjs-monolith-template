@@ -7,9 +7,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@acme-libs/auth';
-import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import { IdempotencyKey } from '@acme-libs/http';
+import { CurrentUser } from '@acme-libs-auth';
+import type { IAuthCurrentUserView } from '@acme-libs-contracts/auth';
+import { IdempotencyKey } from '@acme-libs-http';
+
 import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from '../../application';
 import { OrderGetManyRequestDto } from '../dto/order-get-many-request.dto';
 import { OrderIdRequestDto } from '../dto/order-id-request.dto';

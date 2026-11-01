@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
-import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs/toolkit';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs-toolkit';
+
 import { ProductCreatedEvent, ProductPublishedEvent } from '../../domain';
 import {
   type IProductLedgerRecordEnqueueCommand,

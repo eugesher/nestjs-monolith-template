@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyStatusEnum } from '@acme-libs-kernel';
 
 @Entity({ name: 'idempotency_key' })
 export class IdempotencyKey {

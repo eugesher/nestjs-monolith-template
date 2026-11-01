@@ -43,8 +43,8 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   and the test helpers of the observability lib;
 - a feature queue adapter and a processor consumer that reach app contracts: a queue between the
   modules of one app keeps its contract in the app, while a queue written by more than one app
-  keeps it in core, `ledger-record` in `@acme-core/contracts/ledger` and
-  `product-stock-post-subtract` in `@acme-core/contracts/product-stock`;
+  keeps it in core, `ledger-record` in `@acme-core-contracts/ledger` and
+  `product-stock-post-subtract` in `@acme-core-contracts/product-stock`;
 - the core-adapters and common-adapters of a common module, and a common module root that mounts
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
@@ -87,7 +87,7 @@ edges exist for it:
 - **The module root registers the queues it writes to** with `BullModule` and nothing else of Bull.
   A core module is mounted by features of several apps, so the queue comes with it rather than with
   the `common/shared` of each app.
-- **Core infrastructure may take `@acme-libs/contracts/cache`**, to drop the keys a write makes
+- **Core infrastructure may take `@acme-libs-contracts/cache`**, to drop the keys a write makes
   stale; the application still may not, so caching stays an adapter behind a port.
 
 ### Where the credentials and the persistence packages are allowed
@@ -95,7 +95,7 @@ edges exist for it:
 Code lives with its only caller (see `024-code-placement.md`), so the edges follow the code:
 
 - **A feature signs its users in.** The application of a feature may take
-  `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No
+  `@acme-libs-contracts/credentials`, and its module root may mount `@acme-libs-credentials`. No
   core module and no common module signs anyone in today, so neither may.
 - **A processor and a global module read tables.** Their infrastructure may import the persistence
   packages (`@nestjs-cls/transactional`, its TypeORM adapter, `@nestjs/typeorm`, `typeorm`) and

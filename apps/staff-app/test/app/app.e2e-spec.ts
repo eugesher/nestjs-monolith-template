@@ -3,8 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
-import * as entities from '@acme-core/entities';
-import { SnakeNamingStrategy } from '@acme-libs/database';
+import { SnakeNamingStrategy } from '@acme-libs-database';
+
+import * as entities from '@acme-core-entities';
+
 import { AppE2EContext } from '../context/app-e2e.context';
 import {
   CatalogE2E,

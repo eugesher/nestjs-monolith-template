@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
+
 import { UserDomainException } from '../../domain';
 import {
   USER_ASSIGN_ROLE_REPOSITORY_PORT,

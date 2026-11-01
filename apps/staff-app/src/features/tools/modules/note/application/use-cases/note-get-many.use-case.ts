@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+
 import { NoteDomainException, NoteErrorCodeEnum } from '../../domain';
 import { type INoteCrudRepositoryPort, NOTE_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';

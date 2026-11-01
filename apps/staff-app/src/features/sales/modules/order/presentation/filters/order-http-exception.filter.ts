@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { OrderDomainException, OrderErrorCodeEnum } from '../../domain';
 
 @Catch(OrderDomainException)

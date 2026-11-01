@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import { ProductStatusEnum } from '@acme-libs-kernel';
 
 export class ProductResponseDto {
   @ApiResponseProperty({ example: '12' })

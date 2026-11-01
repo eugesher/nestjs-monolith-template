@@ -1,4 +1,5 @@
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyStatusEnum } from '@acme-libs-kernel';
+
 import { IdempotencyCoreKeyModel } from '../../../domain';
 import { IdempotencyCoreClaimUseCase } from '../idempotency-core-claim.use-case';
 

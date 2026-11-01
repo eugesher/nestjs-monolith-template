@@ -3,7 +3,8 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Reminder } from '@acme-core/entities';
+import { Reminder } from '@acme-core-entities';
+
 import { ReminderModel } from '../../../domain';
 import { type IReminderCreateRepositoryPort } from '../../../outbound';
 import { ReminderMapper } from '../mappers/reminder.mapper';

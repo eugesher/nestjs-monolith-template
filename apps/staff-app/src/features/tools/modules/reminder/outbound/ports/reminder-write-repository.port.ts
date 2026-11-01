@@ -1,4 +1,5 @@
-import { Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs-toolkit';
+
 import { ReminderModel } from '../../domain';
 import { IReminderWriteUpdateCommand } from '../interfaces';
 

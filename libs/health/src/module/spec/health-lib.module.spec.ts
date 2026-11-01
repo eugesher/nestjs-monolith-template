@@ -3,9 +3,10 @@ import { NestFactory } from '@nestjs/core';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { CACHE_PORT } from '@acme-libs/contracts/cache';
-import { HEALTH_LIB_PORT, IHealthLibPort } from '@acme-libs/contracts/health';
-import { AppNameEnum } from '@acme-libs/kernel';
+import { CACHE_PORT } from '@acme-libs-contracts/cache';
+import { HEALTH_LIB_PORT, IHealthLibPort } from '@acme-libs-contracts/health';
+import { AppNameEnum } from '@acme-libs-kernel';
+
 import { HealthLibModule } from '../health-lib.module';
 
 describe('HealthLibModule', () => {

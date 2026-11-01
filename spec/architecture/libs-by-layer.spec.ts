@@ -116,10 +116,10 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    ['staff-app', 'import { CurrentUser, RequiresPermission, Roles } from "@acme-libs/auth";'],
-    ['staff-app', 'import { PermissionCodeEnum, RoleEnum } from "@acme-libs/kernel";'],
-    ['customer-app', 'import { CurrentUser, Public } from "@acme-libs/auth";'],
-    ['customer-app', 'import type { IAuthCurrentUserView } from "@acme-libs/contracts/auth";'],
+    ['staff-app', 'import { CurrentUser, RequiresPermission, Roles } from "@acme-libs-auth";'],
+    ['staff-app', 'import { PermissionCodeEnum, RoleEnum } from "@acme-libs-kernel";'],
+    ['customer-app', 'import { CurrentUser, Public } from "@acme-libs-auth";'],
+    ['customer-app', 'import type { IAuthCurrentUserView } from "@acme-libs-contracts/auth";'],
   ])('%s presentation MAY take %s', async (app, code) => {
     await expect({
       file: `apps/${app}/src/features/auth/presentation/controllers/__fixture__.ts`,
@@ -128,10 +128,10 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    'import { CurrentUser, RequiresPermission } from "@acme-libs/auth";',
-    'import { Roles } from "@acme-libs/auth";',
-    'import { PermissionCodeEnum } from "@acme-libs/kernel";',
-    'import { ReminderStatusEnum, RoleEnum } from "@acme-libs/kernel";',
+    'import { CurrentUser, RequiresPermission } from "@acme-libs-auth";',
+    'import { Roles } from "@acme-libs-auth";',
+    'import { PermissionCodeEnum } from "@acme-libs-kernel";',
+    'import { ReminderStatusEnum, RoleEnum } from "@acme-libs-kernel";',
   ])(
     'customer-app presentation may NOT take %s — a customer holds no roles or permissions',
     async (code) => {
@@ -145,11 +145,11 @@ describe('libs by layer', () => {
   it.each([
     [
       'apps/customer-app/src/app/global/auth/module/__fixture__.ts',
-      'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";',
+      'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs-auth";',
     ],
     [
       'apps/customer-app/src/app/global/auth/module/__fixture__.ts',
-      'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
+      'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs-contracts/auth";',
     ],
   ])('%s may NOT wire the claim guards: %s', async (file, code) => {
     await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -159,8 +159,8 @@ describe('libs by layer', () => {
     await expect({
       file: 'apps/staff-app/src/app/global/auth/module/__fixture__.ts',
       code:
-        'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";\n' +
-        'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
+        'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs-auth";\n' +
+        'import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from "@acme-libs-contracts/auth";',
     }).toPassArchitectureLint();
   });
 
@@ -382,7 +382,7 @@ describe('libs by layer', () => {
   ])('%s MAY bind config values through the config lib', async (file) => {
     await expect({
       file,
-      code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+      code: 'import { ConfigProviderHelper } from "@acme-libs-config";',
     }).toPassArchitectureLint();
   });
 
@@ -398,7 +398,7 @@ describe('libs by layer', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+        code: 'import { ConfigProviderHelper } from "@acme-libs-config";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -471,14 +471,14 @@ describe('libs by layer', () => {
   ])('%s may NOT reach the observability lib', async (file) => {
     await expect({
       file,
-      code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+      code: 'import { CorrelationContextHelper } from "@acme-libs-observability";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it('a consumer MAY read the correlation context from the observability lib', async () => {
     await expect({
       file: 'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
-      code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+      code: 'import { CorrelationContextHelper } from "@acme-libs-observability";',
     }).toPassArchitectureLint();
   });
 });

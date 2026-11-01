@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   ICredentialsAccessTokenPayloadCommand,
   ICredentialsAccessTokenPort,
-} from '@acme-libs/contracts/credentials';
+} from '@acme-libs-contracts/credentials';
 
 @Injectable()
 export class CredentialsAccessTokenAdapter implements ICredentialsAccessTokenPort {

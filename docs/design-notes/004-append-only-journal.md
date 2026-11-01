@@ -12,7 +12,7 @@ one processor appends.
 
 **Producers enqueue, one processor appends.** No HTTP app writes the table, so the append has one
 caller and lives in the processor (see `024-code-placement.md`). The queue contract lives in
-`@acme-core/contracts/ledger`, because every app writes to the queue and an app may not import
+`@acme-core-contracts/ledger`, because every app writes to the queue and an app may not import
 another.
 
 ## Append is the only verb

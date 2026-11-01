@@ -3,9 +3,11 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
-import { RoleEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import { RoleEnum } from '@acme-libs-kernel';
+import { Maybe } from '@acme-libs-toolkit';
+
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-core-entities';
+
 import { UserStaffUserModel } from '../../../domain';
 import { type IUserAssignRoleRepositoryPort } from '../../../outbound';
 import { UserStaffUserMapper } from '../mappers/user-staff-user.mapper';

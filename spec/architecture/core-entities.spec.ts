@@ -1,12 +1,12 @@
 import '../support/lint';
 
-describe('core entities (@acme-core/entities)', () => {
-  it('@acme-core/entities resolves', () => {
-    expect('@acme-core/entities').toResolve();
+describe('core entities (@acme-core-entities)', () => {
+  it('@acme-core-entities resolves', () => {
+    expect('@acme-core-entities').toResolve();
   });
 
   it('a deep path into the entities does not resolve', () => {
-    expect('@acme-core/entities/product/product.entity').not.toResolve();
+    expect('@acme-core-entities/product/product.entity').not.toResolve();
   });
 
   it.each([
@@ -18,7 +18,7 @@ describe('core entities (@acme-core/entities)', () => {
   ])('%s MAY import the entities', async (file) => {
     await expect({
       file,
-      code: 'import { Product } from "@acme-core/entities";',
+      code: 'import { Product } from "@acme-core-entities";',
     }).toPassArchitectureLint();
   });
 
@@ -39,7 +39,7 @@ describe('core entities (@acme-core/entities)', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { Product } from "@acme-core/entities";',
+        code: 'import { Product } from "@acme-core-entities";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -47,7 +47,7 @@ describe('core entities (@acme-core/entities)', () => {
   it('an entity MAY import typeorm and the kernel lib', async () => {
     await expect({
       file: 'core/entities/src/product/__fixture__.ts',
-      code: 'import { Entity } from "typeorm";\nimport { ProductStatusEnum } from "@acme-libs/kernel";',
+      code: 'import { Entity } from "typeorm";\nimport { ProductStatusEnum } from "@acme-libs-kernel";',
     }).toPassArchitectureLint();
   });
 

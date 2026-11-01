@@ -1,4 +1,5 @@
-import { IPage } from '@acme-libs/toolkit';
+import { IPage } from '@acme-libs-toolkit';
+
 import { NoteRevisionModel } from '../../domain';
 import { INoteRevisionPageQuery } from '../interfaces';
 

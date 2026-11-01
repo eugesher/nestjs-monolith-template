@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Customer } from '@acme-core/entities';
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
+import { Customer } from '@acme-core-entities';
+
 import { AuthCustomerModel } from '../../../domain';
 import { type IAuthLoginRepositoryPort } from '../../../outbound';
 import { AuthCustomerMapper } from '../mappers/auth-customer.mapper';

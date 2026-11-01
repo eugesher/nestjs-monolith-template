@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
   type IAuthGlobalValidateSubjectRepositoryPort,

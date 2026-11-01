@@ -19,8 +19,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUser } from '@acme-libs/auth';
-import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import { CurrentUser } from '@acme-libs-auth';
+import type { IAuthCurrentUserView } from '@acme-libs-contracts/auth';
+
 import {
   ReminderCompleteUseCase,
   ReminderCreateUseCase,

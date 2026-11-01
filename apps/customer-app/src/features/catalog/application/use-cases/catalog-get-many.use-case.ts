@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+
 import {
   CATALOG_CACHE_PORT,
   CATALOG_CRUD_REPOSITORY_PORT,

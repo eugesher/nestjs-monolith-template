@@ -61,7 +61,7 @@ describe('core modules', () => {
     it('product MAY reach its own contracts through the alias', async () => {
       await expect({
         file: 'core/modules/src/product/application/use-cases/__fixture__.ts',
-        code: 'import { PRODUCT_CORE_PORT } from "@acme-core/contracts/product";',
+        code: 'import { PRODUCT_CORE_PORT } from "@acme-core-contracts/product";',
       }).toPassArchitectureLint();
     });
 
@@ -227,9 +227,9 @@ describe('core modules', () => {
     it.each([
       [
         'application/use-cases',
-        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs-contracts/credentials";',
       ],
-      ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
+      ['module', 'import { CredentialsLibModule } from "@acme-libs-credentials";'],
     ])(
       '%s may NOT reach the credentials — sign-in belongs to the auth modules of each app',
       async (layer, code) => {
@@ -261,7 +261,7 @@ describe('core modules', () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
-          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
+          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs-contracts/database";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
     });
@@ -269,14 +269,14 @@ describe('core modules', () => {
     it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
-        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_PORT } from "@acme-libs-contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure MAY take the cache port to drop the keys a write makes stale', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/cache/__fixture__.ts',
-        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs-contracts/cache";',
       }).toPassArchitectureLint();
     });
 
@@ -286,7 +286,7 @@ describe('core modules', () => {
         code:
           'import { InjectQueue } from "@nestjs/bull";\n' +
           'import type { Queue } from "bull";\n' +
-          'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
+          'import { LEDGER_RECORD_QUEUE } from "@acme-core-contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
@@ -302,7 +302,7 @@ describe('core modules', () => {
         file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
         code:
           'import { BullModule } from "@nestjs/bull";\n' +
-          'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
+          'import { LEDGER_RECORD_QUEUE } from "@acme-core-contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
@@ -326,7 +326,7 @@ describe('core modules', () => {
     it('the module root MAY bind config values with the config lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
-        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+        code: 'import { ConfigProviderHelper } from "@acme-libs-config";',
       }).toPassArchitectureLint();
     });
 

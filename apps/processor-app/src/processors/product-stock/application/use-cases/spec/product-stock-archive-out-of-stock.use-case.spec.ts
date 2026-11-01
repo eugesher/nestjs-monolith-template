@@ -1,6 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { ProductStockArchiveOutOfStockUseCase } from '../product-stock-archive-out-of-stock.use-case';
 
 describe('ProductStockArchiveOutOfStockUseCase', () => {
