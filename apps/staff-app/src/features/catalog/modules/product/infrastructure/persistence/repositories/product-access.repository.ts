@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+
+import { RepositoryHost } from '@acme-libs/database';
 
 import { type IProductAccessRepositoryPort } from '../../../outbound';
 import { ProductFindByIdBaseRepository } from './base/product-find-by-id-base.repository';
@@ -10,7 +10,7 @@ export class ProductAccessRepository
   extends ProductFindByIdBaseRepository
   implements IProductAccessRepositoryPort
 {
-  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(transactionHost);
+  constructor(repositoryHost: RepositoryHost) {
+    super(repositoryHost);
   }
 }

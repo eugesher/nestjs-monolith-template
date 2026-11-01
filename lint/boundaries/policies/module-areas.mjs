@@ -100,14 +100,7 @@ export const moduleAreas = [
   ...areaPolicies('features', {
     outbound: [libs('ledger')],
     application: [libContracts('credentials'), libs('ledger'), packages('@nestjs/common')],
-    infrastructure: [
-      packages(
-        '@nestjs-cls/transactional',
-        '@nestjs-cls/transactional-adapter-typeorm',
-        '@nestjs/common',
-        'typeorm',
-      ),
-    ],
+    infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [packages('@nestjs/common')],
     queue: [libs('ledger'), packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
@@ -124,14 +117,7 @@ export const moduleAreas = [
   ...areaPolicies('processors', {
     outbound: [],
     application: [],
-    infrastructure: [
-      packages(
-        '@nestjs-cls/transactional',
-        '@nestjs-cls/transactional-adapter-typeorm',
-        '@nestjs/common',
-        'typeorm',
-      ),
-    ],
+    infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [],
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [

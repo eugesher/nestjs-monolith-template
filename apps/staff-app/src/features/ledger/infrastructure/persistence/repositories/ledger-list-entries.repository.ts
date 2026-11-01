@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { IPage } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
@@ -15,10 +14,10 @@ import { LedgerEntryMapper } from '../mappers/ledger-entry.mapper';
 
 @Injectable()
 export class LedgerListEntriesRepository implements ILedgerListEntriesRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get ledgerEntryRepository(): Repository<LedgerEntry> {
-    return this.transactionHost.tx.getRepository(LedgerEntry);
+    return this.repositoryHost.getRepository(LedgerEntry);
   }
 
   public async list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryView>> {

@@ -62,13 +62,23 @@ describe('common modules (common/modules/<module>)', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm', 'typeorm'])(
+    it.each(['typeorm', '@acme-libs/database'])(
       'common infrastructure MAY import the persistence package %s',
       async (source) => {
         await expect({
           file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
           code: `import { x } from "${source}";`,
         }).toPassArchitectureLint();
+      },
+    );
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'common infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
       },
     );
 

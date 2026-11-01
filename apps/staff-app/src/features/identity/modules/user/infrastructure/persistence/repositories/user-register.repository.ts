@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { In, Repository } from 'typeorm';
 
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
@@ -12,18 +10,18 @@ import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get staffRoleRepository(): Repository<StaffRole> {
-    return this.transactionHost.tx.getRepository(StaffRole);
+    return this.repositoryHost.getRepository(StaffRole);
   }
 
   private get staffUserRoleRepository(): Repository<StaffUserRole> {
-    return this.transactionHost.tx.getRepository(StaffUserRole);
+    return this.repositoryHost.getRepository(StaffUserRole);
   }
 
   private get staffUserRepository(): Repository<StaffUser> {
-    return this.transactionHost.tx.getRepository(StaffUser);
+    return this.repositoryHost.getRepository(StaffUser);
   }
 
   public async insert(user: UserStaffUserModel): Promise<void> {

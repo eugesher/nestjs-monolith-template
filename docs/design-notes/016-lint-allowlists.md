@@ -102,11 +102,12 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   ledger service extends `SubjectLedgerService`, the queue adapter extends
   `SubjectLedgerQueueAdapter`. No processor and no common module writes a ledger record, so neither
   may. The lib itself sees only the base libs.
-- **A processor and a global module read tables.** Their infrastructure may import the persistence
-  packages (`@nestjs-cls/transactional`, its TypeORM adapter, `typeorm`) and
-  `@nestjs/common`, as feature infrastructure does.
-- **No module registers entities.** A repository reads through
-  `TransactionHost.tx.getRepository(<Entity>)`, and the entities of an app are listed once in
+- **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
+  `@acme-libs/database` and `@nestjs/common`, as feature infrastructure does.
+- **No module touches `@nestjs-cls`.** A repository reads through
+  `RepositoryHost.getRepository(<Entity>)` of `libs/database`, so infrastructure may not import
+  `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and `app/setup` do.
+- **No module registers entities.** The entities of an app are listed once in
   `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
   would add repository tokens that nothing injects.
 - **A global module has the layers of a feature.** `application/` sees its own outbound, the base

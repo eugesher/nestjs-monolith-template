@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { IPage } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
@@ -12,10 +11,10 @@ import { NoteRevisionMapper } from '../mappers/note-revision.mapper';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get noteRevisionRepository(): Repository<NoteRevision> {
-    return this.transactionHost.tx.getRepository(NoteRevision);
+    return this.repositoryHost.getRepository(NoteRevision);
   }
 
   public async listForNote(query: INoteRevisionPageQuery): Promise<IPage<NoteRevisionModel>> {

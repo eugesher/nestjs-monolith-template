@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { In, Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
@@ -14,18 +13,18 @@ import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get staffPermissionRepository(): Repository<StaffPermission> {
-    return this.transactionHost.tx.getRepository(StaffPermission);
+    return this.repositoryHost.getRepository(StaffPermission);
   }
 
   private get staffRolePermissionRepository(): Repository<StaffRolePermission> {
-    return this.transactionHost.tx.getRepository(StaffRolePermission);
+    return this.repositoryHost.getRepository(StaffRolePermission);
   }
 
   private get staffRoleRepository(): Repository<StaffRole> {
-    return this.transactionHost.tx.getRepository(StaffRole);
+    return this.repositoryHost.getRepository(StaffRole);
   }
 
   public async findRole(name: RoleEnum): Promise<Nullable<RoleModel>> {

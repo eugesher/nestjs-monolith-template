@@ -193,15 +193,24 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the transaction host', async () => {
+    it('infrastructure MAY read tables through the repository host', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
         code:
-          'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
-          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";\n' +
-          'import { Repository } from "typeorm";',
+          'import { Repository } from "typeorm";\n' +
+          'import { RepositoryHost } from "@acme-libs/database";',
       }).toPassArchitectureLint();
     });
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
       await expect({

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
 import { LedgerEntry } from '@acme-core/entities';
 
 import { LedgerRecordEntryModel } from '../../../domain';
@@ -14,10 +12,10 @@ import {
 
 @Injectable()
 export class LedgerRecordAppendRepository implements ILedgerRecordAppendRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get ledgerEntryRepository(): Repository<LedgerEntry> {
-    return this.transactionHost.tx.getRepository(LedgerEntry);
+    return this.repositoryHost.getRepository(LedgerEntry);
   }
 
   public async append(entry: LedgerRecordEntryModel): Promise<ILedgerRecordAppendOutcomeView> {

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { In, Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
@@ -12,18 +11,18 @@ import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get orderRepository(): Repository<Order> {
-    return this.transactionHost.tx.getRepository(Order);
+    return this.repositoryHost.getRepository(Order);
   }
 
   private get orderProductRepository(): Repository<OrderProduct> {
-    return this.transactionHost.tx.getRepository(OrderProduct);
+    return this.repositoryHost.getRepository(OrderProduct);
   }
 
   private get productRepository(): Repository<Product> {
-    return this.transactionHost.tx.getRepository(Product);
+    return this.repositoryHost.getRepository(Product);
   }
 
   public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]> {

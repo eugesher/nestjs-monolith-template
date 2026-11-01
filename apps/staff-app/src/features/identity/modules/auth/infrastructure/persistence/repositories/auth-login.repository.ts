@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
@@ -12,10 +11,10 @@ import { AuthStaffUserMapper } from '../mappers/auth-staff-user.mapper';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get staffUserRepository(): Repository<StaffUser> {
-    return this.transactionHost.tx.getRepository(StaffUser);
+    return this.repositoryHost.getRepository(StaffUser);
   }
 
   public async findByEmail(email: string): Promise<Nullable<AuthStaffUserModel>> {

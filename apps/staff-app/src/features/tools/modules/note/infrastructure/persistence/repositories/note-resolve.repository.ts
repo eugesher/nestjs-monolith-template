@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+
+import { RepositoryHost } from '@acme-libs/database';
 
 import { type INoteResolveRepositoryPort } from '../../../outbound';
 import { NoteUpdateBaseRepository } from './base/note-update-base.repository';
@@ -10,7 +10,7 @@ export class NoteResolveRepository
   extends NoteUpdateBaseRepository
   implements INoteResolveRepositoryPort
 {
-  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(transactionHost);
+  constructor(repositoryHost: RepositoryHost) {
+    super(repositoryHost);
   }
 }

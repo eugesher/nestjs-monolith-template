@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
@@ -13,18 +12,18 @@ import { UserStaffUserMapper } from '../mappers/user-staff-user.mapper';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get staffRoleRepository(): Repository<StaffRole> {
-    return this.transactionHost.tx.getRepository(StaffRole);
+    return this.repositoryHost.getRepository(StaffRole);
   }
 
   private get staffUserRoleRepository(): Repository<StaffUserRole> {
-    return this.transactionHost.tx.getRepository(StaffUserRole);
+    return this.repositoryHost.getRepository(StaffUserRole);
   }
 
   private get staffUserRepository(): Repository<StaffUser> {
-    return this.transactionHost.tx.getRepository(StaffUser);
+    return this.repositoryHost.getRepository(StaffUser);
   }
 
   public async findById(id: string): Promise<Nullable<UserStaffUserModel>> {

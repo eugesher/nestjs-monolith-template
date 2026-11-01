@@ -90,12 +90,7 @@ export const acmeApp = [
     to('acme-core:entities'),
     to('acme-app:common:entities', own('app')),
     baseLibs('database'),
-    packages(
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/common',
-      'typeorm',
-    ),
+    packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-app:app:global:infrastructure:common-adapters', [
     to('acme-app:app:global:infrastructure:common-adapters', own('app', 'module')),

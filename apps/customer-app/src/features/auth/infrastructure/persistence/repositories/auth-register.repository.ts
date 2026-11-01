@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { Customer } from '@acme-core/entities';
 
@@ -12,10 +10,10 @@ import { type IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get customerRepository(): Repository<Customer> {
-    return this.transactionHost.tx.getRepository(Customer);
+    return this.repositoryHost.getRepository(Customer);
   }
 
   public async insert(customer: AuthCustomerModel): Promise<void> {

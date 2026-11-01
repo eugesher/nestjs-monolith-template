@@ -15,9 +15,12 @@ it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 
 ## `run`
 
-`run` wraps `TransactionHost.withTransaction`. A repository reads its connection from
-`TransactionHost`, so every query inside `work` joins the transaction without being handed
-anything. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
+`run` wraps `TransactionHost.withTransaction`. A repository reads its tables through
+`RepositoryHost` of `libs/database` (`repositoryHost.getRepository(<Entity>)`), which takes the
+repository from the current transaction on every call, so every query inside `work` joins the
+transaction without being handed anything. `RepositoryHost` exposes only `getRepository`, so a
+repository cannot open a transaction of its own, and only `libs/database` and `app/setup` import
+`@nestjs-cls`. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
 outermost `run`.
 
 ## `afterCommit`

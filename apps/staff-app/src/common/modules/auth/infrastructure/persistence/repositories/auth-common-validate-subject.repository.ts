@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
@@ -13,10 +12,10 @@ import { AuthCommonStaffUserMapper } from '../mappers/auth-common-staff-user.map
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get staffUserRepository(): Repository<StaffUser> {
-    return this.transactionHost.tx.getRepository(StaffUser);
+    return this.repositoryHost.getRepository(StaffUser);
   }
 
   public async findActiveById(id: string): Promise<Nullable<AuthCommonStaffUserModel>> {

@@ -1,22 +1,19 @@
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
+import { RepositoryHost } from '@acme-libs/database';
 import { Product, ProductStock } from '@acme-core/entities';
 
 import { IProductStockCoreSumView } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
-  protected constructor(
-    protected readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
-  ) {}
+  protected constructor(protected readonly repositoryHost: RepositoryHost) {}
 
   protected get productRepository(): Repository<Product> {
-    return this.transactionHost.tx.getRepository(Product);
+    return this.repositoryHost.getRepository(Product);
   }
 
   protected get productStockRepository(): Repository<ProductStock> {
-    return this.transactionHost.tx.getRepository(ProductStock);
+    return this.repositoryHost.getRepository(ProductStock);
   }
 
   public async lockProducts(productIds: string[]): Promise<string[]> {

@@ -161,17 +161,26 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the transaction host', async () => {
+    it('infrastructure MAY read tables through the repository host', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         code: [
           'import { Injectable } from "@nestjs/common";',
-          'import { TransactionHost } from "@nestjs-cls/transactional";',
-          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";',
           'import { Repository } from "typeorm";',
+          'import { RepositoryHost } from "@acme-libs/database";',
         ].join('\n'),
       }).toPassArchitectureLint();
     });
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
       await expect({

@@ -29,12 +29,7 @@ export const acmeCore = [
     to('acme-core:entities'),
     baseLibs('database'),
     libContracts('cache'),
-    packages(
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/common',
-      'typeorm',
-    ),
+    packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-core:modules:infrastructure:queue', [
     layer('domain'),
