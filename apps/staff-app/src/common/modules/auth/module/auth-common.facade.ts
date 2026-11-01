@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import {
   IAuthCommonPort,
@@ -16,7 +16,7 @@ export class AuthCommonFacade implements IAuthCommonPort {
 
   public async validateSubject(
     query: IAuthCommonValidateSubjectQuery,
-  ): Promise<Maybe<IAuthCommonSubjectView>> {
+  ): Promise<Nullable<IAuthCommonSubjectView>> {
     return await this.authCommonValidateSubject.execute(query);
   }
 }

@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { Customer } from '@acme-core-entities';
 
@@ -21,12 +21,12 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
     return this.transactionHost.tx.getRepository(Customer);
   }
 
-  public async findActiveById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
+  public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerView>> {
     const customer = await this.customerRepository.findOne({
       select: { id: true, email: true },
       where: { id, status: UserStatusEnum.ACTIVE },
     });
 
-    return customer ?? undefined;
+    return customer;
   }
 }

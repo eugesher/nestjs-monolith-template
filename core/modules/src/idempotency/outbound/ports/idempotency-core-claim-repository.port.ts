@@ -1,10 +1,10 @@
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { IdempotencyCoreKeyModel } from '../../domain';
 
 export interface IIdempotencyCoreClaimRepositoryPort {
   insert(key: IdempotencyCoreKeyModel): Promise<boolean>;
-  findByKey(key: string): Promise<Maybe<IdempotencyCoreKeyModel>>;
+  findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>>;
 }
 
 export const IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT = Symbol(

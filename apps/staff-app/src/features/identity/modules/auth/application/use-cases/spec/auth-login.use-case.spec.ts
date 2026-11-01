@@ -50,7 +50,7 @@ describe('AuthLoginUseCase', () => {
   });
 
   it('rejects an unknown email with the same error as a wrong password', async () => {
-    repository.findByEmail.mockResolvedValue(undefined);
+    repository.findByEmail.mockResolvedValue(null);
 
     const login = useCase.execute({ email: 'ghost@example.com', password: 'correct-horse' });
 

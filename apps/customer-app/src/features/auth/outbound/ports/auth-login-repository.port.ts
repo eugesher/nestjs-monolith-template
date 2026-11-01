@@ -1,9 +1,9 @@
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { AuthCustomerModel } from '../../domain';
 
 export interface IAuthLoginRepositoryPort {
-  findByEmail(email: string): Promise<Maybe<AuthCustomerModel>>;
+  findByEmail(email: string): Promise<Nullable<AuthCustomerModel>>;
 }
 
 export const AUTH_LOGIN_REPOSITORY_PORT = Symbol('AUTH_LOGIN_REPOSITORY_PORT');

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import {
   IAuthCommonSubjectView,
@@ -21,10 +21,10 @@ export class AuthCommonValidateSubjectUseCase {
 
   public async execute(
     query: IAuthCommonValidateSubjectQuery,
-  ): Promise<Maybe<IAuthCommonSubjectView>> {
+  ): Promise<Nullable<IAuthCommonSubjectView>> {
     const { userId } = query;
     const user = await this.repository.findActiveById(userId);
 
-    return user ? { id: user.id, email: user.email, roles: [...user.roles] } : undefined;
+    return user ? { id: user.id, email: user.email, roles: [...user.roles] } : null;
   }
 }

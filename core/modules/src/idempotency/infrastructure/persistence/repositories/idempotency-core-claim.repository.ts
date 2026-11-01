@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { MysqlErrorHelper } from '@acme-libs-database';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { IdempotencyKey } from '@acme-core-entities';
 
@@ -39,9 +39,9 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
     }
   }
 
-  public async findByKey(key: string): Promise<Maybe<IdempotencyCoreKeyModel>> {
+  public async findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>> {
     const entity = await this.idempotencyKeyRepository.findOne({ where: { idempotencyKey: key } });
 
-    return entity === null ? undefined : IdempotencyCoreKeyMapper.toModel(entity);
+    return entity === null ? null : IdempotencyCoreKeyMapper.toModel(entity);
   }
 }

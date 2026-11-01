@@ -1,10 +1,10 @@
 import { RoleEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { UserStaffUserModel } from '../../domain';
 
 export interface IUserAssignRoleRepositoryPort {
-  findById(id: string): Promise<Maybe<UserStaffUserModel>>;
+  findById(id: string): Promise<Nullable<UserStaffUserModel>>;
   addRole(userId: string, role: RoleEnum): Promise<boolean>;
 }
 

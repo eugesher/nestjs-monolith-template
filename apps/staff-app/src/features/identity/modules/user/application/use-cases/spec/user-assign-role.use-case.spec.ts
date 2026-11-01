@@ -44,7 +44,7 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('rejects an unknown user', async () => {
-    repository.findById.mockResolvedValue(undefined);
+    repository.findById.mockResolvedValue(null);
 
     const assign = useCase.execute({ userId: 'ghost', role: RoleEnum.VIEWER });
 

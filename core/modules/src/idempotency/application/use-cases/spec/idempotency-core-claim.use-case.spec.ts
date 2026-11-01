@@ -86,7 +86,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
 
     it('answers in-flight when the holder released the key between the insert and the read', async () => {
       repository.insert.mockResolvedValue(false);
-      repository.findByKey.mockResolvedValue(undefined);
+      repository.findByKey.mockResolvedValue(null);
 
       const claim = await useCase.execute({ key: 'key-1', body: { sku: 'A-1', name: 'Lamp' } });
 

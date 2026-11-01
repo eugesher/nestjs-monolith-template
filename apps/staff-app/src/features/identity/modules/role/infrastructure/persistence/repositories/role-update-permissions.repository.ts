@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { In, Repository } from 'typeorm';
 
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core-entities';
 
@@ -29,13 +29,13 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     return this.transactionHost.tx.getRepository(StaffRole);
   }
 
-  public async findRole(name: RoleEnum): Promise<Maybe<RoleModel>> {
+  public async findRole(name: RoleEnum): Promise<Nullable<RoleModel>> {
     const role = await this.staffRoleRepository.findOne({
       where: { name },
       relations: { rolePermissions: { permission: true } },
     });
 
-    return role ? RoleMapper.toModel(role) : undefined;
+    return role ? RoleMapper.toModel(role) : null;
   }
 
   public async findPermissions(codes: PermissionCodeEnum[]): Promise<RolePermissionModel[]> {

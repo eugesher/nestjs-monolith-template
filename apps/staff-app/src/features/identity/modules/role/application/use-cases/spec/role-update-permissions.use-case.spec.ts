@@ -78,7 +78,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
   });
 
   it('rejects an unknown role', async () => {
-    repository.findRole.mockResolvedValue(undefined);
+    repository.findRole.mockResolvedValue(null);
 
     const update = useCase.execute({ role: RoleEnum.ADMIN, permissionCodes: [] });
 

@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { RoleEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-core-entities';
 
@@ -28,13 +28,13 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
     return this.transactionHost.tx.getRepository(StaffUser);
   }
 
-  public async findById(id: string): Promise<Maybe<UserStaffUserModel>> {
+  public async findById(id: string): Promise<Nullable<UserStaffUserModel>> {
     const user = await this.staffUserRepository.findOne({
       where: { id },
       relations: { userRoles: { role: true } },
     });
 
-    return user ? UserStaffUserMapper.toModel(user) : undefined;
+    return user ? UserStaffUserMapper.toModel(user) : null;
   }
 
   public async addRole(userId: string, role: RoleEnum): Promise<boolean> {

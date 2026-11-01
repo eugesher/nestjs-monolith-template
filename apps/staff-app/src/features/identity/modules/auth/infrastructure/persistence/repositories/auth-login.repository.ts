@@ -3,7 +3,7 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { StaffUser } from '@acme-core-entities';
 
@@ -19,9 +19,9 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
     return this.transactionHost.tx.getRepository(StaffUser);
   }
 
-  public async findByEmail(email: string): Promise<Maybe<AuthStaffUserModel>> {
+  public async findByEmail(email: string): Promise<Nullable<AuthStaffUserModel>> {
     const user = await this.staffUserRepository.findOne({ where: { email } });
 
-    return user ? AuthStaffUserMapper.toModel(user) : undefined;
+    return user ? AuthStaffUserMapper.toModel(user) : null;
   }
 }

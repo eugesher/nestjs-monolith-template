@@ -21,7 +21,7 @@ describe('AuthMeUseCase', () => {
     });
 
     it('refuses with AUTH_USER_NOT_FOUND when identity no longer knows an active user', async () => {
-      findSubject.mockResolvedValue(undefined);
+      findSubject.mockResolvedValue(null);
 
       const execution = useCase.execute({ userId: 'user-1' });
 

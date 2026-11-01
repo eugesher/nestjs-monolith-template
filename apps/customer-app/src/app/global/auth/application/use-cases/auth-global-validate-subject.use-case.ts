@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
@@ -17,7 +17,7 @@ export class AuthGlobalValidateSubjectUseCase {
 
   public async execute(
     query: IAuthGlobalValidateSubjectQuery,
-  ): Promise<Maybe<IAuthGlobalSubjectView>> {
+  ): Promise<Nullable<IAuthGlobalSubjectView>> {
     const { customerId } = query;
 
     return await this.repository.findActiveById(customerId);

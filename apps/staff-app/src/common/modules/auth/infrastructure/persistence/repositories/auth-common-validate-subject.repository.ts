@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { Repository } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { StaffUser } from '@acme-core-entities';
 
@@ -20,12 +20,12 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
     return this.transactionHost.tx.getRepository(StaffUser);
   }
 
-  public async findActiveById(id: string): Promise<Maybe<AuthCommonStaffUserModel>> {
+  public async findActiveById(id: string): Promise<Nullable<AuthCommonStaffUserModel>> {
     const user = await this.staffUserRepository.findOne({
       where: { id, status: UserStatusEnum.ACTIVE },
       relations: { userRoles: { role: true } },
     });
 
-    return user ? AuthCommonStaffUserMapper.toModel(user) : undefined;
+    return user ? AuthCommonStaffUserMapper.toModel(user) : null;
   }
 }

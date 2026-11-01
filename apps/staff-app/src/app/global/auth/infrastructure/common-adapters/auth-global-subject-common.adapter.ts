@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs-toolkit';
 
 import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff-contracts/auth';
 
@@ -13,7 +13,7 @@ export class AuthGlobalSubjectCommonAdapter implements IAuthGlobalSubjectPort {
     private readonly authCommon: IAuthCommonPort,
   ) {}
 
-  public async findSubject(userId: string): Promise<Maybe<IAuthGlobalStaffUserView>> {
+  public async findSubject(userId: string): Promise<Nullable<IAuthGlobalStaffUserView>> {
     return await this.authCommon.validateSubject({ userId });
   }
 }
