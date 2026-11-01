@@ -17,7 +17,7 @@ export class Reminder {
   @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   public id: string;
 
-  @Column({ type: 'char', length: 36 })
+  @Column({ type: 'bigint', unsigned: true })
   public ownerId: string;
 
   @Column({ type: 'varchar', length: 255 })

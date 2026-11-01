@@ -5,11 +5,11 @@ import { StaffRole } from './staff-role.entity';
 
 @Entity({ name: 'staff_role_permissions' })
 export class StaffRolePermission {
-  @PrimaryColumn({ type: 'int' })
-  public roleId: number;
+  @PrimaryColumn({ type: 'bigint', unsigned: true })
+  public roleId: string;
 
-  @PrimaryColumn({ type: 'int' })
-  public permissionId: number;
+  @PrimaryColumn({ type: 'bigint', unsigned: true })
+  public permissionId: string;
 
   @ManyToOne(() => StaffRole, (role) => role.rolePermissions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'role_id', foreignKeyConstraintName: 'fk_staff_role_permissions_role' })

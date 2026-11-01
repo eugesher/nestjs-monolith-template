@@ -2,8 +2,8 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'staff_permission' })
 export class StaffPermission {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+  public id: string;
 
   @Index('uq_staff_permission_code', { unique: true })
   @Column({ type: 'varchar', length: 64 })

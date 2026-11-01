@@ -5,7 +5,7 @@ description: |-
   Expect: 200 OK, roles viewer and editor
   User: admin@example.com (token signed by scripts.py)
 method: POST
-url: $STAFF_APP_BASE_URL/identity/users/00000000-0000-4000-8000-000000000004/roles
+url: $STAFF_APP_BASE_URL/identity/users/4/roles
 body:
   content: |-
     {

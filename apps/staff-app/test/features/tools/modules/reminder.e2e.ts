@@ -28,7 +28,7 @@ export class ReminderE2E {
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        const key = 'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__';
+        const key = 'acme:reminders:summary:v1:1:__all__';
 
         expect({
           response: { body: response.body },
@@ -43,7 +43,7 @@ export class ReminderE2E {
 
       it('should answer the cached summary', async () => {
         await this.ctx.redis.set(
-          'acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__',
+          'acme:reminders:summary:v1:1:__all__',
           JSON.stringify({ pending: 99, nextDueOn: '2030-01-01' }),
           'PX',
           60_000,

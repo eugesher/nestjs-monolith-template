@@ -6,14 +6,14 @@ describe('RolePermissionMapper', () => {
   describe('toModel', () => {
     it('copies the id and the code', () => {
       const permission = Object.assign(new StaffPermission(), {
-        id: 4,
+        id: '4',
         code: 'ledger:read',
         description: null,
       });
 
       const model = RolePermissionMapper.toModel(permission);
 
-      expect(model).toMatchObject({ id: 4, code: 'ledger:read' });
+      expect(model).toMatchObject({ id: '4', code: 'ledger:read' });
     });
   });
 });

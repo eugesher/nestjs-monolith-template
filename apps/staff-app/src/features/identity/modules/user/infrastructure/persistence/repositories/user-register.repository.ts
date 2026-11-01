@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 
 import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
-import { UserDomainException, UserStaffUserModel } from '../../../domain';
+import { IUserStaffUserDraft, UserDomainException, UserStaffUserModel } from '../../../domain';
 import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -24,11 +24,23 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async insert(user: UserStaffUserModel): Promise<void> {
-    const { id, email, passwordHash, status } = user;
+  public async insert(draft: IUserStaffUserDraft): Promise<UserStaffUserModel> {
+    const { email, passwordHash, status, roles } = draft;
+    const id = await this.insertRow(draft);
+
+    await this.insertRoles(id, roles);
+
+    return UserStaffUserModel.reconstitute({ id, email, passwordHash, status, roles });
+  }
+
+  private async insertRow(draft: IUserStaffUserDraft): Promise<string> {
+    const { email, passwordHash, status } = draft;
 
     try {
-      await this.staffUserRepository.insert({ id, email, passwordHash, status });
+      const result = await this.staffUserRepository.insert({ email, passwordHash, status });
+      const [identifier] = result.identifiers as { id: number | string }[];
+
+      return String(identifier.id);
     } catch (error) {
       if (!MysqlErrorHelper.isDuplicateKey(error)) {
         throw error;
@@ -39,16 +51,18 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
         `Email ${email} is already registered`,
       );
     }
+  }
 
-    if (user.roles.length === 0) {
+  private async insertRoles(userId: string, names: RoleEnum[]): Promise<void> {
+    if (names.length === 0) {
       return;
     }
 
     const roles = await this.staffRoleRepository.find({
       select: { id: true },
-      where: { name: In([...user.roles]) },
+      where: { name: In(names) },
     });
-    const rows = roles.map((role) => ({ userId: user.id, roleId: role.id }));
+    const rows = roles.map((role) => ({ userId, roleId: role.id }));
 
     await this.staffUserRoleRepository.insert(rows);
   }

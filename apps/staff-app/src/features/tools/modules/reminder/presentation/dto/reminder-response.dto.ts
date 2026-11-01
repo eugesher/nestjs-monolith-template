@@ -6,7 +6,7 @@ export class ReminderResponseDto {
   @ApiResponseProperty({ example: '31' })
   public id: string;
 
-  @ApiResponseProperty({ example: '7d3f0e2a-5b1c-4c8e-9a4f-2b6d8e1f3a5c' })
+  @ApiResponseProperty({ example: '2' })
   public ownerId: string;
 
   @ApiResponseProperty({ example: 'Renew the subscription' })

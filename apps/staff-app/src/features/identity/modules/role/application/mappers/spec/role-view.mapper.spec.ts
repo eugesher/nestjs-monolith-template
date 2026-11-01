@@ -7,7 +7,7 @@ describe('RoleViewMapper', () => {
   describe('toView', () => {
     it('copies the name and the permission codes of the role', () => {
       const role = RoleModel.reconstitute({
-        id: 1,
+        id: '1',
         name: RoleEnum.ADMIN,
         permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
       });

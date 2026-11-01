@@ -1,6 +1,7 @@
 import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { UserDomainException } from '../exceptions/user-domain.exception';
+import { IUserStaffUserDraft } from '../interfaces/user-staff-user-draft.interface';
 import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';
 import { IUserStaffUserRegistration } from '../interfaces/user-staff-user-registration.interface';
 
@@ -16,7 +17,7 @@ export class UserStaffUserModel {
     private assignedRoles: RoleEnum[],
   ) {}
 
-  public static register(registration: IUserStaffUserRegistration): UserStaffUserModel {
+  public static register(registration: IUserStaffUserRegistration): IUserStaffUserDraft {
     const { email, passwordHash, roles } = registration;
     const normalized = UserStaffUserModel.normalizeEmail(email);
 
@@ -27,10 +28,9 @@ export class UserStaffUserModel {
       );
     }
 
-    const id = crypto.randomUUID();
     const unique = [...new Set(roles)];
 
-    return new UserStaffUserModel(id, normalized, passwordHash, UserStatusEnum.ACTIVE, unique);
+    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE, roles: unique };
   }
 
   public static reconstitute(record: IUserStaffUserRecord): UserStaffUserModel {

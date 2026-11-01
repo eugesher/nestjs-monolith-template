@@ -29,9 +29,8 @@ export class AuthRegisterUseCase {
     AuthCustomerModel.assertPasswordStrength(password);
 
     const passwordHash = await this.passwordHasher.hash(password);
-    const customer = AuthCustomerModel.register({ email, passwordHash });
-
-    await this.repository.insert(customer);
+    const draft = AuthCustomerModel.register({ email, passwordHash });
+    const customer = await this.repository.insert(draft);
 
     this.logger.info({ customerId: customer.id }, 'Customer registered');
 

@@ -80,9 +80,9 @@ export class AppE2EContext {
     await app.init();
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
-    const adminToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000001' });
-    const editorToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000002' });
-    const viewerToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000003' });
+    const adminToken = jwt.sign({ sub: '1' });
+    const editorToken = jwt.sign({ sub: '2' });
+    const viewerToken = jwt.sign({ sub: '3' });
 
     this.state = {
       app,

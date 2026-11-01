@@ -4,7 +4,7 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE customer (
-        id            CHAR(36)     NOT NULL PRIMARY KEY,
+        id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         email         VARCHAR(255) NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         status        VARCHAR(16)  NOT NULL DEFAULT 'active',
@@ -15,7 +15,7 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_user (
-        id            CHAR(36)     NOT NULL PRIMARY KEY,
+        id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         email         VARCHAR(255) NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         status        VARCHAR(16)  NOT NULL DEFAULT 'active',
@@ -26,7 +26,7 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_role (
-        id          INT AUTO_INCREMENT PRIMARY KEY,
+        id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         name        VARCHAR(64) NOT NULL,
         description VARCHAR(255) NULL,
         UNIQUE KEY uq_staff_role_name (name)
@@ -35,7 +35,7 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_permission (
-        id          INT AUTO_INCREMENT PRIMARY KEY,
+        id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         code        VARCHAR(64) NOT NULL,
         description VARCHAR(255) NULL,
         UNIQUE KEY uq_staff_permission_code (code)
@@ -44,8 +44,8 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_user_roles (
-        user_id CHAR(36) NOT NULL,
-        role_id INT      NOT NULL,
+        user_id BIGINT UNSIGNED NOT NULL,
+        role_id BIGINT UNSIGNED NOT NULL,
         PRIMARY KEY (user_id, role_id),
         CONSTRAINT fk_staff_user_roles_user FOREIGN KEY (user_id) REFERENCES staff_user(id) ON DELETE CASCADE,
         CONSTRAINT fk_staff_user_roles_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE
@@ -54,8 +54,8 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_role_permissions (
-        role_id       INT NOT NULL,
-        permission_id INT NOT NULL,
+        role_id       BIGINT UNSIGNED NOT NULL,
+        permission_id BIGINT UNSIGNED NOT NULL,
         PRIMARY KEY (role_id, permission_id),
         CONSTRAINT fk_staff_role_permissions_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE,
         CONSTRAINT fk_staff_role_permissions_permission FOREIGN KEY (permission_id) REFERENCES staff_permission(id) ON DELETE CASCADE

@@ -1,9 +1,9 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { AuthDomainException } from '../../../domain';
+import { AuthCustomerModel, AuthDomainException } from '../../../domain';
 import { AuthLedgerService } from '../../services/auth-ledger.service';
 import { AuthRegisterUseCase } from '../auth-register.use-case';
 
@@ -16,7 +16,16 @@ describe('AuthRegisterUseCase', () => {
 
   beforeEach(() => {
     recordRegistered = jest.fn().mockResolvedValue(undefined);
-    repository = { insert: jest.fn().mockResolvedValue(undefined) };
+    repository = {
+      insert: jest.fn().mockResolvedValue(
+        AuthCustomerModel.reconstitute({
+          id: '105',
+          email: 'eve@example.com',
+          passwordHash: 'argon-hash',
+          status: UserStatusEnum.ACTIVE,
+        }),
+      ),
+    };
     passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
     logger = makePinoLoggerMock();
     useCase = new AuthRegisterUseCase(
@@ -25,11 +34,6 @@ describe('AuthRegisterUseCase', () => {
       passwordHasher,
       logger as unknown as PinoLogger,
     );
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue('5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f');
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   it('hashes the password and stores an active customer', async () => {
@@ -38,23 +42,14 @@ describe('AuthRegisterUseCase', () => {
       password: 'correct-horse-battery',
     });
 
-    expect(view).toEqual({
-      id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
-      email: 'eve@example.com',
-    });
+    expect(view).toEqual({ id: '105', email: 'eve@example.com' });
     expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
-    expect(repository.insert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
-        email: 'eve@example.com',
-        passwordHash: 'argon-hash',
-        status: 'active',
-      }),
-    );
-    expect(logger.info).toHaveBeenCalledWith(
-      { customerId: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f' },
-      'Customer registered',
-    );
+    expect(repository.insert).toHaveBeenCalledWith({
+      email: 'eve@example.com',
+      passwordHash: 'argon-hash',
+      status: 'active',
+    });
+    expect(logger.info).toHaveBeenCalledWith({ customerId: '105' }, 'Customer registered');
   });
 
   it('rejects a weak password before hashing it', async () => {
@@ -99,7 +94,7 @@ describe('AuthRegisterUseCase', () => {
     await useCase.execute({ email: 'Eve@Example.com', password: 'correct-horse-battery' });
 
     expect(recordRegistered).toHaveBeenCalledWith({
-      customerId: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
+      customerId: '105',
       email: 'eve@example.com',
     });
   });

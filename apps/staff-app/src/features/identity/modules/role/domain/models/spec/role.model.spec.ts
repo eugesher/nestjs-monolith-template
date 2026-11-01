@@ -8,7 +8,7 @@ describe('RoleModel', () => {
 
   beforeEach(() => {
     role = RoleModel.reconstitute({
-      id: 2,
+      id: '2',
       name: RoleEnum.EDITOR,
       permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
     });
@@ -16,7 +16,7 @@ describe('RoleModel', () => {
 
   describe('reconstitute', () => {
     it('keeps the stored state as is', () => {
-      expect(role).toMatchObject({ id: 2, name: 'editor', permissionCodes: ['iam:assign'] });
+      expect(role).toMatchObject({ id: '2', name: 'editor', permissionCodes: ['iam:assign'] });
     });
   });
 
@@ -30,11 +30,11 @@ describe('RoleModel', () => {
         ],
         [
           RolePermissionModel.reconstitute({
-            id: 2,
+            id: '2',
             code: PermissionCodeEnum.IAM_ROLE_EDIT,
           }),
           RolePermissionModel.reconstitute({
-            id: 8,
+            id: '8',
             code: PermissionCodeEnum.PRODUCT_READ,
           }),
         ],
@@ -59,7 +59,7 @@ describe('RoleModel', () => {
           ],
           [
             RolePermissionModel.reconstitute({
-              id: 2,
+              id: '2',
               code: PermissionCodeEnum.IAM_ROLE_EDIT,
             }),
           ],

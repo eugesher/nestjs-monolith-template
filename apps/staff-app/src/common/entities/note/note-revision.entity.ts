@@ -32,7 +32,7 @@ export class NoteRevision {
   @Column({ type: 'text' })
   public bodyAfter: string;
 
-  @Column({ type: 'char', length: 36 })
+  @Column({ type: 'bigint', unsigned: true })
   public editorId: string;
 
   @Index('idx_note_revision_correlation')

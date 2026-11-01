@@ -133,7 +133,7 @@ export class OrderE2E {
           db: {
             order: await this.ctx.dataSource.query(
               'SELECT customer_id FROM `order` WHERE customer_id = ? ORDER BY id',
-              ['00000000-0000-4000-8000-000000000103'],
+              ['103'],
             ),
           },
           ledger_record_queue: records.map((record) => record.action),
@@ -182,7 +182,7 @@ export class OrderE2E {
           db: {
             order: await this.ctx.dataSource.query(
               'SELECT id FROM `order` WHERE customer_id = ? ORDER BY id',
-              ['00000000-0000-4000-8000-000000000102'],
+              ['102'],
             ),
           },
         }).toMatchSnapshot();

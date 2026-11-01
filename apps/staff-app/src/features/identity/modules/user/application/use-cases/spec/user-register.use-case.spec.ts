@@ -1,9 +1,9 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { UserDomainException } from '../../../domain';
+import { UserDomainException, UserStaffUserModel } from '../../../domain';
 import { UserRegisterUseCase } from '../user-register.use-case';
 
 describe('UserRegisterUseCase', () => {
@@ -16,7 +16,21 @@ describe('UserRegisterUseCase', () => {
 
   beforeEach(() => {
     outcomes = [];
-    repository = { insert: jest.fn().mockResolvedValue(undefined) };
+    repository = {
+      insert: jest.fn(() => {
+        outcomes.push('insert');
+
+        const user = UserStaffUserModel.reconstitute({
+          id: '5',
+          email: 'editor@example.com',
+          passwordHash: 'argon-hash',
+          status: UserStatusEnum.ACTIVE,
+          roles: [RoleEnum.EDITOR],
+        });
+
+        return Promise.resolve(user);
+      }),
+    };
     transaction = {
       afterCommit: jest.fn(),
       run: jest.fn(async (work: () => Promise<unknown>) => {
@@ -37,11 +51,6 @@ describe('UserRegisterUseCase', () => {
       passwordHasher,
       logger as unknown as PinoLogger,
     );
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue('5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f');
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   it('hashes the password and stores the user with its roles in one transaction', async () => {
@@ -51,24 +60,16 @@ describe('UserRegisterUseCase', () => {
       roles: [RoleEnum.EDITOR],
     });
 
-    expect(view).toEqual({
-      id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
-      email: 'editor@example.com',
-    });
+    expect(view).toEqual({ id: '5', email: 'editor@example.com' });
     expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
-    expect(repository.insert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
-        email: 'editor@example.com',
-        passwordHash: 'argon-hash',
-        roles: ['editor'],
-      }),
-    );
-    expect(outcomes).toEqual(['begin', 'commit']);
-    expect(logger.info).toHaveBeenCalledWith(
-      { userId: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f' },
-      'User registered',
-    );
+    expect(repository.insert).toHaveBeenCalledWith({
+      email: 'editor@example.com',
+      passwordHash: 'argon-hash',
+      status: 'active',
+      roles: ['editor'],
+    });
+    expect(outcomes).toEqual(['begin', 'insert', 'commit']);
+    expect(logger.info).toHaveBeenCalledWith({ userId: '5' }, 'User registered');
   });
 
   it('rejects a weak password before hashing it', async () => {

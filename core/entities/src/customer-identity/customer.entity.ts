@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
 
 @Entity({ name: 'customer' })
 export class Customer {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   public id: string;
 
   @Index('uq_customer_email', { unique: true })

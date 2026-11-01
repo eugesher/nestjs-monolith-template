@@ -25,7 +25,7 @@ export class Note {
   public body: string;
 
   @Index('idx_note_author')
-  @Column({ type: 'char', length: 36 })
+  @Column({ type: 'bigint', unsigned: true })
   public authorId: string;
 
   @Column({ type: 'boolean', default: false })

@@ -1,6 +1,6 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 export interface IRolePermissionRecord {
-  id: number;
+  id: string;
   code: PermissionCodeEnum;
 }

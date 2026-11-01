@@ -8,12 +8,12 @@ describe('RoleListUseCase', () => {
     const repository = {
       list: jest.fn().mockResolvedValue([
         RoleModel.reconstitute({
-          id: 1,
+          id: '1',
           name: RoleEnum.ADMIN,
           permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
         }),
         RoleModel.reconstitute({
-          id: 3,
+          id: '3',
           name: RoleEnum.VIEWER,
           permissionCodes: [],
         }),

@@ -5,7 +5,7 @@ import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { Customer } from '@acme-core/entities';
 
-import { AuthCustomerModel, AuthDomainException } from '../../../domain';
+import { AuthCustomerModel, AuthDomainException, IAuthCustomerDraft } from '../../../domain';
 import { type IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -16,11 +16,21 @@ export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
     return this.repositoryHost.getRepository(Customer);
   }
 
-  public async insert(customer: AuthCustomerModel): Promise<void> {
-    const { id, email, passwordHash, status } = customer;
+  public async insert(draft: IAuthCustomerDraft): Promise<AuthCustomerModel> {
+    const { email, passwordHash, status } = draft;
+    const id = await this.insertRow(draft);
+
+    return AuthCustomerModel.reconstitute({ id, email, passwordHash, status });
+  }
+
+  private async insertRow(draft: IAuthCustomerDraft): Promise<string> {
+    const { email, passwordHash, status } = draft;
 
     try {
-      await this.customerRepository.insert({ id, email, passwordHash, status });
+      const result = await this.customerRepository.insert({ email, passwordHash, status });
+      const [identifier] = result.identifiers as { id: number | string }[];
+
+      return String(identifier.id);
     } catch (error) {
       if (!MysqlErrorHelper.isDuplicateKey(error)) {
         throw error;

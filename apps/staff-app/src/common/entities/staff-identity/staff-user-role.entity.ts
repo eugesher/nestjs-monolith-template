@@ -5,11 +5,11 @@ import { StaffUser } from './staff-user.entity';
 
 @Entity({ name: 'staff_user_roles' })
 export class StaffUserRole {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryColumn({ type: 'bigint', unsigned: true })
   public userId: string;
 
-  @PrimaryColumn({ type: 'int' })
-  public roleId: number;
+  @PrimaryColumn({ type: 'bigint', unsigned: true })
+  public roleId: string;
 
   @ManyToOne(() => StaffUser, (user) => user.userRoles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', foreignKeyConstraintName: 'fk_staff_user_roles_user' })

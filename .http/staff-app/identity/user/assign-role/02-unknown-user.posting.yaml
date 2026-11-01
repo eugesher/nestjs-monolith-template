@@ -5,7 +5,7 @@ description: |-
   Expect: 404 Not Found, code AUTH_USER_NOT_FOUND
   User: admin@example.com (token signed by scripts.py)
 method: POST
-url: $STAFF_APP_BASE_URL/identity/users/00000000-0000-4000-8000-000000000099/roles
+url: $STAFF_APP_BASE_URL/identity/users/99/roles
 body:
   content: |-
     {

@@ -4,6 +4,13 @@ An entity that several apps map lives in `core/entities/src`, an entity of one a
 `apps/<app>/src/common/entities`, and the migrations in `migrations/`. Examples below use
 the tables of `core/entities/src/order` and `core/entities/src/product`.
 
+**Every key is `BIGINT UNSIGNED`.** A primary key is `BIGINT UNSIGNED AUTO_INCREMENT`
+(`@PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })`), and every column that references
+one has the same type, so a join never casts. The driver returns a `bigint` as a string, so an id is
+a `string` in TypeScript. The database issues the id on insert: the domain drafts a new row without
+an id (`AuthCustomerModel.register` returns `IAuthCustomerDraft`), and the repository returns the
+stored model (`AuthRegisterRepository.insert`).
+
 **A quantity is a sum of signed movements.** `product_stock` stores one row per movement, and the
 value is `SUM(quantity)` over the rows of a key. No column holds the current value, so no update can
 lose a movement, and only one module writes the rows (see `022-enqueue-after-commit.md`).

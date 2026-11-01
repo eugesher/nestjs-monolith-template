@@ -4,7 +4,7 @@ import { IRolePermissionRecord } from '../interfaces/role-permission-record.inte
 
 export class RolePermissionModel {
   private constructor(
-    public readonly id: number,
+    public readonly id: string,
     public readonly code: PermissionCodeEnum,
   ) {}
 

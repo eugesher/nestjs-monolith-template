@@ -22,18 +22,18 @@ describe('RoleUpdatePermissionsUseCase', () => {
     repository = {
       findRole: jest.fn().mockResolvedValue(
         RoleModel.reconstitute({
-          id: 2,
+          id: '2',
           name: RoleEnum.EDITOR,
           permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
         }),
       ),
       findPermissions: jest.fn().mockResolvedValue([
         RolePermissionModel.reconstitute({
-          id: 2,
+          id: '2',
           code: PermissionCodeEnum.IAM_ROLE_EDIT,
         }),
         RolePermissionModel.reconstitute({
-          id: 8,
+          id: '8',
           code: PermissionCodeEnum.PRODUCT_READ,
         }),
       ]),
@@ -68,7 +68,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
     expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
     expect(repository.replacePermissions).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'product:read'] }),
+      expect.objectContaining({ id: '2', permissionCodes: ['iam:role-edit', 'product:read'] }),
     );
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(

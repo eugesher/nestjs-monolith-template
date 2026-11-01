@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
 
@@ -6,7 +13,7 @@ import { StaffUserRole } from './staff-user-role.entity';
 
 @Entity({ name: 'staff_user' })
 export class StaffUser {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   public id: string;
 
   @Index('uq_staff_user_email', { unique: true })
