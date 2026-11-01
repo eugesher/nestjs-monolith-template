@@ -11,7 +11,6 @@ import {
   IdempotencyCoreClaimRepository,
   IdempotencyCoreCompleteRepository,
   IdempotencyCoreReleaseRepository,
-  IdempotencyCoreTypeOrmModule,
 } from '../infrastructure';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
@@ -21,7 +20,6 @@ import {
 import { IdempotencyCoreKeyFacade } from './idempotency-core-key.facade';
 
 @Module({
-  imports: [IdempotencyCoreTypeOrmModule.forFeature()],
   exports: [IDEMPOTENCY_CORE_KEY_PORT],
   providers: [
     { provide: IDEMPOTENCY_CORE_KEY_PORT, useClass: IdempotencyCoreKeyFacade },

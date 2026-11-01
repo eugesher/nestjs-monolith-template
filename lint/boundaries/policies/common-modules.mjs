@@ -32,12 +32,7 @@ export const commonModules = [
     layer('infrastructure:common-adapters'),
     to('acme-core:entities'),
     baseLibs('database'),
-    packages(
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/typeorm',
-      'typeorm',
-    ),
+    packages('@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm', 'typeorm'),
   ]),
   fromSpec('acme-app:common:modules:infrastructure:core-adapters'),
   from('acme-app:common:modules:infrastructure:core-adapters', [

@@ -20,7 +20,6 @@ import {
   NoteEditRepository,
   NoteGetRevisionsRepository,
   NoteResolveRepository,
-  NoteTypeOrmModule,
 } from './infrastructure';
 import {
   NOTE_ACCESS_REPOSITORY_PORT,
@@ -34,7 +33,6 @@ import {
 import { NoteController } from './presentation';
 
 @Module({
-  imports: [NoteTypeOrmModule.forFeature()],
   controllers: [NoteController],
   providers: [
     HttpExceptionFilter,

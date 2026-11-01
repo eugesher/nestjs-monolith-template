@@ -15,7 +15,6 @@ import {
   AuthLedgerRecordQueueAdapter,
   AuthLoginRepository,
   AuthRegisterRepository,
-  AuthTypeOrmModule,
 } from './infrastructure';
 import {
   AUTH_LEDGER_RECORD_PORT,
@@ -27,7 +26,7 @@ import {
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [AuthTypeOrmModule.forFeature(), CredentialsLibModule, LedgerRecordQueueModule],
+  imports: [CredentialsLibModule, LedgerRecordQueueModule],
   controllers: [AuthController],
   providers: [
     HttpExceptionFilter,

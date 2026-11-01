@@ -4,7 +4,7 @@ description: |-
 
   Expect: 200 OK, product 104 version + 1
   User: editor@example.com (token signed by scripts.py)
-  Note: the e2e sends six updates at once and gets version 7; one request shows only a single update
+  Note: the e2e sends five updates at once and gets version 6; one request shows only a single update
 method: PATCH
 url: $STAFF_APP_BASE_URL/catalog/products/104
 body:

@@ -12,7 +12,6 @@ import {
   ProductStockIdempotencyCoreAdapter,
   ProductStockLedgerRecordQueueAdapter,
   ProductStockMovementCoreAdapter,
-  ProductStockTypeOrmModule,
 } from './infrastructure';
 import {
   PRODUCT_STOCK_ADD_REPOSITORY_PORT,
@@ -25,12 +24,7 @@ import {
 import { ProductStockController } from './presentation';
 
 @Module({
-  imports: [
-    ProductStockTypeOrmModule.forFeature(),
-    LedgerRecordQueueModule,
-    IdempotencyCoreModule,
-    ProductStockCoreModule,
-  ],
+  imports: [LedgerRecordQueueModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [ProductStockController],
   providers: [
     HttpExceptionFilter,

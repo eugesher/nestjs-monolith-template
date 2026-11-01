@@ -209,9 +209,15 @@ describe('core modules', () => {
         code:
           'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
           'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";\n' +
-          'import { TypeOrmModule } from "@nestjs/typeorm";\n' +
           'import { Repository } from "typeorm";',
       }).toPassArchitectureLint();
+    });
+
+    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['argon2', '@nestjs/jwt'])(

@@ -25,7 +25,6 @@ import {
   ProductIdempotencyCoreAdapter,
   ProductLedgerRecordQueueAdapter,
   ProductStatusCoreAdapter,
-  ProductTypeOrmModule,
   ProductWriteRepository,
 } from './infrastructure';
 import {
@@ -44,12 +43,7 @@ import {
 import { ProductController } from './presentation';
 
 @Module({
-  imports: [
-    ProductTypeOrmModule.forFeature(),
-    LedgerRecordQueueModule,
-    IdempotencyCoreModule,
-    ProductCoreModule,
-  ],
+  imports: [LedgerRecordQueueModule, IdempotencyCoreModule, ProductCoreModule],
   controllers: [ProductController],
   providers: [
     HttpExceptionFilter,

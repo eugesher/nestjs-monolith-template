@@ -13,7 +13,6 @@ import {
   ProductStockCoreLockRepository,
   ProductStockCoreMoveRepository,
   ProductStockCorePostSubtractQueueAdapter,
-  ProductStockCoreTypeOrmModule,
 } from '../infrastructure';
 import {
   PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
@@ -26,7 +25,6 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
 
 @Module({
   imports: [
-    ProductStockCoreTypeOrmModule.forFeature(),
     BullModule.registerQueue({
       name: PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
       defaultJobOptions: PRODUCT_STOCK_POST_SUBTRACT_JOB_OPTIONS,

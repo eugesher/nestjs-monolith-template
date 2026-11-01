@@ -10,7 +10,6 @@ import {
   ProductCoreArchiveRepository,
   ProductCoreCatalogCacheAdapter,
   ProductCoreLedgerRecordQueueAdapter,
-  ProductCoreTypeOrmModule,
 } from '../infrastructure';
 import {
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
@@ -23,7 +22,6 @@ import { ProductCoreFacade } from './product-core.facade';
 
 @Module({
   imports: [
-    ProductCoreTypeOrmModule.forFeature(),
     BullModule.registerQueue({
       name: LEDGER_RECORD_QUEUE,
       defaultJobOptions: LEDGER_RECORD_JOB_OPTIONS,

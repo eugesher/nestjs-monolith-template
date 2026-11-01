@@ -7,16 +7,12 @@ import {
   LedgerRecordReportFailureUseCase,
   LedgerRecordRetryFailedUseCase,
 } from './application';
-import {
-  LedgerRecordAppendRepository,
-  LedgerRecordQueueAdapter,
-  LedgerRecordTypeOrmModule,
-} from './infrastructure';
+import { LedgerRecordAppendRepository, LedgerRecordQueueAdapter } from './infrastructure';
 import { LEDGER_RECORD_APPEND_REPOSITORY_PORT, LEDGER_RECORD_QUEUE_PORT } from './outbound';
 import { LedgerRecordConsumer } from './presentation/ledger-record.consumer';
 
 @Module({
-  imports: [LedgerRecordTypeOrmModule.forFeature(), LedgerRecordQueueModule],
+  imports: [LedgerRecordQueueModule],
   providers: [
     LedgerRecordConsumer,
     LedgerRecordAppendUseCase,

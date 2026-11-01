@@ -33,7 +33,6 @@ export const acmeCore = [
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
       '@nestjs/common',
-      '@nestjs/typeorm',
       'typeorm',
     ),
   ]),

@@ -12,7 +12,6 @@ import {
 import {
   AuthGlobalFindPermissionCodesRepository,
   AuthGlobalSubjectCommonAdapter,
-  AuthGlobalTypeOrmModule,
 } from '../infrastructure';
 import {
   AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT,
@@ -23,12 +22,7 @@ import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
 @Module({
-  imports: [
-    AuthGlobalTypeOrmModule.forFeature(),
-    AuthLibModule,
-    AuthClaimsLibModule,
-    AuthCommonModule,
-  ],
+  imports: [AuthLibModule, AuthClaimsLibModule, AuthCommonModule],
   exports: [AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT],
   providers: [
     { provide: AUTH_CLAIMS_PORT, useClass: AuthGlobalClaimsFacade },

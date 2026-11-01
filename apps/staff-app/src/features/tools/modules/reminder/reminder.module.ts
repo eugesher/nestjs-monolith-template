@@ -20,7 +20,6 @@ import {
   ReminderDeleteRepository,
   ReminderGetSummaryRepository,
   ReminderSummaryCacheAdapter,
-  ReminderTypeOrmModule,
   ReminderWriteRepository,
 } from './infrastructure';
 import {
@@ -37,7 +36,6 @@ import {
 import { ReminderController } from './presentation';
 
 @Module({
-  imports: [ReminderTypeOrmModule.forFeature()],
   controllers: [ReminderController],
   providers: [
     HttpExceptionFilter,

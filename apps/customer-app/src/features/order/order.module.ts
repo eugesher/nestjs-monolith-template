@@ -18,7 +18,6 @@ import {
   OrderLedgerRecordQueueAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
-  OrderTypeOrmModule,
 } from './infrastructure';
 import {
   ORDER_CRUD_REPOSITORY_PORT,
@@ -32,12 +31,7 @@ import {
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [
-    OrderTypeOrmModule.forFeature(),
-    LedgerRecordQueueModule,
-    IdempotencyCoreModule,
-    ProductStockCoreModule,
-  ],
+  imports: [LedgerRecordQueueModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
     HttpExceptionFilter,

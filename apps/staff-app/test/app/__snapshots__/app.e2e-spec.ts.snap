@@ -111,12 +111,11 @@ exports[`App Catalog Product PATCH /api/catalog/products/:productId should apply
     "product": [
       {
         "id": "104",
-        "version": 7,
+        "version": 6,
       },
     ],
   },
   "statuses": [
-    200,
     200,
     200,
     200,

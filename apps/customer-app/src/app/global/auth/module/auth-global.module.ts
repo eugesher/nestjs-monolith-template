@@ -4,13 +4,13 @@ import { AuthLibModule } from '@acme-libs/auth';
 import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
 
 import { AuthGlobalValidateSubjectUseCase } from '../application';
-import { AuthGlobalTypeOrmModule, AuthGlobalValidateSubjectRepository } from '../infrastructure';
+import { AuthGlobalValidateSubjectRepository } from '../infrastructure';
 import { AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT } from '../outbound';
 import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
 @Module({
-  imports: [AuthGlobalTypeOrmModule.forFeature(), AuthLibModule],
+  imports: [AuthLibModule],
   exports: [AUTH_USER_VALIDATOR_PORT],
   providers: [
     { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },

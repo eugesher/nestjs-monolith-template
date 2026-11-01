@@ -8,7 +8,6 @@ import {
   ProductStockArchiveCoreAdapter,
   ProductStockArchiveOutOfStockRepository,
   ProductStockOnHandCoreAdapter,
-  ProductStockTypeOrmModule,
 } from './infrastructure';
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,
@@ -18,7 +17,7 @@ import {
 import { ProductStockPostSubtractConsumer } from './presentation/product-stock-post-subtract.consumer';
 
 @Module({
-  imports: [ProductStockTypeOrmModule.forFeature(), ProductCoreModule, ProductStockCoreModule],
+  imports: [ProductCoreModule, ProductStockCoreModule],
   providers: [
     ProductStockPostSubtractConsumer,
     ProductStockArchiveOutOfStockUseCase,

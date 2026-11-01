@@ -166,12 +166,18 @@ describe('features', () => {
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         code: [
           'import { Injectable } from "@nestjs/common";',
-          'import { TypeOrmModule } from "@nestjs/typeorm";',
           'import { TransactionHost } from "@nestjs-cls/transactional";',
           'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";',
           'import { Repository } from "typeorm";',
         ].join('\n'),
       }).toPassArchitectureLint();
+    });
+
+    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['application', 'domain', 'outbound', 'infrastructure/queue'])(
