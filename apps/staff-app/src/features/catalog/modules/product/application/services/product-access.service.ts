@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../domain';
 import { type IProductAccessRepositoryPort, PRODUCT_ACCESS_REPOSITORY_PORT } from '../../outbound';
-import { IProductAccessLoadQuery } from '../interfaces/queries/product-access-load.query';
+import { IProductAccessLoadQuery } from '../interfaces';
 
 @Injectable()
 export class ProductAccessService {

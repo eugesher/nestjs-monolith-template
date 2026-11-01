@@ -9,7 +9,7 @@ import {
   AUTH_LEDGER_RECORD_PORT,
   AUTH_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
-import { IAuthLedgerRecordRegisteredCommand } from '../interfaces/commands/auth-ledger-record-registered.command';
+import { IAuthLedgerRecordRegisteredCommand } from '../interfaces';
 
 @Injectable()
 export class AuthLedgerService {

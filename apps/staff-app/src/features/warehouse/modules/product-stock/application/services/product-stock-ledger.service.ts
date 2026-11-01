@@ -10,7 +10,7 @@ import {
   PRODUCT_STOCK_LEDGER_RECORD_PORT,
   PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
-import { IProductStockLedgerRecordCommand } from '../interfaces/commands/product-stock-ledger-record.command';
+import { IProductStockLedgerRecordCommand } from '../interfaces';
 
 @Injectable()
 export class ProductStockLedgerService {

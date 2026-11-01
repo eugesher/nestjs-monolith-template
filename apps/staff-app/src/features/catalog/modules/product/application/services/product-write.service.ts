@@ -14,8 +14,7 @@ import {
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from '../../outbound';
 import { ProductWriteConflictError } from '../errors/product-write-conflict.error';
-import { IProductWriteCommand } from '../interfaces/commands/product-write.command';
-import { IProductWriteView } from '../interfaces/views/product-write.view';
+import { IProductWriteCommand, IProductWriteView } from '../interfaces';
 import { ProductAccessService } from './product-access.service';
 
 @Injectable()

@@ -5,8 +5,7 @@ import { OccRetryHelper } from '@acme-libs/toolkit';
 import { NoteDomainException, NoteErrorCodeEnum, NoteModel } from '../../domain';
 import { NOTE_OCC_RETRY_ATTEMPTS } from '../../outbound';
 import { NoteWriteConflictError } from '../errors/note-write-conflict.error';
-import { INoteWriteCommand } from '../interfaces/commands/note-write.command';
-import { INoteWriteReloadCommand } from '../interfaces/commands/note-write-reload.command';
+import { INoteWriteCommand, INoteWriteReloadCommand } from '../interfaces';
 import { NoteAccessService } from './note-access.service';
 
 @Injectable()

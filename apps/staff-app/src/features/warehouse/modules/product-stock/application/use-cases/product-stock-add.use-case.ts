@@ -11,8 +11,11 @@ import {
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
   PRODUCT_STOCK_MOVEMENT_PORT,
 } from '../../outbound';
-import { IProductStockAddCommand, IProductStockView } from '../interfaces';
-import { IProductStockAddWriteView } from '../interfaces/views/product-stock-add-write.view';
+import {
+  IProductStockAddCommand,
+  IProductStockAddWriteView,
+  IProductStockView,
+} from '../interfaces';
 import { ProductStockLedgerService } from '../services/product-stock-ledger.service';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { NoteModel } from '../../domain';
-import { INoteView } from '../interfaces/views/note.view';
+import { INoteView } from '../interfaces';
 
 export class NoteViewMapper {
   public static toView(note: NoteModel): INoteView {
