@@ -34,7 +34,6 @@ module.exports = {
     '!**/presentation/controllers/**',
     '!**/module/*.facade.ts',
     '!apps/*/src/main.ts',
-    '!libs/observability/src/tracer/tracer.ts',
     '!libs/openapi/src/api-reference/api-reference.ts',
   ],
   coverageThreshold: {

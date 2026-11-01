@@ -1,5 +1,6 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { RolePermissionModel, RoleModel } from '../../domain';
 
 export interface IRoleUpdatePermissionsRepositoryPort {

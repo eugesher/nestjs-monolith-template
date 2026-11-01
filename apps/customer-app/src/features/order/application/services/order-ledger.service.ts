@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
-import { ReplayRetryHelper } from '@acme-libs/toolkit';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+import { ReplayRetryHelper } from '@acme-libs-toolkit';
+
 import {
   type IOrderLedgerRecordEnqueueCommand,
   type IOrderLedgerRecordPort,
   ORDER_LEDGER_RECORD_PORT,
   ORDER_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
-import { IOrderLedgerRecordPlacedCommand } from '../interfaces/commands/order-ledger-record-placed.command';
+import { IOrderLedgerRecordPlacedCommand } from '../interfaces';
 
 @Injectable()
 export class OrderLedgerService {

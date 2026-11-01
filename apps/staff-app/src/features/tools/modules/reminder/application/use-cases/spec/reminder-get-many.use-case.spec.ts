@@ -1,4 +1,5 @@
-import { ReminderStatusEnum } from '@acme-libs/kernel';
+import { ReminderStatusEnum } from '@acme-libs-kernel';
+
 import { ReminderModel } from '../../../domain';
 import { ReminderGetManyUseCase } from '../reminder-get-many.use-case';
 

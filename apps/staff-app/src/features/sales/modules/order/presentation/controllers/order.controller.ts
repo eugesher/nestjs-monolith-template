@@ -1,8 +1,9 @@
 import { Controller, Get, Param, Query, UseFilters } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { RequiresPermission } from '@acme-libs-auth';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+
 import { OrderGetManyUseCase, OrderGetOneUseCase } from '../../application';
 import { OrderGetManyRequestDto } from '../dto/order-get-many-request.dto';
 import { OrderIdRequestDto } from '../dto/order-id-request.dto';

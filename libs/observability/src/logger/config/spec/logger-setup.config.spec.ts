@@ -1,7 +1,8 @@
 import { RequestMethod } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 
-import { AppNameEnum } from '@acme-libs/kernel';
+import { AppNameEnum } from '@acme-libs-kernel';
+
 import { LoggerSetupConfig } from '../logger-setup.config';
 
 describe('LoggerSetupConfig', () => {

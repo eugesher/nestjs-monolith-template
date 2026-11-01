@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+
 import {
   type ILedgerListEntriesRepositoryPort,
   LEDGER_LIST_ENTRIES_REPOSITORY_PORT,

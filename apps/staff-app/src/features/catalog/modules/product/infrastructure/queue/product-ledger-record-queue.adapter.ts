@@ -5,7 +5,8 @@ import type { Queue } from 'bull';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-core/contracts/ledger';
+} from '@acme-core-contracts/ledger';
+
 import {
   IProductLedgerRecordEnqueueCommand,
   IProductLedgerRecordPort,

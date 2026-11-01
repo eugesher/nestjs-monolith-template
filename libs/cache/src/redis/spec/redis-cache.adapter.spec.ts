@@ -2,7 +2,8 @@ import { Span, trace, Tracer } from '@opentelemetry/api';
 import { Redis } from 'ioredis';
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { RedisCacheAdapter } from '../redis-cache.adapter';
 
 describe('RedisCacheAdapter', () => {

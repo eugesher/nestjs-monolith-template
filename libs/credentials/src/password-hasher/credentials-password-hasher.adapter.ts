@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { hash, verify } from 'argon2';
 
-import { ICredentialsPasswordHasherPort } from '@acme-libs/contracts/credentials';
+import { ICredentialsPasswordHasherPort } from '@acme-libs-contracts/credentials';
+
 import { CredentialsPasswordHasherOptions } from './credentials-password-hasher.options';
 
 @Injectable()

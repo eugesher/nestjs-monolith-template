@@ -1,4 +1,5 @@
-import { LedgerEntry } from '@acme-core/entities';
+import { LedgerEntry } from '@acme-core-entities';
+
 import { LedgerEntryMapper } from '../ledger-entry.mapper';
 
 describe('LedgerEntryMapper', () => {

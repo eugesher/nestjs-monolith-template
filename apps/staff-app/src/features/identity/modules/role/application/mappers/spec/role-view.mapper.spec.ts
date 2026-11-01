@@ -1,4 +1,5 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+
 import { RoleModel } from '../../../domain';
 import { RoleViewMapper } from '../role-view.mapper';
 

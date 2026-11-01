@@ -1,4 +1,5 @@
-import { IdempotencyCoreClaimOutcomeEnum } from '@acme-core/contracts/idempotency';
+import { IdempotencyCoreClaimOutcomeEnum } from '@acme-core-contracts/idempotency';
+
 import { ProductIdempotencyCoreAdapter } from '../product-idempotency-core.adapter';
 
 describe('ProductIdempotencyCoreAdapter', () => {

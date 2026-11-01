@@ -1,4 +1,5 @@
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyStatusEnum } from '@acme-libs-kernel';
+
 import { IdempotencyCoreKeyModel } from '../idempotency-core-key.model';
 
 describe('IdempotencyCoreKeyModel', () => {

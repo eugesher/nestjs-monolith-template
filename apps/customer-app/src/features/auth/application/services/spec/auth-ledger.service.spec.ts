@@ -1,7 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { AuthLedgerService } from '../auth-ledger.service';
 
 describe('AuthLedgerService', () => {

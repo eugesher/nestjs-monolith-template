@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 
+import { ConfigProviderHelper } from '@acme-libs-config';
+import { CredentialsLibModule } from '@acme-libs-credentials';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { LedgerRecordQueueModule } from '@acme-customer-common/shared/ledger-record';
-import { ConfigProviderHelper } from '@acme-libs/config';
-import { CredentialsLibModule } from '@acme-libs/credentials';
-import { HttpExceptionFilter } from '@acme-libs/http';
+
 import {
   AuthAccessTokenService,
   AuthLedgerService,

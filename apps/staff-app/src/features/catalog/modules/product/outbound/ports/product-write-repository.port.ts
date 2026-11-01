@@ -1,4 +1,5 @@
-import { Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs-toolkit';
+
 import { ProductModel } from '../../domain';
 import { IProductWriteUpdateCommand } from '../interfaces';
 

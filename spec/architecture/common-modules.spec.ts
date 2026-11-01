@@ -462,7 +462,7 @@ describe('common modules (common/modules/<module>)', () => {
       ],
       [
         'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { Customer, StaffUser } from "@acme-core/entities";',
+        'import { Customer, StaffUser } from "@acme-core-entities";',
       ],
     ])('%s may NOT reach the staff users — they belong to staff-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -471,11 +471,11 @@ describe('common modules (common/modules/<module>)', () => {
     it.each([
       [
         'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
-        'import { Customer, Product } from "@acme-core/entities";',
+        'import { Customer, Product } from "@acme-core-entities";',
       ],
       [
         'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-        'import { Customer } from "@acme-core/entities";',
+        'import { Customer } from "@acme-core-entities";',
       ],
     ])('%s may NOT reach the customers — they belong to customer-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -487,14 +487,14 @@ describe('common modules (common/modules/<module>)', () => {
     ])('%s MAY register the %s entity of its own users', async (file, entity) => {
       await expect({
         file,
-        code: `import { ${entity} } from "@acme-core/entities";`,
+        code: `import { ${entity} } from "@acme-core-entities";`,
       }).toPassArchitectureLint();
     });
 
     it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
       await expect({
         file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
+        code: 'import { Customer, Order, StaffUser } from "@acme-core-entities";',
       }).toPassArchitectureLint();
     });
   });

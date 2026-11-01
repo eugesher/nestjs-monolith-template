@@ -9,7 +9,7 @@ queue consumers and the schedules (see `023-processor-app.md`).
 
 `main.ts` starts the process and nothing else:
 
-1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
+1. `@acme-libs-observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
 2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
@@ -95,8 +95,9 @@ still pass, and production keeps everything.
 
 ## Entry points
 
-`@acme-staff-app`, `@acme-customer-app` and `@acme-processor-app` resolve to the FILE `app/app.module.ts`, not to a folder:
-`app/` has no barrel next to the module. `main.ts` and the e2e context import `AppModule` by them.
+`main.ts` and the e2e context import `AppModule` by `@acme-<app>-app/app.module`. The alias
+`@acme-<app>-app/*` maps the folder `app/`, which has no barrel, so the import names the file. The
+alias resolves any path under `app/`; lint decides which of them a file may import.
 
 Lint gives `app.module.ts` its own category, `acme-app:app:module`:
 

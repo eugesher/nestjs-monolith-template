@@ -1,8 +1,10 @@
 import { Global, Module } from '@nestjs/common';
 
+import { AuthClaimsLibModule, AuthLibModule } from '@acme-libs-auth';
+import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from '@acme-libs-contracts/auth';
+
 import { AuthCommonModule } from '@acme-staff-common/modules/auth';
-import { AuthClaimsLibModule, AuthLibModule } from '@acme-libs/auth';
-import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
+
 import {
   AuthGlobalFindPermissionCodesUseCase,
   AuthGlobalFindRolesUseCase,

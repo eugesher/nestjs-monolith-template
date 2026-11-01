@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { StaffUser } from '@acme-core/entities';
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
+import { StaffUser } from '@acme-core-entities';
+
 import { AuthStaffUserModel } from '../../../domain';
 import { type IAuthLoginRepositoryPort } from '../../../outbound';
 import { AuthStaffUserMapper } from '../mappers/auth-staff-user.mapper';

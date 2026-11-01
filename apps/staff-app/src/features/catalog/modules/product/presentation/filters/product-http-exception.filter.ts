@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
 
 @Catch(ProductDomainException)
@@ -9,7 +10,6 @@ export class ProductHttpExceptionFilter implements ExceptionFilter<ProductDomain
     [ProductErrorCodeEnum.PRODUCT_SKU_INVALID]: HttpStatus.BAD_REQUEST,
     [ProductErrorCodeEnum.PRODUCT_NAME_INVALID]: HttpStatus.BAD_REQUEST,
     [ProductErrorCodeEnum.PRODUCT_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
-    [ProductErrorCodeEnum.PRODUCT_QUANTITY_INVALID]: HttpStatus.BAD_REQUEST,
     [ProductErrorCodeEnum.PRODUCT_NOT_FOUND]: HttpStatus.NOT_FOUND,
     [ProductErrorCodeEnum.PRODUCT_ALREADY_ARCHIVED]: HttpStatus.CONFLICT,
     [ProductErrorCodeEnum.PRODUCT_SKU_TAKEN]: HttpStatus.CONFLICT,

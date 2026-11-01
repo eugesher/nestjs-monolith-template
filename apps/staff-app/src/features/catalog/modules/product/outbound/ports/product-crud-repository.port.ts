@@ -1,4 +1,5 @@
-import { IPage } from '@acme-libs/toolkit';
+import { IPage } from '@acme-libs-toolkit';
+
 import { ProductModel } from '../../domain';
 import { IProductPageQuery } from '../interfaces';
 

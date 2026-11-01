@@ -1,13 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
-import { CorrelationContextHelper } from '@acme-libs/observability';
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+
 import { NoteRevisionModel } from '../../domain';
 import { type INoteEditRepositoryPort, NOTE_EDIT_REPOSITORY_PORT } from '../../outbound';
-import { INoteEditCommand, INoteView } from '../interfaces';
-import { INoteEditSaveCommand } from '../interfaces/commands/note-edit-save.command';
-import { INoteEditOutcomeView } from '../interfaces/views/note-edit-outcome.view';
+import {
+  INoteEditCommand,
+  INoteEditOutcomeView,
+  INoteEditSaveCommand,
+  INoteView,
+} from '../interfaces';
 import { NoteViewMapper } from '../mappers/note-view.mapper';
 import { NoteAccessService } from '../services/note-access.service';
 import { NoteWriteService } from '../services/note-write.service';

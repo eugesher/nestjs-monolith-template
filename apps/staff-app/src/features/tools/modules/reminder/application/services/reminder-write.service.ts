@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { OccRetryHelper } from '@acme-libs/toolkit';
+import { OccRetryHelper } from '@acme-libs-toolkit';
+
 import { ReminderDomainException, ReminderErrorCodeEnum, ReminderModel } from '../../domain';
 import {
   type IReminderWriteRepositoryPort,
@@ -9,7 +10,7 @@ import {
   REMINDER_WRITE_REPOSITORY_PORT,
 } from '../../outbound';
 import { ReminderWriteConflictError } from '../errors/reminder-write-conflict.error';
-import { IReminderWriteCommand } from '../interfaces/commands/reminder-write.command';
+import { IReminderWriteCommand } from '../interfaces';
 import { ReminderAccessService } from './reminder-access.service';
 
 @Injectable()

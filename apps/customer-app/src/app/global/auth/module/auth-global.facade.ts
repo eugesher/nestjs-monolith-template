@@ -4,8 +4,9 @@ import {
   IAuthCurrentUserView,
   IAuthJwtPayloadQuery,
   IAuthUserValidatorPort,
-} from '@acme-libs/contracts/auth';
-import { Maybe } from '@acme-libs/toolkit';
+} from '@acme-libs-contracts/auth';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 
 @Injectable()

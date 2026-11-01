@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { IAuthCommonSubjectView, IAuthCommonValidateSubjectQuery } from '../interfaces';
 
 export interface IAuthCommonPort {

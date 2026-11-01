@@ -6,7 +6,7 @@ Writes that read a sum and then write against it lock the parent rows first, in 
 | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | the lock order        | `core/modules/src/product-stock/infrastructure/persistence/repositories/base/product-stock-core-base.repository.ts` |
 | a use case that locks | `apps/customer-app/src/features/order/application/use-cases/order-place.use-case.ts`                                |
-| another one           | `apps/staff-app/src/features/catalog/modules/product/application/use-cases/product-restock.use-case.ts`             |
+| another one           | `apps/staff-app/src/features/warehouse/modules/product-stock/application/use-cases/product-stock-add.use-case.ts`   |
 | a lock of one row     | `core/modules/src/product/infrastructure/persistence/repositories/product-core-archive.repository.ts`               |
 
 ## One transaction

@@ -1,4 +1,5 @@
-import { RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs-kernel';
+
 import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../../application';
 import { UserController } from '../user.controller';
 

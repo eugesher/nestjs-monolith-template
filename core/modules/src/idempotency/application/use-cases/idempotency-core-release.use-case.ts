@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IIdempotencyCoreReleaseCommand } from '@acme-core/contracts/idempotency';
+import { IIdempotencyCoreReleaseCommand } from '@acme-core-contracts/idempotency';
+
 import {
   IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT,
   type IIdempotencyCoreReleaseRepositoryPort,

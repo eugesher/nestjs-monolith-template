@@ -1,7 +1,9 @@
 import type { Job } from 'bull';
 
-import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
-import { CorrelationContextHelper } from '@acme-libs/observability';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+
+import { IProductStockPostSubtractPayload } from '@acme-core-contracts/product-stock';
+
 import { ProductStockArchiveOutOfStockUseCase } from '../../application';
 import { ProductStockPostSubtractConsumer } from '../product-stock-post-subtract.consumer';
 

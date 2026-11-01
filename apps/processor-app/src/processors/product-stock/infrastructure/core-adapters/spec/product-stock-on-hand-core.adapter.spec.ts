@@ -1,4 +1,5 @@
-import { type IProductStockCorePort } from '@acme-core/contracts/product-stock';
+import { type IProductStockCorePort } from '@acme-core-contracts/product-stock';
+
 import { ProductStockOnHandCoreAdapter } from '../product-stock-on-hand-core.adapter';
 
 describe('ProductStockOnHandCoreAdapter', () => {

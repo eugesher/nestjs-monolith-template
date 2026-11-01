@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { IdempotencyCoreKeyModel } from '../../domain';
 
 export interface IIdempotencyCoreClaimRepositoryPort {

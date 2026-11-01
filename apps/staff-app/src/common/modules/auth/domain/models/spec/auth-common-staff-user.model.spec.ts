@@ -1,4 +1,5 @@
-import { RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs-kernel';
+
 import { AuthCommonStaffUserModel } from '../auth-common-staff-user.model';
 
 describe('AuthCommonStaffUserModel', () => {

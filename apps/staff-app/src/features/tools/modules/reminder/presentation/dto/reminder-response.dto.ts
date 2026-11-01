@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { ReminderStatusEnum } from '@acme-libs/kernel';
+import { ReminderStatusEnum } from '@acme-libs-kernel';
 
 export class ReminderResponseDto {
   @ApiResponseProperty({ example: '31' })

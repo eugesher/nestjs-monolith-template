@@ -1,4 +1,5 @@
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+
 import { RolePermissionModel } from '../role-permission.model';
 import { RoleModel } from '../role.model';
 

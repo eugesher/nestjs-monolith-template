@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { LedgerRecordQueueModule } from '@acme-processor-common/shared/ledger-record';
+
 import {
   LedgerRecordAppendUseCase,
   LedgerRecordReportFailureUseCase,

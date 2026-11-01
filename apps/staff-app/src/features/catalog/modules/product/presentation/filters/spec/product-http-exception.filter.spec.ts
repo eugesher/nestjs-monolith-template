@@ -1,6 +1,7 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { ProductDomainException, ProductErrorCodeEnum } from '../../../domain';
 import { ProductHttpExceptionFilter } from '../product-http-exception.filter';
 
@@ -29,7 +30,6 @@ describe('ProductHttpExceptionFilter', () => {
     ['PRODUCT_SKU_INVALID', 400],
     ['PRODUCT_NAME_INVALID', 400],
     ['PRODUCT_VERSION_INVALID', 400],
-    ['PRODUCT_QUANTITY_INVALID', 400],
     ['PRODUCT_NOT_FOUND', 404],
     ['PRODUCT_ALREADY_ARCHIVED', 409],
     ['PRODUCT_SKU_TAKEN', 409],

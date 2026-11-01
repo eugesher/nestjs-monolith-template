@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+
 import {
   AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT,
   type IAuthGlobalFindPermissionCodesRepositoryPort,

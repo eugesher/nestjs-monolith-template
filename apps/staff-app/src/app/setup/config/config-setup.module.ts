@@ -2,8 +2,8 @@ import { DynamicModule } from '@nestjs/common';
 import { ConfigModule, ConfigModuleOptions } from '@nestjs/config';
 import Joi from 'joi';
 
-import { EnvHelper } from '@acme-libs/config';
-import { AppNameEnum } from '@acme-libs/kernel';
+import { EnvHelper } from '@acme-libs-config';
+import { AppNameEnum } from '@acme-libs-kernel';
 
 export class ConfigSetupModule {
   public static async forRoot(): Promise<DynamicModule> {

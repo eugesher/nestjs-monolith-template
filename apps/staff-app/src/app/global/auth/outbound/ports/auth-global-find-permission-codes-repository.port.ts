@@ -1,4 +1,4 @@
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
 
 export interface IAuthGlobalFindPermissionCodesRepositoryPort {
   findPermissionCodes(userId: string): Promise<PermissionCodeEnum[]>;

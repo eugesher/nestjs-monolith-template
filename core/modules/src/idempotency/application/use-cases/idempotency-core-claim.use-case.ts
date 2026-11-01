@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { BodyFingerprintHelper } from '@acme-libs-toolkit';
+
 import {
   IdempotencyCoreClaimOutcomeEnum,
   IIdempotencyCoreClaimCommand,
   IIdempotencyCoreClaimView,
-} from '@acme-core/contracts/idempotency';
-import { BodyFingerprintHelper } from '@acme-libs/toolkit';
+} from '@acme-core-contracts/idempotency';
+
 import { IdempotencyCoreKeyModel } from '../../domain';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,

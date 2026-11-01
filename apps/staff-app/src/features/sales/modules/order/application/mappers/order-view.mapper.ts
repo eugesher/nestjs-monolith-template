@@ -1,6 +1,5 @@
 import { IOrderFoundView, IOrderListedView } from '../../outbound';
-import { IOrderSummaryView } from '../interfaces/views/order-summary.view';
-import { IOrderView } from '../interfaces/views/order.view';
+import { IOrderSummaryView, IOrderView } from '../interfaces';
 
 export class OrderViewMapper {
   public static toView(order: IOrderFoundView): IOrderView {

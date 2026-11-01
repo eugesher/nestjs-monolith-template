@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { NoteDomainException, NoteErrorCodeEnum, NoteModel } from '../../domain';
 import { type INoteAccessRepositoryPort, NOTE_ACCESS_REPOSITORY_PORT } from '../../outbound';
-import { INoteAccessLoadOwnedQuery } from '../interfaces/queries/note-access-load-owned.query';
+import { INoteAccessLoadOwnedQuery } from '../interfaces';
 
 @Injectable()
 export class NoteAccessService {

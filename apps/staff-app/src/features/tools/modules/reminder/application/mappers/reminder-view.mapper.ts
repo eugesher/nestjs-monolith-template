@@ -1,5 +1,5 @@
 import { ReminderModel } from '../../domain';
-import { IReminderView } from '../interfaces/views/reminder.view';
+import { IReminderView } from '../interfaces';
 
 export class ReminderViewMapper {
   public static toView(reminder: ReminderModel): IReminderView {
