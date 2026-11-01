@@ -8,15 +8,13 @@ import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { REDIS_CLIENT } from '@acme-libs-cache/testing';
-import { Maybe } from '@acme-libs-toolkit';
-
+import { REDIS_CLIENT } from '@acme-libs/cache/testing';
+import { Maybe } from '@acme-libs/toolkit';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-core-contracts/ledger';
-
-import { AppModule } from '@acme-staff-app/app.module';
+} from '@acme-core/contracts/ledger';
+import { AppModule } from '@acme-staff/app/app.module';
 
 interface IAppE2EState {
   app: INestApplication;

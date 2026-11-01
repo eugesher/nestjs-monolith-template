@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
 import { OrderDomainException, OrderErrorCodeEnum, OrderModel } from '../../domain';
 import {

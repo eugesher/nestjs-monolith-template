@@ -1,4 +1,4 @@
-import { Nullable } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs/toolkit';
 
 import { IAuthIdentityFindSubjectQuery, IAuthIdentitySubjectView } from '../interfaces';
 

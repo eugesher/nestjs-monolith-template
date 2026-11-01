@@ -6,7 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs-contracts/health';
+import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
 import { HealthLivenessResponseDto } from '../dto/health-liveness-response.dto';
 import { HealthReadinessResponseDto } from '../dto/health-readiness-response.dto';

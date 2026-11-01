@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs-toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { type IReminderCrudRepositoryPort, REMINDER_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IReminderGetManyQuery, IReminderView } from '../interfaces';

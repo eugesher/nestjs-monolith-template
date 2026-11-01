@@ -9,7 +9,7 @@ import {
   VersionColumn,
 } from 'typeorm';
 
-import { ReminderStatusEnum } from '@acme-libs-kernel';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
 
 @Entity({ name: 'reminder' })
 @Index('idx_reminder_owner_status', ['ownerId', 'status'])

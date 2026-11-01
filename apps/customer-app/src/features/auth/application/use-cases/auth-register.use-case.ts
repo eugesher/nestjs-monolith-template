@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import {
   CREDENTIALS_PASSWORD_HASHER_PORT,
   type ICredentialsPasswordHasherPort,
-} from '@acme-libs-contracts/credentials';
+} from '@acme-libs/contracts/credentials';
 
 import { AuthCustomerModel } from '../../domain';
 import { AUTH_REGISTER_REPOSITORY_PORT, type IAuthRegisterRepositoryPort } from '../../outbound';

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 import { PinoLogger } from 'nestjs-pino';
 
-import { CACHE_PORT } from '@acme-libs-contracts/cache';
+import { CACHE_PORT } from '@acme-libs/contracts/cache';
 
 import { RedisCacheAdapter } from '../redis/redis-cache.adapter';
 import { RedisClientOptions } from '../redis/redis-client.options';

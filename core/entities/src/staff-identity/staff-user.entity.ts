@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryColumn } from 'typeorm';
 
-import { UserStatusEnum } from '@acme-libs-kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { StaffUserRole } from './staff-user-role.entity';
 

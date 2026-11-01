@@ -1,4 +1,4 @@
-import { NoteRevision } from '@acme-core-entities';
+import { NoteRevision } from '@acme-core/entities';
 
 import { NoteRevisionMapper } from '../note-revision.mapper';
 

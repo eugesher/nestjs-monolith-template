@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { AuthStaffUserModel } from '../../../domain';
 import { AuthAccessTokenService } from '../../services/auth-access-token.service';

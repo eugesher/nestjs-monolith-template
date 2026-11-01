@@ -1,5 +1,5 @@
-import { RoleEnum } from '@acme-libs-kernel';
-import { Nullable } from '@acme-libs-toolkit';
+import { RoleEnum } from '@acme-libs/kernel';
+import { Nullable } from '@acme-libs/toolkit';
 
 import { UserStaffUserModel } from '../../domain';
 

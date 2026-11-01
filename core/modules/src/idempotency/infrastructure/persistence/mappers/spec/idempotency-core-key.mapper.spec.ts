@@ -1,6 +1,5 @@
-import { IdempotencyStatusEnum } from '@acme-libs-kernel';
-
-import { IdempotencyKey } from '@acme-core-entities';
+import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyMapper } from '../idempotency-core-key.mapper';
 

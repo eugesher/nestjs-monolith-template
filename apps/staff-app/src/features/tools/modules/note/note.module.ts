@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs-config';
-import { HttpExceptionFilter } from '@acme-libs-http';
+import { ConfigProviderHelper } from '@acme-libs/config';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
   NoteAccessService,

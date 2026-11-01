@@ -7,18 +7,16 @@ import type { Queue } from 'bull';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { Maybe } from '@acme-libs-toolkit';
-
+import { Maybe } from '@acme-libs/toolkit';
 import {
   type ILedgerRecordProcessorPayload,
   LEDGER_RECORD_QUEUE,
-} from '@acme-core-contracts/ledger';
+} from '@acme-core/contracts/ledger';
 import {
   type IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core-contracts/product-stock';
-
-import { AppModule } from '@acme-processor-app/app.module';
+} from '@acme-core/contracts/product-stock';
+import { AppModule } from '@acme-processor/app/app.module';
 
 interface IAppE2EState {
   app: INestApplication;

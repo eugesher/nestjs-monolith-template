@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { IDEMPOTENCY_CORE_KEY_PORT } from '@acme-core-contracts/idempotency';
+import { IDEMPOTENCY_CORE_KEY_PORT } from '@acme-core/contracts/idempotency';
 
 import {
   IdempotencyCoreClaimUseCase,

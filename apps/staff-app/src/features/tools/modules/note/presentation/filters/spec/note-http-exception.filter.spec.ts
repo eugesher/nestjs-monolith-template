@@ -1,6 +1,6 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs-http';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import { NoteDomainException, NoteErrorCodeEnum } from '../../../domain';
 import { NoteHttpExceptionFilter } from '../note-http-exception.filter';

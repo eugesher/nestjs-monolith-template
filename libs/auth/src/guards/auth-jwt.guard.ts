@@ -8,8 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { AUTH_USER_VALIDATOR_PORT, type IAuthUserValidatorPort } from '@acme-libs-contracts/auth';
-import { Maybe } from '@acme-libs-toolkit';
+import { AUTH_USER_VALIDATOR_PORT, type IAuthUserValidatorPort } from '@acme-libs/contracts/auth';
+import { Maybe } from '@acme-libs/toolkit';
 
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
 import { IAuthRequest } from '../interfaces/auth-request.interface';

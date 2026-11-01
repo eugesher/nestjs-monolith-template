@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IHealthLibReadinessView } from '@acme-libs-contracts/health';
+import { IHealthLibReadinessView } from '@acme-libs/contracts/health';
 
 import {
   HEALTH_LIB_DEPENDENCY_PROBE_PORT,

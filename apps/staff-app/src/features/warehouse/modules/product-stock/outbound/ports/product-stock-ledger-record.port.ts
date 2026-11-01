@@ -1,4 +1,4 @@
-import { ISubjectLedgerPort } from '@acme-libs-ledger';
+import { ISubjectLedgerPort } from '@acme-libs/ledger';
 
 export type IProductStockLedgerRecordPort = ISubjectLedgerPort;
 

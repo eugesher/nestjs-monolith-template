@@ -1,5 +1,5 @@
-import { ProductStatusEnum } from '@acme-libs-kernel';
-import { DomainEvent, Maybe } from '@acme-libs-toolkit';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { DomainEvent, Maybe } from '@acme-libs/toolkit';
 
 export class ProductPublishedEvent extends DomainEvent<Maybe<string>> {
   constructor(

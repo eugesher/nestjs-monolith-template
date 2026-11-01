@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsService } from 'nestjs-cls';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { ITransactionPort } from '@acme-libs-contracts/database';
+import { ITransactionPort } from '@acme-libs/contracts/database';
 
 @Injectable()
 export class TransactionAdapter implements ITransactionPort {

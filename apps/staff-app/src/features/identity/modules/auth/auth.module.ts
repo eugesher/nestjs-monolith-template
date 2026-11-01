@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { CredentialsLibModule } from '@acme-libs-credentials';
-import { HttpExceptionFilter } from '@acme-libs-http';
-
-import { AuthCommonModule } from '@acme-staff-common/modules/auth';
+import { CredentialsLibModule } from '@acme-libs/credentials';
+import { HttpExceptionFilter } from '@acme-libs/http';
+import { AuthCommonModule } from '@acme-staff/common/modules/auth';
 
 import { AuthAccessTokenService, AuthLoginUseCase, AuthMeUseCase } from './application';
 import {

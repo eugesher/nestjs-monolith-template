@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
-
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import {
   IProductCoreArchiveCommand,
   IProductCoreArchiveView,
   ProductCoreArchiveOutcomeEnum,
-} from '@acme-core-contracts/product';
+} from '@acme-core/contracts/product';
 
 import {
   type IProductCoreArchiveRepositoryPort,

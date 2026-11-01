@@ -3,14 +3,14 @@ import { Attributes, trace } from '@opentelemetry/api';
 import { Redis } from 'ioredis';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { ICachePort } from '@acme-libs-contracts/cache';
-import { Maybe } from '@acme-libs-toolkit';
+import { ICachePort } from '@acme-libs/contracts/cache';
+import { Maybe } from '@acme-libs/toolkit';
 
 import { REDIS_CLIENT } from './redis-client.token';
 
 @Injectable()
 export class RedisCacheAdapter implements ICachePort {
-  private static readonly TRACER_NAME = '@acme-libs-cache';
+  private static readonly TRACER_NAME = '@acme-libs/cache';
   private static readonly SCAN_BATCH_SIZE = 100;
 
   private readonly inFlight = new Map<string, Promise<unknown>>();

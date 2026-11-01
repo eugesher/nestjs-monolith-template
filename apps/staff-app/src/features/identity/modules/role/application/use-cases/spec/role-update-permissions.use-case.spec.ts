@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { RolePermissionModel, RoleModel } from '../../../domain';
 import { RoleUpdatePermissionsUseCase } from '../role-update-permissions.use-case';

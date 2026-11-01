@@ -2,12 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 
-import { SubjectLedgerQueueAdapter } from '@acme-libs-ledger';
-
+import { SubjectLedgerQueueAdapter } from '@acme-libs/ledger';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-core-contracts/ledger';
+} from '@acme-core/contracts/ledger';
 
 import { IOrderLedgerRecordPort, ORDER_LEDGER_RECORD_TIMEOUT_MS } from '../../outbound';
 

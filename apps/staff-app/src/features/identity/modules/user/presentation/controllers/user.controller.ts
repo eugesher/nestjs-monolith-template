@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Post, UseFilters } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs-auth';
-import { PermissionCodeEnum } from '@acme-libs-kernel';
+import { RequiresPermission } from '@acme-libs/auth';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../application';
 import { UserAssignRoleRequestDto } from '../dto/user-assign-role-request.dto';

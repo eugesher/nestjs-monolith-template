@@ -3,7 +3,7 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { LessThan, Repository } from 'typeorm';
 
-import { IdempotencyKey } from '@acme-core-entities';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { type IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
 

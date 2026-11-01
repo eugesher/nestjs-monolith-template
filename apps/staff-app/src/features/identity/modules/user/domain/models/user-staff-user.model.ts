@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { UserDomainException } from '../exceptions/user-domain.exception';
 import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';

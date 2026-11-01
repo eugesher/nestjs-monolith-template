@@ -1,7 +1,7 @@
 # 026 — Transaction port
 
 The application layer opens a transaction through `TRANSACTION_PORT` of
-`@acme-libs-contracts/database`, never through TypeORM or `@nestjs-cls/transactional`:
+`@acme-libs/contracts/database`, never through TypeORM or `@nestjs-cls/transactional`:
 
 ```ts
 interface ITransactionPort {

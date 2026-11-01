@@ -1,15 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { ReplayRetryHelper } from '@acme-libs-toolkit';
-
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { ReplayRetryHelper } from '@acme-libs/toolkit';
 import {
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,
   ProductStockCoreMovementKindEnum,
-} from '@acme-core-contracts/product-stock';
+} from '@acme-core/contracts/product-stock';
 
 import {
   type IProductStockCoreMoveRepositoryPort,

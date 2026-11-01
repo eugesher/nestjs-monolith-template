@@ -1,4 +1,4 @@
-import { ReplayRetryHelper } from '@acme-libs-toolkit';
+import { ReplayRetryHelper } from '@acme-libs/toolkit';
 
 import { ISubjectLedgerLogger } from './subject-ledger-logger.interface';
 import { ISubjectLedgerPort } from './subject-ledger-port.interface';

@@ -1,4 +1,4 @@
-import { IPage } from '@acme-libs-toolkit';
+import { IPage } from '@acme-libs/toolkit';
 
 import { ICatalogPageQuery, ICatalogProductRowView } from '../interfaces';
 

@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { AppNameEnum } from '@acme-libs-kernel';
+import { AppNameEnum } from '@acme-libs/kernel';
 
 import { BootstrapLogger } from '../bootstrap-logger';
 

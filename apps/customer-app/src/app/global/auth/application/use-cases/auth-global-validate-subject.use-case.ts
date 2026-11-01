@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs/toolkit';
 
 import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,

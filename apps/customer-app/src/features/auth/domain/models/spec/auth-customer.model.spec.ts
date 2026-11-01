@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthCustomerModel } from '../auth-customer.model';
 

@@ -1,4 +1,4 @@
-import { ProductStatusEnum } from '@acme-libs-kernel';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 
 import { IProductCoreRecord } from '../interfaces/product-core-record.interface';
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 import { AUTH_GLOBAL_SUBJECT_PORT, type IAuthGlobalSubjectPort } from '../../outbound';
 import { IAuthGlobalFindRolesQuery } from '../interfaces';

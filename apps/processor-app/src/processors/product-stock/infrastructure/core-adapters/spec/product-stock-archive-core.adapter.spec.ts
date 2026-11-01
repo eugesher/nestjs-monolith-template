@@ -1,4 +1,4 @@
-import { ProductCoreArchiveOutcomeEnum } from '@acme-core-contracts/product';
+import { ProductCoreArchiveOutcomeEnum } from '@acme-core/contracts/product';
 
 import { ProductStockArchiveCoreAdapter } from '../product-stock-archive-core.adapter';
 

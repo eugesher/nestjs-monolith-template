@@ -1,4 +1,4 @@
-import { PermissionCodeEnum } from '@acme-libs-kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { IRolePermissionRecord } from '../interfaces/role-permission-record.interface';
 

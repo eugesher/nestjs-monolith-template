@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../../application';
 import { RoleController } from '../role.controller';

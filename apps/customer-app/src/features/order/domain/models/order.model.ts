@@ -1,4 +1,4 @@
-import { AggregateRoot, Maybe } from '@acme-libs-toolkit';
+import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
 import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
 import { OrderDomainException } from '../exceptions/order-domain.exception';

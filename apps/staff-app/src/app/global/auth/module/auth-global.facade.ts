@@ -4,8 +4,8 @@ import {
   IAuthCurrentUserView,
   IAuthJwtPayloadQuery,
   IAuthUserValidatorPort,
-} from '@acme-libs-contracts/auth';
-import { Nullable } from '@acme-libs-toolkit';
+} from '@acme-libs/contracts/auth';
+import { Nullable } from '@acme-libs/toolkit';
 
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 

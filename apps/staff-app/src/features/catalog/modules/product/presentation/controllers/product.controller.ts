@@ -7,12 +7,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs-auth';
-import { IdempotencyKey } from '@acme-libs-http';
-import { PermissionCodeEnum } from '@acme-libs-kernel';
-import type { Maybe } from '@acme-libs-toolkit';
-
-import { IfMatch } from '@acme-staff-common/shared/concurrency';
+import { RequiresPermission } from '@acme-libs/auth';
+import { IdempotencyKey } from '@acme-libs/http';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
+import { IfMatch } from '@acme-staff/common/shared/concurrency';
 
 import {
   ProductArchiveUseCase,

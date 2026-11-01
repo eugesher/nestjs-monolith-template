@@ -1,4 +1,4 @@
-import { PermissionCodeEnum } from '@acme-libs-kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RolePermissionModel } from '../role-permission.model';
 

@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductStockAddedEvent, ProductStockModel } from '../../../domain';
 import { ProductStockLedgerService } from '../../services/product-stock-ledger.service';

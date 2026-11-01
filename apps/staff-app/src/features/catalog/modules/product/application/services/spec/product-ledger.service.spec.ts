@@ -1,8 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { ProductStatusEnum } from '@acme-libs-kernel';
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductCreatedEvent, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
 import { ProductLedgerService } from '../product-ledger.service';

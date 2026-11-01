@@ -3,9 +3,8 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { In, Repository } from 'typeorm';
 
-import { ProductStatusEnum } from '@acme-libs-kernel';
-
-import { Order, OrderProduct, Product } from '@acme-core-entities';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { OrderModel } from '../../../domain';
 import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';

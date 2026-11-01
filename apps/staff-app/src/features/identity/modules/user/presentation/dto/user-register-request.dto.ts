@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEmail, IsEnum, IsString, MinLength } from 'class-validator';
 
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 export class UserRegisterRequestDto {
   @ApiProperty({ example: 'editor@example.com' })

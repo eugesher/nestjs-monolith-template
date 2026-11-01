@@ -4,8 +4,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import {
   CREDENTIALS_PASSWORD_HASHER_PORT,
   type ICredentialsPasswordHasherPort,
-} from '@acme-libs-contracts/credentials';
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
+} from '@acme-libs/contracts/credentials';
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
 import { UserStaffUserModel } from '../../domain';
 import { USER_REGISTER_REPOSITORY_PORT, type IUserRegisterRepositoryPort } from '../../outbound';

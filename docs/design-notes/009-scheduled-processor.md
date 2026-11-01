@@ -48,7 +48,7 @@ retries` at `warn` with the error. Expired keys only cost space until the next t
 ## Wiring
 
 `IdempotencyPurgeModule` imports `IdempotencyPurgeTypeOrmModule`, and processor-app mounts it through
-`@acme-processor-processors`. `@Cron` only marks the method: the tick fires because processor-app
+`@acme-processor/processors`. `@Cron` only marks the method: the tick fires because processor-app
 imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
 `idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.
 

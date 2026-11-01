@@ -250,14 +250,14 @@ describe('features', () => {
     it('application MAY take the credentials ports — a feature signs its users in', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs-contracts/credentials";',
+        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
       }).toPassArchitectureLint();
     });
 
     it('the module root MAY mount the credentials lib', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',
-        code: 'import { CredentialsLibModule } from "@acme-libs-credentials";',
+        code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
       }).toPassArchitectureLint();
     });
 
@@ -266,7 +266,7 @@ describe('features', () => {
       async (layer) => {
         await expect({
           file: `apps/__features-fixture__/src/features/product/${layer}/__fixture__.ts`,
-          code: 'import { CredentialsLibModule } from "@acme-libs-credentials";',
+          code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
         }).toBreakRule('boundaries/dependencies');
       },
     );

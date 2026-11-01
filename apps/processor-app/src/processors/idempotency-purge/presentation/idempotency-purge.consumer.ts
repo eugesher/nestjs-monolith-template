@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
-import { CorrelationContextHelper } from '@acme-libs-observability';
+import { CorrelationContextHelper } from '@acme-libs/observability';
 
 import { IdempotencyPurgeRunUseCase } from '../application';
 

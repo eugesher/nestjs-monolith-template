@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { AuthDomainException } from '../../../domain';
 import { AuthLedgerService } from '../../services/auth-ledger.service';

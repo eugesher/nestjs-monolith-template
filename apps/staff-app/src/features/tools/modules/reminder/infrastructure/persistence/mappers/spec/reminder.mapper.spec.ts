@@ -1,6 +1,5 @@
-import { ReminderStatusEnum } from '@acme-libs-kernel';
-
-import { Reminder } from '@acme-core-entities';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
+import { Reminder } from '@acme-core/entities';
 
 import { ReminderMapper } from '../reminder.mapper';
 

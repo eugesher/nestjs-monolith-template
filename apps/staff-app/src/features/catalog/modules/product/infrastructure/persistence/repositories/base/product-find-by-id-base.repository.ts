@@ -2,9 +2,8 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Nullable } from '@acme-libs-toolkit';
-
-import { Product } from '@acme-core-entities';
+import { Nullable } from '@acme-libs/toolkit';
+import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../../domain';
 import { ProductMapper } from '../../mappers/product.mapper';

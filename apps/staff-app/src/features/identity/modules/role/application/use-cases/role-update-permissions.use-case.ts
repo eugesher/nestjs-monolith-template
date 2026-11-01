@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
-import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
 import { RoleDomainException, RoleModel } from '../../domain';
 import {

@@ -1,4 +1,4 @@
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
 import { AuthCommonValidateSubjectUseCase } from '../auth-common-validate-subject.use-case';

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs-config';
+import { ConfigProviderHelper } from '@acme-libs/config';
 
 import { IdempotencyPurgeRunUseCase } from './application';
 import { IdempotencyPurgeRunRepository, IdempotencyPurgeTypeOrmModule } from './infrastructure';

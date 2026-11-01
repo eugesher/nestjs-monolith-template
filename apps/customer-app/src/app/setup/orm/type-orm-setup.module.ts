@@ -6,8 +6,8 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
 
-import { TRANSACTION_PORT } from '@acme-libs-contracts/database';
-import { SnakeNamingStrategy, TransactionAdapter } from '@acme-libs-database';
+import { TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { SnakeNamingStrategy, TransactionAdapter } from '@acme-libs/database';
 
 import { entities } from './entities';
 

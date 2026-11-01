@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryColumn } from 'typeorm';
 
-import { UserStatusEnum } from '@acme-libs-kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
 @Entity({ name: 'customer' })
 export class Customer {

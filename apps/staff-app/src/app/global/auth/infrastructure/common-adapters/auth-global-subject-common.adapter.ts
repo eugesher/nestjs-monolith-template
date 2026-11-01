@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs-toolkit';
-
-import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff-contracts/auth';
+import { Nullable } from '@acme-libs/toolkit';
+import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff/contracts/auth';
 
 import { IAuthGlobalStaffUserView, IAuthGlobalSubjectPort } from '../../outbound';
 

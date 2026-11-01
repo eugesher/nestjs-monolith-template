@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs-toolkit';
-
+import { Nullable } from '@acme-libs/toolkit';
 import {
   IAuthCommonSubjectView,
   IAuthCommonValidateSubjectQuery,
-} from '@acme-staff-contracts/auth';
+} from '@acme-staff/contracts/auth';
 
 import {
   AUTH_COMMON_VALIDATE_SUBJECT_REPOSITORY_PORT,

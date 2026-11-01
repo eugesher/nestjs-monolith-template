@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { RoleDomainException } from '../exceptions/role-domain.exception';
 import { IRoleRecord } from '../interfaces/role-record.interface';

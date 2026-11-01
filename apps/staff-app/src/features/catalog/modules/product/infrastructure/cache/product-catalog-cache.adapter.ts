@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs-contracts/cache';
+import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
 import { type IProductCatalogCachePort } from '../../outbound';
 
