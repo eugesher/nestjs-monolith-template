@@ -45,7 +45,7 @@ no file, and the environment comes from the container. The variables of the proc
 precedence over the files.
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
-filters, the guards and the correlation middleware are all in `AppModule` or in modules it imports.
+filters, the guards and the correlation context are all in `AppModule` or in modules it imports.
 An e2e context built from `AppModule` without `main.ts` behaves like the running app.
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
@@ -58,6 +58,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                                               |
 | `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                                                     |
+| `CorrelationSetupModule.forRoot()` | `libs/observability`                                 | the CLS context of every request under its correlation id                                   |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
 | `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
@@ -66,7 +67,6 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the consumers                                                                |
 | `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
-| `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                                                |
 
 Every module in `app/setup/` is named `*SetupModule`.
 
@@ -74,11 +74,20 @@ Every module in `app/setup/` is named `*SetupModule`.
 order does not matter. A feature filter on a controller catches the domain exceptions of that
 feature first and hands the response to `HttpExceptionFilter`.
 
-**The correlation middleware and the request logger see one id.** Both call
-`CorrelationIdHelper.resolve`, which takes the inbound `x-correlation-id`, or creates one and sets
-it on the request and the response. Whichever runs first decides, and the other reads the same
-header. Inside the request, `CorrelationContextHelper.current()` answers that id, so a ledger entry
-written by the request carries the id the client got back.
+**One CLS context carries the correlation id, the transaction and the logs.**
+`CorrelationSetupModule` is the root `ClsModule` of the app. Its middleware is mounted on every
+route and opens the context with `run`, never with `enterWith`. It stores the id under `CLS_ID`.
+`TypeOrmSetupModule` adds the transactional plugin with `ClsModule.registerPlugins`, and
+`TRANSACTION_PORT.run` opens a nested context with `ifNested: 'inherit'`, so the id stays inside
+the transaction. A consumer or a tick has no request, so `CorrelationContextHelper.run` opens a
+context of its own (`ifNested: 'override'`).
+
+**The context and the request logger see one id.** Both call `CorrelationIdHelper.resolve`, which
+takes the inbound `x-correlation-id`, or creates one and sets it on the request and the response.
+Whichever runs first decides, and the other reads the same header. Inside the request,
+`CorrelationContextHelper.current()` answers that id, so a ledger entry written by the request
+carries the id the client got back. The pino `mixin` of `LoggerSetupConfig` adds
+the id of the CLS context to every line, the `request completed` line of pino-http included.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
 no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core

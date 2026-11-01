@@ -1,10 +1,10 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
 import { CacheModule } from '@acme-libs/cache';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationMiddleware, LoggerSetupModule } from '@acme-libs/observability';
+import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
 import { HealthModule } from '@acme-processor/features';
 import {
   IdempotencyPurgeModule,
@@ -21,6 +21,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.PROCESSOR_APP),
+    CorrelationSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(),
     ScheduleSetupModule,
     QueueSetupModule,
@@ -32,8 +33,4 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
   ],
   providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],
 })
-export class AppModule implements NestModule {
-  public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(CorrelationMiddleware).forRoutes('*path');
-  }
-}
+export class AppModule {}

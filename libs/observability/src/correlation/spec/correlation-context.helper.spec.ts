@@ -1,3 +1,4 @@
+import { CLS_ID, ClsServiceManager } from 'nestjs-cls';
 import { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '../correlation-context.helper';
@@ -8,44 +9,40 @@ describe('CorrelationContextHelper', () => {
   });
 
   describe('run', () => {
-    it('binds the inbound id to the context and to the logger of everything the callback logs', async () => {
-      Object.assign(PinoLogger, { root: new PinoLogger({ pinoHttp: { enabled: false } }).logger });
-
-      const bindings = await CorrelationContextHelper.run('inbound-id', () =>
-        Promise.resolve({
-          current: CorrelationContextHelper.current('ItemArchiveUseCase'),
-          logged: new PinoLogger({}).logger.bindings(),
-        }),
-      );
-
-      expect(bindings).toEqual({
-        current: 'inbound-id',
-        logged: { correlationId: 'inbound-id' },
-      });
-    });
-
-    it.each([undefined, ''])('mints an id when the message carries %p', async (inbound) => {
-      Object.assign(PinoLogger, { root: new PinoLogger({ pinoHttp: { enabled: false } }).logger });
-
-      const bindings = await CorrelationContextHelper.run(inbound, () =>
-        Promise.resolve({
-          current: CorrelationContextHelper.current('ItemArchiveUseCase'),
-          logged: new PinoLogger({}).logger.bindings(),
-        }),
-      );
-
-      expect(bindings.current).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-      );
-      expect(bindings.logged).toEqual({ correlationId: bindings.current });
-    });
-
-    it('still binds the id when no logger module is up', async () => {
+    it('binds the inbound id to the context of the callback', async () => {
       const current = await CorrelationContextHelper.run('inbound-id', () =>
         Promise.resolve(CorrelationContextHelper.current('ItemArchiveUseCase')),
       );
 
       expect(current).toBe('inbound-id');
+    });
+
+    it.each([undefined, ''])('mints an id when the message carries %p', async (inbound) => {
+      const current = await CorrelationContextHelper.run(inbound, () =>
+        Promise.resolve(CorrelationContextHelper.current('ItemArchiveUseCase')),
+      );
+
+      expect(current).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+      );
+    });
+
+    it('opens a context of its own inside another context', async () => {
+      const cls = ClsServiceManager.getClsService();
+
+      const values = await cls.run(async () => {
+        cls.set(CLS_ID, 'outer-id');
+        cls.set('outer-key', 'outer-value');
+
+        return await CorrelationContextHelper.run('inner-id', () =>
+          Promise.resolve({
+            current: CorrelationContextHelper.current('ItemArchiveUseCase'),
+            outer: cls.get<string | undefined>('outer-key'),
+          }),
+        );
+      });
+
+      expect(values).toEqual({ current: 'inner-id', outer: undefined });
     });
   });
 
