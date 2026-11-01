@@ -4,7 +4,7 @@ import {
   IDEMPOTENCY_CORE_KEY_PORT,
   IdempotencyCoreClaimOutcomeEnum,
   type IIdempotencyCoreKeyPort,
-} from '@acme-core-contracts/idempotency';
+} from '@acme-core/contracts/idempotency';
 
 import {
   IOrderIdempotencyClaimCommand,

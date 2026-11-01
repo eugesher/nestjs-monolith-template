@@ -7,8 +7,8 @@ import {
   AUTH_CLAIMS_PORT,
   AUTH_USER_VALIDATOR_PORT,
   type IAuthCurrentUserView,
-} from '@acme-libs-contracts/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+} from '@acme-libs/contracts/auth';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
 import { Roles } from '../../decorators/auth-roles.decorator';

@@ -1,4 +1,4 @@
-import { Note } from '@acme-core-entities';
+import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 

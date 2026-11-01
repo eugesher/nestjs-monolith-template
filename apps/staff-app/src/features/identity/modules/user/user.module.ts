@@ -1,19 +1,15 @@
 import { Module } from '@nestjs/common';
 
-import { CredentialsLibModule } from '@acme-libs-credentials';
-import { HttpExceptionFilter } from '@acme-libs-http';
+import { CredentialsLibModule } from '@acme-libs/credentials';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import { UserAssignRoleUseCase, UserRegisterUseCase } from './application';
-import {
-  UserAssignRoleRepository,
-  UserRegisterRepository,
-  UserTypeOrmModule,
-} from './infrastructure';
+import { UserAssignRoleRepository, UserRegisterRepository } from './infrastructure';
 import { USER_ASSIGN_ROLE_REPOSITORY_PORT, USER_REGISTER_REPOSITORY_PORT } from './outbound';
 import { UserController } from './presentation';
 
 @Module({
-  imports: [UserTypeOrmModule.forFeature(), CredentialsLibModule],
+  imports: [CredentialsLibModule],
   controllers: [UserController],
   providers: [
     HttpExceptionFilter,

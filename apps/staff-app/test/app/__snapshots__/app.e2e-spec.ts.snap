@@ -111,12 +111,11 @@ exports[`App Catalog Product PATCH /api/catalog/products/:productId should apply
     "product": [
       {
         "id": "104",
-        "version": 7,
+        "version": 6,
       },
     ],
   },
   "statuses": [
-    200,
     200,
     200,
     200,
@@ -950,7 +949,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should take the roles from 
   "response": {
     "body": {
       "email": "viewer@example.com",
-      "id": "00000000-0000-4000-8000-000000000003",
+      "id": "3",
       "roles": [
         "viewer",
       ],
@@ -974,7 +973,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should issue an access 
   "lifetime": 2592000,
   "me": {
     "email": "editor@example.com",
-    "id": "00000000-0000-4000-8000-000000000002",
+    "id": "2",
     "roles": [
       "editor",
     ],
@@ -992,7 +991,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should refuse a disable
   "response": {
     "body": {
       "code": "AUTH_USER_INACTIVE",
-      "message": "User 00000000-0000-4000-8000-000000000004 is disabled",
+      "message": "User 4 is disabled",
       "statusCode": 403,
     },
   },
@@ -1112,16 +1111,16 @@ exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refu
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": 1,
-        "role_id": 3,
+        "permission_id": "1",
+        "role_id": "3",
       },
       {
-        "permission_id": 7,
-        "role_id": 3,
+        "permission_id": "7",
+        "role_id": "3",
       },
       {
-        "permission_id": 10,
-        "role_id": 3,
+        "permission_id": "10",
+        "role_id": "3",
       },
     ],
   },
@@ -1145,8 +1144,8 @@ exports[`App Identity Role PUT /api/identity/roles/:role/permissions should repl
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": 8,
-        "role_id": 3,
+        "permission_id": "8",
+        "role_id": "3",
       },
     ],
   },
@@ -1180,7 +1179,7 @@ exports[`App Identity User POST /api/identity/users should create a user who can
     ],
     "staff_user_roles": [
       {
-        "role_id": 3,
+        "role_id": "3",
         "user_id": Any<String>,
       },
     ],
@@ -1223,7 +1222,7 @@ exports[`App Identity User POST /api/identity/users should refuse a taken email 
     "staff_user": [
       {
         "email": "editor@example.com",
-        "id": "00000000-0000-4000-8000-000000000002",
+        "id": "2",
       },
     ],
   },
@@ -1242,7 +1241,7 @@ exports[`App Identity User POST /api/identity/users/:userId/roles should answer 
   "response": {
     "body": {
       "code": "AUTH_USER_NOT_FOUND",
-      "message": "User 00000000-0000-4000-8000-000000000099 was not found",
+      "message": "User 99 was not found",
       "statusCode": 404,
     },
   },
@@ -1254,18 +1253,18 @@ exports[`App Identity User POST /api/identity/users/:userId/roles should grant a
   "db": {
     "staff_user_roles": [
       {
-        "role_id": 2,
-        "user_id": "00000000-0000-4000-8000-000000000004",
+        "role_id": "2",
+        "user_id": "4",
       },
       {
-        "role_id": 3,
-        "user_id": "00000000-0000-4000-8000-000000000004",
+        "role_id": "3",
+        "user_id": "4",
       },
     ],
   },
   "response": {
     "body": {
-      "id": "00000000-0000-4000-8000-000000000004",
+      "id": "4",
       "roles": [
         "viewer",
         "editor",
@@ -1325,7 +1324,7 @@ exports[`App Sales Order GET /api/sales/orders should answer the page window it 
       "items": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000101",
+          "customerId": "101",
           "id": "600",
         },
       ],
@@ -1344,12 +1343,12 @@ exports[`App Sales Order GET /api/sales/orders should list the orders of every c
       "items": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000102",
+          "customerId": "102",
           "id": "601",
         },
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "00000000-0000-4000-8000-000000000101",
+          "customerId": "101",
           "id": "600",
         },
       ],
@@ -1416,7 +1415,7 @@ exports[`App Sales Order GET /api/sales/orders/:orderId should read the order of
   "response": {
     "body": {
       "createdAt": "2026-01-01T00:00:00.000Z",
-      "customerId": "00000000-0000-4000-8000-000000000101",
+      "customerId": "101",
       "id": "600",
       "products": [
         {
@@ -1480,7 +1479,7 @@ exports[`App Tools Note GET /api/tools/notes should filter by resolution 1`] = `
     "body": {
       "items": [
         {
-          "authorId": "00000000-0000-4000-8000-000000000001",
+          "authorId": "1",
           "body": "Already handled.",
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "202",
@@ -1518,7 +1517,7 @@ exports[`App Tools Note GET /api/tools/notes should list the notes of one subjec
     "body": {
       "items": [
         {
-          "authorId": "00000000-0000-4000-8000-000000000001",
+          "authorId": "1",
           "body": "Check the supplier.",
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "201",
@@ -1529,7 +1528,7 @@ exports[`App Tools Note GET /api/tools/notes should list the notes of one subjec
           "version": 1,
         },
         {
-          "authorId": "00000000-0000-4000-8000-000000000001",
+          "authorId": "1",
           "body": "Customer called about this.",
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "200",
@@ -1602,7 +1601,7 @@ exports[`App Tools Note GET /api/tools/notes/:noteId should read one note 1`] = 
 {
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
+      "authorId": "1",
       "body": "Already handled.",
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "202",
@@ -1663,7 +1662,7 @@ exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the r
           "bodyAfter": "Already handled.",
           "bodyBefore": "Handled soon.",
           "correlationId": "seed-correlation-id",
-          "editorId": "00000000-0000-4000-8000-000000000001",
+          "editorId": "1",
           "id": "200",
           "noteId": "202",
           "noteVersion": 2,
@@ -1683,7 +1682,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should hide the note of a
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Edited with the same body.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1712,7 +1711,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should refuse to edit a r
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Already handled.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1729,7 +1728,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should refuse to edit a r
         "body_after": "Already handled.",
         "body_before": "Handled soon.",
         "correlation_id": "seed-correlation-id",
-        "editor_id": "00000000-0000-4000-8000-000000000001",
+        "editor_id": "1",
         "id": "200",
         "note_id": "202",
         "note_version": 2,
@@ -1752,7 +1751,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body a
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Customer called twice; refunded manually.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1769,7 +1768,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body a
         "body_after": "Customer called twice; refunded manually.",
         "body_before": "Customer called about this.",
         "correlation_id": "e2e-note-edit",
-        "editor_id": "00000000-0000-4000-8000-000000000001",
+        "editor_id": "1",
         "id": Any<String>,
         "note_id": "200",
         "note_version": 2,
@@ -1779,7 +1778,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body a
   },
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
+      "authorId": "1",
       "body": "Customer called twice; refunded manually.",
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "200",
@@ -1798,7 +1797,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should roll the note back
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Edited while a revision is taken.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1834,7 +1833,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should write nothing for 
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Edited with the same body.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1850,7 +1849,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should write nothing for 
   },
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
+      "authorId": "1",
       "body": "Edited with the same body.",
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "204",
@@ -1869,7 +1868,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should hide the n
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Edited with the same body.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1897,7 +1896,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should refuse to 
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Already handled.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1925,7 +1924,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should resolve a 
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Check the supplier.",
         "created_at": 2026-01-01T00:00:00.000Z,
         "deleted_at": null,
@@ -1940,7 +1939,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId/resolve should resolve a 
   },
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
+      "authorId": "1",
       "body": "Check the supplier.",
       "createdAt": "2026-01-01T00:00:00.000Z",
       "id": "201",
@@ -1959,7 +1958,7 @@ exports[`App Tools Note POST /api/tools/notes should create an unresolved note o
   "db": {
     "note": [
       {
-        "author_id": "00000000-0000-4000-8000-000000000001",
+        "author_id": "1",
         "body": "Customer called.",
         "created_at": Any<Date>,
         "deleted_at": null,
@@ -1974,7 +1973,7 @@ exports[`App Tools Note POST /api/tools/notes should create an unresolved note o
   },
   "response": {
     "body": {
-      "authorId": "00000000-0000-4000-8000-000000000001",
+      "authorId": "1",
       "body": "Customer called.",
       "createdAt": Any<String>,
       "id": Any<String>,
@@ -2001,7 +2000,7 @@ exports[`App Tools Reminder DELETE /api/tools/reminders/:reminderId should soft-
         "deleted_at": Any<Date>,
         "due_on": "2026-08-01",
         "id": "304",
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "1",
         "status": "pending",
         "title": "Cancel the trial",
         "updated_at": Any<Date>,
@@ -2025,7 +2024,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should filter by status 1`]
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-04-01",
           "id": "302",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "done",
           "title": "Book the venue",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2050,7 +2049,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-04-01",
           "id": "302",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "done",
           "title": "Book the venue",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2061,7 +2060,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-05-15",
           "id": "301",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "pending",
           "title": "Pay the invoice",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2072,7 +2071,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-06-01",
           "id": "300",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "pending",
           "title": "Renew the subscription",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2083,7 +2082,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-08-01",
           "id": "304",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "pending",
           "title": "Cancel the trial",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2094,7 +2093,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
           "createdAt": "2026-01-01T00:00:00.000Z",
           "dueOn": "2026-09-01",
           "id": "305",
-          "ownerId": "00000000-0000-4000-8000-000000000001",
+          "ownerId": "1",
           "status": "pending",
           "title": "Water the plants",
           "updatedAt": "2026-01-01T00:00:00.000Z",
@@ -2124,10 +2123,10 @@ exports[`App Tools Reminder GET /api/tools/reminders/summary should compute the 
 {
   "cache": {
     "keys": [
-      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__",
+      "acme:reminders:summary:v1:1:__all__",
     ],
     "values": {
-      "acme:reminders:summary:v1:00000000-0000-4000-8000-000000000001:__all__": "{"pending":4,"nextDueOn":"2026-05-15"}",
+      "acme:reminders:summary:v1:1:__all__": "{"pending":4,"nextDueOn":"2026-05-15"}",
     },
   },
   "response": {
@@ -2164,7 +2163,7 @@ exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should c
         "deleted_at": null,
         "due_on": "2026-05-15",
         "id": "301",
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "1",
         "status": "done",
         "title": "Pay the invoice",
         "updated_at": Any<Date>,
@@ -2178,7 +2177,7 @@ exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should c
       "createdAt": "2026-01-01T00:00:00.000Z",
       "dueOn": "2026-05-15",
       "id": "301",
-      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "ownerId": "1",
       "status": "done",
       "title": "Pay the invoice",
       "updatedAt": Any<String>,
@@ -2198,7 +2197,7 @@ exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/done should h
         "deleted_at": null,
         "due_on": "2026-06-01",
         "id": "300",
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "1",
         "status": "pending",
         "title": "Renew the subscription",
         "updated_at": 2026-01-01T00:00:00.000Z,
@@ -2255,7 +2254,7 @@ exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/due-on should
         "deleted_at": null,
         "due_on": "2026-10-01",
         "id": "305",
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "1",
         "status": "pending",
         "title": "Water the plants",
         "updated_at": Any<Date>,
@@ -2269,7 +2268,7 @@ exports[`App Tools Reminder PATCH /api/tools/reminders/:reminderId/due-on should
       "createdAt": "2026-01-01T00:00:00.000Z",
       "dueOn": "2026-10-01",
       "id": "305",
-      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "ownerId": "1",
       "status": "pending",
       "title": "Water the plants",
       "updatedAt": Any<String>,
@@ -2292,7 +2291,7 @@ exports[`App Tools Reminder POST /api/tools/reminders should create a pending re
         "deleted_at": null,
         "due_on": "2026-06-01",
         "id": Any<String>,
-        "owner_id": "00000000-0000-4000-8000-000000000001",
+        "owner_id": "1",
         "status": "pending",
         "title": "Renew the domain",
         "updated_at": Any<Date>,
@@ -2306,7 +2305,7 @@ exports[`App Tools Reminder POST /api/tools/reminders should create a pending re
       "createdAt": Any<String>,
       "dueOn": "2026-06-01",
       "id": Any<String>,
-      "ownerId": "00000000-0000-4000-8000-000000000001",
+      "ownerId": "1",
       "status": "pending",
       "title": "Renew the domain",
       "updatedAt": Any<String>,

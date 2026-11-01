@@ -1,4 +1,4 @@
-import { Order } from '@acme-core-entities';
+import { Order } from '@acme-core/entities';
 
 import { IOrderProductRecord, OrderModel } from '../../../domain';
 

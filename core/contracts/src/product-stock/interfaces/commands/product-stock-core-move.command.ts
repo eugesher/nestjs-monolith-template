@@ -1,4 +1,4 @@
-import { Nullable } from '@acme-libs-toolkit';
+import { Nullable } from '@acme-libs/toolkit';
 
 import { ProductStockCoreMovementKindEnum } from '../../enums/product-stock-core-movement-kind.enum';
 

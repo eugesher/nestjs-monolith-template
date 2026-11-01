@@ -1,4 +1,4 @@
-import { Product } from '@acme-core-entities';
+import { Product } from '@acme-core/entities';
 
 import { ProductCoreModel } from '../../../domain';
 

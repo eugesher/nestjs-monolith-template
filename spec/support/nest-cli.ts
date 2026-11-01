@@ -23,15 +23,15 @@ const aliases = readJson<{ compilerOptions: { paths: Record<string, string[]> } 
 export const existsInRepo = (relPath: string): boolean => existsSync(path.join(ROOT, relPath));
 
 const projectOfAlias = (alias: string): string | null => {
-  const core = /^@acme-core-(modules|contracts)\/([^/]+)$/.exec(alias);
-  const libContracts = /^@acme-libs-contracts\/([^/]+)$/.exec(alias);
-  const lib = /^@acme-libs-([^/]+)$/.exec(alias);
+  const core = /^@acme-core\/(modules|contracts)\/([^/]+)$/.exec(alias);
+  const libContracts = /^@acme-libs\/contracts\/([^/]+)$/.exec(alias);
+  const lib = /^@acme-libs\/([^/]+)$/.exec(alias);
 
   if (core) {
     return `core-${core[1]}-${core[2]}`;
   }
 
-  if (alias === '@acme-core-entities') {
+  if (alias === '@acme-core/entities') {
     return 'core-entities';
   }
 

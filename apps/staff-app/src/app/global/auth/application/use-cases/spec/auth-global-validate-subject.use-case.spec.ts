@@ -20,11 +20,11 @@ describe('AuthGlobalValidateSubjectUseCase', () => {
     });
 
     it('answers no user when there is no active subject', async () => {
-      findSubject.mockResolvedValue(undefined);
+      findSubject.mockResolvedValue(null);
 
       const user = await useCase.execute({ userId: 'user-1' });
 
-      expect(user).toBeUndefined();
+      expect(user).toBeNull();
     });
   });
 });

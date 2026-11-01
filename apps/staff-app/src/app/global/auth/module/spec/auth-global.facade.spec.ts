@@ -21,11 +21,11 @@ describe('AuthGlobalFacade', () => {
     });
 
     it('answers no user when the subject is not an active staff user', async () => {
-      findSubject.mockResolvedValue(undefined);
+      findSubject.mockResolvedValue(null);
 
       const user = await facade.validate({ sub: 'user-1' });
 
-      expect(user).toBeUndefined();
+      expect(user).toBeNull();
     });
   });
 });

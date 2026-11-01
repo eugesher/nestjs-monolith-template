@@ -1,4 +1,4 @@
-import { DomainException, Maybe } from '@acme-libs-toolkit';
+import { DomainException, Maybe } from '@acme-libs/toolkit';
 
 import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
 

@@ -54,7 +54,7 @@ exports[`App Auth POST /api/auth/login should issue an access token of the subje
   "lifetime": 604800,
   "me": {
     "email": "ann@example.com",
-    "id": "00000000-0000-4000-8000-000000000101",
+    "id": "101",
   },
   "response": {
     "body": {
@@ -69,7 +69,7 @@ exports[`App Auth POST /api/auth/login should refuse a disabled customer with 40
   "response": {
     "body": {
       "code": "AUTH_USER_INACTIVE",
-      "message": "Customer 00000000-0000-4000-8000-000000000104 is disabled",
+      "message": "Customer 104 is disabled",
       "statusCode": 403,
     },
   },
@@ -215,7 +215,7 @@ exports[`App Auth POST /api/auth/register should refuse a taken email in another
     "customer": [
       {
         "email": "ann@example.com",
-        "id": "00000000-0000-4000-8000-000000000101",
+        "id": "101",
       },
     ],
   },
@@ -484,7 +484,7 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
         "created_at": Any<Date>,
         "id": Any<String>,
         "idempotency_key": "e2e-order-place-key",
-        "request_fingerprint": "85f48343f793ac732a6e9db667951f5ab91e79a907a711c4eaa5cb8eaa827b42",
+        "request_fingerprint": "5c4301c84212cc93c40e2d83d813f76ebebe2880b6a99520ae94fda1f0b73bea",
         "response_body": Any<String>,
         "status": "completed",
       },
@@ -492,7 +492,7 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
     "order": [
       {
         "created_at": Any<Date>,
-        "customer_id": "00000000-0000-4000-8000-000000000101",
+        "customer_id": "101",
         "id": Any<String>,
       },
     ],
@@ -532,7 +532,7 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
       "payload": {
-        "customerId": "00000000-0000-4000-8000-000000000101",
+        "customerId": "101",
         "productIds": [
           "100",
           "100",
@@ -759,7 +759,7 @@ exports[`App Order POST /api/orders should replay the same response for the same
   "db": {
     "order": [
       {
-        "customer_id": "00000000-0000-4000-8000-000000000103",
+        "customer_id": "103",
       },
     ],
   },

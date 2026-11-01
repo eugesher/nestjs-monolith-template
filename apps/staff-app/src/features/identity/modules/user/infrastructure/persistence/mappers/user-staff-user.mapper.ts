@@ -1,6 +1,5 @@
-import { RoleEnum } from '@acme-libs-kernel';
-
-import { StaffUser } from '@acme-core-entities';
+import { RoleEnum } from '@acme-libs/kernel';
+import { StaffUser } from '@acme-staff/common/entities';
 
 import { UserStaffUserModel } from '../../../domain';
 

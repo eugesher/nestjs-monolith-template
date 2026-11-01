@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { AuthStaffUserModel } from '../../../domain';
 import { AuthAccessTokenService } from '../../services/auth-access-token.service';
@@ -50,7 +50,7 @@ describe('AuthLoginUseCase', () => {
   });
 
   it('rejects an unknown email with the same error as a wrong password', async () => {
-    repository.findByEmail.mockResolvedValue(undefined);
+    repository.findByEmail.mockResolvedValue(null);
 
     const login = useCase.execute({ email: 'ghost@example.com', password: 'correct-horse' });
 

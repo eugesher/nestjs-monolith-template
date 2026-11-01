@@ -1,4 +1,4 @@
-import { ReminderStatusEnum } from '@acme-libs-kernel';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
 
 export interface IReminderRecord {
   id: string;

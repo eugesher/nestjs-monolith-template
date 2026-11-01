@@ -1,4 +1,4 @@
-import { Customer } from '@acme-core-entities';
+import { Customer } from '@acme-core/entities';
 
 import { AuthCustomerModel } from '../../../domain';
 

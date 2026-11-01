@@ -1,4 +1,4 @@
-import { IPage, Nullable } from '@acme-libs-toolkit';
+import { IPage, Nullable } from '@acme-libs/toolkit';
 
 import { IOrderFoundView, IOrderListedView, IOrderPageQuery } from '../interfaces';
 

@@ -48,7 +48,7 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it.each(['@acme-staff-contracts/auth', '@acme-staff-common/modules/auth'])(
+    it.each(['@acme-staff/contracts/auth', '@acme-staff/common/modules/auth'])(
       'ledger may NOT reach %s — the journal records facts, it never asks who the user is',
       async (alias) => {
         await expect({
@@ -61,7 +61,7 @@ describe('core modules', () => {
     it('product MAY reach its own contracts through the alias', async () => {
       await expect({
         file: 'core/modules/src/product/application/use-cases/__fixture__.ts',
-        code: 'import { PRODUCT_CORE_PORT } from "@acme-core-contracts/product";',
+        code: 'import { PRODUCT_CORE_PORT } from "@acme-core/contracts/product";',
       }).toPassArchitectureLint();
     });
 
@@ -203,15 +203,30 @@ describe('core modules', () => {
   });
 
   describe('packages and lib contracts', () => {
-    it('infrastructure MAY import the persistence packages', async () => {
+    it('infrastructure MAY read tables through the repository host', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
         code:
-          'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
-          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";\n' +
-          'import { TypeOrmModule } from "@nestjs/typeorm";\n' +
-          'import { Repository } from "typeorm";',
+          'import { Repository } from "typeorm";\n' +
+          'import { RepositoryHost } from "@acme-libs/database";',
       }).toPassArchitectureLint();
+    });
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['argon2', '@nestjs/jwt'])(
@@ -227,9 +242,9 @@ describe('core modules', () => {
     it.each([
       [
         'application/use-cases',
-        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs-contracts/credentials";',
+        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
       ],
-      ['module', 'import { CredentialsLibModule } from "@acme-libs-credentials";'],
+      ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
     ])(
       '%s may NOT reach the credentials — sign-in belongs to the auth modules of each app',
       async (layer, code) => {
@@ -261,7 +276,7 @@ describe('core modules', () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
-          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs-contracts/database";\n' +
+          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
     });
@@ -269,14 +284,14 @@ describe('core modules', () => {
     it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
-        code: 'import { CACHE_PORT } from "@acme-libs-contracts/cache";',
+        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure MAY take the cache port to drop the keys a write makes stale', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/cache/__fixture__.ts',
-        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs-contracts/cache";',
+        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
       }).toPassArchitectureLint();
     });
 
@@ -286,7 +301,7 @@ describe('core modules', () => {
         code:
           'import { InjectQueue } from "@nestjs/bull";\n' +
           'import type { Queue } from "bull";\n' +
-          'import { LEDGER_RECORD_QUEUE } from "@acme-core-contracts/ledger";',
+          'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
@@ -302,7 +317,7 @@ describe('core modules', () => {
         file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
         code:
           'import { BullModule } from "@nestjs/bull";\n' +
-          'import { LEDGER_RECORD_QUEUE } from "@acme-core-contracts/ledger";',
+          'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
@@ -326,7 +341,7 @@ describe('core modules', () => {
     it('the module root MAY bind config values with the config lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
-        code: 'import { ConfigProviderHelper } from "@acme-libs-config";',
+        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
       }).toPassArchitectureLint();
     });
 

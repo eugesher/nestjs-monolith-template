@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
-
-import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff-contracts/auth';
+import { Nullable } from '@acme-libs/toolkit';
+import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff/contracts/auth';
 
 import {
   IAuthIdentityFindSubjectQuery,
@@ -19,7 +18,7 @@ export class AuthIdentityCommonAdapter implements IAuthIdentityPort {
 
   public async findSubject(
     query: IAuthIdentityFindSubjectQuery,
-  ): Promise<Maybe<IAuthIdentitySubjectView>> {
+  ): Promise<Nullable<IAuthIdentitySubjectView>> {
     const { userId } = query;
 
     return await this.authCommon.validateSubject({ userId });

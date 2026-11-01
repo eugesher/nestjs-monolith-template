@@ -1,4 +1,4 @@
-import { Maybe } from '@acme-libs-toolkit';
+import { Maybe } from '@acme-libs/toolkit';
 
 export interface INoteGetManyQuery {
   page: Maybe<number>;

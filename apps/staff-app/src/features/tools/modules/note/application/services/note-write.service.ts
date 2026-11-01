@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { OccRetryHelper } from '@acme-libs-toolkit';
+import { OccRetryHelper } from '@acme-libs/toolkit';
 
 import { NoteDomainException, NoteErrorCodeEnum, NoteModel } from '../../domain';
 import { NOTE_OCC_RETRY_ATTEMPTS } from '../../outbound';

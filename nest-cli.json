@@ -226,6 +226,15 @@
         "tsConfigPath": "libs/kernel/tsconfig.lib.json"
       }
     },
+    "ledger": {
+      "type": "library",
+      "root": "libs/ledger",
+      "entryFile": "index",
+      "sourceRoot": "libs/ledger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/ledger/tsconfig.lib.json"
+      }
+    },
     "observability": {
       "type": "library",
       "root": "libs/observability",

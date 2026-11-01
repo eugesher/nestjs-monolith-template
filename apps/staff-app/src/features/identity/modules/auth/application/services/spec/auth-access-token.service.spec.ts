@@ -1,4 +1,4 @@
-import { UserStatusEnum } from '@acme-libs-kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthStaffUserModel } from '../../../domain';
 import { AuthAccessTokenService } from '../auth-access-token.service';

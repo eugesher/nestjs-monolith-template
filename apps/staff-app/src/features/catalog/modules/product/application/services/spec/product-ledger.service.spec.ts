@@ -1,8 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { ProductStatusEnum } from '@acme-libs-kernel';
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductCreatedEvent, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
 import { ProductLedgerService } from '../product-ledger.service';
@@ -23,10 +23,10 @@ describe('ProductLedgerService', () => {
     jest.useRealTimers();
   });
 
-  describe('enqueue', () => {
+  describe('recordEvents', () => {
     it('enqueues a creation under the stored id with the correlation id of the request', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
-        service.enqueue({
+        service.recordEvents({
           productId: '12',
           events: [new ProductCreatedEvent(undefined, 'SKU-0001', 'Lamp')],
         }),
@@ -41,15 +41,11 @@ describe('ProductLedgerService', () => {
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
-      expect(logger.info).toHaveBeenCalledWith(
-        { productId: '12', operationKey: 'product-created:12' },
-        'Ledger record enqueued',
-      );
     });
 
     it('leaves an update out of the ledger', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
-        service.enqueue({
+        service.recordEvents({
           productId: '12',
           events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
         }),
@@ -60,7 +56,7 @@ describe('ProductLedgerService', () => {
 
     it('enqueues a publication under the product and the version it produced', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
-        service.enqueue({
+        service.recordEvents({
           productId: '12',
           events: [new ProductPublishedEvent('12', 'SKU-0001', 6, ProductStatusEnum.ARCHIVED)],
         }),
@@ -75,53 +71,6 @@ describe('ProductLedgerService', () => {
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
-    });
-
-    it('retries a failed enqueue and logs each retry', async () => {
-      enqueue.mockRejectedValueOnce(new Error('redis is down')).mockResolvedValue(undefined);
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.enqueue({
-          productId: '12',
-          events: [new ProductCreatedEvent(undefined, 'SKU-0001', 'Lamp')],
-        }),
-      );
-
-      expect(enqueue).toHaveBeenCalledTimes(2);
-      expect(logger.warn).toHaveBeenCalledWith(
-        {
-          err: new Error('redis is down'),
-          correlationId: 'corr-1',
-          attempt: 1,
-          productId: '12',
-          operationKey: 'product-created:12',
-        },
-        'Ledger enqueue (product) failed — retrying',
-      );
-      expect(logger.error).not.toHaveBeenCalled();
-    });
-
-    it('logs the record for replay after the configured attempts instead of throwing', async () => {
-      enqueue.mockRejectedValue(new Error('redis is down'));
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.enqueue({
-          productId: '12',
-          events: [new ProductCreatedEvent(undefined, 'SKU-0001', 'Lamp')],
-        }),
-      );
-
-      expect(enqueue).toHaveBeenCalledTimes(2);
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          err: new Error('redis is down'),
-          correlationId: 'corr-1',
-          productId: '12',
-          operationKey: 'product-created:12',
-        },
-        'Ledger enqueue failed permanently: the record is absent from the queue and the ledger, replay this record',
-      );
-      expect(logger.info).not.toHaveBeenCalled();
     });
   });
 });

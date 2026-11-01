@@ -9,7 +9,7 @@ import {
   VersionColumn,
 } from 'typeorm';
 
-import { ProductStatusEnum } from '@acme-libs-kernel';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 
 @Entity({ name: 'product' })
 export class Product {

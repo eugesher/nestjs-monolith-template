@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { IPage, Nullable } from '@acme-libs-toolkit';
-
-import { Order, OrderProduct, Product } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { IPage, Nullable } from '@acme-libs/toolkit';
+import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { IOrderProductRecord, OrderModel } from '../../../domain';
 import {
@@ -18,14 +16,14 @@ import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderCrudRepository implements IOrderCrudRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get orderRepository(): Repository<Order> {
-    return this.transactionHost.tx.getRepository(Order);
+    return this.repositoryHost.getRepository(Order);
   }
 
   private get orderProductRepository(): Repository<OrderProduct> {
-    return this.transactionHost.tx.getRepository(OrderProduct);
+    return this.repositoryHost.getRepository(OrderProduct);
   }
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
@@ -51,14 +49,14 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
     }
 
     const products = await this.orderProductRepository
-      .createQueryBuilder('line')
-      .select('line.id', 'id')
-      .addSelect('line.productId', 'productId')
-      .addSelect('product.sku', 'sku')
-      .addSelect('product.name', 'name')
-      .innerJoin(Product, 'product', 'product.id = line.productId')
-      .where('line.orderId = :orderId', { orderId })
-      .orderBy('line.id', 'ASC')
+      .createQueryBuilder('OrderProduct')
+      .select('OrderProduct.id', 'id')
+      .addSelect('OrderProduct.productId', 'productId')
+      .addSelect('Product.sku', 'sku')
+      .addSelect('Product.name', 'name')
+      .innerJoin(Product, 'Product', 'Product.id = OrderProduct.productId')
+      .where('OrderProduct.orderId = :orderId', { orderId })
+      .orderBy('OrderProduct.id', 'ASC')
       .withDeleted()
       .getRawMany<IOrderProductRecord>();
 

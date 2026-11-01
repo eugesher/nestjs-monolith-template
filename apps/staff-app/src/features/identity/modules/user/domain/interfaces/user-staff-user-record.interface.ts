@@ -1,4 +1,4 @@
-import { RoleEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 export interface IUserStaffUserRecord {
   id: string;

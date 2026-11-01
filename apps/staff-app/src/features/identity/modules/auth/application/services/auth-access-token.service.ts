@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   CREDENTIALS_ACCESS_TOKEN_PORT,
   type ICredentialsAccessTokenPort,
-} from '@acme-libs-contracts/credentials';
+} from '@acme-libs/contracts/credentials';
 
 import { AuthStaffUserModel } from '../../domain';
 import { IAuthAccessTokenView } from '../interfaces';

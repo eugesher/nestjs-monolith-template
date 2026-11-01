@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+
+import { RepositoryHost } from '@acme-libs/database';
 
 import { type IProductWriteRepositoryPort, IProductWriteUpdateCommand } from '../../../outbound';
 import { ProductFindByIdBaseRepository } from './base/product-find-by-id-base.repository';
@@ -10,8 +10,8 @@ export class ProductWriteRepository
   extends ProductFindByIdBaseRepository
   implements IProductWriteRepositoryPort
 {
-  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(transactionHost);
+  constructor(repositoryHost: RepositoryHost) {
+    super(repositoryHost);
   }
 
   public async update(command: IProductWriteUpdateCommand): Promise<boolean> {

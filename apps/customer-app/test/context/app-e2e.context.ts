@@ -8,19 +8,17 @@ import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { REDIS_CLIENT } from '@acme-libs-cache/testing';
-import { Maybe } from '@acme-libs-toolkit';
-
+import { REDIS_CLIENT } from '@acme-libs/cache/testing';
+import { Maybe } from '@acme-libs/toolkit';
 import {
   type ILedgerRecordProcessorPayload,
   LEDGER_RECORD_QUEUE,
-} from '@acme-core-contracts/ledger';
+} from '@acme-core/contracts/ledger';
 import {
   type IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core-contracts/product-stock';
-
-import { AppModule } from '@acme-customer-app/app.module';
+} from '@acme-core/contracts/product-stock';
+import { AppModule } from '@acme-customer/app/app.module';
 
 interface IAppE2EState {
   app: INestApplication;
@@ -86,9 +84,9 @@ export class AppE2EContext {
     await app.init();
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
-    const annToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000101' });
-    const bobToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000102' });
-    const carolToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000103' });
+    const annToken = jwt.sign({ sub: '101' });
+    const bobToken = jwt.sign({ sub: '102' });
+    const carolToken = jwt.sign({ sub: '103' });
 
     this.state = {
       app,

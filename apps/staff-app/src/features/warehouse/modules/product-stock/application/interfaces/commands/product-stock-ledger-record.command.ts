@@ -1,4 +1,4 @@
-import { DomainEvent } from '@acme-libs-toolkit';
+import { DomainEvent } from '@acme-libs/toolkit';
 
 export interface IProductStockLedgerRecordCommand {
   productId: string;

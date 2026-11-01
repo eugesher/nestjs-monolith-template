@@ -27,11 +27,15 @@ services there (`ProductStockAddUseCase`, `OrderPlaceUseCase`).
 
 **An enqueue has a deadline.** While Redis is down, Bull keeps the command in the offline queue of
 its client and `add` never settles. The adapter races `add` against `REDIS_COMMAND_TIMEOUT_MS` and
-throws when it runs out.
+throws when it runs out. Every ledger adapter extends `SubjectLedgerQueueAdapter`
+(`libs/ledger/src/subject-ledger/subject-ledger-queue.adapter.ts`), which holds the race and the fields of
+the job.
 
 **The write stays committed.** The caller retries the enqueue through `ReplayRetryHelper`
 (`libs/toolkit/src/resilience/replay-retry.helper.ts`), `QUEUE_RETRY_ATTEMPTS` or
-`LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. A timed-out `add` may
+`LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. A ledger service
+extends `SubjectLedgerService` (`libs/ledger/src/subject-ledger/subject-ledger.service.ts`): it builds the
+record and hands it to `record`, which retries and logs under the subject and the operation key. A timed-out `add` may
 still reach Redis once it is back, so a consumer must tolerate a duplicate job.
 
 ## Where the queue is declared

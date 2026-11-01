@@ -12,6 +12,7 @@ export const acmeLibs = [
       'database',
       'health',
       'http',
+      'ledger',
       'observability',
       'openapi',
     ],

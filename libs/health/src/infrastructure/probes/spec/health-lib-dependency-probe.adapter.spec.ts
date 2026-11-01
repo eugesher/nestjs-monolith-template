@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { ICachePort } from '@acme-libs-contracts/cache';
+import { ICachePort } from '@acme-libs/contracts/cache';
 
 import { HealthLibDependencyProbeAdapter } from '../health-lib-dependency-probe.adapter';
 

@@ -79,7 +79,7 @@ export class AuthE2E {
     describe('GET /api/identity/auth/me', () => {
       it('should take the roles from the database, not from the token claims', async () => {
         const forged = this.ctx.jwt.sign({
-          sub: '00000000-0000-4000-8000-000000000003',
+          sub: '3',
           roles: ['admin'],
           permissions: ['iam:assign'],
         });
@@ -106,7 +106,7 @@ export class AuthE2E {
       });
 
       it('should refuse the token of a disabled user', async () => {
-        const token = this.ctx.jwt.sign({ sub: '00000000-0000-4000-8000-000000000004' });
+        const token = this.ctx.jwt.sign({ sub: '4' });
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/identity/auth/me')
@@ -120,12 +120,12 @@ export class AuthE2E {
         [
           'a customer signed with the secret of this app',
           new JwtService({ secret: 'e2e-secret-at-least-32-characters-long' }),
-          '00000000-0000-4000-8000-000000000101',
+          '101',
         ],
         [
           'a staff user signed with the secret of customer-app',
           new JwtService({ secret: 'customer-e2e-secret-at-least-32-characters' }),
-          '00000000-0000-4000-8000-000000000002',
+          '2',
         ],
       ])('should refuse the token of %s', async (_, jwt, sub) => {
         const token = jwt.sign({ sub });

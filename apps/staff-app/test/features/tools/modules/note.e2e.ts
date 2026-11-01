@@ -233,7 +233,7 @@ export class NoteE2E {
       it('should roll the note back when the revision insert fails', async () => {
         await this.ctx.dataSource.query(
           'INSERT INTO note_revision (id, note_id, note_version, body_before, body_after, editor_id) VALUES (299, 203, 2, ?, ?, ?)',
-          ['Taken before.', 'Taken after.', '00000000-0000-4000-8000-000000000001'],
+          ['Taken before.', 'Taken after.', '1'],
         );
 
         try {

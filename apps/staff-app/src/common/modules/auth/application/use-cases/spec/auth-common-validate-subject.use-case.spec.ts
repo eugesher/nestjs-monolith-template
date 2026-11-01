@@ -1,4 +1,4 @@
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
 import { AuthCommonValidateSubjectUseCase } from '../auth-common-validate-subject.use-case';
@@ -28,10 +28,10 @@ describe('AuthCommonValidateSubjectUseCase', () => {
   });
 
   it('returns nothing when no active user matches', async () => {
-    repository.findActiveById.mockResolvedValue(undefined);
+    repository.findActiveById.mockResolvedValue(null);
 
     const subject = await useCase.execute({ userId: 'ghost' });
 
-    expect(subject).toBeUndefined();
+    expect(subject).toBeNull();
   });
 });

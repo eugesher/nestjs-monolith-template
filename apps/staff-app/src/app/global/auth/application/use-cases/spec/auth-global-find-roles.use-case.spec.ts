@@ -20,7 +20,7 @@ describe('AuthGlobalFindRolesUseCase', () => {
     });
 
     it('answers no roles when there is no active subject', async () => {
-      findSubject.mockResolvedValue(undefined);
+      findSubject.mockResolvedValue(null);
 
       const roles = await useCase.execute({ userId: 'user-1' });
 

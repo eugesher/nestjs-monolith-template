@@ -1,10 +1,10 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { ProductStatusEnum } from '@acme-libs-kernel';
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductCoreModel } from '../../../domain';
+import { ProductCoreLedgerService } from '../../services/product-core-ledger.service';
 import { ProductCoreArchiveUseCase } from '../product-core-archive.use-case';
 
 describe('ProductCoreArchiveUseCase', () => {
@@ -12,7 +12,7 @@ describe('ProductCoreArchiveUseCase', () => {
   let hooks: (() => Promise<void>)[];
   let lockById: jest.Mock;
   let update: jest.Mock;
-  let enqueue: jest.Mock;
+  let recordArchived: jest.Mock;
   let invalidate: jest.Mock;
   let run: jest.Mock;
   let afterCommit: jest.Mock;
@@ -20,7 +20,6 @@ describe('ProductCoreArchiveUseCase', () => {
   let useCase: ProductCoreArchiveUseCase;
 
   beforeEach(() => {
-    jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     outcomes = [];
     hooks = [];
     lockById = jest.fn().mockResolvedValue(
@@ -32,7 +31,7 @@ describe('ProductCoreArchiveUseCase', () => {
       }),
     );
     update = jest.fn(() => Promise.resolve(void outcomes.push('update')));
-    enqueue = jest.fn(() => Promise.resolve(void outcomes.push('enqueue')));
+    recordArchived = jest.fn(() => Promise.resolve(void outcomes.push('record')));
     invalidate = jest.fn(() => Promise.resolve(void outcomes.push('invalidate')));
     run = jest.fn(async (work: () => Promise<unknown>) => {
       const result = await work();
@@ -48,24 +47,17 @@ describe('ProductCoreArchiveUseCase', () => {
     afterCommit = jest.fn((hook: () => Promise<void>) => hooks.push(hook));
     logger = makePinoLoggerMock();
     useCase = new ProductCoreArchiveUseCase(
+      { recordArchived } as unknown as ProductCoreLedgerService,
       { lockById, update },
-      { enqueue },
       { invalidate },
       { run, afterCommit },
-      2,
       logger as unknown as PinoLogger,
     );
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   describe('execute', () => {
     it('archives the locked product, bumps its version and answers archived', async () => {
-      const view = await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ productId: '12', expectedVersion: 3 }),
-      );
+      const view = await useCase.execute({ productId: '12', expectedVersion: 3 });
 
       expect(view).toEqual({ outcome: 'archived', currentVersion: 4 });
       expect(lockById).toHaveBeenCalledWith('12');
@@ -76,41 +68,16 @@ describe('ProductCoreArchiveUseCase', () => {
       expect(logger.info).toHaveBeenCalledWith({ productId: '12', version: 4 }, 'Product archived');
     });
 
-    it('drops the cached catalog and enqueues the ledger record only after the commit', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ productId: '12', expectedVersion: undefined }),
-      );
+    it('drops the cached catalog and records the archive in the ledger only after the commit', async () => {
+      await useCase.execute({ productId: '12', expectedVersion: undefined });
 
-      expect(outcomes).toEqual(['update', 'commit', 'invalidate', 'enqueue']);
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-archived:12:4',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { sku: 'SKU-0001', previousStatus: 'active' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+      expect(outcomes).toEqual(['update', 'commit', 'invalidate', 'record']);
+      expect(recordArchived).toHaveBeenCalledWith({
+        productId: '12',
+        sku: 'SKU-0001',
+        version: 4,
+        previousStatus: 'active',
       });
-    });
-
-    it('retries a failed enqueue and logs the record for a replay once the budget is spent', async () => {
-      enqueue.mockRejectedValue(new Error('redis is down'));
-
-      const view = await CorrelationContextHelper.run('corr-1', () =>
-        useCase.execute({ productId: '12', expectedVersion: undefined }),
-      );
-
-      expect(view.outcome).toBe('archived');
-      expect(enqueue).toHaveBeenCalledTimes(2);
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          err: new Error('redis is down'),
-          correlationId: 'corr-1',
-          productId: '12',
-          operationKey: 'product-archived:12:4',
-        },
-        'Ledger enqueue failed permanently: the product is archived but absent from the ledger, replay this record',
-      );
     });
 
     it('answers not-found for an unknown product and writes nothing', async () => {

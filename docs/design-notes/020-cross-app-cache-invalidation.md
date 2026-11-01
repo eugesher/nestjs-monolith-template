@@ -10,7 +10,7 @@ definition.
 | a dropper in a feature     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/cache/product-catalog-cache.adapter.ts` |
 | a dropper in a core module | `core/modules/src/product/infrastructure/cache/product-core-catalog-cache.adapter.ts`                       |
 
-**The key lives in a lib contract.** `@acme-libs-contracts/cache` is read by every app, so a key
+**The key lives in a lib contract.** `@acme-libs/contracts/cache` is read by every app, so a key
 that several apps use is defined once. It works because every app points `REDIS_URL` at one Redis,
 as the queues already require.
 

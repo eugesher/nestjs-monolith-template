@@ -1,4 +1,4 @@
-import { AppNameEnum } from '@acme-libs-kernel';
+import { AppNameEnum } from '@acme-libs/kernel';
 
 import { HealthLibCheckLivenessUseCase } from '../health-lib-check-liveness.use-case';
 

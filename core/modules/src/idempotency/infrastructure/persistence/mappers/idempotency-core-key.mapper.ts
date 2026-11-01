@@ -1,4 +1,4 @@
-import { IdempotencyKey } from '@acme-core-entities';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyModel } from '../../../domain';
 

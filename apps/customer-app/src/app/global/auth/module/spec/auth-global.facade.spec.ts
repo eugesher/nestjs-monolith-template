@@ -24,11 +24,11 @@ describe('AuthGlobalFacade', () => {
     });
 
     it('answers no user when the subject is not an active customer', async () => {
-      findActiveById.mockResolvedValue(undefined);
+      findActiveById.mockResolvedValue(null);
 
       const user = await facade.validate({ sub: 'customer-1' });
 
-      expect(user).toBeUndefined();
+      expect(user).toBeNull();
     });
   });
 });

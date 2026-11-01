@@ -1,6 +1,6 @@
 import type { Queue } from 'bull';
 
-import { ILedgerRecordProcessorPayload } from '@acme-core-contracts/ledger';
+import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
 import { LedgerRecordQueueAdapter } from '../ledger-record-queue.adapter';
 

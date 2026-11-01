@@ -8,7 +8,7 @@ import {
   OrderProduct,
   Product,
   ProductStock,
-} from '@acme-core-entities';
+} from '@acme-core/entities';
 
 export const entities: TypeOrmModuleOptions['entities'] = [
   Customer,

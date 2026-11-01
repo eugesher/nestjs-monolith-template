@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { IdempotencyStatusEnum } from '@acme-libs-kernel';
-
-import { IdempotencyKey } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { type IIdempotencyCoreReleaseRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyCoreReleaseRepository implements IIdempotencyCoreReleaseRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
-    return this.transactionHost.tx.getRepository(IdempotencyKey);
+    return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
   public async deleteInFlight(key: string): Promise<void> {

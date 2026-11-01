@@ -1,6 +1,7 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthDomainException } from '../exceptions/auth-domain.exception';
+import { IAuthCustomerDraft } from '../interfaces/auth-customer-draft.interface';
 import { IAuthCustomerRecord } from '../interfaces/auth-customer-record.interface';
 import { IAuthCustomerRegistration } from '../interfaces/auth-customer-registration.interface';
 
@@ -15,7 +16,7 @@ export class AuthCustomerModel {
     public readonly status: UserStatusEnum,
   ) {}
 
-  public static register(registration: IAuthCustomerRegistration): AuthCustomerModel {
+  public static register(registration: IAuthCustomerRegistration): IAuthCustomerDraft {
     const { email, passwordHash } = registration;
     const normalized = AuthCustomerModel.normalizeEmail(email);
 
@@ -26,9 +27,7 @@ export class AuthCustomerModel {
       );
     }
 
-    const id = crypto.randomUUID();
-
-    return new AuthCustomerModel(id, normalized, passwordHash, UserStatusEnum.ACTIVE);
+    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE };
   }
 
   public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {

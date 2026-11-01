@@ -80,9 +80,7 @@ export class AuthE2E {
             },
           ],
         });
-        expect(response.body.id).toMatch(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-        );
+        expect(response.body.id).toMatch(/^\d+$/);
         expect(actual.db.customer[0].password_hash).toMatch(/^\$argon2id\$v=19\$m=19456,p=1,t=2\$/);
       });
 
@@ -219,7 +217,7 @@ export class AuthE2E {
       });
 
       it('should refuse the token of a disabled customer', async () => {
-        const token = this.ctx.jwt.sign({ sub: '00000000-0000-4000-8000-000000000104' });
+        const token = this.ctx.jwt.sign({ sub: '104' });
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/auth/me')
@@ -233,12 +231,12 @@ export class AuthE2E {
         [
           'a staff user signed with the secret of this app',
           new JwtService({ secret: 'customer-e2e-secret-at-least-32-characters' }),
-          '00000000-0000-4000-8000-000000000001',
+          '1',
         ],
         [
           'a customer signed with the secret of staff-app',
           new JwtService({ secret: 'e2e-secret-at-least-32-characters-long' }),
-          '00000000-0000-4000-8000-000000000101',
+          '101',
         ],
       ])('should refuse the token of %s', async (_, jwt, sub) => {
         const token = jwt.sign({ sub });

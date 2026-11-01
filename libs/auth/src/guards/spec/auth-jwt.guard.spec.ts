@@ -86,7 +86,7 @@ describe('AuthJwtGuard', () => {
   });
 
   it('rejects a user that is gone or disabled with 401', async () => {
-    validate.mockResolvedValue(undefined);
+    validate.mockResolvedValue(null);
 
     const allowed = guard.canActivate(context);
 

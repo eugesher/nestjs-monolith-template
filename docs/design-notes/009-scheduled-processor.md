@@ -11,7 +11,7 @@ nothing else deletes them, so the delete lives here with a repository of its own
 | `application`                | `IdempotencyPurgeRunUseCase`                                               |
 | `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                      |
 | `outbound`                   | `IDEMPOTENCY_PURGE_RUN_REPOSITORY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS` |
-| `infrastructure/persistence` | `IdempotencyPurgeRunRepository`, `IdempotencyPurgeTypeOrmModule`           |
+| `infrastructure/persistence` | `IdempotencyPurgeRunRepository`                                            |
 
 The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
 `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`. On every tick the use case computes the cutoff, the instant the
@@ -47,8 +47,8 @@ retries` at `warn` with the error. Expired keys only cost space until the next t
 
 ## Wiring
 
-`IdempotencyPurgeModule` imports `IdempotencyPurgeTypeOrmModule`, and processor-app mounts it through
-`@acme-processor-processors`. `@Cron` only marks the method: the tick fires because processor-app
+processor-app mounts `IdempotencyPurgeModule` through
+`@acme-processor/processors`. `@Cron` only marks the method: the tick fires because processor-app
 imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
 `idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.
 

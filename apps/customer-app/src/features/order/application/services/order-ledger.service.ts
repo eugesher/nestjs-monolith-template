@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { ReplayRetryHelper } from '@acme-libs-toolkit';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { SubjectLedgerService } from '@acme-libs/ledger';
 
 import {
-  type IOrderLedgerRecordEnqueueCommand,
   type IOrderLedgerRecordPort,
   ORDER_LEDGER_RECORD_PORT,
   ORDER_LEDGER_RETRY_ATTEMPTS,
@@ -13,47 +12,31 @@ import {
 import { IOrderLedgerRecordPlacedCommand } from '../interfaces';
 
 @Injectable()
-export class OrderLedgerService {
+export class OrderLedgerService extends SubjectLedgerService {
   constructor(
     @Inject(ORDER_LEDGER_RECORD_PORT)
-    private readonly queue: IOrderLedgerRecordPort,
+    protected readonly queue: IOrderLedgerRecordPort,
     @Inject(ORDER_LEDGER_RETRY_ATTEMPTS)
-    private readonly ledgerRetryAttempts: number,
+    protected readonly retryAttempts: number,
     @InjectPinoLogger(OrderLedgerService.name)
-    private readonly logger: PinoLogger,
-  ) {}
+    protected readonly logger: PinoLogger,
+  ) {
+    super();
+  }
 
   public async recordPlaced(command: IOrderLedgerRecordPlacedCommand): Promise<void> {
     const { orderId, customerId, productIds } = command;
-    const operationKey = `order-placed:${orderId}`;
     const occurredAt = new Date().toISOString();
     const correlationId = CorrelationContextHelper.current(OrderLedgerService.name);
-    const record = {
-      operationKey,
+
+    await this.record({
+      operationKey: `order-placed:${orderId}`,
       subjectType: 'order',
       subjectId: orderId,
       action: 'OrderPlaced',
       payload: { customerId, productIds },
       occurredAt,
       correlationId,
-    };
-
-    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
-      maxAttempts: this.ledgerRetryAttempts,
-      logger: this.logger,
-      correlationId,
-      label: 'Ledger enqueue (order placed)',
-      context: { orderId, operationKey },
-      replayMessage:
-        'Ledger enqueue failed permanently: the order is placed but absent from the queue and the ledger, replay this record',
     });
-  }
-
-  private async enqueueOne(record: IOrderLedgerRecordEnqueueCommand): Promise<void> {
-    const { operationKey, subjectId } = record;
-
-    await this.queue.enqueue(record);
-
-    this.logger.info({ orderId: subjectId, operationKey }, 'Ledger record enqueued');
   }
 }

@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { OrderModel } from '../../../domain';
 import { OrderLedgerService } from '../../services/order-ledger.service';

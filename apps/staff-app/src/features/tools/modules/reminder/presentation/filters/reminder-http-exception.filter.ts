@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs-http';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import { ReminderDomainException, ReminderErrorCodeEnum } from '../../domain';
 

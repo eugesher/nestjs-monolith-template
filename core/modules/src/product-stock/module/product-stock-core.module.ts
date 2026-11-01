@@ -1,20 +1,18 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs-config';
-
+import { ConfigProviderHelper } from '@acme-libs/config';
 import {
   PRODUCT_STOCK_CORE_PORT,
   PRODUCT_STOCK_POST_SUBTRACT_JOB_OPTIONS,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core-contracts/product-stock';
+} from '@acme-core/contracts/product-stock';
 
 import { ProductStockCoreLockUseCase, ProductStockCoreMoveUseCase } from '../application';
 import {
   ProductStockCoreLockRepository,
   ProductStockCoreMoveRepository,
   ProductStockCorePostSubtractQueueAdapter,
-  ProductStockCoreTypeOrmModule,
 } from '../infrastructure';
 import {
   PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
@@ -27,7 +25,6 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
 
 @Module({
   imports: [
-    ProductStockCoreTypeOrmModule.forFeature(),
     BullModule.registerQueue({
       name: PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
       defaultJobOptions: PRODUCT_STOCK_POST_SUBTRACT_JOB_OPTIONS,

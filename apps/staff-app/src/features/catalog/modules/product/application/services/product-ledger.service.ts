@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { DomainEvent, Maybe, ReplayRetryHelper } from '@acme-libs-toolkit';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs/ledger';
+import { DomainEvent, Maybe } from '@acme-libs/toolkit';
 
 import { ProductCreatedEvent, ProductPublishedEvent } from '../../domain';
 import {
-  type IProductLedgerRecordEnqueueCommand,
   type IProductLedgerRecordPort,
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RETRY_ATTEMPTS,
@@ -14,17 +14,19 @@ import {
 import { IProductLedgerRecordCommand } from '../interfaces';
 
 @Injectable()
-export class ProductLedgerService {
+export class ProductLedgerService extends SubjectLedgerService {
   constructor(
     @Inject(PRODUCT_LEDGER_RECORD_PORT)
-    private readonly queue: IProductLedgerRecordPort,
+    protected readonly queue: IProductLedgerRecordPort,
     @Inject(PRODUCT_LEDGER_RETRY_ATTEMPTS)
-    private readonly ledgerRetryAttempts: number,
+    protected readonly retryAttempts: number,
     @InjectPinoLogger(ProductLedgerService.name)
-    private readonly logger: PinoLogger,
-  ) {}
+    protected readonly logger: PinoLogger,
+  ) {
+    super();
+  }
 
-  public async enqueue(command: IProductLedgerRecordCommand): Promise<void> {
+  public async recordEvents(command: IProductLedgerRecordCommand): Promise<void> {
     const { productId, events } = command;
     const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
 
@@ -32,7 +34,7 @@ export class ProductLedgerService {
       const record = this.toRecord(productId, event, correlationId);
 
       if (record !== undefined) {
-        await this.enqueueWithRetry(record);
+        await this.record(record);
       }
     }
   }
@@ -41,7 +43,7 @@ export class ProductLedgerService {
     productId: string,
     event: DomainEvent<Maybe<string>>,
     correlationId: string,
-  ): Maybe<IProductLedgerRecordEnqueueCommand> {
+  ): Maybe<ISubjectLedgerRecord> {
     if (event instanceof ProductCreatedEvent) {
       const { sku, name } = event;
       const occurredAt = event.occurredAt.toISOString();
@@ -73,27 +75,5 @@ export class ProductLedgerService {
     }
 
     return undefined;
-  }
-
-  private async enqueueWithRetry(record: IProductLedgerRecordEnqueueCommand): Promise<void> {
-    const { operationKey, subjectId, correlationId } = record;
-
-    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
-      maxAttempts: this.ledgerRetryAttempts,
-      logger: this.logger,
-      correlationId,
-      label: 'Ledger enqueue (product)',
-      context: { productId: subjectId, operationKey },
-      replayMessage:
-        'Ledger enqueue failed permanently: the record is absent from the queue and the ledger, replay this record',
-    });
-  }
-
-  private async enqueueOne(record: IProductLedgerRecordEnqueueCommand): Promise<void> {
-    const { operationKey, subjectId } = record;
-
-    await this.queue.enqueue(record);
-
-    this.logger.info({ productId: subjectId, operationKey }, 'Ledger record enqueued');
   }
 }
