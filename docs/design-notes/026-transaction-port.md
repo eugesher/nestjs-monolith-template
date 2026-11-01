@@ -20,7 +20,9 @@ it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 repository from the current transaction on every call, so every query inside `work` joins the
 transaction without being handed anything. `RepositoryHost` exposes only `getRepository`, so a
 repository cannot open a transaction of its own, and only `libs/database` and `app/setup` import
-`@nestjs-cls`. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
+`@nestjs-cls/transactional`. The CLS context itself is opened by `CorrelationSetupModule` for a
+request and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests
+in it with `ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
 outermost `run`.
 
 ## `afterCommit`
