@@ -36,7 +36,7 @@ parallel would see each other's half-built scaffolds: one removes a directory th
 linting against, or an unknown-file case finds a file that belongs to its neighbor. `test:unit`
 runs Jest in band, and nothing else may run the specs in parallel.
 
-**Imports are relative until the aliases exist.** A spec may import `@acme-libs/<lib>` only once
+**Imports are relative until the aliases exist.** A spec may import `@acme-libs-<lib>` only once
 `tsconfig.json` maps it; before that the alias does not resolve and the plugin treats it as an
 external package. Cases that are about aliases (`app-entry-points`, deep lib entry points) are
 added together with the aliases.

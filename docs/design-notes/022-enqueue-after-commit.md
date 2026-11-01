@@ -21,7 +21,7 @@ happen, and a call outside `run` throws.
 
 **A use case that owns the transaction enqueues on the next line.** The line after
 `await transaction.run(...)` already runs after the commit, so the features call their ledger
-services there (`ProductRestockUseCase`, `OrderPlaceUseCase`).
+services there (`ProductStockAddUseCase`, `OrderPlaceUseCase`).
 
 ## Deadline and retries
 

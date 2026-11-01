@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
-import { ReplayRetryHelper } from '@acme-libs/toolkit';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+import { ReplayRetryHelper } from '@acme-libs-toolkit';
+
 import {
   type IAuthLedgerRecordEnqueueCommand,
   type IAuthLedgerRecordPort,
   AUTH_LEDGER_RECORD_PORT,
   AUTH_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
-import { IAuthLedgerRecordRegisteredCommand } from '../interfaces/commands/auth-ledger-record-registered.command';
+import { IAuthLedgerRecordRegisteredCommand } from '../interfaces';
 
 @Injectable()
 export class AuthLedgerService {

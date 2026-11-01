@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Product } from '@acme-core/entities';
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper } from '@acme-libs-database';
+
+import { Product } from '@acme-core-entities';
+
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../../domain';
 import { type IProductCreateRepositoryPort } from '../../../outbound';
 import { ProductMapper } from '../mappers/product.mapper';

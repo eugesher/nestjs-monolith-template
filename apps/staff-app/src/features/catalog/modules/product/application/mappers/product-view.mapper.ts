@@ -1,5 +1,5 @@
 import { ProductModel } from '../../domain';
-import { IProductView } from '../interfaces/views/product.view';
+import { IProductView } from '../interfaces';
 
 export class ProductViewMapper {
   public static toView(product: ProductModel): IProductView {

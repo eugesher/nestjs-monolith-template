@@ -1,5 +1,7 @@
-import { StaffRole } from '@acme-core/entities';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+
+import { StaffRole } from '@acme-core-entities';
+
 import { RoleModel } from '../../../domain';
 
 export class RoleMapper {

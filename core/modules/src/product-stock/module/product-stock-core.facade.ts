@@ -6,7 +6,8 @@ import {
   IProductStockCoreMoveView,
   IProductStockCoreOnHandView,
   IProductStockCorePort,
-} from '@acme-core/contracts/product-stock';
+} from '@acme-core-contracts/product-stock';
+
 import { ProductStockCoreLockUseCase, ProductStockCoreMoveUseCase } from '../application';
 
 @Injectable()

@@ -1,4 +1,5 @@
-import { CorrelationContextHelper } from '@acme-libs/observability';
+import { CorrelationContextHelper } from '@acme-libs-observability';
+
 import { IdempotencyPurgeRunUseCase } from '../../application';
 import { IdempotencyPurgeConsumer } from '../idempotency-purge.consumer';
 

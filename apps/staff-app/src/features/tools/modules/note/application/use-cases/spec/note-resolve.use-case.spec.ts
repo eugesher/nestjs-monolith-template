@@ -1,6 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { NoteModel } from '../../../domain';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteWriteService } from '../../services/note-write.service';

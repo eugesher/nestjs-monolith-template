@@ -1,6 +1,7 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { ReminderDomainException, ReminderErrorCodeEnum } from '../../../domain';
 import { ReminderHttpExceptionFilter } from '../reminder-http-exception.filter';
 

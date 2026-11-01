@@ -1,4 +1,5 @@
-import { IPage } from '@acme-libs/toolkit';
+import { IPage } from '@acme-libs-toolkit';
+
 import { ILedgerEntryPageQuery, ILedgerStoredEntryView } from '../interfaces';
 
 export interface ILedgerListEntriesRepositoryPort {

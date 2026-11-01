@@ -1,5 +1,7 @@
-import { Customer } from '@acme-core/entities';
-import { UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs-kernel';
+
+import { Customer } from '@acme-core-entities';
+
 import { AuthCustomerMapper } from '../auth-customer.mapper';
 
 describe('AuthCustomerMapper', () => {

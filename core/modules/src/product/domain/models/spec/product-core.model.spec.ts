@@ -1,4 +1,5 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import { ProductStatusEnum } from '@acme-libs-kernel';
+
 import { ProductCoreModel } from '../product-core.model';
 
 describe('ProductCoreModel', () => {

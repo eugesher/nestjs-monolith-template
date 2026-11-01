@@ -3,8 +3,10 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { IdempotencyKey } from '@acme-core/entities';
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { IdempotencyStatusEnum } from '@acme-libs-kernel';
+
+import { IdempotencyKey } from '@acme-core-entities';
+
 import {
   type IIdempotencyCoreCompleteRepositoryPort,
   IIdempotencyCoreKeyCompletionCommand,

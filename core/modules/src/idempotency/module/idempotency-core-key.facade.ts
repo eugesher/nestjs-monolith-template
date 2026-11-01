@@ -6,7 +6,8 @@ import {
   IIdempotencyCoreCompleteCommand,
   IIdempotencyCoreKeyPort,
   IIdempotencyCoreReleaseCommand,
-} from '@acme-core/contracts/idempotency';
+} from '@acme-core-contracts/idempotency';
+
 import {
   IdempotencyCoreClaimUseCase,
   IdempotencyCoreCompleteUseCase,

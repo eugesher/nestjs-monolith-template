@@ -5,7 +5,8 @@ import type { Queue } from 'bull';
 import {
   type IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core/contracts/product-stock';
+} from '@acme-core-contracts/product-stock';
+
 import {
   IProductStockCorePostSubtractEnqueueCommand,
   IProductStockCorePostSubtractPort,

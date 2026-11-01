@@ -1,5 +1,5 @@
 import { NoteRevisionModel } from '../../domain';
-import { INoteRevisionView } from '../interfaces/views/note-revision.view';
+import { INoteRevisionView } from '../interfaces';
 
 export class NoteRevisionViewMapper {
   public static toView(revision: NoteRevisionModel): INoteRevisionView {

@@ -4,7 +4,8 @@ import {
   type IProductCorePort,
   PRODUCT_CORE_PORT,
   ProductCoreArchiveOutcomeEnum,
-} from '@acme-core/contracts/product';
+} from '@acme-core-contracts/product';
+
 import {
   IProductStockArchiveCommand,
   IProductStockArchivePort,

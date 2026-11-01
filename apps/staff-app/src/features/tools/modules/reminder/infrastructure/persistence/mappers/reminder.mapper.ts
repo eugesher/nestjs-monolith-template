@@ -1,4 +1,5 @@
-import { Reminder } from '@acme-core/entities';
+import { Reminder } from '@acme-core-entities';
+
 import { ReminderModel } from '../../../domain';
 
 export class ReminderMapper {

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { CredentialsLibModule } from '@acme-libs/credentials';
-import { HttpExceptionFilter } from '@acme-libs/http';
+import { CredentialsLibModule } from '@acme-libs-credentials';
+import { HttpExceptionFilter } from '@acme-libs-http';
+
 import { UserAssignRoleUseCase, UserRegisterUseCase } from './application';
 import {
   UserAssignRoleRepository,

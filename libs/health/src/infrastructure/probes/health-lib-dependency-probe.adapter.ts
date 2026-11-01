@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
-import { IHealthLibDependencyView } from '@acme-libs/contracts/health';
+import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs-contracts/cache';
+import { IHealthLibDependencyView } from '@acme-libs-contracts/health';
+
 import { IHealthLibDependencyProbePort } from '../../outbound';
 
 @Injectable()

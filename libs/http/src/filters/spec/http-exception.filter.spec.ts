@@ -7,7 +7,8 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { HttpExceptionFilter } from '../http-exception.filter';
 
 describe('HttpExceptionFilter', () => {

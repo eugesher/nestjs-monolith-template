@@ -1,7 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { UserDomainException } from '../../../domain';
 import { UserRegisterUseCase } from '../user-register.use-case';
 

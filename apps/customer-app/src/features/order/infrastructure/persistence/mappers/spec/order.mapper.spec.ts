@@ -1,4 +1,5 @@
-import { Order } from '@acme-core/entities';
+import { Order } from '@acme-core-entities';
+
 import { OrderMapper } from '../order.mapper';
 
 describe('OrderMapper', () => {

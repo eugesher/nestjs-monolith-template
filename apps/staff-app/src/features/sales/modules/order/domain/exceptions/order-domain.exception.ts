@@ -1,4 +1,5 @@
-import { DomainException } from '@acme-libs/toolkit';
+import { DomainException } from '@acme-libs-toolkit';
+
 import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
 
 export class OrderDomainException extends DomainException {

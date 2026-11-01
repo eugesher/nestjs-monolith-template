@@ -1,7 +1,8 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { ReminderStatusEnum } from '@acme-libs-kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { ReminderModel } from '../../../domain';
 import { ReminderAccessService } from '../reminder-access.service';
 import { ReminderWriteService } from '../reminder-write.service';

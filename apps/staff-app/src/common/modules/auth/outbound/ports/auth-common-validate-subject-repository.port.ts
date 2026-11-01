@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { AuthCommonStaffUserModel } from '../../domain';
 
 export interface IAuthCommonValidateSubjectRepositoryPort {

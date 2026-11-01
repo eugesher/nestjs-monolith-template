@@ -1,4 +1,5 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
+
 import { AuthDomainException } from '../exceptions/auth-domain.exception';
 import { IAuthCustomerRecord } from '../interfaces/auth-customer-record.interface';
 import { IAuthCustomerRegistration } from '../interfaces/auth-customer-registration.interface';

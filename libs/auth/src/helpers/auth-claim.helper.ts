@@ -1,4 +1,4 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
 
 export class AuthClaimHelper {
   public static holdsAny(

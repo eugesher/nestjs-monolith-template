@@ -13,9 +13,9 @@ Deleting the expired keys has one caller, the `idempotency-purge` processor of p
 lives in the processor with a repository of its own (see `009-scheduled-processor.md` and
 `024-code-placement.md`).
 
-A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency`
+A feature root mounts `IdempotencyCoreModule` from `@acme-core-modules/idempotency`
 and reaches a port only from a core-adapter, like any core module. The `IdempotencyKey` decorator
-that reads the header lives in `@acme-libs/http`, so both apps parse the key the same way.
+that reads the header lives in `@acme-libs-http`, so both apps parse the key the same way.
 
 Keys share one table and one UNIQUE index across the apps. A key that one app or one client already
 used is a `mismatch` for any other body, so a caller that wants keys scoped per user puts the user

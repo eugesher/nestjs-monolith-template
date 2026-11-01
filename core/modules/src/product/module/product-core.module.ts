@@ -1,9 +1,11 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
-import { PRODUCT_CORE_PORT } from '@acme-core/contracts/product';
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigProviderHelper } from '@acme-libs-config';
+
+import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core-contracts/ledger';
+import { PRODUCT_CORE_PORT } from '@acme-core-contracts/product';
+
 import { ProductCoreArchiveUseCase } from '../application';
 import {
   ProductCoreArchiveRepository,

@@ -1,5 +1,6 @@
-import { RoleEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import { RoleEnum } from '@acme-libs-kernel';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { UserStaffUserModel } from '../../domain';
 
 export interface IUserAssignRoleRepositoryPort {

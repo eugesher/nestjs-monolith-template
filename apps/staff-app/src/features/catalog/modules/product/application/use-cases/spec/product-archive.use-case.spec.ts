@@ -1,4 +1,5 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import { ProductStatusEnum } from '@acme-libs-kernel';
+
 import { ProductModel } from '../../../domain';
 import { ProductAccessService } from '../../services/product-access.service';
 import { ProductArchiveUseCase } from '../product-archive.use-case';

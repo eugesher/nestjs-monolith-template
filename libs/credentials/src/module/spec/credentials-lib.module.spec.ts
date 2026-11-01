@@ -8,7 +8,8 @@ import {
   CREDENTIALS_PASSWORD_HASHER_PORT,
   type ICredentialsAccessTokenPort,
   type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
+} from '@acme-libs-contracts/credentials';
+
 import { CredentialsLibModule } from '../credentials-lib.module';
 
 describe('CredentialsLibModule', () => {

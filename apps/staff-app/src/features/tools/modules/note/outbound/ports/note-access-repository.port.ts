@@ -1,4 +1,5 @@
-import { Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs-toolkit';
+
 import { NoteModel } from '../../domain';
 import { INoteAccessFindOwnedQuery } from '../interfaces';
 

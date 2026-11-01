@@ -1,6 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+
 import { HealthLibCheckReadinessUseCase } from '../health-lib-check-readiness.use-case';
 
 describe('HealthLibCheckReadinessUseCase', () => {

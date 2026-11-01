@@ -3,7 +3,8 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { NoteRevision } from '@acme-core/entities';
+import { NoteRevision } from '@acme-core-entities';
+
 import { NoteRevisionModel } from '../../../domain';
 import { type INoteEditRepositoryPort } from '../../../outbound';
 import { NoteUpdateBaseRepository } from './base/note-update-base.repository';

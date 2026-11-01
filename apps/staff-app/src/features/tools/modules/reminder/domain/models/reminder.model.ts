@@ -1,5 +1,6 @@
-import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { ReminderStatusEnum } from '@acme-libs-kernel';
+import { AggregateRoot, Maybe } from '@acme-libs-toolkit';
+
 import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
 import { ReminderDomainException } from '../exceptions/reminder-domain.exception';
 import { IReminderDraft } from '../interfaces/reminder-draft.interface';

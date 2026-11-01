@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { AUTH_CLAIMS_PORT, type IAuthClaimsPort } from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import { AUTH_CLAIMS_PORT, type IAuthClaimsPort } from '@acme-libs-contracts/auth';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
 import { AuthClaimHelper } from '../helpers/auth-claim.helper';
 import { IAuthRequest } from '../interfaces/auth-request.interface';

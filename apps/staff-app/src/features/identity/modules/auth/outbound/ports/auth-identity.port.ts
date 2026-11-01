@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { IAuthIdentityFindSubjectQuery, IAuthIdentitySubjectView } from '../interfaces';
 
 export interface IAuthIdentityPort {

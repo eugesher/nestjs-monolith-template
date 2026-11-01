@@ -4,7 +4,8 @@ import {
   IProductCoreArchiveCommand,
   IProductCoreArchiveView,
   IProductCorePort,
-} from '@acme-core/contracts/product';
+} from '@acme-core-contracts/product';
+
 import { ProductCoreArchiveUseCase } from '../application';
 
 @Injectable()

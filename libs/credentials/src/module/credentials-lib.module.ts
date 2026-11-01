@@ -5,7 +5,8 @@ import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import {
   CREDENTIALS_ACCESS_TOKEN_PORT,
   CREDENTIALS_PASSWORD_HASHER_PORT,
-} from '@acme-libs/contracts/credentials';
+} from '@acme-libs-contracts/credentials';
+
 import { CredentialsAccessTokenAdapter } from '../access-token/credentials-access-token.adapter';
 import { CredentialsPasswordHasherAdapter } from '../password-hasher/credentials-password-hasher.adapter';
 

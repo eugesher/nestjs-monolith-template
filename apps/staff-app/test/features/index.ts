@@ -4,3 +4,4 @@ export * from './identity/identity.e2e';
 export * from './ledger/ledger.e2e';
 export * from './sales/sales.e2e';
 export * from './tools/tools.e2e';
+export * from './warehouse/warehouse.e2e';

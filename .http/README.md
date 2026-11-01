@@ -28,7 +28,7 @@ Nine e2e cases are not one request:
 - the concurrent renames of a product send six requests at once, `catalog/product/update/06-concurrent` sends
   one;
 - the replays of a product create, a restock and an order send the same request twice, as
-  `staff-app/catalog/product/create/02-replay`, `staff-app/catalog/product/restock/03-replay` and
+  `staff-app/catalog/product/create/02-replay`, `staff-app/warehouse/product-stock/add/03-replay` and
   `customer-app/order/place/02-replay` say;
 - two simultaneous orders for the last units of a product send the same request twice at once with
   two keys, as `customer-app/order/place/13-simultaneous` says;

@@ -397,7 +397,7 @@ exports[`App Catalog Product POST /api/catalog/products should replay the same r
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
 {
   "cache": {
     "keys": [
@@ -462,7 +462,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer a deleted product with 404 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer a deleted product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -474,7 +474,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should answer an unknown product with 404 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer an unknown product with 404 1`] = `
 {
   "response": {
     "body": {
@@ -486,7 +486,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of a fraction with 400 from validation 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of a fraction with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -500,7 +500,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a quantity of zero with 400 from validation 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of zero with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -514,7 +514,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock by a viewer with 403 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock by a viewer with 403 1`] = `
 {
   "response": {
     "body": {
@@ -526,7 +526,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse a restock without a key with 400 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock without a key with 400 1`] = `
 {
   "response": {
     "body": {
@@ -538,7 +538,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should refuse the same key with another quantity with 422 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse the same key with another quantity with 422 1`] = `
 {
   "db": {
     "product_stock": [
@@ -558,7 +558,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should replay the same response for the same key and body without a second movement 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should replay the same response for the same key and body without a second movement 1`] = `
 {
   "db": {
     "product_stock": [
@@ -593,7 +593,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock a draft 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock a draft 1`] = `
 {
   "response": {
     "body": {
@@ -604,7 +604,7 @@ exports[`App Catalog Product POST /api/catalog/products/:productId/stock should 
 }
 `;
 
-exports[`App Catalog Product POST /api/catalog/products/:productId/stock should restock an archived product and leave it archived 1`] = `
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock an archived product and leave it archived 1`] = `
 {
   "db": {
     "product": [

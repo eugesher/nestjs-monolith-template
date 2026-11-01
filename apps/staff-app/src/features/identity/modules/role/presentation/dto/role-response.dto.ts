@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
 
 export class RoleResponseDto {
   @ApiResponseProperty({ example: RoleEnum.EDITOR })

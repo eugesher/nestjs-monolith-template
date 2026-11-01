@@ -1,4 +1,5 @@
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs-kernel';
+
 import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {

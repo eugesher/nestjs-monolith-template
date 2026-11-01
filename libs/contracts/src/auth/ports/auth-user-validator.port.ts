@@ -1,4 +1,5 @@
-import { Maybe } from '@acme-libs/toolkit';
+import { Maybe } from '@acme-libs-toolkit';
+
 import { IAuthCurrentUserView, IAuthJwtPayloadQuery } from '../interfaces';
 
 export interface IAuthUserValidatorPort {

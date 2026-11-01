@@ -7,18 +7,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { RequiresPermission } from '@acme-libs-auth';
+import { IdempotencyKey } from '@acme-libs-http';
+import { PermissionCodeEnum } from '@acme-libs-kernel';
+import type { Maybe } from '@acme-libs-toolkit';
+
 import { IfMatch } from '@acme-staff-common/shared/concurrency';
-import { RequiresPermission } from '@acme-libs/auth';
-import { IdempotencyKey } from '@acme-libs/http';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
-import type { Maybe } from '@acme-libs/toolkit';
+
 import {
   ProductArchiveUseCase,
   ProductCreateUseCase,
   ProductGetManyUseCase,
   ProductGetOneUseCase,
   ProductPublishUseCase,
-  ProductRestockUseCase,
   ProductUpdateUseCase,
 } from '../../application';
 import { ProductCreateRequestDto } from '../dto/product-create-request.dto';
@@ -26,8 +27,6 @@ import { ProductGetManyRequestDto } from '../dto/product-get-many-request.dto';
 import { ProductIdRequestDto } from '../dto/product-id-request.dto';
 import { ProductPageResponseDto } from '../dto/product-page-response.dto';
 import { ProductResponseDto } from '../dto/product-response.dto';
-import { ProductRestockRequestDto } from '../dto/product-restock-request.dto';
-import { ProductStockResponseDto } from '../dto/product-stock-response.dto';
 import { ProductUpdateRequestDto } from '../dto/product-update-request.dto';
 import { ProductHttpExceptionFilter } from '../filters/product-http-exception.filter';
 
@@ -42,7 +41,6 @@ export class ProductController {
     private readonly update: ProductUpdateUseCase,
     private readonly publish: ProductPublishUseCase,
     private readonly archive: ProductArchiveUseCase,
-    private readonly restock: ProductRestockUseCase,
   ) {}
 
   @Post()
@@ -125,23 +123,5 @@ export class ProductController {
     const { productId } = params;
 
     return await this.archive.execute({ productId, expectedVersion });
-  }
-
-  @Post(':productId/stock')
-  @RequiresPermission(PermissionCodeEnum.PRODUCT_RESTOCK)
-  @ApiHeader({ name: 'Idempotency-Key', required: true, description: 'At most 128 characters' })
-  @ApiOperation({
-    summary: 'Add units to the stock of a product that is not archived (idempotent)',
-  })
-  @ApiCreatedResponse({ type: ProductStockResponseDto })
-  public async handleRestock(
-    @Param() params: ProductIdRequestDto,
-    @Body() body: ProductRestockRequestDto,
-    @IdempotencyKey() idempotencyKey: string,
-  ): Promise<ProductStockResponseDto> {
-    const { productId } = params;
-    const { quantity } = body;
-
-    return await this.restock.execute({ productId, quantity, idempotencyKey });
   }
 }
