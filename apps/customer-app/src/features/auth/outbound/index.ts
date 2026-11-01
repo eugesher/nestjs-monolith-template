@@ -1,5 +1,3 @@
-export * from './interfaces';
-
 export * from './ports/auth-ledger-record.port';
 export * from './ports/auth-login-repository.port';
 export * from './ports/auth-register-repository.port';

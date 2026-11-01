@@ -1,7 +1,5 @@
-import { IProductCoreLedgerRecordEnqueueCommand } from '../interfaces';
+import { ISubjectLedgerPort } from '@acme-libs-toolkit';
 
-export interface IProductCoreLedgerRecordPort {
-  enqueue(command: IProductCoreLedgerRecordEnqueueCommand): Promise<void>;
-}
+export type IProductCoreLedgerRecordPort = ISubjectLedgerPort;
 
 export const PRODUCT_CORE_LEDGER_RECORD_PORT = Symbol('PRODUCT_CORE_LEDGER_RECORD_PORT');

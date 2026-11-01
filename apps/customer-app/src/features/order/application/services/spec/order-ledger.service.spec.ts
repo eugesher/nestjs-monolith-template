@@ -41,51 +41,6 @@ describe('OrderLedgerService', () => {
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
-      expect(logger.info).toHaveBeenCalledWith(
-        { orderId: '610', operationKey: 'order-placed:610' },
-        'Ledger record enqueued',
-      );
-    });
-
-    it('retries a failed enqueue and logs each retry', async () => {
-      enqueue.mockRejectedValueOnce(new Error('redis is down')).mockResolvedValue(undefined);
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordPlaced({ orderId: '610', customerId: 'customer-1', productIds: ['100'] }),
-      );
-
-      expect(enqueue).toHaveBeenCalledTimes(2);
-      expect(logger.warn).toHaveBeenCalledWith(
-        {
-          err: new Error('redis is down'),
-          correlationId: 'corr-1',
-          attempt: 1,
-          orderId: '610',
-          operationKey: 'order-placed:610',
-        },
-        'Ledger enqueue (order placed) failed — retrying',
-      );
-      expect(logger.error).not.toHaveBeenCalled();
-    });
-
-    it('logs the record for replay after the configured attempts instead of throwing', async () => {
-      enqueue.mockRejectedValue(new Error('redis is down'));
-
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordPlaced({ orderId: '610', customerId: 'customer-1', productIds: ['100'] }),
-      );
-
-      expect(enqueue).toHaveBeenCalledTimes(2);
-      expect(logger.info).not.toHaveBeenCalled();
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          err: new Error('redis is down'),
-          correlationId: 'corr-1',
-          orderId: '610',
-          operationKey: 'order-placed:610',
-        },
-        'Ledger enqueue failed permanently: the order is placed but absent from the queue and the ledger, replay this record',
-      );
     });
   });
 });

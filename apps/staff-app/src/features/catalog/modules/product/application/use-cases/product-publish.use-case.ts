@@ -26,7 +26,7 @@ export class ProductPublishUseCase {
     const { product, events } = written;
 
     await this.catalogCache.invalidate();
-    await this.ledgerService.enqueue({ productId, events });
+    await this.ledgerService.recordEvents({ productId, events });
 
     const view = ProductViewMapper.toView(product);
 

@@ -1,7 +1,5 @@
-import { IAuthLedgerRecordEnqueueCommand } from '../interfaces';
+import { ISubjectLedgerPort } from '@acme-libs-toolkit';
 
-export interface IAuthLedgerRecordPort {
-  enqueue(command: IAuthLedgerRecordEnqueueCommand): Promise<void>;
-}
+export type IAuthLedgerRecordPort = ISubjectLedgerPort;
 
 export const AUTH_LEDGER_RECORD_PORT = Symbol('AUTH_LEDGER_RECORD_PORT');

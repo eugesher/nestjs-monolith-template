@@ -1,4 +1,4 @@
-export interface IProductCoreLedgerRecordEnqueueCommand {
+export interface ISubjectLedgerRecord {
   operationKey: string;
   subjectType: string;
   subjectId: string;

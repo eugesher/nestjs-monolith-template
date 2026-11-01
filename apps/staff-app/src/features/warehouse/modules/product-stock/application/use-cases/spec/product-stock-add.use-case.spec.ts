@@ -13,7 +13,7 @@ describe('ProductStockAddUseCase', () => {
   let claim: jest.Mock;
   let complete: jest.Mock;
   let release: jest.Mock;
-  let enqueue: jest.Mock;
+  let recordEvents: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductStockAddUseCase;
@@ -27,11 +27,11 @@ describe('ProductStockAddUseCase', () => {
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
-    enqueue = jest.fn().mockResolvedValue(undefined);
+    recordEvents = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductStockAddUseCase(
-      { enqueue } as unknown as ProductStockLedgerService,
+      { recordEvents } as unknown as ProductStockLedgerService,
       { findById },
       { lock, add },
       { claim, complete, release },
@@ -58,12 +58,14 @@ describe('ProductStockAddUseCase', () => {
     it('enqueues the ledger record under the stock row after the commit and logs it', async () => {
       await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
 
-      expect(enqueue).toHaveBeenCalledWith({
+      expect(recordEvents).toHaveBeenCalledWith({
         productId: '12',
         productStockId: '700',
         events: [expect.any(ProductStockAddedEvent)],
       });
-      expect(run.mock.invocationCallOrder[0]).toBeLessThan(enqueue.mock.invocationCallOrder[0]);
+      expect(run.mock.invocationCallOrder[0]).toBeLessThan(
+        recordEvents.mock.invocationCallOrder[0],
+      );
       expect(logger.info).toHaveBeenCalledWith(
         { productId: '12', quantity: 5, onHand: 15 },
         'Product restocked',
@@ -80,7 +82,7 @@ describe('ProductStockAddUseCase', () => {
 
       expect(view).toEqual({ productId: '12', quantity: 10 });
       expect(lock).not.toHaveBeenCalled();
-      expect(enqueue).not.toHaveBeenCalled();
+      expect(recordEvents).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Product restock replayed from the idempotency store',
@@ -128,7 +130,7 @@ describe('ProductStockAddUseCase', () => {
         useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' }),
       ).rejects.toThrow('lock wait timeout');
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
-      expect(enqueue).not.toHaveBeenCalled();
+      expect(recordEvents).not.toHaveBeenCalled();
     });
   });
 });

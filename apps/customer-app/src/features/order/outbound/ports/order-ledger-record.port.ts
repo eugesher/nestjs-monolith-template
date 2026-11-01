@@ -1,7 +1,5 @@
-import { IOrderLedgerRecordEnqueueCommand } from '../interfaces';
+import { ISubjectLedgerPort } from '@acme-libs-toolkit';
 
-export interface IOrderLedgerRecordPort {
-  enqueue(command: IOrderLedgerRecordEnqueueCommand): Promise<void>;
-}
+export type IOrderLedgerRecordPort = ISubjectLedgerPort;
 
 export const ORDER_LEDGER_RECORD_PORT = Symbol('ORDER_LEDGER_RECORD_PORT');

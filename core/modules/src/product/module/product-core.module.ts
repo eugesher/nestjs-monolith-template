@@ -6,7 +6,7 @@ import { ConfigProviderHelper } from '@acme-libs-config';
 import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core-contracts/ledger';
 import { PRODUCT_CORE_PORT } from '@acme-core-contracts/product';
 
-import { ProductCoreArchiveUseCase } from '../application';
+import { ProductCoreArchiveUseCase, ProductCoreLedgerService } from '../application';
 import {
   ProductCoreArchiveRepository,
   ProductCoreCatalogCacheAdapter,
@@ -34,6 +34,7 @@ import { ProductCoreFacade } from './product-core.facade';
   providers: [
     { provide: PRODUCT_CORE_PORT, useClass: ProductCoreFacade },
     ProductCoreArchiveUseCase,
+    ProductCoreLedgerService,
     { provide: PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT, useClass: ProductCoreArchiveRepository },
     { provide: PRODUCT_CORE_LEDGER_RECORD_PORT, useClass: ProductCoreLedgerRecordQueueAdapter },
     { provide: PRODUCT_CORE_CATALOG_CACHE_PORT, useClass: ProductCoreCatalogCacheAdapter },

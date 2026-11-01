@@ -76,7 +76,7 @@ export class ProductStockAddUseCase {
     const written = await this.transaction.run(() => this.persist(command));
     const { stock, productStockId, events } = written;
 
-    await this.ledgerService.enqueue({ productId, productStockId, events });
+    await this.ledgerService.recordEvents({ productId, productStockId, events });
 
     this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
 

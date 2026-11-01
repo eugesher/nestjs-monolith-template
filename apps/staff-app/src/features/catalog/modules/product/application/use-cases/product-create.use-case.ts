@@ -79,7 +79,7 @@ export class ProductCreateUseCase {
     const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
     const events = draft.pullDomainEvents();
 
-    await this.ledgerService.enqueue({ productId: view.id, events });
+    await this.ledgerService.recordEvents({ productId: view.id, events });
 
     this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
 

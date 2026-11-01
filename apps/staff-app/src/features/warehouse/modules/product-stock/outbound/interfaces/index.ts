@@ -1,7 +1,6 @@
 export * from './commands/product-stock-idempotency-claim.command';
 export * from './commands/product-stock-idempotency-complete.command';
 export * from './commands/product-stock-idempotency-release.command';
-export * from './commands/product-stock-ledger-record-enqueue.command';
 export * from './commands/product-stock-movement-add.command';
 export * from './commands/product-stock-movement-lock.command';
 

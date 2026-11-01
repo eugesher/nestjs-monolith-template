@@ -10,7 +10,7 @@ import { ProductPublishUseCase } from '../product-publish.use-case';
 
 describe('ProductPublishUseCase', () => {
   let write: jest.Mock;
-  let enqueue: jest.Mock;
+  let recordEvents: jest.Mock;
   let invalidate: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductPublishUseCase;
@@ -28,12 +28,12 @@ describe('ProductPublishUseCase', () => {
       }),
       events: [new ProductPublishedEvent('12', 'SKU-0001', 2, ProductStatusEnum.DRAFT)],
     });
-    enqueue = jest.fn().mockResolvedValue(undefined);
+    recordEvents = jest.fn().mockResolvedValue(undefined);
     invalidate = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
     useCase = new ProductPublishUseCase(
       { write } as unknown as ProductWriteService,
-      { enqueue } as unknown as ProductLedgerService,
+      { recordEvents } as unknown as ProductLedgerService,
       { invalidate },
       logger as unknown as PinoLogger,
     );
@@ -47,7 +47,7 @@ describe('ProductPublishUseCase', () => {
         { productId: '12', expectedVersion: 1 },
         expect.any(Function),
       );
-      expect(enqueue).toHaveBeenCalledWith({
+      expect(recordEvents).toHaveBeenCalledWith({
         productId: '12',
         events: [expect.any(ProductPublishedEvent)],
       });
@@ -71,7 +71,7 @@ describe('ProductPublishUseCase', () => {
         invalidate.mock.invocationCallOrder[0],
       );
       expect(invalidate.mock.invocationCallOrder[0]).toBeLessThan(
-        enqueue.mock.invocationCallOrder[0],
+        recordEvents.mock.invocationCallOrder[0],
       );
     });
 
@@ -82,7 +82,7 @@ describe('ProductPublishUseCase', () => {
         useCase.execute({ productId: '12', expectedVersion: undefined }),
       ).rejects.toThrow('PRODUCT_ALREADY_ARCHIVED');
       expect(invalidate).not.toHaveBeenCalled();
-      expect(enqueue).not.toHaveBeenCalled();
+      expect(recordEvents).not.toHaveBeenCalled();
     });
 
     it('hands the write service a change that publishes the product', async () => {
