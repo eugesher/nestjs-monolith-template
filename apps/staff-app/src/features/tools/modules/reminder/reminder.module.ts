@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs-config';
-import { HttpExceptionFilter } from '@acme-libs-http';
+import { ConfigProviderHelper } from '@acme-libs/config';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
   ReminderAccessService,
@@ -20,7 +20,6 @@ import {
   ReminderDeleteRepository,
   ReminderGetSummaryRepository,
   ReminderSummaryCacheAdapter,
-  ReminderTypeOrmModule,
   ReminderWriteRepository,
 } from './infrastructure';
 import {
@@ -37,7 +36,6 @@ import {
 import { ReminderController } from './presentation';
 
 @Module({
-  imports: [ReminderTypeOrmModule.forFeature()],
   controllers: [ReminderController],
   providers: [
     HttpExceptionFilter,

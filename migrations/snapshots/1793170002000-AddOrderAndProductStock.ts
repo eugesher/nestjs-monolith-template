@@ -5,7 +5,7 @@ export class AddOrderAndProductStock1793170002000 implements MigrationInterface 
     await queryRunner.query(`
       CREATE TABLE \`order\` (
         id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        customer_id CHAR(36)  NOT NULL,
+        customer_id BIGINT UNSIGNED NOT NULL,
         created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         KEY idx_order_customer (customer_id, id),
         CONSTRAINT fk_order_customer FOREIGN KEY (customer_id) REFERENCES customer (id)

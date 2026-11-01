@@ -1,6 +1,6 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 export class UserRolesResponseDto {
   @ApiResponseProperty()

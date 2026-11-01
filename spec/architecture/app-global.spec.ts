@@ -205,16 +205,31 @@ describe('global modules (app/global) — modules without controllers', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it.each([
-    '@nestjs-cls/transactional',
-    '@nestjs-cls/transactional-adapter-typeorm',
-    '@nestjs/typeorm',
-    'typeorm',
-  ])('the rest of infrastructure MAY import the persistence package %s', async (source) => {
+  it.each(['typeorm', '@acme-libs/database'])(
+    'the rest of infrastructure MAY import the persistence package %s',
+    async (source) => {
+      await expect({
+        file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toPassArchitectureLint();
+    },
+  );
+
+  it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+    'the rest of infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+    async (source) => {
+      await expect({
+        file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it('the rest of infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',
-      code: `import { x } from "${source}";`,
-    }).toPassArchitectureLint();
+      code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('the rest of infrastructure MAY reach its own outbound', async () => {

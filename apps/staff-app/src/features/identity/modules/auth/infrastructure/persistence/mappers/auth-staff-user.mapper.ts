@@ -1,4 +1,4 @@
-import { StaffUser } from '@acme-core-entities';
+import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthStaffUserModel } from '../../../domain';
 

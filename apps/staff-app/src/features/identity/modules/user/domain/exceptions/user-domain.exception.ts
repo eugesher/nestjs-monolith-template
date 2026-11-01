@@ -1,5 +1,5 @@
-import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
-import { DomainException } from '@acme-libs-toolkit';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { DomainException } from '@acme-libs/toolkit';
 
 export class UserDomainException extends DomainException {
   public readonly code: IdentityErrorCodeEnum;

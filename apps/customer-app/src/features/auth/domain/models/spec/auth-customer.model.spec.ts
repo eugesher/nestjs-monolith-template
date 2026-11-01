@@ -1,23 +1,17 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
+import { IAuthCustomerDraft } from '../../interfaces/auth-customer-draft.interface';
 import { AuthCustomerModel } from '../auth-customer.model';
 
 describe('AuthCustomerModel', () => {
   describe('register', () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
-    it('creates an active customer with a generated id and a normalized email', () => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValue('5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f');
-
-      const customer = AuthCustomerModel.register({
+    it('drafts an active customer with a normalized email and no id until it is stored', () => {
+      const draft = AuthCustomerModel.register({
         email: '  Eve@Example.COM ',
         passwordHash: 'hash',
       });
 
-      expect(customer).toMatchObject({
-        id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
+      expect(draft).toEqual({
         email: 'eve@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
@@ -27,7 +21,7 @@ describe('AuthCustomerModel', () => {
     it.each(['eve', 'eve@', '@example.com', 'eve@example', 'e ve@example.com'])(
       'rejects the malformed email %s',
       (email) => {
-        const register = (): AuthCustomerModel =>
+        const register = (): IAuthCustomerDraft =>
           AuthCustomerModel.register({ email, passwordHash: 'hash' });
 
         expect(register).toThrow(

@@ -1,18 +1,15 @@
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Note } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { Note } from '@acme-staff/common/entities';
 
 import { INoteWriteUpdateCommand } from '../../../../outbound';
 
 export abstract class NoteUpdateBaseRepository {
-  protected constructor(
-    protected readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
-  ) {}
+  protected constructor(protected readonly repositoryHost: RepositoryHost) {}
 
   protected get noteRepository(): Repository<Note> {
-    return this.transactionHost.tx.getRepository(Note);
+    return this.repositoryHost.getRepository(Note);
   }
 
   public async update(command: INoteWriteUpdateCommand): Promise<boolean> {

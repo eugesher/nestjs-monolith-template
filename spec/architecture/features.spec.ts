@@ -161,17 +161,32 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the transaction host', async () => {
+    it('infrastructure MAY read tables through the repository host', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         code: [
           'import { Injectable } from "@nestjs/common";',
-          'import { TypeOrmModule } from "@nestjs/typeorm";',
-          'import { TransactionHost } from "@nestjs-cls/transactional";',
-          'import { TransactionalAdapterTypeOrm } from "@nestjs-cls/transactional-adapter-typeorm";',
           'import { Repository } from "typeorm";',
+          'import { RepositoryHost } from "@acme-libs/database";',
         ].join('\n'),
       }).toPassArchitectureLint();
+    });
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['application', 'domain', 'outbound', 'infrastructure/queue'])(
@@ -250,14 +265,14 @@ describe('features', () => {
     it('application MAY take the credentials ports — a feature signs its users in', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs-contracts/credentials";',
+        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
       }).toPassArchitectureLint();
     });
 
     it('the module root MAY mount the credentials lib', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',
-        code: 'import { CredentialsLibModule } from "@acme-libs-credentials";',
+        code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
       }).toPassArchitectureLint();
     });
 
@@ -266,7 +281,7 @@ describe('features', () => {
       async (layer) => {
         await expect({
           file: `apps/__features-fixture__/src/features/product/${layer}/__fixture__.ts`,
-          code: 'import { CredentialsLibModule } from "@acme-libs-credentials";',
+          code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
         }).toBreakRule('boundaries/dependencies');
       },
     );

@@ -1,6 +1,5 @@
-import { PermissionCodeEnum } from '@acme-libs-kernel';
-
-import { StaffPermission } from '@acme-core-entities';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { StaffPermission } from '@acme-staff/common/entities';
 
 import { RolePermissionModel } from '../../../domain';
 

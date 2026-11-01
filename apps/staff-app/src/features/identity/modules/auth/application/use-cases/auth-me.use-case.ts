@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IdentityErrorCodeEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
 import { AuthDomainException } from '../../domain';
 import { type IAuthIdentityPort, AUTH_IDENTITY_PORT } from '../../outbound';

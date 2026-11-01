@@ -61,9 +61,7 @@ export class UserE2E {
             staff_user_roles: [{ user_id: response.body.id }],
           },
         });
-        expect(response.body.id).toMatch(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-        );
+        expect(response.body.id).toMatch(/^\d+$/);
         expect(actual.db.staff_user[0].password_hash).toMatch(
           /^\$argon2id\$v=19\$m=19456,p=1,t=2\$/,
         );
@@ -130,7 +128,7 @@ export class UserE2E {
     describe('POST /api/identity/users/:userId/roles', () => {
       it('should grant a role and answer 200', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/identity/users/00000000-0000-4000-8000-000000000004/roles')
+          .post('/api/identity/users/4/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ role: 'editor' })
           .expect(HttpStatus.OK);
@@ -140,7 +138,7 @@ export class UserE2E {
           db: {
             staff_user_roles: await this.ctx.dataSource.query(
               'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
-              ['00000000-0000-4000-8000-000000000004'],
+              ['4'],
             ),
           },
         }).toMatchSnapshot();
@@ -148,7 +146,7 @@ export class UserE2E {
 
       it('should answer 404 for an unknown user', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/identity/users/00000000-0000-4000-8000-000000000099/roles')
+          .post('/api/identity/users/99/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ role: 'editor' })
           .expect(HttpStatus.NOT_FOUND);

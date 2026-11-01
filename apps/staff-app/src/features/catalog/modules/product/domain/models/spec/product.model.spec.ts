@@ -1,4 +1,4 @@
-import { ProductStatusEnum } from '@acme-libs-kernel';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 
 import { ProductCreatedEvent } from '../../events/product-created.event';
 import { ProductPublishedEvent } from '../../events/product-published.event';

@@ -8,11 +8,11 @@ from pathlib import Path
 ENV_DIR = Path(__file__).resolve().parents[2] / "env" / "apps"
 ENV_FILE = ENV_DIR / "staff-app" / ".env.local"
 CUSTOMER_ENV_FILE = ENV_DIR / "customer-app" / ".env.local"
-ADMIN_ID = "00000000-0000-4000-8000-000000000001"
-EDITOR_ID = "00000000-0000-4000-8000-000000000002"
-VIEWER_ID = "00000000-0000-4000-8000-000000000003"
-DISABLED_ID = "00000000-0000-4000-8000-000000000004"
-CUSTOMER_ANN_ID = "00000000-0000-4000-8000-000000000101"
+ADMIN_ID = "1"
+EDITOR_ID = "2"
+VIEWER_ID = "3"
+DISABLED_ID = "4"
+CUSTOMER_ANN_ID = "101"
 
 
 def capture_login(response, posting) -> None:

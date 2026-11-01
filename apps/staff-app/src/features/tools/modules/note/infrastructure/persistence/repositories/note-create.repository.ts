@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Note } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { type INoteCreateRepositoryPort } from '../../../outbound';
@@ -11,10 +10,10 @@ import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get noteRepository(): Repository<Note> {
-    return this.transactionHost.tx.getRepository(Note);
+    return this.repositoryHost.getRepository(Note);
   }
 
   public async insert(note: NoteModel): Promise<NoteModel> {

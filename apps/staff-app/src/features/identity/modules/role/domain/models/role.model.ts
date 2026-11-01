@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { RoleDomainException } from '../exceptions/role-domain.exception';
 import { IRoleRecord } from '../interfaces/role-record.interface';
@@ -6,7 +6,7 @@ import { RolePermissionModel } from './role-permission.model';
 
 export class RoleModel {
   private constructor(
-    public readonly id: number,
+    public readonly id: string,
     public readonly name: RoleEnum,
     private codes: PermissionCodeEnum[],
   ) {}

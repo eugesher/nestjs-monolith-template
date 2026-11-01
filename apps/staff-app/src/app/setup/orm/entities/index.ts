@@ -4,19 +4,21 @@ import {
   Customer,
   IdempotencyKey,
   LedgerEntry,
-  Note,
-  NoteRevision,
   Order,
   OrderProduct,
   Product,
   ProductStock,
+} from '@acme-core/entities';
+import {
+  Note,
+  NoteRevision,
   Reminder,
   StaffPermission,
   StaffRole,
   StaffRolePermission,
   StaffUser,
   StaffUserRole,
-} from '@acme-core-entities';
+} from '@acme-staff/common/entities';
 
 export const entities: TypeOrmModuleOptions['entities'] = [
   Customer,

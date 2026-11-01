@@ -1,4 +1,4 @@
-import { Reminder } from '@acme-core-entities';
+import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 

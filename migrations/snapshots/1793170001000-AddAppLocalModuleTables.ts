@@ -8,7 +8,7 @@ export class AddAppLocalModuleTables1793170001000 implements MigrationInterface 
         subject_type VARCHAR(64)  NOT NULL,
         subject_id   VARCHAR(64)  NOT NULL,
         body         TEXT         NOT NULL,
-        author_id    CHAR(36)     NOT NULL,
+        author_id    BIGINT UNSIGNED NOT NULL,
         resolved     TINYINT(1)   NOT NULL DEFAULT 0,
         version      INT          NOT NULL DEFAULT 1,
         created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,7 +26,7 @@ export class AddAppLocalModuleTables1793170001000 implements MigrationInterface 
         note_version   INT          NOT NULL,
         body_before    TEXT         NOT NULL,
         body_after     TEXT         NOT NULL,
-        editor_id      CHAR(36)     NOT NULL,
+        editor_id      BIGINT UNSIGNED NOT NULL,
         correlation_id VARCHAR(64)  NOT NULL DEFAULT '',
         recorded_at    TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
         UNIQUE KEY uq_note_revision_version (note_id, note_version),
@@ -39,7 +39,7 @@ export class AddAppLocalModuleTables1793170001000 implements MigrationInterface 
     await queryRunner.query(`
       CREATE TABLE reminder (
         id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        owner_id   CHAR(36)      NOT NULL,
+        owner_id   BIGINT UNSIGNED NOT NULL,
         title      VARCHAR(255)  NOT NULL,
         body       VARCHAR(2000) NOT NULL DEFAULT '',
         due_on     DATE          NOT NULL,

@@ -1,4 +1,4 @@
-import { DomainException, Maybe } from '@acme-libs-toolkit';
+import { DomainException, Maybe } from '@acme-libs/toolkit';
 
 import { ProductStockErrorCodeEnum } from '../enums/product-stock-error-code.enum';
 

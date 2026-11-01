@@ -1,12 +1,11 @@
 import { Process, Processor } from '@nestjs/bull';
 import type { Job } from 'bull';
 
-import { CorrelationContextHelper } from '@acme-libs-observability';
-
+import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
   type IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
-} from '@acme-core-contracts/product-stock';
+} from '@acme-core/contracts/product-stock';
 
 import { ProductStockArchiveOutOfStockUseCase } from '../application';
 

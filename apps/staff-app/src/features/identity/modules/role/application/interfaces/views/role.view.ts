@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 export interface IRoleView {
   name: RoleEnum;

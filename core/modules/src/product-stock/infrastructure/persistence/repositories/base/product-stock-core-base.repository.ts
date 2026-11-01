@@ -1,22 +1,19 @@
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Product, ProductStock } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { Product, ProductStock } from '@acme-core/entities';
 
 import { IProductStockCoreSumView } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
-  protected constructor(
-    protected readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
-  ) {}
+  protected constructor(protected readonly repositoryHost: RepositoryHost) {}
 
   protected get productRepository(): Repository<Product> {
-    return this.transactionHost.tx.getRepository(Product);
+    return this.repositoryHost.getRepository(Product);
   }
 
   protected get productStockRepository(): Repository<ProductStock> {
-    return this.transactionHost.tx.getRepository(ProductStock);
+    return this.repositoryHost.getRepository(ProductStock);
   }
 
   public async lockProducts(productIds: string[]): Promise<string[]> {
@@ -25,9 +22,9 @@ export abstract class ProductStockCoreBaseRepository {
     }
 
     const products = await this.productRepository
-      .createQueryBuilder('product')
-      .where('product.id IN (:...productIds)', { productIds })
-      .orderBy('product.id', 'ASC')
+      .createQueryBuilder('Product')
+      .where('Product.id IN (:...productIds)', { productIds })
+      .orderBy('Product.id', 'ASC')
       .setLock('pessimistic_write')
       .getMany();
 
@@ -40,11 +37,11 @@ export abstract class ProductStockCoreBaseRepository {
     }
 
     const rows = await this.productStockRepository
-      .createQueryBuilder('stock')
-      .select('stock.productId', 'productId')
-      .addSelect('SUM(stock.quantity)', 'quantity')
-      .where('stock.productId IN (:...productIds)', { productIds })
-      .groupBy('stock.productId')
+      .createQueryBuilder('ProductStock')
+      .select('ProductStock.productId', 'productId')
+      .addSelect('SUM(ProductStock.quantity)', 'quantity')
+      .where('ProductStock.productId IN (:...productIds)', { productIds })
+      .groupBy('ProductStock.productId')
       .setLock('pessimistic_read')
       .getRawMany<{ productId: string; quantity: number | string }>();
 

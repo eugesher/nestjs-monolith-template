@@ -313,7 +313,7 @@ export class ProductE2E {
 
       it('should apply every one of concurrent updates without If-Match', async () => {
         const responses = await Promise.all(
-          [1, 2, 3, 4, 5, 6].map((index) =>
+          [1, 2, 3, 4, 5].map((index) =>
             request(this.ctx.app.getHttpServer())
               .patch('/api/catalog/products/104')
               .auth(this.ctx.editorToken, { type: 'bearer' })

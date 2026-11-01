@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   IProductStockCoreLockCommand,
   IProductStockCoreOnHandView,
-} from '@acme-core-contracts/product-stock';
+} from '@acme-core/contracts/product-stock';
 
 import {
   type IProductStockCoreLockRepositoryPort,

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseFilters } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser, Public } from '@acme-libs-auth';
-import type { IAuthCurrentUserView } from '@acme-libs-contracts/auth';
+import { CurrentUser, Public } from '@acme-libs/auth';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { AuthLoginUseCase, AuthMeUseCase } from '../../application';
 import { AuthAccessTokenResponseDto } from '../dto/auth-access-token-response.dto';

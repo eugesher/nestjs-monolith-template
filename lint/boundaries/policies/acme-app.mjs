@@ -33,6 +33,7 @@ export const acmeApp = [
     to('acme-app:app', own('app')),
     ...appIndexes,
     to('acme-core:entities'),
+    to('acme-app:common:entities', own('app')),
     baseLibs('cache', 'config', 'database'),
     libContracts('database'),
     packages(
@@ -87,14 +88,9 @@ export const acmeApp = [
     to('acme-app:app:global:outbound', own('app', 'module')),
     appContracts,
     to('acme-core:entities'),
+    to('acme-app:common:entities', own('app')),
     baseLibs('database'),
-    packages(
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/common',
-      '@nestjs/typeorm',
-      'typeorm',
-    ),
+    packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-app:app:global:infrastructure:common-adapters', [
     to('acme-app:app:global:infrastructure:common-adapters', own('app', 'module')),
@@ -105,12 +101,19 @@ export const acmeApp = [
     packages('@nestjs/common'),
   ]),
   from('acme-app:contracts', [appContracts, baseLibs()]),
+  from('acme-app:common:entities', [
+    to('acme-app:common:entities', own('app')),
+    to('acme-core:entities'),
+    libs('kernel'),
+    packages('typeorm'),
+  ]),
   from('acme-app:test', [
     to('acme-app:test', own('app')),
     to('acme-app:app:module', own('app')),
     to('acme-app:contracts', own('app')),
     to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
     to('acme-core:entities'),
+    to('acme-app:common:entities', own('app')),
     baseLibs('cache', 'database', 'observability'),
     packages(
       '@nestjs/bull',

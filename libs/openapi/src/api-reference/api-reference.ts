@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
-import { AppNameEnum } from '@acme-libs-kernel';
+import { AppNameEnum } from '@acme-libs/kernel';
 
 export class ApiReference {
   private static readonly DOCUMENTS: Record<AppNameEnum, { title: string; description: string }> = {

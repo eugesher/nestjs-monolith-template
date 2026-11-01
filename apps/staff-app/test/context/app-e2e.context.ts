@@ -8,15 +8,13 @@ import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { REDIS_CLIENT } from '@acme-libs-cache/testing';
-import { Maybe } from '@acme-libs-toolkit';
-
+import { REDIS_CLIENT } from '@acme-libs/cache/testing';
+import { Maybe } from '@acme-libs/toolkit';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-core-contracts/ledger';
-
-import { AppModule } from '@acme-staff-app/app.module';
+} from '@acme-core/contracts/ledger';
+import { AppModule } from '@acme-staff/app/app.module';
 
 interface IAppE2EState {
   app: INestApplication;
@@ -82,9 +80,9 @@ export class AppE2EContext {
     await app.init();
 
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
-    const adminToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000001' });
-    const editorToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000002' });
-    const viewerToken = jwt.sign({ sub: '00000000-0000-4000-8000-000000000003' });
+    const adminToken = jwt.sign({ sub: '1' });
+    const editorToken = jwt.sign({ sub: '2' });
+    const viewerToken = jwt.sign({ sub: '3' });
 
     this.state = {
       app,

@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { PinoLogger } from 'nestjs-pino';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Maybe } from '@acme-libs/toolkit';
 
 import { correlationStorage } from './correlation.storage';
 

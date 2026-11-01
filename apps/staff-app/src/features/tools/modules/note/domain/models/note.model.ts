@@ -1,4 +1,4 @@
-import { AggregateRoot, Maybe } from '@acme-libs-toolkit';
+import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
 import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
 import { NoteDomainException } from '../exceptions/note-domain.exception';

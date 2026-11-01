@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs-toolkit';
+import { Maybe } from '@acme-libs/toolkit';
 
 import { IdempotencyKeyHelper } from '../helpers/idempotency-key.helper';
 

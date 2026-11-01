@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper } from '@acme-libs-database';
-import { Maybe } from '@acme-libs-toolkit';
-
-import { IdempotencyKey } from '@acme-core-entities';
+import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
+import { Nullable } from '@acme-libs/toolkit';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyModel } from '../../../domain';
 import { type IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
@@ -14,10 +11,10 @@ import { IdempotencyCoreKeyMapper } from '../mappers/idempotency-core-key.mapper
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
-    return this.transactionHost.tx.getRepository(IdempotencyKey);
+    return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
   public async insert(key: IdempotencyCoreKeyModel): Promise<boolean> {
@@ -39,9 +36,9 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
     }
   }
 
-  public async findByKey(key: string): Promise<Maybe<IdempotencyCoreKeyModel>> {
+  public async findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>> {
     const entity = await this.idempotencyKeyRepository.findOne({ where: { idempotencyKey: key } });
 
-    return entity === null ? undefined : IdempotencyCoreKeyMapper.toModel(entity);
+    return entity === null ? null : IdempotencyCoreKeyMapper.toModel(entity);
   }
 }

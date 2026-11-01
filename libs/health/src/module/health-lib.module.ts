@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { HEALTH_LIB_PORT } from '@acme-libs-contracts/health';
-import { AppNameEnum } from '@acme-libs-kernel';
+import { HEALTH_LIB_PORT } from '@acme-libs/contracts/health';
+import { AppNameEnum } from '@acme-libs/kernel';
 
 import { HealthLibCheckLivenessUseCase, HealthLibCheckReadinessUseCase } from '../application';
 import { HealthLibDependencyProbeAdapter, HealthLibUptimeAdapter } from '../infrastructure';

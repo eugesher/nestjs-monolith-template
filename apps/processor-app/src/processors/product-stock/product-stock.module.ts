@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { ProductCoreModule } from '@acme-core-modules/product';
-import { ProductStockCoreModule } from '@acme-core-modules/product-stock';
+import { ProductCoreModule } from '@acme-core/modules/product';
+import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 
 import { ProductStockArchiveOutOfStockUseCase } from './application';
 import {
   ProductStockArchiveCoreAdapter,
   ProductStockArchiveOutOfStockRepository,
   ProductStockOnHandCoreAdapter,
-  ProductStockTypeOrmModule,
 } from './infrastructure';
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,
@@ -18,7 +17,7 @@ import {
 import { ProductStockPostSubtractConsumer } from './presentation/product-stock-post-subtract.consumer';
 
 @Module({
-  imports: [ProductStockTypeOrmModule.forFeature(), ProductCoreModule, ProductStockCoreModule],
+  imports: [ProductCoreModule, ProductStockCoreModule],
   providers: [
     ProductStockPostSubtractConsumer,
     ProductStockArchiveOutOfStockUseCase,

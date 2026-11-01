@@ -76,7 +76,7 @@ feature that needs a hook before each case has `hooks()`, as `ReminderE2E` delet
 the logger and the global prefix, and signs one access token for each seeded account the cases use
 with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app.
 processor-app has no auth and signs nothing. Everything the cases read is a getter that throws before
-`init()`. The staff-app context also holds the Redis client, through `@acme-libs-cache/testing`.
+`init()`. The staff-app context also holds the Redis client, through `@acme-libs/cache/testing`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
 records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes the
@@ -152,7 +152,7 @@ The snapshots in `apps/<app>/test/app/__snapshots__` hold what each case asserts
 ## Lint
 
 `apps/*/test/**` is the category `acme-app:test`. It sees its own app's tests, its `AppModule`, its
-contracts, `@acme-core-entities`, the libs `kernel`, `toolkit`, `database`, `cache` and
+contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cache` and
 `observability`, and the packages `@nestjs/common`, `@nestjs/config`, `@nestjs/jwt`,
 `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
 

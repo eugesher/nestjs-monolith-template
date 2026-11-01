@@ -1,4 +1,4 @@
-import { Maybe } from '@acme-libs-toolkit';
+import { Maybe } from '@acme-libs/toolkit';
 
 export interface IProductUpdateCommand {
   productId: string;

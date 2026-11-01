@@ -9,7 +9,7 @@ queue consumers and the schedules (see `023-processor-app.md`).
 
 `main.ts` starts the process and nothing else:
 
-1. `@acme-libs-observability/tracer` is the first import, so OpenTelemetry patches the modules
+1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
 2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
@@ -63,7 +63,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
 | `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                                                         |
 | `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
-| features, processors               | `@acme-<app>-features`, `@acme-processor-processors` | the routes and the consumers                                                                |
+| features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the consumers                                                                |
 | `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
 | `CorrelationMiddleware`            | every route, `*path`                                 | opens the correlation context of the request                                                |
@@ -95,8 +95,8 @@ still pass, and production keeps everything.
 
 ## Entry points
 
-`main.ts` and the e2e context import `AppModule` by `@acme-<app>-app/app.module`. The alias
-`@acme-<app>-app/*` maps the folder `app/`, which has no barrel, so the import names the file. The
+`main.ts` and the e2e context import `AppModule` by `@acme-<app>/app/app.module`. The alias
+`@acme-<app>/app/*` maps the folder `app/`, which has no barrel, so the import names the file. The
 alias resolves any path under `app/`; lint decides which of them a file may import.
 
 Lint gives `app.module.ts` its own category, `acme-app:app:module`:

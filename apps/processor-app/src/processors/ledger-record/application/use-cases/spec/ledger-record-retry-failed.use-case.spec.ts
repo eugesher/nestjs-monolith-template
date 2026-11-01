@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { LedgerRecordRetryFailedUseCase } from '../ledger-record-retry-failed.use-case';
 

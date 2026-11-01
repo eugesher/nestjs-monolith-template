@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { RolePermissionModel, RoleModel } from '../../../domain';
 import { RoleUpdatePermissionsUseCase } from '../role-update-permissions.use-case';
@@ -22,18 +22,18 @@ describe('RoleUpdatePermissionsUseCase', () => {
     repository = {
       findRole: jest.fn().mockResolvedValue(
         RoleModel.reconstitute({
-          id: 2,
+          id: '2',
           name: RoleEnum.EDITOR,
           permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
         }),
       ),
       findPermissions: jest.fn().mockResolvedValue([
         RolePermissionModel.reconstitute({
-          id: 2,
+          id: '2',
           code: PermissionCodeEnum.IAM_ROLE_EDIT,
         }),
         RolePermissionModel.reconstitute({
-          id: 8,
+          id: '8',
           code: PermissionCodeEnum.PRODUCT_READ,
         }),
       ]),
@@ -68,7 +68,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
     expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
     expect(repository.replacePermissions).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 2, permissionCodes: ['iam:role-edit', 'product:read'] }),
+      expect.objectContaining({ id: '2', permissionCodes: ['iam:role-edit', 'product:read'] }),
     );
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
@@ -78,7 +78,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
   });
 
   it('rejects an unknown role', async () => {
-    repository.findRole.mockResolvedValue(undefined);
+    repository.findRole.mockResolvedValue(null);
 
     const update = useCase.execute({ role: RoleEnum.ADMIN, permissionCodes: [] });
 

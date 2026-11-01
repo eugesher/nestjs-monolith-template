@@ -1,7 +1,7 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs-observability/testing';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { NoteModel, NoteRevisionModel } from '../../../domain';
 import { NoteAccessService } from '../../services/note-access.service';

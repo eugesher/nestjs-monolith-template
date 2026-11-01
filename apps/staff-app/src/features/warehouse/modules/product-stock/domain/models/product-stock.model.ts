@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@acme-libs-toolkit';
+import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { ProductStockErrorCodeEnum } from '../enums/product-stock-error-code.enum';
 import { ProductStockAddedEvent } from '../events/product-stock-added.event';

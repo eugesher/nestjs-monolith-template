@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
 import { ProductStockDomainException, ProductStockErrorCodeEnum } from '../../domain';
 import {
@@ -76,7 +76,7 @@ export class ProductStockAddUseCase {
     const written = await this.transaction.run(() => this.persist(command));
     const { stock, productStockId, events } = written;
 
-    await this.ledgerService.enqueue({ productId, productStockId, events });
+    await this.ledgerService.recordEvents({ productId, productStockId, events });
 
     this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
 

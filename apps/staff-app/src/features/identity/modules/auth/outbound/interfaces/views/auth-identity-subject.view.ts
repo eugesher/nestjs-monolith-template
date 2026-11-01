@@ -1,4 +1,4 @@
-import { RoleEnum } from '@acme-libs-kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 
 export interface IAuthIdentitySubjectView {
   id: string;

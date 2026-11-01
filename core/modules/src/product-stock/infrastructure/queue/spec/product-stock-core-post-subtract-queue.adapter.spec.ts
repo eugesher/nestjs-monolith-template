@@ -1,6 +1,6 @@
 import type { Queue } from 'bull';
 
-import { IProductStockPostSubtractPayload } from '@acme-core-contracts/product-stock';
+import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 
 import { ProductStockCorePostSubtractQueueAdapter } from '../product-stock-core-post-subtract-queue.adapter';
 

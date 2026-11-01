@@ -15,7 +15,7 @@ VALUES
     2,
     'Handled soon.',
     'Already handled.',
-    '00000000-0000-4000-8000-000000000001',
+    1,
     'seed-correlation-id',
     '2026-01-01 00:00:00.000'
   );

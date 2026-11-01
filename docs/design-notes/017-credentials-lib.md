@@ -41,4 +41,4 @@ Modules that read the same table keep models of their own, narrowed to what each
 
 Tables of one module share a prefix, and indexes and foreign keys repeat the table name, so a
 constraint error in a log points at the module at once. A prefix also avoids reserved words such as
-`user`. Examples: the entities of `core/entities/src/staff-identity/`.
+`user`. Examples: the entities of `apps/staff-app/src/common/entities/staff-identity/`.

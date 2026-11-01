@@ -1,4 +1,4 @@
-import { PermissionCodeEnum } from '@acme-libs-kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { AuthGlobalFindPermissionCodesUseCase } from '../auth-global-find-permission-codes.use-case';
 

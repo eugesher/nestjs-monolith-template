@@ -1,4 +1,4 @@
-import { ProductStatusEnum } from '@acme-libs-kernel';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 
 import { ProductModel } from '../../models/product.model';
 import { ProductHelper } from '../product.helper';

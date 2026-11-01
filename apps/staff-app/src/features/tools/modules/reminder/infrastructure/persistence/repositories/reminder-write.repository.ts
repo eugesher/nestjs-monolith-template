@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Nullable } from '@acme-libs-toolkit';
-
-import { Reminder } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { Nullable } from '@acme-libs/toolkit';
+import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 import { type IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
@@ -13,10 +11,10 @@ import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get reminderRepository(): Repository<Reminder> {
-    return this.transactionHost.tx.getRepository(Reminder);
+    return this.repositoryHost.getRepository(Reminder);
   }
 
   public async findById(reminderId: string): Promise<Nullable<ReminderModel>> {

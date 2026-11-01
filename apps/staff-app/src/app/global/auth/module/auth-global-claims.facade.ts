@@ -4,8 +4,8 @@ import {
   IAuthClaimsPort,
   IAuthFindPermissionCodesQuery,
   IAuthFindRolesQuery,
-} from '@acme-libs-contracts/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs-kernel';
+} from '@acme-libs/contracts/auth';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { AuthGlobalFindPermissionCodesUseCase, AuthGlobalFindRolesUseCase } from '../application';
 

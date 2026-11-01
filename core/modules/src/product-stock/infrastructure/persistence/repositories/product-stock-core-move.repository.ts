@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+
+import { RepositoryHost } from '@acme-libs/database';
 
 import {
   type IProductStockCoreMoveRepositoryPort,
@@ -13,8 +13,8 @@ export class ProductStockCoreMoveRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreMoveRepositoryPort
 {
-  constructor(transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {
-    super(transactionHost);
+  constructor(repositoryHost: RepositoryHost) {
+    super(repositoryHost);
   }
 
   public async insertMany(commands: IProductStockCoreMovementInsertCommand[]): Promise<string[]> {

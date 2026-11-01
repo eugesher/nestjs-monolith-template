@@ -1,5 +1,6 @@
 export * from './exceptions/user-domain.exception';
 
+export * from './interfaces/user-staff-user-draft.interface';
 export * from './interfaces/user-staff-user-record.interface';
 export * from './interfaces/user-staff-user-registration.interface';
 

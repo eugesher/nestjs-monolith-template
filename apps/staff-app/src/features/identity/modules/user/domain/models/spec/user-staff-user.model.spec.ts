@@ -1,24 +1,18 @@
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs-kernel';
+import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
+import { IUserStaffUserDraft } from '../../interfaces/user-staff-user-draft.interface';
 import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {
   describe('register', () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
-    it('creates an active user with a generated id and a normalized email', () => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValue('5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f');
-
-      const user = UserStaffUserModel.register({
+    it('drafts an active user with a normalized email, unique roles and no id until it is stored', () => {
+      const draft = UserStaffUserModel.register({
         email: '  Editor@Example.COM ',
         passwordHash: 'hash',
         roles: [RoleEnum.EDITOR, RoleEnum.EDITOR, RoleEnum.VIEWER],
       });
 
-      expect(user).toMatchObject({
-        id: '5f0c6a8e-1d2b-4c3d-8e9f-0a1b2c3d4e5f',
+      expect(draft).toEqual({
         email: 'editor@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
@@ -29,7 +23,7 @@ describe('UserStaffUserModel', () => {
     it.each(['editor', 'editor@', '@example.com', 'editor@example', 'ed itor@example.com'])(
       'rejects the malformed email %s',
       (email) => {
-        const register = (): UserStaffUserModel =>
+        const register = (): IUserStaffUserDraft =>
           UserStaffUserModel.register({ email, passwordHash: 'hash', roles: [] });
 
         expect(register).toThrow(

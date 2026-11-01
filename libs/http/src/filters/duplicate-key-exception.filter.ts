@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ConflictException } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { QueryFailedError } from 'typeorm';
 
-import { MysqlErrorHelper } from '@acme-libs-database';
+import { MysqlErrorHelper } from '@acme-libs/database';
 
 @Catch(QueryFailedError)
 export class DuplicateKeyExceptionFilter extends BaseExceptionFilter {

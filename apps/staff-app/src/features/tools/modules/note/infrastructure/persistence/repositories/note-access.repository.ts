@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { Nullable } from '@acme-libs-toolkit';
-
-import { Note } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { Nullable } from '@acme-libs/toolkit';
+import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { INoteAccessFindOwnedQuery, type INoteAccessRepositoryPort } from '../../../outbound';
@@ -13,10 +11,10 @@ import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get noteRepository(): Repository<Note> {
-    return this.transactionHost.tx.getRepository(Note);
+    return this.repositoryHost.getRepository(Note);
   }
 
   public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<NoteModel>> {

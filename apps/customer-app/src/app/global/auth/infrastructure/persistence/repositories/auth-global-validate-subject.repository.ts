@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Repository } from 'typeorm';
 
-import { UserStatusEnum } from '@acme-libs-kernel';
-import { Maybe } from '@acme-libs-toolkit';
-
-import { Customer } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { UserStatusEnum } from '@acme-libs/kernel';
+import { Nullable } from '@acme-libs/toolkit';
+import { Customer } from '@acme-core/entities';
 
 import {
   IAuthGlobalCustomerView,
@@ -15,18 +13,18 @@ import {
 
 @Injectable()
 export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateSubjectRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get customerRepository(): Repository<Customer> {
-    return this.transactionHost.tx.getRepository(Customer);
+    return this.repositoryHost.getRepository(Customer);
   }
 
-  public async findActiveById(id: string): Promise<Maybe<IAuthGlobalCustomerView>> {
+  public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerView>> {
     const customer = await this.customerRepository.findOne({
       select: { id: true, email: true },
       where: { id, status: UserStatusEnum.ACTIVE },
     });
 
-    return customer ?? undefined;
+    return customer;
   }
 }

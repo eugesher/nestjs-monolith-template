@@ -62,16 +62,31 @@ describe('common modules (common/modules/<module>)', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each([
-      '@nestjs-cls/transactional',
-      '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/typeorm',
-      'typeorm',
-    ])('common infrastructure MAY import the persistence package %s', async (source) => {
+    it.each(['typeorm', '@acme-libs/database'])(
+      'common infrastructure MAY import the persistence package %s',
+      async (source) => {
+        await expect({
+          file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toPassArchitectureLint();
+      },
+    );
+
+    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+      'common infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      async (source) => {
+        await expect({
+          file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('common infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
-        code: `import { x } from "${source}";`,
-      }).toPassArchitectureLint();
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['application', 'module'])(
@@ -443,26 +458,26 @@ describe('common modules (common/modules/<module>)', () => {
     ])('%s MAY import the port of the staff auth common module', async (file) => {
       await expect({
         file,
-        code: 'import { AUTH_COMMON_PORT, IAuthCommonPort } from "@acme-staff-contracts/auth";',
+        code: 'import { AUTH_COMMON_PORT, IAuthCommonPort } from "@acme-staff/contracts/auth";',
       }).toPassArchitectureLint();
     });
 
     it.each([
       [
         'apps/customer-app/src/features/auth/infrastructure/common-adapters/__fixture__.ts',
-        'import { AUTH_COMMON_PORT } from "@acme-staff-contracts/auth";',
+        'import { AUTH_COMMON_PORT } from "@acme-staff/contracts/auth";',
       ],
       [
         'apps/customer-app/src/app/global/auth/infrastructure/common-adapters/__fixture__.ts',
-        'import { AUTH_COMMON_PORT } from "@acme-staff-contracts/auth";',
+        'import { AUTH_COMMON_PORT } from "@acme-staff/contracts/auth";',
       ],
       [
         'apps/customer-app/src/features/auth/auth.module.ts',
-        'import { AuthCommonModule } from "@acme-staff-common/modules/auth";',
+        'import { AuthCommonModule } from "@acme-staff/common/modules/auth";',
       ],
       [
         'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { Customer, StaffUser } from "@acme-core-entities";',
+        'import { StaffUser } from "@acme-staff/common/entities";',
       ],
     ])('%s may NOT reach the staff users — they belong to staff-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -471,11 +486,11 @@ describe('common modules (common/modules/<module>)', () => {
     it.each([
       [
         'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
-        'import { Customer, Product } from "@acme-core-entities";',
+        'import { Customer, Product } from "@acme-core/entities";',
       ],
       [
         'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-        'import { Customer } from "@acme-core-entities";',
+        'import { Customer } from "@acme-core/entities";',
       ],
     ])('%s may NOT reach the customers — they belong to customer-app', async (file, code) => {
       await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -487,14 +502,14 @@ describe('common modules (common/modules/<module>)', () => {
     ])('%s MAY register the %s entity of its own users', async (file, entity) => {
       await expect({
         file,
-        code: `import { ${entity} } from "@acme-core-entities";`,
+        code: `import { ${entity} } from "@acme-core/entities";`,
       }).toPassArchitectureLint();
     });
 
     it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
       await expect({
         file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { Customer, Order, StaffUser } from "@acme-core-entities";',
+        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
       }).toPassArchitectureLint();
     });
   });

@@ -1,4 +1,4 @@
-import { ReminderStatusEnum } from '@acme-libs-kernel';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
 
 import { ReminderModel } from '../../../domain';
 import { ReminderAccessService } from '../reminder-access.service';

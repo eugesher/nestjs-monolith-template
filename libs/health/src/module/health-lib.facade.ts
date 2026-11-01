@@ -4,7 +4,7 @@ import {
   IHealthLibLivenessView,
   IHealthLibPort,
   IHealthLibReadinessView,
-} from '@acme-libs-contracts/health';
+} from '@acme-libs/contracts/health';
 
 import { HealthLibCheckLivenessUseCase, HealthLibCheckReadinessUseCase } from '../application';
 

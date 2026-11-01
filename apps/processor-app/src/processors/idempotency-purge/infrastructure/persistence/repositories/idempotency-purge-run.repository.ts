@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { LessThan, Repository } from 'typeorm';
 
-import { IdempotencyKey } from '@acme-core-entities';
+import { RepositoryHost } from '@acme-libs/database';
+import { IdempotencyKey } from '@acme-core/entities';
 
 import { type IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunRepositoryPort {
-  constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}
+  constructor(private readonly repositoryHost: RepositoryHost) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
-    return this.transactionHost.tx.getRepository(IdempotencyKey);
+    return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
   public async deleteCreatedBefore(cutoff: Date): Promise<number> {

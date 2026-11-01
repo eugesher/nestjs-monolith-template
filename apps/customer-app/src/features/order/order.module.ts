@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs-config';
-import { HttpExceptionFilter } from '@acme-libs-http';
-
-import { IdempotencyCoreModule } from '@acme-core-modules/idempotency';
-import { ProductStockCoreModule } from '@acme-core-modules/product-stock';
-
-import { LedgerRecordQueueModule } from '@acme-customer-common/shared/ledger-record';
+import { ConfigProviderHelper } from '@acme-libs/config';
+import { HttpExceptionFilter } from '@acme-libs/http';
+import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
+import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
+import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-record';
 
 import {
   OrderGetManyUseCase,
@@ -20,7 +18,6 @@ import {
   OrderLedgerRecordQueueAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
-  OrderTypeOrmModule,
 } from './infrastructure';
 import {
   ORDER_CRUD_REPOSITORY_PORT,
@@ -34,12 +31,7 @@ import {
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [
-    OrderTypeOrmModule.forFeature(),
-    LedgerRecordQueueModule,
-    IdempotencyCoreModule,
-    ProductStockCoreModule,
-  ],
+  imports: [LedgerRecordQueueModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
     HttpExceptionFilter,

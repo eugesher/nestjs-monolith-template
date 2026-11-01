@@ -1,4 +1,4 @@
-import { DomainEvent, Maybe } from '@acme-libs-toolkit';
+import { DomainEvent, Maybe } from '@acme-libs/toolkit';
 
 import { ProductModel } from '../../../domain';
 

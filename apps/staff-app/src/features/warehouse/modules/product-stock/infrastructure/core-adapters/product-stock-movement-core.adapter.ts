@@ -4,7 +4,7 @@ import {
   type IProductStockCorePort,
   PRODUCT_STOCK_CORE_PORT,
   ProductStockCoreMovementKindEnum,
-} from '@acme-core-contracts/product-stock';
+} from '@acme-core/contracts/product-stock';
 
 import {
   IProductStockMovementAddCommand,

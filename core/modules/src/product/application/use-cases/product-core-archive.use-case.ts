@@ -1,42 +1,32 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs-contracts/database';
-import { ProductStatusEnum } from '@acme-libs-kernel';
-import { CorrelationContextHelper } from '@acme-libs-observability';
-import { ReplayRetryHelper } from '@acme-libs-toolkit';
-
+import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import {
   IProductCoreArchiveCommand,
   IProductCoreArchiveView,
   ProductCoreArchiveOutcomeEnum,
-} from '@acme-core-contracts/product';
+} from '@acme-core/contracts/product';
 
-import { ProductCoreModel } from '../../domain';
 import {
   type IProductCoreArchiveRepositoryPort,
   type IProductCoreCatalogCachePort,
-  IProductCoreLedgerRecordEnqueueCommand,
-  type IProductCoreLedgerRecordPort,
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
   PRODUCT_CORE_CATALOG_CACHE_PORT,
-  PRODUCT_CORE_LEDGER_RECORD_PORT,
-  PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS,
 } from '../../outbound';
+import { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
+import { ProductCoreLedgerService } from '../services/product-core-ledger.service';
 
 @Injectable()
 export class ProductCoreArchiveUseCase {
   constructor(
+    private readonly ledgerService: ProductCoreLedgerService,
     @Inject(PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT)
     private readonly repository: IProductCoreArchiveRepositoryPort,
-    @Inject(PRODUCT_CORE_LEDGER_RECORD_PORT)
-    private readonly ledgerRecord: IProductCoreLedgerRecordPort,
     @Inject(PRODUCT_CORE_CATALOG_CACHE_PORT)
     private readonly catalogCache: IProductCoreCatalogCachePort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @Inject(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS)
-    private readonly ledgerRetryAttempts: number,
     @InjectPinoLogger(ProductCoreArchiveUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -82,44 +72,16 @@ export class ProductCoreArchiveUseCase {
 
     await this.repository.update({ product, versionAsRead });
 
-    const record = this.toRecord(product, previousStatus);
+    const { id, sku, version } = product;
+    const record = { productId: id, sku, version, previousStatus };
 
     this.transaction.afterCommit(() => this.announce(record));
 
-    return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: product.version };
+    return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: version };
   }
 
-  private toRecord(
-    product: ProductCoreModel,
-    previousStatus: ProductStatusEnum,
-  ): IProductCoreLedgerRecordEnqueueCommand {
-    const { id, sku, version } = product;
-    const correlationId = CorrelationContextHelper.current(ProductCoreArchiveUseCase.name);
-    const occurredAt = new Date().toISOString();
-
-    return {
-      operationKey: `product-archived:${id}:${version}`,
-      subjectType: 'product',
-      subjectId: id,
-      action: 'ProductArchived',
-      payload: { sku, previousStatus },
-      occurredAt,
-      correlationId,
-    };
-  }
-
-  private async announce(record: IProductCoreLedgerRecordEnqueueCommand): Promise<void> {
-    const { operationKey, subjectId, correlationId } = record;
-
+  private async announce(command: IProductCoreLedgerRecordArchivedCommand): Promise<void> {
     await this.catalogCache.invalidate();
-    await ReplayRetryHelper.retryThenLogForReplay(() => this.ledgerRecord.enqueue(record), {
-      maxAttempts: this.ledgerRetryAttempts,
-      logger: this.logger,
-      correlationId,
-      label: 'Ledger enqueue (product archived)',
-      context: { productId: subjectId, operationKey },
-      replayMessage:
-        'Ledger enqueue failed permanently: the product is archived but absent from the ledger, replay this record',
-    });
+    await this.ledgerService.recordArchived(command);
   }
 }

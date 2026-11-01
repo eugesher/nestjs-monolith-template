@@ -1,6 +1,5 @@
-import { UserStatusEnum } from '@acme-libs-kernel';
-
-import { StaffUser } from '@acme-core-entities';
+import { UserStatusEnum } from '@acme-libs/kernel';
+import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthStaffUserMapper } from '../auth-staff-user.mapper';
 
