@@ -87,7 +87,7 @@ takes the inbound `x-correlation-id`, or creates one and sets it on the request 
 Whichever runs first decides, and the other reads the same header. Inside the request,
 `CorrelationContextHelper.current()` answers that id, so a ledger entry written by the request
 carries the id the client got back. The pino `mixin` of `LoggerSetupConfig` adds
-`CorrelationContextHelper.peek()` to every line, the `request completed` line of pino-http included.
+the id of the CLS context to every line, the `request completed` line of pino-http included.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
 no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core

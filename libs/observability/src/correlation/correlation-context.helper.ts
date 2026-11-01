@@ -16,12 +16,8 @@ export class CorrelationContextHelper {
     });
   }
 
-  public static peek(): Maybe<string> {
-    return ClsServiceManager.getClsService().getId();
-  }
-
   public static current(context: string): string {
-    const correlationId = CorrelationContextHelper.peek();
+    const correlationId: Maybe<string> = ClsServiceManager.getClsService().getId();
 
     if (correlationId) {
       return correlationId;

@@ -29,7 +29,7 @@ describe('CorrelationSetupConfig', () => {
   it('mints a correlation id for a request without one and puts it on the request', async () => {
     const config = new CorrelationSetupConfig();
     const cls = ClsServiceManager.getClsService();
-    const req = { headers: {} };
+    const req: { headers: Record<string, string> } = { headers: {} };
     const res = { headersSent: false, setHeader: jest.fn() };
 
     const current = await cls.run(async () => {

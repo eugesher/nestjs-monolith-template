@@ -46,28 +46,6 @@ describe('CorrelationContextHelper', () => {
     });
   });
 
-  describe('peek', () => {
-    it('answers the id of the context', async () => {
-      const peeked = await CorrelationContextHelper.run('inbound-id', () =>
-        Promise.resolve(CorrelationContextHelper.peek()),
-      );
-
-      expect(peeked).toBe('inbound-id');
-    });
-
-    it('answers undefined and does not warn outside a correlation context', () => {
-      const root = new PinoLogger({ pinoHttp: { enabled: false } }).logger;
-      const warn = jest.spyOn(root, 'warn');
-
-      Object.assign(PinoLogger, { root });
-
-      const peeked = CorrelationContextHelper.peek();
-
-      expect(peeked).toBeUndefined();
-      expect(warn).not.toHaveBeenCalled();
-    });
-  });
-
   describe('current', () => {
     it('keeps the id of its own context across awaits of concurrent contexts', async () => {
       const ids = await Promise.all(

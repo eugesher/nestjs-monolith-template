@@ -1,13 +1,14 @@
 import { RequestMethod } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
+import { ClsServiceManager } from 'nestjs-cls';
 import { Params } from 'nestjs-pino';
 import { levels } from 'pino';
 import { Options } from 'pino-http';
 
 import { EnvHelper } from '@acme-libs/config';
 import { AppNameEnum } from '@acme-libs/kernel';
+import { Maybe } from '@acme-libs/toolkit';
 
-import { CorrelationContextHelper } from '../../correlation/correlation-context.helper';
 import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 
 export class LoggerSetupConfig implements Params {
@@ -30,7 +31,7 @@ export class LoggerSetupConfig implements Params {
     const baseOptions: Options = {
       level: process.env.LOG_LEVEL ?? (isProduction ? 'info' : 'debug'),
       mixin: () => {
-        const correlationId = CorrelationContextHelper.peek();
+        const correlationId: Maybe<string> = ClsServiceManager.getClsService().getId();
         const span = trace.getActiveSpan()?.spanContext();
         const correlation = correlationId === undefined ? {} : { correlationId };
         const tracing = span ? { traceId: span.traceId, spanId: span.spanId } : {};
