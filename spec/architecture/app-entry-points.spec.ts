@@ -17,17 +17,28 @@ describe('app entry points', () => {
     );
 
     expect(appAliases).toEqual([
+      '@acme-staff-app',
       '@acme-staff-app/*',
+      '@acme-staff-common',
       '@acme-staff-common/*',
+      '@acme-staff-contracts',
       '@acme-staff-contracts/*',
       '@acme-staff-features',
+      '@acme-staff-features/*',
+      '@acme-customer-app',
       '@acme-customer-app/*',
+      '@acme-customer-common',
       '@acme-customer-common/*',
       '@acme-customer-features',
+      '@acme-customer-features/*',
+      '@acme-processor-app',
       '@acme-processor-app/*',
+      '@acme-processor-common',
       '@acme-processor-common/*',
       '@acme-processor-features',
+      '@acme-processor-features/*',
       '@acme-processor-processors',
+      '@acme-processor-processors/*',
     ]);
   });
 
@@ -49,18 +60,17 @@ describe('app entry points', () => {
     expect(source).toResolve();
   });
 
-  it.each([
-    '@acme-staff-features/health/health.module',
-    '@acme-customer-features/health/health.module',
-    '@acme-staff-features/index',
-    '@acme-processor-processors/ledger-record/ledger-record.module',
-    '@acme-processor-processors/index',
-    '@acme-staff-processors',
-  ])('a deep path into an app does not resolve: %s', (source) => {
+  it.each(['@acme-staff-processors'])('%s does not resolve', (source) => {
     expect(source).not.toResolve();
   });
 
   it.each([
+    ['apps/staff-app/src/app/app.module.ts', '@acme-staff-features/health/health.module'],
+    ['apps/customer-app/src/app/app.module.ts', '@acme-customer-features/health/health.module'],
+    [
+      'apps/processor-app/src/app/app.module.ts',
+      '@acme-processor-processors/ledger-record/ledger-record.module',
+    ],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff-app/setup/config/config-setup.module',
@@ -81,7 +91,7 @@ describe('app entry points', () => {
       'apps/customer-app/src/features/order/__fixture__.ts',
       '@acme-customer-common/shared/ledger-record/queues/ledger-record-queue.module',
     ],
-  ])('%s may NOT reach a deep path through a wildcard alias: %s', async (file, source) => {
+  ])('%s may NOT reach a deep path through an alias: %s', async (file, source) => {
     await expect({
       file,
       code: `import { X } from "${source}";`,

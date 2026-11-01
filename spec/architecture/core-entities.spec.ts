@@ -5,8 +5,11 @@ describe('core entities (@acme-core-entities)', () => {
     expect('@acme-core-entities').toResolve();
   });
 
-  it('a deep path into the entities does not resolve', () => {
-    expect('@acme-core-entities/product/product.entity').not.toResolve();
+  it('a repository may NOT reach a deep path into the entities', async () => {
+    await expect({
+      file: 'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
+      code: 'import { Product } from "@acme-core-entities/product/product.entity";',
+    }).toBreakRule('no-restricted-imports');
   });
 
   it.each([

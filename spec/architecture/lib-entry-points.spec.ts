@@ -34,19 +34,29 @@ describe('lib entry points', () => {
 
     expect(libAliases).toEqual([
       '@acme-libs-auth',
+      '@acme-libs-auth/*',
       '@acme-libs-cache',
       '@acme-libs-cache/*',
       '@acme-libs-config',
+      '@acme-libs-config/*',
+      '@acme-libs-contracts',
       '@acme-libs-contracts/*',
       '@acme-libs-credentials',
+      '@acme-libs-credentials/*',
       '@acme-libs-database',
+      '@acme-libs-database/*',
       '@acme-libs-health',
+      '@acme-libs-health/*',
       '@acme-libs-http',
+      '@acme-libs-http/*',
       '@acme-libs-kernel',
+      '@acme-libs-kernel/*',
       '@acme-libs-observability',
       '@acme-libs-observability/*',
       '@acme-libs-openapi',
+      '@acme-libs-openapi/*',
       '@acme-libs-toolkit',
+      '@acme-libs-toolkit/*',
     ]);
   });
 
@@ -74,10 +84,16 @@ describe('lib entry points', () => {
     expect(source).toResolve();
   });
 
+  it.each(['@acme-libs-toolkit/src'])(
+    'a path outside the src of a lib does not resolve: %s',
+    (source) => {
+      expect(source).not.toResolve();
+    },
+  );
+
   it.each([
     '@acme-libs-kernel/app/app-name.enum',
     '@acme-libs-toolkit/ddd/entity.base',
-    '@acme-libs-toolkit/src',
     '@acme-libs-config/env/env.helper',
     '@acme-libs-database/transaction/transaction.adapter',
     '@acme-libs-http/filters/http-exception.filter',
@@ -85,11 +101,6 @@ describe('lib entry points', () => {
     '@acme-libs-health/module/health-lib.module',
     '@acme-libs-auth/module/auth-lib.module',
     '@acme-libs-credentials/module/credentials-lib.module',
-  ])('a deep path into a lib does not resolve: %s', (source) => {
-    expect(source).not.toResolve();
-  });
-
-  it.each([
     '@acme-libs-observability/correlation/correlation.middleware',
     '@acme-libs-contracts/database/ports/transaction.port',
     '@acme-libs-cache/redis/redis-cache.adapter',
@@ -97,15 +108,12 @@ describe('lib entry points', () => {
     '@acme-libs-contracts/health/ports/health-lib.port',
     '@acme-libs-contracts/auth/ports/auth-user-validator.port',
     '@acme-libs-contracts/credentials/ports/credentials-password-hasher.port',
-  ])(
-    'a feature may NOT reach a deep path into a lib through a wildcard alias: %s',
-    async (source) => {
-      await expect({
-        file: 'apps/staff-app/src/features/product/infrastructure/__fixture__.ts',
-        code: `import { X } from "${source}";`,
-      }).toBreakRule('no-restricted-imports');
-    },
-  );
+  ])('a feature may NOT reach a deep path into a lib: %s', async (source) => {
+    await expect({
+      file: 'apps/staff-app/src/features/product/infrastructure/__fixture__.ts',
+      code: `import { X } from "${source}";`,
+    }).toBreakRule('no-restricted-imports');
+  });
 
   it.each([
     'apps/staff-app/src/features/product/domain/__fixture__.ts',

@@ -18,6 +18,10 @@ export const libsDeepImports = {
             ],
             message,
           },
+          {
+            group: ['@acme-core-entities/**'],
+            message: 'outside specs the entities are imported by their root, @acme-core-entities',
+          },
         ],
       },
     ],

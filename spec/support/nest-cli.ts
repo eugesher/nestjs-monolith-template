@@ -44,7 +44,7 @@ const projectOfAlias = (alias: string): string | null => {
 
 const expandAlias = ([alias, [target]]: [string, string[]]): [string, string][] => {
   if (!alias.endsWith('/*')) {
-    return [[alias, target]];
+    return existsInRepo(path.join(target, 'index.ts')) ? [[alias, target]] : [];
   }
 
   const root = target.slice(0, -'/*'.length);
