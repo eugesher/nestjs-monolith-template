@@ -6,13 +6,18 @@ const ownContracts = to('acme-core:contracts', own('module'));
 
 export const acmeCore = [
   from('acme-core:modules:domain', [layer('domain'), baseLibs()]),
-  from('acme-core:modules:outbound', [layer('domain'), layer('outbound'), baseLibs()]),
+  from('acme-core:modules:outbound', [
+    layer('domain'),
+    layer('outbound'),
+    baseLibs(),
+    libs('ledger'),
+  ]),
   from('acme-core:modules:application', [
     layer('domain'),
     layer('outbound'),
     layer('application'),
     ownContracts,
-    baseLibs('observability'),
+    baseLibs('ledger', 'observability'),
     libContracts('database'),
     packages('nestjs-pino'),
   ]),
@@ -38,7 +43,7 @@ export const acmeCore = [
     layer('infrastructure:queue'),
     ownContracts,
     to('acme-core:contracts', { module: 'ledger' }),
-    baseLibs(),
+    baseLibs('ledger'),
     packages('@nestjs/bull', '@nestjs/common', 'bull'),
   ]),
   from('acme-core:modules:module:facade', [layer('application'), ownContracts, baseLibs()]),

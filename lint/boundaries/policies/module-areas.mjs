@@ -4,6 +4,7 @@ import {
   fromSpec,
   layerOf,
   libContracts,
+  libs,
   own,
   packages,
   to,
@@ -22,7 +23,12 @@ const areaPolicies = (area, sharedFacing) => {
       }),
     ]),
     from(`${prefix}:domain`, [layer('domain'), baseLibs()]),
-    from(`${prefix}:outbound`, [layer('domain'), layer('outbound'), baseLibs()]),
+    from(`${prefix}:outbound`, [
+      layer('domain'),
+      layer('outbound'),
+      baseLibs(),
+      ...sharedFacing.outbound,
+    ]),
     from(`${prefix}:application`, [
       layer('domain'),
       layer('outbound'),
@@ -91,7 +97,8 @@ const areaPolicies = (area, sharedFacing) => {
 
 export const moduleAreas = [
   ...areaPolicies('features', {
-    application: [libContracts('credentials'), packages('@nestjs/common')],
+    outbound: [libs('ledger')],
+    application: [libContracts('credentials'), libs('ledger'), packages('@nestjs/common')],
     infrastructure: [
       packages(
         '@nestjs-cls/transactional',
@@ -102,7 +109,7 @@ export const moduleAreas = [
       ),
     ],
     commonAdapters: [packages('@nestjs/common')],
-    queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
+    queue: [libs('ledger'), packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:common:shared:index', own('app')),
       libContracts('auth', 'health'),
@@ -115,6 +122,7 @@ export const moduleAreas = [
     ],
   }),
   ...areaPolicies('processors', {
+    outbound: [],
     application: [],
     infrastructure: [
       packages(

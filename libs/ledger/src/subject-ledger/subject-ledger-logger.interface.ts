@@ -1,4 +1,4 @@
-import { IReplayRetryLogger } from '../resilience/replay-retry-options.interface';
+import { IReplayRetryLogger } from '@acme-libs-toolkit';
 
 export interface ISubjectLedgerLogger extends IReplayRetryLogger {
   info(context: Record<string, unknown>, message: string): void;

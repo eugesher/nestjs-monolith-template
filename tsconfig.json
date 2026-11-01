@@ -68,6 +68,8 @@
       "@acme-libs-http/*": ["./libs/http/src/*"],
       "@acme-libs-kernel": ["./libs/kernel/src"],
       "@acme-libs-kernel/*": ["./libs/kernel/src/*"],
+      "@acme-libs-ledger": ["./libs/ledger/src"],
+      "@acme-libs-ledger/*": ["./libs/ledger/src/*"],
       "@acme-libs-observability": ["./libs/observability/src"],
       "@acme-libs-observability/*": ["./libs/observability/src/*"],
       "@acme-libs-openapi": ["./libs/openapi/src"],

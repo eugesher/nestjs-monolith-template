@@ -97,6 +97,11 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **A feature signs its users in.** The application of a feature may take
   `@acme-libs-contracts/credentials`, and its module root may mount `@acme-libs-credentials`. No
   core module and no common module signs anyone in today, so neither may.
+- **A feature and a core module write to the ledger.** Their outbound, application and
+  `infrastructure/queue` may import `@acme-libs-ledger`: the port aliases `ISubjectLedgerPort`, the
+  ledger service extends `SubjectLedgerService`, the queue adapter extends
+  `SubjectLedgerQueueAdapter`. No processor and no common module writes a ledger record, so neither
+  may. The lib itself sees only the base libs.
 - **A processor and a global module read tables.** Their infrastructure may import the persistence
   packages (`@nestjs-cls/transactional`, its TypeORM adapter, `@nestjs/typeorm`, `typeorm`) and
   `@nestjs/common`, as feature infrastructure does.

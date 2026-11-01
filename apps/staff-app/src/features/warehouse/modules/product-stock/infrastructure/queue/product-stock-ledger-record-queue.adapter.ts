@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 
-import { SubjectLedgerQueueAdapter } from '@acme-libs-toolkit';
+import { SubjectLedgerQueueAdapter } from '@acme-libs-ledger';
 
 import {
   LEDGER_RECORD_QUEUE,

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs-observability';
-import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs-toolkit';
+import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs-ledger';
 
 import { ProductStockAddedEvent } from '../../domain';
 import {
