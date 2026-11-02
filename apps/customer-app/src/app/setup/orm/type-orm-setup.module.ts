@@ -6,8 +6,12 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
 
-import { TRANSACTION_PORT } from '@acme-libs/contracts/database';
-import { RepositoryHost, SnakeNamingStrategy, TransactionAdapter } from '@acme-libs/database';
+import { REPOSITORY_HOST_PORT, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import {
+  RepositoryHostAdapter,
+  SnakeNamingStrategy,
+  TransactionAdapter,
+} from '@acme-libs/database';
 
 import { entities } from './entities';
 
@@ -36,8 +40,11 @@ export class TypeOrmSetupModule {
       module: TypeOrmSetupModule,
       global: true,
       imports: [typeOrm, ClsModule.registerPlugins([transactional])],
-      providers: [{ provide: TRANSACTION_PORT, useClass: TransactionAdapter }, RepositoryHost],
-      exports: [TRANSACTION_PORT, RepositoryHost],
+      providers: [
+        { provide: TRANSACTION_PORT, useClass: TransactionAdapter },
+        { provide: REPOSITORY_HOST_PORT, useClass: RepositoryHostAdapter },
+      ],
+      exports: [TRANSACTION_PORT, REPOSITORY_HOST_PORT],
     };
   }
 }

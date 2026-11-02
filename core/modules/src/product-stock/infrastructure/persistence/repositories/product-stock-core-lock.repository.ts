@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import { type IProductStockCoreLockRepositoryPort } from '../../../outbound';
 import { ProductStockCoreBaseRepository } from './base/product-stock-core-base.repository';
@@ -10,7 +10,7 @@ export class ProductStockCoreLockRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreLockRepositoryPort
 {
-  constructor(repositoryHost: RepositoryHost) {
+  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
     super(repositoryHost);
   }
 }

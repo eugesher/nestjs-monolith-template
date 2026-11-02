@@ -103,10 +103,15 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   `SubjectLedgerQueueAdapter`. No processor and no common module writes a ledger record, so neither
   may. The lib itself sees only the base libs.
 - **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
-  `@acme-libs/database` and `@nestjs/common`, as feature infrastructure does.
-- **No module touches `@nestjs-cls`.** A repository reads through
-  `RepositoryHost.getRepository(<Entity>)` of `libs/database`, so infrastructure may not import
-  `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and `app/setup` do.
+  `@acme-libs/database`, `@acme-libs/contracts/database` and `@nestjs/common`, as feature
+  infrastructure does.
+- **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
+  `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
+  not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
+  `app/setup` do.
+- **The database contracts name TypeORM.** The repository host port returns a TypeORM
+  `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
+  the base libs.
 - **No module registers entities.** The entities of an app are listed once in
   `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
   would add repository tokens that nothing injects.

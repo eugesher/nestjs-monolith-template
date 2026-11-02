@@ -193,17 +193,17 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the repository host', async () => {
+    it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
         code:
           'import { Repository } from "typeorm";\n' +
-          'import { RepositoryHost } from "@acme-libs/database";',
+          'import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
     it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({
           file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',

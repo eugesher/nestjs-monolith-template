@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper } from '@acme-libs/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { IdempotencyKey } from '@acme-core/entities';
 
@@ -11,7 +12,10 @@ import { IdempotencyCoreKeyMapper } from '../mappers/idempotency-core-key.mapper
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
     return this.repositoryHost.getRepository(IdempotencyKey);

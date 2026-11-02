@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
@@ -11,7 +11,10 @@ import { NoteRevisionMapper } from '../mappers/note-revision.mapper';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get noteRevisionRepository(): Repository<NoteRevision> {
     return this.repositoryHost.getRepository(NoteRevision);

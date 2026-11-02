@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
@@ -11,7 +11,10 @@ import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderCrudRepository implements IReminderCrudRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get reminderRepository(): Repository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);

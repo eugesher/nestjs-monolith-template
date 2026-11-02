@@ -48,7 +48,7 @@ const areaPolicies = (area, sharedFacing) => {
       to('acme-core:entities'),
       to('acme-app:common:entities', own('app')),
       baseLibs('database'),
-      libContracts('cache'),
+      libContracts('cache', 'database'),
       ...sharedFacing.infrastructure,
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),

@@ -129,6 +129,23 @@ describe('libs', () => {
     }
   });
 
+  it('the contracts of database MAY import typeorm — the repository host port returns its Repository', async () => {
+    await expect({
+      file: 'libs/contracts/src/database/__fixture__.ts',
+      code: 'import type { Repository } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['auth', 'cache', 'credentials', 'health'])(
+    'the contracts of %s may NOT import typeorm',
+    async (lib) => {
+      await expect({
+        file: `libs/contracts/src/${lib}/__fixture__.ts`,
+        code: 'import type { Repository } from "typeorm";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
   it.each(['auth', 'cache', 'credentials', 'database', 'health'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {

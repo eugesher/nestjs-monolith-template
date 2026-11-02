@@ -28,7 +28,7 @@ export const acmeCore = [
     layer('infrastructure:queue'),
     to('acme-core:entities'),
     baseLibs('database'),
-    libContracts('cache'),
+    libContracts('cache', 'database'),
     packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-core:modules:infrastructure:queue', [

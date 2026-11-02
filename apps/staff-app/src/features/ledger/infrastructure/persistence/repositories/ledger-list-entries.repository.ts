@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
@@ -14,7 +14,10 @@ import { LedgerEntryMapper } from '../mappers/ledger-entry.mapper';
 
 @Injectable()
 export class LedgerListEntriesRepository implements ILedgerListEntriesRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get ledgerEntryRepository(): Repository<LedgerEntry> {
     return this.repositoryHost.getRepository(LedgerEntry);

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
@@ -10,7 +10,10 @@ import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get noteRepository(): Repository<Note> {
     return this.repositoryHost.getRepository(Note);

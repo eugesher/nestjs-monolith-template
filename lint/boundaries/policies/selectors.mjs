@@ -22,6 +22,11 @@ export const fromLib = (lib, allow) => ({
   allow,
 });
 
+export const fromLibContracts = (lib, allow) => ({
+  from: { file: { categories: 'acme-libs:contracts', captured: { lib } } },
+  allow,
+});
+
 export const fromSpec = (category) => ({
   from: { file: { categories: category, captured: { file: 'spec/*.spec.ts' } } },
   allow: [to(category, own('app', 'module'))],

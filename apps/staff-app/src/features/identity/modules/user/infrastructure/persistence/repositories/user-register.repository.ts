@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper } from '@acme-libs/database';
 import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
@@ -10,7 +11,10 @@ import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get staffRoleRepository(): Repository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);

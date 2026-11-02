@@ -1,8 +1,19 @@
-import { baseLibs, from, fromLib, libContracts, libs, own, packages, to } from './selectors.mjs';
+import {
+  baseLibs,
+  from,
+  fromLib,
+  fromLibContracts,
+  libContracts,
+  libs,
+  own,
+  packages,
+  to,
+} from './selectors.mjs';
 
 export const acmeLibs = [
   from('acme-libs', [to('acme-libs', own('lib')), to('acme-libs:contracts', own('lib'))]),
   from('acme-libs:contracts', [to('acme-libs:contracts', own('lib')), baseLibs()]),
+  fromLibContracts('database', [packages('typeorm')]),
   fromLib(
     [
       'auth',

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper } from '@acme-libs/database';
 import { Product } from '@acme-core/entities';
 
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../../domain';
@@ -10,7 +11,10 @@ import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCreateRepository implements IProductCreateRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);

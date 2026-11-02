@@ -161,19 +161,19 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the repository host', async () => {
+    it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         code: [
           'import { Injectable } from "@nestjs/common";',
           'import { Repository } from "typeorm";',
-          'import { RepositoryHost } from "@acme-libs/database";',
+          'import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
         ].join('\n'),
       }).toPassArchitectureLint();
     });
 
     it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({
           file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
