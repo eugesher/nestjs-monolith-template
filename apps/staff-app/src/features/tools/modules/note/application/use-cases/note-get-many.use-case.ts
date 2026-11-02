@@ -28,8 +28,8 @@ export class NoteGetManyUseCase {
       resolved,
       authorId,
     });
-    const items = result.items.map((note) => note.toView());
+    const data = result.data.map((note) => note.toView());
 
-    return { items, total: result.total, page: result.page, size: result.size };
+    return { ...result, data };
   }
 }

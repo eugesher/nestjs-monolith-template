@@ -1,3 +1,4 @@
+import { IPage } from './page.interface';
 import { IPageRequest } from './page-request.interface';
 import { IPageWindowOptions } from './page-window-options.interface';
 
@@ -14,5 +15,12 @@ export class PaginationHelper {
     const clampedSize = flooredSize > 0 ? Math.min(flooredSize, maxSize) : defaultSize;
 
     return { page: clampedPage, size: clampedSize };
+  }
+
+  public static toPage<T>(data: T[], total: number, request: IPageRequest): IPage<T> {
+    const { page, size } = request;
+    const pageCount = Math.ceil(total / size);
+
+    return { page, count: data.length, pageCount, total, data };
   }
 }

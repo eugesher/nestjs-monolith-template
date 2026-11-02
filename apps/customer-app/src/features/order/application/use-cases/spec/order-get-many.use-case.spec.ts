@@ -6,10 +6,11 @@ describe('OrderGetManyUseCase', () => {
 
   beforeEach(() => {
     list = jest.fn().mockResolvedValue({
-      items: [{ id: '600', createdAt: new Date('2026-01-03T00:00:00.000Z') }],
-      total: 1,
       page: 1,
-      size: 20,
+      count: 1,
+      pageCount: 1,
+      total: 1,
+      data: [{ id: '600', createdAt: new Date('2026-01-03T00:00:00.000Z') }],
     });
     useCase = new OrderGetManyUseCase({ list });
   });
@@ -24,10 +25,11 @@ describe('OrderGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({ page: 1, size: 20, customerId: 'customer-1' });
       expect(page).toEqual({
-        items: [{ id: '600', createdAt: '2026-01-03T00:00:00.000Z' }],
-        total: 1,
         page: 1,
-        size: 20,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [{ id: '600', createdAt: '2026-01-03T00:00:00.000Z' }],
       });
     });
 

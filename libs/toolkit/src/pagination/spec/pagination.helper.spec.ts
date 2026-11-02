@@ -46,4 +46,18 @@ describe('PaginationHelper', () => {
       expect(oversized).toEqual({ page: 1, size: 50 });
     });
   });
+
+  describe('toPage', () => {
+    it('answers the page with the rows on it, the number of pages and the total', () => {
+      const page = PaginationHelper.toPage(['a', 'b'], 42, { page: 3, size: 20 });
+
+      expect(page).toEqual({ page: 3, count: 2, pageCount: 3, total: 42, data: ['a', 'b'] });
+    });
+
+    it('counts no pages for no rows', () => {
+      const page = PaginationHelper.toPage([], 0, { page: 1, size: 20 });
+
+      expect(page).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+    });
+  });
 });

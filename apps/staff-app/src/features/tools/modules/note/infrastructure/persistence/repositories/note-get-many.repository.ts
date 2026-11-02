@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
@@ -55,23 +55,20 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: notes.map((note) =>
-        NoteModel.reconstitute({
-          id: note.id,
-          subjectType: note.subjectType,
-          subjectId: note.subjectId,
-          body: note.body,
-          authorId: note.authorId,
-          resolved: note.resolved,
-          version: note.version,
-          createdAt: note.createdAt,
-          updatedAt: note.updatedAt,
-        }),
-      ),
-      total,
-      page,
-      size,
-    };
+    const data = notes.map((note) =>
+      NoteModel.reconstitute({
+        id: note.id,
+        subjectType: note.subjectType,
+        subjectId: note.subjectId,
+        body: note.body,
+        authorId: note.authorId,
+        resolved: note.resolved,
+        version: note.version,
+        createdAt: note.createdAt,
+        updatedAt: note.updatedAt,
+      }),
+    );
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

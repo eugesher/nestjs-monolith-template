@@ -233,7 +233,8 @@ exports[`App Catalog GET /api/products should answer a cached page without readi
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "id": "999",
           "name": "Cached product",
@@ -241,7 +242,7 @@ exports[`App Catalog GET /api/products should answer a cached page without readi
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },
@@ -252,7 +253,8 @@ exports[`App Catalog GET /api/products should answer the page of the window with
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "id": "103",
           "name": "Product to archive",
@@ -260,7 +262,7 @@ exports[`App Catalog GET /api/products should answer the page of the window with
         },
       ],
       "page": 2,
-      "size": 1,
+      "pageCount": 3,
       "total": 3,
     },
   },
@@ -271,7 +273,8 @@ exports[`App Catalog GET /api/products should list every active product by id, w
 {
   "response": {
     "body": {
-      "items": [
+      "count": 3,
+      "data": [
         {
           "id": "100",
           "name": "Seeded reference product",
@@ -289,7 +292,7 @@ exports[`App Catalog GET /api/products should list every active product by id, w
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 3,
     },
   },
@@ -357,14 +360,15 @@ exports[`App Order GET /api/orders should list only the orders of the caller, ne
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "601",
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },

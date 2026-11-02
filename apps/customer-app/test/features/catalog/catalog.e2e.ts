@@ -61,10 +61,11 @@ export class CatalogE2E {
         await this.ctx.redis.set(
           'acme:catalog:v1:page:1:size:20',
           JSON.stringify({
-            items: [{ id: '999', sku: 'SKU-CACHED', name: 'Cached product' }],
-            total: 1,
             page: 1,
-            size: 20,
+            count: 1,
+            pageCount: 1,
+            total: 1,
+            data: [{ id: '999', sku: 'SKU-CACHED', name: 'Cached product' }],
           }),
         );
 

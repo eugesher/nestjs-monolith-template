@@ -19,8 +19,8 @@ export class ReminderGetManyUseCase {
     const { page, size, ownerId, status } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.list({ ...window, ownerId, status });
-    const items = result.items.map((reminder) => reminder.toView());
+    const data = result.data.map((reminder) => reminder.toView());
 
-    return { items, total: result.total, page: result.page, size: result.size };
+    return { ...result, data };
   }
 }

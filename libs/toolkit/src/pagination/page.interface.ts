@@ -1,6 +1,7 @@
 export interface IPage<T> {
-  items: T[];
-  total: number;
   page: number;
-  size: number;
+  count: number;
+  pageCount: number;
+  total: number;
+  data: T[];
 }

@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../domain';
@@ -24,7 +24,7 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
 
   public async list(query: IProductPageQuery): Promise<IPage<ProductModel>> {
     const { page, size } = query;
-    const [items, total] = await this.productRepository
+    const [products, total] = await this.productRepository
       .createQueryBuilder('Product')
       .select([
         'Product.id',
@@ -40,21 +40,18 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: items.map((product) =>
-        ProductModel.reconstitute({
-          id: product.id,
-          sku: product.sku,
-          name: product.name,
-          status: product.status,
-          version: product.version,
-          createdAt: product.createdAt,
-          updatedAt: product.updatedAt,
-        }),
-      ),
-      total,
-      page,
-      size,
-    };
+    const data = products.map((product) =>
+      ProductModel.reconstitute({
+        id: product.id,
+        sku: product.sku,
+        name: product.name,
+        status: product.status,
+        version: product.version,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
+      }),
+    );
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

@@ -40,14 +40,14 @@ describe('OrderController', () => {
 
   describe('handleGetMany', () => {
     it('lists the orders of the caller for the page window', async () => {
-      getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
+      getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany(
         { id: 'customer-1', email: 'ann@example.com' },
         { page: 2, size: 5 },
       );
 
-      expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
+      expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({ customerId: 'customer-1', page: 2, size: 5 });
     });
   });

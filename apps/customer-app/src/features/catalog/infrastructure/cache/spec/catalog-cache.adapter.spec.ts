@@ -14,11 +14,11 @@ describe('CatalogCacheAdapter', () => {
   describe('read', () => {
     it('reads the page window through the cache under its key and TTL', async () => {
       const compute = jest.fn();
-      wrap.mockResolvedValue({ items: [], total: 0, page: 2, size: 10 });
+      wrap.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const page = await adapter.read({ page: 2, size: 10, compute });
 
-      expect(page).toEqual({ items: [], total: 0, page: 2, size: 10 });
+      expect(page).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(wrap).toHaveBeenCalledWith('acme:catalog:v1:page:2:size:10', 60_000, compute);
       expect(compute).not.toHaveBeenCalled();
     });

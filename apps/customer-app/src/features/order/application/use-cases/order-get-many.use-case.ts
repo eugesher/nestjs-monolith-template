@@ -17,8 +17,8 @@ export class OrderGetManyUseCase {
     const { customerId, page, size } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.list({ ...window, customerId });
-    const items = result.items.map((order) => OrderViewMapper.toSummaryView(order));
+    const data = result.data.map((order) => OrderViewMapper.toSummaryView(order));
 
-    return { items, total: result.total, page: result.page, size: result.size };
+    return { ...result, data };
   }
 }

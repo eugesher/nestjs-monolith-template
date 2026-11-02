@@ -9,7 +9,11 @@ describe('ReminderGetManyUseCase', () => {
 
   beforeEach(() => {
     list = jest.fn().mockResolvedValue({
-      items: [
+      page: 1,
+      count: 1,
+      pageCount: 1,
+      total: 1,
+      data: [
         ReminderModel.reconstitute({
           id: '7',
           ownerId: 'owner-1',
@@ -22,9 +26,6 @@ describe('ReminderGetManyUseCase', () => {
           updatedAt: new Date('2026-01-01T00:00:00.000Z'),
         }),
       ],
-      total: 1,
-      page: 1,
-      size: 20,
     });
     useCase = new ReminderGetManyUseCase({ list });
   });
@@ -45,7 +46,11 @@ describe('ReminderGetManyUseCase', () => {
         status: undefined,
       });
       expect(page).toEqual({
-        items: [
+        page: 1,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [
           {
             id: '7',
             ownerId: 'owner-1',
@@ -58,9 +63,6 @@ describe('ReminderGetManyUseCase', () => {
             updatedAt: '2026-01-01T00:00:00.000Z',
           },
         ],
-        total: 1,
-        page: 1,
-        size: 20,
       });
     });
 

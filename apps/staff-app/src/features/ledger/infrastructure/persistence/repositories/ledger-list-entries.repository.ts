@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
@@ -59,21 +59,18 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: entries.map((entry) => ({
-        id: entry.id,
-        operationKey: entry.operationKey,
-        subjectType: entry.subjectType,
-        subjectId: entry.subjectId,
-        action: entry.action,
-        payload: entry.payload,
-        correlationId: entry.correlationId,
-        occurredAt: entry.occurredAt.toISOString(),
-        recordedAt: entry.recordedAt.toISOString(),
-      })),
-      total,
-      page,
-      size,
-    };
+    const data = entries.map((entry) => ({
+      id: entry.id,
+      operationKey: entry.operationKey,
+      subjectType: entry.subjectType,
+      subjectId: entry.subjectId,
+      action: entry.action,
+      payload: entry.payload,
+      correlationId: entry.correlationId,
+      occurredAt: entry.occurredAt.toISOString(),
+      recordedAt: entry.recordedAt.toISOString(),
+    }));
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

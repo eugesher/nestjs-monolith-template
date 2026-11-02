@@ -6,7 +6,7 @@ import {
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import {
@@ -36,12 +36,12 @@ export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-    const items = products.map((product) => ({
+    const data = products.map((product) => ({
       id: product.id,
       sku: product.sku,
       name: product.name,
     }));
 
-    return { items, total, page, size };
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

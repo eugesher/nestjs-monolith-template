@@ -24,8 +24,8 @@ export class NoteGetRevisionsUseCase {
 
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.listForNote({ ...window, noteId });
-    const items = result.items.map((revision) => revision.toView());
+    const data = result.data.map((revision) => revision.toView());
 
-    return { items, total: result.total, page: result.page, size: result.size };
+    return { ...result, data };
   }
 }

@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Order } from '@acme-core/entities';
 
 import { IOrderGetManyRepositoryPort, IOrderListedView, IOrderPageQuery } from '../../../outbound';
@@ -31,8 +31,8 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-    const items = orders.map((order) => ({ id: order.id, createdAt: order.createdAt }));
+    const data = orders.map((order) => ({ id: order.id, createdAt: order.createdAt }));
 
-    return { items, total, page, size };
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

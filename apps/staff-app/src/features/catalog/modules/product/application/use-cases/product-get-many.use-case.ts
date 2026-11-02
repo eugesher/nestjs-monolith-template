@@ -19,8 +19,8 @@ export class ProductGetManyUseCase {
     const { page, size } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.list({ ...window });
-    const items = result.items.map((product) => product.toView());
+    const data = result.data.map((product) => product.toView());
 
-    return { items, total: result.total, page: result.page, size: result.size };
+    return { ...result, data };
   }
 }

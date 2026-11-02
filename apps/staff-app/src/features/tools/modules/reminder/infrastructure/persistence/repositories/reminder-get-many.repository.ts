@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
@@ -50,23 +50,20 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: reminders.map((reminder) =>
-        ReminderModel.reconstitute({
-          id: reminder.id,
-          ownerId: reminder.ownerId,
-          title: reminder.title,
-          body: reminder.body,
-          dueOn: reminder.dueOn,
-          status: reminder.status,
-          version: reminder.version,
-          createdAt: reminder.createdAt,
-          updatedAt: reminder.updatedAt,
-        }),
-      ),
-      total,
-      page,
-      size,
-    };
+    const data = reminders.map((reminder) =>
+      ReminderModel.reconstitute({
+        id: reminder.id,
+        ownerId: reminder.ownerId,
+        title: reminder.title,
+        body: reminder.body,
+        dueOn: reminder.dueOn,
+        status: reminder.status,
+        version: reminder.version,
+        createdAt: reminder.createdAt,
+        updatedAt: reminder.updatedAt,
+      }),
+    );
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

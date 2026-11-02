@@ -13,7 +13,7 @@ describe('CatalogGetManyUseCase', () => {
 
   describe('execute', () => {
     it('reads the page window of the query through the cache', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 2, size: 10 });
+      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ page: 2, size: 10 });
 
@@ -25,7 +25,7 @@ describe('CatalogGetManyUseCase', () => {
     });
 
     it('computes a miss with the repository page of the same window', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 2, size: 10 });
+      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ page: 2, size: 10 });
 
@@ -33,7 +33,7 @@ describe('CatalogGetManyUseCase', () => {
     });
 
     it('asks for the first page of 20 when the query has no window', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
+      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ page: undefined, size: undefined });
 
@@ -41,7 +41,7 @@ describe('CatalogGetManyUseCase', () => {
     });
 
     it('caps the size at 100', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 100 });
+      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ page: 1, size: 500 });
 
@@ -50,19 +50,21 @@ describe('CatalogGetManyUseCase', () => {
 
     it('answers a cached page without asking the repository', async () => {
       read.mockResolvedValue({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-        total: 1,
         page: 1,
-        size: 20,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
 
       const page = await useCase.execute({ page: undefined, size: undefined });
 
       expect(page).toEqual({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-        total: 1,
         page: 1,
-        size: 20,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
       expect(list).not.toHaveBeenCalled();
     });

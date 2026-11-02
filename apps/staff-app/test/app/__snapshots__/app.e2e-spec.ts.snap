@@ -4,7 +4,8 @@ exports[`App Catalog Product GET /api/catalog/products should list the catalog, 
 {
   "response": {
     "body": {
-      "items": [
+      "count": 7,
+      "data": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "106",
@@ -70,7 +71,7 @@ exports[`App Catalog Product GET /api/catalog/products should list the catalog, 
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 7,
     },
   },
@@ -393,244 +394,6 @@ exports[`App Catalog Product POST /api/catalog/products should replay the same r
   "ledger_record_queue": [
     "ProductCreated",
   ],
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
-{
-  "cache": {
-    "keys": [
-      "acme:catalog:v1:page:1:size:20",
-    ],
-  },
-  "db": {
-    "idempotency_key": [
-      {
-        "created_at": Any<Date>,
-        "id": Any<String>,
-        "idempotency_key": "e2e-restock-key",
-        "request_fingerprint": "f221eaac047dc3cc80d8c9ee9d9c752481cb15973ff880c71519f4158a3ec24e",
-        "response_body": Any<String>,
-        "status": "completed",
-      },
-    ],
-    "product_stock": [
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "id": "701",
-        "order_product_id": null,
-        "product_id": "106",
-        "quantity": 1,
-      },
-      {
-        "created_at": 2026-01-01T00:00:00.000Z,
-        "id": "703",
-        "order_product_id": "601",
-        "product_id": "106",
-        "quantity": -1,
-      },
-      {
-        "created_at": Any<Date>,
-        "id": Any<String>,
-        "order_product_id": null,
-        "product_id": "106",
-        "quantity": 5,
-      },
-    ],
-  },
-  "ledger_record_queue": [
-    {
-      "action": "ProductRestocked",
-      "correlationId": "e2e-product-restock",
-      "occurredAt": Any<String>,
-      "operationKey": Any<String>,
-      "payload": {
-        "quantity": 5,
-        "sku": "SKU-0007",
-      },
-      "subjectId": "106",
-      "subjectType": "product",
-    },
-  ],
-  "response": {
-    "body": {
-      "productId": "106",
-      "quantity": 5,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer a deleted product with 404 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "PRODUCT_NOT_FOUND",
-      "message": "Product 107 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer an unknown product with 404 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "PRODUCT_NOT_FOUND",
-      "message": "Product 999 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of a fraction with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "quantity must be an integer number",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of zero with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "quantity must not be less than 1",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock by a viewer with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock without a key with 400 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "IDEMPOTENCY_KEY_REQUIRED",
-      "message": "The Idempotency-Key header is required for this operation",
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse the same key with another quantity with 422 1`] = `
-{
-  "db": {
-    "product_stock": [
-      {
-        "product_id": "102",
-        "quantity": 1,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "PRODUCT_IDEMPOTENCY_KEY_REUSED",
-      "message": "Idempotency-Key e2e-restock-reuse-key was already used with a different request body",
-      "statusCode": 422,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should replay the same response for the same key and body without a second movement 1`] = `
-{
-  "db": {
-    "product_stock": [
-      {
-        "order_product_id": null,
-        "product_id": "100",
-        "quantity": 10,
-      },
-      {
-        "order_product_id": "600",
-        "product_id": "100",
-        "quantity": -1,
-      },
-      {
-        "order_product_id": "602",
-        "product_id": "100",
-        "quantity": -1,
-      },
-      {
-        "order_product_id": null,
-        "product_id": "100",
-        "quantity": 2,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "productId": "100",
-      "quantity": 10,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock a draft 1`] = `
-{
-  "response": {
-    "body": {
-      "productId": "101",
-      "quantity": 8,
-    },
-  },
-}
-`;
-
-exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock an archived product and leave it archived 1`] = `
-{
-  "db": {
-    "product": [
-      {
-        "id": "105",
-        "status": "archived",
-        "version": 2,
-      },
-    ],
-    "product_stock": [
-      {
-        "quantity": 4,
-      },
-      {
-        "quantity": 5,
-      },
-    ],
-  },
-  "ledger_record_queue": [
-    "ProductRestocked",
-  ],
-  "response": {
-    "body": {
-      "productId": "105",
-      "quantity": 9,
-    },
-  },
 }
 `;
 
@@ -1278,7 +1041,8 @@ exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] =
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "action": "ProductCreated",
           "correlationId": "seed-correlation-id",
@@ -1295,7 +1059,7 @@ exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] =
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },
@@ -1321,7 +1085,8 @@ exports[`App Sales Order GET /api/sales/orders should answer the page window it 
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "customerId": "101",
@@ -1329,7 +1094,7 @@ exports[`App Sales Order GET /api/sales/orders should answer the page window it 
         },
       ],
       "page": 2,
-      "size": 1,
+      "pageCount": 2,
       "total": 2,
     },
   },
@@ -1340,7 +1105,8 @@ exports[`App Sales Order GET /api/sales/orders should list the orders of every c
 {
   "response": {
     "body": {
-      "items": [
+      "count": 2,
+      "data": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "customerId": "102",
@@ -1353,7 +1119,7 @@ exports[`App Sales Order GET /api/sales/orders should list the orders of every c
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 2,
     },
   },
@@ -1477,7 +1243,8 @@ exports[`App Tools Note GET /api/tools/notes should filter by resolution 1`] = `
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "authorId": "1",
           "body": "Already handled.",
@@ -1491,7 +1258,7 @@ exports[`App Tools Note GET /api/tools/notes should filter by resolution 1`] = `
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },
@@ -1502,9 +1269,10 @@ exports[`App Tools Note GET /api/tools/notes should list only the notes of the c
 {
   "response": {
     "body": {
-      "items": [],
+      "count": 0,
+      "data": [],
       "page": 1,
-      "size": 20,
+      "pageCount": 0,
       "total": 0,
     },
   },
@@ -1515,7 +1283,8 @@ exports[`App Tools Note GET /api/tools/notes should list the notes of one subjec
 {
   "response": {
     "body": {
-      "items": [
+      "count": 2,
+      "data": [
         {
           "authorId": "1",
           "body": "Check the supplier.",
@@ -1540,7 +1309,7 @@ exports[`App Tools Note GET /api/tools/notes should list the notes of one subjec
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 2,
     },
   },
@@ -1657,7 +1426,8 @@ exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the r
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "bodyAfter": "Already handled.",
           "bodyBefore": "Handled soon.",
@@ -1670,7 +1440,7 @@ exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the r
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },
@@ -2018,7 +1788,8 @@ exports[`App Tools Reminder GET /api/tools/reminders should filter by status 1`]
 {
   "response": {
     "body": {
-      "items": [
+      "count": 1,
+      "data": [
         {
           "body": "",
           "createdAt": "2026-01-01T00:00:00.000Z",
@@ -2032,7 +1803,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should filter by status 1`]
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 1,
     },
   },
@@ -2043,7 +1814,8 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
 {
   "response": {
     "body": {
-      "items": [
+      "count": 5,
+      "data": [
         {
           "body": "",
           "createdAt": "2026-01-01T00:00:00.000Z",
@@ -2101,7 +1873,7 @@ exports[`App Tools Reminder GET /api/tools/reminders should list the own reminde
         },
       ],
       "page": 1,
-      "size": 20,
+      "pageCount": 1,
       "total": 5,
     },
   },
@@ -2336,6 +2108,244 @@ exports[`App Tools Reminder POST /api/tools/reminders should refuse an instant w
         "dueOn must be a calendar date formatted YYYY-MM-DD",
       ],
       "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog 1`] = `
+{
+  "cache": {
+    "keys": [
+      "acme:catalog:v1:page:1:size:20",
+    ],
+  },
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "e2e-restock-key",
+        "request_fingerprint": "f221eaac047dc3cc80d8c9ee9d9c752481cb15973ff880c71519f4158a3ec24e",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "product_stock": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "701",
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 1,
+      },
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "703",
+        "order_product_id": "601",
+        "product_id": "106",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 5,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    {
+      "action": "ProductRestocked",
+      "correlationId": "e2e-product-restock",
+      "occurredAt": Any<String>,
+      "operationKey": Any<String>,
+      "payload": {
+        "quantity": 5,
+        "sku": "SKU-0007",
+      },
+      "subjectId": "106",
+      "subjectType": "product",
+    },
+  ],
+  "response": {
+    "body": {
+      "productId": "106",
+      "quantity": 5,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer a deleted product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 107 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should answer an unknown product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of a fraction with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "quantity must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a quantity of zero with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "quantity must not be less than 1",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock by a viewer with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse a restock without a key with 400 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "IDEMPOTENCY_KEY_REQUIRED",
+      "message": "The Idempotency-Key header is required for this operation",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should refuse the same key with another quantity with 422 1`] = `
+{
+  "db": {
+    "product_stock": [
+      {
+        "product_id": "102",
+        "quantity": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "PRODUCT_IDEMPOTENCY_KEY_REUSED",
+      "message": "Idempotency-Key e2e-restock-reuse-key was already used with a different request body",
+      "statusCode": 422,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should replay the same response for the same key and body without a second movement 1`] = `
+{
+  "db": {
+    "product_stock": [
+      {
+        "order_product_id": null,
+        "product_id": "100",
+        "quantity": 10,
+      },
+      {
+        "order_product_id": "600",
+        "product_id": "100",
+        "quantity": -1,
+      },
+      {
+        "order_product_id": "602",
+        "product_id": "100",
+        "quantity": -1,
+      },
+      {
+        "order_product_id": null,
+        "product_id": "100",
+        "quantity": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "productId": "100",
+      "quantity": 10,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock a draft 1`] = `
+{
+  "response": {
+    "body": {
+      "productId": "101",
+      "quantity": 8,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should restock an archived product and leave it archived 1`] = `
+{
+  "db": {
+    "product": [
+      {
+        "id": "105",
+        "status": "archived",
+        "version": 2,
+      },
+    ],
+    "product_stock": [
+      {
+        "quantity": 4,
+      },
+      {
+        "quantity": 5,
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    "ProductRestocked",
+  ],
+  "response": {
+    "body": {
+      "productId": "105",
+      "quantity": 9,
     },
   },
 }

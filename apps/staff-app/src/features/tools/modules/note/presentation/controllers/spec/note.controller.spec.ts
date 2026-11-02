@@ -56,14 +56,14 @@ describe('NoteController', () => {
 
   describe('handleGetMany', () => {
     it('lists the notes of the query written by the caller', async () => {
-      getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
+      getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany(
         { page: 2, size: 5, subjectType: 'product', subjectId: '42', resolved: false },
         { id: 'user-1', email: 'ann@example.com' },
       );
 
-      expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
+      expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
         size: 5,
@@ -124,7 +124,7 @@ describe('NoteController', () => {
 
   describe('handleGetRevisions', () => {
     it('lists the revisions of the note of the path for the caller', async () => {
-      getRevisions.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
+      getRevisions.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetRevisions(
         { noteId: '17' },
@@ -132,7 +132,7 @@ describe('NoteController', () => {
         { id: 'user-1', email: 'ann@example.com' },
       );
 
-      expect(response).toEqual({ items: [], total: 0, page: 1, size: 20 });
+      expect(response).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getRevisions).toHaveBeenCalledWith({
         noteId: '17',
         authorId: 'user-1',

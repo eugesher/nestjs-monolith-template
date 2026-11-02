@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
@@ -42,22 +42,19 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: revisions.map((revision) =>
-        NoteRevisionModel.reconstitute({
-          id: revision.id,
-          noteId: revision.noteId,
-          noteVersion: revision.noteVersion,
-          bodyBefore: revision.bodyBefore,
-          bodyAfter: revision.bodyAfter,
-          editorId: revision.editorId,
-          correlationId: revision.correlationId,
-          recordedAt: revision.recordedAt,
-        }),
-      ),
-      total,
-      page,
-      size,
-    };
+    const data = revisions.map((revision) =>
+      NoteRevisionModel.reconstitute({
+        id: revision.id,
+        noteId: revision.noteId,
+        noteVersion: revision.noteVersion,
+        bodyBefore: revision.bodyBefore,
+        bodyAfter: revision.bodyAfter,
+        editorId: revision.editorId,
+        correlationId: revision.correlationId,
+        recordedAt: revision.recordedAt,
+      }),
+    );
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

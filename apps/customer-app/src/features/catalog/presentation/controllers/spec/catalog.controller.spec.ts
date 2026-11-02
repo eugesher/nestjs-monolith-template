@@ -15,19 +15,21 @@ describe('CatalogController', () => {
   describe('handleGetMany', () => {
     it('answers the page for the window of the query string', async () => {
       list.mockResolvedValue({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-        total: 1,
         page: 2,
-        size: 10,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
 
       const response = await controller.handleGetMany({ page: 2, size: 10 });
 
       expect(response).toEqual({
-        items: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-        total: 1,
         page: 2,
-        size: 10,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
       expect(list).toHaveBeenCalledWith({ page: 2, size: 10 });
     });
