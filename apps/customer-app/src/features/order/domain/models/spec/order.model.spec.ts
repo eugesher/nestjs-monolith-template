@@ -96,6 +96,54 @@ describe('OrderModel', () => {
     });
   });
 
+  describe('fromInserted', () => {
+    it('takes the ids from the inserted rows and the sku and name from the placed order', () => {
+      const placed = OrderModel.place({
+        customerId: 'customer-1',
+        productIds: ['100', '103'],
+        stock: [
+          { productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 1 },
+          { productId: '103', sku: 'SKU-0004', name: 'Chair', quantity: 1 },
+        ],
+      });
+
+      const order = OrderModel.fromInserted(placed, {
+        id: '600',
+        customerId: 'customer-1',
+        createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        products: [
+          { id: '700', productId: '100' },
+          { id: '701', productId: '103' },
+        ],
+      });
+
+      expect(order.id).toBe('600');
+      expect(order.customerId).toBe('customer-1');
+      expect(order.createdAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
+      expect(order.products).toEqual([
+        { id: '700', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+        { id: '701', productId: '103', sku: 'SKU-0004', name: 'Chair' },
+      ]);
+    });
+
+    it('leaves sku and name empty for a row the placed order does not hold', () => {
+      const placed = OrderModel.place({
+        customerId: 'customer-1',
+        productIds: ['100'],
+        stock: [{ productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 1 }],
+      });
+
+      const order = OrderModel.fromInserted(placed, {
+        id: '600',
+        customerId: 'customer-1',
+        createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        products: [{ id: '700', productId: '999' }],
+      });
+
+      expect(order.products).toEqual([{ id: '700', productId: '999', sku: '', name: '' }]);
+    });
+  });
+
   describe('reconstitute', () => {
     it('restores a stored order with its products', () => {
       const order = OrderModel.reconstitute({

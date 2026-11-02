@@ -3,6 +3,7 @@ import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
 import { OrderDomainException } from '../exceptions/order-domain.exception';
 import { IOrderDraft } from '../interfaces/order-draft.interface';
+import { IOrderInserted } from '../interfaces/order-inserted.interface';
 import { IOrderProduct } from '../interfaces/order-product.interface';
 import { IOrderRecord } from '../interfaces/order-record.interface';
 import { IOrderStock } from '../interfaces/order-stock.interface';
@@ -39,6 +40,22 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
     }));
 
     return new OrderModel(undefined, customerId, products, undefined);
+  }
+
+  public static fromInserted(placed: OrderModel, inserted: IOrderInserted): OrderModel {
+    const { id, customerId, createdAt, products } = inserted;
+    const records = products.map((row) => {
+      const product = placed.products.find((candidate) => candidate.productId === row.productId);
+
+      return {
+        id: row.id,
+        productId: row.productId,
+        sku: product?.sku ?? '',
+        name: product?.name ?? '',
+      };
+    });
+
+    return new OrderModel(id, customerId, records, createdAt);
   }
 
   public static reconstitute(record: IOrderRecord): OrderModel {

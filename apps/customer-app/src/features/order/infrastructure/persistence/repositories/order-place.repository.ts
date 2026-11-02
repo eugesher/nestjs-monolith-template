@@ -63,18 +63,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .where('Order.id = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
       .getOneOrFail();
-    const records = stored.orderProducts.map((row) => {
-      const { id, productId } = row;
-      const product = products.find((candidate) => candidate.productId === productId);
 
-      return { id, productId, sku: product?.sku ?? '', name: product?.name ?? '' };
-    });
-
-    return OrderModel.reconstitute({
+    return OrderModel.fromInserted(order, {
       id: stored.id,
       customerId: stored.customerId,
       createdAt: stored.createdAt,
-      products: records,
+      products: stored.orderProducts,
     });
   }
 }
