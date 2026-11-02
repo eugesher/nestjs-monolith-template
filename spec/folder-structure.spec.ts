@@ -19,6 +19,14 @@ describe('folder structure', () => {
         { relPath: 'x', files: ['a.ts', 'b.ts'], folders: ['spec'] },
       ],
       [
+        'exceptions with their base folder',
+        {
+          relPath: 'x/exceptions',
+          files: ['a.exception.ts', 'b.exception.ts'],
+          folders: ['base'],
+        },
+      ],
+      [
         'repositories with their base folder',
         {
           relPath: 'x/repositories',
@@ -41,7 +49,7 @@ describe('folder structure', () => {
         { relPath: 'x', files: ['a.ts', 'b.ts'], folders: ['a', 'spec'] },
       ],
       [
-        'a base folder outside repositories',
+        'a base folder outside repositories and exceptions',
         { relPath: 'x/services', files: ['a.ts', 'b.ts'], folders: ['base'] },
       ],
     ])('rejects %s', (_, folder) => {

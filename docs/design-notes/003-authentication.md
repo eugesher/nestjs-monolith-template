@@ -18,7 +18,7 @@ carry the `AuthGlobal` prefix (see `002-global-auth-guards.md`) and the feature 
 | application    | `application/use-cases/auth-login.use-case.ts`, `application/services/auth-access-token.service.ts` |
 | outbound       | `outbound/ports/auth-login-repository.port.ts`                                                      |
 | infrastructure | `infrastructure/persistence/repositories/auth-login.repository.ts`                                  |
-| domain         | `domain/models/`, `domain/exceptions/auth-domain.exception.ts`                                      |
+| domain         | `domain/models/`, `domain/exceptions/base/auth-base.exception.ts`                                   |
 
 **Login lives in the feature.** No other module logs anyone in, so the use case reads the user,
 checks the password and signs the token itself (see `024-code-placement.md`).
@@ -38,7 +38,7 @@ e2e of each app sends two such requests at once and expects one 201 and one 409.
 
 ## The feature filter delegates
 
-`AuthHttpExceptionFilter` turns the code of `AuthDomainException` into an `HttpException` with the
+`AuthHttpExceptionFilter` turns the code of `AuthBaseException` into an `HttpException` with the
 body `{ statusCode, message, code }` and hands it to the shared `HttpExceptionFilter` of
 `libs/http`. Logging, and masking of `password` in the logged request, stay in one place. The
 feature module provides `HttpExceptionFilter` so that Nest can inject it into the feature filter.

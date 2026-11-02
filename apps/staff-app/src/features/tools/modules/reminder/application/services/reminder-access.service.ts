@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ReminderDomainException, ReminderErrorCodeEnum, ReminderModel } from '../../domain';
+import { ReminderModel, ReminderNotFoundException } from '../../domain';
 import {
   type IReminderAccessRepositoryPort,
   REMINDER_ACCESS_REPOSITORY_PORT,
@@ -19,10 +19,7 @@ export class ReminderAccessService {
     const reminder = await this.repository.findOwned({ reminderId, ownerId });
 
     if (reminder === null) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_NOT_FOUND,
-        `Reminder ${reminderId} was not found`,
-      );
+      throw new ReminderNotFoundException(reminderId);
     }
 
     return reminder;

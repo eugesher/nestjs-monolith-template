@@ -1,4 +1,4 @@
-import { AuthDomainException } from '../../../domain';
+import { AuthBaseException } from '../../../domain';
 import { AuthMeUseCase } from '../auth-me.use-case';
 
 describe('AuthMeUseCase', () => {
@@ -25,7 +25,7 @@ describe('AuthMeUseCase', () => {
 
       const execution = useCase.execute({ userId: 'user-1' });
 
-      await expect(execution).rejects.toBeInstanceOf(AuthDomainException);
+      await expect(execution).rejects.toBeInstanceOf(AuthBaseException);
       await expect(execution).rejects.toMatchObject({
         code: 'AUTH_USER_NOT_FOUND',
         message: 'User user-1 was not found',

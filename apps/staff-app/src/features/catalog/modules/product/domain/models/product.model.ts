@@ -1,11 +1,12 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
-import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
 import { ProductCreatedEvent } from '../events/product-created.event';
 import { ProductPublishedEvent } from '../events/product-published.event';
 import { ProductUpdatedEvent } from '../events/product-updated.event';
-import { ProductDomainException } from '../exceptions/product-domain.exception';
+import { ProductNameInvalidException } from '../exceptions/product-name-invalid.exception';
+import { ProductSkuInvalidException } from '../exceptions/product-sku-invalid.exception';
+import { ProductVersionInvalidException } from '../exceptions/product-version-invalid.exception';
 import { IProductChanges } from '../interfaces/product-changes.interface';
 import { IProductDraft } from '../interfaces/product-draft.interface';
 import { IProductRecord } from '../interfaces/product-record.interface';
@@ -57,10 +58,7 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
 
   private static validSku(sku: string): string {
     if (!ProductModel.SKU_PATTERN.test(sku)) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_SKU_INVALID,
-        `Product.sku must match ${String(ProductModel.SKU_PATTERN)}, got ${sku}`,
-      );
+      throw new ProductSkuInvalidException(ProductModel.SKU_PATTERN, sku);
     }
 
     return sku;
@@ -70,10 +68,7 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     const trimmed = name.trim();
 
     if (trimmed.length === 0 || trimmed.length > ProductModel.NAME_MAX_LENGTH) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_NAME_INVALID,
-        `Product.name must be a non-empty string of at most ${ProductModel.NAME_MAX_LENGTH} characters`,
-      );
+      throw new ProductNameInvalidException(ProductModel.NAME_MAX_LENGTH);
     }
 
     return trimmed;
@@ -81,10 +76,7 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
 
   private static validVersion(version: number): number {
     if (!Number.isInteger(version) || version < 1) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_VERSION_INVALID,
-        `Product.version must be a positive integer, got ${version}`,
-      );
+      throw new ProductVersionInvalidException(version);
     }
 
     return version;

@@ -5,8 +5,8 @@ const ROOT = path.resolve(__dirname, '../..');
 const SKIPPED = new Set(['node_modules', 'dist']);
 const BARREL = 'index.ts';
 const SPEC = 'spec';
-const REPOSITORIES = 'repositories';
-const REPOSITORY_BASE = 'base';
+const BASE_HOLDERS = new Set(['repositories', 'exceptions']);
+const BASE = 'base';
 
 export interface IFolder {
   relPath: string;
@@ -27,7 +27,7 @@ function* walk(relPath: string): Generator<IFolder> {
 }
 
 const countsAsSubfolder = (relPath: string, folder: string): boolean =>
-  folder !== SPEC && !(path.basename(relPath) === REPOSITORIES && folder === REPOSITORY_BASE);
+  folder !== SPEC && !(BASE_HOLDERS.has(path.basename(relPath)) && folder === BASE);
 
 export const folderStructureViolationOf = ({ relPath, files, folders }: IFolder): string | null => {
   if (files.includes(BARREL)) {

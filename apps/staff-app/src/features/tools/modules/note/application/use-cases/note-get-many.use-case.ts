@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
-import { NoteDomainException, NoteErrorCodeEnum } from '../../domain';
+import { NoteSubjectInvalidException } from '../../domain';
 import { type INoteCrudRepositoryPort, NOTE_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';
 import { NoteViewMapper } from '../mappers/note-view.mapper';
@@ -18,10 +18,7 @@ export class NoteGetManyUseCase {
     const { page, size, subjectType, subjectId, resolved, authorId } = query;
 
     if ((subjectType === undefined) !== (subjectId === undefined)) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_SUBJECT_INVALID,
-        'A subject filter needs both subjectType and subjectId, or neither',
-      );
+      throw new NoteSubjectInvalidException();
     }
 
     const window = PaginationHelper.clampPageWindow(page, size);

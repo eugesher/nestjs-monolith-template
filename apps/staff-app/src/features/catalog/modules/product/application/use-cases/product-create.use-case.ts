@@ -3,7 +3,12 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
-import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../domain';
+import {
+  ProductIdempotencyKeyReusedException,
+  ProductIdempotentRequestInFlightException,
+  ProductModel,
+  ProductSkuTakenException,
+} from '../../domain';
 import {
   type IProductCreateRepositoryPort,
   type IProductIdempotencyPort,
@@ -42,17 +47,11 @@ export class ProductCreateUseCase {
     }
 
     if (claim.outcome === 'in-flight') {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT,
-        `Idempotency-Key ${idempotencyKey} is still being processed, retry shortly`,
-      );
+      throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
     if (claim.outcome === 'mismatch') {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED,
-        `Idempotency-Key ${idempotencyKey} was already used with a different request body`,
-      );
+      throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 
     try {
@@ -69,10 +68,7 @@ export class ProductCreateUseCase {
     const taken = await this.repository.existsBySku(sku);
 
     if (taken) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_SKU_TAKEN,
-        `Product sku ${sku} is already registered`,
-      );
+      throw new ProductSkuTakenException(sku);
     }
 
     const draft = ProductModel.create({ sku, name });

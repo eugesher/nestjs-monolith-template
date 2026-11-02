@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { RoleEnum } from '@acme-libs/kernel';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
-import { IUserStaffUserDraft, UserDomainException, UserStaffUserModel } from '../../../domain';
+import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../../domain';
 import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -50,10 +50,7 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
         throw error;
       }
 
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
-        `Email ${email} is already registered`,
-      );
+      throw new AuthEmailTakenException(email);
     }
   }
 

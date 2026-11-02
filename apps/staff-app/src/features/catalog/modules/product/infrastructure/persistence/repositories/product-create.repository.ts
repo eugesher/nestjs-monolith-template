@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../../domain';
+import { ProductModel, ProductSkuTakenException } from '../../../domain';
 import { type IProductCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -36,10 +36,7 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
         throw error;
       }
 
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_SKU_TAKEN,
-        `Product sku ${sku} is already registered`,
-      );
+      throw new ProductSkuTakenException(sku);
     }
 
     const stored = await this.productRepository

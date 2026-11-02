@@ -1,7 +1,8 @@
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
-import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
-import { OrderDomainException } from '../exceptions/order-domain.exception';
+import { OrderEmptyException } from '../exceptions/order-empty.exception';
+import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
+import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
 import { IOrderDraft } from '../interfaces/order-draft.interface';
 import { IOrderInserted } from '../interfaces/order-inserted.interface';
 import { IOrderProduct } from '../interfaces/order-product.interface';
@@ -22,10 +23,7 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
     const { customerId, productIds, stock } = draft;
 
     if (productIds.length === 0) {
-      throw new OrderDomainException(
-        OrderErrorCodeEnum.ORDER_EMPTY,
-        'An order must contain at least one product',
-      );
+      throw new OrderEmptyException();
     }
 
     const units = productIds.map((productId) => OrderModel.requireStock(productId, stock));
@@ -68,11 +66,7 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
     const unit = stock.find((candidate) => candidate.productId === productId);
 
     if (unit === undefined) {
-      throw new OrderDomainException(
-        OrderErrorCodeEnum.ORDER_PRODUCT_NOT_FOUND,
-        `Product ${productId} was not found`,
-        { productId },
-      );
+      throw new OrderProductNotFoundException(productId);
     }
 
     return unit;
@@ -84,11 +78,7 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
       const requested = units.filter((other) => other.productId === productId).length;
 
       if (requested > quantity) {
-        throw new OrderDomainException(
-          OrderErrorCodeEnum.ORDER_STOCK_INSUFFICIENT,
-          `Product ${productId} has ${quantity} in stock, ${requested} requested`,
-          { productId, requested, available: quantity },
-        );
+        throw new OrderStockInsufficientException(productId, requested, quantity);
       }
     }
   }

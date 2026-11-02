@@ -2,7 +2,15 @@ import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { ReminderDomainException, ReminderErrorCodeEnum } from '../../../domain';
+import {
+  ReminderAlreadyDoneException,
+  ReminderBodyInvalidException,
+  ReminderDueOnInvalidException,
+  ReminderNotFoundException,
+  ReminderTitleInvalidException,
+  ReminderVersionInvalidException,
+  ReminderVersionMismatchException,
+} from '../../../domain';
 import { ReminderHttpExceptionFilter } from '../reminder-http-exception.filter';
 
 describe('ReminderHttpExceptionFilter', () => {
@@ -17,40 +25,43 @@ describe('ReminderHttpExceptionFilter', () => {
   it('hands the HttpException over together with the same host', () => {
     const host = {} as ArgumentsHost;
 
-    filter.catch(
-      new ReminderDomainException(ReminderErrorCodeEnum.REMINDER_NOT_FOUND, 'reason'),
-      host,
-    );
+    filter.catch(new ReminderNotFoundException('1'), host);
 
     expect(httpExceptionFilter.catch).toHaveBeenCalledTimes(1);
     expect(httpExceptionFilter.catch).toHaveBeenCalledWith(expect.any(HttpException), host);
   });
 
   it.each([
-    ['REMINDER_TITLE_INVALID', 400],
-    ['REMINDER_BODY_INVALID', 400],
-    ['REMINDER_DUE_ON_INVALID', 400],
-    ['REMINDER_VERSION_INVALID', 400],
-    ['REMINDER_NOT_FOUND', 404],
-    ['REMINDER_ALREADY_DONE', 409],
-    ['VERSION_MISMATCH', 409],
-  ])('maps %s to %i with the code and the domain message in the body', (code, status) => {
-    filter.catch(
-      new ReminderDomainException(code as ReminderErrorCodeEnum, 'domain message'),
-      {} as ArgumentsHost,
-    );
+    ['REMINDER_TITLE_INVALID', 400, new ReminderTitleInvalidException(255, 'domain message')],
+    ['REMINDER_BODY_INVALID', 400, new ReminderBodyInvalidException(255, 'domain message')],
+    [
+      'REMINDER_DUE_ON_INVALID',
+      400,
+      new ReminderDueOnInvalidException('2026-02-30', 'domain message'),
+    ],
+    ['REMINDER_VERSION_INVALID', 400, new ReminderVersionInvalidException(0, 'domain message')],
+    ['REMINDER_NOT_FOUND', 404, new ReminderNotFoundException('1', 'domain message')],
+    ['REMINDER_ALREADY_DONE', 409, new ReminderAlreadyDoneException('1', 'domain message')],
+    ['VERSION_MISMATCH', 409, new ReminderVersionMismatchException('1', 5, 4, 'domain message')],
+  ])(
+    'maps %s to %i with the code and the domain message in the body',
+    (code, status, exception) => {
+      filter.catch(exception, {} as ArgumentsHost);
 
-    const [error] = httpExceptionFilter.catch.mock.calls[0];
+      const [error] = httpExceptionFilter.catch.mock.calls[0];
 
-    expect(error.getStatus()).toBe(status);
-    expect(error.getResponse()).toEqual({ statusCode: status, message: 'domain message', code });
-  });
+      expect(error.getStatus()).toBe(status);
+      expect(error.getResponse()).toMatchObject({
+        statusCode: status,
+        message: 'domain message',
+        code,
+      });
+    },
+  );
 
   it('adds the details of the exception to the body', () => {
     filter.catch(
-      new ReminderDomainException(ReminderErrorCodeEnum.REMINDER_VERSION_MISMATCH, 'stale', {
-        currentVersion: 4,
-      }),
+      new ReminderVersionMismatchException('1', 5, 4, 'domain message'),
       {} as ArgumentsHost,
     );
 
@@ -58,7 +69,7 @@ describe('ReminderHttpExceptionFilter', () => {
 
     expect(error.getResponse()).toEqual({
       statusCode: 409,
-      message: 'stale',
+      message: 'domain message',
       code: 'VERSION_MISMATCH',
       details: { currentVersion: 4 },
     });

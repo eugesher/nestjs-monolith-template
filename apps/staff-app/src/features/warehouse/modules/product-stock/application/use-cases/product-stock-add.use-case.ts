@@ -3,7 +3,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
-import { ProductStockDomainException, ProductStockErrorCodeEnum } from '../../domain';
+import {
+  ProductIdempotencyKeyReusedException,
+  ProductIdempotentRequestInFlightException,
+  ProductNotFoundException,
+} from '../../domain';
 import {
   type IProductStockAddRepositoryPort,
   type IProductStockIdempotencyPort,
@@ -49,17 +53,11 @@ export class ProductStockAddUseCase {
     }
 
     if (claim.outcome === 'in-flight') {
-      throw new ProductStockDomainException(
-        ProductStockErrorCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT,
-        `Idempotency-Key ${idempotencyKey} is still being processed, retry shortly`,
-      );
+      throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
     if (claim.outcome === 'mismatch') {
-      throw new ProductStockDomainException(
-        ProductStockErrorCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED,
-        `Idempotency-Key ${idempotencyKey} was already used with a different request body`,
-      );
+      throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 
     try {
@@ -90,10 +88,7 @@ export class ProductStockAddUseCase {
     const productStock = await this.repository.findById(productId);
 
     if (productStock === null) {
-      throw new ProductStockDomainException(
-        ProductStockErrorCodeEnum.PRODUCT_NOT_FOUND,
-        `Product ${productId} was not found`,
-      );
+      throw new ProductNotFoundException(productId);
     }
 
     productStock.add(quantity);
