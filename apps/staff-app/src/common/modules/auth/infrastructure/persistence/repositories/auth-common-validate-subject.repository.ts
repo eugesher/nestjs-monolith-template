@@ -2,13 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { UserStatusEnum } from '@acme-libs/kernel';
+import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
 import { type IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
-import { AuthCommonStaffUserMapper } from '../mappers/auth-common-staff-user.mapper';
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {
@@ -33,6 +32,12 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
       .andWhere('StaffUser.status = :status', { status: UserStatusEnum.ACTIVE })
       .getOne();
 
-    return user ? AuthCommonStaffUserMapper.toModel(user) : null;
+    if (user === null) {
+      return null;
+    }
+
+    const roles = user.userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
+
+    return AuthCommonStaffUserModel.reconstitute({ id: user.id, email: user.email, roles });
   }
 }

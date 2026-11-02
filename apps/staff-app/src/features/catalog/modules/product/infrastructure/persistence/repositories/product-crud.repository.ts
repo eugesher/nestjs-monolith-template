@@ -7,7 +7,6 @@ import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../domain';
 import { type IProductCrudRepositoryPort, IProductPageQuery } from '../../../outbound';
-import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCrudRepository implements IProductCrudRepositoryPort {
@@ -39,7 +38,17 @@ export class ProductCrudRepository implements IProductCrudRepositoryPort {
       .getManyAndCount();
 
     return {
-      items: items.map((product) => ProductMapper.toModel(product)),
+      items: items.map((product) =>
+        ProductModel.reconstitute({
+          id: product.id,
+          sku: product.sku,
+          name: product.name,
+          status: product.status,
+          version: product.version,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+        }),
+      ),
       total,
       page,
       size,

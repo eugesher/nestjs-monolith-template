@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { StaffRole } from '@acme-staff/common/entities';
 
 import { RoleModel } from '../../../domain';
 import { type IRoleListRepositoryPort } from '../../../outbound';
-import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleListRepository implements IRoleListRepositoryPort {
@@ -30,6 +30,14 @@ export class RoleListRepository implements IRoleListRepositoryPort {
       .orderBy('StaffRole.id', 'ASC')
       .getMany();
 
-    return roles.map((role) => RoleMapper.toModel(role));
+    return roles.map((role) =>
+      RoleModel.reconstitute({
+        id: role.id,
+        name: role.name as RoleEnum,
+        permissionCodes: role.rolePermissions
+          .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
+          .sort(),
+      }),
+    );
   }
 }

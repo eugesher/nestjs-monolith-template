@@ -10,7 +10,6 @@ import {
   IReminderAccessFindOwnedQuery,
   type IReminderAccessRepositoryPort,
 } from '../../../outbound';
-import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
@@ -42,6 +41,20 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
       .andWhere('Reminder.ownerId = :ownerId', { ownerId })
       .getOne();
 
-    return reminder === null ? null : ReminderMapper.toModel(reminder);
+    if (reminder === null) {
+      return null;
+    }
+
+    return ReminderModel.reconstitute({
+      id: reminder.id,
+      ownerId: reminder.ownerId,
+      title: reminder.title,
+      body: reminder.body,
+      dueOn: reminder.dueOn,
+      status: reminder.status,
+      version: reminder.version,
+      createdAt: reminder.createdAt,
+      updatedAt: reminder.updatedAt,
+    });
   }
 }

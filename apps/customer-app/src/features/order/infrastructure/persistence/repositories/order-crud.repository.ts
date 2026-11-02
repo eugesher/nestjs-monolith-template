@@ -12,7 +12,6 @@ import {
   IOrderListedView,
   IOrderPageQuery,
 } from '../../../outbound';
-import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderCrudRepository implements IOrderCrudRepositoryPort {
@@ -69,6 +68,11 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
       .withDeleted()
       .getRawMany<IOrderProductRecord>();
 
-    return OrderMapper.toModel(order, products);
+    return OrderModel.reconstitute({
+      id: order.id,
+      customerId: order.customerId,
+      createdAt: order.createdAt,
+      products,
+    });
   }
 }

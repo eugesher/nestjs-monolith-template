@@ -10,7 +10,6 @@ import {
   type ILedgerListEntriesRepositoryPort,
   ILedgerStoredEntryView,
 } from '../../../outbound';
-import { LedgerEntryMapper } from '../mappers/ledger-entry.mapper';
 
 @Injectable()
 export class LedgerListEntriesRepository implements ILedgerListEntriesRepositoryPort {
@@ -58,7 +57,17 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
       .getManyAndCount();
 
     return {
-      items: entries.map((entry) => LedgerEntryMapper.toView(entry)),
+      items: entries.map((entry) => ({
+        id: entry.id,
+        operationKey: entry.operationKey,
+        subjectType: entry.subjectType,
+        subjectId: entry.subjectId,
+        action: entry.action,
+        payload: entry.payload,
+        correlationId: entry.correlationId,
+        occurredAt: entry.occurredAt.toISOString(),
+        recordedAt: entry.recordedAt.toISOString(),
+      })),
       total,
       page,
       size,

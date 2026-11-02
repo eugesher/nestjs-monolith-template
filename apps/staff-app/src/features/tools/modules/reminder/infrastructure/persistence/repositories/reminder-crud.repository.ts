@@ -7,7 +7,6 @@ import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 import { type IReminderCrudRepositoryPort, IReminderPageQuery } from '../../../outbound';
-import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderCrudRepository implements IReminderCrudRepositoryPort {
@@ -49,7 +48,19 @@ export class ReminderCrudRepository implements IReminderCrudRepositoryPort {
       .getManyAndCount();
 
     return {
-      items: reminders.map((reminder) => ReminderMapper.toModel(reminder)),
+      items: reminders.map((reminder) =>
+        ReminderModel.reconstitute({
+          id: reminder.id,
+          ownerId: reminder.ownerId,
+          title: reminder.title,
+          body: reminder.body,
+          dueOn: reminder.dueOn,
+          status: reminder.status,
+          version: reminder.version,
+          createdAt: reminder.createdAt,
+          updatedAt: reminder.updatedAt,
+        }),
+      ),
       total,
       page,
       size,

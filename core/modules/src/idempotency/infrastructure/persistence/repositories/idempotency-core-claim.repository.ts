@@ -7,7 +7,6 @@ import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyModel } from '../../../domain';
 import { type IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
-import { IdempotencyCoreKeyMapper } from '../mappers/idempotency-core-key.mapper';
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
@@ -53,6 +52,17 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
       .where('IdempotencyKey.idempotencyKey = :key', { key })
       .getOne();
 
-    return entity === null ? null : IdempotencyCoreKeyMapper.toModel(entity);
+    if (entity === null) {
+      return null;
+    }
+
+    return IdempotencyCoreKeyModel.reconstitute({
+      id: entity.id,
+      key: entity.idempotencyKey,
+      requestFingerprint: entity.requestFingerprint,
+      status: entity.status,
+      responseBody: entity.responseBody,
+      createdAt: entity.createdAt,
+    });
   }
 }

@@ -6,7 +6,6 @@ import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 import { type IReminderCreateRepositoryPort } from '../../../outbound';
-import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
@@ -47,6 +46,16 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
       .where('Reminder.id = :id', { id })
       .getOneOrFail();
 
-    return ReminderMapper.toModel(stored);
+    return ReminderModel.reconstitute({
+      id: stored.id,
+      ownerId: stored.ownerId,
+      title: stored.title,
+      body: stored.body,
+      dueOn: stored.dueOn,
+      status: stored.status,
+      version: stored.version,
+      createdAt: stored.createdAt,
+      updatedAt: stored.updatedAt,
+    });
   }
 }

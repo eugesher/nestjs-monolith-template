@@ -6,10 +6,8 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
-import { RolePermissionModel, RoleModel } from '../../../domain';
+import { RoleModel, RolePermissionModel } from '../../../domain';
 import { type IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';
-import { RolePermissionMapper } from '../mappers/role-permission.mapper';
-import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {
@@ -41,7 +39,15 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .where('StaffRole.name = :name', { name })
       .getOne();
 
-    return role ? RoleMapper.toModel(role) : null;
+    if (role === null) {
+      return null;
+    }
+
+    const permissionCodes = role.rolePermissions
+      .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
+      .sort();
+
+    return RoleModel.reconstitute({ id: role.id, name: role.name as RoleEnum, permissionCodes });
   }
 
   public async findPermissions(codes: PermissionCodeEnum[]): Promise<RolePermissionModel[]> {
@@ -55,7 +61,12 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .where('StaffPermission.code IN (:...codes)', { codes })
       .getMany();
 
-    return permissions.map((permission) => RolePermissionMapper.toModel(permission));
+    return permissions.map((permission) =>
+      RolePermissionModel.reconstitute({
+        id: permission.id,
+        code: permission.code as PermissionCodeEnum,
+      }),
+    );
   }
 
   public async replacePermissions(role: RoleModel): Promise<void> {

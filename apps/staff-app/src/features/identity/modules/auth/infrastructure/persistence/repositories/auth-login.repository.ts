@@ -7,7 +7,6 @@ import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthStaffUserModel } from '../../../domain';
 import { type IAuthLoginRepositoryPort } from '../../../outbound';
-import { AuthStaffUserMapper } from '../mappers/auth-staff-user.mapper';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -27,6 +26,15 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
       .where('StaffUser.email = :email', { email })
       .getOne();
 
-    return user ? AuthStaffUserMapper.toModel(user) : null;
+    if (user === null) {
+      return null;
+    }
+
+    return AuthStaffUserModel.reconstitute({
+      id: user.id,
+      email: user.email,
+      passwordHash: user.passwordHash,
+      status: user.status,
+    });
   }
 }

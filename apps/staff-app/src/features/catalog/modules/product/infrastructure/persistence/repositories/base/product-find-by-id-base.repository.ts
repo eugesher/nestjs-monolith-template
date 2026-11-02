@@ -5,7 +5,6 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../../domain';
-import { ProductMapper } from '../../mappers/product.mapper';
 
 export abstract class ProductFindByIdBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
@@ -29,6 +28,18 @@ export abstract class ProductFindByIdBaseRepository {
       .where('Product.id = :productId', { productId })
       .getOne();
 
-    return product === null ? null : ProductMapper.toModel(product);
+    if (product === null) {
+      return null;
+    }
+
+    return ProductModel.reconstitute({
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      status: product.status,
+      version: product.version,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    });
   }
 }

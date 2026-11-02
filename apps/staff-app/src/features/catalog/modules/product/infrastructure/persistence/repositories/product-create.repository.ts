@@ -7,7 +7,6 @@ import { Product } from '@acme-core/entities';
 
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../../domain';
 import { type IProductCreateRepositoryPort } from '../../../outbound';
-import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCreateRepository implements IProductCreateRepositoryPort {
@@ -57,6 +56,14 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       .where('Product.sku = :sku', { sku })
       .getOneOrFail();
 
-    return ProductMapper.toModel(stored);
+    return ProductModel.reconstitute({
+      id: stored.id,
+      sku: stored.sku,
+      name: stored.name,
+      status: stored.status,
+      version: stored.version,
+      createdAt: stored.createdAt,
+      updatedAt: stored.updatedAt,
+    });
   }
 }

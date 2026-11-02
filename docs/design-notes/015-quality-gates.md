@@ -26,12 +26,11 @@ a threshold.
 | `libs/openapi/src/api-reference/api-reference.ts`                                  | mounts the reference page                                       |
 | `libs/*/src/testing/**`, `apps/*/test/**`                                          | test code                                                       |
 
-**The thresholds** are 95% for statements, branches, functions and lines, three times over:
+**The thresholds** are 95% for statements, branches, functions and lines, twice over:
 
 - for the whole tree;
 - for every file of `domain/` and `application/` in a feature, a nested feature module
-  (`features/<area>/modules/<module>`), a processor, a common module and a core module;
-- for every persistence mapper.
+  (`features/<area>/modules/<module>`), a processor, a common module and a core module.
 
 The per-file keys are what matter. One unit without a spec barely moves the global numbers, but
 its file drops to zero and fails its own key.

@@ -7,7 +7,6 @@ import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { OrderModel } from '../../../domain';
 import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
-import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
@@ -71,6 +70,11 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return { id, productId, sku: product?.sku ?? '', name: product?.name ?? '' };
     });
 
-    return OrderMapper.toModel(stored, records);
+    return OrderModel.reconstitute({
+      id: stored.id,
+      customerId: stored.customerId,
+      createdAt: stored.createdAt,
+      products: records,
+    });
   }
 }

@@ -6,7 +6,6 @@ import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { type INoteCreateRepositoryPort } from '../../../outbound';
-import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
@@ -47,6 +46,16 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
       .where('Note.id = :id', { id })
       .getOneOrFail();
 
-    return NoteMapper.toModel(stored);
+    return NoteModel.reconstitute({
+      id: stored.id,
+      subjectType: stored.subjectType,
+      subjectId: stored.subjectId,
+      body: stored.body,
+      authorId: stored.authorId,
+      resolved: stored.resolved,
+      version: stored.version,
+      createdAt: stored.createdAt,
+      updatedAt: stored.updatedAt,
+    });
   }
 }

@@ -7,7 +7,6 @@ import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
 import { type IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
-import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
@@ -37,7 +36,21 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       .where('Reminder.id = :reminderId', { reminderId })
       .getOne();
 
-    return reminder === null ? null : ReminderMapper.toModel(reminder);
+    if (reminder === null) {
+      return null;
+    }
+
+    return ReminderModel.reconstitute({
+      id: reminder.id,
+      ownerId: reminder.ownerId,
+      title: reminder.title,
+      body: reminder.body,
+      dueOn: reminder.dueOn,
+      status: reminder.status,
+      version: reminder.version,
+      createdAt: reminder.createdAt,
+      updatedAt: reminder.updatedAt,
+    });
   }
 
   public async update(command: IReminderWriteUpdateCommand): Promise<boolean> {

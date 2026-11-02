@@ -7,7 +7,6 @@ import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { INoteAccessFindOwnedQuery, type INoteAccessRepositoryPort } from '../../../outbound';
-import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {
@@ -39,6 +38,20 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
       .andWhere('Note.authorId = :authorId', { authorId })
       .getOne();
 
-    return note === null ? null : NoteMapper.toModel(note);
+    if (note === null) {
+      return null;
+    }
+
+    return NoteModel.reconstitute({
+      id: note.id,
+      subjectType: note.subjectType,
+      subjectId: note.subjectId,
+      body: note.body,
+      authorId: note.authorId,
+      resolved: note.resolved,
+      version: note.version,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+    });
   }
 }

@@ -7,7 +7,6 @@ import { Product } from '@acme-core/entities';
 
 import { ProductStockModel } from '../../../domain';
 import { type IProductStockAddRepositoryPort } from '../../../outbound';
-import { ProductStockMapper } from '../mappers/product-stock.mapper';
 
 @Injectable()
 export class ProductStockAddRepository implements IProductStockAddRepositoryPort {
@@ -27,6 +26,10 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
       .where('Product.id = :productId', { productId })
       .getOne();
 
-    return product === null ? null : ProductStockMapper.toModel(product);
+    if (product === null) {
+      return null;
+    }
+
+    return ProductStockModel.reconstitute({ productId: product.id, sku: product.sku });
   }
 }

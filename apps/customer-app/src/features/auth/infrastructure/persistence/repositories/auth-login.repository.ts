@@ -7,7 +7,6 @@ import { Customer } from '@acme-core/entities';
 
 import { AuthCustomerModel } from '../../../domain';
 import { type IAuthLoginRepositoryPort } from '../../../outbound';
-import { AuthCustomerMapper } from '../mappers/auth-customer.mapper';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -27,6 +26,15 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
       .where('Customer.email = :email', { email })
       .getOne();
 
-    return customer ? AuthCustomerMapper.toModel(customer) : null;
+    if (customer === null) {
+      return null;
+    }
+
+    return AuthCustomerModel.reconstitute({
+      id: customer.id,
+      email: customer.email,
+      passwordHash: customer.passwordHash,
+      status: customer.status,
+    });
   }
 }

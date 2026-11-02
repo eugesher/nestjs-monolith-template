@@ -7,7 +7,6 @@ import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
 import { type INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
-import { NoteRevisionMapper } from '../mappers/note-revision.mapper';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
@@ -41,7 +40,18 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
       .getManyAndCount();
 
     return {
-      items: revisions.map((revision) => NoteRevisionMapper.toModel(revision)),
+      items: revisions.map((revision) =>
+        NoteRevisionModel.reconstitute({
+          id: revision.id,
+          noteId: revision.noteId,
+          noteVersion: revision.noteVersion,
+          bodyBefore: revision.bodyBefore,
+          bodyAfter: revision.bodyAfter,
+          editorId: revision.editorId,
+          correlationId: revision.correlationId,
+          recordedAt: revision.recordedAt,
+        }),
+      ),
       total,
       page,
       size,

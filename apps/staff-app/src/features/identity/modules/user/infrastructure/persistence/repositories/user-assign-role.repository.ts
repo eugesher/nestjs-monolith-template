@@ -8,7 +8,6 @@ import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities
 
 import { UserStaffUserModel } from '../../../domain';
 import { type IUserAssignRoleRepositoryPort } from '../../../outbound';
-import { UserStaffUserMapper } from '../mappers/user-staff-user.mapper';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
@@ -40,7 +39,19 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .where('StaffUser.id = :id', { id })
       .getOne();
 
-    return user ? UserStaffUserMapper.toModel(user) : null;
+    if (user === null) {
+      return null;
+    }
+
+    const roles = user.userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
+
+    return UserStaffUserModel.reconstitute({
+      id: user.id,
+      email: user.email,
+      passwordHash: user.passwordHash,
+      status: user.status,
+      roles,
+    });
   }
 
   public async addRole(userId: string, role: RoleEnum): Promise<boolean> {

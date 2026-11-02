@@ -10,7 +10,6 @@ import {
   type IProductCoreArchiveRepositoryPort,
   IProductCoreWriteUpdateCommand,
 } from '../../../outbound';
-import { ProductCoreMapper } from '../mappers/product-core.mapper';
 
 @Injectable()
 export class ProductCoreArchiveRepository implements IProductCoreArchiveRepositoryPort {
@@ -31,7 +30,16 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
       .setLock('pessimistic_write')
       .getOne();
 
-    return product === null ? null : ProductCoreMapper.toModel(product);
+    if (product === null) {
+      return null;
+    }
+
+    return ProductCoreModel.reconstitute({
+      id: product.id,
+      sku: product.sku,
+      status: product.status,
+      version: product.version,
+    });
   }
 
   public async update(command: IProductCoreWriteUpdateCommand): Promise<void> {

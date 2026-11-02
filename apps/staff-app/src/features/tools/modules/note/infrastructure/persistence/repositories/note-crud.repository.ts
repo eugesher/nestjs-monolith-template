@@ -7,7 +7,6 @@ import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { type INoteCrudRepositoryPort, INotePageQuery } from '../../../outbound';
-import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCrudRepository implements INoteCrudRepositoryPort {
@@ -54,7 +53,19 @@ export class NoteCrudRepository implements INoteCrudRepositoryPort {
       .getManyAndCount();
 
     return {
-      items: notes.map((note) => NoteMapper.toModel(note)),
+      items: notes.map((note) =>
+        NoteModel.reconstitute({
+          id: note.id,
+          subjectType: note.subjectType,
+          subjectId: note.subjectId,
+          body: note.body,
+          authorId: note.authorId,
+          resolved: note.resolved,
+          version: note.version,
+          createdAt: note.createdAt,
+          updatedAt: note.updatedAt,
+        }),
+      ),
       total,
       page,
       size,
