@@ -6,13 +6,9 @@ import {
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
-import { Order, OrderProduct, Product } from '@acme-core/entities';
+import { Order } from '@acme-core/entities';
 
-import {
-  IOrderFoundProductView,
-  IOrderFoundView,
-  IOrderGetOneRepositoryPort,
-} from '../../../outbound';
+import { IOrderFoundView, IOrderGetOneRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
@@ -25,32 +21,28 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  private get orderProductRepository(): IHostedRepository<OrderProduct> {
-    return this.repositoryHost.getRepository(OrderProduct);
-  }
-
   public async findById(orderId: string): Promise<Nullable<IOrderFoundView>> {
     const order = await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .leftJoin('Order.orderProducts', 'OrderProduct')
+      .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
+      .leftJoin('OrderProduct.product', 'Product')
+      .addSelect(['Product.id', 'Product.sku', 'Product.name'])
       .where('Order.id = :orderId', { orderId })
+      .orderBy('OrderProduct.id', 'ASC')
+      .withDeleted()
       .getOne();
 
     if (!order) {
       return null;
     }
 
-    const products = await this.orderProductRepository
-      .createQueryBuilder('OrderProduct')
-      .select('OrderProduct.id', 'id')
-      .addSelect('OrderProduct.productId', 'productId')
-      .addSelect('Product.sku', 'sku')
-      .addSelect('Product.name', 'name')
-      .innerJoin(Product, 'Product', 'Product.id = OrderProduct.productId')
-      .where('OrderProduct.orderId = :orderId', { orderId })
-      .orderBy('OrderProduct.id', 'ASC')
-      .withDeleted()
-      .getRawMany<IOrderFoundProductView>();
+    const products = order.orderProducts.map((orderProduct) => {
+      const { id, productId, product } = orderProduct;
+
+      return { id, productId, sku: product.sku, name: product.name };
+    });
 
     return { id: order.id, customerId: order.customerId, createdAt: order.createdAt, products };
   }
