@@ -20,11 +20,9 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
   }
 
   public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerView>> {
-    const customer = await this.customerRepository.findOne({
+    return await this.customerRepository.findOne({
       select: { id: true, email: true },
       where: { id, status: UserStatusEnum.ACTIVE },
     });
-
-    return customer;
   }
 }
