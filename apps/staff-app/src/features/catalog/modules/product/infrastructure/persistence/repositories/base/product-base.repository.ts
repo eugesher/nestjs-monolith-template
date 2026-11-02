@@ -1,6 +1,4 @@
-import { Repository } from 'typeorm';
-
-import { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
@@ -9,7 +7,7 @@ import { ProductModel } from '../../../../domain';
 export abstract class ProductBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
-  protected get productRepository(): Repository<Product> {
+  protected get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 

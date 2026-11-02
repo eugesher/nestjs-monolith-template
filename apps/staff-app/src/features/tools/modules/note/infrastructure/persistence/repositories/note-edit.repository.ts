@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { NoteRevision } from '@acme-staff/common/entities';
 
 import { INoteRevisionDraft } from '../../../domain';
@@ -14,7 +17,7 @@ export class NoteEditRepository extends NoteBaseRepository implements INoteEditR
     super(repositoryHost);
   }
 
-  private get noteRevisionRepository(): Repository<NoteRevision> {
+  private get noteRevisionRepository(): IHostedRepository<NoteRevision> {
     return this.repositoryHost.getRepository(NoteRevision);
   }
 

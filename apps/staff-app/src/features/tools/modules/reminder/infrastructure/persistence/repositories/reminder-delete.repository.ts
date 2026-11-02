@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { IReminderDeleteRepositoryPort } from '../../../outbound';
@@ -13,7 +16,7 @@ export class ReminderDeleteRepository implements IReminderDeleteRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get reminderRepository(): Repository<Reminder> {
+  private get reminderRepository(): IHostedRepository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
   }
 

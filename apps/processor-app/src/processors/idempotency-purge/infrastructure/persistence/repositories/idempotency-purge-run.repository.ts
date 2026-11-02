@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LessThan, Repository } from 'typeorm';
+import { LessThan } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { IdempotencyKey } from '@acme-core/entities';
 
 import { IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
@@ -13,7 +17,7 @@ export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunReposi
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
+  private get idempotencyKeyRepository(): IHostedRepository<IdempotencyKey> {
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 

@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
@@ -16,7 +19,7 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffUserRepository(): Repository<StaffUser> {
+  private get staffUserRepository(): IHostedRepository<StaffUser> {
     return this.repositoryHost.getRepository(StaffUser);
   }
 

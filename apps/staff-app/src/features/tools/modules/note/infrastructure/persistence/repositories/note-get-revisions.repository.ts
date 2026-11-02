@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
@@ -15,7 +18,7 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get noteRevisionRepository(): Repository<NoteRevision> {
+  private get noteRevisionRepository(): IHostedRepository<NoteRevision> {
     return this.repositoryHost.getRepository(NoteRevision);
   }
 

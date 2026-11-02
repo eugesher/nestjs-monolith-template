@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
@@ -15,11 +18,11 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get orderRepository(): Repository<Order> {
+  private get orderRepository(): IHostedRepository<Order> {
     return this.repositoryHost.getRepository(Order);
   }
 
-  private get orderProductRepository(): Repository<OrderProduct> {
+  private get orderProductRepository(): IHostedRepository<OrderProduct> {
     return this.repositoryHost.getRepository(OrderProduct);
   }
 

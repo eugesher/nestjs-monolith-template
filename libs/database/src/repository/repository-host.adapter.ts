@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
-import { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
+import { EntityTarget, ObjectLiteral } from 'typeorm';
 
-import { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+
+import { HostedRepository } from './hosted.repository';
 
 @Injectable()
 export class RepositoryHostAdapter implements IRepositoryHostPort {
@@ -11,7 +13,9 @@ export class RepositoryHostAdapter implements IRepositoryHostPort {
 
   public getRepository<Entity extends ObjectLiteral>(
     entity: EntityTarget<Entity>,
-  ): Repository<Entity> {
-    return this.transactionHost.tx.getRepository(entity);
+  ): IHostedRepository<Entity> {
+    const manager = this.transactionHost.tx;
+
+    return new HostedRepository(entity, manager, manager.queryRunner);
   }
 }

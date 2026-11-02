@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
@@ -16,15 +19,15 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffPermissionRepository(): Repository<StaffPermission> {
+  private get staffPermissionRepository(): IHostedRepository<StaffPermission> {
     return this.repositoryHost.getRepository(StaffPermission);
   }
 
-  private get staffRolePermissionRepository(): Repository<StaffRolePermission> {
+  private get staffRolePermissionRepository(): IHostedRepository<StaffRolePermission> {
     return this.repositoryHost.getRepository(StaffRolePermission);
   }
 
-  private get staffRoleRepository(): Repository<StaffRole> {
+  private get staffRoleRepository(): IHostedRepository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
   }
 

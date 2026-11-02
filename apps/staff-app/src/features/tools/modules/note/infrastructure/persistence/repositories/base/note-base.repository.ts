@@ -1,6 +1,4 @@
-import { Repository } from 'typeorm';
-
-import { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
 import { INoteWriteUpdateCommand } from '../../../../outbound';
@@ -8,7 +6,7 @@ import { INoteWriteUpdateCommand } from '../../../../outbound';
 export abstract class NoteBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
-  protected get noteRepository(): Repository<Note> {
+  protected get noteRepository(): IHostedRepository<Note> {
     return this.repositoryHost.getRepository(Note);
   }
 

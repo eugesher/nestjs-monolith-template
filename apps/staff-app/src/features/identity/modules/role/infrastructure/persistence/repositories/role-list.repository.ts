@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { StaffRole } from '@acme-staff/common/entities';
 
@@ -15,7 +18,7 @@ export class RoleListRepository implements IRoleListRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffRoleRepository(): Repository<StaffRole> {
+  private get staffRoleRepository(): IHostedRepository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
   }
 

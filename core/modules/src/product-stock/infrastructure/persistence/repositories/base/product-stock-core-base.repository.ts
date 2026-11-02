@@ -1,6 +1,4 @@
-import { Repository } from 'typeorm';
-
-import { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Product, ProductStock } from '@acme-core/entities';
 
 import { IProductStockCoreSumView } from '../../../../outbound';
@@ -8,11 +6,11 @@ import { IProductStockCoreSumView } from '../../../../outbound';
 export abstract class ProductStockCoreBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
-  protected get productRepository(): Repository<Product> {
+  protected get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 
-  protected get productStockRepository(): Repository<ProductStock> {
+  protected get productStockRepository(): IHostedRepository<ProductStock> {
     return this.repositoryHost.getRepository(ProductStock);
   }
 

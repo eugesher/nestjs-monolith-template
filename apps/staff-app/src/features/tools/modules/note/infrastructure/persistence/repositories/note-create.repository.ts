@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
 import { INoteDraft, NoteModel } from '../../../domain';
@@ -14,13 +17,13 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get noteRepository(): Repository<Note> {
+  private get noteRepository(): IHostedRepository<Note> {
     return this.repositoryHost.getRepository(Note);
   }
 
   public async insert(draft: INoteDraft): Promise<NoteModel> {
     const { subjectType, subjectId, body, authorId, resolved, version } = draft;
-    const result = await this.noteRepository.insert({
+    const id = await this.noteRepository.insertOne({
       subjectType,
       subjectId,
       body,
@@ -28,8 +31,6 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
       resolved,
       version,
     });
-    const [identifier] = result.identifiers as { id: number | string }[];
-    const id = String(identifier.id);
     const stored = await this.noteRepository
       .createQueryBuilder('Note')
       .select([

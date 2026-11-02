@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
@@ -15,15 +18,15 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get orderRepository(): Repository<Order> {
+  private get orderRepository(): IHostedRepository<Order> {
     return this.repositoryHost.getRepository(Order);
   }
 
-  private get orderProductRepository(): Repository<OrderProduct> {
+  private get orderProductRepository(): IHostedRepository<OrderProduct> {
     return this.repositoryHost.getRepository(OrderProduct);
   }
 
-  private get productRepository(): Repository<Product> {
+  private get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 
@@ -42,9 +45,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
 
   public async insert(draft: IOrderDraft): Promise<OrderModel> {
     const { customerId, productIds } = draft;
-    const result = await this.orderRepository.insert({ customerId });
-    const [identifier] = result.identifiers as { id: number | string }[];
-    const orderId = String(identifier.id);
+    const orderId = await this.orderRepository.insertOne({ customerId });
     const lines = productIds.map((productId) => ({ orderId, productId }));
 
     await this.orderProductRepository.insert(lines);
