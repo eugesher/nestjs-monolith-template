@@ -44,7 +44,7 @@ export class RoleUpdatePermissionsUseCase {
 
     role.replacePermissions(permissionCodes, known);
 
-    await this.repository.replacePermissions(role);
+    await this.repository.replacePermissions({ role, permissions: known });
 
     return role;
   }
