@@ -24,19 +24,10 @@ describe('OrderModel', () => {
       const draft = OrderModel.createDraft({
         customerId: 'customer-1',
         productIds: ['100', '103', '100'],
+        products: [{ id: '100' }, { id: '103' }],
         stock: [
-          {
-            productId: '100',
-            sku: 'SKU-0001',
-            name: 'Lamp',
-            quantity: 2,
-          },
-          {
-            productId: '103',
-            sku: 'SKU-0004',
-            name: 'Chair',
-            quantity: 3,
-          },
+          { productId: '100', quantity: 2 },
+          { productId: '103', quantity: 3 },
         ],
       });
 
@@ -45,7 +36,12 @@ describe('OrderModel', () => {
 
     it('refuses an empty order with ORDER_EMPTY', () => {
       expect(() =>
-        OrderModel.createDraft({ customerId: 'customer-1', productIds: [], stock: [] }),
+        OrderModel.createDraft({
+          customerId: 'customer-1',
+          productIds: [],
+          products: [],
+          stock: [],
+        }),
       ).toThrow(
         expect.objectContaining({
           code: 'ORDER_EMPTY',
@@ -54,9 +50,14 @@ describe('OrderModel', () => {
       );
     });
 
-    it('refuses a product without stock data with ORDER_PRODUCT_NOT_FOUND', () => {
+    it('refuses a product that is not active with ORDER_PRODUCT_NOT_FOUND', () => {
       expect(() =>
-        OrderModel.createDraft({ customerId: 'customer-1', productIds: ['999'], stock: [] }),
+        OrderModel.createDraft({
+          customerId: 'customer-1',
+          productIds: ['999'],
+          products: [],
+          stock: [{ productId: '999', quantity: 5 }],
+        }),
       ).toThrow(
         expect.objectContaining({
           code: 'ORDER_PRODUCT_NOT_FOUND',
@@ -71,14 +72,8 @@ describe('OrderModel', () => {
         OrderModel.createDraft({
           customerId: 'customer-1',
           productIds: ['100', '100', '100'],
-          stock: [
-            {
-              productId: '100',
-              sku: 'SKU-0001',
-              name: 'Lamp',
-              quantity: 2,
-            },
-          ],
+          products: [{ id: '100' }],
+          stock: [{ productId: '100', quantity: 2 }],
         }),
       ).toThrow(
         expect.objectContaining({
@@ -89,21 +84,50 @@ describe('OrderModel', () => {
       );
     });
 
+    it('counts a product without stock data as zero in stock', () => {
+      expect(() =>
+        OrderModel.createDraft({
+          customerId: 'customer-1',
+          productIds: ['100'],
+          products: [{ id: '100' }],
+          stock: [],
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'ORDER_STOCK_INSUFFICIENT',
+          details: { productId: '100', requested: 1, available: 0 },
+        }) as Error,
+      );
+    });
+
     it('accepts exactly the units in stock', () => {
       const draft = OrderModel.createDraft({
         customerId: 'customer-1',
         productIds: ['100', '100'],
-        stock: [
-          {
-            productId: '100',
-            sku: 'SKU-0001',
-            name: 'Lamp',
-            quantity: 2,
-          },
-        ],
+        products: [{ id: '100' }],
+        stock: [{ productId: '100', quantity: 2 }],
       });
 
       expect(draft.productIds).toEqual(['100', '100']);
+    });
+  });
+
+  describe('getMovements', () => {
+    it('turns every ordered product into a movement of its order product', () => {
+      const order = OrderModel.reconstitute({
+        id: '600',
+        customerId: 'customer-1',
+        createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        products: [
+          { id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+          { id: '602', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+        ],
+      });
+
+      expect(order.getMovements()).toEqual([
+        { productId: '100', orderProductId: '601' },
+        { productId: '100', orderProductId: '602' },
+      ]);
     });
   });
 

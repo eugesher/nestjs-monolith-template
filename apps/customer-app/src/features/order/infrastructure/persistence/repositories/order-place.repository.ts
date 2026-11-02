@@ -32,18 +32,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return [];
     }
 
-    const products = await this.productRepository
+    return await this.productRepository
       .createQueryBuilder('Product')
-      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .select(['Product.id'])
       .where('Product.id IN (:...productIds)', { productIds })
       .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
       .getMany();
-
-    return products.map((product) => {
-      const { id, sku, name } = product;
-
-      return { productId: id, sku, name };
-    });
   }
 
   public async insert(draft: IOrderDraft): Promise<OrderModel> {

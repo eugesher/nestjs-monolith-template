@@ -17,7 +17,6 @@ import {
   ORDER_PRODUCT_STOCK_PORT,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
-import { OrderProductStockMapper } from '../mappers/order-product-stock.mapper';
 import { OrderLedgerService } from '../services/order-ledger.service';
 
 @Injectable()
@@ -84,16 +83,15 @@ export class OrderPlaceUseCase {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
 
-    const quantities = await this.productStock.lock({ productIds: distinctIds });
+    const stock = await this.productStock.lock({ productIds: distinctIds });
     const products = await this.repository.findActiveProducts(distinctIds);
 
-    const stock = OrderProductStockMapper.toStock(products, quantities);
-    const draft = OrderModel.createDraft({ customerId, productIds, stock });
+    const draft = OrderModel.createDraft({ customerId, productIds, products, stock });
 
     const placed = await this.repository.insert(draft);
 
     const view = placed.toView();
-    const movements = OrderProductStockMapper.toMovements(view.products);
+    const movements = placed.getMovements();
 
     await this.productStock.withdraw({ movements });
     await this.idempotency.complete({ key: idempotencyKey, response: view });

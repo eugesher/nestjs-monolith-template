@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
-import { LedgerRecordEntryModel } from '../../../domain';
+import { ILedgerRecordEntryDraft } from '../../../domain';
 import {
   ILedgerRecordAppendRepositoryPort,
   ILedgerRecordAppendOutcomeView,
@@ -22,7 +22,7 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async append(entry: LedgerRecordEntryModel): Promise<ILedgerRecordAppendOutcomeView> {
+  public async append(entry: ILedgerRecordEntryDraft): Promise<ILedgerRecordAppendOutcomeView> {
     try {
       const payload = entry.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
       const result = await this.ledgerEntryRepository.insert({

@@ -20,10 +20,7 @@ describe('OrderPlaceUseCase', () => {
   let useCase: OrderPlaceUseCase;
 
   beforeEach(() => {
-    findActiveProducts = jest.fn().mockResolvedValue([
-      { productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-      { productId: '103', sku: 'SKU-0004', name: 'Chair' },
-    ]);
+    findActiveProducts = jest.fn().mockResolvedValue([{ id: '100' }, { id: '103' }]);
     insert = jest.fn().mockResolvedValue(
       OrderModel.reconstitute({
         id: '610',

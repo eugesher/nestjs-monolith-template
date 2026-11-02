@@ -26,7 +26,7 @@ export class LedgerRecordAppendUseCase {
 
     const instant = LedgerRecordHelper.parseInstant(occurredAt, 'occurredAt');
     const correlationId = CorrelationContextHelper.current(LedgerRecordAppendUseCase.name);
-    const entry = LedgerRecordEntryModel.create({
+    const draft = LedgerRecordEntryModel.createDraft({
       operationKey,
       subjectType,
       subjectId,
@@ -35,10 +35,10 @@ export class LedgerRecordAppendUseCase {
       correlationId,
       occurredAt: instant,
     });
-    const outcome = await this.repository.append(entry);
+    const outcome = await this.repository.append(draft);
     const { id, appended } = outcome;
     const message = appended ? 'Ledger record appended' : 'Ledger record already appended';
 
-    this.logger.info({ id, operationKey: entry.operationKey, appended }, message);
+    this.logger.info({ id, operationKey: draft.operationKey, appended }, message);
   }
 }

@@ -3,8 +3,10 @@ import { AggregateRoot } from '@acme-libs/toolkit';
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
 import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
+import { IOrderActiveProduct } from '../interfaces/order-active-product.interface';
 import { IOrderCandidate } from '../interfaces/order-candidate.interface';
 import { IOrderDraft } from '../interfaces/order-draft.interface';
+import { IOrderMovement } from '../interfaces/order-movement.interface';
 import { IOrderProductRecord } from '../interfaces/order-product-record.interface';
 import { IOrderRecord } from '../interfaces/order-record.interface';
 import { IOrderSnapshot } from '../interfaces/order-snapshot.interface';
@@ -27,38 +29,47 @@ export class OrderModel extends AggregateRoot<string> {
   }
 
   public static createDraft(candidate: IOrderCandidate): IOrderDraft {
-    const { customerId, productIds, stock } = candidate;
+    const { customerId, productIds, products, stock } = candidate;
 
     if (productIds.length === 0) {
       throw new OrderEmptyException();
     }
 
-    const units = productIds.map((productId) => OrderModel.requireStock(productId, stock));
-
-    OrderModel.assertInStock(units);
+    OrderModel.assertFound(productIds, products);
+    OrderModel.assertInStock(productIds, stock);
 
     return { customerId, productIds: [...productIds] };
   }
 
-  private static requireStock(productId: string, stock: IOrderStock[]): IOrderStock {
-    const unit = stock.find((candidate) => candidate.productId === productId);
+  private static assertFound(productIds: string[], products: IOrderActiveProduct[]): void {
+    for (const productId of productIds) {
+      const found = products.some((product) => product.id === productId);
 
-    if (unit === undefined) {
-      throw new OrderProductNotFoundException(productId);
-    }
-
-    return unit;
-  }
-
-  private static assertInStock(units: IOrderStock[]): void {
-    for (const unit of units) {
-      const { productId, quantity } = unit;
-      const requested = units.filter((other) => other.productId === productId).length;
-
-      if (requested > quantity) {
-        throw new OrderStockInsufficientException(productId, requested, quantity);
+      if (!found) {
+        throw new OrderProductNotFoundException(productId);
       }
     }
+  }
+
+  private static assertInStock(productIds: string[], stock: IOrderStock[]): void {
+    const distinctIds = new Set(productIds);
+
+    for (const productId of distinctIds) {
+      const requested = productIds.filter((id) => id === productId).length;
+      const unit = stock.find((candidate) => candidate.productId === productId);
+      const available = unit?.quantity ?? 0;
+
+      if (requested > available) {
+        throw new OrderStockInsufficientException(productId, requested, available);
+      }
+    }
+  }
+
+  public getMovements(): IOrderMovement[] {
+    return this.products.map((product) => ({
+      productId: product.productId,
+      orderProductId: product.id,
+    }));
   }
 
   public toView(): IOrderSnapshot {
