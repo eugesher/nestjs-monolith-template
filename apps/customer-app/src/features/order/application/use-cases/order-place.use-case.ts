@@ -59,24 +59,26 @@ export class OrderPlaceUseCase {
     }
 
     try {
-      return await this.place(command);
+      const view = await this.transaction.run(() => this.persist(command));
+      const placedProductIds = view.products.map((product) => product.productId);
+
+      await this.ledgerService.recordPlaced({
+        orderId: view.id,
+        customerId,
+        productIds: placedProductIds,
+      });
+
+      this.logger.info(
+        { orderId: view.id, customerId, units: placedProductIds.length },
+        'Order placed',
+      );
+
+      return view;
     } catch (error) {
       await this.idempotency.release({ key: idempotencyKey });
 
       throw error;
     }
-  }
-
-  private async place(command: IOrderPlaceCommand): Promise<IOrderView> {
-    const { customerId } = command;
-    const view = await this.transaction.run(() => this.persist(command));
-    const productIds = view.products.map((product) => product.productId);
-
-    await this.ledgerService.recordPlaced({ orderId: view.id, customerId, productIds });
-
-    this.logger.info({ orderId: view.id, customerId, units: productIds.length }, 'Order placed');
-
-    return view;
   }
 
   private async persist(command: IOrderPlaceCommand): Promise<IOrderView> {
