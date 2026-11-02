@@ -10,7 +10,7 @@ describe('UserRegisterUseCase', () => {
   let outcomes: string[];
   let repository: { insert: jest.Mock };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
-  let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
+  let passwordHasher: { hash: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserRegisterUseCase;
 
@@ -43,7 +43,7 @@ describe('UserRegisterUseCase', () => {
         return result;
       }),
     };
-    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
+    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash') };
     logger = makePinoLoggerMock();
     useCase = new UserRegisterUseCase(
       repository,

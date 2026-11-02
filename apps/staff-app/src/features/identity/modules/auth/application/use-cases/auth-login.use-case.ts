@@ -1,24 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import {
-  CREDENTIALS_PASSWORD_HASHER_PORT,
-  type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
-
 import { AuthInvalidCredentialsException, AuthStaffUserModel } from '../../domain';
-import { AUTH_LOGIN_REPOSITORY_PORT, type IAuthLoginRepositoryPort } from '../../outbound';
+import {
+  AUTH_ACCESS_TOKEN_PORT,
+  AUTH_LOGIN_REPOSITORY_PORT,
+  AUTH_PASSWORD_HASHER_PORT,
+  type IAuthAccessTokenPort,
+  type IAuthLoginRepositoryPort,
+  type IAuthPasswordHasherPort,
+} from '../../outbound';
 import { IAuthAccessTokenView, IAuthLoginCommand } from '../interfaces';
-import { AuthAccessTokenService } from '../services/auth-access-token.service';
 
 @Injectable()
 export class AuthLoginUseCase {
   constructor(
-    private readonly accessTokens: AuthAccessTokenService,
     @Inject(AUTH_LOGIN_REPOSITORY_PORT)
     private readonly repository: IAuthLoginRepositoryPort,
-    @Inject(CREDENTIALS_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: ICredentialsPasswordHasherPort,
+    @Inject(AUTH_ACCESS_TOKEN_PORT)
+    private readonly accessToken: IAuthAccessTokenPort,
+    @Inject(AUTH_PASSWORD_HASHER_PORT)
+    private readonly passwordHasher: IAuthPasswordHasherPort,
     @InjectPinoLogger(AuthLoginUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -34,7 +36,8 @@ export class AuthLoginUseCase {
       throw new AuthInvalidCredentialsException();
     }
 
-    const valid = await this.passwordHasher.verify(user.passwordHash, password);
+    const { passwordHash } = user;
+    const valid = await this.passwordHasher.verify({ passwordHash, password });
 
     if (!valid) {
       this.logger.warn({ userId: user.id }, 'Login failed: wrong password');
@@ -44,10 +47,10 @@ export class AuthLoginUseCase {
 
     user.assertActive();
 
-    const view = await this.accessTokens.issue(user);
+    const accessToken = await this.accessToken.issue(user.id);
 
     this.logger.info({ userId: user.id }, 'User logged in');
 
-    return view;
+    return { accessToken };
   }
 }

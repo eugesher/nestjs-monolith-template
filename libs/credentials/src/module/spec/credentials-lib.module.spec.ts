@@ -3,12 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import {
-  CREDENTIALS_ACCESS_TOKEN_PORT,
-  CREDENTIALS_PASSWORD_HASHER_PORT,
-  type ICredentialsAccessTokenPort,
-  type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
+import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
 import { CredentialsLibModule } from '../credentials-lib.module';
 
@@ -44,9 +39,9 @@ describe('CredentialsLibModule', () => {
   });
 
   it('signs an access token with JWT_SECRET that expires after JWT_EXPIRES_IN', async () => {
-    const accessToken = app.get<ICredentialsAccessTokenPort>(CREDENTIALS_ACCESS_TOKEN_PORT);
+    const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
 
-    const token = await accessToken.sign({ sub: 'user-1' });
+    const token = await credentials.signAccessToken({ sub: 'user-1' });
 
     const claims = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
@@ -59,12 +54,22 @@ describe('CredentialsLibModule', () => {
   });
 
   it('hashes passwords with the costs of AUTH_ARGON2_*', async () => {
-    const passwordHasher = app.get<ICredentialsPasswordHasherPort>(
-      CREDENTIALS_PASSWORD_HASHER_PORT,
-    );
+    const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
 
-    const passwordHash = await passwordHasher.hash('correct-horse-battery');
+    const passwordHash = await credentials.hashPassword('correct-horse-battery');
 
     expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,p=1,t=2\$/);
+  });
+
+  it('verifies a password against the hash it produced', async () => {
+    const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
+    const passwordHash = await credentials.hashPassword('correct-horse-battery');
+
+    const valid = await credentials.verifyPassword({
+      passwordHash,
+      password: 'correct-horse-battery',
+    });
+
+    expect(valid).toBe(true);
   });
 });

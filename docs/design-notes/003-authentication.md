@@ -12,13 +12,13 @@ carry the `AuthGlobal` prefix (see `002-global-auth-guards.md`) and the feature 
 
 ## The full path, even for a thin feature
 
-| Layer          | Example                                                                                             |
-| -------------- | --------------------------------------------------------------------------------------------------- |
-| presentation   | `presentation/controllers/auth.controller.ts`, `presentation/filters/auth-http-exception.filter.ts` |
-| application    | `application/use-cases/auth-login.use-case.ts`, `application/services/auth-access-token.service.ts` |
-| outbound       | `outbound/ports/auth-login-repository.port.ts`                                                      |
-| infrastructure | `infrastructure/persistence/repositories/auth-login.repository.ts`                                  |
-| domain         | `domain/models/`, `domain/exceptions/base/auth-base.exception.ts`                                   |
+| Layer          | Example                                                                                                                            |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| presentation   | `presentation/controllers/auth.controller.ts`, `presentation/filters/auth-http-exception.filter.ts`                                |
+| application    | `application/use-cases/auth-login.use-case.ts`                                                                                     |
+| outbound       | `outbound/ports/auth-login-repository.port.ts`                                                                                     |
+| infrastructure | `infrastructure/persistence/repositories/auth-login.repository.ts`, `infrastructure/lib-adapters/auth-access-token-lib.adapter.ts` |
+| domain         | `domain/models/`, `domain/exceptions/base/auth-base.exception.ts`                                                                  |
 
 **Login lives in the feature.** No other module logs anyone in, so the use case reads the user,
 checks the password and signs the token itself (see `024-code-placement.md`).

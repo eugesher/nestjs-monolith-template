@@ -94,9 +94,15 @@ edges exist for it:
 
 Code lives with its only caller (see `024-code-placement.md`), so the edges follow the code:
 
-- **A feature signs its users in.** The application of a feature may take
+- **A feature signs its users in.** Its `infrastructure/lib-adapters` may take
   `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No
   core module and no common module signs anyone in today, so neither may.
+- **A lib port is reached through a lib adapter.** A feature declares a port of its own in
+  `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
+  `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
+  `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
+  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth` stay
+  direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
   ledger service extends `SubjectLedgerService`, the queue adapter extends

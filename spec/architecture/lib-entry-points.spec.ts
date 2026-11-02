@@ -113,7 +113,7 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/cache/ports/cache.port',
     '@acme-libs/contracts/health/ports/health-lib.port',
     '@acme-libs/contracts/auth/ports/auth-user-validator.port',
-    '@acme-libs/contracts/credentials/ports/credentials-password-hasher.port',
+    '@acme-libs/contracts/credentials/ports/credentials-lib.port',
   ])('a feature may NOT reach a deep path into a lib: %s', async (source) => {
     await expect({
       file: 'apps/staff-app/src/features/product/infrastructure/__fixture__.ts',

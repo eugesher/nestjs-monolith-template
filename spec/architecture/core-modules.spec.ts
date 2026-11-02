@@ -246,7 +246,7 @@ describe('core modules', () => {
     it.each([
       [
         'application/use-cases',
-        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+        'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
       ],
       ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
     ])(

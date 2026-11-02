@@ -5,22 +5,21 @@ import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-record';
 
+import { AuthLedgerService, AuthLoginUseCase, AuthRegisterUseCase } from './application';
 import {
-  AuthAccessTokenService,
-  AuthLedgerService,
-  AuthLoginUseCase,
-  AuthRegisterUseCase,
-} from './application';
-import {
+  AuthAccessTokenLibAdapter,
   AuthLedgerRecordQueueAdapter,
   AuthLoginRepository,
+  AuthPasswordHasherLibAdapter,
   AuthRegisterRepository,
 } from './infrastructure';
 import {
+  AUTH_ACCESS_TOKEN_PORT,
   AUTH_LEDGER_RECORD_PORT,
   AUTH_LEDGER_RECORD_TIMEOUT_MS,
   AUTH_LEDGER_RETRY_ATTEMPTS,
   AUTH_LOGIN_REPOSITORY_PORT,
+  AUTH_PASSWORD_HASHER_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
 } from './outbound';
 import { AuthController } from './presentation';
@@ -32,11 +31,12 @@ import { AuthController } from './presentation';
     HttpExceptionFilter,
     AuthLoginUseCase,
     AuthRegisterUseCase,
-    AuthAccessTokenService,
     AuthLedgerService,
     { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
     { provide: AUTH_REGISTER_REPOSITORY_PORT, useClass: AuthRegisterRepository },
     { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerRecordQueueAdapter },
+    { provide: AUTH_ACCESS_TOKEN_PORT, useClass: AuthAccessTokenLibAdapter },
+    { provide: AUTH_PASSWORD_HASHER_PORT, useClass: AuthPasswordHasherLibAdapter },
     ConfigProviderHelper.value(AUTH_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(AUTH_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],

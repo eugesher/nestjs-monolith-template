@@ -312,7 +312,7 @@ describe('libs', () => {
 
   it('the credentials lib MAY import the packages hashing and signing need', async () => {
     await expect({
-      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      file: 'libs/credentials/src/infrastructure/password-hasher/__fixture__.ts',
       code:
         'import { Injectable } from "@nestjs/common";\n' +
         'import { ConfigService } from "@nestjs/config";\n' +
@@ -323,7 +323,7 @@ describe('libs', () => {
 
   it.each(['typeorm', 'nestjs-pino'])('the credentials lib may NOT import %s', async (source) => {
     await expect({
-      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      file: 'libs/credentials/src/infrastructure/password-hasher/__fixture__.ts',
       code: `import { x } from "${source}";`,
     }).toBreakRule('boundaries/dependencies');
   });
