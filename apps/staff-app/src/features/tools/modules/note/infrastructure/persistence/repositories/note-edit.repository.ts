@@ -6,13 +6,10 @@ import { NoteRevision } from '@acme-staff/common/entities';
 
 import { INoteRevisionDraft } from '../../../domain';
 import { INoteEditRepositoryPort } from '../../../outbound';
-import { NoteUpdateBaseRepository } from './base/note-update-base.repository';
+import { NoteBaseRepository } from './base/note-base.repository';
 
 @Injectable()
-export class NoteEditRepository
-  extends NoteUpdateBaseRepository
-  implements INoteEditRepositoryPort
-{
+export class NoteEditRepository extends NoteBaseRepository implements INoteEditRepositoryPort {
   constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
     super(repositoryHost);
   }

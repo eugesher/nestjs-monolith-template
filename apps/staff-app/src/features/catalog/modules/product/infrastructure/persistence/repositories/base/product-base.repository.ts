@@ -6,7 +6,7 @@ import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../../domain';
 
-export abstract class ProductFindByIdBaseRepository {
+export abstract class ProductBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
   protected get productRepository(): Repository<Product> {

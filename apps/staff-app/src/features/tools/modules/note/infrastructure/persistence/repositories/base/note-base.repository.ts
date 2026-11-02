@@ -5,7 +5,7 @@ import { Note } from '@acme-staff/common/entities';
 
 import { INoteWriteUpdateCommand } from '../../../../outbound';
 
-export abstract class NoteUpdateBaseRepository {
+export abstract class NoteBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
   protected get noteRepository(): Repository<Note> {
