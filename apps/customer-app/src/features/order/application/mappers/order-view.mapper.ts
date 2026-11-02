@@ -1,24 +1,7 @@
-import { OrderModel } from '../../domain';
 import { IOrderListedView } from '../../outbound';
-import { IOrderSummaryView, IOrderView } from '../interfaces';
+import { IOrderSummaryView } from '../interfaces';
 
 export class OrderViewMapper {
-  public static toView(order: OrderModel): IOrderView {
-    const createdAt = order.createdAt ?? new Date();
-    const products = order.products.map((product) => ({
-      id: product.id ?? '',
-      productId: product.productId,
-      sku: product.sku,
-      name: product.name,
-    }));
-
-    return {
-      id: order.id ?? '',
-      createdAt: createdAt.toISOString(),
-      products,
-    };
-  }
-
   public static toSummaryView(order: IOrderListedView): IOrderSummaryView {
     return {
       id: order.id,

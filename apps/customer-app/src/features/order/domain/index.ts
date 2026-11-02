@@ -13,6 +13,7 @@ export * from './interfaces/order-inserted.interface';
 export * from './interfaces/order-product.interface';
 export * from './interfaces/order-product-record.interface';
 export * from './interfaces/order-record.interface';
+export * from './interfaces/order-snapshot.interface';
 export * from './interfaces/order-stock.interface';
 
 export * from './models/order.model';

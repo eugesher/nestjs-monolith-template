@@ -161,4 +161,50 @@ describe('OrderModel', () => {
       ]);
     });
   });
+
+  describe('toView', () => {
+    beforeEach(() => {
+      jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('maps a stored order with its products', () => {
+      const order = OrderModel.reconstitute({
+        id: '600',
+        customerId: 'customer-1',
+        createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        products: [{ id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+      });
+
+      expect(order.toView()).toEqual({
+        id: '600',
+        createdAt: '2026-01-03T00:00:00.000Z',
+        products: [{ id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+      });
+    });
+
+    it('fills the ids and the creation time of an unsaved order', () => {
+      const order = OrderModel.place({
+        customerId: 'customer-1',
+        productIds: ['100'],
+        stock: [
+          {
+            productId: '100',
+            sku: 'SKU-0001',
+            name: 'Lamp',
+            quantity: 1,
+          },
+        ],
+      });
+
+      expect(order.toView()).toEqual({
+        id: '',
+        createdAt: '2026-01-05T08:00:00.000Z',
+        products: [{ id: '', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+      });
+    });
+  });
 });

@@ -7,6 +7,7 @@ import { IOrderDraft } from '../interfaces/order-draft.interface';
 import { IOrderInserted } from '../interfaces/order-inserted.interface';
 import { IOrderProduct } from '../interfaces/order-product.interface';
 import { IOrderRecord } from '../interfaces/order-record.interface';
+import { IOrderSnapshot } from '../interfaces/order-snapshot.interface';
 import { IOrderStock } from '../interfaces/order-stock.interface';
 
 export class OrderModel extends AggregateRoot<Maybe<string>> {
@@ -81,5 +82,21 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
         throw new OrderStockInsufficientException(productId, requested, quantity);
       }
     }
+  }
+
+  public toView(): IOrderSnapshot {
+    const createdAt = this.createdAt ?? new Date();
+    const products = this.products.map((product) => ({
+      id: product.id ?? '',
+      productId: product.productId,
+      sku: product.sku,
+      name: product.name,
+    }));
+
+    return {
+      id: this.id ?? '',
+      createdAt: createdAt.toISOString(),
+      products,
+    };
   }
 }
