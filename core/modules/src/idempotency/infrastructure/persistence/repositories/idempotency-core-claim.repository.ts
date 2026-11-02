@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
-import { Nullable } from '@acme-libs/toolkit';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper, Nullable } from '@acme-libs/toolkit';
 import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyModel } from '../../../domain';
 import { type IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
-import { IdempotencyCoreKeyMapper } from '../mappers/idempotency-core-key.mapper';
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
     return this.repositoryHost.getRepository(IdempotencyKey);
@@ -28,17 +30,39 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
 
       return true;
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return false;
       }
 
-      return false;
+      throw error;
     }
   }
 
   public async findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>> {
-    const entity = await this.idempotencyKeyRepository.findOne({ where: { idempotencyKey: key } });
+    const entity = await this.idempotencyKeyRepository
+      .createQueryBuilder('IdempotencyKey')
+      .select([
+        'IdempotencyKey.id',
+        'IdempotencyKey.idempotencyKey',
+        'IdempotencyKey.requestFingerprint',
+        'IdempotencyKey.status',
+        'IdempotencyKey.responseBody',
+        'IdempotencyKey.createdAt',
+      ])
+      .where('IdempotencyKey.idempotencyKey = :key', { key })
+      .getOne();
 
-    return entity === null ? null : IdempotencyCoreKeyMapper.toModel(entity);
+    if (entity === null) {
+      return null;
+    }
+
+    return IdempotencyCoreKeyModel.reconstitute({
+      id: entity.id,
+      key: entity.idempotencyKey,
+      requestFingerprint: entity.requestFingerprint,
+      status: entity.status,
+      responseBody: entity.responseBody,
+      createdAt: entity.createdAt,
+    });
   }
 }

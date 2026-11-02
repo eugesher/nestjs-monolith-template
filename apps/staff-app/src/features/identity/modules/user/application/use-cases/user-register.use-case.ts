@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import {
-  CREDENTIALS_PASSWORD_HASHER_PORT,
-  type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
 import { IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
-import { USER_REGISTER_REPOSITORY_PORT, type IUserRegisterRepositoryPort } from '../../outbound';
+import {
+  type IUserPasswordHasherPort,
+  type IUserRegisterRepositoryPort,
+  USER_PASSWORD_HASHER_PORT,
+  USER_REGISTER_REPOSITORY_PORT,
+} from '../../outbound';
 import { IUserRegisterCommand, IUserRegisterView } from '../interfaces';
 
 @Injectable()
@@ -18,8 +19,8 @@ export class UserRegisterUseCase {
     private readonly repository: IUserRegisterRepositoryPort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @Inject(CREDENTIALS_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: ICredentialsPasswordHasherPort,
+    @Inject(USER_PASSWORD_HASHER_PORT)
+    private readonly passwordHasher: IUserPasswordHasherPort,
     @InjectPinoLogger(UserRegisterUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

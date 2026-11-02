@@ -4,9 +4,19 @@ import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { AuthCommonModule } from '@acme-staff/common/modules/auth';
 
-import { AuthAccessTokenService, AuthLoginUseCase, AuthMeUseCase } from './application';
-import { AuthIdentityCommonAdapter, AuthLoginRepository } from './infrastructure';
-import { AUTH_IDENTITY_PORT, AUTH_LOGIN_REPOSITORY_PORT } from './outbound';
+import { AuthLoginUseCase, AuthMeUseCase } from './application';
+import {
+  AuthAccessTokenLibAdapter,
+  AuthIdentityCommonAdapter,
+  AuthLoginRepository,
+  AuthPasswordHasherLibAdapter,
+} from './infrastructure';
+import {
+  AUTH_ACCESS_TOKEN_PORT,
+  AUTH_IDENTITY_PORT,
+  AUTH_LOGIN_REPOSITORY_PORT,
+  AUTH_PASSWORD_HASHER_PORT,
+} from './outbound';
 import { AuthController } from './presentation';
 
 @Module({
@@ -16,9 +26,10 @@ import { AuthController } from './presentation';
     HttpExceptionFilter,
     AuthLoginUseCase,
     AuthMeUseCase,
-    AuthAccessTokenService,
     { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
     { provide: AUTH_IDENTITY_PORT, useClass: AuthIdentityCommonAdapter },
+    { provide: AUTH_ACCESS_TOKEN_PORT, useClass: AuthAccessTokenLibAdapter },
+    { provide: AUTH_PASSWORD_HASHER_PORT, useClass: AuthPasswordHasherLibAdapter },
   ],
 })
 export class AuthModule {}

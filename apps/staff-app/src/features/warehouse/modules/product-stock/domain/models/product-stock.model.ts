@@ -1,8 +1,7 @@
 import { AggregateRoot } from '@acme-libs/toolkit';
 
-import { ProductStockErrorCodeEnum } from '../enums/product-stock-error-code.enum';
 import { ProductStockAddedEvent } from '../events/product-stock-added.event';
-import { ProductStockDomainException } from '../exceptions/product-stock-domain.exception';
+import { ProductQuantityInvalidException } from '../exceptions/product-quantity-invalid.exception';
 import { IProductStockRecord } from '../interfaces/product-stock-record.interface';
 
 export class ProductStockModel extends AggregateRoot<string> {
@@ -27,10 +26,7 @@ export class ProductStockModel extends AggregateRoot<string> {
       quantity < 1 ||
       quantity > ProductStockModel.ADD_MAX_QUANTITY
     ) {
-      throw new ProductStockDomainException(
-        ProductStockErrorCodeEnum.PRODUCT_QUANTITY_INVALID,
-        `Product restock quantity must be an integer from 1 to ${ProductStockModel.ADD_MAX_QUANTITY}, got ${quantity}`,
-      );
+      throw new ProductQuantityInvalidException(ProductStockModel.ADD_MAX_QUANTITY, quantity);
     }
 
     return quantity;

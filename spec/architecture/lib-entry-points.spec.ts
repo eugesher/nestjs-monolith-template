@@ -100,6 +100,7 @@ describe('lib entry points', () => {
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
     '@acme-libs/database/transaction/transaction.adapter',
+    '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
     '@acme-libs/health/module/health-lib.module',
@@ -107,11 +108,12 @@ describe('lib entry points', () => {
     '@acme-libs/credentials/module/credentials-lib.module',
     '@acme-libs/observability/correlation/correlation-setup.module',
     '@acme-libs/contracts/database/ports/transaction.port',
+    '@acme-libs/contracts/database/ports/repository-host.port',
     '@acme-libs/cache/redis/redis-cache.adapter',
     '@acme-libs/contracts/cache/ports/cache.port',
     '@acme-libs/contracts/health/ports/health-lib.port',
     '@acme-libs/contracts/auth/ports/auth-user-validator.port',
-    '@acme-libs/contracts/credentials/ports/credentials-password-hasher.port',
+    '@acme-libs/contracts/credentials/ports/credentials-lib.port',
   ])('a feature may NOT reach a deep path into a lib: %s', async (source) => {
     await expect({
       file: 'apps/staff-app/src/features/product/infrastructure/__fixture__.ts',

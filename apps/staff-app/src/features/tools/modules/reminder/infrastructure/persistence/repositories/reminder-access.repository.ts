@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
@@ -10,11 +10,13 @@ import {
   IReminderAccessFindOwnedQuery,
   type IReminderAccessRepositoryPort,
 } from '../../../outbound';
-import { ReminderMapper } from '../mappers/reminder.mapper';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get reminderRepository(): Repository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
@@ -22,8 +24,37 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
 
   public async findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<ReminderModel>> {
     const { reminderId, ownerId } = query;
-    const reminder = await this.reminderRepository.findOne({ where: { id: reminderId, ownerId } });
+    const reminder = await this.reminderRepository
+      .createQueryBuilder('Reminder')
+      .select([
+        'Reminder.id',
+        'Reminder.ownerId',
+        'Reminder.title',
+        'Reminder.body',
+        'Reminder.dueOn',
+        'Reminder.status',
+        'Reminder.version',
+        'Reminder.createdAt',
+        'Reminder.updatedAt',
+      ])
+      .where('Reminder.id = :reminderId', { reminderId })
+      .andWhere('Reminder.ownerId = :ownerId', { ownerId })
+      .getOne();
 
-    return reminder === null ? null : ReminderMapper.toModel(reminder);
+    if (reminder === null) {
+      return null;
+    }
+
+    return ReminderModel.reconstitute({
+      id: reminder.id,
+      ownerId: reminder.ownerId,
+      title: reminder.title,
+      body: reminder.body,
+      dueOn: reminder.dueOn,
+      status: reminder.status,
+      version: reminder.version,
+      createdAt: reminder.createdAt,
+      updatedAt: reminder.updatedAt,
+    });
   }
 }

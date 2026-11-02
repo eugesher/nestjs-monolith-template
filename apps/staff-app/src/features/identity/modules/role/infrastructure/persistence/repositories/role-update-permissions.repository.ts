@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
-import { RolePermissionModel, RoleModel } from '../../../domain';
+import { RoleModel, RolePermissionModel } from '../../../domain';
 import { type IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';
-import { RolePermissionMapper } from '../mappers/role-permission.mapper';
-import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get staffPermissionRepository(): Repository<StaffPermission> {
     return this.repositoryHost.getRepository(StaffPermission);
@@ -28,12 +29,25 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
   }
 
   public async findRole(name: RoleEnum): Promise<Nullable<RoleModel>> {
-    const role = await this.staffRoleRepository.findOne({
-      where: { name },
-      relations: { rolePermissions: { permission: true } },
-    });
+    const role = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id', 'StaffRole.name'])
+      .leftJoin('StaffRole.rolePermissions', 'StaffRolePermission')
+      .addSelect(['StaffRolePermission.roleId', 'StaffRolePermission.permissionId'])
+      .leftJoin('StaffRolePermission.permission', 'StaffPermission')
+      .addSelect(['StaffPermission.id', 'StaffPermission.code'])
+      .where('StaffRole.name = :name', { name })
+      .getOne();
 
-    return role ? RoleMapper.toModel(role) : null;
+    if (role === null) {
+      return null;
+    }
+
+    const permissionCodes = role.rolePermissions
+      .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
+      .sort();
+
+    return RoleModel.reconstitute({ id: role.id, name: role.name as RoleEnum, permissionCodes });
   }
 
   public async findPermissions(codes: PermissionCodeEnum[]): Promise<RolePermissionModel[]> {
@@ -41,9 +55,18 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       return [];
     }
 
-    const permissions = await this.staffPermissionRepository.find({ where: { code: In(codes) } });
+    const permissions = await this.staffPermissionRepository
+      .createQueryBuilder('StaffPermission')
+      .select(['StaffPermission.id', 'StaffPermission.code'])
+      .where('StaffPermission.code IN (:...codes)', { codes })
+      .getMany();
 
-    return permissions.map((permission) => RolePermissionMapper.toModel(permission));
+    return permissions.map((permission) =>
+      RolePermissionModel.reconstitute({
+        id: permission.id,
+        code: permission.code as PermissionCodeEnum,
+      }),
+    );
   }
 
   public async replacePermissions(role: RoleModel): Promise<void> {

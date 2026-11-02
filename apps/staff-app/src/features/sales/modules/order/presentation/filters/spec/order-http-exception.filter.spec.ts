@@ -2,7 +2,7 @@ import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { OrderDomainException, OrderErrorCodeEnum } from '../../../domain';
+import { OrderNotFoundException } from '../../../domain';
 import { OrderHttpExceptionFilter } from '../order-http-exception.filter';
 
 describe('OrderHttpExceptionFilter', () => {
@@ -17,25 +17,21 @@ describe('OrderHttpExceptionFilter', () => {
   it('hands the HttpException over together with the same host', () => {
     const host = {} as ArgumentsHost;
 
-    filter.catch(new OrderDomainException(OrderErrorCodeEnum.ORDER_NOT_FOUND, 'reason'), host);
+    filter.catch(new OrderNotFoundException('600'), host);
 
     expect(httpExceptionFilter.catch).toHaveBeenCalledTimes(1);
     expect(httpExceptionFilter.catch).toHaveBeenCalledWith(expect.any(HttpException), host);
   });
 
-  it('maps ORDER_NOT_FOUND to 404 with the code and the domain message in the body', () => {
-    filter.catch(
-      new OrderDomainException(OrderErrorCodeEnum.ORDER_NOT_FOUND, 'domain message'),
-      {} as ArgumentsHost,
-    );
+  it.each([['ORDER_NOT_FOUND', 404, new OrderNotFoundException('600', 'domain message')]])(
+    'maps %s to %i with the code and the domain message in the body',
+    (code, status, exception) => {
+      filter.catch(exception, {} as ArgumentsHost);
 
-    const [error] = httpExceptionFilter.catch.mock.calls[0];
+      const [error] = httpExceptionFilter.catch.mock.calls[0];
 
-    expect(error.getStatus()).toBe(404);
-    expect(error.getResponse()).toEqual({
-      statusCode: 404,
-      message: 'domain message',
-      code: 'ORDER_NOT_FOUND',
-    });
-  });
+      expect(error.getStatus()).toBe(status);
+      expect(error.getResponse()).toEqual({ statusCode: status, message: 'domain message', code });
+    },
+  );
 });

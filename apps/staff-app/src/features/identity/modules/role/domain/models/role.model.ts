@@ -1,6 +1,6 @@
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
-import { RoleDomainException } from '../exceptions/role-domain.exception';
+import { AuthPermissionNotFoundException } from '../exceptions/auth-permission-not-found.exception';
 import { IRoleRecord } from '../interfaces/role-record.interface';
 import { RolePermissionModel } from './role-permission.model';
 
@@ -27,10 +27,7 @@ export class RoleModel {
     const unknown = unique.filter((code) => !knownCodes.has(code));
 
     if (unknown.length > 0) {
-      throw new RoleDomainException(
-        IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND,
-        `Unknown permission codes: ${unknown.join(', ')}`,
-      );
+      throw new AuthPermissionNotFoundException(unknown);
     }
 
     this.codes = unique;

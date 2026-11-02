@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import { type INoteResolveRepositoryPort } from '../../../outbound';
 import { NoteUpdateBaseRepository } from './base/note-update-base.repository';
@@ -10,7 +10,7 @@ export class NoteResolveRepository
   extends NoteUpdateBaseRepository
   implements INoteResolveRepositoryPort
 {
-  constructor(repositoryHost: RepositoryHost) {
+  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
     super(repositoryHost);
   }
 }

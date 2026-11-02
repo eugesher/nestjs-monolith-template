@@ -2,10 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { OrderDomainException, OrderErrorCodeEnum } from '../../domain';
+import { OrderBaseException, OrderErrorCodeEnum } from '../../domain';
 
-@Catch(OrderDomainException)
-export class OrderHttpExceptionFilter implements ExceptionFilter<OrderDomainException> {
+@Catch(OrderBaseException)
+export class OrderHttpExceptionFilter implements ExceptionFilter<OrderBaseException> {
   private static readonly STATUS: Record<OrderErrorCodeEnum, HttpStatus> = {
     [OrderErrorCodeEnum.ORDER_EMPTY]: HttpStatus.BAD_REQUEST,
     [OrderErrorCodeEnum.ORDER_PRODUCT_NOT_FOUND]: HttpStatus.NOT_FOUND,
@@ -17,7 +17,7 @@ export class OrderHttpExceptionFilter implements ExceptionFilter<OrderDomainExce
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: OrderDomainException, host: ArgumentsHost): void {
+  public catch(exception: OrderBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = OrderHttpExceptionFilter.STATUS[code];
     const body =

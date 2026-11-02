@@ -2,10 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { NoteDomainException, NoteErrorCodeEnum } from '../../domain';
+import { NoteBaseException, NoteErrorCodeEnum } from '../../domain';
 
-@Catch(NoteDomainException)
-export class NoteHttpExceptionFilter implements ExceptionFilter<NoteDomainException> {
+@Catch(NoteBaseException)
+export class NoteHttpExceptionFilter implements ExceptionFilter<NoteBaseException> {
   private static readonly STATUS: Record<NoteErrorCodeEnum, HttpStatus> = {
     [NoteErrorCodeEnum.NOTE_SUBJECT_INVALID]: HttpStatus.BAD_REQUEST,
     [NoteErrorCodeEnum.NOTE_BODY_INVALID]: HttpStatus.BAD_REQUEST,
@@ -17,7 +17,7 @@ export class NoteHttpExceptionFilter implements ExceptionFilter<NoteDomainExcept
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: NoteDomainException, host: ArgumentsHost): void {
+  public catch(exception: NoteBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = NoteHttpExceptionFilter.STATUS[code];
     const body =

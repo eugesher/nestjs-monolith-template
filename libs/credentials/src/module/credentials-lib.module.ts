@@ -2,13 +2,22 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 
-import {
-  CREDENTIALS_ACCESS_TOKEN_PORT,
-  CREDENTIALS_PASSWORD_HASHER_PORT,
-} from '@acme-libs/contracts/credentials';
+import { CREDENTIALS_LIB_PORT } from '@acme-libs/contracts/credentials';
 
-import { CredentialsAccessTokenAdapter } from '../access-token/credentials-access-token.adapter';
-import { CredentialsPasswordHasherAdapter } from '../password-hasher/credentials-password-hasher.adapter';
+import {
+  CredentialsLibHashPasswordUseCase,
+  CredentialsLibSignAccessTokenUseCase,
+  CredentialsLibVerifyPasswordUseCase,
+} from '../application';
+import {
+  CredentialsLibAccessTokenAdapter,
+  CredentialsLibPasswordHasherAdapter,
+} from '../infrastructure';
+import {
+  CREDENTIALS_LIB_ACCESS_TOKEN_PORT,
+  CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
+} from '../outbound';
+import { CredentialsLibFacade } from './credentials-lib.facade';
 
 @Module({
   imports: [
@@ -22,10 +31,17 @@ import { CredentialsPasswordHasherAdapter } from '../password-hasher/credentials
       }),
     }),
   ],
-  exports: [CREDENTIALS_ACCESS_TOKEN_PORT, CREDENTIALS_PASSWORD_HASHER_PORT],
+  exports: [CREDENTIALS_LIB_PORT],
   providers: [
-    { provide: CREDENTIALS_ACCESS_TOKEN_PORT, useClass: CredentialsAccessTokenAdapter },
-    { provide: CREDENTIALS_PASSWORD_HASHER_PORT, useClass: CredentialsPasswordHasherAdapter },
+    { provide: CREDENTIALS_LIB_PORT, useClass: CredentialsLibFacade },
+    CredentialsLibSignAccessTokenUseCase,
+    CredentialsLibHashPasswordUseCase,
+    CredentialsLibVerifyPasswordUseCase,
+    { provide: CREDENTIALS_LIB_ACCESS_TOKEN_PORT, useClass: CredentialsLibAccessTokenAdapter },
+    {
+      provide: CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
+      useClass: CredentialsLibPasswordHasherAdapter,
+    },
   ],
 })
 export class CredentialsLibModule {}

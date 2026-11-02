@@ -3,7 +3,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
-import { ReminderDomainException, ReminderErrorCodeEnum, ReminderModel } from '../../domain';
+import {
+  ReminderModel,
+  ReminderNotFoundException,
+  ReminderVersionMismatchException,
+} from '../../domain';
 import {
   type IReminderWriteRepositoryPort,
   REMINDER_OCC_RETRY_ATTEMPTS,
@@ -40,11 +44,7 @@ export class ReminderWriteService {
       retryContext: (conflict) => ({ reminderId, currentVersion: conflict.currentVersion }),
       exhaustedContext: () => ({ reminderId }),
       onExhausted: (conflict, attempts) => {
-        throw new ReminderDomainException(
-          ReminderErrorCodeEnum.REMINDER_VERSION_MISMATCH,
-          `Reminder ${reminderId} write lost the optimistic race after ${attempts} attempts`,
-          { currentVersion: conflict.currentVersion },
-        );
+        throw new ReminderVersionMismatchException(reminderId, attempts, conflict.currentVersion);
       },
     });
   }
@@ -78,10 +78,7 @@ export class ReminderWriteService {
     const reminder = await this.repository.findById(reminderId);
 
     if (reminder === null) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_NOT_FOUND,
-        `Reminder ${reminderId} was not found`,
-      );
+      throw new ReminderNotFoundException(reminderId);
     }
 
     return reminder;

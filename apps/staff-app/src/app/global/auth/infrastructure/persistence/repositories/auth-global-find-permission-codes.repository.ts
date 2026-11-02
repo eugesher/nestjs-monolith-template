@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-staff/common/entities';
 
@@ -9,7 +9,10 @@ import { type IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outb
 
 @Injectable()
 export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindPermissionCodesRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get staffPermissionRepository(): Repository<StaffPermission> {
     return this.repositoryHost.getRepository(StaffPermission);

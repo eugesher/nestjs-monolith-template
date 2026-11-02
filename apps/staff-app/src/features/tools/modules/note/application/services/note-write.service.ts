@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
-import { NoteDomainException, NoteErrorCodeEnum, NoteModel } from '../../domain';
+import { NoteModel, NoteVersionMismatchException } from '../../domain';
 import { NOTE_OCC_RETRY_ATTEMPTS } from '../../outbound';
 import { NoteWriteConflictError } from '../errors/note-write-conflict.error';
 import { INoteWriteCommand, INoteWriteReloadCommand } from '../interfaces';
@@ -31,11 +31,7 @@ export class NoteWriteService {
       retryContext: (conflict) => ({ noteId, currentVersion: conflict.currentVersion }),
       exhaustedContext: () => ({ noteId }),
       onExhausted: (conflict, attempts) => {
-        throw new NoteDomainException(
-          NoteErrorCodeEnum.NOTE_VERSION_MISMATCH,
-          `Note ${noteId} write lost the optimistic race after ${attempts} attempts`,
-          { currentVersion: conflict.currentVersion },
-        );
+        throw new NoteVersionMismatchException(noteId, attempts, conflict.currentVersion);
       },
     });
   }

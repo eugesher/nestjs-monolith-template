@@ -1,25 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
+import { AuthCustomerModel, AuthInvalidCredentialsException } from '../../domain';
 import {
-  CREDENTIALS_PASSWORD_HASHER_PORT,
-  type ICredentialsPasswordHasherPort,
-} from '@acme-libs/contracts/credentials';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
-
-import { AuthCustomerModel, AuthDomainException } from '../../domain';
-import { AUTH_LOGIN_REPOSITORY_PORT, type IAuthLoginRepositoryPort } from '../../outbound';
+  AUTH_ACCESS_TOKEN_PORT,
+  AUTH_LOGIN_REPOSITORY_PORT,
+  AUTH_PASSWORD_HASHER_PORT,
+  type IAuthAccessTokenPort,
+  type IAuthLoginRepositoryPort,
+  type IAuthPasswordHasherPort,
+} from '../../outbound';
 import { IAuthAccessTokenView, IAuthLoginCommand } from '../interfaces';
-import { AuthAccessTokenService } from '../services/auth-access-token.service';
 
 @Injectable()
 export class AuthLoginUseCase {
   constructor(
-    private readonly accessTokens: AuthAccessTokenService,
     @Inject(AUTH_LOGIN_REPOSITORY_PORT)
     private readonly repository: IAuthLoginRepositoryPort,
-    @Inject(CREDENTIALS_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: ICredentialsPasswordHasherPort,
+    @Inject(AUTH_ACCESS_TOKEN_PORT)
+    private readonly accessToken: IAuthAccessTokenPort,
+    @Inject(AUTH_PASSWORD_HASHER_PORT)
+    private readonly passwordHasher: IAuthPasswordHasherPort,
     @InjectPinoLogger(AuthLoginUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -32,29 +33,24 @@ export class AuthLoginUseCase {
     if (!customer) {
       this.logger.warn({ email: normalized }, 'Login failed: unknown email');
 
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS,
-        'Invalid credentials',
-      );
+      throw new AuthInvalidCredentialsException();
     }
 
-    const valid = await this.passwordHasher.verify(customer.passwordHash, password);
+    const { passwordHash } = customer;
+    const valid = await this.passwordHasher.verify({ passwordHash, password });
 
     if (!valid) {
       this.logger.warn({ customerId: customer.id }, 'Login failed: wrong password');
 
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS,
-        'Invalid credentials',
-      );
+      throw new AuthInvalidCredentialsException();
     }
 
     customer.assertActive();
 
-    const view = await this.accessTokens.issue(customer);
+    const accessToken = await this.accessToken.issue(customer.id);
 
     this.logger.info({ customerId: customer.id }, 'Customer logged in');
 
-    return view;
+    return { accessToken };
   }
 }

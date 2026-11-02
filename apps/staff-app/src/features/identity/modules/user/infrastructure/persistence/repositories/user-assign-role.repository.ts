@@ -1,18 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { UserStaffUserModel } from '../../../domain';
 import { type IUserAssignRoleRepositoryPort } from '../../../outbound';
-import { UserStaffUserMapper } from '../mappers/user-staff-user.mapper';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get staffRoleRepository(): Repository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
@@ -27,19 +29,37 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
   }
 
   public async findById(id: string): Promise<Nullable<UserStaffUserModel>> {
-    const user = await this.staffUserRepository.findOne({
-      where: { id },
-      relations: { userRoles: { role: true } },
-    });
+    const user = await this.staffUserRepository
+      .createQueryBuilder('StaffUser')
+      .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
+      .leftJoin('StaffUser.userRoles', 'StaffUserRole')
+      .addSelect(['StaffUserRole.userId', 'StaffUserRole.roleId'])
+      .leftJoin('StaffUserRole.role', 'StaffRole')
+      .addSelect(['StaffRole.id', 'StaffRole.name'])
+      .where('StaffUser.id = :id', { id })
+      .getOne();
 
-    return user ? UserStaffUserMapper.toModel(user) : null;
+    if (user === null) {
+      return null;
+    }
+
+    const roles = user.userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
+
+    return UserStaffUserModel.reconstitute({
+      id: user.id,
+      email: user.email,
+      passwordHash: user.passwordHash,
+      status: user.status,
+      roles,
+    });
   }
 
   public async addRole(userId: string, role: RoleEnum): Promise<boolean> {
-    const stored = await this.staffRoleRepository.findOne({
-      select: { id: true },
-      where: { name: role },
-    });
+    const stored = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id'])
+      .where('StaffRole.name = :role', { role })
+      .getOne();
 
     if (!stored) {
       return false;

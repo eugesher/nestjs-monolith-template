@@ -1,7 +1,6 @@
 import { Maybe } from '@acme-libs/toolkit';
 
-import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
-import { NoteDomainException } from '../exceptions/note-domain.exception';
+import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
 import { INoteRevisionDraft } from '../interfaces/note-revision-draft.interface';
 import { INoteRevisionRecord } from '../interfaces/note-revision-record.interface';
 
@@ -56,8 +55,8 @@ export class NoteRevisionModel {
 
   private static validNoteVersion(noteVersion: number): number {
     if (!Number.isInteger(noteVersion) || noteVersion < NoteRevisionModel.FIRST_REVISED_VERSION) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_VERSION_INVALID,
+      throw new NoteVersionInvalidException(
+        noteVersion,
         `NoteRevision.noteVersion must be an integer of at least ${NoteRevisionModel.FIRST_REVISED_VERSION}, got ${noteVersion}`,
       );
     }

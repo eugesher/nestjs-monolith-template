@@ -205,7 +205,7 @@ describe('global modules (app/global) — modules without controllers', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it.each(['typeorm', '@acme-libs/database'])(
+  it.each(['typeorm', '@acme-libs/contracts/database'])(
     'the rest of infrastructure MAY import the persistence package %s',
     async (source) => {
       await expect({
@@ -215,8 +215,12 @@ describe('global modules (app/global) — modules without controllers', () => {
     },
   );
 
-  it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-    'the rest of infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+  it.each([
+    '@acme-libs/database',
+    '@nestjs-cls/transactional',
+    '@nestjs-cls/transactional-adapter-typeorm',
+  ])(
+    'the rest of infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
     async (source) => {
       await expect({
         file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',

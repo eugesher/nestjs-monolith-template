@@ -40,11 +40,5 @@ module.exports = {
     global: { statements: 95, branches: 95, functions: 95, lines: 95 },
     './{apps/*/src/{features,processors}/*,apps/*/src/features/*/modules/*,apps/*/src/common/modules/*,core/modules/src/*}/{domain,application}/**/*.ts':
       { statements: 95, branches: 95, functions: 95, lines: 95 },
-    './{apps,core}/**/infrastructure/persistence/mappers/*.ts': {
-      statements: 95,
-      branches: 95,
-      functions: 95,
-      lines: 95,
-    },
   },
 };

@@ -1,12 +1,12 @@
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import type { IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Product, ProductStock } from '@acme-core/entities';
 
 import { IProductStockCoreSumView } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
-  protected constructor(protected readonly repositoryHost: RepositoryHost) {}
+  protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
 
   protected get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);
@@ -23,6 +23,7 @@ export abstract class ProductStockCoreBaseRepository {
 
     const products = await this.productRepository
       .createQueryBuilder('Product')
+      .select(['Product.id'])
       .where('Product.id IN (:...productIds)', { productIds })
       .orderBy('Product.id', 'ASC')
       .setLock('pessimistic_write')

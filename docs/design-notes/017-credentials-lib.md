@@ -2,24 +2,28 @@
 
 Password hashing and token signing are used by both HTTP apps, so they live in a lib.
 
-| Port                               | Adapter                            | Reads                                                                         |
-| ---------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| `CREDENTIALS_PASSWORD_HASHER_PORT` | `CredentialsPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
-| `CREDENTIALS_ACCESS_TOKEN_PORT`    | `CredentialsAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
+The lib has the shape of `libs/health`: one port in `libs/contracts/src/credentials`,
+`CREDENTIALS_LIB_PORT`, implemented by `CredentialsLibFacade`. The facade hands each method to a use
+case, and the use cases reach the libraries through ports of the lib's own `outbound`:
 
-The ports are in `libs/contracts/src/credentials`, the adapters and `CredentialsLibModule` in
-`libs/credentials`.
+| Facade method     | Use case                               | Adapter                               | Reads                                                                         |
+| ----------------- | -------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
+| `signAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
+| `hashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
+| `verifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
 
 **The lib reads the config of the app it runs in.** `CredentialsLibModule` takes the values from
 `ConfigService`, as `libs/cache` does, so the features bind no config tokens of their own, and each
 app signs with its own secret.
 
-**The signer signs the subject alone.** `sign({ sub })` passes only `sub` to the JWT library, so a
-caller that hands it a wider object cannot widen the token.
+**The signer signs the subject alone.** `signAccessToken({ sub })` passes only `sub` to the JWT
+library, so a caller that hands it a wider object cannot widen the token.
 
-**Features use the lib like any lib.** The module root imports `CredentialsLibModule`, the
-application injects the ports, and no feature imports `argon2` or `@nestjs/jwt`. Example:
-`apps/customer-app/src/features/auth/application/use-cases/auth-register.use-case.ts`. Verifying a
+**Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`;
+the feature declares ports of its own (`AUTH_ACCESS_TOKEN_PORT`, `AUTH_PASSWORD_HASHER_PORT`) and
+implements them in `infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature
+imports `argon2` or `@nestjs/jwt` and the application never sees the lib. Example:
+`apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-password-hasher-lib.adapter.ts`. Verifying a
 token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
 
 ## One model per module over one table

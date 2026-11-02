@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
 import { type INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
-import { NoteRevisionMapper } from '../mappers/note-revision.mapper';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get noteRevisionRepository(): Repository<NoteRevision> {
     return this.repositoryHost.getRepository(NoteRevision);
@@ -19,15 +21,37 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
 
   public async listForNote(query: INoteRevisionPageQuery): Promise<IPage<NoteRevisionModel>> {
     const { page, size, noteId } = query;
-    const [revisions, total] = await this.noteRevisionRepository.findAndCount({
-      where: { noteId },
-      order: { noteVersion: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [revisions, total] = await this.noteRevisionRepository
+      .createQueryBuilder('NoteRevision')
+      .select([
+        'NoteRevision.id',
+        'NoteRevision.noteId',
+        'NoteRevision.noteVersion',
+        'NoteRevision.bodyBefore',
+        'NoteRevision.bodyAfter',
+        'NoteRevision.editorId',
+        'NoteRevision.correlationId',
+        'NoteRevision.recordedAt',
+      ])
+      .where('NoteRevision.noteId = :noteId', { noteId })
+      .orderBy('NoteRevision.noteVersion', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
-      items: revisions.map((revision) => NoteRevisionMapper.toModel(revision)),
+      items: revisions.map((revision) =>
+        NoteRevisionModel.reconstitute({
+          id: revision.id,
+          noteId: revision.noteId,
+          noteVersion: revision.noteVersion,
+          bodyBefore: revision.bodyBefore,
+          bodyAfter: revision.bodyAfter,
+          editorId: revision.editorId,
+          correlationId: revision.correlationId,
+          recordedAt: revision.recordedAt,
+        }),
+      ),
       total,
       page,
       size,

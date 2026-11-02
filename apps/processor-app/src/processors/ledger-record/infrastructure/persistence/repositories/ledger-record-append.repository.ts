@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { QueryDeepPartialEntity, Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
 import { LedgerRecordEntryModel } from '../../../domain';
@@ -12,7 +13,10 @@ import {
 
 @Injectable()
 export class LedgerRecordAppendRepository implements ILedgerRecordAppendRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get ledgerEntryRepository(): Repository<LedgerEntry> {
     return this.repositoryHost.getRepository(LedgerEntry);
@@ -20,29 +24,32 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
 
   public async append(entry: LedgerRecordEntryModel): Promise<ILedgerRecordAppendOutcomeView> {
     try {
-      const draft = this.ledgerEntryRepository.create({
+      const payload = entry.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
+      const result = await this.ledgerEntryRepository.insert({
         operationKey: entry.operationKey,
         subjectType: entry.subjectType,
         subjectId: entry.subjectId,
         action: entry.action,
-        payload: entry.payload,
+        payload,
         correlationId: entry.correlationId,
         occurredAt: entry.occurredAt,
       });
-      const saved = await this.ledgerEntryRepository.save(draft);
+      const [identifier] = result.identifiers as { id: number | string }[];
 
-      return { id: String(saved.id), appended: true };
+      return { id: String(identifier.id), appended: true };
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        const { operationKey } = entry;
+        const existing = await this.ledgerEntryRepository
+          .createQueryBuilder('LedgerEntry')
+          .select(['LedgerEntry.id'])
+          .where('LedgerEntry.operationKey = :operationKey', { operationKey })
+          .getOneOrFail();
+
+        return { id: existing.id, appended: false };
       }
 
-      const existing = await this.ledgerEntryRepository.findOneOrFail({
-        select: { id: true },
-        where: { operationKey: entry.operationKey },
-      });
-
-      return { id: existing.id, appended: false };
+      throw error;
     }
   }
 }

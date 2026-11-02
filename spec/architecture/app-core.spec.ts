@@ -46,11 +46,11 @@ describe('app → core', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('presentation MAY reach the health lib contracts (presentation-only modules like health)', async () => {
+    it('presentation may NOT reach the health lib contracts — a lib adapter does', async () => {
       await expect({
         file: 'apps/__core-link-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
         code: 'import { x } from "../../../../../../../libs/contracts/src/health";',
-      }).toPassArchitectureLint();
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it('the module root MAY mount a core module', async () => {

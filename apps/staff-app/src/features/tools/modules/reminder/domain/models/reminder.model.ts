@@ -1,8 +1,11 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
-import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
-import { ReminderDomainException } from '../exceptions/reminder-domain.exception';
+import { ReminderAlreadyDoneException } from '../exceptions/reminder-already-done.exception';
+import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invalid.exception';
+import { ReminderDueOnInvalidException } from '../exceptions/reminder-due-on-invalid.exception';
+import { ReminderTitleInvalidException } from '../exceptions/reminder-title-invalid.exception';
+import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
 import { IReminderDraft } from '../interfaces/reminder-draft.interface';
 import { IReminderRecord } from '../interfaces/reminder-record.interface';
 
@@ -68,10 +71,7 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
     const trimmed = title.trim();
 
     if (trimmed.length === 0 || trimmed.length > ReminderModel.TITLE_MAX_LENGTH) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_TITLE_INVALID,
-        `Reminder.title must be a non-empty string of at most ${ReminderModel.TITLE_MAX_LENGTH} characters`,
-      );
+      throw new ReminderTitleInvalidException(ReminderModel.TITLE_MAX_LENGTH);
     }
 
     return trimmed;
@@ -81,10 +81,7 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
     const trimmed = body.trim();
 
     if (trimmed.length > ReminderModel.BODY_MAX_LENGTH) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_BODY_INVALID,
-        `Reminder.body must be at most ${ReminderModel.BODY_MAX_LENGTH} characters`,
-      );
+      throw new ReminderBodyInvalidException(ReminderModel.BODY_MAX_LENGTH);
     }
 
     return trimmed;
@@ -92,17 +89,14 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
 
   private static validDueOn(dueOn: string): string {
     if (!ReminderModel.DUE_ON_PATTERN.test(dueOn)) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_DUE_ON_INVALID,
-        `Reminder.dueOn must be a calendar date formatted YYYY-MM-DD, got ${dueOn}`,
-      );
+      throw new ReminderDueOnInvalidException(dueOn);
     }
 
     const parsed = new Date(`${dueOn}T00:00:00.000Z`);
 
     if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== dueOn) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_DUE_ON_INVALID,
+      throw new ReminderDueOnInvalidException(
+        dueOn,
         `Reminder.dueOn is not a real calendar date: ${dueOn}`,
       );
     }
@@ -112,10 +106,7 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
 
   private static validVersion(version: number): number {
     if (!Number.isInteger(version) || version < 1) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_VERSION_INVALID,
-        `Reminder.version must be a positive integer, got ${version}`,
-      );
+      throw new ReminderVersionInvalidException(version);
     }
 
     return version;
@@ -155,10 +146,7 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
 
   private assertPending(): void {
     if (this.currentStatus === ReminderStatusEnum.DONE) {
-      throw new ReminderDomainException(
-        ReminderErrorCodeEnum.REMINDER_ALREADY_DONE,
-        `Reminder ${String(this.id)} is already done`,
-      );
+      throw new ReminderAlreadyDoneException(String(this.id));
     }
   }
 }

@@ -161,19 +161,23 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY read tables through the repository host', async () => {
+    it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
         code: [
           'import { Injectable } from "@nestjs/common";',
           'import { Repository } from "typeorm";',
-          'import { RepositoryHost } from "@acme-libs/database";',
+          'import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
         ].join('\n'),
       }).toPassArchitectureLint();
     });
 
-    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+    it.each([
+      '@acme-libs/database',
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+    ])(
+      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({
           file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
@@ -262,11 +266,35 @@ describe('features', () => {
       },
     );
 
-    it('application MAY take the credentials ports — a feature signs its users in', async () => {
+    it('infrastructure/lib-adapters MAY take the credentials port — a feature signs its users in', async () => {
       await expect({
-        file: 'apps/__features-fixture__/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/lib-adapters/__fixture__.ts',
+        code: 'import { Inject, Injectable } from "@nestjs/common";\nimport { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
       }).toPassArchitectureLint();
+    });
+
+    it('infrastructure/lib-adapters MAY take the health port', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/lib-adapters/__fixture__.ts',
+        code: 'import { HEALTH_LIB_PORT } from "@acme-libs/contracts/health";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['application/use-cases', 'infrastructure/persistence', 'presentation/controllers'])(
+      '%s may NOT take the credentials or health port — a lib port is reached through infrastructure/lib-adapters',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/product/${layer}/__fixture__.ts`,
+          code: 'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";\nimport { HEALTH_LIB_PORT } from "@acme-libs/contracts/health";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('infrastructure/lib-adapters may NOT reach app contracts — only common-adapters and queue do', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/lib-adapters/__fixture__.ts',
+        code: 'import { x } from "../../../../contracts/ledger-record";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it('the module root MAY mount the credentials lib', async () => {

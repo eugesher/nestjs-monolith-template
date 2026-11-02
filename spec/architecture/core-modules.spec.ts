@@ -203,17 +203,21 @@ describe('core modules', () => {
   });
 
   describe('packages and lib contracts', () => {
-    it('infrastructure MAY read tables through the repository host', async () => {
+    it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
         code:
           'import { Repository } from "typeorm";\n' +
-          'import { RepositoryHost } from "@acme-libs/database";',
+          'import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
-    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-      'infrastructure may NOT import %s — a repository reads tables through RepositoryHost',
+    it.each([
+      '@acme-libs/database',
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+    ])(
+      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({
           file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
@@ -242,7 +246,7 @@ describe('core modules', () => {
     it.each([
       [
         'application/use-cases',
-        'import { CREDENTIALS_PASSWORD_HASHER_PORT } from "@acme-libs/contracts/credentials";',
+        'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
       ],
       ['module', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
     ])(

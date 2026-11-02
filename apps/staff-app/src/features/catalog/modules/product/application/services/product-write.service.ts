@@ -4,10 +4,10 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
 import {
-  ProductDomainException,
-  ProductErrorCodeEnum,
   ProductHelper,
   ProductModel,
+  ProductNotFoundException,
+  ProductVersionMismatchException,
 } from '../../domain';
 import {
   type IProductWriteRepositoryPort,
@@ -46,10 +46,10 @@ export class ProductWriteService {
       retryContext: (conflict) => ({ productId, currentVersion: conflict.currentVersion }),
       exhaustedContext: () => ({ productId }),
       onExhausted: (conflict, attempts) => {
-        throw new ProductDomainException(
-          ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH,
+        throw new ProductVersionMismatchException(
+          productId,
+          conflict.currentVersion,
           `Product ${productId} write lost the optimistic race after ${attempts} attempts`,
-          { currentVersion: conflict.currentVersion },
         );
       },
     });
@@ -91,10 +91,7 @@ export class ProductWriteService {
     const product = await this.repository.findById(productId);
 
     if (product === null) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_NOT_FOUND,
-        `Product ${productId} was not found`,
-      );
+      throw new ProductNotFoundException(productId);
     }
 
     return product;

@@ -2,10 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
+import { ProductBaseException, ProductErrorCodeEnum } from '../../domain';
 
-@Catch(ProductDomainException)
-export class ProductHttpExceptionFilter implements ExceptionFilter<ProductDomainException> {
+@Catch(ProductBaseException)
+export class ProductHttpExceptionFilter implements ExceptionFilter<ProductBaseException> {
   private static readonly STATUS: Record<ProductErrorCodeEnum, HttpStatus> = {
     [ProductErrorCodeEnum.PRODUCT_SKU_INVALID]: HttpStatus.BAD_REQUEST,
     [ProductErrorCodeEnum.PRODUCT_NAME_INVALID]: HttpStatus.BAD_REQUEST,
@@ -20,7 +20,7 @@ export class ProductHttpExceptionFilter implements ExceptionFilter<ProductDomain
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: ProductDomainException, host: ArgumentsHost): void {
+  public catch(exception: ProductBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = ProductHttpExceptionFilter.STATUS[code];
     const body =

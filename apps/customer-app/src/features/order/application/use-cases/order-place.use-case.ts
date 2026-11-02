@@ -3,7 +3,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
-import { OrderDomainException, OrderErrorCodeEnum, OrderModel } from '../../domain';
+import {
+  OrderIdempotencyKeyReusedException,
+  OrderIdempotentRequestInFlightException,
+  OrderModel,
+} from '../../domain';
 import {
   type IOrderIdempotencyPort,
   type IOrderPlaceRepositoryPort,
@@ -47,17 +51,11 @@ export class OrderPlaceUseCase {
     }
 
     if (claim.outcome === 'in-flight') {
-      throw new OrderDomainException(
-        OrderErrorCodeEnum.ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT,
-        `Idempotency-Key ${idempotencyKey} is still being processed, retry shortly`,
-      );
+      throw new OrderIdempotentRequestInFlightException(idempotencyKey);
     }
 
     if (claim.outcome === 'mismatch') {
-      throw new OrderDomainException(
-        OrderErrorCodeEnum.ORDER_IDEMPOTENCY_KEY_REUSED,
-        `Idempotency-Key ${idempotencyKey} was already used with a different request body`,
-      );
+      throw new OrderIdempotencyKeyReusedException(idempotencyKey);
     }
 
     try {

@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Inject, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -7,8 +7,8 @@ import {
 } from '@nestjs/swagger';
 
 import { Public } from '@acme-libs/auth';
-import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
+import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../application';
 import { HealthLivenessResponseDto } from '../dto/health-liveness-response.dto';
 import { HealthReadinessResponseDto } from '../dto/health-readiness-response.dto';
 
@@ -17,15 +17,15 @@ import { HealthReadinessResponseDto } from '../dto/health-readiness-response.dto
 @Controller('health')
 export class HealthController {
   constructor(
-    @Inject(HEALTH_LIB_PORT)
-    private readonly health: IHealthLibPort,
+    private readonly liveness: HealthLivenessUseCase,
+    private readonly readiness: HealthReadinessUseCase,
   ) {}
 
   @Get()
   @ApiOperation({ summary: 'Liveness: is the process running?' })
   @ApiOkResponse({ type: HealthLivenessResponseDto })
   public live(): HealthLivenessResponseDto {
-    return this.health.liveness();
+    return this.liveness.execute();
   }
 
   @Get('ready')
@@ -35,7 +35,7 @@ export class HealthController {
   public async ready(
     @Res({ passthrough: true }) response: { status(code: HttpStatus): unknown },
   ): Promise<HealthReadinessResponseDto> {
-    const view = await this.health.readiness();
+    const view = await this.readiness.execute();
     const status = view.status === 'ready' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
 
     response.status(status);
