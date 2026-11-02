@@ -2,9 +2,9 @@ import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
+import { IUserStaffUserCandidate } from '../interfaces/user-staff-user-candidate.interface';
 import { IUserStaffUserDraft } from '../interfaces/user-staff-user-draft.interface';
 import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';
-import { IUserStaffUserRegistration } from '../interfaces/user-staff-user-registration.interface';
 
 export class UserStaffUserModel {
   private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,8 +24,8 @@ export class UserStaffUserModel {
     return new UserStaffUserModel(id, email, passwordHash, status, [...roles]);
   }
 
-  public static createDraft(registration: IUserStaffUserRegistration): IUserStaffUserDraft {
-    const { email, passwordHash, roles } = registration;
+  public static createDraft(candidate: IUserStaffUserCandidate): IUserStaffUserDraft {
+    const { email, passwordHash, roles } = candidate;
     const normalized = UserStaffUserModel.normalizeEmail(email);
 
     if (!UserStaffUserModel.EMAIL_PATTERN.test(normalized)) {

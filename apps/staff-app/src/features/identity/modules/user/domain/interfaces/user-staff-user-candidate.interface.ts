@@ -1,6 +1,6 @@
 import { RoleEnum } from '@acme-libs/kernel';
 
-export interface IUserStaffUserRegistration {
+export interface IUserStaffUserCandidate {
   email: string;
   passwordHash: string;
   roles: RoleEnum[];

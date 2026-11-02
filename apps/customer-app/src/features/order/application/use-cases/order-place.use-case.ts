@@ -84,11 +84,15 @@ export class OrderPlaceUseCase {
   private async persist(command: IOrderPlaceCommand): Promise<IOrderView> {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
+
     const quantities = await this.productStock.lock({ productIds: distinctIds });
     const products = await this.repository.findActiveProducts(distinctIds);
+
     const stock = OrderStockMapper.toStock(products, quantities);
     const draft = OrderModel.place({ customerId, productIds, stock });
+
     const placed = await this.repository.insert(draft);
+
     const view = OrderViewMapper.toView(placed);
     const movements = view.products.map((product) => ({
       productId: product.productId,
