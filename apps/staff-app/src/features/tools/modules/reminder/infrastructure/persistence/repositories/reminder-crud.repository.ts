@@ -6,7 +6,7 @@ import { IPage } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import { type IReminderCrudRepositoryPort, IReminderPageQuery } from '../../../outbound';
+import { IReminderCrudRepositoryPort, IReminderPageQuery } from '../../../outbound';
 
 @Injectable()
 export class ReminderCrudRepository implements IReminderCrudRepositoryPort {

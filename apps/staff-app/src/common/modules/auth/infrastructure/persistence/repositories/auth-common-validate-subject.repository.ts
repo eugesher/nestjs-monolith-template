@@ -7,7 +7,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
-import { type IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
+import { IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {

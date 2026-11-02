@@ -7,7 +7,7 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../../domain';
-import { type IUserRegisterRepositoryPort } from '../../../outbound';
+import { IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {

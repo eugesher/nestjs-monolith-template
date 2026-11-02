@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Product } from '@acme-core/entities';
 
-import { type IProductStockArchiveOutOfStockRepositoryPort } from '../../../outbound';
+import { IProductStockArchiveOutOfStockRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {

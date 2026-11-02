@@ -7,7 +7,7 @@ import { Product } from '@acme-core/entities';
 
 import { ProductCoreModel } from '../../../domain';
 import {
-  type IProductCoreArchiveRepositoryPort,
+  IProductCoreArchiveRepositoryPort,
   IProductCoreWriteUpdateCommand,
 } from '../../../outbound';
 

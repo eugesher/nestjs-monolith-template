@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
-  type IProductStockCoreMoveRepositoryPort,
+  IProductStockCoreMoveRepositoryPort,
   IProductStockCoreMovementInsertCommand,
 } from '../../../outbound';
 import { ProductStockCoreBaseRepository } from './base/product-stock-core-base.repository';

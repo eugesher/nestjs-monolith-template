@@ -8,7 +8,7 @@ import { Customer } from '@acme-core/entities';
 
 import {
   IAuthGlobalCustomerView,
-  type IAuthGlobalValidateSubjectRepositoryPort,
+  IAuthGlobalValidateSubjectRepositoryPort,
 } from '../../../outbound';
 
 @Injectable()

@@ -7,7 +7,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { UserStaffUserModel } from '../../../domain';
-import { type IUserAssignRoleRepositoryPort } from '../../../outbound';
+import { IUserAssignRoleRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {

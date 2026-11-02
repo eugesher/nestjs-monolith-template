@@ -6,7 +6,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import { type IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
+import { IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
 
 @Injectable()
 export class ReminderWriteRepository implements IReminderWriteRepositoryPort {

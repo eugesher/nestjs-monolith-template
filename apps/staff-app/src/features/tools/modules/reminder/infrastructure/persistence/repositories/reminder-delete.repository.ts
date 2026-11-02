@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { type IReminderDeleteRepositoryPort } from '../../../outbound';
+import { IReminderDeleteRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderDeleteRepository implements IReminderDeleteRepositoryPort {

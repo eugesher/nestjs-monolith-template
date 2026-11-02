@@ -6,7 +6,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductStockModel } from '../../../domain';
-import { type IProductStockAddRepositoryPort } from '../../../outbound';
+import { IProductStockAddRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductStockAddRepository implements IProductStockAddRepositoryPort {

@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import type { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Product, ProductStock } from '@acme-core/entities';
 
 import { IProductStockCoreSumView } from '../../../../outbound';

@@ -7,7 +7,7 @@ import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { IOrderProductRecord, OrderModel } from '../../../domain';
 import {
-  type IOrderCrudRepositoryPort,
+  IOrderCrudRepositoryPort,
   IOrderFindOwnedQuery,
   IOrderListedView,
   IOrderPageQuery,

@@ -6,7 +6,7 @@ import { IPage, Nullable } from '@acme-libs/toolkit';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import {
-  type IOrderCrudRepositoryPort,
+  IOrderCrudRepositoryPort,
   IOrderFoundProductView,
   IOrderFoundView,
   IOrderListedView,

@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import type { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 

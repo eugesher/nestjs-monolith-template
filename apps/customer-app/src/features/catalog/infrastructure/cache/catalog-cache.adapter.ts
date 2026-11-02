@@ -5,7 +5,7 @@ import { IPage } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_TTL_MS,
-  type ICatalogCachePort,
+  ICatalogCachePort,
   ICatalogCacheReadQuery,
   ICatalogProductRowView,
 } from '../../outbound';

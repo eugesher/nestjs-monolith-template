@@ -6,7 +6,7 @@ import { IPage } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
-import { type INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
+import { INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {

@@ -7,7 +7,7 @@ import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import {
-  type ICatalogCrudRepositoryPort,
+  ICatalogCrudRepositoryPort,
   ICatalogPageQuery,
   ICatalogProductRowView,
 } from '../../../outbound';

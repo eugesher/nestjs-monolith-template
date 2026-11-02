@@ -6,10 +6,7 @@ import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import {
-  type IReminderGetSummaryRepositoryPort,
-  IReminderSummarySnapshotView,
-} from '../../../outbound';
+import { IReminderGetSummaryRepositoryPort, IReminderSummarySnapshotView } from '../../../outbound';
 
 @Injectable()
 export class ReminderGetSummaryRepository implements IReminderGetSummaryRepositoryPort {

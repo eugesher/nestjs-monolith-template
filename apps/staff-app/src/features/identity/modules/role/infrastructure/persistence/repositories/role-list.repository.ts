@@ -6,7 +6,7 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { StaffRole } from '@acme-staff/common/entities';
 
 import { RoleModel } from '../../../domain';
-import { type IRoleListRepositoryPort } from '../../../outbound';
+import { IRoleListRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class RoleListRepository implements IRoleListRepositoryPort {

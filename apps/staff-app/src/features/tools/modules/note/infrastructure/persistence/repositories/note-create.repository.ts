@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
-import { type INoteCreateRepositoryPort } from '../../../outbound';
+import { INoteCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {

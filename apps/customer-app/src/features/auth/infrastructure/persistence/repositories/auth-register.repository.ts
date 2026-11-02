@@ -6,7 +6,7 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
 import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../../domain';
-import { type IAuthRegisterRepositoryPort } from '../../../outbound';
+import { IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {

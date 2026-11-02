@@ -6,7 +6,7 @@ import { IPage } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
-import { type INoteCrudRepositoryPort, INotePageQuery } from '../../../outbound';
+import { INoteCrudRepositoryPort, INotePageQuery } from '../../../outbound';
 
 @Injectable()
 export class NoteCrudRepository implements INoteCrudRepositoryPort {

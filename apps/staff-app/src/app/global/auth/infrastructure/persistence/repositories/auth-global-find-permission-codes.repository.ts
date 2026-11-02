@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-staff/common/entities';
 
-import { type IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outbound';
+import { IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindPermissionCodesRepositoryPort {

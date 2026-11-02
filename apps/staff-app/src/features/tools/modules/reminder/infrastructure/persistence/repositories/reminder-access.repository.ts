@@ -6,10 +6,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import {
-  IReminderAccessFindOwnedQuery,
-  type IReminderAccessRepositoryPort,
-} from '../../../outbound';
+import { IReminderAccessFindOwnedQuery, IReminderAccessRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {

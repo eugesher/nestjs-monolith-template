@@ -1,4 +1,4 @@
-import type { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
+import { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
 
 export interface IRepositoryHostPort {
   getRepository<Entity extends ObjectLiteral>(entity: EntityTarget<Entity>): Repository<Entity>;

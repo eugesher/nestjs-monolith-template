@@ -4,7 +4,7 @@ import { LessThan, Repository } from 'typeorm';
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IdempotencyKey } from '@acme-core/entities';
 
-import { type IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
+import { IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunRepositoryPort {

@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import { type IReminderCreateRepositoryPort } from '../../../outbound';
+import { IReminderCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderCreateRepository implements IReminderCreateRepositoryPort {

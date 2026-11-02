@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { IdempotencyKey } from '@acme-core/entities';
 
-import { type IIdempotencyCoreReleaseRepositoryPort } from '../../../outbound';
+import { IIdempotencyCoreReleaseRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyCoreReleaseRepository implements IIdempotencyCoreReleaseRepositoryPort {

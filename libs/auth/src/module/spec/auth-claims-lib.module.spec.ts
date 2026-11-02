@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   AUTH_CLAIMS_PORT,
   AUTH_USER_VALIDATOR_PORT,
-  type IAuthCurrentUserView,
+  IAuthCurrentUserView,
 } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 

@@ -6,7 +6,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
-import { INoteAccessFindOwnedQuery, type INoteAccessRepositoryPort } from '../../../outbound';
+import { INoteAccessFindOwnedQuery, INoteAccessRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {

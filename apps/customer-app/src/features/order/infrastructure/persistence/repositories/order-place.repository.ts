@@ -6,7 +6,7 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { OrderModel } from '../../../domain';
-import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
+import { IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {

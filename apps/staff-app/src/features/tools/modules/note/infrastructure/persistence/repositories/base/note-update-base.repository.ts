@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import type { IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
 import { INoteWriteUpdateCommand } from '../../../../outbound';

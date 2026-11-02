@@ -7,7 +7,7 @@ import { LedgerEntry } from '@acme-core/entities';
 
 import { LedgerRecordEntryModel } from '../../../domain';
 import {
-  type ILedgerRecordAppendRepositoryPort,
+  ILedgerRecordAppendRepositoryPort,
   ILedgerRecordAppendOutcomeView,
 } from '../../../outbound';
 

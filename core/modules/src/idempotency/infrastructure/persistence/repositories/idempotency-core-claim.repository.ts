@@ -6,7 +6,7 @@ import { MysqlErrorHelper, Nullable } from '@acme-libs/toolkit';
 import { IdempotencyKey } from '@acme-core/entities';
 
 import { IdempotencyCoreKeyModel } from '../../../domain';
-import { type IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
+import { IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {

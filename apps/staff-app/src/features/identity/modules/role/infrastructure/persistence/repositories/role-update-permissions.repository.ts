@@ -7,7 +7,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
 import { RoleModel, RolePermissionModel } from '../../../domain';
-import { type IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';
+import { IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {

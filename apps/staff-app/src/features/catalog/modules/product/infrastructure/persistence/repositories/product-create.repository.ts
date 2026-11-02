@@ -6,7 +6,7 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel, ProductSkuTakenException } from '../../../domain';
-import { type IProductCreateRepositoryPort } from '../../../outbound';
+import { IProductCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductCreateRepository implements IProductCreateRepositoryPort {

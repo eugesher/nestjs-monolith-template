@@ -6,7 +6,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
 import { AuthCustomerModel } from '../../../domain';
-import { type IAuthLoginRepositoryPort } from '../../../outbound';
+import { IAuthLoginRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {

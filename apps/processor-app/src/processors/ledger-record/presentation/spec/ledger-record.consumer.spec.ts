@@ -1,4 +1,4 @@
-import type { Job } from 'bull';
+import { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';

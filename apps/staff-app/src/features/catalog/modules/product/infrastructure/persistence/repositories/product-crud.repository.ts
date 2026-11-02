@@ -6,7 +6,7 @@ import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../domain';
-import { type IProductCrudRepositoryPort, IProductPageQuery } from '../../../outbound';
+import { IProductCrudRepositoryPort, IProductPageQuery } from '../../../outbound';
 
 @Injectable()
 export class ProductCrudRepository implements IProductCrudRepositoryPort {
