@@ -18,7 +18,13 @@ export class UserStaffUserModel {
     private assignedRoles: RoleEnum[],
   ) {}
 
-  public static register(registration: IUserStaffUserRegistration): IUserStaffUserDraft {
+  public static reconstitute(record: IUserStaffUserRecord): UserStaffUserModel {
+    const { id, email, passwordHash, status, roles } = record;
+
+    return new UserStaffUserModel(id, email, passwordHash, status, [...roles]);
+  }
+
+  public static createDraft(registration: IUserStaffUserRegistration): IUserStaffUserDraft {
     const { email, passwordHash, roles } = registration;
     const normalized = UserStaffUserModel.normalizeEmail(email);
 
@@ -29,12 +35,6 @@ export class UserStaffUserModel {
     const unique = [...new Set(roles)];
 
     return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE, roles: unique };
-  }
-
-  public static reconstitute(record: IUserStaffUserRecord): UserStaffUserModel {
-    const { id, email, passwordHash, status, roles } = record;
-
-    return new UserStaffUserModel(id, email, passwordHash, status, [...roles]);
   }
 
   public static assertPasswordStrength(password: string): void {

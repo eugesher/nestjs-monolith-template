@@ -18,7 +18,13 @@ export class AuthCustomerModel {
     public readonly status: UserStatusEnum,
   ) {}
 
-  public static register(registration: IAuthCustomerRegistration): IAuthCustomerDraft {
+  public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {
+    const { id, email, passwordHash, status } = record;
+
+    return new AuthCustomerModel(id, email, passwordHash, status);
+  }
+
+  public static createDraft(registration: IAuthCustomerRegistration): IAuthCustomerDraft {
     const { email, passwordHash } = registration;
     const normalized = AuthCustomerModel.normalizeEmail(email);
 
@@ -27,12 +33,6 @@ export class AuthCustomerModel {
     }
 
     return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE };
-  }
-
-  public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {
-    const { id, email, passwordHash, status } = record;
-
-    return new AuthCustomerModel(id, email, passwordHash, status);
   }
 
   public static normalizeEmail(email: string): string {

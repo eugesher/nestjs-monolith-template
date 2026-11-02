@@ -4,9 +4,9 @@ import { IUserStaffUserDraft } from '../../interfaces/user-staff-user-draft.inte
 import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {
-  describe('register', () => {
+  describe('createDraft', () => {
     it('drafts an active user with a normalized email, unique roles and no id until it is stored', () => {
-      const draft = UserStaffUserModel.register({
+      const draft = UserStaffUserModel.createDraft({
         email: '  Editor@Example.COM ',
         passwordHash: 'hash',
         roles: [RoleEnum.EDITOR, RoleEnum.EDITOR, RoleEnum.VIEWER],
@@ -24,7 +24,7 @@ describe('UserStaffUserModel', () => {
       'rejects the malformed email %s',
       (email) => {
         const register = (): IUserStaffUserDraft =>
-          UserStaffUserModel.register({ email, passwordHash: 'hash', roles: [] });
+          UserStaffUserModel.createDraft({ email, passwordHash: 'hash', roles: [] });
 
         expect(register).toThrow(
           expect.objectContaining({
