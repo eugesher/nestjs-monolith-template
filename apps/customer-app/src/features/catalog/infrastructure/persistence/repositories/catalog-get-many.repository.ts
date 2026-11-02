@@ -28,7 +28,7 @@ export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
 
   public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size } = query;
-    const [products, total] = await this.productRepository
+    const [data, total] = await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku', 'Product.name'])
       .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
@@ -36,11 +36,6 @@ export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-    const data = products.map((product) => ({
-      id: product.id,
-      sku: product.sku,
-      name: product.name,
-    }));
 
     return PaginationHelper.toPage(data, total, { page, size });
   }

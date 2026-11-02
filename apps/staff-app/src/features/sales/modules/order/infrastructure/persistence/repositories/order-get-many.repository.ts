@@ -23,18 +23,13 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
     const { page, size } = query;
-    const [orders, total] = await this.orderRepository
+    const [data, total] = await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .orderBy('Order.id', 'DESC')
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-    const data = orders.map((order) => ({
-      id: order.id,
-      customerId: order.customerId,
-      createdAt: order.createdAt,
-    }));
 
     return PaginationHelper.toPage(data, total, { page, size });
   }
