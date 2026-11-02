@@ -59,15 +59,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     const stored = await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .leftJoin('Order.orderProducts', 'OrderProduct')
+      .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
       .where('Order.id = :orderId', { orderId })
-      .getOneOrFail();
-    const rows = await this.orderProductRepository
-      .createQueryBuilder('OrderProduct')
-      .select(['OrderProduct.id', 'OrderProduct.productId'])
-      .where('OrderProduct.orderId = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
-      .getMany();
-    const records = rows.map((row) => {
+      .getOneOrFail();
+    const records = stored.orderProducts.map((row) => {
       const { id, productId } = row;
       const product = products.find((candidate) => candidate.productId === productId);
 
