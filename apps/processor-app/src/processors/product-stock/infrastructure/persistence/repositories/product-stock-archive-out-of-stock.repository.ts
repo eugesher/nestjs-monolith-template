@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
@@ -23,11 +23,13 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
       return [];
     }
 
-    const products = await this.productRepository.find({
-      select: { id: true },
-      where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
-      order: { id: 'ASC' },
-    });
+    const products = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id'])
+      .where('Product.id IN (:...productIds)', { productIds })
+      .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .orderBy('Product.id', 'ASC')
+      .getMany();
 
     return products.map((product) => product.id);
   }

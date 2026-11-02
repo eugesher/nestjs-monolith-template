@@ -30,12 +30,13 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
     const { page, size } = query;
-    const [orders, total] = await this.orderRepository.findAndCount({
-      select: { id: true, customerId: true, createdAt: true },
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [orders, total] = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .orderBy('Order.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
     const items = orders.map((order) => ({
       id: order.id,
       customerId: order.customerId,
@@ -46,7 +47,11 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
   }
 
   public async findById(orderId: string): Promise<Nullable<IOrderFoundView>> {
-    const order = await this.orderRepository.findOneBy({ id: orderId });
+    const order = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .where('Order.id = :orderId', { orderId })
+      .getOne();
 
     if (order === null) {
       return null;

@@ -21,7 +21,11 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
   }
 
   public async findByEmail(email: string): Promise<Nullable<AuthCustomerModel>> {
-    const customer = await this.customerRepository.findOne({ where: { email } });
+    const customer = await this.customerRepository
+      .createQueryBuilder('Customer')
+      .select(['Customer.id', 'Customer.email', 'Customer.passwordHash', 'Customer.status'])
+      .where('Customer.email = :email', { email })
+      .getOne();
 
     return customer ? AuthCustomerMapper.toModel(customer) : null;
   }

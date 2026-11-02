@@ -23,6 +23,7 @@ export abstract class ProductStockCoreBaseRepository {
 
     const products = await this.productRepository
       .createQueryBuilder('Product')
+      .select(['Product.id'])
       .where('Product.id IN (:...productIds)', { productIds })
       .orderBy('Product.id', 'ASC')
       .setLock('pessimistic_write')

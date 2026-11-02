@@ -25,15 +25,37 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
 
   public async list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryView>> {
     const { page, size, subjectType, subjectId, correlationId } = query;
-    const bySubjectType = subjectType === undefined ? {} : { subjectType };
-    const bySubjectId = subjectId === undefined ? {} : { subjectId };
-    const byCorrelationId = correlationId === undefined ? {} : { correlationId };
-    const [entries, total] = await this.ledgerEntryRepository.findAndCount({
-      where: { ...bySubjectType, ...bySubjectId, ...byCorrelationId },
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const builder = this.ledgerEntryRepository
+      .createQueryBuilder('LedgerEntry')
+      .select([
+        'LedgerEntry.id',
+        'LedgerEntry.operationKey',
+        'LedgerEntry.subjectType',
+        'LedgerEntry.subjectId',
+        'LedgerEntry.action',
+        'LedgerEntry.payload',
+        'LedgerEntry.correlationId',
+        'LedgerEntry.occurredAt',
+        'LedgerEntry.recordedAt',
+      ]);
+
+    if (subjectType !== undefined) {
+      builder.andWhere('LedgerEntry.subjectType = :subjectType', { subjectType });
+    }
+
+    if (subjectId !== undefined) {
+      builder.andWhere('LedgerEntry.subjectId = :subjectId', { subjectId });
+    }
+
+    if (correlationId !== undefined) {
+      builder.andWhere('LedgerEntry.correlationId = :correlationId', { correlationId });
+    }
+
+    const [entries, total] = await builder
+      .orderBy('LedgerEntry.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
       items: entries.map((entry) => LedgerEntryMapper.toView(entry)),

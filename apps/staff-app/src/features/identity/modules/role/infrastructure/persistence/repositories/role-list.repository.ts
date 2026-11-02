@@ -20,10 +20,15 @@ export class RoleListRepository implements IRoleListRepositoryPort {
   }
 
   public async list(): Promise<RoleModel[]> {
-    const roles = await this.staffRoleRepository.find({
-      relations: { rolePermissions: { permission: true } },
-      order: { id: 'ASC' },
-    });
+    const roles = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id', 'StaffRole.name'])
+      .leftJoin('StaffRole.rolePermissions', 'StaffRolePermission')
+      .addSelect(['StaffRolePermission.roleId', 'StaffRolePermission.permissionId'])
+      .leftJoin('StaffRolePermission.permission', 'StaffPermission')
+      .addSelect(['StaffPermission.id', 'StaffPermission.code'])
+      .orderBy('StaffRole.id', 'ASC')
+      .getMany();
 
     return roles.map((role) => RoleMapper.toModel(role));
   }

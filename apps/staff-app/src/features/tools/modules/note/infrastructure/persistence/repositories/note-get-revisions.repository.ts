@@ -22,12 +22,23 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
 
   public async listForNote(query: INoteRevisionPageQuery): Promise<IPage<NoteRevisionModel>> {
     const { page, size, noteId } = query;
-    const [revisions, total] = await this.noteRevisionRepository.findAndCount({
-      where: { noteId },
-      order: { noteVersion: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [revisions, total] = await this.noteRevisionRepository
+      .createQueryBuilder('NoteRevision')
+      .select([
+        'NoteRevision.id',
+        'NoteRevision.noteId',
+        'NoteRevision.noteVersion',
+        'NoteRevision.bodyBefore',
+        'NoteRevision.bodyAfter',
+        'NoteRevision.editorId',
+        'NoteRevision.correlationId',
+        'NoteRevision.recordedAt',
+      ])
+      .where('NoteRevision.noteId = :noteId', { noteId })
+      .orderBy('NoteRevision.noteVersion', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
       items: revisions.map((revision) => NoteRevisionMapper.toModel(revision)),

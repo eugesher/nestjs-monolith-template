@@ -30,7 +30,22 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
       version,
     });
     const saved = await this.noteRepository.save(draft);
-    const stored = await this.noteRepository.findOneOrFail({ where: { id: String(saved.id) } });
+    const id = String(saved.id);
+    const stored = await this.noteRepository
+      .createQueryBuilder('Note')
+      .select([
+        'Note.id',
+        'Note.subjectType',
+        'Note.subjectId',
+        'Note.body',
+        'Note.authorId',
+        'Note.resolved',
+        'Note.version',
+        'Note.createdAt',
+        'Note.updatedAt',
+      ])
+      .where('Note.id = :id', { id })
+      .getOneOrFail();
 
     return NoteMapper.toModel(stored);
   }

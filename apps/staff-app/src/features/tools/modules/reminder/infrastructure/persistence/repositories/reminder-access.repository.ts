@@ -25,7 +25,22 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
 
   public async findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<ReminderModel>> {
     const { reminderId, ownerId } = query;
-    const reminder = await this.reminderRepository.findOne({ where: { id: reminderId, ownerId } });
+    const reminder = await this.reminderRepository
+      .createQueryBuilder('Reminder')
+      .select([
+        'Reminder.id',
+        'Reminder.ownerId',
+        'Reminder.title',
+        'Reminder.body',
+        'Reminder.dueOn',
+        'Reminder.status',
+        'Reminder.version',
+        'Reminder.createdAt',
+        'Reminder.updatedAt',
+      ])
+      .where('Reminder.id = :reminderId', { reminderId })
+      .andWhere('Reminder.ownerId = :ownerId', { ownerId })
+      .getOne();
 
     return reminder === null ? null : ReminderMapper.toModel(reminder);
   }

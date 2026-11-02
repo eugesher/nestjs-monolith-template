@@ -21,10 +21,11 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
   }
 
   public async findById(productId: string): Promise<Nullable<ProductStockModel>> {
-    const product = await this.productRepository.findOne({
-      select: { id: true, sku: true },
-      where: { id: productId },
-    });
+    const product = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku'])
+      .where('Product.id = :productId', { productId })
+      .getOne();
 
     return product === null ? null : ProductStockMapper.toModel(product);
   }

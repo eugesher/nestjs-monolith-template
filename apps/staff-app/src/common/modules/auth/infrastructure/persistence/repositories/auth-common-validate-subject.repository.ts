@@ -22,10 +22,16 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
   }
 
   public async findActiveById(id: string): Promise<Nullable<AuthCommonStaffUserModel>> {
-    const user = await this.staffUserRepository.findOne({
-      where: { id, status: UserStatusEnum.ACTIVE },
-      relations: { userRoles: { role: true } },
-    });
+    const user = await this.staffUserRepository
+      .createQueryBuilder('StaffUser')
+      .select(['StaffUser.id', 'StaffUser.email'])
+      .leftJoin('StaffUser.userRoles', 'StaffUserRole')
+      .addSelect(['StaffUserRole.userId', 'StaffUserRole.roleId'])
+      .leftJoin('StaffUserRole.role', 'StaffRole')
+      .addSelect(['StaffRole.id', 'StaffRole.name'])
+      .where('StaffUser.id = :id', { id })
+      .andWhere('StaffUser.status = :status', { status: UserStatusEnum.ACTIVE })
+      .getOne();
 
     return user ? AuthCommonStaffUserMapper.toModel(user) : null;
   }

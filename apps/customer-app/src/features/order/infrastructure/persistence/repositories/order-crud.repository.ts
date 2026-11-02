@@ -31,13 +31,14 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
     const { page, size, customerId } = query;
-    const [orders, total] = await this.orderRepository.findAndCount({
-      select: { id: true, createdAt: true },
-      where: { customerId },
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [orders, total] = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.createdAt'])
+      .where('Order.customerId = :customerId', { customerId })
+      .orderBy('Order.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
     const items = orders.map((order) => ({ id: order.id, createdAt: order.createdAt }));
 
     return { items, total, page, size };
@@ -45,7 +46,12 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
 
   public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<OrderModel>> {
     const { orderId, customerId } = query;
-    const order = await this.orderRepository.findOneBy({ id: orderId, customerId });
+    const order = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .where('Order.id = :orderId', { orderId })
+      .andWhere('Order.customerId = :customerId', { customerId })
+      .getOne();
 
     if (order === null) {
       return null;

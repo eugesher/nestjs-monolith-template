@@ -22,11 +22,21 @@ export class ProductCrudRepository implements IProductCrudRepositoryPort {
 
   public async list(query: IProductPageQuery): Promise<IPage<ProductModel>> {
     const { page, size } = query;
-    const [items, total] = await this.productRepository.findAndCount({
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [items, total] = await this.productRepository
+      .createQueryBuilder('Product')
+      .select([
+        'Product.id',
+        'Product.sku',
+        'Product.name',
+        'Product.status',
+        'Product.version',
+        'Product.createdAt',
+        'Product.updatedAt',
+      ])
+      .orderBy('Product.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
       items: items.map((product) => ProductMapper.toModel(product)),

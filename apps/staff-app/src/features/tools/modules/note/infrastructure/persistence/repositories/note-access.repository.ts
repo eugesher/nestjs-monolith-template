@@ -22,7 +22,22 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
 
   public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<NoteModel>> {
     const { noteId, authorId } = query;
-    const note = await this.noteRepository.findOne({ where: { id: noteId, authorId } });
+    const note = await this.noteRepository
+      .createQueryBuilder('Note')
+      .select([
+        'Note.id',
+        'Note.subjectType',
+        'Note.subjectId',
+        'Note.body',
+        'Note.authorId',
+        'Note.resolved',
+        'Note.version',
+        'Note.createdAt',
+        'Note.updatedAt',
+      ])
+      .where('Note.id = :noteId', { noteId })
+      .andWhere('Note.authorId = :authorId', { authorId })
+      .getOne();
 
     return note === null ? null : NoteMapper.toModel(note);
   }

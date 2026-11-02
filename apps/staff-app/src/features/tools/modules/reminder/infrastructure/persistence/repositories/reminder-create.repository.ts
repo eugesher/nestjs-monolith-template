@@ -23,7 +23,22 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
     const { ownerId, title, body, dueOn, status, version } = reminder;
     const draft = this.reminderRepository.create({ ownerId, title, body, dueOn, status, version });
     const saved = await this.reminderRepository.save(draft);
-    const stored = await this.reminderRepository.findOneOrFail({ where: { id: String(saved.id) } });
+    const id = String(saved.id);
+    const stored = await this.reminderRepository
+      .createQueryBuilder('Reminder')
+      .select([
+        'Reminder.id',
+        'Reminder.ownerId',
+        'Reminder.title',
+        'Reminder.body',
+        'Reminder.dueOn',
+        'Reminder.status',
+        'Reminder.version',
+        'Reminder.createdAt',
+        'Reminder.updatedAt',
+      ])
+      .where('Reminder.id = :id', { id })
+      .getOneOrFail();
 
     return ReminderMapper.toModel(stored);
   }

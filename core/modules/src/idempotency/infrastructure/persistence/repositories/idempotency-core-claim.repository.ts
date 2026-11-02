@@ -40,7 +40,18 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
   }
 
   public async findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>> {
-    const entity = await this.idempotencyKeyRepository.findOne({ where: { idempotencyKey: key } });
+    const entity = await this.idempotencyKeyRepository
+      .createQueryBuilder('IdempotencyKey')
+      .select([
+        'IdempotencyKey.id',
+        'IdempotencyKey.idempotencyKey',
+        'IdempotencyKey.requestFingerprint',
+        'IdempotencyKey.status',
+        'IdempotencyKey.responseBody',
+        'IdempotencyKey.createdAt',
+      ])
+      .where('IdempotencyKey.idempotencyKey = :key', { key })
+      .getOne();
 
     return entity === null ? null : IdempotencyCoreKeyMapper.toModel(entity);
   }

@@ -41,10 +41,12 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
         throw error;
       }
 
-      const existing = await this.ledgerEntryRepository.findOneOrFail({
-        select: { id: true },
-        where: { operationKey: entry.operationKey },
-      });
+      const { operationKey } = entry;
+      const existing = await this.ledgerEntryRepository
+        .createQueryBuilder('LedgerEntry')
+        .select(['LedgerEntry.id'])
+        .where('LedgerEntry.operationKey = :operationKey', { operationKey })
+        .getOneOrFail();
 
       return { id: existing.id, appended: false };
     }

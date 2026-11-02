@@ -23,9 +23,11 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
   }
 
   public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerView>> {
-    return await this.customerRepository.findOne({
-      select: { id: true, email: true },
-      where: { id, status: UserStatusEnum.ACTIVE },
-    });
+    return await this.customerRepository
+      .createQueryBuilder('Customer')
+      .select(['Customer.id', 'Customer.email'])
+      .where('Customer.id = :id', { id })
+      .andWhere('Customer.status = :status', { status: UserStatusEnum.ACTIVE })
+      .getOne();
   }
 }

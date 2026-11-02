@@ -25,13 +25,14 @@ export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
 
   public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size } = query;
-    const [products, total] = await this.productRepository.findAndCount({
-      select: { id: true, sku: true, name: true },
-      where: { status: ProductStatusEnum.ACTIVE },
-      order: { id: 'ASC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [products, total] = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .orderBy('Product.id', 'ASC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
     const items = products.map((product) => ({
       id: product.id,
       sku: product.sku,

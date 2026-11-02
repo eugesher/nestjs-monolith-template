@@ -30,19 +30,25 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
   }
 
   public async findById(id: string): Promise<Nullable<UserStaffUserModel>> {
-    const user = await this.staffUserRepository.findOne({
-      where: { id },
-      relations: { userRoles: { role: true } },
-    });
+    const user = await this.staffUserRepository
+      .createQueryBuilder('StaffUser')
+      .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
+      .leftJoin('StaffUser.userRoles', 'StaffUserRole')
+      .addSelect(['StaffUserRole.userId', 'StaffUserRole.roleId'])
+      .leftJoin('StaffUserRole.role', 'StaffRole')
+      .addSelect(['StaffRole.id', 'StaffRole.name'])
+      .where('StaffUser.id = :id', { id })
+      .getOne();
 
     return user ? UserStaffUserMapper.toModel(user) : null;
   }
 
   public async addRole(userId: string, role: RoleEnum): Promise<boolean> {
-    const stored = await this.staffRoleRepository.findOne({
-      select: { id: true },
-      where: { name: role },
-    });
+    const stored = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id'])
+      .where('StaffRole.name = :role', { role })
+      .getOne();
 
     if (!stored) {
       return false;

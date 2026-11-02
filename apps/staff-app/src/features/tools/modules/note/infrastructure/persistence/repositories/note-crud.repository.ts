@@ -22,14 +22,36 @@ export class NoteCrudRepository implements INoteCrudRepositoryPort {
 
   public async list(query: INotePageQuery): Promise<IPage<NoteModel>> {
     const { page, size, subjectType, subjectId, resolved, authorId } = query;
-    const bySubject = subjectType === undefined ? {} : { subjectType, subjectId };
-    const byResolved = resolved === undefined ? {} : { resolved };
-    const [notes, total] = await this.noteRepository.findAndCount({
-      where: { authorId, ...bySubject, ...byResolved },
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const builder = this.noteRepository
+      .createQueryBuilder('Note')
+      .select([
+        'Note.id',
+        'Note.subjectType',
+        'Note.subjectId',
+        'Note.body',
+        'Note.authorId',
+        'Note.resolved',
+        'Note.version',
+        'Note.createdAt',
+        'Note.updatedAt',
+      ])
+      .where('Note.authorId = :authorId', { authorId });
+
+    if (subjectType !== undefined) {
+      builder
+        .andWhere('Note.subjectType = :subjectType', { subjectType })
+        .andWhere('Note.subjectId = :subjectId', { subjectId });
+    }
+
+    if (resolved !== undefined) {
+      builder.andWhere('Note.resolved = :resolved', { resolved });
+    }
+
+    const [notes, total] = await builder
+      .orderBy('Note.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
       items: notes.map((note) => NoteMapper.toModel(note)),

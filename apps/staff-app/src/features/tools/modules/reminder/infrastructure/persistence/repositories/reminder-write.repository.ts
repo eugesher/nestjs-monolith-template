@@ -21,7 +21,21 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
   }
 
   public async findById(reminderId: string): Promise<Nullable<ReminderModel>> {
-    const reminder = await this.reminderRepository.findOne({ where: { id: reminderId } });
+    const reminder = await this.reminderRepository
+      .createQueryBuilder('Reminder')
+      .select([
+        'Reminder.id',
+        'Reminder.ownerId',
+        'Reminder.title',
+        'Reminder.body',
+        'Reminder.dueOn',
+        'Reminder.status',
+        'Reminder.version',
+        'Reminder.createdAt',
+        'Reminder.updatedAt',
+      ])
+      .where('Reminder.id = :reminderId', { reminderId })
+      .getOne();
 
     return reminder === null ? null : ReminderMapper.toModel(reminder);
   }

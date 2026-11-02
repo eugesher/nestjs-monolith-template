@@ -21,7 +21,10 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
   }
 
   public async existsBySku(sku: string): Promise<boolean> {
-    return await this.productRepository.exists({ where: { sku } });
+    return await this.productRepository
+      .createQueryBuilder('Product')
+      .where('Product.sku = :sku', { sku })
+      .getExists();
   }
 
   public async insert(product: ProductModel): Promise<ProductModel> {
@@ -40,7 +43,19 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       );
     }
 
-    const stored = await this.productRepository.findOneOrFail({ where: { sku } });
+    const stored = await this.productRepository
+      .createQueryBuilder('Product')
+      .select([
+        'Product.id',
+        'Product.sku',
+        'Product.name',
+        'Product.status',
+        'Product.version',
+        'Product.createdAt',
+        'Product.updatedAt',
+      ])
+      .where('Product.sku = :sku', { sku })
+      .getOneOrFail();
 
     return ProductMapper.toModel(stored);
   }

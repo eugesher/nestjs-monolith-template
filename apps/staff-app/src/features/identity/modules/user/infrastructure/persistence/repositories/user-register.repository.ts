@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
@@ -62,10 +62,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       return;
     }
 
-    const roles = await this.staffRoleRepository.find({
-      select: { id: true },
-      where: { name: In(names) },
-    });
+    const roles = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id'])
+      .where('StaffRole.name IN (:...names)', { names })
+      .getMany();
     const rows = roles.map((role) => ({ userId, roleId: role.id }));
 
     await this.staffUserRoleRepository.insert(rows);

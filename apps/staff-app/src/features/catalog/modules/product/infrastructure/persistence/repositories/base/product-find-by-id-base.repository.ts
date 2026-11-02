@@ -15,7 +15,19 @@ export abstract class ProductFindByIdBaseRepository {
   }
 
   public async findById(productId: string): Promise<Nullable<ProductModel>> {
-    const product = await this.productRepository.findOne({ where: { id: productId } });
+    const product = await this.productRepository
+      .createQueryBuilder('Product')
+      .select([
+        'Product.id',
+        'Product.sku',
+        'Product.name',
+        'Product.status',
+        'Product.version',
+        'Product.createdAt',
+        'Product.updatedAt',
+      ])
+      .where('Product.id = :productId', { productId })
+      .getOne();
 
     return product === null ? null : ProductMapper.toModel(product);
   }

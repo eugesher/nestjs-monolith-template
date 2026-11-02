@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
@@ -33,9 +33,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return [];
     }
 
-    const products = await this.productRepository.find({
-      where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
-    });
+    const products = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .where('Product.id IN (:...productIds)', { productIds })
+      .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .getMany();
 
     return products.map((product) => {
       const { id, sku, name } = product;
@@ -52,10 +55,13 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
 
     await this.orderProductRepository.insert(lines);
 
-    const rows = await this.orderProductRepository.find({
-      where: { orderId: stored.id },
-      order: { id: 'ASC' },
-    });
+    const orderId = stored.id;
+    const rows = await this.orderProductRepository
+      .createQueryBuilder('OrderProduct')
+      .select(['OrderProduct.id', 'OrderProduct.productId'])
+      .where('OrderProduct.orderId = :orderId', { orderId })
+      .orderBy('OrderProduct.id', 'ASC')
+      .getMany();
     const records = rows.map((row) => {
       const { id, productId } = row;
       const product = products.find((candidate) => candidate.productId === productId);
