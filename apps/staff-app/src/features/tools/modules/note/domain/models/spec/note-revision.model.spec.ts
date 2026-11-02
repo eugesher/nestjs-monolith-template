@@ -1,64 +1,6 @@
 import { NoteRevisionModel } from '../note-revision.model';
 
 describe('NoteRevisionModel', () => {
-  describe('create', () => {
-    it('records an edit with no id and no recording time yet', () => {
-      const revision = NoteRevisionModel.create({
-        noteId: '7',
-        noteVersion: 2,
-        bodyBefore: 'Check the supplier',
-        bodyAfter: 'Supplier confirmed',
-        editorId: 'admin-2',
-        correlationId: 'corr-1',
-      });
-
-      expect(revision).toEqual({
-        id: undefined,
-        noteId: '7',
-        noteVersion: 2,
-        bodyBefore: 'Check the supplier',
-        bodyAfter: 'Supplier confirmed',
-        editorId: 'admin-2',
-        correlationId: 'corr-1',
-        recordedAt: undefined,
-      });
-    });
-
-    it('is frozen', () => {
-      const revision = NoteRevisionModel.create({
-        noteId: '7',
-        noteVersion: 2,
-        bodyBefore: 'Check the supplier',
-        bodyAfter: 'Supplier confirmed',
-        editorId: 'admin-2',
-        correlationId: 'corr-1',
-      });
-
-      expect(Object.isFrozen(revision)).toBe(true);
-      expect(() => {
-        Object.assign(revision, { bodyAfter: 'Rewritten' });
-      }).toThrow(TypeError);
-    });
-
-    it.each([1, 2.5])('refuses note version %s with NOTE_VERSION_INVALID', (noteVersion) => {
-      expect(() =>
-        NoteRevisionModel.create({
-          noteId: '7',
-          noteVersion,
-          bodyBefore: 'Check the supplier',
-          bodyAfter: 'Supplier confirmed',
-          editorId: 'admin-2',
-          correlationId: 'corr-1',
-        }),
-      ).toThrow(
-        expect.objectContaining({
-          code: 'NOTE_VERSION_INVALID',
-          message: `NoteRevision.noteVersion must be an integer of at least 2, got ${noteVersion}`,
-        }) as Error,
-      );
-    });
-  });
-
   describe('reconstitute', () => {
     it('restores a stored revision, frozen', () => {
       const revision = NoteRevisionModel.reconstitute({
@@ -94,6 +36,46 @@ describe('NoteRevisionModel', () => {
     });
   });
 
+  describe('createDraft', () => {
+    it('drafts an edit of the note', () => {
+      const draft = NoteRevisionModel.createDraft({
+        noteId: '7',
+        noteVersion: 2,
+        bodyBefore: 'Check the supplier',
+        bodyAfter: 'Supplier confirmed',
+        editorId: 'admin-2',
+        correlationId: 'corr-1',
+      });
+
+      expect(draft).toEqual({
+        noteId: '7',
+        noteVersion: 2,
+        bodyBefore: 'Check the supplier',
+        bodyAfter: 'Supplier confirmed',
+        editorId: 'admin-2',
+        correlationId: 'corr-1',
+      });
+    });
+
+    it.each([1, 2.5])('refuses note version %s with NOTE_VERSION_INVALID', (noteVersion) => {
+      expect(() =>
+        NoteRevisionModel.createDraft({
+          noteId: '7',
+          noteVersion,
+          bodyBefore: 'Check the supplier',
+          bodyAfter: 'Supplier confirmed',
+          editorId: 'admin-2',
+          correlationId: 'corr-1',
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'NOTE_VERSION_INVALID',
+          message: `NoteRevision.noteVersion must be an integer of at least 2, got ${noteVersion}`,
+        }) as Error,
+      );
+    });
+  });
+
   describe('toView', () => {
     it('maps a stored revision with its instant as an ISO string', () => {
       const revision = NoteRevisionModel.reconstitute({
@@ -117,25 +99,6 @@ describe('NoteRevisionModel', () => {
         correlationId: 'corr-1',
         recordedAt: '2026-01-02T00:00:00.123Z',
       });
-    });
-
-    it('answers an empty id and the current instant for a revision that was never stored', () => {
-      jest.useFakeTimers({ now: new Date('2026-03-01T10:00:00.000Z') });
-
-      const revision = NoteRevisionModel.create({
-        noteId: '7',
-        noteVersion: 2,
-        bodyBefore: 'Check the supplier',
-        bodyAfter: 'Supplier confirmed',
-        editorId: 'admin-2',
-        correlationId: 'corr-1',
-      });
-      const view = revision.toView();
-
-      jest.useRealTimers();
-
-      expect(view.id).toBe('');
-      expect(view.recordedAt).toBe('2026-03-01T10:00:00.000Z');
     });
   });
 });

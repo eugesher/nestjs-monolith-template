@@ -16,8 +16,8 @@ export class NoteCreateUseCase {
 
   public async execute(command: INoteCreateCommand): Promise<INoteView> {
     const { subjectType, subjectId, body, authorId } = command;
-    const note = NoteModel.create({ subjectType, subjectId, body, authorId });
-    const created = await this.repository.insert(note);
+    const draft = NoteModel.createDraft({ subjectType, subjectId, body, authorId });
+    const created = await this.repository.insert(draft);
     const view = created.toView();
 
     this.logger.info(

@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductModel, ProductSkuTakenException } from '../../../domain';
+import { IProductDraft, ProductModel, ProductSkuTakenException } from '../../../domain';
 import { IProductCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -26,8 +26,8 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       .getExists();
   }
 
-  public async insert(product: ProductModel): Promise<ProductModel> {
-    const { sku, name, status, version } = product;
+  public async insert(draft: IProductDraft): Promise<ProductModel> {
+    const { sku, name, status, version } = draft;
 
     try {
       await this.productRepository.insert({ sku, name, status, version });

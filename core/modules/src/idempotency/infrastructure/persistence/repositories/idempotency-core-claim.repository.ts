@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { MysqlErrorHelper, Nullable } from '@acme-libs/toolkit';
 import { IdempotencyKey } from '@acme-core/entities';
 
-import { IdempotencyCoreKeyModel } from '../../../domain';
+import { IIdempotencyCoreKeyDraft, IdempotencyCoreKeyModel } from '../../../domain';
 import { IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -19,13 +19,15 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
-  public async insert(key: IdempotencyCoreKeyModel): Promise<boolean> {
+  public async insert(draft: IIdempotencyCoreKeyDraft): Promise<boolean> {
+    const { key, requestFingerprint, status, responseBody } = draft;
+
     try {
       await this.idempotencyKeyRepository.insert({
-        idempotencyKey: key.key,
-        requestFingerprint: key.requestFingerprint,
-        status: key.status,
-        responseBody: key.responseBody,
+        idempotencyKey: key,
+        requestFingerprint,
+        status,
+        responseBody,
       });
 
       return true;

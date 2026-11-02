@@ -1,51 +1,33 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { ReminderAlreadyDoneException } from '../exceptions/reminder-already-done.exception';
 import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invalid.exception';
 import { ReminderDueOnInvalidException } from '../exceptions/reminder-due-on-invalid.exception';
 import { ReminderTitleInvalidException } from '../exceptions/reminder-title-invalid.exception';
 import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
+import { IReminderCandidate } from '../interfaces/reminder-candidate.interface';
 import { IReminderDraft } from '../interfaces/reminder-draft.interface';
 import { IReminderRecord } from '../interfaces/reminder-record.interface';
 import { IReminderSnapshot } from '../interfaces/reminder-snapshot.interface';
 
-export class ReminderModel extends AggregateRoot<Maybe<string>> {
+export class ReminderModel extends AggregateRoot<string> {
   private static readonly TITLE_MAX_LENGTH = 255;
   private static readonly BODY_MAX_LENGTH = 2000;
   private static readonly DUE_ON_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
   private constructor(
-    id: Maybe<string>,
+    id: string,
     public readonly ownerId: string,
     public readonly title: string,
     public readonly body: string,
     private currentDueOn: string,
     private currentStatus: ReminderStatusEnum,
     private currentVersion: number,
-    public readonly createdAt: Maybe<Date>,
-    public readonly updatedAt: Maybe<Date>,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
   ) {
     super(id);
-  }
-
-  public static create(draft: IReminderDraft): ReminderModel {
-    const { ownerId, title, body, dueOn } = draft;
-    const validTitle = ReminderModel.validTitle(title);
-    const validBody = ReminderModel.validBody(body);
-    const validDueOn = ReminderModel.validDueOn(dueOn);
-
-    return new ReminderModel(
-      undefined,
-      ownerId,
-      validTitle,
-      validBody,
-      validDueOn,
-      ReminderStatusEnum.PENDING,
-      1,
-      undefined,
-      undefined,
-    );
   }
 
   public static reconstitute(record: IReminderRecord): ReminderModel {
@@ -66,6 +48,22 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
       createdAt,
       updatedAt,
     );
+  }
+
+  public static createDraft(candidate: IReminderCandidate): IReminderDraft {
+    const { ownerId, title, body, dueOn } = candidate;
+    const validTitle = ReminderModel.validTitle(title);
+    const validBody = ReminderModel.validBody(body);
+    const validDueOn = ReminderModel.validDueOn(dueOn);
+
+    return {
+      ownerId,
+      title: validTitle,
+      body: validBody,
+      dueOn: validDueOn,
+      status: ReminderStatusEnum.PENDING,
+      version: 1,
+    };
   }
 
   private static validTitle(title: string): string {
@@ -146,26 +144,22 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
   }
 
   public toView(): IReminderSnapshot {
-    const now = new Date();
-    const createdAt = this.createdAt ?? now;
-    const updatedAt = this.updatedAt ?? now;
-
     return {
-      id: this.id ?? '',
+      id: this.id,
       ownerId: this.ownerId,
       title: this.title,
       body: this.body,
       dueOn: this.dueOn,
       status: this.status,
       version: this.version,
-      createdAt: createdAt.toISOString(),
-      updatedAt: updatedAt.toISOString(),
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
     };
   }
 
   private assertPending(): void {
     if (this.currentStatus === ReminderStatusEnum.DONE) {
-      throw new ReminderAlreadyDoneException(String(this.id));
+      throw new ReminderAlreadyDoneException(this.id);
     }
   }
 }

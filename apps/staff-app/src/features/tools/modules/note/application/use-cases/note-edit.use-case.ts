@@ -68,7 +68,7 @@ export class NoteEditUseCase {
     }
 
     const correlationId = CorrelationContextHelper.current(NoteEditUseCase.name);
-    const revision = NoteRevisionModel.create({
+    const revision = NoteRevisionModel.createDraft({
       noteId,
       noteVersion: note.version,
       bodyBefore,

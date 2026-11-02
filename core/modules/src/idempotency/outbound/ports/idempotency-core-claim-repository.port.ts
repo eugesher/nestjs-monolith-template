@@ -1,9 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IdempotencyCoreKeyModel } from '../../domain';
+import { IIdempotencyCoreKeyDraft, IdempotencyCoreKeyModel } from '../../domain';
 
 export interface IIdempotencyCoreClaimRepositoryPort {
-  insert(key: IdempotencyCoreKeyModel): Promise<boolean>;
+  insert(draft: IIdempotencyCoreKeyDraft): Promise<boolean>;
   findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>>;
 }
 

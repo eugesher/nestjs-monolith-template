@@ -3,7 +3,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductCreatedEvent, ProductModel } from '../../../domain';
+import { ProductModel } from '../../../domain';
 import { ProductLedgerService } from '../../services/product-ledger.service';
 import { ProductCreateUseCase } from '../product-create.use-case';
 
@@ -13,7 +13,7 @@ describe('ProductCreateUseCase', () => {
   let claim: jest.Mock;
   let complete: jest.Mock;
   let release: jest.Mock;
-  let recordEvents: jest.Mock;
+  let recordCreated: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ProductCreateUseCase;
@@ -34,11 +34,11 @@ describe('ProductCreateUseCase', () => {
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
-    recordEvents = jest.fn().mockResolvedValue(undefined);
+    recordCreated = jest.fn().mockResolvedValue(undefined);
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductCreateUseCase(
-      { recordEvents } as unknown as ProductLedgerService,
+      { recordCreated } as unknown as ProductLedgerService,
       { existsBySku, insert },
       { claim, complete, release },
       { run, afterCommit: jest.fn() },
@@ -53,15 +53,18 @@ describe('ProductCreateUseCase', () => {
         name: 'Lamp',
         idempotencyKey: 'key-1',
       });
-      const [draft] = insert.mock.calls[0] as [ProductModel];
 
       expect(claim).toHaveBeenCalledWith({
         key: 'key-1',
         body: { sku: 'SKU-0001', name: 'Lamp' },
       });
       expect(existsBySku).toHaveBeenCalledWith('SKU-0001');
-      expect(draft.id).toBeUndefined();
-      expect(draft.status).toBe('draft');
+      expect(insert).toHaveBeenCalledWith({
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status: 'draft',
+        version: 1,
+      });
       expect(view).toEqual({
         id: '12',
         sku: 'SKU-0001',
@@ -76,19 +79,20 @@ describe('ProductCreateUseCase', () => {
       expect(release).not.toHaveBeenCalled();
     });
 
-    it('enqueues the ledger records under the stored id after the commit and logs it', async () => {
+    it('enqueues the creation record under the stored id after the commit and logs it', async () => {
       await useCase.execute({
         sku: 'SKU-0001',
         name: 'Lamp',
         idempotencyKey: 'key-1',
       });
 
-      expect(recordEvents).toHaveBeenCalledWith({
+      expect(recordCreated).toHaveBeenCalledWith({
         productId: '12',
-        events: [expect.any(ProductCreatedEvent)],
+        sku: 'SKU-0001',
+        name: 'Lamp',
       });
       expect(run.mock.invocationCallOrder[0]).toBeLessThan(
-        recordEvents.mock.invocationCallOrder[0],
+        recordCreated.mock.invocationCallOrder[0],
       );
       expect(logger.info).toHaveBeenCalledWith(
         { productId: '12', sku: 'SKU-0001' },
@@ -110,7 +114,7 @@ describe('ProductCreateUseCase', () => {
 
       expect(view).toEqual({ id: '12', sku: 'SKU-0001' });
       expect(insert).not.toHaveBeenCalled();
-      expect(recordEvents).not.toHaveBeenCalled();
+      expect(recordCreated).not.toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalledWith(
         { idempotencyKey: 'key-1' },
         'Product creation replayed from the idempotency store',
@@ -170,7 +174,7 @@ describe('ProductCreateUseCase', () => {
         }),
       ).rejects.toThrow('lock wait timeout');
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
-      expect(recordEvents).not.toHaveBeenCalled();
+      expect(recordCreated).not.toHaveBeenCalled();
     });
   });
 });

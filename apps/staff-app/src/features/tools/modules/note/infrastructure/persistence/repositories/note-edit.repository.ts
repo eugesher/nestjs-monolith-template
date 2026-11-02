@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { NoteRevision } from '@acme-staff/common/entities';
 
-import { NoteRevisionModel } from '../../../domain';
+import { INoteRevisionDraft } from '../../../domain';
 import { INoteEditRepositoryPort } from '../../../outbound';
 import { NoteUpdateBaseRepository } from './base/note-update-base.repository';
 
@@ -21,7 +21,7 @@ export class NoteEditRepository
     return this.repositoryHost.getRepository(NoteRevision);
   }
 
-  public async appendRevision(revision: NoteRevisionModel): Promise<void> {
+  public async appendRevision(revision: INoteRevisionDraft): Promise<void> {
     const { noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId } = revision;
 
     await this.noteRevisionRepository.insert({

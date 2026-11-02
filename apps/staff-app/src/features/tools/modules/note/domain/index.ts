@@ -8,8 +8,10 @@ export * from './exceptions/note-subject-invalid.exception';
 export * from './exceptions/note-version-invalid.exception';
 export * from './exceptions/note-version-mismatch.exception';
 
+export * from './interfaces/note-candidate.interface';
 export * from './interfaces/note-draft.interface';
 export * from './interfaces/note-record.interface';
+export * from './interfaces/note-revision-candidate.interface';
 export * from './interfaces/note-revision-draft.interface';
 export * from './interfaces/note-revision-record.interface';
 export * from './interfaces/note-revision-snapshot.interface';

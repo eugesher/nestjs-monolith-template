@@ -3,122 +3,6 @@ import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { ReminderModel } from '../reminder.model';
 
 describe('ReminderModel', () => {
-  describe('create', () => {
-    it('opens a pending reminder at version 1 with a trimmed title and body', () => {
-      const reminder = ReminderModel.create({
-        ownerId: 'owner-1',
-        title: '  Call the bank  ',
-        body: '  About the card  ',
-        dueOn: '2026-11-05',
-      });
-
-      expect(reminder.id).toBeUndefined();
-      expect(reminder.ownerId).toBe('owner-1');
-      expect(reminder.title).toBe('Call the bank');
-      expect(reminder.body).toBe('About the card');
-      expect(reminder.dueOn).toBe('2026-11-05');
-      expect(reminder.status).toBe('pending');
-      expect(reminder.version).toBe(1);
-      expect(reminder.createdAt).toBeUndefined();
-      expect(reminder.updatedAt).toBeUndefined();
-      expect(reminder.pullDomainEvents()).toEqual([]);
-    });
-
-    it('accepts an empty body', () => {
-      const reminder = ReminderModel.create({
-        ownerId: 'owner-1',
-        title: 'Call the bank',
-        body: '   ',
-        dueOn: '2026-11-05',
-      });
-
-      expect(reminder.body).toBe('');
-    });
-
-    it.each([
-      ['a blank title', '   '],
-      ['a title longer than 255', 't'.repeat(256)],
-    ])('refuses %s with REMINDER_TITLE_INVALID', (_, title) => {
-      expect(() =>
-        ReminderModel.create({ ownerId: 'owner-1', title, body: '', dueOn: '2026-11-05' }),
-      ).toThrow(
-        expect.objectContaining({
-          code: 'REMINDER_TITLE_INVALID',
-          message: 'Reminder.title must be a non-empty string of at most 255 characters',
-        }) as Error,
-      );
-    });
-
-    it('accepts a title of 255 characters and a body of 2000', () => {
-      const reminder = ReminderModel.create({
-        ownerId: 'owner-1',
-        title: 't'.repeat(255),
-        body: 'b'.repeat(2000),
-        dueOn: '2026-11-05',
-      });
-
-      expect(reminder.title).toHaveLength(255);
-      expect(reminder.body).toHaveLength(2000);
-    });
-
-    it('refuses a body longer than 2000 with REMINDER_BODY_INVALID', () => {
-      expect(() =>
-        ReminderModel.create({
-          ownerId: 'owner-1',
-          title: 'Call the bank',
-          body: 'b'.repeat(2001),
-          dueOn: '2026-11-05',
-        }),
-      ).toThrow(
-        expect.objectContaining({
-          code: 'REMINDER_BODY_INVALID',
-          message: 'Reminder.body must be at most 2000 characters',
-        }) as Error,
-      );
-    });
-
-    it.each([
-      ['a date with a time', '2026-11-05T10:00:00Z'],
-      ['a date without leading zeros', '2026-11-5'],
-      ['an empty string', ''],
-    ])('refuses %s as a malformed due date', (_, dueOn) => {
-      expect(() =>
-        ReminderModel.create({ ownerId: 'owner-1', title: 'Call the bank', body: '', dueOn }),
-      ).toThrow(
-        expect.objectContaining({
-          code: 'REMINDER_DUE_ON_INVALID',
-          message: `Reminder.dueOn must be a calendar date formatted YYYY-MM-DD, got ${dueOn}`,
-        }) as Error,
-      );
-    });
-
-    it.each([
-      ['the 30th of February', '2026-02-30'],
-      ['the 29th of February of a common year', '2026-02-29'],
-      ['month 13', '2026-13-01'],
-    ])('refuses %s as a date that does not exist', (_, dueOn) => {
-      expect(() =>
-        ReminderModel.create({ ownerId: 'owner-1', title: 'Call the bank', body: '', dueOn }),
-      ).toThrow(
-        expect.objectContaining({
-          code: 'REMINDER_DUE_ON_INVALID',
-          message: `Reminder.dueOn is not a real calendar date: ${dueOn}`,
-        }) as Error,
-      );
-    });
-
-    it('accepts the 29th of February of a leap year', () => {
-      const reminder = ReminderModel.create({
-        ownerId: 'owner-1',
-        title: 'Call the bank',
-        body: '',
-        dueOn: '2028-02-29',
-      });
-
-      expect(reminder.dueOn).toBe('2028-02-29');
-    });
-  });
-
   describe('reconstitute', () => {
     it('restores a stored reminder', () => {
       const reminder = ReminderModel.reconstitute({
@@ -162,6 +46,120 @@ describe('ReminderModel', () => {
           message: `Reminder.version must be a positive integer, got ${version}`,
         }) as Error,
       );
+    });
+  });
+
+  describe('createDraft', () => {
+    it('drafts a pending reminder at version 1 with a trimmed title and body', () => {
+      const draft = ReminderModel.createDraft({
+        ownerId: 'owner-1',
+        title: '  Call the bank  ',
+        body: '  About the card  ',
+        dueOn: '2026-11-05',
+      });
+
+      expect(draft).toEqual({
+        ownerId: 'owner-1',
+        title: 'Call the bank',
+        body: 'About the card',
+        dueOn: '2026-11-05',
+        status: 'pending',
+        version: 1,
+      });
+    });
+
+    it('accepts an empty body', () => {
+      const draft = ReminderModel.createDraft({
+        ownerId: 'owner-1',
+        title: 'Call the bank',
+        body: '   ',
+        dueOn: '2026-11-05',
+      });
+
+      expect(draft.body).toBe('');
+    });
+
+    it.each([
+      ['a blank title', '   '],
+      ['a title longer than 255', 't'.repeat(256)],
+    ])('refuses %s with REMINDER_TITLE_INVALID', (_, title) => {
+      expect(() =>
+        ReminderModel.createDraft({ ownerId: 'owner-1', title, body: '', dueOn: '2026-11-05' }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'REMINDER_TITLE_INVALID',
+          message: 'Reminder.title must be a non-empty string of at most 255 characters',
+        }) as Error,
+      );
+    });
+
+    it('accepts a title of 255 characters and a body of 2000', () => {
+      const draft = ReminderModel.createDraft({
+        ownerId: 'owner-1',
+        title: 't'.repeat(255),
+        body: 'b'.repeat(2000),
+        dueOn: '2026-11-05',
+      });
+
+      expect(draft.title).toHaveLength(255);
+      expect(draft.body).toHaveLength(2000);
+    });
+
+    it('refuses a body longer than 2000 with REMINDER_BODY_INVALID', () => {
+      expect(() =>
+        ReminderModel.createDraft({
+          ownerId: 'owner-1',
+          title: 'Call the bank',
+          body: 'b'.repeat(2001),
+          dueOn: '2026-11-05',
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'REMINDER_BODY_INVALID',
+          message: 'Reminder.body must be at most 2000 characters',
+        }) as Error,
+      );
+    });
+
+    it.each([
+      ['a date with a time', '2026-11-05T10:00:00Z'],
+      ['a date without leading zeros', '2026-11-5'],
+      ['an empty string', ''],
+    ])('refuses %s as a malformed due date', (_, dueOn) => {
+      expect(() =>
+        ReminderModel.createDraft({ ownerId: 'owner-1', title: 'Call the bank', body: '', dueOn }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'REMINDER_DUE_ON_INVALID',
+          message: `Reminder.dueOn must be a calendar date formatted YYYY-MM-DD, got ${dueOn}`,
+        }) as Error,
+      );
+    });
+
+    it.each([
+      ['the 30th of February', '2026-02-30'],
+      ['the 29th of February of a common year', '2026-02-29'],
+      ['month 13', '2026-13-01'],
+    ])('refuses %s as a date that does not exist', (_, dueOn) => {
+      expect(() =>
+        ReminderModel.createDraft({ ownerId: 'owner-1', title: 'Call the bank', body: '', dueOn }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'REMINDER_DUE_ON_INVALID',
+          message: `Reminder.dueOn is not a real calendar date: ${dueOn}`,
+        }) as Error,
+      );
+    });
+
+    it('accepts the 29th of February of a leap year', () => {
+      const draft = ReminderModel.createDraft({
+        ownerId: 'owner-1',
+        title: 'Call the bank',
+        body: '',
+        dueOn: '2028-02-29',
+      });
+
+      expect(draft.dueOn).toBe('2028-02-29');
     });
   });
 
@@ -282,24 +280,6 @@ describe('ReminderModel', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-02T00:00:00.000Z',
       });
-    });
-
-    it('answers an empty id and the current instant for a reminder that was never stored', () => {
-      jest.useFakeTimers({ now: new Date('2026-03-01T10:00:00.000Z') });
-
-      const reminder = ReminderModel.create({
-        ownerId: 'owner-1',
-        title: 'Call the bank',
-        body: '',
-        dueOn: '2026-11-05',
-      });
-      const view = reminder.toView();
-
-      jest.useRealTimers();
-
-      expect(view.id).toBe('');
-      expect(view.createdAt).toBe('2026-03-01T10:00:00.000Z');
-      expect(view.updatedAt).toBe('2026-03-01T10:00:00.000Z');
     });
   });
 });

@@ -1,51 +1,31 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { AggregateRoot } from '@acme-libs/toolkit';
 
-import { ProductCreatedEvent } from '../events/product-created.event';
 import { ProductPublishedEvent } from '../events/product-published.event';
 import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductNameInvalidException } from '../exceptions/product-name-invalid.exception';
 import { ProductSkuInvalidException } from '../exceptions/product-sku-invalid.exception';
 import { ProductVersionInvalidException } from '../exceptions/product-version-invalid.exception';
+import { IProductCandidate } from '../interfaces/product-candidate.interface';
 import { IProductChanges } from '../interfaces/product-changes.interface';
 import { IProductDraft } from '../interfaces/product-draft.interface';
 import { IProductRecord } from '../interfaces/product-record.interface';
 import { IProductSnapshot } from '../interfaces/product-snapshot.interface';
 
-export class ProductModel extends AggregateRoot<Maybe<string>> {
+export class ProductModel extends AggregateRoot<string> {
   private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
   private static readonly NAME_MAX_LENGTH = 255;
 
   private constructor(
-    id: Maybe<string>,
+    id: string,
     public readonly sku: string,
     private currentName: string,
     private currentStatus: ProductStatusEnum,
     private currentVersion: number,
-    public readonly createdAt: Maybe<Date>,
-    public readonly updatedAt: Maybe<Date>,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
   ) {
     super(id);
-  }
-
-  public static create(draft: IProductDraft): ProductModel {
-    const { sku, name } = draft;
-    const validSku = ProductModel.validSku(sku);
-    const validName = ProductModel.validName(name);
-    const product = new ProductModel(
-      undefined,
-      validSku,
-      validName,
-      ProductStatusEnum.DRAFT,
-      1,
-      undefined,
-      undefined,
-    );
-    const event = new ProductCreatedEvent(undefined, product.sku, product.name);
-
-    product.addDomainEvent(event);
-
-    return product;
   }
 
   public static reconstitute(record: IProductRecord): ProductModel {
@@ -55,6 +35,14 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     const validVersion = ProductModel.validVersion(version);
 
     return new ProductModel(id, validSku, validName, status, validVersion, createdAt, updatedAt);
+  }
+
+  public static createDraft(candidate: IProductCandidate): IProductDraft {
+    const { sku, name } = candidate;
+    const validSku = ProductModel.validSku(sku);
+    const validName = ProductModel.validName(name);
+
+    return { sku: validSku, name: validName, status: ProductStatusEnum.DRAFT, version: 1 };
   }
 
   private static validSku(sku: string): string {
@@ -134,18 +122,14 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
   }
 
   public toView(): IProductSnapshot {
-    const now = new Date();
-    const createdAt = this.createdAt ?? now;
-    const updatedAt = this.updatedAt ?? now;
-
     return {
-      id: this.id ?? '',
+      id: this.id,
       sku: this.sku,
       name: this.name,
       status: this.status,
       version: this.version,
-      createdAt: createdAt.toISOString(),
-      updatedAt: updatedAt.toISOString(),
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
     };
   }
 }

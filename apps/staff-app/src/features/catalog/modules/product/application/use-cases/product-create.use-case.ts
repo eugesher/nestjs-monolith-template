@@ -6,6 +6,7 @@ import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/da
 import {
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
+  IProductDraft,
   ProductModel,
   ProductSkuTakenException,
 } from '../../domain';
@@ -60,11 +61,14 @@ export class ProductCreateUseCase {
         throw new ProductSkuTakenException(sku);
       }
 
-      const draft = ProductModel.create({ sku, name });
+      const draft = ProductModel.createDraft({ sku, name });
       const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
-      const events = draft.pullDomainEvents();
 
-      await this.ledgerService.recordEvents({ productId: view.id, events });
+      await this.ledgerService.recordCreated({
+        productId: view.id,
+        sku: view.sku,
+        name: view.name,
+      });
 
       this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
 
@@ -76,7 +80,7 @@ export class ProductCreateUseCase {
     }
   }
 
-  private async persist(draft: ProductModel, idempotencyKey: string): Promise<IProductView> {
+  private async persist(draft: IProductDraft, idempotencyKey: string): Promise<IProductView> {
     const created = await this.repository.insert(draft);
     const view = created.toView();
 

@@ -1,62 +1,10 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 
-import { ProductCreatedEvent } from '../../events/product-created.event';
 import { ProductPublishedEvent } from '../../events/product-published.event';
 import { ProductUpdatedEvent } from '../../events/product-updated.event';
 import { ProductModel } from '../product.model';
 
 describe('ProductModel', () => {
-  describe('create', () => {
-    it('opens a draft at version 1 with a trimmed name and records the creation', () => {
-      const product = ProductModel.create({ sku: 'SKU-0001', name: '  Lamp  ' });
-      const events = product.pullDomainEvents();
-
-      expect(product.id).toBeUndefined();
-      expect(product.sku).toBe('SKU-0001');
-      expect(product.name).toBe('Lamp');
-      expect(product.status).toBe('draft');
-      expect(product.version).toBe(1);
-      expect(product.createdAt).toBeUndefined();
-      expect(product.updatedAt).toBeUndefined();
-      expect(events).toHaveLength(1);
-      expect(events[0]).toBeInstanceOf(ProductCreatedEvent);
-      expect(events[0]).toMatchObject({
-        aggregateId: undefined,
-        sku: 'SKU-0001',
-        name: 'Lamp',
-      });
-    });
-
-    it.each([
-      ['a lowercase sku', 'sku-0001'],
-      ['a sku shorter than 3', 'AB'],
-      ['a sku starting with a dash', '-ABC'],
-      ['a sku longer than 64', `A${'B'.repeat(64)}`],
-    ])('refuses %s with PRODUCT_SKU_INVALID', (_, sku) => {
-      expect(() => ProductModel.create({ sku, name: 'Lamp' })).toThrow(
-        expect.objectContaining({ code: 'PRODUCT_SKU_INVALID' }) as Error,
-      );
-    });
-
-    it.each([
-      ['a blank name', '   '],
-      ['a name longer than 255', 'n'.repeat(256)],
-    ])('refuses %s with PRODUCT_NAME_INVALID', (_, name) => {
-      expect(() => ProductModel.create({ sku: 'SKU-0001', name })).toThrow(
-        expect.objectContaining({
-          code: 'PRODUCT_NAME_INVALID',
-          message: 'Product.name must be a non-empty string of at most 255 characters',
-        }) as Error,
-      );
-    });
-
-    it('accepts a name of 255 characters', () => {
-      const product = ProductModel.create({ sku: 'SKU-0001', name: 'n'.repeat(255) });
-
-      expect(product.name).toHaveLength(255);
-    });
-  });
-
   describe('reconstitute', () => {
     it('restores a stored product without recording anything', () => {
       const product = ProductModel.reconstitute({
@@ -116,6 +64,43 @@ describe('ProductModel', () => {
           message: 'Product.sku must match /^[A-Z0-9][A-Z0-9-]{2,63}$/, got bad',
         }) as Error,
       );
+    });
+  });
+
+  describe('createDraft', () => {
+    it('drafts a product at version 1 with a trimmed name', () => {
+      const draft = ProductModel.createDraft({ sku: 'SKU-0001', name: '  Lamp  ' });
+
+      expect(draft).toEqual({ sku: 'SKU-0001', name: 'Lamp', status: 'draft', version: 1 });
+    });
+
+    it.each([
+      ['a lowercase sku', 'sku-0001'],
+      ['a sku shorter than 3', 'AB'],
+      ['a sku starting with a dash', '-ABC'],
+      ['a sku longer than 64', `A${'B'.repeat(64)}`],
+    ])('refuses %s with PRODUCT_SKU_INVALID', (_, sku) => {
+      expect(() => ProductModel.createDraft({ sku, name: 'Lamp' })).toThrow(
+        expect.objectContaining({ code: 'PRODUCT_SKU_INVALID' }) as Error,
+      );
+    });
+
+    it.each([
+      ['a blank name', '   '],
+      ['a name longer than 255', 'n'.repeat(256)],
+    ])('refuses %s with PRODUCT_NAME_INVALID', (_, name) => {
+      expect(() => ProductModel.createDraft({ sku: 'SKU-0001', name })).toThrow(
+        expect.objectContaining({
+          code: 'PRODUCT_NAME_INVALID',
+          message: 'Product.name must be a non-empty string of at most 255 characters',
+        }) as Error,
+      );
+    });
+
+    it('accepts a name of 255 characters', () => {
+      const draft = ProductModel.createDraft({ sku: 'SKU-0001', name: 'n'.repeat(255) });
+
+      expect(draft.name).toHaveLength(255);
     });
   });
 
@@ -243,10 +228,6 @@ describe('ProductModel', () => {
   });
 
   describe('toView', () => {
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it('answers a stored product with ISO instants', () => {
       const product = ProductModel.reconstitute({
         id: '12',
@@ -268,24 +249,6 @@ describe('ProductModel', () => {
         version: 3,
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-02T00:00:00.000Z',
-      });
-    });
-
-    it('answers a product not stored yet with an empty id and the current instant', () => {
-      jest.useFakeTimers({ now: new Date('2026-03-01T10:00:00.000Z') });
-
-      const product = ProductModel.create({ sku: 'SKU-0001', name: 'Lamp' });
-
-      const view = product.toView();
-
-      expect(view).toEqual({
-        id: '',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: 'draft',
-        version: 1,
-        createdAt: '2026-03-01T10:00:00.000Z',
-        updatedAt: '2026-03-01T10:00:00.000Z',
       });
     });
   });

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { ReminderModel } from '../../../domain';
+import { IReminderDraft, ReminderModel } from '../../../domain';
 import { IReminderCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
@@ -18,8 +18,8 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async insert(reminder: ReminderModel): Promise<ReminderModel> {
-    const { ownerId, title, body, dueOn, status, version } = reminder;
+  public async insert(draft: IReminderDraft): Promise<ReminderModel> {
+    const { ownerId, title, body, dueOn, status, version } = draft;
     const result = await this.reminderRepository.insert({
       ownerId,
       title,

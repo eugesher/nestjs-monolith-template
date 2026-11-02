@@ -1,6 +1,5 @@
 export * from './enums/product-error-code.enum';
 
-export * from './events/product-created.event';
 export * from './events/product-published.event';
 export * from './events/product-updated.event';
 
@@ -18,6 +17,7 @@ export * from './exceptions/product-version-mismatch.exception';
 export * from './helpers/product.helper';
 
 export * from './interfaces/product-changes.interface';
+export * from './interfaces/product-candidate.interface';
 export * from './interfaces/product-draft.interface';
 export * from './interfaces/product-record.interface';
 export * from './interfaces/product-snapshot.interface';

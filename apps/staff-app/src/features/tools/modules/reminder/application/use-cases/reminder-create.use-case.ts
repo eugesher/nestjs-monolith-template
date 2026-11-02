@@ -23,8 +23,8 @@ export class ReminderCreateUseCase {
 
   public async execute(command: IReminderCreateCommand): Promise<IReminderView> {
     const { ownerId, title, body, dueOn } = command;
-    const reminder = ReminderModel.create({ ownerId, title, body: body ?? '', dueOn });
-    const created = await this.repository.insert(reminder);
+    const draft = ReminderModel.createDraft({ ownerId, title, body: body ?? '', dueOn });
+    const created = await this.repository.insert(draft);
 
     await this.summary.invalidate(ownerId);
 
