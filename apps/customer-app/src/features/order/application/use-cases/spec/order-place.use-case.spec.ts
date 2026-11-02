@@ -64,7 +64,6 @@ describe('OrderPlaceUseCase', () => {
         productIds: ['100', '103', '100'],
         idempotencyKey: 'key-1',
       });
-      const [draft] = insert.mock.calls[0] as [OrderModel];
 
       expect(claim).toHaveBeenCalledWith({
         key: 'key-1',
@@ -75,9 +74,10 @@ describe('OrderPlaceUseCase', () => {
       expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
         findActiveProducts.mock.invocationCallOrder[0],
       );
-      expect(draft.id).toBeUndefined();
-      expect(draft.customerId).toBe('customer-1');
-      expect(draft.products.map((product) => product.productId)).toEqual(['100', '103', '100']);
+      expect(insert).toHaveBeenCalledWith({
+        customerId: 'customer-1',
+        productIds: ['100', '103', '100'],
+      });
       expect(view).toEqual({
         id: '610',
         createdAt: '2026-01-05T08:00:00.000Z',

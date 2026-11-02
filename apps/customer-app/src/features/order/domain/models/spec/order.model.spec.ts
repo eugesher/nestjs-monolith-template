@@ -1,9 +1,27 @@
 import { OrderModel } from '../order.model';
 
 describe('OrderModel', () => {
-  describe('place', () => {
-    it('places one product per requested unit in the request order', () => {
-      const order = OrderModel.place({
+  describe('reconstitute', () => {
+    it('restores a stored order with its products', () => {
+      const order = OrderModel.reconstitute({
+        id: '600',
+        customerId: 'customer-1',
+        createdAt: new Date('2026-01-03T00:00:00.000Z'),
+        products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+      });
+
+      expect(order.id).toBe('600');
+      expect(order.customerId).toBe('customer-1');
+      expect(order.createdAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
+      expect(order.products).toEqual([
+        { id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+      ]);
+    });
+  });
+
+  describe('createDraft', () => {
+    it('drafts one product per requested unit in the request order', () => {
+      const draft = OrderModel.createDraft({
         customerId: 'customer-1',
         productIds: ['100', '103', '100'],
         stock: [
@@ -22,19 +40,12 @@ describe('OrderModel', () => {
         ],
       });
 
-      expect(order.id).toBeUndefined();
-      expect(order.customerId).toBe('customer-1');
-      expect(order.createdAt).toBeUndefined();
-      expect(order.products).toEqual([
-        { id: undefined, productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-        { id: undefined, productId: '103', sku: 'SKU-0004', name: 'Chair' },
-        { id: undefined, productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-      ]);
+      expect(draft).toEqual({ customerId: 'customer-1', productIds: ['100', '103', '100'] });
     });
 
     it('refuses an empty order with ORDER_EMPTY', () => {
       expect(() =>
-        OrderModel.place({ customerId: 'customer-1', productIds: [], stock: [] }),
+        OrderModel.createDraft({ customerId: 'customer-1', productIds: [], stock: [] }),
       ).toThrow(
         expect.objectContaining({
           code: 'ORDER_EMPTY',
@@ -45,7 +56,7 @@ describe('OrderModel', () => {
 
     it('refuses a product without stock data with ORDER_PRODUCT_NOT_FOUND', () => {
       expect(() =>
-        OrderModel.place({ customerId: 'customer-1', productIds: ['999'], stock: [] }),
+        OrderModel.createDraft({ customerId: 'customer-1', productIds: ['999'], stock: [] }),
       ).toThrow(
         expect.objectContaining({
           code: 'ORDER_PRODUCT_NOT_FOUND',
@@ -57,7 +68,7 @@ describe('OrderModel', () => {
 
     it('refuses more units than in stock with ORDER_STOCK_INSUFFICIENT', () => {
       expect(() =>
-        OrderModel.place({
+        OrderModel.createDraft({
           customerId: 'customer-1',
           productIds: ['100', '100', '100'],
           stock: [
@@ -79,7 +90,7 @@ describe('OrderModel', () => {
     });
 
     it('accepts exactly the units in stock', () => {
-      const order = OrderModel.place({
+      const draft = OrderModel.createDraft({
         customerId: 'customer-1',
         productIds: ['100', '100'],
         stock: [
@@ -92,85 +103,11 @@ describe('OrderModel', () => {
         ],
       });
 
-      expect(order.products).toHaveLength(2);
-    });
-  });
-
-  describe('fromInserted', () => {
-    it('takes the ids from the inserted rows and the sku and name from the placed order', () => {
-      const placed = OrderModel.place({
-        customerId: 'customer-1',
-        productIds: ['100', '103'],
-        stock: [
-          { productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 1 },
-          { productId: '103', sku: 'SKU-0004', name: 'Chair', quantity: 1 },
-        ],
-      });
-
-      const order = OrderModel.fromInserted(placed, {
-        id: '600',
-        customerId: 'customer-1',
-        createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [
-          { id: '700', productId: '100' },
-          { id: '701', productId: '103' },
-        ],
-      });
-
-      expect(order.id).toBe('600');
-      expect(order.customerId).toBe('customer-1');
-      expect(order.createdAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
-      expect(order.products).toEqual([
-        { id: '700', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-        { id: '701', productId: '103', sku: 'SKU-0004', name: 'Chair' },
-      ]);
-    });
-
-    it('leaves sku and name empty for a row the placed order does not hold', () => {
-      const placed = OrderModel.place({
-        customerId: 'customer-1',
-        productIds: ['100'],
-        stock: [{ productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 1 }],
-      });
-
-      const order = OrderModel.fromInserted(placed, {
-        id: '600',
-        customerId: 'customer-1',
-        createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [{ id: '700', productId: '999' }],
-      });
-
-      expect(order.products).toEqual([{ id: '700', productId: '999', sku: '', name: '' }]);
-    });
-  });
-
-  describe('reconstitute', () => {
-    it('restores a stored order with its products', () => {
-      const order = OrderModel.reconstitute({
-        id: '600',
-        customerId: 'customer-1',
-        createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
-      });
-
-      expect(order.id).toBe('600');
-      expect(order.customerId).toBe('customer-1');
-      expect(order.createdAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
-      expect(order.products).toEqual([
-        { id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-      ]);
+      expect(draft.productIds).toEqual(['100', '100']);
     });
   });
 
   describe('toView', () => {
-    beforeEach(() => {
-      jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it('maps a stored order with its products', () => {
       const order = OrderModel.reconstitute({
         id: '600',
@@ -183,27 +120,6 @@ describe('OrderModel', () => {
         id: '600',
         createdAt: '2026-01-03T00:00:00.000Z',
         products: [{ id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
-      });
-    });
-
-    it('fills the ids and the creation time of an unsaved order', () => {
-      const order = OrderModel.place({
-        customerId: 'customer-1',
-        productIds: ['100'],
-        stock: [
-          {
-            productId: '100',
-            sku: 'SKU-0001',
-            name: 'Lamp',
-            quantity: 1,
-          },
-        ],
-      });
-
-      expect(order.toView()).toEqual({
-        id: '',
-        createdAt: '2026-01-05T08:00:00.000Z',
-        products: [{ id: '', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
       });
     });
   });

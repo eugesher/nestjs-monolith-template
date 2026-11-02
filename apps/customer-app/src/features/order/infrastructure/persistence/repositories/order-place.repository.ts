@@ -5,7 +5,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-import { OrderModel } from '../../../domain';
+import { IOrderDraft, OrderModel } from '../../../domain';
 import { IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
 
 @Injectable()
@@ -46,12 +46,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     });
   }
 
-  public async insert(order: OrderModel): Promise<OrderModel> {
-    const { customerId, products } = order;
+  public async insert(draft: IOrderDraft): Promise<OrderModel> {
+    const { customerId, productIds } = draft;
     const result = await this.orderRepository.insert({ customerId });
     const [identifier] = result.identifiers as { id: number | string }[];
     const orderId = String(identifier.id);
-    const lines = products.map((product) => ({ orderId, productId: product.productId }));
+    const lines = productIds.map((productId) => ({ orderId, productId }));
 
     await this.orderProductRepository.insert(lines);
 
@@ -60,15 +60,22 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .leftJoin('Order.orderProducts', 'OrderProduct')
       .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
+      .leftJoin('OrderProduct.product', 'Product')
+      .addSelect(['Product.id', 'Product.sku', 'Product.name'])
       .where('Order.id = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
       .getOneOrFail();
+    const products = stored.orderProducts.map((orderProduct) => {
+      const { id, productId, product } = orderProduct;
 
-    return OrderModel.fromInserted(order, {
+      return { id, productId, sku: product.sku, name: product.name };
+    });
+
+    return OrderModel.reconstitute({
       id: stored.id,
       customerId: stored.customerId,
       createdAt: stored.createdAt,
-      products: stored.orderProducts,
+      products,
     });
   }
 }

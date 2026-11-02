@@ -88,7 +88,7 @@ export class OrderPlaceUseCase {
     const products = await this.repository.findActiveProducts(distinctIds);
 
     const stock = OrderProductStockMapper.toStock(products, quantities);
-    const draft = OrderModel.place({ customerId, productIds, stock });
+    const draft = OrderModel.createDraft({ customerId, productIds, stock });
 
     const placed = await this.repository.insert(draft);
 

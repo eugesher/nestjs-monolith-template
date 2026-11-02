@@ -1,27 +1,33 @@
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
 import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
+import { IOrderCandidate } from '../interfaces/order-candidate.interface';
 import { IOrderDraft } from '../interfaces/order-draft.interface';
-import { IOrderInserted } from '../interfaces/order-inserted.interface';
-import { IOrderProduct } from '../interfaces/order-product.interface';
+import { IOrderProductRecord } from '../interfaces/order-product-record.interface';
 import { IOrderRecord } from '../interfaces/order-record.interface';
 import { IOrderSnapshot } from '../interfaces/order-snapshot.interface';
 import { IOrderStock } from '../interfaces/order-stock.interface';
 
-export class OrderModel extends AggregateRoot<Maybe<string>> {
+export class OrderModel extends AggregateRoot<string> {
   private constructor(
-    id: Maybe<string>,
+    id: string,
     public readonly customerId: string,
-    public readonly products: readonly IOrderProduct[],
-    public readonly createdAt: Maybe<Date>,
+    public readonly products: readonly IOrderProductRecord[],
+    public readonly createdAt: Date,
   ) {
     super(id);
   }
 
-  public static place(draft: IOrderDraft): OrderModel {
-    const { customerId, productIds, stock } = draft;
+  public static reconstitute(record: IOrderRecord): OrderModel {
+    const { id, customerId, createdAt, products } = record;
+
+    return new OrderModel(id, customerId, products, createdAt);
+  }
+
+  public static createDraft(candidate: IOrderCandidate): IOrderDraft {
+    const { customerId, productIds, stock } = candidate;
 
     if (productIds.length === 0) {
       throw new OrderEmptyException();
@@ -31,36 +37,7 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
 
     OrderModel.assertInStock(units);
 
-    const products = units.map((unit) => ({
-      id: undefined,
-      productId: unit.productId,
-      sku: unit.sku,
-      name: unit.name,
-    }));
-
-    return new OrderModel(undefined, customerId, products, undefined);
-  }
-
-  public static fromInserted(placed: OrderModel, inserted: IOrderInserted): OrderModel {
-    const { id, customerId, createdAt, products } = inserted;
-    const records = products.map((row) => {
-      const product = placed.products.find((candidate) => candidate.productId === row.productId);
-
-      return {
-        id: row.id,
-        productId: row.productId,
-        sku: product?.sku ?? '',
-        name: product?.name ?? '',
-      };
-    });
-
-    return new OrderModel(id, customerId, records, createdAt);
-  }
-
-  public static reconstitute(record: IOrderRecord): OrderModel {
-    const { id, customerId, createdAt, products } = record;
-
-    return new OrderModel(id, customerId, products, createdAt);
+    return { customerId, productIds: [...productIds] };
   }
 
   private static requireStock(productId: string, stock: IOrderStock[]): IOrderStock {
@@ -85,17 +62,16 @@ export class OrderModel extends AggregateRoot<Maybe<string>> {
   }
 
   public toView(): IOrderSnapshot {
-    const createdAt = this.createdAt ?? new Date();
     const products = this.products.map((product) => ({
-      id: product.id ?? '',
+      id: product.id,
       productId: product.productId,
       sku: product.sku,
       name: product.name,
     }));
 
     return {
-      id: this.id ?? '',
-      createdAt: createdAt.toISOString(),
+      id: this.id,
+      createdAt: this.createdAt.toISOString(),
       products,
     };
   }
