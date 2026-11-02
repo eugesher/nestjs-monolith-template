@@ -26,7 +26,7 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
       .where('Customer.email = :email', { email })
       .getOne();
 
-    if (customer === null) {
+    if (!customer) {
       return null;
     }
 

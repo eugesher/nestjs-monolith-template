@@ -7,7 +7,6 @@ const TOPS = ['apps', 'core', 'libs'];
 const SKIPPED = new Set(['node_modules', 'dist', 'spec', 'test']);
 const REPOSITORY_TYPE = /^I?(\w+)Repository(Port)?$/;
 const CONSUMER_SUFFIX = /(UseCase|Service|Facade)$/;
-const CRUD_USE_CASE = /^(\w+)(GetMany|GetOne|CreateOne|UpdateOne|DeleteOne)UseCase$/;
 const PROPERTY = 'repository';
 
 export interface IRepositoryParam {
@@ -70,11 +69,7 @@ export const repositoryConsumers = (): IRepositoryConsumer[] =>
     return files.flatMap(consumersOf);
   });
 
-const expectedRepositoryOf = (consumer: string): string => {
-  const crud = CRUD_USE_CASE.exec(consumer);
-
-  return crud ? `${crud[1]}Crud` : consumer.replace(CONSUMER_SUFFIX, '');
-};
+const expectedRepositoryOf = (consumer: string): string => consumer.replace(CONSUMER_SUFFIX, '');
 
 export const repositoryConsumerViolations = (consumers: IRepositoryConsumer[]): string[] => {
   const violations: string[] = [];
@@ -104,7 +99,7 @@ export const repositoryConsumerViolations = (consumers: IRepositoryConsumer[]): 
   }
 
   for (const [key, names] of owners) {
-    if (names.length > 1 && !names.every((name) => CRUD_USE_CASE.test(name))) {
+    if (names.length > 1) {
       const [, type] = key.split(' ');
 
       violations.push(`${type} is shared by ${names.join(', ')}`);

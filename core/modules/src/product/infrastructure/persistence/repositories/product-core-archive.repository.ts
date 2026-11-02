@@ -30,7 +30,7 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
       .setLock('pessimistic_write')
       .getOne();
 
-    if (product === null) {
+    if (!product) {
       return null;
     }
 

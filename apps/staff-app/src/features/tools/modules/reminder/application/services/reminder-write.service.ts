@@ -77,7 +77,7 @@ export class ReminderWriteService {
   private async load(reminderId: string): Promise<ReminderModel> {
     const reminder = await this.repository.findById(reminderId);
 
-    if (reminder === null) {
+    if (!reminder) {
       throw new ReminderNotFoundException(reminderId);
     }
 

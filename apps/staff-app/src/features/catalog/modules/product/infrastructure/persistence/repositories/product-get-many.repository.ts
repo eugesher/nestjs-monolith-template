@@ -6,10 +6,10 @@ import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../domain';
-import { IProductCrudRepositoryPort, IProductPageQuery } from '../../../outbound';
+import { IProductGetManyRepositoryPort, IProductPageQuery } from '../../../outbound';
 
 @Injectable()
-export class ProductCrudRepository implements IProductCrudRepositoryPort {
+export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,

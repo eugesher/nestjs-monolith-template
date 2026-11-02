@@ -26,7 +26,7 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
       .where('Product.id = :productId', { productId })
       .getOne();
 
-    if (product === null) {
+    if (!product) {
       return null;
     }
 

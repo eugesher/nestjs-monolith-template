@@ -52,21 +52,6 @@ describe('one repository per use case, service or facade', () => {
         ],
       ],
       [
-        'the CRUD use cases of a resource sharing its CRUD repository',
-        [
-          {
-            name: 'ProductGetManyUseCase',
-            file: 'x',
-            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
-          },
-          {
-            name: 'ProductDeleteOneUseCase',
-            file: 'x',
-            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
-          },
-        ],
-      ],
-      [
         'two apps with a namesake repository port each',
         [
           {
@@ -120,20 +105,30 @@ describe('one repository per use case, service or facade', () => {
         ],
       ],
       [
-        'a CRUD repository outside the CRUD use cases',
+        'the get-many and get-one use cases sharing one repository',
         [
           {
-            name: 'ProductGetHistoryUseCase',
+            name: 'ProductGetManyUseCase',
             file: 'x',
-            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
+            params: [{ name: 'repository', type: 'IProductGetManyRepositoryPort' }],
+          },
+          {
+            name: 'ProductGetOneUseCase',
+            file: 'x',
+            params: [{ name: 'repository', type: 'IProductGetManyRepositoryPort' }],
           },
         ],
       ],
       [
-        'the CRUD repository of another resource',
+        'a CRUD repository shared by the use cases of its resource',
         [
           {
-            name: 'NoteGetManyUseCase',
+            name: 'ProductGetManyUseCase',
+            file: 'x',
+            params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
+          },
+          {
+            name: 'ProductDeleteOneUseCase',
             file: 'x',
             params: [{ name: 'repository', type: 'IProductCrudRepositoryPort' }],
           },

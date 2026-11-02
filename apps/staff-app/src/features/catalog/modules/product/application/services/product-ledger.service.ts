@@ -49,7 +49,7 @@ export class ProductLedgerService extends SubjectLedgerService {
     for (const event of events) {
       const record = this.toRecord(productId, event, correlationId);
 
-      if (record !== undefined) {
+      if (record) {
         await this.record(record);
       }
     }

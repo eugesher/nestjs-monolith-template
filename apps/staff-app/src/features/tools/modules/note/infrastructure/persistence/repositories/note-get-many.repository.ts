@@ -6,10 +6,10 @@ import { IPage } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
-import { INoteCrudRepositoryPort, INotePageQuery } from '../../../outbound';
+import { INoteGetManyRepositoryPort, INotePageQuery } from '../../../outbound';
 
 @Injectable()
-export class NoteCrudRepository implements INoteCrudRepositoryPort {
+export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,

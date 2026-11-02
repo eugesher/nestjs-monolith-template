@@ -21,10 +21,7 @@ export class ReminderHttpExceptionFilter implements ExceptionFilter<ReminderBase
   public catch(exception: ReminderBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = ReminderHttpExceptionFilter.STATUS[code];
-    const body =
-      details === undefined
-        ? { statusCode, message, code }
-        : { statusCode, message, code, details };
+    const body = details ? { statusCode, message, code, details } : { statusCode, message, code };
     const error = new HttpException(body, statusCode);
 
     this.httpExceptionFilter.catch(error, host);

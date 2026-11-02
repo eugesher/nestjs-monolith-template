@@ -30,7 +30,7 @@ export class TransactionAdapter implements ITransactionPort {
       ? this.cls.get<(() => Promise<void>)[]>(TransactionAdapter.AFTER_COMMIT_HOOKS)
       : undefined;
 
-    if (!this.transactionHost.isTransactionActive() || hooks === undefined) {
+    if (!this.transactionHost.isTransactionActive() || !hooks) {
       throw new Error('afterCommit must be called inside TRANSACTION_PORT.run');
     }
 

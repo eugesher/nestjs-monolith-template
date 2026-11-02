@@ -39,7 +39,7 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .where('StaffRole.name = :name', { name })
       .getOne();
 
-    if (role === null) {
+    if (!role) {
       return null;
     }
 

@@ -15,7 +15,7 @@ export class NoteAccessService {
     const { noteId, authorId } = query;
     const note = await this.repository.findOwned({ noteId, authorId });
 
-    if (note === null) {
+    if (!note) {
       throw new NoteNotFoundException(noteId);
     }
 

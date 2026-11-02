@@ -6,10 +6,10 @@ import { IPage } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import { IReminderCrudRepositoryPort, IReminderPageQuery } from '../../../outbound';
+import { IReminderGetManyRepositoryPort, IReminderPageQuery } from '../../../outbound';
 
 @Injectable()
-export class ReminderCrudRepository implements IReminderCrudRepositoryPort {
+export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,

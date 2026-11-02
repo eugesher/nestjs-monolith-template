@@ -54,7 +54,7 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
       .where('IdempotencyKey.idempotencyKey = :key', { key })
       .getOne();
 
-    if (entity === null) {
+    if (!entity) {
       return null;
     }
 

@@ -2,8 +2,8 @@ export * from './interfaces';
 
 export * from './ports/reminder-access-repository.port';
 export * from './ports/reminder-create-repository.port';
-export * from './ports/reminder-crud-repository.port';
 export * from './ports/reminder-delete-repository.port';
+export * from './ports/reminder-get-many-repository.port';
 export * from './ports/reminder-get-summary-repository.port';
 export * from './ports/reminder-summary.port';
 export * from './ports/reminder-write-repository.port';

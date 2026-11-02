@@ -38,7 +38,7 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
       .andWhere('Note.authorId = :authorId', { authorId })
       .getOne();
 
-    if (note === null) {
+    if (!note) {
       return null;
     }
 

@@ -46,7 +46,7 @@ export class ProductCoreArchiveUseCase {
     const { productId, expectedVersion } = command;
     const product = await this.repository.lockById(productId);
 
-    if (product === null) {
+    if (!product) {
       return { outcome: ProductCoreArchiveOutcomeEnum.NOT_FOUND, currentVersion: undefined };
     }
 

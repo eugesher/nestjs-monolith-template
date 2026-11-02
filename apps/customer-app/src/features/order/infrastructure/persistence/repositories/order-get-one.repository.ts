@@ -2,19 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { IPage, Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs/toolkit';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-import {
-  IOrderCrudRepositoryPort,
-  IOrderFoundProductView,
-  IOrderFoundView,
-  IOrderListedView,
-  IOrderPageQuery,
-} from '../../../outbound';
+import { IOrderProductRecord, OrderModel } from '../../../domain';
+import { IOrderFindOwnedQuery, IOrderGetOneRepositoryPort } from '../../../outbound';
 
 @Injectable()
-export class OrderCrudRepository implements IOrderCrudRepositoryPort {
+export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,
@@ -28,32 +23,16 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
     return this.repositoryHost.getRepository(OrderProduct);
   }
 
-  public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
-    const { page, size } = query;
-    const [orders, total] = await this.orderRepository
-      .createQueryBuilder('Order')
-      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
-      .orderBy('Order.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
-      .getManyAndCount();
-    const items = orders.map((order) => ({
-      id: order.id,
-      customerId: order.customerId,
-      createdAt: order.createdAt,
-    }));
-
-    return { items, total, page, size };
-  }
-
-  public async findById(orderId: string): Promise<Nullable<IOrderFoundView>> {
+  public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<OrderModel>> {
+    const { orderId, customerId } = query;
     const order = await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .where('Order.id = :orderId', { orderId })
+      .andWhere('Order.customerId = :customerId', { customerId })
       .getOne();
 
-    if (order === null) {
+    if (!order) {
       return null;
     }
 
@@ -67,8 +46,13 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
       .where('OrderProduct.orderId = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
       .withDeleted()
-      .getRawMany<IOrderFoundProductView>();
+      .getRawMany<IOrderProductRecord>();
 
-    return { id: order.id, customerId: order.customerId, createdAt: order.createdAt, products };
+    return OrderModel.reconstitute({
+      id: order.id,
+      customerId: order.customerId,
+      createdAt: order.createdAt,
+      products,
+    });
   }
 }

@@ -3,14 +3,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { NoteSubjectInvalidException } from '../../domain';
-import { type INoteCrudRepositoryPort, NOTE_CRUD_REPOSITORY_PORT } from '../../outbound';
+import { type INoteGetManyRepositoryPort, NOTE_GET_MANY_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';
 
 @Injectable()
 export class NoteGetManyUseCase {
   constructor(
-    @Inject(NOTE_CRUD_REPOSITORY_PORT)
-    private readonly repository: INoteCrudRepositoryPort,
+    @Inject(NOTE_GET_MANY_REPOSITORY_PORT)
+    private readonly repository: INoteGetManyRepositoryPort,
   ) {}
 
   public async execute(query: INoteGetManyQuery): Promise<IPage<INoteView>> {

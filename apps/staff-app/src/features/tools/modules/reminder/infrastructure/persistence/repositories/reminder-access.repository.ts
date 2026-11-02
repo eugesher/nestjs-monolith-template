@@ -38,7 +38,7 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
       .andWhere('Reminder.ownerId = :ownerId', { ownerId })
       .getOne();
 
-    if (reminder === null) {
+    if (!reminder) {
       return null;
     }
 

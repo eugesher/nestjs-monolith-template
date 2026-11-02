@@ -36,7 +36,7 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       .where('Reminder.id = :reminderId', { reminderId })
       .getOne();
 
-    if (reminder === null) {
+    if (!reminder) {
       return null;
     }
 

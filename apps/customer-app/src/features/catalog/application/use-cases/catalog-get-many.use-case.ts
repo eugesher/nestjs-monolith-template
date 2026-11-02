@@ -4,17 +4,17 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
-  CATALOG_CRUD_REPOSITORY_PORT,
+  CATALOG_GET_MANY_REPOSITORY_PORT,
   type ICatalogCachePort,
-  type ICatalogCrudRepositoryPort,
+  type ICatalogGetManyRepositoryPort,
 } from '../../outbound';
 import { ICatalogGetManyQuery, ICatalogProductView } from '../interfaces';
 
 @Injectable()
 export class CatalogGetManyUseCase {
   constructor(
-    @Inject(CATALOG_CRUD_REPOSITORY_PORT)
-    private readonly repository: ICatalogCrudRepositoryPort,
+    @Inject(CATALOG_GET_MANY_REPOSITORY_PORT)
+    private readonly repository: ICatalogGetManyRepositoryPort,
     @Inject(CATALOG_CACHE_PORT)
     private readonly cache: ICatalogCachePort,
   ) {}

@@ -14,7 +14,7 @@ describe('OrderGetOneUseCase', () => {
         products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
       }),
     );
-    useCase = new OrderGetOneUseCase({ list: jest.fn(), findOwned });
+    useCase = new OrderGetOneUseCase({ findOwned });
   });
 
   describe('execute', () => {

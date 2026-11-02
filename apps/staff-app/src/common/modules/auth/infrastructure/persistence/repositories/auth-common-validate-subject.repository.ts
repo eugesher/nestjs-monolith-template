@@ -32,7 +32,7 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
       .andWhere('StaffUser.status = :status', { status: UserStatusEnum.ACTIVE })
       .getOne();
 
-    if (user === null) {
+    if (!user) {
       return null;
     }
 

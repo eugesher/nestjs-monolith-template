@@ -2,14 +2,17 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
-import { type IReminderCrudRepositoryPort, REMINDER_CRUD_REPOSITORY_PORT } from '../../outbound';
+import {
+  type IReminderGetManyRepositoryPort,
+  REMINDER_GET_MANY_REPOSITORY_PORT,
+} from '../../outbound';
 import { IReminderGetManyQuery, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderGetManyUseCase {
   constructor(
-    @Inject(REMINDER_CRUD_REPOSITORY_PORT)
-    private readonly repository: IReminderCrudRepositoryPort,
+    @Inject(REMINDER_GET_MANY_REPOSITORY_PORT)
+    private readonly repository: IReminderGetManyRepositoryPort,
   ) {}
 
   public async execute(query: IReminderGetManyQuery): Promise<IPage<IReminderView>> {

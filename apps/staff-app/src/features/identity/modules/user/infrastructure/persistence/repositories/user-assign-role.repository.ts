@@ -39,7 +39,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .where('StaffUser.id = :id', { id })
       .getOne();
 
-    if (user === null) {
+    if (!user) {
       return null;
     }
 

@@ -7,13 +7,13 @@ import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import {
-  ICatalogCrudRepositoryPort,
+  ICatalogGetManyRepositoryPort,
   ICatalogPageQuery,
   ICatalogProductRowView,
 } from '../../../outbound';
 
 @Injectable()
-export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
+export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,

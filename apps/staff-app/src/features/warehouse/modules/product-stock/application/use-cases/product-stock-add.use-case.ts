@@ -82,7 +82,7 @@ export class ProductStockAddUseCase {
 
     const productStock = await this.repository.findById(productId);
 
-    if (productStock === null) {
+    if (!productStock) {
       throw new ProductNotFoundException(productId);
     }
 

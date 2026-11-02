@@ -3,7 +3,7 @@ export * from './interfaces';
 export * from './ports/product-access-repository.port';
 export * from './ports/product-catalog-cache.port';
 export * from './ports/product-create-repository.port';
-export * from './ports/product-crud-repository.port';
+export * from './ports/product-get-many-repository.port';
 export * from './ports/product-idempotency.port';
 export * from './ports/product-ledger-record.port';
 export * from './ports/product-status.port';

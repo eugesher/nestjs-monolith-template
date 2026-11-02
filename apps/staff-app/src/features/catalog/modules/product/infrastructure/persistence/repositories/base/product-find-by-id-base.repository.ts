@@ -28,7 +28,7 @@ export abstract class ProductFindByIdBaseRepository {
       .where('Product.id = :productId', { productId })
       .getOne();
 
-    if (product === null) {
+    if (!product) {
       return null;
     }
 

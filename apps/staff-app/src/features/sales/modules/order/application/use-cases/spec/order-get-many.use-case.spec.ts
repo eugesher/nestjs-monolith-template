@@ -13,7 +13,7 @@ describe('OrderGetManyUseCase', () => {
       page: 1,
       size: 20,
     });
-    useCase = new OrderGetManyUseCase({ list, findById: jest.fn() });
+    useCase = new OrderGetManyUseCase({ list });
   });
 
   describe('execute', () => {

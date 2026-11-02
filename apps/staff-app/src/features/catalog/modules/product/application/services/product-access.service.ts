@@ -15,7 +15,7 @@ export class ProductAccessService {
     const { productId } = query;
     const product = await this.repository.findById(productId);
 
-    if (product === null) {
+    if (!product) {
       throw new ProductNotFoundException(productId);
     }
 

@@ -20,10 +20,7 @@ export class NoteHttpExceptionFilter implements ExceptionFilter<NoteBaseExceptio
   public catch(exception: NoteBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = NoteHttpExceptionFilter.STATUS[code];
-    const body =
-      details === undefined
-        ? { statusCode, message, code }
-        : { statusCode, message, code, details };
+    const body = details ? { statusCode, message, code, details } : { statusCode, message, code };
     const error = new HttpException(body, statusCode);
 
     this.httpExceptionFilter.catch(error, host);

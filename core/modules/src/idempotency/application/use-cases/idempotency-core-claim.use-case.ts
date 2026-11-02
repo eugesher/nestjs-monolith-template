@@ -32,7 +32,7 @@ export class IdempotencyCoreClaimUseCase {
 
     const existing = await this.repository.findByKey(key);
 
-    if (existing === null) {
+    if (!existing) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
     }
 
