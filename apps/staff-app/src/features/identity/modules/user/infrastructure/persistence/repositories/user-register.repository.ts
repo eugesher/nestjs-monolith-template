@@ -46,11 +46,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
 
       return String(identifier.id);
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        throw new AuthEmailTakenException(email);
       }
 
-      throw new AuthEmailTakenException(email);
+      throw error;
     }
   }
 

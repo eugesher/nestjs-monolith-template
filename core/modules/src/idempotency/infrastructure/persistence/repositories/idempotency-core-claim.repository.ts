@@ -30,11 +30,11 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
 
       return true;
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return false;
       }
 
-      return false;
+      throw error;
     }
   }
 

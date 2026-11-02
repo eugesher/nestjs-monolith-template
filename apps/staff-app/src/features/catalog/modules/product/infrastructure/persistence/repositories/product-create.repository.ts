@@ -32,11 +32,11 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
     try {
       await this.productRepository.insert({ sku, name, status, version });
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        throw new ProductSkuTakenException(sku);
       }
 
-      throw new ProductSkuTakenException(sku);
+      throw error;
     }
 
     const stored = await this.productRepository

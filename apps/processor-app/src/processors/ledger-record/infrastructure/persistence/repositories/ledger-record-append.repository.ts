@@ -38,18 +38,18 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
 
       return { id: String(identifier.id), appended: true };
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        const { operationKey } = entry;
+        const existing = await this.ledgerEntryRepository
+          .createQueryBuilder('LedgerEntry')
+          .select(['LedgerEntry.id'])
+          .where('LedgerEntry.operationKey = :operationKey', { operationKey })
+          .getOneOrFail();
+
+        return { id: existing.id, appended: false };
       }
 
-      const { operationKey } = entry;
-      const existing = await this.ledgerEntryRepository
-        .createQueryBuilder('LedgerEntry')
-        .select(['LedgerEntry.id'])
-        .where('LedgerEntry.operationKey = :operationKey', { operationKey })
-        .getOneOrFail();
-
-      return { id: existing.id, appended: false };
+      throw error;
     }
   }
 }
