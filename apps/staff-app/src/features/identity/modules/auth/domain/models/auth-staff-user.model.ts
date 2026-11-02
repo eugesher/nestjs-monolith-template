@@ -1,6 +1,6 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
-import { AuthDomainException } from '../exceptions/auth-domain.exception';
+import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
 import { IAuthStaffUserRecord } from '../interfaces/auth-staff-user-record.interface';
 
 export class AuthStaffUserModel {
@@ -23,10 +23,7 @@ export class AuthStaffUserModel {
 
   public assertActive(): void {
     if (this.status !== UserStatusEnum.ACTIVE) {
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_USER_INACTIVE,
-        `User ${this.id} is disabled`,
-      );
+      throw new AuthUserInactiveException(this.id);
     }
   }
 }

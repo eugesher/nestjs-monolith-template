@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
-import { MysqlErrorHelper, RepositoryHost } from '@acme-libs/database';
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { RoleEnum } from '@acme-libs/kernel';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
-import { IUserStaffUserDraft, UserDomainException, UserStaffUserModel } from '../../../domain';
+import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../../domain';
 import { type IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get staffRoleRepository(): Repository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
@@ -42,14 +46,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
 
       return String(identifier.id);
     } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        throw new AuthEmailTakenException(email);
       }
 
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
-        `Email ${email} is already registered`,
-      );
+      throw error;
     }
   }
 
@@ -58,10 +59,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       return;
     }
 
-    const roles = await this.staffRoleRepository.find({
-      select: { id: true },
-      where: { name: In(names) },
-    });
+    const roles = await this.staffRoleRepository
+      .createQueryBuilder('StaffRole')
+      .select(['StaffRole.id'])
+      .where('StaffRole.name IN (:...names)', { names })
+      .getMany();
     const rows = roles.map((role) => ({ userId, roleId: role.id }));
 
     await this.staffUserRoleRepository.insert(rows);

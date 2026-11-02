@@ -3,10 +3,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
-import { UserDomainException } from '../../domain';
+import { UserBaseException } from '../../domain';
 
-@Catch(UserDomainException)
-export class UserHttpExceptionFilter implements ExceptionFilter<UserDomainException> {
+@Catch(UserBaseException)
+export class UserHttpExceptionFilter implements ExceptionFilter<UserBaseException> {
   private static readonly STATUS: Record<IdentityErrorCodeEnum, HttpStatus> = {
     [IdentityErrorCodeEnum.AUTH_EMAIL_INVALID]: HttpStatus.BAD_REQUEST,
     [IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK]: HttpStatus.BAD_REQUEST,
@@ -20,7 +20,7 @@ export class UserHttpExceptionFilter implements ExceptionFilter<UserDomainExcept
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: UserDomainException, host: ArgumentsHost): void {
+  public catch(exception: UserBaseException, host: ArgumentsHost): void {
     const { code, message } = exception;
     const statusCode = UserHttpExceptionFilter.STATUS[code];
     const error = new HttpException({ statusCode, message, code }, statusCode);

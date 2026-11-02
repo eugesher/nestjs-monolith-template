@@ -17,8 +17,13 @@ export const packages = (...names) => ({
 
 export const from = (category, allow) => ({ from: { file: { categories: category } }, allow });
 
-export const fromLib = (lib, allow) => ({
-  from: { file: { categories: 'acme-libs', captured: { lib } } },
+export const fromLib = (lib, allow, file) => ({
+  from: { file: { categories: 'acme-libs', captured: file ? { lib, file } : { lib } } },
+  allow,
+});
+
+export const fromLibContracts = (lib, allow) => ({
+  from: { file: { categories: 'acme-libs:contracts', captured: { lib } } },
   allow,
 });
 

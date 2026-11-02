@@ -2,9 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
-import { RoleDomainException, RoleModel } from '../../domain';
+import { AuthRoleNotFoundException, RoleModel } from '../../domain';
 import {
   ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
   type IRoleUpdatePermissionsRepositoryPort,
@@ -39,10 +38,7 @@ export class RoleUpdatePermissionsUseCase {
     const role = await this.repository.findRole(name);
 
     if (!role) {
-      throw new RoleDomainException(
-        IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND,
-        `Role ${name} was not found`,
-      );
+      throw new AuthRoleNotFoundException(name);
     }
 
     const known = await this.repository.findPermissions(permissionCodes);

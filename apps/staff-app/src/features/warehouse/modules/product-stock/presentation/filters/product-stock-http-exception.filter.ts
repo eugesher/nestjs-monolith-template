@@ -2,10 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { ProductStockDomainException, ProductStockErrorCodeEnum } from '../../domain';
+import { ProductStockBaseException, ProductStockErrorCodeEnum } from '../../domain';
 
-@Catch(ProductStockDomainException)
-export class ProductStockHttpExceptionFilter implements ExceptionFilter<ProductStockDomainException> {
+@Catch(ProductStockBaseException)
+export class ProductStockHttpExceptionFilter implements ExceptionFilter<ProductStockBaseException> {
   private static readonly STATUS: Record<ProductStockErrorCodeEnum, HttpStatus> = {
     [ProductStockErrorCodeEnum.PRODUCT_QUANTITY_INVALID]: HttpStatus.BAD_REQUEST,
     [ProductStockErrorCodeEnum.PRODUCT_NOT_FOUND]: HttpStatus.NOT_FOUND,
@@ -15,14 +15,10 @@ export class ProductStockHttpExceptionFilter implements ExceptionFilter<ProductS
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: ProductStockDomainException, host: ArgumentsHost): void {
-    const { code, message, details } = exception;
+  public catch(exception: ProductStockBaseException, host: ArgumentsHost): void {
+    const { code, message } = exception;
     const statusCode = ProductStockHttpExceptionFilter.STATUS[code];
-    const body =
-      details === undefined
-        ? { statusCode, message, code }
-        : { statusCode, message, code, details };
-    const error = new HttpException(body, statusCode);
+    const error = new HttpException({ statusCode, message, code }, statusCode);
 
     this.httpExceptionFilter.catch(error, host);
   }

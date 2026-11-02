@@ -1,4 +1,6 @@
-export * from './exceptions/role-domain.exception';
+export * from './exceptions/auth-permission-not-found.exception';
+export * from './exceptions/auth-role-not-found.exception';
+export * from './exceptions/base/role-base.exception';
 
 export * from './interfaces/role-permission-record.interface';
 export * from './interfaces/role-record.interface';

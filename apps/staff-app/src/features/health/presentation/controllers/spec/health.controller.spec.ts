@@ -1,3 +1,4 @@
+import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../../application';
 import { HealthController } from '../health.controller';
 
 describe('HealthController', () => {
@@ -10,10 +11,13 @@ describe('HealthController', () => {
     liveness = jest.fn();
     readiness = jest.fn();
     response = { status: jest.fn() };
-    controller = new HealthController({ liveness, readiness });
+    controller = new HealthController(
+      { execute: liveness } as unknown as HealthLivenessUseCase,
+      { execute: readiness } as unknown as HealthReadinessUseCase,
+    );
   });
 
-  it('answers liveness with the view of the lib', () => {
+  it('answers liveness with the view of the use case', () => {
     liveness.mockReturnValue({ status: 'ok', app: 'staff-app', uptimeSeconds: 7 });
 
     const body = controller.live();

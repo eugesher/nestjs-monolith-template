@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage, Nullable } from '@acme-libs/toolkit';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
@@ -12,11 +12,13 @@ import {
   IOrderListedView,
   IOrderPageQuery,
 } from '../../../outbound';
-import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderCrudRepository implements IOrderCrudRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get orderRepository(): Repository<Order> {
     return this.repositoryHost.getRepository(Order);
@@ -28,13 +30,14 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
 
   public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
     const { page, size, customerId } = query;
-    const [orders, total] = await this.orderRepository.findAndCount({
-      select: { id: true, createdAt: true },
-      where: { customerId },
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [orders, total] = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.createdAt'])
+      .where('Order.customerId = :customerId', { customerId })
+      .orderBy('Order.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
     const items = orders.map((order) => ({ id: order.id, createdAt: order.createdAt }));
 
     return { items, total, page, size };
@@ -42,7 +45,12 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
 
   public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<OrderModel>> {
     const { orderId, customerId } = query;
-    const order = await this.orderRepository.findOneBy({ id: orderId, customerId });
+    const order = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .where('Order.id = :orderId', { orderId })
+      .andWhere('Order.customerId = :customerId', { customerId })
+      .getOne();
 
     if (order === null) {
       return null;
@@ -60,6 +68,11 @@ export class OrderCrudRepository implements IOrderCrudRepositoryPort {
       .withDeleted()
       .getRawMany<IOrderProductRecord>();
 
-    return OrderMapper.toModel(order, products);
+    return OrderModel.reconstitute({
+      id: order.id,
+      customerId: order.customerId,
+      createdAt: order.createdAt,
+      products,
+    });
   }
 }

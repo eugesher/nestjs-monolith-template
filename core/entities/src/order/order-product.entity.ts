@@ -12,7 +12,7 @@ export class OrderProduct {
   @Column({ type: 'bigint', unsigned: true })
   public orderId: string;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, (order) => order.orderProducts)
   @JoinColumn({ name: 'order_id', foreignKeyConstraintName: 'fk_order_product_order' })
   public order: Order;
 

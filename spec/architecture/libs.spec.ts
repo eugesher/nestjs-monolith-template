@@ -63,7 +63,7 @@ describe('libs', () => {
     ['credentials', ['kernel', 'toolkit']],
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
-    ['http', ['kernel', 'toolkit', 'database', 'observability']],
+    ['http', ['kernel', 'toolkit', 'observability']],
     ['ledger', ['kernel', 'toolkit']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
@@ -129,6 +129,23 @@ describe('libs', () => {
     }
   });
 
+  it('the contracts of database MAY import typeorm — the repository host port returns its Repository', async () => {
+    await expect({
+      file: 'libs/contracts/src/database/__fixture__.ts',
+      code: 'import type { Repository } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['auth', 'cache', 'credentials', 'health'])(
+    'the contracts of %s may NOT import typeorm',
+    async (lib) => {
+      await expect({
+        file: `libs/contracts/src/${lib}/__fixture__.ts`,
+        code: 'import type { Repository } from "typeorm";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
   it.each(['auth', 'cache', 'credentials', 'database', 'health'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {
@@ -170,6 +187,27 @@ describe('libs', () => {
       file: 'libs/toolkit/src/__fixture__.ts',
       code: 'import { createHash, randomUUID } from "crypto";',
     }).toPassArchitectureLint();
+  });
+
+  it('the database helpers of the toolkit MAY import typeorm (MysqlErrorHelper)', async () => {
+    await expect({
+      file: 'libs/toolkit/src/database/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the rest of the toolkit may NOT import typeorm', async () => {
+    await expect({
+      file: 'libs/toolkit/src/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the kernel lib may NOT import typeorm', async () => {
+    await expect({
+      file: 'libs/kernel/src/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('the config lib MAY import the Nest config packages it wraps', async () => {
@@ -274,7 +312,7 @@ describe('libs', () => {
 
   it('the credentials lib MAY import the packages hashing and signing need', async () => {
     await expect({
-      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      file: 'libs/credentials/src/infrastructure/password-hasher/__fixture__.ts',
       code:
         'import { Injectable } from "@nestjs/common";\n' +
         'import { ConfigService } from "@nestjs/config";\n' +
@@ -285,7 +323,7 @@ describe('libs', () => {
 
   it.each(['typeorm', 'nestjs-pino'])('the credentials lib may NOT import %s', async (source) => {
     await expect({
-      file: 'libs/credentials/src/password-hasher/__fixture__.ts',
+      file: 'libs/credentials/src/infrastructure/password-hasher/__fixture__.ts',
       code: `import { x } from "${source}";`,
     }).toBreakRule('boundaries/dependencies');
   });

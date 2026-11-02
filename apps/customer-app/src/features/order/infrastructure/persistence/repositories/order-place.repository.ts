@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { OrderModel } from '../../../domain';
 import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
-import { OrderMapper } from '../mappers/order.mapper';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get orderRepository(): Repository<Order> {
     return this.repositoryHost.getRepository(Order);
@@ -30,9 +32,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return [];
     }
 
-    const products = await this.productRepository.find({
-      where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
-    });
+    const products = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .where('Product.id IN (:...productIds)', { productIds })
+      .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .getMany();
 
     return products.map((product) => {
       const { id, sku, name } = product;
@@ -43,23 +48,27 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
 
   public async insert(order: OrderModel): Promise<OrderModel> {
     const { customerId, products } = order;
-    const draft = this.orderRepository.create({ customerId });
-    const stored = await this.orderRepository.save(draft);
-    const lines = products.map((product) => ({ orderId: stored.id, productId: product.productId }));
+    const result = await this.orderRepository.insert({ customerId });
+    const [identifier] = result.identifiers as { id: number | string }[];
+    const orderId = String(identifier.id);
+    const lines = products.map((product) => ({ orderId, productId: product.productId }));
 
     await this.orderProductRepository.insert(lines);
 
-    const rows = await this.orderProductRepository.find({
-      where: { orderId: stored.id },
-      order: { id: 'ASC' },
-    });
-    const records = rows.map((row) => {
-      const { id, productId } = row;
-      const product = products.find((candidate) => candidate.productId === productId);
+    const stored = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .leftJoin('Order.orderProducts', 'OrderProduct')
+      .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
+      .where('Order.id = :orderId', { orderId })
+      .orderBy('OrderProduct.id', 'ASC')
+      .getOneOrFail();
 
-      return { id, productId, sku: product?.sku ?? '', name: product?.name ?? '' };
+    return OrderModel.fromInserted(order, {
+      id: stored.id,
+      customerId: stored.customerId,
+      createdAt: stored.createdAt,
+      products: stored.orderProducts,
     });
-
-    return OrderMapper.toModel(stored, records);
   }
 }

@@ -1,7 +1,9 @@
 import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
 
-import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
-import { NoteDomainException } from '../exceptions/note-domain.exception';
+import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.exception';
+import { NoteResolvedException } from '../exceptions/note-resolved.exception';
+import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.exception';
+import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
 import { INoteDraft } from '../interfaces/note-draft.interface';
 import { INoteRecord } from '../interfaces/note-record.interface';
 
@@ -66,8 +68,7 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
 
   private static validSubjectType(subjectType: string): string {
     if (!NoteModel.SUBJECT_TYPE_PATTERN.test(subjectType)) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_SUBJECT_INVALID,
+      throw new NoteSubjectInvalidException(
         `Note.subjectType must match ${String(NoteModel.SUBJECT_TYPE_PATTERN)}, got ${subjectType}`,
       );
     }
@@ -79,8 +80,7 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
     const trimmed = subjectId.trim();
 
     if (trimmed.length === 0 || trimmed.length > NoteModel.SUBJECT_ID_MAX_LENGTH) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_SUBJECT_INVALID,
+      throw new NoteSubjectInvalidException(
         `Note.subjectId must be a non-empty string of at most ${NoteModel.SUBJECT_ID_MAX_LENGTH} characters`,
       );
     }
@@ -92,10 +92,7 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
     const trimmed = body.trim();
 
     if (trimmed.length === 0 || trimmed.length > NoteModel.BODY_MAX_LENGTH) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_BODY_INVALID,
-        `Note.body must be a non-empty string of at most ${NoteModel.BODY_MAX_LENGTH} characters`,
-      );
+      throw new NoteBodyInvalidException(NoteModel.BODY_MAX_LENGTH);
     }
 
     return trimmed;
@@ -103,10 +100,7 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
 
   private static validVersion(version: number): number {
     if (!Number.isInteger(version) || version < 1) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_VERSION_INVALID,
-        `Note.version must be a positive integer, got ${version}`,
-      );
+      throw new NoteVersionInvalidException(version);
     }
 
     return version;
@@ -146,10 +140,7 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
 
   private assertOpen(): void {
     if (this.currentResolved) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_RESOLVED,
-        `Note ${String(this.id)} is resolved and can no longer be modified`,
-      );
+      throw new NoteResolvedException(String(this.id));
     }
   }
 }

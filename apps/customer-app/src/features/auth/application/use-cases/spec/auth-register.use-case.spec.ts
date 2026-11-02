@@ -3,7 +3,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { AuthCustomerModel, AuthDomainException } from '../../../domain';
+import { AuthCustomerModel, AuthEmailTakenException } from '../../../domain';
 import { AuthLedgerService } from '../../services/auth-ledger.service';
 import { AuthRegisterUseCase } from '../auth-register.use-case';
 
@@ -71,12 +71,7 @@ describe('AuthRegisterUseCase', () => {
   });
 
   it('lets the taken email refusal of the repository through without logging a sign-up', async () => {
-    repository.insert.mockRejectedValue(
-      new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
-        'Email ann@example.com is already registered',
-      ),
-    );
+    repository.insert.mockRejectedValue(new AuthEmailTakenException('ann@example.com'));
 
     const register = useCase.execute({
       email: 'ann@example.com',

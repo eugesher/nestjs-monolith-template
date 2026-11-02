@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
 import { type INoteCreateRepositoryPort } from '../../../outbound';
-import { NoteMapper } from '../mappers/note.mapper';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get noteRepository(): Repository<Note> {
     return this.repositoryHost.getRepository(Note);
@@ -18,7 +20,7 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
 
   public async insert(note: NoteModel): Promise<NoteModel> {
     const { subjectType, subjectId, body, authorId, resolved, version } = note;
-    const draft = this.noteRepository.create({
+    const result = await this.noteRepository.insert({
       subjectType,
       subjectId,
       body,
@@ -26,9 +28,34 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
       resolved,
       version,
     });
-    const saved = await this.noteRepository.save(draft);
-    const stored = await this.noteRepository.findOneOrFail({ where: { id: String(saved.id) } });
+    const [identifier] = result.identifiers as { id: number | string }[];
+    const id = String(identifier.id);
+    const stored = await this.noteRepository
+      .createQueryBuilder('Note')
+      .select([
+        'Note.id',
+        'Note.subjectType',
+        'Note.subjectId',
+        'Note.body',
+        'Note.authorId',
+        'Note.resolved',
+        'Note.version',
+        'Note.createdAt',
+        'Note.updatedAt',
+      ])
+      .where('Note.id = :id', { id })
+      .getOneOrFail();
 
-    return NoteMapper.toModel(stored);
+    return NoteModel.reconstitute({
+      id: stored.id,
+      subjectType: stored.subjectType,
+      subjectId: stored.subjectId,
+      body: stored.body,
+      authorId: stored.authorId,
+      resolved: stored.resolved,
+      version: stored.version,
+      createdAt: stored.createdAt,
+      updatedAt: stored.updatedAt,
+    });
   }
 }

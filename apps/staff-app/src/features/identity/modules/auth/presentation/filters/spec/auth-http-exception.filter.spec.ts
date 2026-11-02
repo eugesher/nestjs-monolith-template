@@ -1,9 +1,12 @@
 import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
-import { AuthDomainException } from '../../../domain';
+import {
+  AuthInvalidCredentialsException,
+  AuthUserInactiveException,
+  AuthUserNotFoundException,
+} from '../../../domain';
 import { AuthHttpExceptionFilter } from '../auth-http-exception.filter';
 
 describe('AuthHttpExceptionFilter', () => {
@@ -18,33 +21,25 @@ describe('AuthHttpExceptionFilter', () => {
   it('hands the HttpException over together with the same host', () => {
     const host = {} as ArgumentsHost;
 
-    filter.catch(
-      new AuthDomainException(IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS, 'reason'),
-      host,
-    );
+    filter.catch(new AuthInvalidCredentialsException(), host);
 
     expect(httpExceptionFilter.catch).toHaveBeenCalledTimes(1);
     expect(httpExceptionFilter.catch).toHaveBeenCalledWith(expect.any(HttpException), host);
   });
 
   it.each([
-    ['AUTH_EMAIL_INVALID', 400],
-    ['AUTH_PASSWORD_TOO_WEAK', 400],
-    ['AUTH_INVALID_CREDENTIALS', 401],
-    ['AUTH_USER_INACTIVE', 403],
-    ['AUTH_USER_NOT_FOUND', 404],
-    ['AUTH_ROLE_NOT_FOUND', 404],
-    ['AUTH_PERMISSION_NOT_FOUND', 400],
-    ['AUTH_EMAIL_TAKEN', 409],
-  ])('maps %s to %i with the code and the domain message in the body', (code, status) => {
-    filter.catch(
-      new AuthDomainException(code as IdentityErrorCodeEnum, 'domain message'),
-      {} as ArgumentsHost,
-    );
+    ['AUTH_INVALID_CREDENTIALS', 401, new AuthInvalidCredentialsException('domain message')],
+    ['AUTH_USER_INACTIVE', 403, new AuthUserInactiveException('1', 'domain message')],
+    ['AUTH_USER_NOT_FOUND', 404, new AuthUserNotFoundException('1', 'domain message')],
+  ])(
+    'maps %s to %i with the code and the domain message in the body',
+    (code, status, exception) => {
+      filter.catch(exception, {} as ArgumentsHost);
 
-    const [error] = httpExceptionFilter.catch.mock.calls[0];
+      const [error] = httpExceptionFilter.catch.mock.calls[0];
 
-    expect(error.getStatus()).toBe(status);
-    expect(error.getResponse()).toEqual({ statusCode: status, message: 'domain message', code });
-  });
+      expect(error.getStatus()).toBe(status);
+      expect(error.getResponse()).toEqual({ statusCode: status, message: 'domain message', code });
+    },
+  );
 });

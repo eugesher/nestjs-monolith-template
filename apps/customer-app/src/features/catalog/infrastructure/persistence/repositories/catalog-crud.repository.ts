@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
@@ -14,7 +14,10 @@ import {
 
 @Injectable()
 export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);
@@ -22,13 +25,14 @@ export class CatalogCrudRepository implements ICatalogCrudRepositoryPort {
 
   public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
     const { page, size } = query;
-    const [products, total] = await this.productRepository.findAndCount({
-      select: { id: true, sku: true, name: true },
-      where: { status: ProductStatusEnum.ACTIVE },
-      order: { id: 'ASC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [products, total] = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .orderBy('Product.id', 'ASC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
     const items = products.map((product) => ({
       id: product.id,
       sku: product.sku,

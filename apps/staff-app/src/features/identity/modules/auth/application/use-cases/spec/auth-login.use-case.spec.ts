@@ -4,18 +4,17 @@ import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { AuthStaffUserModel } from '../../../domain';
-import { AuthAccessTokenService } from '../../services/auth-access-token.service';
 import { AuthLoginUseCase } from '../auth-login.use-case';
 
 describe('AuthLoginUseCase', () => {
   let issue: jest.Mock;
   let repository: { findByEmail: jest.Mock };
-  let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
+  let passwordHasher: { verify: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: AuthLoginUseCase;
 
   beforeEach(() => {
-    issue = jest.fn().mockResolvedValue({ accessToken: 'access-token' });
+    issue = jest.fn().mockResolvedValue('access-token');
     repository = {
       findByEmail: jest.fn().mockResolvedValue(
         AuthStaffUserModel.reconstitute({
@@ -26,11 +25,11 @@ describe('AuthLoginUseCase', () => {
         }),
       ),
     };
-    passwordHasher = { hash: jest.fn(), verify: jest.fn().mockResolvedValue(true) };
+    passwordHasher = { verify: jest.fn().mockResolvedValue(true) };
     logger = makePinoLoggerMock();
     useCase = new AuthLoginUseCase(
-      { issue } as unknown as AuthAccessTokenService,
       repository,
+      { issue },
       passwordHasher,
       logger as unknown as PinoLogger,
     );
@@ -44,8 +43,11 @@ describe('AuthLoginUseCase', () => {
 
     expect(view).toEqual({ accessToken: 'access-token' });
     expect(repository.findByEmail).toHaveBeenCalledWith('editor@example.com');
-    expect(passwordHasher.verify).toHaveBeenCalledWith('hash', 'correct-horse');
-    expect(issue).toHaveBeenCalledWith(expect.objectContaining({ id: 'user-1' }));
+    expect(passwordHasher.verify).toHaveBeenCalledWith({
+      passwordHash: 'hash',
+      password: 'correct-horse',
+    });
+    expect(issue).toHaveBeenCalledWith('user-1');
     expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1' }, 'User logged in');
   });
 

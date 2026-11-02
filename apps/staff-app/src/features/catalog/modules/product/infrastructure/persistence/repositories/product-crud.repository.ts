@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IPage } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductModel } from '../../../domain';
 import { type IProductCrudRepositoryPort, IProductPageQuery } from '../../../outbound';
-import { ProductMapper } from '../mappers/product.mapper';
 
 @Injectable()
 export class ProductCrudRepository implements IProductCrudRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);
@@ -19,14 +21,34 @@ export class ProductCrudRepository implements IProductCrudRepositoryPort {
 
   public async list(query: IProductPageQuery): Promise<IPage<ProductModel>> {
     const { page, size } = query;
-    const [items, total] = await this.productRepository.findAndCount({
-      order: { id: 'DESC' },
-      skip: (page - 1) * size,
-      take: size,
-    });
+    const [items, total] = await this.productRepository
+      .createQueryBuilder('Product')
+      .select([
+        'Product.id',
+        'Product.sku',
+        'Product.name',
+        'Product.status',
+        'Product.version',
+        'Product.createdAt',
+        'Product.updatedAt',
+      ])
+      .orderBy('Product.id', 'DESC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
 
     return {
-      items: items.map((product) => ProductMapper.toModel(product)),
+      items: items.map((product) =>
+        ProductModel.reconstitute({
+          id: product.id,
+          sku: product.sku,
+          name: product.name,
+          status: product.status,
+          version: product.version,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+        }),
+      ),
       total,
       page,
       size,

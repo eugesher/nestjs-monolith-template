@@ -3,14 +3,14 @@ import { PinoLogger } from 'nestjs-pino';
 import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { UserDomainException, UserStaffUserModel } from '../../../domain';
+import { AuthEmailTakenException, UserStaffUserModel } from '../../../domain';
 import { UserRegisterUseCase } from '../user-register.use-case';
 
 describe('UserRegisterUseCase', () => {
   let outcomes: string[];
   let repository: { insert: jest.Mock };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
-  let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
+  let passwordHasher: { hash: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserRegisterUseCase;
 
@@ -43,7 +43,7 @@ describe('UserRegisterUseCase', () => {
         return result;
       }),
     };
-    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
+    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash') };
     logger = makePinoLoggerMock();
     useCase = new UserRegisterUseCase(
       repository,
@@ -95,12 +95,7 @@ describe('UserRegisterUseCase', () => {
   });
 
   it('lets the taken email refusal of the repository roll the transaction back', async () => {
-    repository.insert.mockRejectedValue(
-      new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
-        'Email editor@example.com is already registered',
-      ),
-    );
+    repository.insert.mockRejectedValue(new AuthEmailTakenException('editor@example.com'));
 
     const register = useCase.execute({
       email: 'editor@example.com',

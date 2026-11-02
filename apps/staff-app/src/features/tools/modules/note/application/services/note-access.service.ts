@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { NoteDomainException, NoteErrorCodeEnum, NoteModel } from '../../domain';
+import { NoteModel, NoteNotFoundException } from '../../domain';
 import { type INoteAccessRepositoryPort, NOTE_ACCESS_REPOSITORY_PORT } from '../../outbound';
 import { INoteAccessLoadOwnedQuery } from '../interfaces';
 
@@ -16,10 +16,7 @@ export class NoteAccessService {
     const note = await this.repository.findOwned({ noteId, authorId });
 
     if (note === null) {
-      throw new NoteDomainException(
-        NoteErrorCodeEnum.NOTE_NOT_FOUND,
-        `Note ${noteId} was not found`,
-      );
+      throw new NoteNotFoundException(noteId);
     }
 
     return note;

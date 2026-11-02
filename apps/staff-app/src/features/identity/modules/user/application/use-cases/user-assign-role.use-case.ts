@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
-
-import { UserDomainException } from '../../domain';
+import { AuthRoleNotFoundException, AuthUserNotFoundException } from '../../domain';
 import {
   USER_ASSIGN_ROLE_REPOSITORY_PORT,
   type IUserAssignRoleRepositoryPort,
@@ -24,20 +22,14 @@ export class UserAssignRoleUseCase {
     const user = await this.repository.findById(userId);
 
     if (!user) {
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_USER_NOT_FOUND,
-        `User ${userId} was not found`,
-      );
+      throw new AuthUserNotFoundException(userId);
     }
 
     const added = user.assignRole(role);
     const stored = added ? await this.repository.addRole(user.id, role) : true;
 
     if (!stored) {
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND,
-        `Role ${role} was not found`,
-      );
+      throw new AuthRoleNotFoundException(role);
     }
 
     this.logger.info({ userId, role }, 'Role assigned');

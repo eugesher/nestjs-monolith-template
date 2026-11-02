@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { OrderDomainException, OrderErrorCodeEnum } from '../../domain';
+import { OrderNotFoundException } from '../../domain';
 import { type IOrderCrudRepositoryPort, ORDER_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IOrderGetOneQuery, IOrderView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';
@@ -17,10 +17,7 @@ export class OrderGetOneUseCase {
     const order = await this.repository.findOwned({ orderId, customerId });
 
     if (order === null) {
-      throw new OrderDomainException(
-        OrderErrorCodeEnum.ORDER_NOT_FOUND,
-        `Order ${orderId} was not found`,
-      );
+      throw new OrderNotFoundException(orderId);
     }
 
     return OrderViewMapper.toView(order);

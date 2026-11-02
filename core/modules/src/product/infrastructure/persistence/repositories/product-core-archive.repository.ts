@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
@@ -10,11 +10,13 @@ import {
   type IProductCoreArchiveRepositoryPort,
   IProductCoreWriteUpdateCommand,
 } from '../../../outbound';
-import { ProductCoreMapper } from '../mappers/product-core.mapper';
 
 @Injectable()
 export class ProductCoreArchiveRepository implements IProductCoreArchiveRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);
@@ -23,11 +25,21 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
   public async lockById(productId: string): Promise<Nullable<ProductCoreModel>> {
     const product = await this.productRepository
       .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.status', 'Product.version'])
       .where('Product.id = :productId', { productId })
       .setLock('pessimistic_write')
       .getOne();
 
-    return product === null ? null : ProductCoreMapper.toModel(product);
+    if (product === null) {
+      return null;
+    }
+
+    return ProductCoreModel.reconstitute({
+      id: product.id,
+      sku: product.sku,
+      status: product.status,
+      version: product.version,
+    });
   }
 
   public async update(command: IProductCoreWriteUpdateCommand): Promise<void> {

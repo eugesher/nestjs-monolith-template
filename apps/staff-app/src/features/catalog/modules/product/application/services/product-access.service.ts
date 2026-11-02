@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../domain';
+import { ProductModel, ProductNotFoundException } from '../../domain';
 import { type IProductAccessRepositoryPort, PRODUCT_ACCESS_REPOSITORY_PORT } from '../../outbound';
 import { IProductAccessLoadQuery } from '../interfaces';
 
@@ -16,10 +16,7 @@ export class ProductAccessService {
     const product = await this.repository.findById(productId);
 
     if (product === null) {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_NOT_FOUND,
-        `Product ${productId} was not found`,
-      );
+      throw new ProductNotFoundException(productId);
     }
 
     return product;

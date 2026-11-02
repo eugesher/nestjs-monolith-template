@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Product } from '@acme-core/entities';
 
@@ -9,7 +9,10 @@ import { type IProductStockArchiveOutOfStockRepositoryPort } from '../../../outb
 
 @Injectable()
 export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get productRepository(): Repository<Product> {
     return this.repositoryHost.getRepository(Product);
@@ -20,11 +23,13 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
       return [];
     }
 
-    const products = await this.productRepository.find({
-      select: { id: true },
-      where: { id: In(productIds), status: ProductStatusEnum.ACTIVE },
-      order: { id: 'ASC' },
-    });
+    const products = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id'])
+      .where('Product.id IN (:...productIds)', { productIds })
+      .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .orderBy('Product.id', 'ASC')
+      .getMany();
 
     return products.map((product) => product.id);
   }

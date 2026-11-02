@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ProductDomainException, ProductErrorCodeEnum } from '../../domain';
+import {
+  ProductAlreadyArchivedException,
+  ProductNotFoundException,
+  ProductVersionMismatchException,
+} from '../../domain';
 import { type IProductStatusPort, PRODUCT_STATUS_PORT } from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductViewMapper } from '../mappers/product-view.mapper';
@@ -20,25 +24,19 @@ export class ProductArchiveUseCase {
     const { outcome, currentVersion } = archived;
 
     if (outcome === 'not-found') {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_NOT_FOUND,
-        `Product ${productId} was not found`,
-      );
+      throw new ProductNotFoundException(productId);
     }
 
     if (outcome === 'version-mismatch') {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH,
+      throw new ProductVersionMismatchException(
+        productId,
+        currentVersion,
         `Product ${productId}: If-Match version ${String(expectedVersion)} does not match the current version ${String(currentVersion)}`,
-        { currentVersion },
       );
     }
 
     if (outcome === 'already-archived') {
-      throw new ProductDomainException(
-        ProductErrorCodeEnum.PRODUCT_ALREADY_ARCHIVED,
-        `Product ${productId} is already archived`,
-      );
+      throw new ProductAlreadyArchivedException(productId);
     }
 
     const product = await this.accessService.load({ productId });

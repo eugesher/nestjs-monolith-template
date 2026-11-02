@@ -2,10 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { ReminderDomainException, ReminderErrorCodeEnum } from '../../domain';
+import { ReminderBaseException, ReminderErrorCodeEnum } from '../../domain';
 
-@Catch(ReminderDomainException)
-export class ReminderHttpExceptionFilter implements ExceptionFilter<ReminderDomainException> {
+@Catch(ReminderBaseException)
+export class ReminderHttpExceptionFilter implements ExceptionFilter<ReminderBaseException> {
   private static readonly STATUS: Record<ReminderErrorCodeEnum, HttpStatus> = {
     [ReminderErrorCodeEnum.REMINDER_TITLE_INVALID]: HttpStatus.BAD_REQUEST,
     [ReminderErrorCodeEnum.REMINDER_BODY_INVALID]: HttpStatus.BAD_REQUEST,
@@ -18,7 +18,7 @@ export class ReminderHttpExceptionFilter implements ExceptionFilter<ReminderDoma
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: ReminderDomainException, host: ArgumentsHost): void {
+  public catch(exception: ReminderBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = ReminderHttpExceptionFilter.STATUS[code];
     const body =

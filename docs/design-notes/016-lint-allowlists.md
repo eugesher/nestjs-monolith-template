@@ -18,7 +18,7 @@ common-module spec imports the kernel; both are code the lint checks.
 `baseLibs(...names)` is `libs('kernel', 'toolkit', ...names)`. The kernel is the vocabulary and the
 toolkit is the technique of every layer, so each layer gets both whether or not one of its files
 imports them today. The names after them are what the layer adds: `baseLibs('observability')` for
-an application layer, `baseLibs('database')` for infrastructure.
+an application layer, `baseLibs('ledger', 'observability')` for the application of a core module.
 
 `main.ts` and the core entities are the exceptions: they list their libs one by one.
 
@@ -35,8 +35,8 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 
 - the index of nested features and processors, and the module roots that mount through it;
 - a bootstrap file that mounts the features, processors and global modules through their indexes;
-- a global module that reaches app contracts, common modules, the entities and the config and
-  database libs;
+- a global module that reaches app contracts, common modules, the entities, the config lib and
+  the database contracts;
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
@@ -48,7 +48,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 - the core-adapters and common-adapters of a common module, and a common module root that mounts
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
-  database contracts, the entities, the database and config libs;
+  database contracts, the entities and the config lib;
 - the libs a layer is meant to reach: the cache lib from the app root, the auth
   lib from a feature root, the database contracts from the application of a common module;
 - a script, a migration or a seed script that imports its own support files.
@@ -94,19 +94,36 @@ edges exist for it:
 
 Code lives with its only caller (see `024-code-placement.md`), so the edges follow the code:
 
-- **A feature signs its users in.** The application of a feature may take
+- **A feature signs its users in.** Its `infrastructure/lib-adapters` may take
   `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No
   core module and no common module signs anyone in today, so neither may.
+- **A lib port is reached through a lib adapter.** A feature declares a port of its own in
+  `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
+  `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
+  `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
+  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth` stay
+  direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
   ledger service extends `SubjectLedgerService`, the queue adapter extends
   `SubjectLedgerQueueAdapter`. No processor and no common module writes a ledger record, so neither
   may. The lib itself sees only the base libs.
 - **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
-  `@acme-libs/database` and `@nestjs/common`, as feature infrastructure does.
-- **No module touches `@nestjs-cls`.** A repository reads through
-  `RepositoryHost.getRepository(<Entity>)` of `libs/database`, so infrastructure may not import
-  `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and `app/setup` do.
+  `@acme-libs/contracts/database` and `@nestjs/common`, as feature infrastructure does.
+- **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
+  `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
+  not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
+  `app/setup` do.
+- **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
+  `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of
+  `libs/database` are bound in `app/setup`, so infrastructure cannot inject `RepositoryHostAdapter`
+  past the port. The http lib reads `MysqlErrorHelper` from the toolkit too.
+- **`toolkit/src/database` may import `typeorm`.** `MysqlErrorHelper` checks for a TypeORM
+  `QueryFailedError`. The edge is scoped to that folder by the `file` capture of the lib category,
+  so the rest of the toolkit sees only `crypto` and the kernel sees no package.
+- **The database contracts name TypeORM.** The repository host port returns a TypeORM
+  `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
+  the base libs.
 - **No module registers entities.** The entities of an app are listed once in
   `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
   would add repository tokens that nothing injects.

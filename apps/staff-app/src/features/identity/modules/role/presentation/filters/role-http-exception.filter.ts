@@ -3,10 +3,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 
-import { RoleDomainException } from '../../domain';
+import { RoleBaseException } from '../../domain';
 
-@Catch(RoleDomainException)
-export class RoleHttpExceptionFilter implements ExceptionFilter<RoleDomainException> {
+@Catch(RoleBaseException)
+export class RoleHttpExceptionFilter implements ExceptionFilter<RoleBaseException> {
   private static readonly STATUS: Record<IdentityErrorCodeEnum, HttpStatus> = {
     [IdentityErrorCodeEnum.AUTH_EMAIL_INVALID]: HttpStatus.BAD_REQUEST,
     [IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK]: HttpStatus.BAD_REQUEST,
@@ -20,7 +20,7 @@ export class RoleHttpExceptionFilter implements ExceptionFilter<RoleDomainExcept
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}
 
-  public catch(exception: RoleDomainException, host: ArgumentsHost): void {
+  public catch(exception: RoleBaseException, host: ArgumentsHost): void {
     const { code, message } = exception;
     const statusCode = RoleHttpExceptionFilter.STATUS[code];
     const error = new HttpException({ statusCode, message, code }, statusCode);

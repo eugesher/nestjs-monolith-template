@@ -250,9 +250,17 @@ describe('libs by layer', () => {
       'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
       '../../../../../../libs',
     ],
+  ])('infrastructure MAY reach the database contracts: %s', async (file, libs) => {
+    await expect({
+      file,
+      code: `import { x } from "${libs}/contracts/src/database";`,
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
     ['apps/__layers-fixture__/src/app/setup/orm/__fixture__.ts', '../../../../../../libs'],
     ['apps/__layers-fixture__/src/main.ts', '../../../libs'],
-  ])('infrastructure and bootstrap MAY reach the database lib: %s', async (file, libs) => {
+  ])('the ORM setup and bootstrap MAY reach the database lib: %s', async (file, libs) => {
     await expect({
       file,
       code: `import { x } from "${libs}/database/src";`,
@@ -274,6 +282,26 @@ describe('libs by layer', () => {
     ],
     ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs'],
     ['core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts', '../../../../../libs'],
+    [
+      'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/processors/purge/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/app/global/auth/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../../../libs',
+    ],
+    [
+      'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
+      '../../../../../../libs',
+    ],
   ])('nothing else may reach the database lib: %s', async (file, libs) => {
     await expect({
       file,

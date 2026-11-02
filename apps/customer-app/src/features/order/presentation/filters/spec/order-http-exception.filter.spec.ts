@@ -2,7 +2,14 @@ import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { OrderDomainException, OrderErrorCodeEnum } from '../../../domain';
+import {
+  OrderEmptyException,
+  OrderIdempotencyKeyReusedException,
+  OrderIdempotentRequestInFlightException,
+  OrderNotFoundException,
+  OrderProductNotFoundException,
+  OrderStockInsufficientException,
+} from '../../../domain';
 import { OrderHttpExceptionFilter } from '../order-http-exception.filter';
 
 describe('OrderHttpExceptionFilter', () => {
@@ -17,38 +24,50 @@ describe('OrderHttpExceptionFilter', () => {
   it('hands the HttpException over together with the same host', () => {
     const host = {} as ArgumentsHost;
 
-    filter.catch(new OrderDomainException(OrderErrorCodeEnum.ORDER_NOT_FOUND, 'reason'), host);
+    filter.catch(new OrderNotFoundException('600'), host);
 
     expect(httpExceptionFilter.catch).toHaveBeenCalledTimes(1);
     expect(httpExceptionFilter.catch).toHaveBeenCalledWith(expect.any(HttpException), host);
   });
 
   it.each([
-    ['ORDER_EMPTY', 400],
-    ['ORDER_PRODUCT_NOT_FOUND', 404],
-    ['ORDER_NOT_FOUND', 404],
-    ['ORDER_STOCK_INSUFFICIENT', 409],
-    ['ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT', 409],
-    ['ORDER_IDEMPOTENCY_KEY_REUSED', 422],
-  ])('maps %s to %i with the code and the domain message in the body', (code, status) => {
-    filter.catch(
-      new OrderDomainException(code as OrderErrorCodeEnum, 'domain message'),
-      {} as ArgumentsHost,
-    );
+    ['ORDER_EMPTY', 400, new OrderEmptyException('domain message')],
+    ['ORDER_PRODUCT_NOT_FOUND', 404, new OrderProductNotFoundException('100', 'domain message')],
+    ['ORDER_NOT_FOUND', 404, new OrderNotFoundException('600', 'domain message')],
+    [
+      'ORDER_STOCK_INSUFFICIENT',
+      409,
+      new OrderStockInsufficientException('100', 9, 8, 'domain message'),
+    ],
+    [
+      'ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT',
+      409,
+      new OrderIdempotentRequestInFlightException('key-1', 'domain message'),
+    ],
+    [
+      'ORDER_IDEMPOTENCY_KEY_REUSED',
+      422,
+      new OrderIdempotencyKeyReusedException('key-1', 'domain message'),
+    ],
+  ])(
+    'maps %s to %i with the code and the domain message in the body',
+    (code, status, exception) => {
+      filter.catch(exception, {} as ArgumentsHost);
 
-    const [error] = httpExceptionFilter.catch.mock.calls[0];
+      const [error] = httpExceptionFilter.catch.mock.calls[0];
 
-    expect(error.getStatus()).toBe(status);
-    expect(error.getResponse()).toEqual({ statusCode: status, message: 'domain message', code });
-  });
+      expect(error.getStatus()).toBe(status);
+      expect(error.getResponse()).toMatchObject({
+        statusCode: status,
+        message: 'domain message',
+        code,
+      });
+    },
+  );
 
   it('adds the details of the exception to the body', () => {
     filter.catch(
-      new OrderDomainException(OrderErrorCodeEnum.ORDER_STOCK_INSUFFICIENT, 'domain message', {
-        productId: '100',
-        requested: 9,
-        available: 8,
-      }),
+      new OrderStockInsufficientException('100', 9, 8, 'domain message'),
       {} as ArgumentsHost,
     );
 

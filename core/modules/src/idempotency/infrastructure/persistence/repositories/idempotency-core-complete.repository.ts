@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { RepositoryHost } from '@acme-libs/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { IdempotencyKey } from '@acme-core/entities';
 
@@ -12,7 +12,10 @@ import {
 
 @Injectable()
 export class IdempotencyCoreCompleteRepository implements IIdempotencyCoreCompleteRepositoryPort {
-  constructor(private readonly repositoryHost: RepositoryHost) {}
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
 
   private get idempotencyKeyRepository(): Repository<IdempotencyKey> {
     return this.repositoryHost.getRepository(IdempotencyKey);

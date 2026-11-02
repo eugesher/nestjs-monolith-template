@@ -44,11 +44,12 @@ const areaPolicies = (area, sharedFacing) => {
       layer('infrastructure'),
       layer('infrastructure:core-adapters'),
       layer('infrastructure:common-adapters'),
+      layer('infrastructure:lib-adapters'),
       layer('infrastructure:queue'),
       to('acme-core:entities'),
       to('acme-app:common:entities', own('app')),
-      baseLibs('database'),
-      libContracts('cache'),
+      baseLibs(),
+      libContracts('cache', 'database'),
       ...sharedFacing.infrastructure,
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),
@@ -66,6 +67,13 @@ const areaPolicies = (area, sharedFacing) => {
       to('acme-app:contracts', own('app')),
       baseLibs(),
       ...sharedFacing.commonAdapters,
+    ]),
+    fromSpec(`${prefix}:infrastructure:lib-adapters`),
+    from(`${prefix}:infrastructure:lib-adapters`, [
+      layer('domain'),
+      layer('outbound'),
+      baseLibs(),
+      ...sharedFacing.libAdapters,
     ]),
     fromSpec(`${prefix}:infrastructure:queue`),
     from(`${prefix}:infrastructure:queue`, [
@@ -99,13 +107,14 @@ const areaPolicies = (area, sharedFacing) => {
 export const moduleAreas = [
   ...areaPolicies('features', {
     outbound: [libs('ledger')],
-    application: [libContracts('credentials'), libs('ledger'), packages('@nestjs/common')],
+    application: [libs('ledger'), packages('@nestjs/common')],
     infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [packages('@nestjs/common')],
+    libAdapters: [libContracts('credentials', 'health'), packages('@nestjs/common')],
     queue: [libs('ledger'), packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:common:shared:index', own('app')),
-      libContracts('auth', 'health'),
+      libContracts('auth'),
       baseLibs('auth', 'http'),
       packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
@@ -119,6 +128,7 @@ export const moduleAreas = [
     application: [],
     infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [],
+    libAdapters: [],
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:contracts', own('app')),

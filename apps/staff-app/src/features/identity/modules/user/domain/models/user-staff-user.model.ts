@@ -1,6 +1,7 @@
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
-import { UserDomainException } from '../exceptions/user-domain.exception';
+import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
+import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
 import { IUserStaffUserDraft } from '../interfaces/user-staff-user-draft.interface';
 import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';
 import { IUserStaffUserRegistration } from '../interfaces/user-staff-user-registration.interface';
@@ -22,10 +23,7 @@ export class UserStaffUserModel {
     const normalized = UserStaffUserModel.normalizeEmail(email);
 
     if (!UserStaffUserModel.EMAIL_PATTERN.test(normalized)) {
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
-        'User email must be a well-formed address',
-      );
+      throw new AuthEmailInvalidException();
     }
 
     const unique = [...new Set(roles)];
@@ -41,10 +39,7 @@ export class UserStaffUserModel {
 
   public static assertPasswordStrength(password: string): void {
     if (password.length < UserStaffUserModel.MIN_PASSWORD_LENGTH) {
-      throw new UserDomainException(
-        IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
-        `Password must be at least ${UserStaffUserModel.MIN_PASSWORD_LENGTH} characters`,
-      );
+      throw new AuthPasswordTooWeakException(UserStaffUserModel.MIN_PASSWORD_LENGTH);
     }
   }
 

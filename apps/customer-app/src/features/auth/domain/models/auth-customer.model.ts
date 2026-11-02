@@ -1,6 +1,8 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
-import { AuthDomainException } from '../exceptions/auth-domain.exception';
+import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
+import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
+import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
 import { IAuthCustomerDraft } from '../interfaces/auth-customer-draft.interface';
 import { IAuthCustomerRecord } from '../interfaces/auth-customer-record.interface';
 import { IAuthCustomerRegistration } from '../interfaces/auth-customer-registration.interface';
@@ -21,10 +23,7 @@ export class AuthCustomerModel {
     const normalized = AuthCustomerModel.normalizeEmail(email);
 
     if (!AuthCustomerModel.EMAIL_PATTERN.test(normalized)) {
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
-        'Customer email must be a well-formed address',
-      );
+      throw new AuthEmailInvalidException();
     }
 
     return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE };
@@ -42,19 +41,13 @@ export class AuthCustomerModel {
 
   public static assertPasswordStrength(password: string): void {
     if (password.length < AuthCustomerModel.MIN_PASSWORD_LENGTH) {
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
-        `Password must be at least ${AuthCustomerModel.MIN_PASSWORD_LENGTH} characters`,
-      );
+      throw new AuthPasswordTooWeakException(AuthCustomerModel.MIN_PASSWORD_LENGTH);
     }
   }
 
   public assertActive(): void {
     if (this.status !== UserStatusEnum.ACTIVE) {
-      throw new AuthDomainException(
-        IdentityErrorCodeEnum.AUTH_USER_INACTIVE,
-        `Customer ${this.id} is disabled`,
-      );
+      throw new AuthUserInactiveException(this.id);
     }
   }
 }
