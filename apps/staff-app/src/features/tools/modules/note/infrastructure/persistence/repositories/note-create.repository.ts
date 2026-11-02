@@ -21,7 +21,7 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
 
   public async insert(note: NoteModel): Promise<NoteModel> {
     const { subjectType, subjectId, body, authorId, resolved, version } = note;
-    const draft = this.noteRepository.create({
+    const result = await this.noteRepository.insert({
       subjectType,
       subjectId,
       body,
@@ -29,8 +29,8 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
       resolved,
       version,
     });
-    const saved = await this.noteRepository.save(draft);
-    const id = String(saved.id);
+    const [identifier] = result.identifiers as { id: number | string }[];
+    const id = String(identifier.id);
     const stored = await this.noteRepository
       .createQueryBuilder('Note')
       .select([

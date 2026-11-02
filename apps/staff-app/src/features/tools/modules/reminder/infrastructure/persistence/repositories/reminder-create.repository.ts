@@ -21,9 +21,16 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
 
   public async insert(reminder: ReminderModel): Promise<ReminderModel> {
     const { ownerId, title, body, dueOn, status, version } = reminder;
-    const draft = this.reminderRepository.create({ ownerId, title, body, dueOn, status, version });
-    const saved = await this.reminderRepository.save(draft);
-    const id = String(saved.id);
+    const result = await this.reminderRepository.insert({
+      ownerId,
+      title,
+      body,
+      dueOn,
+      status,
+      version,
+    });
+    const [identifier] = result.identifiers as { id: number | string }[];
+    const id = String(identifier.id);
     const stored = await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([

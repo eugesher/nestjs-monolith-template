@@ -49,13 +49,18 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
 
   public async insert(order: OrderModel): Promise<OrderModel> {
     const { customerId, products } = order;
-    const draft = this.orderRepository.create({ customerId });
-    const stored = await this.orderRepository.save(draft);
-    const lines = products.map((product) => ({ orderId: stored.id, productId: product.productId }));
+    const result = await this.orderRepository.insert({ customerId });
+    const [identifier] = result.identifiers as { id: number | string }[];
+    const orderId = String(identifier.id);
+    const lines = products.map((product) => ({ orderId, productId: product.productId }));
 
     await this.orderProductRepository.insert(lines);
 
-    const orderId = stored.id;
+    const stored = await this.orderRepository
+      .createQueryBuilder('Order')
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
+      .where('Order.id = :orderId', { orderId })
+      .getOneOrFail();
     const rows = await this.orderProductRepository
       .createQueryBuilder('OrderProduct')
       .select(['OrderProduct.id', 'OrderProduct.productId'])
