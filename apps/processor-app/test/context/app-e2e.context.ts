@@ -3,17 +3,14 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { Queue } from 'bull';
+import { Queue } from 'bull';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { Maybe } from '@acme-libs/toolkit';
+import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import {
-  type ILedgerRecordProcessorPayload,
-  LEDGER_RECORD_QUEUE,
-} from '@acme-core/contracts/ledger';
-import {
-  type IProductStockPostSubtractPayload,
+  IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
 } from '@acme-core/contracts/product-stock';
 import { AppModule } from '@acme-processor/app/app.module';

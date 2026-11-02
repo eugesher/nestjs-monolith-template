@@ -1,39 +1,23 @@
-import { Maybe } from '@acme-libs/toolkit';
-
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
+import { INoteRevisionCandidate } from '../interfaces/note-revision-candidate.interface';
 import { INoteRevisionDraft } from '../interfaces/note-revision-draft.interface';
 import { INoteRevisionRecord } from '../interfaces/note-revision-record.interface';
+import { INoteRevisionSnapshot } from '../interfaces/note-revision-snapshot.interface';
 
 export class NoteRevisionModel {
   private static readonly FIRST_REVISED_VERSION = 2;
 
   private constructor(
-    public readonly id: Maybe<string>,
+    public readonly id: string,
     public readonly noteId: string,
     public readonly noteVersion: number,
     public readonly bodyBefore: string,
     public readonly bodyAfter: string,
     public readonly editorId: string,
     public readonly correlationId: string,
-    public readonly recordedAt: Maybe<Date>,
+    public readonly recordedAt: Date,
   ) {
     Object.freeze(this);
-  }
-
-  public static create(draft: INoteRevisionDraft): NoteRevisionModel {
-    const { noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId } = draft;
-    const validNoteVersion = NoteRevisionModel.validNoteVersion(noteVersion);
-
-    return new NoteRevisionModel(
-      undefined,
-      noteId,
-      validNoteVersion,
-      bodyBefore,
-      bodyAfter,
-      editorId,
-      correlationId,
-      undefined,
-    );
   }
 
   public static reconstitute(record: INoteRevisionRecord): NoteRevisionModel {
@@ -53,6 +37,20 @@ export class NoteRevisionModel {
     );
   }
 
+  public static createDraft(candidate: INoteRevisionCandidate): INoteRevisionDraft {
+    const { noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId } = candidate;
+    const validNoteVersion = NoteRevisionModel.validNoteVersion(noteVersion);
+
+    return {
+      noteId,
+      noteVersion: validNoteVersion,
+      bodyBefore,
+      bodyAfter,
+      editorId,
+      correlationId,
+    };
+  }
+
   private static validNoteVersion(noteVersion: number): number {
     if (!Number.isInteger(noteVersion) || noteVersion < NoteRevisionModel.FIRST_REVISED_VERSION) {
       throw new NoteVersionInvalidException(
@@ -62,5 +60,18 @@ export class NoteRevisionModel {
     }
 
     return noteVersion;
+  }
+
+  public toView(): INoteRevisionSnapshot {
+    return {
+      id: this.id,
+      noteId: this.noteId,
+      noteVersion: this.noteVersion,
+      bodyBefore: this.bodyBefore,
+      bodyAfter: this.bodyAfter,
+      editorId: this.editorId,
+      correlationId: this.correlationId,
+      recordedAt: this.recordedAt.toISOString(),
+    };
   }
 }

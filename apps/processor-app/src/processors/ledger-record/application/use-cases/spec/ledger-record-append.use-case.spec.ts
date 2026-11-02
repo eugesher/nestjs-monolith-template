@@ -3,7 +3,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { LedgerRecordEntryModel } from '../../../domain';
+import { ILedgerRecordEntryDraft } from '../../../domain';
 import { LedgerRecordAppendUseCase } from '../ledger-record-append.use-case';
 
 describe('LedgerRecordAppendUseCase', () => {
@@ -30,9 +30,9 @@ describe('LedgerRecordAppendUseCase', () => {
         }),
       );
 
-      const [entry] = append.mock.calls[0] as [LedgerRecordEntryModel];
+      const [draft] = append.mock.calls[0] as [ILedgerRecordEntryDraft];
 
-      expect({ ...entry }).toEqual({
+      expect(draft).toEqual({
         operationKey: 'product-archived:12:2',
         subjectType: 'product',
         subjectId: '12',

@@ -14,7 +14,6 @@ import {
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
   PRODUCT_CORE_CATALOG_CACHE_PORT,
 } from '../../outbound';
-import { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
 import { ProductCoreLedgerService } from '../services/product-core-ledger.service';
 
 @Injectable()
@@ -47,7 +46,7 @@ export class ProductCoreArchiveUseCase {
     const { productId, expectedVersion } = command;
     const product = await this.repository.lockById(productId);
 
-    if (product === null) {
+    if (!product) {
       return { outcome: ProductCoreArchiveOutcomeEnum.NOT_FOUND, currentVersion: undefined };
     }
 
@@ -75,13 +74,9 @@ export class ProductCoreArchiveUseCase {
     const { id, sku, version } = product;
     const record = { productId: id, sku, version, previousStatus };
 
-    this.transaction.afterCommit(() => this.announce(record));
+    this.transaction.afterCommit(() => this.catalogCache.invalidate());
+    this.transaction.afterCommit(() => this.ledgerService.recordArchived(record));
 
     return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: version };
-  }
-
-  private async announce(command: IProductCoreLedgerRecordArchivedCommand): Promise<void> {
-    await this.catalogCache.invalidate();
-    await this.ledgerService.recordArchived(command);
   }
 }

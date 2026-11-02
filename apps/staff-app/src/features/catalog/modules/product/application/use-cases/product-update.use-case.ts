@@ -3,7 +3,6 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
 import { IProductUpdateCommand, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductWriteService } from '../services/product-write.service';
 
 @Injectable()
@@ -25,7 +24,7 @@ export class ProductUpdateUseCase {
 
     await this.catalogCache.invalidate();
 
-    const view = ProductViewMapper.toView(product);
+    const view = product.toView();
 
     this.logger.info({ productId, version: view.version }, 'Product updated');
 

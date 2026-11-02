@@ -22,7 +22,11 @@ describe('NoteGetRevisionsUseCase', () => {
       }),
     );
     listForNote = jest.fn().mockResolvedValue({
-      items: [
+      page: 2,
+      count: 1,
+      pageCount: 1,
+      total: 1,
+      data: [
         NoteRevisionModel.reconstitute({
           id: '11',
           noteId: '7',
@@ -34,9 +38,6 @@ describe('NoteGetRevisionsUseCase', () => {
           recordedAt: new Date('2026-01-02T00:00:00.123Z'),
         }),
       ],
-      total: 1,
-      page: 2,
-      size: 5,
     });
     useCase = new NoteGetRevisionsUseCase({ loadOwned } as unknown as NoteAccessService, {
       listForNote,
@@ -50,7 +51,11 @@ describe('NoteGetRevisionsUseCase', () => {
       expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
       expect(listForNote).toHaveBeenCalledWith({ page: 2, size: 5, noteId: '7' });
       expect(page).toEqual({
-        items: [
+        page: 2,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [
           {
             id: '11',
             noteId: '7',
@@ -62,9 +67,6 @@ describe('NoteGetRevisionsUseCase', () => {
             recordedAt: '2026-01-02T00:00:00.123Z',
           },
         ],
-        total: 1,
-        page: 2,
-        size: 5,
       });
     });
 

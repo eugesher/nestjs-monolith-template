@@ -16,16 +16,16 @@ import {
 import {
   NoteAccessRepository,
   NoteCreateRepository,
-  NoteCrudRepository,
   NoteEditRepository,
+  NoteGetManyRepository,
   NoteGetRevisionsRepository,
   NoteResolveRepository,
 } from './infrastructure';
 import {
   NOTE_ACCESS_REPOSITORY_PORT,
   NOTE_CREATE_REPOSITORY_PORT,
-  NOTE_CRUD_REPOSITORY_PORT,
   NOTE_EDIT_REPOSITORY_PORT,
+  NOTE_GET_MANY_REPOSITORY_PORT,
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
   NOTE_OCC_RETRY_ATTEMPTS,
   NOTE_RESOLVE_REPOSITORY_PORT,
@@ -46,8 +46,8 @@ import { NoteController } from './presentation';
     NoteWriteService,
     { provide: NOTE_ACCESS_REPOSITORY_PORT, useClass: NoteAccessRepository },
     { provide: NOTE_CREATE_REPOSITORY_PORT, useClass: NoteCreateRepository },
-    { provide: NOTE_CRUD_REPOSITORY_PORT, useClass: NoteCrudRepository },
     { provide: NOTE_EDIT_REPOSITORY_PORT, useClass: NoteEditRepository },
+    { provide: NOTE_GET_MANY_REPOSITORY_PORT, useClass: NoteGetManyRepository },
     { provide: NOTE_GET_REVISIONS_REPOSITORY_PORT, useClass: NoteGetRevisionsRepository },
     { provide: NOTE_RESOLVE_REPOSITORY_PORT, useClass: NoteResolveRepository },
     ConfigProviderHelper.value(NOTE_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),

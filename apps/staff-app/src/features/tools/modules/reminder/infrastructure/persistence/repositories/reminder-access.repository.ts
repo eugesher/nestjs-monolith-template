@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import {
-  IReminderAccessFindOwnedQuery,
-  type IReminderAccessRepositoryPort,
-} from '../../../outbound';
+import { IReminderAccessFindOwnedQuery, IReminderAccessRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
@@ -18,7 +18,7 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get reminderRepository(): Repository<Reminder> {
+  private get reminderRepository(): IHostedRepository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
   }
 
@@ -41,7 +41,7 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
       .andWhere('Reminder.ownerId = :ownerId', { ownerId })
       .getOne();
 
-    if (reminder === null) {
+    if (!reminder) {
       return null;
     }
 

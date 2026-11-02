@@ -3,9 +3,9 @@ import { UserStatusEnum } from '@acme-libs/kernel';
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
 import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
+import { IAuthCustomerCandidate } from '../interfaces/auth-customer-candidate.interface';
 import { IAuthCustomerDraft } from '../interfaces/auth-customer-draft.interface';
 import { IAuthCustomerRecord } from '../interfaces/auth-customer-record.interface';
-import { IAuthCustomerRegistration } from '../interfaces/auth-customer-registration.interface';
 
 export class AuthCustomerModel {
   private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,8 +18,14 @@ export class AuthCustomerModel {
     public readonly status: UserStatusEnum,
   ) {}
 
-  public static register(registration: IAuthCustomerRegistration): IAuthCustomerDraft {
-    const { email, passwordHash } = registration;
+  public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {
+    const { id, email, passwordHash, status } = record;
+
+    return new AuthCustomerModel(id, email, passwordHash, status);
+  }
+
+  public static createDraft(candidate: IAuthCustomerCandidate): IAuthCustomerDraft {
+    const { email, passwordHash } = candidate;
     const normalized = AuthCustomerModel.normalizeEmail(email);
 
     if (!AuthCustomerModel.EMAIL_PATTERN.test(normalized)) {
@@ -27,12 +33,6 @@ export class AuthCustomerModel {
     }
 
     return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE };
-  }
-
-  public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {
-    const { id, email, passwordHash, status } = record;
-
-    return new AuthCustomerModel(id, email, passwordHash, status);
   }
 
   public static normalizeEmail(email: string): string {

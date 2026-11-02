@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { IPage } from '@acme-libs/toolkit';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { NoteRevision } from '@acme-staff/common/entities';
 
 import { NoteRevisionModel } from '../../../domain';
-import { type INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
+import { INoteGetRevisionsRepositoryPort, INoteRevisionPageQuery } from '../../../outbound';
 
 @Injectable()
 export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPort {
@@ -15,7 +18,7 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get noteRevisionRepository(): Repository<NoteRevision> {
+  private get noteRevisionRepository(): IHostedRepository<NoteRevision> {
     return this.repositoryHost.getRepository(NoteRevision);
   }
 
@@ -39,22 +42,19 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
       .take(size)
       .getManyAndCount();
 
-    return {
-      items: revisions.map((revision) =>
-        NoteRevisionModel.reconstitute({
-          id: revision.id,
-          noteId: revision.noteId,
-          noteVersion: revision.noteVersion,
-          bodyBefore: revision.bodyBefore,
-          bodyAfter: revision.bodyAfter,
-          editorId: revision.editorId,
-          correlationId: revision.correlationId,
-          recordedAt: revision.recordedAt,
-        }),
-      ),
-      total,
-      page,
-      size,
-    };
+    const data = revisions.map((revision) =>
+      NoteRevisionModel.reconstitute({
+        id: revision.id,
+        noteId: revision.noteId,
+        noteVersion: revision.noteVersion,
+        bodyBefore: revision.bodyBefore,
+        bodyAfter: revision.bodyAfter,
+        editorId: revision.editorId,
+        correlationId: revision.correlationId,
+        recordedAt: revision.recordedAt,
+      }),
+    );
+
+    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

@@ -1,13 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../../domain';
-import { type IUserRegisterRepositoryPort } from '../../../outbound';
+import { IUserRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
@@ -16,15 +19,15 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffRoleRepository(): Repository<StaffRole> {
+  private get staffRoleRepository(): IHostedRepository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  private get staffUserRoleRepository(): Repository<StaffUserRole> {
+  private get staffUserRoleRepository(): IHostedRepository<StaffUserRole> {
     return this.repositoryHost.getRepository(StaffUserRole);
   }
 
-  private get staffUserRepository(): Repository<StaffUser> {
+  private get staffUserRepository(): IHostedRepository<StaffUser> {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
@@ -41,10 +44,7 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     const { email, passwordHash, status } = draft;
 
     try {
-      const result = await this.staffUserRepository.insert({ email, passwordHash, status });
-      const [identifier] = result.identifiers as { id: number | string }[];
-
-      return String(identifier.id);
+      return await this.staffUserRepository.insertOne({ email, passwordHash, status });
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         throw new AuthEmailTakenException(email);

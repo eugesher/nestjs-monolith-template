@@ -90,7 +90,7 @@ export class ProductWriteService {
   private async load(productId: string): Promise<ProductModel> {
     const product = await this.repository.findById(productId);
 
-    if (product === null) {
+    if (!product) {
       throw new ProductNotFoundException(productId);
     }
 

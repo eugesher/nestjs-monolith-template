@@ -18,11 +18,11 @@ describe('OrderController', () => {
 
   describe('handleGetMany', () => {
     it('lists the orders for the page window', async () => {
-      getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
+      getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany({ page: 2, size: 5 });
 
-      expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
+      expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({ page: 2, size: 5 });
     });
   });

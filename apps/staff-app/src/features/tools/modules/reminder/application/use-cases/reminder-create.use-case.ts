@@ -9,7 +9,6 @@ import {
   REMINDER_SUMMARY_PORT,
 } from '../../outbound';
 import { IReminderCreateCommand, IReminderView } from '../interfaces';
-import { ReminderViewMapper } from '../mappers/reminder-view.mapper';
 
 @Injectable()
 export class ReminderCreateUseCase {
@@ -24,12 +23,12 @@ export class ReminderCreateUseCase {
 
   public async execute(command: IReminderCreateCommand): Promise<IReminderView> {
     const { ownerId, title, body, dueOn } = command;
-    const reminder = ReminderModel.create({ ownerId, title, body: body ?? '', dueOn });
-    const created = await this.repository.insert(reminder);
+    const draft = ReminderModel.createDraft({ ownerId, title, body: body ?? '', dueOn });
+    const created = await this.repository.insert(draft);
 
     await this.summary.invalidate(ownerId);
 
-    const view = ReminderViewMapper.toView(created);
+    const view = created.toView();
 
     this.logger.info({ reminderId: view.id, ownerId }, 'Reminder created');
 

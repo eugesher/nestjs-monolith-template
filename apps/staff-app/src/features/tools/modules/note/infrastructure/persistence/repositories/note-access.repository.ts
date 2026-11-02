@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
 import { NoteModel } from '../../../domain';
-import { INoteAccessFindOwnedQuery, type INoteAccessRepositoryPort } from '../../../outbound';
+import { INoteAccessFindOwnedQuery, INoteAccessRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {
@@ -15,7 +18,7 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get noteRepository(): Repository<Note> {
+  private get noteRepository(): IHostedRepository<Note> {
     return this.repositoryHost.getRepository(Note);
   }
 
@@ -38,7 +41,7 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
       .andWhere('Note.authorId = :authorId', { authorId })
       .getOne();
 
-    if (note === null) {
+    if (!note) {
       return null;
     }
 

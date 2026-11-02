@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
 import { OrderGetManyUseCase, OrderGetOneUseCase } from './application';
-import { OrderCrudRepository } from './infrastructure';
-import { ORDER_CRUD_REPOSITORY_PORT } from './outbound';
+import { OrderGetManyRepository, OrderGetOneRepository } from './infrastructure';
+import { ORDER_GET_MANY_REPOSITORY_PORT, ORDER_GET_ONE_REPOSITORY_PORT } from './outbound';
 import { OrderController } from './presentation';
 
 @Module({
@@ -13,7 +13,8 @@ import { OrderController } from './presentation';
     HttpExceptionFilter,
     OrderGetManyUseCase,
     OrderGetOneUseCase,
-    { provide: ORDER_CRUD_REPOSITORY_PORT, useClass: OrderCrudRepository },
+    { provide: ORDER_GET_MANY_REPOSITORY_PORT, useClass: OrderGetManyRepository },
+    { provide: ORDER_GET_ONE_REPOSITORY_PORT, useClass: OrderGetOneRepository },
   ],
 })
 export class OrderModule {}

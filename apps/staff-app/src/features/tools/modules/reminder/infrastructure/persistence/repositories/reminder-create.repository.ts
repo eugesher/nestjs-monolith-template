@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { ReminderModel } from '../../../domain';
-import { type IReminderCreateRepositoryPort } from '../../../outbound';
+import { IReminderDraft, ReminderModel } from '../../../domain';
+import { IReminderCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
@@ -14,13 +17,13 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get reminderRepository(): Repository<Reminder> {
+  private get reminderRepository(): IHostedRepository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async insert(reminder: ReminderModel): Promise<ReminderModel> {
-    const { ownerId, title, body, dueOn, status, version } = reminder;
-    const result = await this.reminderRepository.insert({
+  public async insert(draft: IReminderDraft): Promise<ReminderModel> {
+    const { ownerId, title, body, dueOn, status, version } = draft;
+    const id = await this.reminderRepository.insertOne({
       ownerId,
       title,
       body,
@@ -28,8 +31,6 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
       status,
       version,
     });
-    const [identifier] = result.identifiers as { id: number | string }[];
-    const id = String(identifier.id);
     const stored = await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([

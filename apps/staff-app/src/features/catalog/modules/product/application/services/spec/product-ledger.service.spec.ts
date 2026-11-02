@@ -4,7 +4,7 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductCreatedEvent, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
+import { ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
 import { ProductLedgerService } from '../product-ledger.service';
 
 describe('ProductLedgerService', () => {
@@ -23,13 +23,10 @@ describe('ProductLedgerService', () => {
     jest.useRealTimers();
   });
 
-  describe('recordEvents', () => {
+  describe('recordCreated', () => {
     it('enqueues a creation under the stored id with the correlation id of the request', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
-        service.recordEvents({
-          productId: '12',
-          events: [new ProductCreatedEvent(undefined, 'SKU-0001', 'Lamp')],
-        }),
+        service.recordCreated({ productId: '12', sku: 'SKU-0001', name: 'Lamp' }),
       );
 
       expect(enqueue).toHaveBeenCalledWith({
@@ -42,7 +39,9 @@ describe('ProductLedgerService', () => {
         correlationId: 'corr-1',
       });
     });
+  });
 
+  describe('recordEvents', () => {
     it('leaves an update out of the ledger', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordEvents({

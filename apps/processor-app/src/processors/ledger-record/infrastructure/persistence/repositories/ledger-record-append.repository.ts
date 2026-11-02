@@ -1,13 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { QueryDeepPartialEntity, Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
-import { LedgerRecordEntryModel } from '../../../domain';
+import { ILedgerRecordEntryDraft } from '../../../domain';
 import {
-  type ILedgerRecordAppendRepositoryPort,
+  ILedgerRecordAppendRepositoryPort,
   ILedgerRecordAppendOutcomeView,
 } from '../../../outbound';
 
@@ -18,14 +22,14 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get ledgerEntryRepository(): Repository<LedgerEntry> {
+  private get ledgerEntryRepository(): IHostedRepository<LedgerEntry> {
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async append(entry: LedgerRecordEntryModel): Promise<ILedgerRecordAppendOutcomeView> {
+  public async append(entry: ILedgerRecordEntryDraft): Promise<ILedgerRecordAppendOutcomeView> {
     try {
       const payload = entry.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
-      const result = await this.ledgerEntryRepository.insert({
+      const id = await this.ledgerEntryRepository.insertOne({
         operationKey: entry.operationKey,
         subjectType: entry.subjectType,
         subjectId: entry.subjectId,
@@ -34,9 +38,7 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
         correlationId: entry.correlationId,
         occurredAt: entry.occurredAt,
       });
-      const [identifier] = result.identifiers as { id: number | string }[];
-
-      return { id: String(identifier.id), appended: true };
+      return { id, appended: true };
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         const { operationKey } = entry;

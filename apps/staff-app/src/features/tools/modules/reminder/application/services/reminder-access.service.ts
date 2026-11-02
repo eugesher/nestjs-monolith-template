@@ -18,7 +18,7 @@ export class ReminderAccessService {
     const { reminderId, ownerId } = query;
     const reminder = await this.repository.findOwned({ reminderId, ownerId });
 
-    if (reminder === null) {
+    if (!reminder) {
       throw new ReminderNotFoundException(reminderId);
     }
 

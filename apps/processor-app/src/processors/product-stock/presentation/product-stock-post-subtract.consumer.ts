@@ -3,7 +3,7 @@ import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
-  type IProductStockPostSubtractPayload,
+  IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
 } from '@acme-core/contracts/product-stock';
 

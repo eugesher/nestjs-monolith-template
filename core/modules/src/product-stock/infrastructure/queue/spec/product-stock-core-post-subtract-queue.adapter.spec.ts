@@ -1,4 +1,4 @@
-import type { Queue } from 'bull';
+import { Queue } from 'bull';
 
 import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 

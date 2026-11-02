@@ -11,7 +11,7 @@ describe('LedgerListEntriesUseCase', () => {
 
   describe('execute', () => {
     it('asks the ledger for the page and the filters of the query', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 2, size: 10 });
+      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({
         page: 2,
@@ -31,7 +31,7 @@ describe('LedgerListEntriesUseCase', () => {
     });
 
     it('reads the first page of 20 when the query names no window', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 20 });
+      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ subjectType: 'product' });
 
@@ -45,7 +45,7 @@ describe('LedgerListEntriesUseCase', () => {
     });
 
     it('caps the page size at 100', async () => {
-      list.mockResolvedValue({ items: [], total: 0, page: 1, size: 100 });
+      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
       await useCase.execute({ size: 500 });
 
@@ -60,7 +60,11 @@ describe('LedgerListEntriesUseCase', () => {
 
     it('answers the page of the ledger', async () => {
       list.mockResolvedValue({
-        items: [
+        page: 1,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [
           {
             id: '7',
             operationKey: 'product-archived:12',
@@ -73,15 +77,16 @@ describe('LedgerListEntriesUseCase', () => {
             recordedAt: '2026-01-01T00:00:01.000Z',
           },
         ],
-        total: 1,
-        page: 1,
-        size: 20,
       });
 
       const page = await useCase.execute({});
 
       expect(page).toEqual({
-        items: [
+        page: 1,
+        count: 1,
+        pageCount: 1,
+        total: 1,
+        data: [
           {
             id: '7',
             operationKey: 'product-archived:12',
@@ -94,9 +99,6 @@ describe('LedgerListEntriesUseCase', () => {
             recordedAt: '2026-01-01T00:00:01.000Z',
           },
         ],
-        total: 1,
-        page: 1,
-        size: 20,
       });
     });
   });

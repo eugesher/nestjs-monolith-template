@@ -1,4 +1,4 @@
-import { type ICachePort } from '@acme-libs/contracts/cache';
+import { ICachePort } from '@acme-libs/contracts/cache';
 
 import { ProductCatalogCacheAdapter } from '../product-catalog-cache.adapter';
 

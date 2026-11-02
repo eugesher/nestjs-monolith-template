@@ -1,9 +1,10 @@
+import { ILedgerRecordEntryDraft } from '../../interfaces/ledger-record-entry-draft.interface';
 import { LedgerRecordEntryModel } from '../ledger-record-entry.model';
 
 describe('LedgerRecordEntryModel', () => {
-  describe('create', () => {
+  describe('createDraft', () => {
     it('trims the operation key and the action', () => {
-      const entry = LedgerRecordEntryModel.create({
+      const draft = LedgerRecordEntryModel.createDraft({
         operationKey: '  product-archived:12 ',
         subjectType: 'product',
         subjectId: '12',
@@ -13,7 +14,7 @@ describe('LedgerRecordEntryModel', () => {
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
-      expect({ ...entry }).toEqual({
+      expect(draft).toEqual({
         operationKey: 'product-archived:12',
         subjectType: 'product',
         subjectId: '12',
@@ -22,20 +23,6 @@ describe('LedgerRecordEntryModel', () => {
         correlationId: 'corr-1',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
       });
-    });
-
-    it('freezes the entry — a ledger row never changes', () => {
-      const entry = LedgerRecordEntryModel.create({
-        operationKey: 'product-archived:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: {},
-        correlationId: 'corr-1',
-        occurredAt: new Date('2026-01-01T00:00:00.000Z'),
-      });
-
-      expect(Object.isFrozen(entry)).toBe(true);
     });
 
     it.each([
@@ -61,8 +48,8 @@ describe('LedgerRecordEntryModel', () => {
         'LedgerEntry.occurredAt must be a valid instant',
       ],
     ])('rejects %s', (_case, operationKey, action, occurredAt, message) => {
-      const create = (): LedgerRecordEntryModel =>
-        LedgerRecordEntryModel.create({
+      const createDraft = (): ILedgerRecordEntryDraft =>
+        LedgerRecordEntryModel.createDraft({
           operationKey,
           subjectType: 'product',
           subjectId: '12',
@@ -72,7 +59,7 @@ describe('LedgerRecordEntryModel', () => {
           occurredAt: new Date(occurredAt),
         });
 
-      expect(create).toThrow(message);
+      expect(createDraft).toThrow(message);
     });
   });
 });

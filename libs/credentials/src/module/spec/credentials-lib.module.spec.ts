@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
+import { CREDENTIALS_LIB_PORT, ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
 import { CredentialsLibModule } from '../credentials-lib.module';
 

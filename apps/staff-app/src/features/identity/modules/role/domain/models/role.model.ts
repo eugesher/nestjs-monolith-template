@@ -2,6 +2,7 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { AuthPermissionNotFoundException } from '../exceptions/auth-permission-not-found.exception';
 import { IRoleRecord } from '../interfaces/role-record.interface';
+import { IRoleSnapshot } from '../interfaces/role-snapshot.interface';
 import { RolePermissionModel } from './role-permission.model';
 
 export class RoleModel {
@@ -31,5 +32,9 @@ export class RoleModel {
     }
 
     this.codes = unique;
+  }
+
+  public toView(): IRoleSnapshot {
+    return { name: this.name, permissionCodes: [...this.permissionCodes] };
   }
 }

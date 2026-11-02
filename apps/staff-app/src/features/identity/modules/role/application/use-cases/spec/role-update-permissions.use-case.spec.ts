@@ -67,9 +67,16 @@ describe('RoleUpdatePermissionsUseCase', () => {
 
     expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
     expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
-    expect(repository.replacePermissions).toHaveBeenCalledWith(
-      expect.objectContaining({ id: '2', permissionCodes: ['iam:role-edit', 'product:read'] }),
-    );
+    expect(repository.replacePermissions).toHaveBeenCalledWith({
+      role: expect.objectContaining({
+        id: '2',
+        permissionCodes: ['iam:role-edit', 'product:read'],
+      }) as unknown,
+      permissions: [
+        expect.objectContaining({ code: 'iam:role-edit' }),
+        expect.objectContaining({ code: 'product:read' }),
+      ],
+    });
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
       { role: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] },

@@ -61,24 +61,19 @@ export class ProductStockAddUseCase {
     }
 
     try {
-      return await this.add(command);
+      const written = await this.transaction.run(() => this.persist(command));
+      const { stock, productStockId, events } = written;
+
+      await this.ledgerService.recordEvents({ productId, productStockId, events });
+
+      this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
+
+      return stock;
     } catch (error) {
       await this.idempotency.release({ key: idempotencyKey });
 
       throw error;
     }
-  }
-
-  private async add(command: IProductStockAddCommand): Promise<IProductStockView> {
-    const { productId, quantity } = command;
-    const written = await this.transaction.run(() => this.persist(command));
-    const { stock, productStockId, events } = written;
-
-    await this.ledgerService.recordEvents({ productId, productStockId, events });
-
-    this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
-
-    return stock;
   }
 
   private async persist(command: IProductStockAddCommand): Promise<IProductStockAddWriteView> {
@@ -87,7 +82,7 @@ export class ProductStockAddUseCase {
 
     const productStock = await this.repository.findById(productId);
 
-    if (productStock === null) {
+    if (!productStock) {
       throw new ProductNotFoundException(productId);
     }
 

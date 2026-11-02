@@ -17,8 +17,6 @@ import {
   ORDER_PRODUCT_STOCK_PORT,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
-import { OrderStockMapper } from '../mappers/order-stock.mapper';
-import { OrderViewMapper } from '../mappers/order-view.mapper';
 import { OrderLedgerService } from '../services/order-ledger.service';
 
 @Injectable()
@@ -59,7 +57,21 @@ export class OrderPlaceUseCase {
     }
 
     try {
-      return await this.place(command);
+      const view = await this.transaction.run(() => this.persist(command));
+      const placedProductIds = view.products.map((product) => product.productId);
+
+      await this.ledgerService.recordPlaced({
+        orderId: view.id,
+        customerId,
+        productIds: placedProductIds,
+      });
+
+      this.logger.info(
+        { orderId: view.id, customerId, units: placedProductIds.length },
+        'Order placed',
+      );
+
+      return view;
     } catch (error) {
       await this.idempotency.release({ key: idempotencyKey });
 
@@ -67,31 +79,19 @@ export class OrderPlaceUseCase {
     }
   }
 
-  private async place(command: IOrderPlaceCommand): Promise<IOrderView> {
-    const { customerId } = command;
-    const view = await this.transaction.run(() => this.persist(command));
-    const productIds = view.products.map((product) => product.productId);
-
-    await this.ledgerService.recordPlaced({ orderId: view.id, customerId, productIds });
-
-    this.logger.info({ orderId: view.id, customerId, units: productIds.length }, 'Order placed');
-
-    return view;
-  }
-
   private async persist(command: IOrderPlaceCommand): Promise<IOrderView> {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
-    const quantities = await this.productStock.lock({ productIds: distinctIds });
+
+    const stock = await this.productStock.lock({ productIds: distinctIds });
     const products = await this.repository.findActiveProducts(distinctIds);
-    const stock = OrderStockMapper.toStock(products, quantities);
-    const draft = OrderModel.place({ customerId, productIds, stock });
+
+    const draft = OrderModel.createDraft({ customerId, productIds, products, stock });
+
     const placed = await this.repository.insert(draft);
-    const view = OrderViewMapper.toView(placed);
-    const movements = view.products.map((product) => ({
-      productId: product.productId,
-      orderProductId: product.id,
-    }));
+
+    const view = placed.toView();
+    const movements = placed.getMovements();
 
     await this.productStock.withdraw({ movements });
     await this.idempotency.complete({ key: idempotencyKey, response: view });

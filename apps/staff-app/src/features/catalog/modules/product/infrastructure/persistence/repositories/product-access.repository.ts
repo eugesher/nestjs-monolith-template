@@ -2,12 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
-import { type IProductAccessRepositoryPort } from '../../../outbound';
-import { ProductFindByIdBaseRepository } from './base/product-find-by-id-base.repository';
+import { IProductAccessRepositoryPort } from '../../../outbound';
+import { ProductBaseRepository } from './base/product-base.repository';
 
 @Injectable()
 export class ProductAccessRepository
-  extends ProductFindByIdBaseRepository
+  extends ProductBaseRepository
   implements IProductAccessRepositoryPort
 {
   constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {

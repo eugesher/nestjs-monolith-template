@@ -1,48 +1,31 @@
-import { AggregateRoot, Maybe } from '@acme-libs/toolkit';
+import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.exception';
 import { NoteResolvedException } from '../exceptions/note-resolved.exception';
 import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.exception';
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
+import { INoteCandidate } from '../interfaces/note-candidate.interface';
 import { INoteDraft } from '../interfaces/note-draft.interface';
 import { INoteRecord } from '../interfaces/note-record.interface';
+import { INoteSnapshot } from '../interfaces/note-snapshot.interface';
 
-export class NoteModel extends AggregateRoot<Maybe<string>> {
+export class NoteModel extends AggregateRoot<string> {
   private static readonly SUBJECT_TYPE_PATTERN = /^[a-z][a-z-]{1,63}$/;
   private static readonly SUBJECT_ID_MAX_LENGTH = 64;
   private static readonly BODY_MAX_LENGTH = 4000;
 
   private constructor(
-    id: Maybe<string>,
+    id: string,
     public readonly subjectType: string,
     public readonly subjectId: string,
     private currentBody: string,
     public readonly authorId: string,
     private currentResolved: boolean,
     private currentVersion: number,
-    public readonly createdAt: Maybe<Date>,
-    public readonly updatedAt: Maybe<Date>,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
   ) {
     super(id);
-  }
-
-  public static create(draft: INoteDraft): NoteModel {
-    const { subjectType, subjectId, body, authorId } = draft;
-    const validSubjectType = NoteModel.validSubjectType(subjectType);
-    const validSubjectId = NoteModel.validSubjectId(subjectId);
-    const validBody = NoteModel.validBody(body);
-
-    return new NoteModel(
-      undefined,
-      validSubjectType,
-      validSubjectId,
-      validBody,
-      authorId,
-      false,
-      1,
-      undefined,
-      undefined,
-    );
   }
 
   public static reconstitute(record: INoteRecord): NoteModel {
@@ -64,6 +47,22 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
       createdAt,
       updatedAt,
     );
+  }
+
+  public static createDraft(candidate: INoteCandidate): INoteDraft {
+    const { subjectType, subjectId, body, authorId } = candidate;
+    const validSubjectType = NoteModel.validSubjectType(subjectType);
+    const validSubjectId = NoteModel.validSubjectId(subjectId);
+    const validBody = NoteModel.validBody(body);
+
+    return {
+      subjectType: validSubjectType,
+      subjectId: validSubjectId,
+      body: validBody,
+      authorId,
+      resolved: false,
+      version: 1,
+    };
   }
 
   private static validSubjectType(subjectType: string): string {
@@ -138,9 +137,23 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
     this.currentVersion += 1;
   }
 
+  public toView(): INoteSnapshot {
+    return {
+      id: this.id,
+      subjectType: this.subjectType,
+      subjectId: this.subjectId,
+      body: this.body,
+      authorId: this.authorId,
+      resolved: this.resolved,
+      version: this.version,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
+    };
+  }
+
   private assertOpen(): void {
     if (this.currentResolved) {
-      throw new NoteResolvedException(String(this.id));
+      throw new NoteResolvedException(this.id);
     }
   }
 }

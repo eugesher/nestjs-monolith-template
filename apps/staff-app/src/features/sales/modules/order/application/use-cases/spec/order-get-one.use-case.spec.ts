@@ -11,7 +11,7 @@ describe('OrderGetOneUseCase', () => {
       createdAt: new Date('2026-01-03T00:00:00.000Z'),
       products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
     });
-    useCase = new OrderGetOneUseCase({ list: jest.fn(), findById });
+    useCase = new OrderGetOneUseCase({ findById });
   });
 
   describe('execute', () => {

@@ -1,13 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
 import { RoleModel, RolePermissionModel } from '../../../domain';
-import { type IRoleUpdatePermissionsRepositoryPort } from '../../../outbound';
+import {
+  IRoleReplacePermissionsCommand,
+  IRoleUpdatePermissionsRepositoryPort,
+} from '../../../outbound';
 
 @Injectable()
 export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRepositoryPort {
@@ -16,15 +22,15 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffPermissionRepository(): Repository<StaffPermission> {
+  private get staffPermissionRepository(): IHostedRepository<StaffPermission> {
     return this.repositoryHost.getRepository(StaffPermission);
   }
 
-  private get staffRolePermissionRepository(): Repository<StaffRolePermission> {
+  private get staffRolePermissionRepository(): IHostedRepository<StaffRolePermission> {
     return this.repositoryHost.getRepository(StaffRolePermission);
   }
 
-  private get staffRoleRepository(): Repository<StaffRole> {
+  private get staffRoleRepository(): IHostedRepository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
   }
 
@@ -39,7 +45,7 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .where('StaffRole.name = :name', { name })
       .getOne();
 
-    if (role === null) {
+    if (!role) {
       return null;
     }
 
@@ -69,10 +75,11 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     );
   }
 
-  public async replacePermissions(role: RoleModel): Promise<void> {
+  public async replacePermissions(command: IRoleReplacePermissionsCommand): Promise<void> {
+    const { role, permissions } = command;
+
     await this.staffRolePermissionRepository.delete({ roleId: role.id });
 
-    const permissions = await this.findPermissions([...role.permissionCodes]);
     const rows = permissions.map((permission) => ({
       roleId: role.id,
       permissionId: permission.id,

@@ -9,7 +9,6 @@ import {
   type IRoleUpdatePermissionsRepositoryPort,
 } from '../../outbound';
 import { IRoleView, IRoleUpdatePermissionsCommand } from '../interfaces';
-import { RoleViewMapper } from '../mappers/role-view.mapper';
 
 @Injectable()
 export class RoleUpdatePermissionsUseCase {
@@ -30,7 +29,7 @@ export class RoleUpdatePermissionsUseCase {
       'Role permissions replaced',
     );
 
-    return RoleViewMapper.toView(role);
+    return role.toView();
   }
 
   private async replace(command: IRoleUpdatePermissionsCommand): Promise<RoleModel> {
@@ -45,7 +44,7 @@ export class RoleUpdatePermissionsUseCase {
 
     role.replacePermissions(permissionCodes, known);
 
-    await this.repository.replacePermissions(role);
+    await this.repository.replacePermissions({ role, permissions: known });
 
     return role;
   }

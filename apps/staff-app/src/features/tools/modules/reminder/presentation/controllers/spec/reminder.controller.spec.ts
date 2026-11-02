@@ -58,7 +58,7 @@ describe('ReminderController', () => {
 
   describe('handleGetMany', () => {
     it('lists only the reminders of the caller', async () => {
-      getMany.mockResolvedValue({ items: [], total: 0, page: 2, size: 5 });
+      getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany(
         { page: 2, size: 5, status: ReminderStatusEnum.DONE },
@@ -68,7 +68,7 @@ describe('ReminderController', () => {
         },
       );
 
-      expect(response).toEqual({ items: [], total: 0, page: 2, size: 5 });
+      expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
         size: 5,

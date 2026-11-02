@@ -13,14 +13,16 @@ import {
   OrderPlaceUseCase,
 } from './application';
 import {
-  OrderCrudRepository,
+  OrderGetManyRepository,
+  OrderGetOneRepository,
   OrderIdempotencyCoreAdapter,
   OrderLedgerRecordQueueAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
 } from './infrastructure';
 import {
-  ORDER_CRUD_REPOSITORY_PORT,
+  ORDER_GET_MANY_REPOSITORY_PORT,
+  ORDER_GET_ONE_REPOSITORY_PORT,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_LEDGER_RECORD_PORT,
   ORDER_LEDGER_RECORD_TIMEOUT_MS,
@@ -39,7 +41,8 @@ import { OrderController } from './presentation';
     OrderGetManyUseCase,
     OrderGetOneUseCase,
     OrderLedgerService,
-    { provide: ORDER_CRUD_REPOSITORY_PORT, useClass: OrderCrudRepository },
+    { provide: ORDER_GET_MANY_REPOSITORY_PORT, useClass: OrderGetManyRepository },
+    { provide: ORDER_GET_ONE_REPOSITORY_PORT, useClass: OrderGetOneRepository },
     { provide: ORDER_PLACE_REPOSITORY_PORT, useClass: OrderPlaceRepository },
     { provide: ORDER_PRODUCT_STOCK_PORT, useClass: OrderProductStockCoreAdapter },
     { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },

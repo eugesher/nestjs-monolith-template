@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
 import {
   IAuthGlobalCustomerView,
-  type IAuthGlobalValidateSubjectRepositoryPort,
+  IAuthGlobalValidateSubjectRepositoryPort,
 } from '../../../outbound';
 
 @Injectable()
@@ -18,7 +21,7 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get customerRepository(): Repository<Customer> {
+  private get customerRepository(): IHostedRepository<Customer> {
     return this.repositoryHost.getRepository(Customer);
   }
 

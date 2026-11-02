@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductStockModel } from '../../../domain';
-import { type IProductStockAddRepositoryPort } from '../../../outbound';
+import { IProductStockAddRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductStockAddRepository implements IProductStockAddRepositoryPort {
@@ -15,7 +18,7 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get productRepository(): Repository<Product> {
+  private get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 
@@ -26,7 +29,7 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
       .where('Product.id = :productId', { productId })
       .getOne();
 
-    if (product === null) {
+    if (!product) {
       return null;
     }
 

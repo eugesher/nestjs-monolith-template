@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-import { OrderModel } from '../../../domain';
-import { type IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
+import { IOrderDraft, OrderModel } from '../../../domain';
+import { IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
@@ -15,15 +18,15 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get orderRepository(): Repository<Order> {
+  private get orderRepository(): IHostedRepository<Order> {
     return this.repositoryHost.getRepository(Order);
   }
 
-  private get orderProductRepository(): Repository<OrderProduct> {
+  private get orderProductRepository(): IHostedRepository<OrderProduct> {
     return this.repositoryHost.getRepository(OrderProduct);
   }
 
-  private get productRepository(): Repository<Product> {
+  private get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 
@@ -32,26 +35,18 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       return [];
     }
 
-    const products = await this.productRepository
+    return await this.productRepository
       .createQueryBuilder('Product')
-      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .select(['Product.id'])
       .where('Product.id IN (:...productIds)', { productIds })
       .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
       .getMany();
-
-    return products.map((product) => {
-      const { id, sku, name } = product;
-
-      return { productId: id, sku, name };
-    });
   }
 
-  public async insert(order: OrderModel): Promise<OrderModel> {
-    const { customerId, products } = order;
-    const result = await this.orderRepository.insert({ customerId });
-    const [identifier] = result.identifiers as { id: number | string }[];
-    const orderId = String(identifier.id);
-    const lines = products.map((product) => ({ orderId, productId: product.productId }));
+  public async insert(draft: IOrderDraft): Promise<OrderModel> {
+    const { customerId, productIds } = draft;
+    const orderId = await this.orderRepository.insertOne({ customerId });
+    const lines = productIds.map((productId) => ({ orderId, productId }));
 
     await this.orderProductRepository.insert(lines);
 
@@ -60,15 +55,22 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .leftJoin('Order.orderProducts', 'OrderProduct')
       .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
+      .leftJoin('OrderProduct.product', 'Product')
+      .addSelect(['Product.id', 'Product.sku', 'Product.name'])
       .where('Order.id = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
       .getOneOrFail();
+    const products = stored.orderProducts.map((orderProduct) => {
+      const { id, productId, product } = orderProduct;
 
-    return OrderModel.fromInserted(order, {
+      return { id, productId, sku: product.sku, name: product.name };
+    });
+
+    return OrderModel.reconstitute({
       id: stored.id,
       customerId: stored.customerId,
       createdAt: stored.createdAt,
-      products: stored.orderProducts,
+      products,
     });
   }
 }

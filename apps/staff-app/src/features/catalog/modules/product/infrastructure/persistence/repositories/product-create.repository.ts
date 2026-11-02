@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductModel, ProductSkuTakenException } from '../../../domain';
-import { type IProductCreateRepositoryPort } from '../../../outbound';
+import { IProductDraft, ProductModel, ProductSkuTakenException } from '../../../domain';
+import { IProductCreateRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductCreateRepository implements IProductCreateRepositoryPort {
@@ -15,7 +18,7 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get productRepository(): Repository<Product> {
+  private get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 
@@ -26,8 +29,8 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       .getExists();
   }
 
-  public async insert(product: ProductModel): Promise<ProductModel> {
-    const { sku, name, status, version } = product;
+  public async insert(draft: IProductDraft): Promise<ProductModel> {
+    const { sku, name, status, version } = draft;
 
     try {
       await this.productRepository.insert({ sku, name, status, version });

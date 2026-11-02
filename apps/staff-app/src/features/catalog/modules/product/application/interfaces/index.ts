@@ -1,6 +1,7 @@
 export * from './commands/product-archive.command';
 export * from './commands/product-create.command';
 export * from './commands/product-ledger-record.command';
+export * from './commands/product-ledger-record-created.command';
 export * from './commands/product-publish.command';
 export * from './commands/product-update.command';
 export * from './commands/product-write.command';

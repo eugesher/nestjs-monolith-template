@@ -9,7 +9,11 @@ describe('ProductGetManyUseCase', () => {
 
   beforeEach(() => {
     list = jest.fn().mockResolvedValue({
-      items: [
+      page: 2,
+      count: 1,
+      pageCount: 3,
+      total: 41,
+      data: [
         ProductModel.reconstitute({
           id: '12',
           sku: 'SKU-0001',
@@ -20,9 +24,6 @@ describe('ProductGetManyUseCase', () => {
           updatedAt: new Date('2026-01-01T00:00:00.000Z'),
         }),
       ],
-      total: 41,
-      page: 2,
-      size: 20,
     });
     useCase = new ProductGetManyUseCase({ list });
   });
@@ -33,7 +34,11 @@ describe('ProductGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({ page: 2, size: 20 });
       expect(page).toEqual({
-        items: [
+        page: 2,
+        count: 1,
+        pageCount: 3,
+        total: 41,
+        data: [
           {
             id: '12',
             sku: 'SKU-0001',
@@ -44,9 +49,6 @@ describe('ProductGetManyUseCase', () => {
             updatedAt: '2026-01-01T00:00:00.000Z',
           },
         ],
-        total: 41,
-        page: 2,
-        size: 20,
       });
     });
 

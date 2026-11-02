@@ -1,3 +1,5 @@
+import { IOrderMovement } from '../../../domain';
+
 export interface IOrderProductStockWithdrawCommand {
-  movements: { productId: string; orderProductId: string }[];
+  movements: IOrderMovement[];
 }

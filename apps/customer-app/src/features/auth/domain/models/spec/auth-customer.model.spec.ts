@@ -4,9 +4,9 @@ import { IAuthCustomerDraft } from '../../interfaces/auth-customer-draft.interfa
 import { AuthCustomerModel } from '../auth-customer.model';
 
 describe('AuthCustomerModel', () => {
-  describe('register', () => {
+  describe('createDraft', () => {
     it('drafts an active customer with a normalized email and no id until it is stored', () => {
-      const draft = AuthCustomerModel.register({
+      const draft = AuthCustomerModel.createDraft({
         email: '  Eve@Example.COM ',
         passwordHash: 'hash',
       });
@@ -22,7 +22,7 @@ describe('AuthCustomerModel', () => {
       'rejects the malformed email %s',
       (email) => {
         const register = (): IAuthCustomerDraft =>
-          AuthCustomerModel.register({ email, passwordHash: 'hash' });
+          AuthCustomerModel.createDraft({ email, passwordHash: 'hash' });
 
         expect(register).toThrow(
           expect.objectContaining({

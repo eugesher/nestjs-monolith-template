@@ -31,7 +31,7 @@ export class UserRegisterUseCase {
     UserStaffUserModel.assertPasswordStrength(password);
 
     const passwordHash = await this.passwordHasher.hash(password);
-    const draft = UserStaffUserModel.register({ email, passwordHash, roles });
+    const draft = UserStaffUserModel.createDraft({ email, passwordHash, roles });
     const user = await this.transaction.run(() => this.insert(draft));
 
     this.logger.info({ userId: user.id }, 'User registered');

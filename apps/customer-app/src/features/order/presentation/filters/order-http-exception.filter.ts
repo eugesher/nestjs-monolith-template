@@ -20,10 +20,7 @@ export class OrderHttpExceptionFilter implements ExceptionFilter<OrderBaseExcept
   public catch(exception: OrderBaseException, host: ArgumentsHost): void {
     const { code, message, details } = exception;
     const statusCode = OrderHttpExceptionFilter.STATUS[code];
-    const body =
-      details === undefined
-        ? { statusCode, message, code }
-        : { statusCode, message, code, details };
+    const body = details ? { statusCode, message, code, details } : { statusCode, message, code };
     const error = new HttpException(body, statusCode);
 
     this.httpExceptionFilter.catch(error, host);

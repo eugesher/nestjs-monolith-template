@@ -23,7 +23,7 @@ export class IdempotencyCoreClaimUseCase {
   public async execute(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
     const { key, body } = command;
     const requestFingerprint = BodyFingerprintHelper.compute(body);
-    const draft = IdempotencyCoreKeyModel.claim({ key, requestFingerprint });
+    const draft = IdempotencyCoreKeyModel.createDraft({ key, requestFingerprint });
     const inserted = await this.repository.insert(draft);
 
     if (inserted) {
@@ -32,7 +32,7 @@ export class IdempotencyCoreClaimUseCase {
 
     const existing = await this.repository.findByKey(key);
 
-    if (existing === null) {
+    if (!existing) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
     }
 

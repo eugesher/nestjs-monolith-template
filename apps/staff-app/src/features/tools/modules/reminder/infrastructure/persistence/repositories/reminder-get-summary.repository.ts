@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import {
-  type IReminderGetSummaryRepositoryPort,
-  IReminderSummarySnapshotView,
-} from '../../../outbound';
+import { IReminderGetSummaryRepositoryPort, IReminderSummarySnapshotView } from '../../../outbound';
 
 @Injectable()
 export class ReminderGetSummaryRepository implements IReminderGetSummaryRepositoryPort {
@@ -18,7 +18,7 @@ export class ReminderGetSummaryRepository implements IReminderGetSummaryReposito
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get reminderRepository(): Repository<Reminder> {
+  private get reminderRepository(): IHostedRepository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
   }
 

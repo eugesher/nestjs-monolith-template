@@ -1,0 +1,42 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
+import { ProductStatusEnum } from '@acme-libs/kernel';
+import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { Product } from '@acme-core/entities';
+
+import {
+  ICatalogGetManyRepositoryPort,
+  ICatalogPageQuery,
+  ICatalogProductRowView,
+} from '../../../outbound';
+
+@Injectable()
+export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    private readonly repositoryHost: IRepositoryHostPort,
+  ) {}
+
+  private get productRepository(): IHostedRepository<Product> {
+    return this.repositoryHost.getRepository(Product);
+  }
+
+  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
+    const { page, size } = query;
+    const [data, total] = await this.productRepository
+      .createQueryBuilder('Product')
+      .select(['Product.id', 'Product.sku', 'Product.name'])
+      .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
+      .orderBy('Product.id', 'ASC')
+      .skip((page - 1) * size)
+      .take(size)
+      .getManyAndCount();
+
+    return PaginationHelper.toPage(data, total, { page, size });
+  }
+}

@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderModel } from '../../../domain';
-import { type IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
+import { IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
 
 @Injectable()
 export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
@@ -15,7 +18,7 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get reminderRepository(): Repository<Reminder> {
+  private get reminderRepository(): IHostedRepository<Reminder> {
     return this.repositoryHost.getRepository(Reminder);
   }
 
@@ -36,7 +39,7 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       .where('Reminder.id = :reminderId', { reminderId })
       .getOne();
 
-    if (reminder === null) {
+    if (!reminder) {
       return null;
     }
 

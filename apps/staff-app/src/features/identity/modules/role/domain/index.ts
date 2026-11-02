@@ -4,6 +4,7 @@ export * from './exceptions/base/role-base.exception';
 
 export * from './interfaces/role-permission-record.interface';
 export * from './interfaces/role-record.interface';
+export * from './interfaces/role-snapshot.interface';
 
 export * from './models/role-permission.model';
 export * from './models/role.model';

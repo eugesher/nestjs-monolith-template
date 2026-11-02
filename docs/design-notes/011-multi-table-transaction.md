@@ -55,5 +55,5 @@ reminder module does the same.
 ## Shared update through a base repository
 
 The edit and resolve repositories share `update` through
-`apps/staff-app/src/features/tools/modules/note/infrastructure/persistence/repositories/base/note-update-base.repository.ts`; the product
+`apps/staff-app/src/features/tools/modules/note/infrastructure/persistence/repositories/base/note-base.repository.ts`; the product
 module shares `findById` the same way.

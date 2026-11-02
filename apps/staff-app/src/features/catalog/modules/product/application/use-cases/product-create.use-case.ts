@@ -6,6 +6,7 @@ import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/da
 import {
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
+  IProductDraft,
   ProductModel,
   ProductSkuTakenException,
 } from '../../domain';
@@ -16,7 +17,6 @@ import {
   PRODUCT_IDEMPOTENCY_PORT,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductLedgerService } from '../services/product-ledger.service';
 
 @Injectable()
@@ -55,7 +55,24 @@ export class ProductCreateUseCase {
     }
 
     try {
-      return await this.create(command);
+      const taken = await this.repository.existsBySku(sku);
+
+      if (taken) {
+        throw new ProductSkuTakenException(sku);
+      }
+
+      const draft = ProductModel.createDraft({ sku, name });
+      const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
+
+      await this.ledgerService.recordCreated({
+        productId: view.id,
+        sku: view.sku,
+        name: view.name,
+      });
+
+      this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
+
+      return view;
     } catch (error) {
       await this.idempotency.release({ key: idempotencyKey });
 
@@ -63,28 +80,9 @@ export class ProductCreateUseCase {
     }
   }
 
-  private async create(command: IProductCreateCommand): Promise<IProductView> {
-    const { sku, name, idempotencyKey } = command;
-    const taken = await this.repository.existsBySku(sku);
-
-    if (taken) {
-      throw new ProductSkuTakenException(sku);
-    }
-
-    const draft = ProductModel.create({ sku, name });
-    const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
-    const events = draft.pullDomainEvents();
-
-    await this.ledgerService.recordEvents({ productId: view.id, events });
-
-    this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
-
-    return view;
-  }
-
-  private async persist(draft: ProductModel, idempotencyKey: string): Promise<IProductView> {
+  private async persist(draft: IProductDraft, idempotencyKey: string): Promise<IProductView> {
     const created = await this.repository.insert(draft);
-    const view = ProductViewMapper.toView(created);
+    const view = created.toView();
 
     await this.idempotency.complete({ key: idempotencyKey, response: view });
 

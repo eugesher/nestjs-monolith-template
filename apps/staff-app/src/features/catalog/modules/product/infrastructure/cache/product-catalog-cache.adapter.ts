@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
-import { type IProductCatalogCachePort } from '../../outbound';
+import { IProductCatalogCachePort } from '../../outbound';
 
 @Injectable()
 export class ProductCatalogCacheAdapter implements IProductCatalogCachePort {

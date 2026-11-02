@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
 import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../../domain';
-import { type IAuthRegisterRepositoryPort } from '../../../outbound';
+import { IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
@@ -15,7 +18,7 @@ export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get customerRepository(): Repository<Customer> {
+  private get customerRepository(): IHostedRepository<Customer> {
     return this.repositoryHost.getRepository(Customer);
   }
 
@@ -30,10 +33,7 @@ export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
     const { email, passwordHash, status } = draft;
 
     try {
-      const result = await this.customerRepository.insert({ email, passwordHash, status });
-      const [identifier] = result.identifiers as { id: number | string }[];
-
-      return String(identifier.id);
+      return await this.customerRepository.insertOne({ email, passwordHash, status });
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         throw new AuthEmailTakenException(email);

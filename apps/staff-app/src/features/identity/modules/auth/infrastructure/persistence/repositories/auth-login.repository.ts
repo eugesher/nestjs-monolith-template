@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthStaffUserModel } from '../../../domain';
-import { type IAuthLoginRepositoryPort } from '../../../outbound';
+import { IAuthLoginRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -15,7 +18,7 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffUserRepository(): Repository<StaffUser> {
+  private get staffUserRepository(): IHostedRepository<StaffUser> {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
@@ -26,7 +29,7 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
       .where('StaffUser.email = :email', { email })
       .getOne();
 
-    if (user === null) {
+    if (!user) {
       return null;
     }
 

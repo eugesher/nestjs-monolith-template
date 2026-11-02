@@ -1,6 +1,7 @@
 export * from './interfaces';
 
-export * from './ports/order-crud-repository.port';
+export * from './ports/order-get-many-repository.port';
+export * from './ports/order-get-one-repository.port';
 export * from './ports/order-idempotency.port';
 export * from './ports/order-ledger-record.port';
 export * from './ports/order-place-repository.port';

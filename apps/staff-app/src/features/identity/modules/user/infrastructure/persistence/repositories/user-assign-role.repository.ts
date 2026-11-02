@@ -1,13 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { UserStaffUserModel } from '../../../domain';
-import { type IUserAssignRoleRepositoryPort } from '../../../outbound';
+import { IUserAssignRoleRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
@@ -16,15 +19,15 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffRoleRepository(): Repository<StaffRole> {
+  private get staffRoleRepository(): IHostedRepository<StaffRole> {
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  private get staffUserRoleRepository(): Repository<StaffUserRole> {
+  private get staffUserRoleRepository(): IHostedRepository<StaffUserRole> {
     return this.repositoryHost.getRepository(StaffUserRole);
   }
 
-  private get staffUserRepository(): Repository<StaffUser> {
+  private get staffUserRepository(): IHostedRepository<StaffUser> {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
@@ -39,7 +42,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .where('StaffUser.id = :id', { id })
       .getOne();
 
-    if (user === null) {
+    if (!user) {
       return null;
     }
 

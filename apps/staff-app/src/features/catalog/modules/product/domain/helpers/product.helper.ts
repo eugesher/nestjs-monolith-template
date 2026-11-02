@@ -10,9 +10,9 @@ export class ProductHelper {
     }
 
     throw new ProductVersionMismatchException(
-      String(product.id),
+      product.id,
       product.version,
-      `Product ${String(product.id)}: If-Match version ${expectedVersion} does not match the current version ${product.version}`,
+      `Product ${product.id}: If-Match version ${expectedVersion} does not match the current version ${product.version}`,
     );
   }
 }

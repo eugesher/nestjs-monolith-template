@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Product } from '@acme-core/entities';
 
-import { type IProductStockArchiveOutOfStockRepositoryPort } from '../../../outbound';
+import { IProductStockArchiveOutOfStockRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {
@@ -14,7 +17,7 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get productRepository(): Repository<Product> {
+  private get productRepository(): IHostedRepository<Product> {
     return this.repositoryHost.getRepository(Product);
   }
 

@@ -1,13 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import {
+  IHostedRepository,
+  type IRepositoryHostPort,
+  REPOSITORY_HOST_PORT,
+} from '@acme-libs/contracts/database';
 import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
 import { AuthCommonStaffUserModel } from '../../../domain';
-import { type IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
+import { IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {
@@ -16,7 +19,7 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
     private readonly repositoryHost: IRepositoryHostPort,
   ) {}
 
-  private get staffUserRepository(): Repository<StaffUser> {
+  private get staffUserRepository(): IHostedRepository<StaffUser> {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
@@ -32,7 +35,7 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
       .andWhere('StaffUser.status = :status', { status: UserStatusEnum.ACTIVE })
       .getOne();
 
-    if (user === null) {
+    if (!user) {
       return null;
     }
 
