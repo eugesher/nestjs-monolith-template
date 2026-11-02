@@ -62,7 +62,7 @@ describe('common modules (common/modules/<module>)', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['typeorm', '@acme-libs/database', '@acme-libs/contracts/database'])(
+    it.each(['typeorm', '@acme-libs/contracts/database'])(
       'common infrastructure MAY import the persistence package %s',
       async (source) => {
         await expect({
@@ -72,7 +72,11 @@ describe('common modules (common/modules/<module>)', () => {
       },
     );
 
-    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+    it.each([
+      '@acme-libs/database',
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+    ])(
       'common infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({

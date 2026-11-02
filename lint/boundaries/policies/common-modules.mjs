@@ -32,7 +32,7 @@ export const commonModules = [
     layer('infrastructure:common-adapters'),
     to('acme-core:entities'),
     to('acme-app:common:entities', own('app')),
-    baseLibs('database'),
+    baseLibs(),
     libContracts('database'),
     packages('typeorm'),
   ]),

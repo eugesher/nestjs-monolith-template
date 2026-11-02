@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { MysqlErrorHelper } from '@acme-libs/database';
 import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
 import { IUserStaffUserDraft, UserDomainException, UserStaffUserModel } from '../../../domain';

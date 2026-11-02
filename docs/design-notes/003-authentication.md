@@ -32,7 +32,7 @@ checks the password and signs the token itself (see `024-code-placement.md`).
 
 `AuthRegisterRepository` of customer-app inserts at once and turns the duplicate-key error of the
 driver into a domain error with `MysqlErrorHelper.isDuplicateKey`
-(`libs/database/src/errors/mysql-error.helper.ts`). A lookup and an insert are two statements: two
+(`libs/toolkit/src/database/mysql-error.helper.ts`). A lookup and an insert are two statements: two
 concurrent requests would both pass the lookup, and the loser would hit the index as a 500. The
 e2e of each app sends two such requests at once and expects one 201 and one 409.
 

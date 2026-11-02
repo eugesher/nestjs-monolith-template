@@ -89,7 +89,7 @@ export const acmeApp = [
     appContracts,
     to('acme-core:entities'),
     to('acme-app:common:entities', own('app')),
-    baseLibs('database'),
+    baseLibs(),
     libContracts('database'),
     packages('@nestjs/common', 'typeorm'),
   ]),

@@ -47,7 +47,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('infrastructure:queue'),
       to('acme-core:entities'),
       to('acme-app:common:entities', own('app')),
-      baseLibs('database'),
+      baseLibs(),
       libContracts('cache', 'database'),
       ...sharedFacing.infrastructure,
     ]),

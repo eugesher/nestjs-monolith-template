@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
-import { MysqlErrorHelper } from '@acme-libs/database';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import { ProductDomainException, ProductErrorCodeEnum, ProductModel } from '../../../domain';

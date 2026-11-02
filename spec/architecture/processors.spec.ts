@@ -202,7 +202,11 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
+    it.each([
+      '@acme-libs/database',
+      '@nestjs-cls/transactional',
+      '@nestjs-cls/transactional-adapter-typeorm',
+    ])(
       'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({

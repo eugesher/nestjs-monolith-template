@@ -63,7 +63,7 @@ describe('libs', () => {
     ['credentials', ['kernel', 'toolkit']],
     ['database', ['kernel', 'toolkit']],
     ['health', ['kernel', 'toolkit', 'observability']],
-    ['http', ['kernel', 'toolkit', 'database', 'observability']],
+    ['http', ['kernel', 'toolkit', 'observability']],
     ['ledger', ['kernel', 'toolkit']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
@@ -187,6 +187,27 @@ describe('libs', () => {
       file: 'libs/toolkit/src/__fixture__.ts',
       code: 'import { createHash, randomUUID } from "crypto";',
     }).toPassArchitectureLint();
+  });
+
+  it('the database helpers of the toolkit MAY import typeorm (MysqlErrorHelper)', async () => {
+    await expect({
+      file: 'libs/toolkit/src/database/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the rest of the toolkit may NOT import typeorm', async () => {
+    await expect({
+      file: 'libs/toolkit/src/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the kernel lib may NOT import typeorm', async () => {
+    await expect({
+      file: 'libs/kernel/src/__fixture__.ts',
+      code: 'import { QueryFailedError } from "typeorm";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('the config lib MAY import the Nest config packages it wraps', async () => {

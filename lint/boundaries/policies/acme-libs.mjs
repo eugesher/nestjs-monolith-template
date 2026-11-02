@@ -50,7 +50,7 @@ export const acmeLibs = [
     packages('@nestjs/common', '@nestjs/core', 'nestjs-pino', 'typeorm'),
   ]),
   fromLib('http', [
-    libs('database', 'observability'),
+    libs('observability'),
     packages(
       '@nestjs/common',
       '@nestjs/core',
@@ -94,4 +94,5 @@ export const acmeLibs = [
     ),
   ]),
   fromLib('toolkit', [packages('crypto')]),
+  fromLib('toolkit', [packages('typeorm')], 'database/**'),
 ];

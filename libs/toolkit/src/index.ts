@@ -1,5 +1,6 @@
 export * from './concurrency/occ-retry-policy.interface';
 export * from './concurrency/occ-retry.helper';
+export * from './database/mysql-error.helper';
 export * from './ddd/aggregate-root.base';
 export * from './ddd/domain-event.base';
 export * from './ddd/entity.base';
