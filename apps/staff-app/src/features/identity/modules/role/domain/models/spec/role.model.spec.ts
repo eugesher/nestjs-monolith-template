@@ -74,4 +74,18 @@ describe('RoleModel', () => {
       expect(role.permissionCodes).toEqual(['iam:assign']);
     });
   });
+
+  describe('toView', () => {
+    it('copies the name and the permission codes of the role', () => {
+      const role = RoleModel.reconstitute({
+        id: '1',
+        name: RoleEnum.ADMIN,
+        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
+      });
+
+      const view = role.toView();
+
+      expect(view).toEqual({ name: 'admin', permissionCodes: ['iam:assign', 'ledger:read'] });
+    });
+  });
 });

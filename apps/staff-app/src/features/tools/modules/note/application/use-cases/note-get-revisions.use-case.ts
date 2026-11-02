@@ -7,7 +7,6 @@ import {
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
 } from '../../outbound';
 import { INoteGetRevisionsQuery, INoteRevisionView } from '../interfaces';
-import { NoteRevisionViewMapper } from '../mappers/note-revision-view.mapper';
 import { NoteAccessService } from '../services/note-access.service';
 
 @Injectable()
@@ -25,7 +24,7 @@ export class NoteGetRevisionsUseCase {
 
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.listForNote({ ...window, noteId });
-    const items = result.items.map((revision) => NoteRevisionViewMapper.toView(revision));
+    const items = result.items.map((revision) => revision.toView());
 
     return { items, total: result.total, page: result.page, size: result.size };
   }

@@ -4,7 +4,6 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { type IProductCrudRepositoryPort, PRODUCT_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IProductGetManyQuery, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 
 @Injectable()
 export class ProductGetManyUseCase {
@@ -17,7 +16,7 @@ export class ProductGetManyUseCase {
     const { page, size } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.list({ ...window });
-    const items = result.items.map((product) => ProductViewMapper.toView(product));
+    const items = result.items.map((product) => product.toView());
 
     return { items, total: result.total, page: result.page, size: result.size };
   }

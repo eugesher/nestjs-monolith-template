@@ -8,6 +8,7 @@ import { ReminderTitleInvalidException } from '../exceptions/reminder-title-inva
 import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
 import { IReminderDraft } from '../interfaces/reminder-draft.interface';
 import { IReminderRecord } from '../interfaces/reminder-record.interface';
+import { IReminderSnapshot } from '../interfaces/reminder-snapshot.interface';
 
 export class ReminderModel extends AggregateRoot<Maybe<string>> {
   private static readonly TITLE_MAX_LENGTH = 255;
@@ -142,6 +143,24 @@ export class ReminderModel extends AggregateRoot<Maybe<string>> {
 
     this.currentDueOn = validDueOn;
     this.currentVersion += 1;
+  }
+
+  public toView(): IReminderSnapshot {
+    const now = new Date();
+    const createdAt = this.createdAt ?? now;
+    const updatedAt = this.updatedAt ?? now;
+
+    return {
+      id: this.id ?? '',
+      ownerId: this.ownerId,
+      title: this.title,
+      body: this.body,
+      dueOn: this.dueOn,
+      status: this.status,
+      version: this.version,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    };
   }
 
   private assertPending(): void {

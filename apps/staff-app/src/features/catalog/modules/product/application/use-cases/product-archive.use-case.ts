@@ -7,7 +7,6 @@ import {
 } from '../../domain';
 import { type IProductStatusPort, PRODUCT_STATUS_PORT } from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductAccessService } from '../services/product-access.service';
 
 @Injectable()
@@ -41,6 +40,6 @@ export class ProductArchiveUseCase {
 
     const product = await this.accessService.load({ productId });
 
-    return ProductViewMapper.toView(product);
+    return product.toView();
   }
 }

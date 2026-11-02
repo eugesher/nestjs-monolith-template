@@ -20,5 +20,6 @@ export * from './helpers/product.helper';
 export * from './interfaces/product-changes.interface';
 export * from './interfaces/product-draft.interface';
 export * from './interfaces/product-record.interface';
+export * from './interfaces/product-snapshot.interface';
 
 export * from './models/product.model';

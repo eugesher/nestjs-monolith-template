@@ -4,7 +4,6 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { NoteModel } from '../../domain';
 import { type INoteCreateRepositoryPort, NOTE_CREATE_REPOSITORY_PORT } from '../../outbound';
 import { INoteCreateCommand, INoteView } from '../interfaces';
-import { NoteViewMapper } from '../mappers/note-view.mapper';
 
 @Injectable()
 export class NoteCreateUseCase {
@@ -19,7 +18,7 @@ export class NoteCreateUseCase {
     const { subjectType, subjectId, body, authorId } = command;
     const note = NoteModel.create({ subjectType, subjectId, body, authorId });
     const created = await this.repository.insert(note);
-    const view = NoteViewMapper.toView(created);
+    const view = created.toView();
 
     this.logger.info(
       {

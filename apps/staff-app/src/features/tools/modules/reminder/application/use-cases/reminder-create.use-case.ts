@@ -9,7 +9,6 @@ import {
   REMINDER_SUMMARY_PORT,
 } from '../../outbound';
 import { IReminderCreateCommand, IReminderView } from '../interfaces';
-import { ReminderViewMapper } from '../mappers/reminder-view.mapper';
 
 @Injectable()
 export class ReminderCreateUseCase {
@@ -29,7 +28,7 @@ export class ReminderCreateUseCase {
 
     await this.summary.invalidate(ownerId);
 
-    const view = ReminderViewMapper.toView(created);
+    const view = created.toView();
 
     this.logger.info({ reminderId: view.id, ownerId }, 'Reminder created');
 

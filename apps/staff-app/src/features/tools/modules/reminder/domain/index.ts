@@ -11,5 +11,6 @@ export * from './exceptions/reminder-version-mismatch.exception';
 
 export * from './interfaces/reminder-draft.interface';
 export * from './interfaces/reminder-record.interface';
+export * from './interfaces/reminder-snapshot.interface';
 
 export * from './models/reminder.model';

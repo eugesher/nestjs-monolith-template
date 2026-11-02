@@ -3,7 +3,6 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
 import { IProductPublishCommand, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductLedgerService } from '../services/product-ledger.service';
 import { ProductWriteService } from '../services/product-write.service';
 
@@ -28,7 +27,7 @@ export class ProductPublishUseCase {
     await this.catalogCache.invalidate();
     await this.ledgerService.recordEvents({ productId, events });
 
-    const view = ProductViewMapper.toView(product);
+    const view = product.toView();
 
     this.logger.info({ productId }, 'Product published');
 

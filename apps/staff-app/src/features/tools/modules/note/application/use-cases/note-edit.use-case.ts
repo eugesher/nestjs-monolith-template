@@ -12,7 +12,6 @@ import {
   INoteEditSaveCommand,
   INoteView,
 } from '../interfaces';
-import { NoteViewMapper } from '../mappers/note-view.mapper';
 import { NoteAccessService } from '../services/note-access.service';
 import { NoteWriteService } from '../services/note-write.service';
 
@@ -32,7 +31,7 @@ export class NoteEditUseCase {
   public async execute(command: INoteEditCommand): Promise<INoteView> {
     const { noteId, editorId } = command;
     const outcome = await this.writeService.run({ noteId }, () => this.attempt(command));
-    const view = NoteViewMapper.toView(outcome.note);
+    const view = outcome.note.toView();
     const message = outcome.edited ? 'Note edited' : 'Note edit was a no-op';
 
     this.logger.info({ noteId, editorId, version: view.version, edited: outcome.edited }, message);

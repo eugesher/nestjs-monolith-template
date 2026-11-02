@@ -3,6 +3,7 @@ import { Maybe } from '@acme-libs/toolkit';
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
 import { INoteRevisionDraft } from '../interfaces/note-revision-draft.interface';
 import { INoteRevisionRecord } from '../interfaces/note-revision-record.interface';
+import { INoteRevisionSnapshot } from '../interfaces/note-revision-snapshot.interface';
 
 export class NoteRevisionModel {
   private static readonly FIRST_REVISED_VERSION = 2;
@@ -62,5 +63,20 @@ export class NoteRevisionModel {
     }
 
     return noteVersion;
+  }
+
+  public toView(): INoteRevisionSnapshot {
+    const recordedAt = this.recordedAt ?? new Date();
+
+    return {
+      id: this.id ?? '',
+      noteId: this.noteId,
+      noteVersion: this.noteVersion,
+      bodyBefore: this.bodyBefore,
+      bodyAfter: this.bodyAfter,
+      editorId: this.editorId,
+      correlationId: this.correlationId,
+      recordedAt: recordedAt.toISOString(),
+    };
   }
 }

@@ -5,7 +5,6 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { NoteSubjectInvalidException } from '../../domain';
 import { type INoteCrudRepositoryPort, NOTE_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';
-import { NoteViewMapper } from '../mappers/note-view.mapper';
 
 @Injectable()
 export class NoteGetManyUseCase {
@@ -29,7 +28,7 @@ export class NoteGetManyUseCase {
       resolved,
       authorId,
     });
-    const items = result.items.map((note) => NoteViewMapper.toView(note));
+    const items = result.items.map((note) => note.toView());
 
     return { items, total: result.total, page: result.page, size: result.size };
   }

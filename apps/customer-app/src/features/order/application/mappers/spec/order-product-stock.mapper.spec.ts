@@ -15,18 +15,8 @@ describe('OrderProductStockMapper', () => {
       );
 
       expect(stock).toEqual([
-        {
-          productId: '100',
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          quantity: 8,
-        },
-        {
-          productId: '101',
-          sku: 'SKU-0002',
-          name: 'Desk',
-          quantity: 5,
-        },
+        { productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 8 },
+        { productId: '101', sku: 'SKU-0002', name: 'Desk', quantity: 5 },
       ]);
     });
 
@@ -36,14 +26,7 @@ describe('OrderProductStockMapper', () => {
         [{ productId: '999', quantity: 4 }],
       );
 
-      expect(stock).toEqual([
-        {
-          productId: '100',
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          quantity: 0,
-        },
-      ]);
+      expect(stock).toEqual([{ productId: '100', sku: 'SKU-0001', name: 'Lamp', quantity: 0 }]);
     });
   });
 

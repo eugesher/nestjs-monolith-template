@@ -12,6 +12,8 @@ export * from './interfaces/note-draft.interface';
 export * from './interfaces/note-record.interface';
 export * from './interfaces/note-revision-draft.interface';
 export * from './interfaces/note-revision-record.interface';
+export * from './interfaces/note-revision-snapshot.interface';
+export * from './interfaces/note-snapshot.interface';
 
 export * from './models/note.model';
 export * from './models/note-revision.model';

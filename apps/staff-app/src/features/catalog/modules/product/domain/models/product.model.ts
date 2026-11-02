@@ -10,6 +10,7 @@ import { ProductVersionInvalidException } from '../exceptions/product-version-in
 import { IProductChanges } from '../interfaces/product-changes.interface';
 import { IProductDraft } from '../interfaces/product-draft.interface';
 import { IProductRecord } from '../interfaces/product-record.interface';
+import { IProductSnapshot } from '../interfaces/product-snapshot.interface';
 
 export class ProductModel extends AggregateRoot<Maybe<string>> {
   private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
@@ -130,5 +131,21 @@ export class ProductModel extends AggregateRoot<Maybe<string>> {
     const event = new ProductPublishedEvent(this.id, this.sku, this.currentVersion, previousStatus);
 
     this.addDomainEvent(event);
+  }
+
+  public toView(): IProductSnapshot {
+    const now = new Date();
+    const createdAt = this.createdAt ?? now;
+    const updatedAt = this.updatedAt ?? now;
+
+    return {
+      id: this.id ?? '',
+      sku: this.sku,
+      name: this.name,
+      status: this.status,
+      version: this.version,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    };
   }
 }

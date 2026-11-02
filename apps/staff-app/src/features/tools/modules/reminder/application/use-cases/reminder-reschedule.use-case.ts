@@ -3,7 +3,6 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type IReminderSummaryPort, REMINDER_SUMMARY_PORT } from '../../outbound';
 import { IReminderRescheduleCommand, IReminderView } from '../interfaces';
-import { ReminderViewMapper } from '../mappers/reminder-view.mapper';
 import { ReminderWriteService } from '../services/reminder-write.service';
 
 @Injectable()
@@ -24,7 +23,7 @@ export class ReminderRescheduleUseCase {
 
     await this.summary.invalidate(ownerId);
 
-    const view = ReminderViewMapper.toView(written);
+    const view = written.toView();
 
     this.logger.info(
       { reminderId, dueOn: view.dueOn, version: view.version },

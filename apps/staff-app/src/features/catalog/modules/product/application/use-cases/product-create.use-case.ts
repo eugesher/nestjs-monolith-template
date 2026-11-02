@@ -16,7 +16,6 @@ import {
   PRODUCT_IDEMPOTENCY_PORT,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
-import { ProductViewMapper } from '../mappers/product-view.mapper';
 import { ProductLedgerService } from '../services/product-ledger.service';
 
 @Injectable()
@@ -79,7 +78,7 @@ export class ProductCreateUseCase {
 
   private async persist(draft: ProductModel, idempotencyKey: string): Promise<IProductView> {
     const created = await this.repository.insert(draft);
-    const view = ProductViewMapper.toView(created);
+    const view = created.toView();
 
     await this.idempotency.complete({ key: idempotencyKey, response: view });
 

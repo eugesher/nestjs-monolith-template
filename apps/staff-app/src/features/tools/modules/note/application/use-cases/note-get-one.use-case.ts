@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { INoteGetOneQuery, INoteView } from '../interfaces';
-import { NoteViewMapper } from '../mappers/note-view.mapper';
 import { NoteAccessService } from '../services/note-access.service';
 
 @Injectable()
@@ -12,6 +11,6 @@ export class NoteGetOneUseCase {
     const { noteId, authorId } = query;
     const note = await this.accessService.loadOwned({ noteId, authorId });
 
-    return NoteViewMapper.toView(note);
+    return note.toView();
   }
 }

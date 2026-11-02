@@ -6,6 +6,7 @@ import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
 import { INoteDraft } from '../interfaces/note-draft.interface';
 import { INoteRecord } from '../interfaces/note-record.interface';
+import { INoteSnapshot } from '../interfaces/note-snapshot.interface';
 
 export class NoteModel extends AggregateRoot<Maybe<string>> {
   private static readonly SUBJECT_TYPE_PATTERN = /^[a-z][a-z-]{1,63}$/;
@@ -136,6 +137,24 @@ export class NoteModel extends AggregateRoot<Maybe<string>> {
 
     this.currentResolved = true;
     this.currentVersion += 1;
+  }
+
+  public toView(): INoteSnapshot {
+    const now = new Date();
+    const createdAt = this.createdAt ?? now;
+    const updatedAt = this.updatedAt ?? now;
+
+    return {
+      id: this.id ?? '',
+      subjectType: this.subjectType,
+      subjectId: this.subjectId,
+      body: this.body,
+      authorId: this.authorId,
+      resolved: this.resolved,
+      version: this.version,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    };
   }
 
   private assertOpen(): void {

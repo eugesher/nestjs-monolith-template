@@ -4,7 +4,6 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { type IReminderCrudRepositoryPort, REMINDER_CRUD_REPOSITORY_PORT } from '../../outbound';
 import { IReminderGetManyQuery, IReminderView } from '../interfaces';
-import { ReminderViewMapper } from '../mappers/reminder-view.mapper';
 
 @Injectable()
 export class ReminderGetManyUseCase {
@@ -17,7 +16,7 @@ export class ReminderGetManyUseCase {
     const { page, size, ownerId, status } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
     const result = await this.repository.list({ ...window, ownerId, status });
-    const items = result.items.map((reminder) => ReminderViewMapper.toView(reminder));
+    const items = result.items.map((reminder) => reminder.toView());
 
     return { items, total: result.total, page: result.page, size: result.size };
   }
