@@ -20,11 +20,11 @@ export class IdempotencyCoreKeyModel {
   }
 
   public static reconstitute(record: IIdempotencyCoreKeyRecord): IdempotencyCoreKeyModel {
-    const { id, key, requestFingerprint, status, responseBody, createdAt } = record;
+    const { id, idempotencyKey, requestFingerprint, status, responseBody, createdAt } = record;
 
     return new IdempotencyCoreKeyModel(
       id,
-      key,
+      idempotencyKey,
       requestFingerprint,
       status,
       responseBody,

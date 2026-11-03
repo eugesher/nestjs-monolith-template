@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import {
   ProductIdempotencyKeyReusedException,
@@ -81,11 +82,21 @@ export class ProductCreateUseCase {
   }
 
   private async persist(draft: IProductDraft, idempotencyKey: string): Promise<IProductView> {
-    const created = await this.repository.insert(draft);
-    const view = created.toView();
+    try {
+      const productId = await this.repository.insert(draft);
+      const record = await this.repository.findInserted(productId);
+      const created = ProductModel.reconstitute(record);
+      const view = created.toView();
 
-    await this.idempotency.complete({ key: idempotencyKey, response: view });
+      await this.idempotency.complete({ key: idempotencyKey, response: view });
 
-    return view;
+      return view;
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        throw new ProductSkuTakenException(draft.sku);
+      }
+
+      throw error;
+    }
   }
 }

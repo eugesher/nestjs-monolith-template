@@ -10,7 +10,7 @@ describe('RoleModel', () => {
     role = RoleModel.reconstitute({
       id: '2',
       name: RoleEnum.EDITOR,
-      permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+      rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
     });
   });
 
@@ -80,7 +80,10 @@ describe('RoleModel', () => {
       const role = RoleModel.reconstitute({
         id: '1',
         name: RoleEnum.ADMIN,
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.LEDGER_READ],
+        rolePermissions: [
+          { permission: { code: PermissionCodeEnum.IAM_ASSIGN } },
+          { permission: { code: PermissionCodeEnum.LEDGER_READ } },
+        ],
       });
 
       const view = role.toView();

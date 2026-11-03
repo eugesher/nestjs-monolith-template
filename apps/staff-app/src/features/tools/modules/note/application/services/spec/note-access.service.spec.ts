@@ -1,4 +1,3 @@
-import { NoteModel } from '../../../domain';
 import { NoteAccessService } from '../note-access.service';
 
 describe('NoteAccessService', () => {
@@ -6,19 +5,17 @@ describe('NoteAccessService', () => {
   let service: NoteAccessService;
 
   beforeEach(() => {
-    findOwned = jest.fn().mockResolvedValue(
-      NoteModel.reconstitute({
-        id: '7',
-        subjectType: 'product',
-        subjectId: '42',
-        body: 'Check the supplier',
-        authorId: 'admin-1',
-        resolved: false,
-        version: 2,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
-    );
+    findOwned = jest.fn().mockResolvedValue({
+      id: '7',
+      subjectType: 'product',
+      subjectId: '42',
+      body: 'Check the supplier',
+      authorId: 'admin-1',
+      resolved: false,
+      version: 2,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
     service = new NoteAccessService({ findOwned });
   });
 

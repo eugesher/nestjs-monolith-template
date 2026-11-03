@@ -3,7 +3,6 @@ import { PinoLogger } from 'nestjs-pino';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductCoreModel } from '../../../domain';
 import { ProductCoreLedgerService } from '../../services/product-core-ledger.service';
 import { ProductCoreArchiveUseCase } from '../product-core-archive.use-case';
 
@@ -22,14 +21,12 @@ describe('ProductCoreArchiveUseCase', () => {
   beforeEach(() => {
     outcomes = [];
     hooks = [];
-    lockById = jest.fn().mockResolvedValue(
-      ProductCoreModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        status: ProductStatusEnum.ACTIVE,
-        version: 3,
-      }),
-    );
+    lockById = jest.fn().mockResolvedValue({
+      id: '12',
+      sku: 'SKU-0001',
+      status: ProductStatusEnum.ACTIVE,
+      version: 3,
+    });
     update = jest.fn(() => Promise.resolve(void outcomes.push('update')));
     recordArchived = jest.fn(() => Promise.resolve(void outcomes.push('record')));
     invalidate = jest.fn(() => Promise.resolve(void outcomes.push('invalidate')));
@@ -62,8 +59,10 @@ describe('ProductCoreArchiveUseCase', () => {
       expect(view).toEqual({ outcome: 'archived', currentVersion: 4 });
       expect(lockById).toHaveBeenCalledWith('12');
       expect(update).toHaveBeenCalledWith({
-        product: expect.objectContaining({ id: '12', status: 'archived', version: 4 }) as unknown,
+        id: '12',
         versionAsRead: 3,
+        status: 'archived',
+        version: 4,
       });
       expect(logger.info).toHaveBeenCalledWith({ productId: '12', version: 4 }, 'Product archived');
     });
@@ -99,14 +98,12 @@ describe('ProductCoreArchiveUseCase', () => {
     });
 
     it('answers already-archived for an archived product and announces nothing', async () => {
-      lockById.mockResolvedValue(
-        ProductCoreModel.reconstitute({
-          id: '12',
-          sku: 'SKU-0001',
-          status: ProductStatusEnum.ARCHIVED,
-          version: 5,
-        }),
-      );
+      lockById.mockResolvedValue({
+        id: '12',
+        sku: 'SKU-0001',
+        status: ProductStatusEnum.ARCHIVED,
+        version: 5,
+      });
 
       const view = await useCase.execute({ productId: '12', expectedVersion: undefined });
 

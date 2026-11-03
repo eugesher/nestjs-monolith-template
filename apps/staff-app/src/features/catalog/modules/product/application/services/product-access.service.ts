@@ -13,12 +13,12 @@ export class ProductAccessService {
 
   public async load(query: IProductAccessLoadQuery): Promise<ProductModel> {
     const { productId } = query;
-    const product = await this.repository.findById(productId);
+    const record = await this.repository.findById(productId);
 
-    if (!product) {
+    if (!record) {
       throw new ProductNotFoundException(productId);
     }
 
-    return product;
+    return ProductModel.reconstitute(record);
   }
 }

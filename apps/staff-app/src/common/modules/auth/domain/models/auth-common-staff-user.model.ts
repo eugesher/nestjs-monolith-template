@@ -10,8 +10,9 @@ export class AuthCommonStaffUserModel {
   ) {}
 
   public static reconstitute(record: IAuthCommonStaffUserRecord): AuthCommonStaffUserModel {
-    const { id, email, roles } = record;
+    const { id, email, userRoles } = record;
+    const roles = userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
 
-    return new AuthCommonStaffUserModel(id, email, [...roles]);
+    return new AuthCommonStaffUserModel(id, email, roles);
   }
 }

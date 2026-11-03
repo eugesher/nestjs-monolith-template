@@ -2,14 +2,15 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { ProductModel } from '../../../domain';
 import { ProductLedgerService } from '../../services/product-ledger.service';
 import { ProductCreateUseCase } from '../product-create.use-case';
 
 describe('ProductCreateUseCase', () => {
   let existsBySku: jest.Mock;
   let insert: jest.Mock;
+  let findInserted: jest.Mock;
   let claim: jest.Mock;
   let complete: jest.Mock;
   let release: jest.Mock;
@@ -20,17 +21,16 @@ describe('ProductCreateUseCase', () => {
 
   beforeEach(() => {
     existsBySku = jest.fn().mockResolvedValue(false);
-    insert = jest.fn().mockResolvedValue(
-      ProductModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: ProductStatusEnum.DRAFT,
-        version: 1,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
-    );
+    insert = jest.fn().mockResolvedValue('12');
+    findInserted = jest.fn().mockResolvedValue({
+      id: '12',
+      sku: 'SKU-0001',
+      name: 'Lamp',
+      status: ProductStatusEnum.DRAFT,
+      version: 1,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });
     complete = jest.fn().mockResolvedValue(undefined);
     release = jest.fn().mockResolvedValue(undefined);
@@ -39,11 +39,15 @@ describe('ProductCreateUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new ProductCreateUseCase(
       { recordCreated } as unknown as ProductLedgerService,
-      { existsBySku, insert },
+      { existsBySku, insert, findInserted },
       { claim, complete, release },
       { run, afterCommit: jest.fn() },
       logger as unknown as PinoLogger,
     );
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('execute', () => {
@@ -65,6 +69,7 @@ describe('ProductCreateUseCase', () => {
         status: 'draft',
         version: 1,
       });
+      expect(findInserted).toHaveBeenCalledWith('12');
       expect(view).toEqual({
         id: '12',
         sku: 'SKU-0001',
@@ -160,6 +165,24 @@ describe('ProductCreateUseCase', () => {
         message: 'Product sku SKU-0001 is already registered',
       });
       expect(insert).not.toHaveBeenCalled();
+      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+    });
+
+    it('refuses a sku taken by a concurrent insert with PRODUCT_SKU_TAKEN and releases the key', async () => {
+      insert.mockRejectedValue(new Error('Duplicate entry'));
+      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+
+      await expect(
+        useCase.execute({
+          sku: 'SKU-0001',
+          name: 'Lamp',
+          idempotencyKey: 'key-1',
+        }),
+      ).rejects.toMatchObject({
+        code: 'PRODUCT_SKU_TAKEN',
+        message: 'Product sku SKU-0001 is already registered',
+      });
+      expect(findInserted).not.toHaveBeenCalled();
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
     });
 

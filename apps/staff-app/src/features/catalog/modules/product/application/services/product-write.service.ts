@@ -74,7 +74,13 @@ export class ProductWriteService {
       return { product, events };
     }
 
-    const updated = await this.repository.update({ product, versionAsRead });
+    const updated = await this.repository.update({
+      id: product.id,
+      versionAsRead,
+      name: product.name,
+      status: product.status,
+      version: product.version,
+    });
 
     if (!updated) {
       const current = await this.load(productId);
@@ -88,12 +94,12 @@ export class ProductWriteService {
   }
 
   private async load(productId: string): Promise<ProductModel> {
-    const product = await this.repository.findById(productId);
+    const record = await this.repository.findById(productId);
 
-    if (!product) {
+    if (!record) {
       throw new ProductNotFoundException(productId);
     }
 
-    return product;
+    return ProductModel.reconstitute(record);
   }
 }

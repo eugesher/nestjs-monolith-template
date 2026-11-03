@@ -39,7 +39,6 @@ const areaPolicies = (area, sharedFacing) => {
       packages('nestjs-pino'),
     ]),
     from(`${prefix}:infrastructure`, [
-      layer('domain'),
       layer('outbound'),
       layer('infrastructure'),
       layer('infrastructure:core-adapters'),
@@ -54,7 +53,6 @@ const areaPolicies = (area, sharedFacing) => {
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),
     from(`${prefix}:infrastructure:core-adapters`, [
-      layer('domain'),
       layer('outbound'),
       to('acme-core:contracts'),
       baseLibs(),
@@ -62,7 +60,6 @@ const areaPolicies = (area, sharedFacing) => {
     ]),
     fromSpec(`${prefix}:infrastructure:common-adapters`),
     from(`${prefix}:infrastructure:common-adapters`, [
-      layer('domain'),
       layer('outbound'),
       to('acme-app:contracts', own('app')),
       baseLibs(),
@@ -70,14 +67,12 @@ const areaPolicies = (area, sharedFacing) => {
     ]),
     fromSpec(`${prefix}:infrastructure:lib-adapters`),
     from(`${prefix}:infrastructure:lib-adapters`, [
-      layer('domain'),
       layer('outbound'),
       baseLibs(),
       ...sharedFacing.libAdapters,
     ]),
     fromSpec(`${prefix}:infrastructure:queue`),
     from(`${prefix}:infrastructure:queue`, [
-      layer('domain'),
       layer('outbound'),
       to('acme-app:contracts', own('app')),
       to('acme-core:contracts', { module: 'ledger' }),

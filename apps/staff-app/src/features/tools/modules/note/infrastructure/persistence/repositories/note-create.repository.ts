@@ -7,8 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
-import { INoteDraft, NoteModel } from '../../../domain';
-import { INoteCreateRepositoryPort } from '../../../outbound';
+import { INoteCreateRepositoryPort, INoteFoundRecord, INoteInsertCommand } from '../../../outbound';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
@@ -21,17 +20,12 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async insert(draft: INoteDraft): Promise<NoteModel> {
-    const { subjectType, subjectId, body, authorId, resolved, version } = draft;
-    const id = await this.noteRepository.insertOne({
-      subjectType,
-      subjectId,
-      body,
-      authorId,
-      resolved,
-      version,
-    });
-    const stored = await this.noteRepository
+  public async insert(command: INoteInsertCommand): Promise<string> {
+    return await this.noteRepository.insertOne(command);
+  }
+
+  public async findInserted(noteId: string): Promise<INoteFoundRecord> {
+    return await this.noteRepository
       .createQueryBuilder('Note')
       .select([
         'Note.id',
@@ -44,19 +38,7 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
         'Note.createdAt',
         'Note.updatedAt',
       ])
-      .where('Note.id = :id', { id })
+      .where('Note.id = :noteId', { noteId })
       .getOneOrFail();
-
-    return NoteModel.reconstitute({
-      id: stored.id,
-      subjectType: stored.subjectType,
-      subjectId: stored.subjectId,
-      body: stored.body,
-      authorId: stored.authorId,
-      resolved: stored.resolved,
-      version: stored.version,
-      createdAt: stored.createdAt,
-      updatedAt: stored.updatedAt,
-    });
   }
 }

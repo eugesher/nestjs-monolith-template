@@ -1,14 +1,14 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { AuthEmailTakenException, UserStaffUserModel } from '../../../domain';
 import { UserRegisterUseCase } from '../user-register.use-case';
 
 describe('UserRegisterUseCase', () => {
   let outcomes: string[];
-  let repository: { insert: jest.Mock };
+  let repository: { insertUser: jest.Mock; findRoles: jest.Mock; insertUserRoles: jest.Mock };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
   let passwordHasher: { hash: jest.Mock };
   let logger: PinoLoggerMock;
@@ -17,19 +17,13 @@ describe('UserRegisterUseCase', () => {
   beforeEach(() => {
     outcomes = [];
     repository = {
-      insert: jest.fn(() => {
+      insertUser: jest.fn(() => {
         outcomes.push('insert');
 
-        const user = UserStaffUserModel.reconstitute({
-          id: '5',
-          email: 'editor@example.com',
-          passwordHash: 'argon-hash',
-          status: UserStatusEnum.ACTIVE,
-          roles: [RoleEnum.EDITOR],
-        });
-
-        return Promise.resolve(user);
+        return Promise.resolve('5');
       }),
+      findRoles: jest.fn().mockResolvedValue([{ id: '2' }]),
+      insertUserRoles: jest.fn().mockResolvedValue(undefined),
     };
     transaction = {
       afterCommit: jest.fn(),
@@ -53,6 +47,10 @@ describe('UserRegisterUseCase', () => {
     );
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('hashes the password and stores the user with its roles in one transaction', async () => {
     const view = await useCase.execute({
       email: 'Editor@Example.com',
@@ -62,12 +60,13 @@ describe('UserRegisterUseCase', () => {
 
     expect(view).toEqual({ id: '5', email: 'editor@example.com' });
     expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
-    expect(repository.insert).toHaveBeenCalledWith({
+    expect(repository.insertUser).toHaveBeenCalledWith({
       email: 'editor@example.com',
       passwordHash: 'argon-hash',
       status: 'active',
-      roles: ['editor'],
     });
+    expect(repository.findRoles).toHaveBeenCalledWith(['editor']);
+    expect(repository.insertUserRoles).toHaveBeenCalledWith([{ userId: '5', roleId: '2' }]);
     expect(outcomes).toEqual(['begin', 'insert', 'commit']);
     expect(logger.info).toHaveBeenCalledWith({ userId: '5' }, 'User registered');
   });
@@ -94,8 +93,9 @@ describe('UserRegisterUseCase', () => {
     expect(transaction.run).not.toHaveBeenCalled();
   });
 
-  it('lets the taken email refusal of the repository roll the transaction back', async () => {
-    repository.insert.mockRejectedValue(new AuthEmailTakenException('editor@example.com'));
+  it('refuses a duplicate email of the repository as taken and rolls the transaction back', async () => {
+    repository.insertUser.mockRejectedValue(new Error('Duplicate entry'));
+    jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
 
     const register = useCase.execute({
       email: 'editor@example.com',
@@ -109,5 +109,18 @@ describe('UserRegisterUseCase', () => {
     });
     expect(outcomes).toEqual(['begin']);
     expect(logger.info).not.toHaveBeenCalled();
+  });
+
+  it('passes a failing insert through as is and rolls the transaction back', async () => {
+    repository.insertUser.mockRejectedValue(new Error('deadlock'));
+
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'correct-horse-battery',
+      roles: [],
+    });
+
+    await expect(register).rejects.toThrow('deadlock');
+    expect(outcomes).toEqual(['begin']);
   });
 });

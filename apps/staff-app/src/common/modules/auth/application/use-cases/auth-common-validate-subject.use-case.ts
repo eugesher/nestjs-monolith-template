@@ -6,6 +6,7 @@ import {
   IAuthCommonValidateSubjectQuery,
 } from '@acme-staff/contracts/auth';
 
+import { AuthCommonStaffUserModel } from '../../domain';
 import {
   AUTH_COMMON_VALIDATE_SUBJECT_REPOSITORY_PORT,
   type IAuthCommonValidateSubjectRepositoryPort,
@@ -22,8 +23,14 @@ export class AuthCommonValidateSubjectUseCase {
     query: IAuthCommonValidateSubjectQuery,
   ): Promise<Nullable<IAuthCommonSubjectView>> {
     const { userId } = query;
-    const user = await this.repository.findActiveById(userId);
+    const record = await this.repository.findActiveById(userId);
 
-    return user ? { id: user.id, email: user.email, roles: [...user.roles] } : null;
+    if (!record) {
+      return null;
+    }
+
+    const user = AuthCommonStaffUserModel.reconstitute(record);
+
+    return { id: user.id, email: user.email, roles: [...user.roles] };
   }
 }

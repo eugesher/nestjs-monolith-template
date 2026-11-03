@@ -19,9 +19,10 @@ export class UserStaffUserModel {
   ) {}
 
   public static reconstitute(record: IUserStaffUserRecord): UserStaffUserModel {
-    const { id, email, passwordHash, status, roles } = record;
+    const { id, email, passwordHash, status, userRoles } = record;
+    const roles = userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
 
-    return new UserStaffUserModel(id, email, passwordHash, status, [...roles]);
+    return new UserStaffUserModel(id, email, passwordHash, status, roles);
   }
 
   public static createDraft(candidate: IUserStaffUserCandidate): IUserStaffUserDraft {

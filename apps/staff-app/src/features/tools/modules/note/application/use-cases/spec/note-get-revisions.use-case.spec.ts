@@ -1,4 +1,4 @@
-import { NoteModel, NoteRevisionModel } from '../../../domain';
+import { NoteModel } from '../../../domain';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteGetRevisionsUseCase } from '../note-get-revisions.use-case';
 
@@ -21,13 +21,9 @@ describe('NoteGetRevisionsUseCase', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       }),
     );
-    listForNote = jest.fn().mockResolvedValue({
-      page: 2,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [
-        NoteRevisionModel.reconstitute({
+    listForNote = jest.fn().mockResolvedValue([
+      [
+        {
           id: '11',
           noteId: '7',
           noteVersion: 2,
@@ -36,9 +32,10 @@ describe('NoteGetRevisionsUseCase', () => {
           editorId: 'admin-2',
           correlationId: 'corr-1',
           recordedAt: new Date('2026-01-02T00:00:00.123Z'),
-        }),
+        },
       ],
-    });
+      1,
+    ]);
     useCase = new NoteGetRevisionsUseCase({ loadOwned } as unknown as NoteAccessService, {
       listForNote,
     });

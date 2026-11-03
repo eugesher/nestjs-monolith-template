@@ -2,30 +2,30 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { NoteModel } from '../../../domain';
+import { INoteDraft } from '../../../domain';
 import { NoteCreateUseCase } from '../note-create.use-case';
 
 describe('NoteCreateUseCase', () => {
   let insert: jest.Mock;
+  let findInserted: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: NoteCreateUseCase;
 
   beforeEach(() => {
-    insert = jest.fn().mockResolvedValue(
-      NoteModel.reconstitute({
-        id: '7',
-        subjectType: 'product',
-        subjectId: '42',
-        body: 'Check the supplier',
-        authorId: 'admin-1',
-        resolved: false,
-        version: 1,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
-    );
+    insert = jest.fn().mockResolvedValue('7');
+    findInserted = jest.fn().mockResolvedValue({
+      id: '7',
+      subjectType: 'product',
+      subjectId: '42',
+      body: 'Check the supplier',
+      authorId: 'admin-1',
+      resolved: false,
+      version: 1,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
     logger = makePinoLoggerMock();
-    useCase = new NoteCreateUseCase({ insert }, logger as unknown as PinoLogger);
+    useCase = new NoteCreateUseCase({ insert, findInserted }, logger as unknown as PinoLogger);
   });
 
   describe('execute', () => {
@@ -36,7 +36,7 @@ describe('NoteCreateUseCase', () => {
         body: ' Check the supplier ',
         authorId: 'admin-1',
       });
-      const [note] = insert.mock.calls[0] as [NoteModel];
+      const [note] = insert.mock.calls[0] as [INoteDraft];
 
       expect(note.subjectId).toBe('42');
       expect(note.body).toBe('Check the supplier');

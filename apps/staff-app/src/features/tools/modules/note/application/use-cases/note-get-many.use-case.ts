@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
-import { NoteSubjectInvalidException } from '../../domain';
+import { NoteModel, NoteSubjectInvalidException } from '../../domain';
 import { type INoteGetManyRepositoryPort, NOTE_GET_MANY_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';
 
@@ -21,15 +21,19 @@ export class NoteGetManyUseCase {
     }
 
     const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list({
+    const [records, total] = await this.repository.list({
       ...window,
       subjectType,
       subjectId,
       resolved,
       authorId,
     });
-    const data = result.data.map((note) => note.toView());
+    const data = records.map((record) => {
+      const note = NoteModel.reconstitute(record);
 
-    return { ...result, data };
+      return note.toView();
+    });
+
+    return PaginationHelper.toPage(data, total, window);
   }
 }

@@ -7,8 +7,11 @@ import {
 } from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { IReminderDraft, ReminderModel } from '../../../domain';
-import { IReminderCreateRepositoryPort } from '../../../outbound';
+import {
+  IReminderCreateRepositoryPort,
+  IReminderFoundRecord,
+  IReminderInsertCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
@@ -21,17 +24,12 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async insert(draft: IReminderDraft): Promise<ReminderModel> {
-    const { ownerId, title, body, dueOn, status, version } = draft;
-    const id = await this.reminderRepository.insertOne({
-      ownerId,
-      title,
-      body,
-      dueOn,
-      status,
-      version,
-    });
-    const stored = await this.reminderRepository
+  public async insert(command: IReminderInsertCommand): Promise<string> {
+    return await this.reminderRepository.insertOne(command);
+  }
+
+  public async findInserted(reminderId: string): Promise<IReminderFoundRecord> {
+    return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([
         'Reminder.id',
@@ -44,19 +42,7 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
         'Reminder.createdAt',
         'Reminder.updatedAt',
       ])
-      .where('Reminder.id = :id', { id })
+      .where('Reminder.id = :reminderId', { reminderId })
       .getOneOrFail();
-
-    return ReminderModel.reconstitute({
-      id: stored.id,
-      ownerId: stored.ownerId,
-      title: stored.title,
-      body: stored.body,
-      dueOn: stored.dueOn,
-      status: stored.status,
-      version: stored.version,
-      createdAt: stored.createdAt,
-      updatedAt: stored.updatedAt,
-    });
   }
 }

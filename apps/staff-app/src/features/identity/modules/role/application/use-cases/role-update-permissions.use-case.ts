@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
-import { AuthRoleNotFoundException, RoleModel } from '../../domain';
+import { AuthRoleNotFoundException, RoleModel, RolePermissionModel } from '../../domain';
 import {
   ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
   type IRoleUpdatePermissionsRepositoryPort,
@@ -34,17 +34,27 @@ export class RoleUpdatePermissionsUseCase {
 
   private async replace(command: IRoleUpdatePermissionsCommand): Promise<RoleModel> {
     const { role: name, permissionCodes } = command;
-    const role = await this.repository.findRole(name);
+    const record = await this.repository.findRole(name);
 
-    if (!role) {
+    if (!record) {
       throw new AuthRoleNotFoundException(name);
     }
 
-    const known = await this.repository.findPermissions(permissionCodes);
+    const role = RoleModel.reconstitute(record);
+    const permissionRecords = await this.repository.findPermissions(permissionCodes);
+    const known = permissionRecords.map((permission) =>
+      RolePermissionModel.reconstitute(permission),
+    );
 
     role.replacePermissions(permissionCodes, known);
 
-    await this.repository.replacePermissions({ role, permissions: known });
+    const rolePermissions = known.map((permission) => ({
+      roleId: role.id,
+      permissionId: permission.id,
+    }));
+
+    await this.repository.deleteRolePermissions(role.id);
+    await this.repository.insertRolePermissions(rolePermissions);
 
     return role;
   }

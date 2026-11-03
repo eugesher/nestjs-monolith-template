@@ -8,8 +8,11 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { ReminderModel } from '../../../domain';
-import { IReminderAccessFindOwnedQuery, IReminderAccessRepositoryPort } from '../../../outbound';
+import {
+  IReminderAccessFindOwnedQuery,
+  IReminderAccessRepositoryPort,
+  IReminderFoundRecord,
+} from '../../../outbound';
 
 @Injectable()
 export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
@@ -22,9 +25,12 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<ReminderModel>> {
+  public async findOwned(
+    query: IReminderAccessFindOwnedQuery,
+  ): Promise<Nullable<IReminderFoundRecord>> {
     const { reminderId, ownerId } = query;
-    const reminder = await this.reminderRepository
+
+    return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([
         'Reminder.id',
@@ -40,21 +46,5 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
       .where('Reminder.id = :reminderId', { reminderId })
       .andWhere('Reminder.ownerId = :ownerId', { ownerId })
       .getOne();
-
-    if (!reminder) {
-      return null;
-    }
-
-    return ReminderModel.reconstitute({
-      id: reminder.id,
-      ownerId: reminder.ownerId,
-      title: reminder.title,
-      body: reminder.body,
-      dueOn: reminder.dueOn,
-      status: reminder.status,
-      version: reminder.version,
-      createdAt: reminder.createdAt,
-      updatedAt: reminder.updatedAt,
-    });
   }
 }

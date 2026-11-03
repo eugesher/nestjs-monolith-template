@@ -1,4 +1,3 @@
-import { NoteModel } from '../../../domain';
 import { NoteGetManyUseCase } from '../note-get-many.use-case';
 
 describe('NoteGetManyUseCase', () => {
@@ -6,13 +5,9 @@ describe('NoteGetManyUseCase', () => {
   let useCase: NoteGetManyUseCase;
 
   beforeEach(() => {
-    list = jest.fn().mockResolvedValue({
-      page: 1,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [
-        NoteModel.reconstitute({
+    list = jest.fn().mockResolvedValue([
+      [
+        {
           id: '7',
           subjectType: 'product',
           subjectId: '42',
@@ -22,9 +17,10 @@ describe('NoteGetManyUseCase', () => {
           version: 2,
           createdAt: new Date('2026-01-01T00:00:00.000Z'),
           updatedAt: new Date('2026-01-02T00:00:00.000Z'),
-        }),
+        },
       ],
-    });
+      1,
+    ]);
     useCase = new NoteGetManyUseCase({ list });
   });
 

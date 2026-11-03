@@ -61,7 +61,13 @@ export class NoteEditUseCase {
 
   private async save(command: INoteEditSaveCommand): Promise<boolean> {
     const { noteId, note, versionAsRead, bodyBefore, editorId } = command;
-    const updated = await this.repository.update({ note, versionAsRead });
+    const updated = await this.repository.update({
+      id: note.id,
+      versionAsRead,
+      body: note.body,
+      resolved: note.resolved,
+      version: note.version,
+    });
 
     if (!updated) {
       return false;

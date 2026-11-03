@@ -3,7 +3,7 @@ import { Nullable } from '@acme-libs/toolkit';
 
 export interface IIdempotencyCoreKeyRecord {
   id: string;
-  key: string;
+  idempotencyKey: string;
   requestFingerprint: string;
   status: IdempotencyStatusEnum;
   responseBody: Nullable<string>;

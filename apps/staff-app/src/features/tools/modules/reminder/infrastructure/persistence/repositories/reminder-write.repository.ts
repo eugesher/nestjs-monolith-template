@@ -8,8 +8,11 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { ReminderModel } from '../../../domain';
-import { IReminderWriteRepositoryPort, IReminderWriteUpdateCommand } from '../../../outbound';
+import {
+  IReminderFoundRecord,
+  IReminderWriteRepositoryPort,
+  IReminderWriteUpdateCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
@@ -22,8 +25,8 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async findById(reminderId: string): Promise<Nullable<ReminderModel>> {
-    const reminder = await this.reminderRepository
+  public async findById(reminderId: string): Promise<Nullable<IReminderFoundRecord>> {
+    return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([
         'Reminder.id',
@@ -38,29 +41,13 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       ])
       .where('Reminder.id = :reminderId', { reminderId })
       .getOne();
-
-    if (!reminder) {
-      return null;
-    }
-
-    return ReminderModel.reconstitute({
-      id: reminder.id,
-      ownerId: reminder.ownerId,
-      title: reminder.title,
-      body: reminder.body,
-      dueOn: reminder.dueOn,
-      status: reminder.status,
-      version: reminder.version,
-      createdAt: reminder.createdAt,
-      updatedAt: reminder.updatedAt,
-    });
   }
 
   public async update(command: IReminderWriteUpdateCommand): Promise<boolean> {
-    const { reminder, versionAsRead } = command;
+    const { id, versionAsRead, dueOn, status, version } = command;
     const result = await this.reminderRepository.update(
-      { id: reminder.id, version: versionAsRead },
-      { dueOn: reminder.dueOn, status: reminder.status, version: reminder.version },
+      { id, version: versionAsRead },
+      { dueOn, status, version },
     );
 
     return result.affected === 1;

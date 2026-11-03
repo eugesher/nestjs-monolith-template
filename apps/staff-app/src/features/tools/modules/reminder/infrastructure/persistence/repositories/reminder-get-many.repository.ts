@@ -5,11 +5,13 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import { ReminderModel } from '../../../domain';
-import { IReminderGetManyRepositoryPort, IReminderPageQuery } from '../../../outbound';
+import {
+  IReminderGetManyRepositoryPort,
+  IReminderListedRecord,
+  IReminderPageQuery,
+} from '../../../outbound';
 
 @Injectable()
 export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort {
@@ -22,7 +24,7 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async list(query: IReminderPageQuery): Promise<IPage<ReminderModel>> {
+  public async list(query: IReminderPageQuery): Promise<[IReminderListedRecord[], number]> {
     const { page, size, ownerId, status } = query;
     const builder = this.reminderRepository
       .createQueryBuilder('Reminder')
@@ -43,27 +45,11 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
       builder.andWhere('Reminder.status = :status', { status });
     }
 
-    const [reminders, total] = await builder
+    return await builder
       .orderBy('Reminder.dueOn', 'ASC')
       .addOrderBy('Reminder.id', 'ASC')
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-
-    const data = reminders.map((reminder) =>
-      ReminderModel.reconstitute({
-        id: reminder.id,
-        ownerId: reminder.ownerId,
-        title: reminder.title,
-        body: reminder.body,
-        dueOn: reminder.dueOn,
-        status: reminder.status,
-        version: reminder.version,
-        createdAt: reminder.createdAt,
-        updatedAt: reminder.updatedAt,
-      }),
-    );
-
-    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

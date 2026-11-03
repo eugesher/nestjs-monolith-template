@@ -1,20 +1,18 @@
-import { RoleEnum } from '@acme-libs/kernel';
-
 import { AuthCommonStaffUserModel } from '../auth-common-staff-user.model';
 
 describe('AuthCommonStaffUserModel', () => {
   describe('reconstitute', () => {
-    it('keeps the stored state as is', () => {
+    it('restores the stored user with the names of its roles in order', () => {
       const user = AuthCommonStaffUserModel.reconstitute({
         id: 'user-1',
         email: 'viewer@example.com',
-        roles: [RoleEnum.VIEWER],
+        userRoles: [{ role: { name: 'viewer' } }, { role: { name: 'editor' } }],
       });
 
       expect(user).toMatchObject({
         id: 'user-1',
         email: 'viewer@example.com',
-        roles: ['viewer'],
+        roles: ['editor', 'viewer'],
       });
     });
   });

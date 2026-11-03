@@ -22,7 +22,6 @@ export const acmeCore = [
     packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [
-    layer('domain'),
     layer('outbound'),
     layer('infrastructure'),
     layer('infrastructure:queue'),
@@ -32,7 +31,6 @@ export const acmeCore = [
     packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-core:modules:infrastructure:queue', [
-    layer('domain'),
     layer('outbound'),
     layer('infrastructure:queue'),
     ownContracts,

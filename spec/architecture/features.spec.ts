@@ -50,11 +50,18 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure MAY reach its own domain and outbound', async () => {
+    it('infrastructure MAY reach its own outbound', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
-        code: 'import { x } from "../../domain";\nimport { y } from "../../outbound";',
+        code: 'import { y } from "../../outbound";',
       }).toPassArchitectureLint();
+    });
+
+    it('infrastructure may NOT reach domain — models are built in application', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+        code: 'import { x } from "../../domain";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it('application MAY reach its own domain and outbound', async () => {

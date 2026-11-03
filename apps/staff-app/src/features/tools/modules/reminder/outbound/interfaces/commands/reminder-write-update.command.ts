@@ -1,6 +1,9 @@
-import { ReminderModel } from '../../../domain';
+import { ReminderStatusEnum } from '@acme-libs/kernel';
 
 export interface IReminderWriteUpdateCommand {
-  reminder: ReminderModel;
+  id: string;
   versionAsRead: number;
+  dueOn: string;
+  status: ReminderStatusEnum;
+  version: number;
 }

@@ -5,11 +5,9 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
-import { NoteModel } from '../../../domain';
-import { INoteGetManyRepositoryPort, INotePageQuery } from '../../../outbound';
+import { INoteGetManyRepositoryPort, INoteListedRecord, INotePageQuery } from '../../../outbound';
 
 @Injectable()
 export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
@@ -22,7 +20,7 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async list(query: INotePageQuery): Promise<IPage<NoteModel>> {
+  public async list(query: INotePageQuery): Promise<[INoteListedRecord[], number]> {
     const { page, size, subjectType, subjectId, resolved, authorId } = query;
     const builder = this.noteRepository
       .createQueryBuilder('Note')
@@ -49,26 +47,10 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
       builder.andWhere('Note.resolved = :resolved', { resolved });
     }
 
-    const [notes, total] = await builder
+    return await builder
       .orderBy('Note.id', 'DESC')
       .skip((page - 1) * size)
       .take(size)
       .getManyAndCount();
-
-    const data = notes.map((note) =>
-      NoteModel.reconstitute({
-        id: note.id,
-        subjectType: note.subjectType,
-        subjectId: note.subjectId,
-        body: note.body,
-        authorId: note.authorId,
-        resolved: note.resolved,
-        version: note.version,
-        createdAt: note.createdAt,
-        updatedAt: note.updatedAt,
-      }),
-    );
-
-    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

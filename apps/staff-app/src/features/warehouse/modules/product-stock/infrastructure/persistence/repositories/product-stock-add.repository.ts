@@ -8,8 +8,7 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductStockModel } from '../../../domain';
-import { IProductStockAddRepositoryPort } from '../../../outbound';
+import { IProductStockAddRepositoryPort, IProductStockProductFoundRecord } from '../../../outbound';
 
 @Injectable()
 export class ProductStockAddRepository implements IProductStockAddRepositoryPort {
@@ -22,17 +21,11 @@ export class ProductStockAddRepository implements IProductStockAddRepositoryPort
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findById(productId: string): Promise<Nullable<ProductStockModel>> {
-    const product = await this.productRepository
+  public async findById(productId: string): Promise<Nullable<IProductStockProductFoundRecord>> {
+    return await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku'])
       .where('Product.id = :productId', { productId })
       .getOne();
-
-    if (!product) {
-      return null;
-    }
-
-    return ProductStockModel.reconstitute({ productId: product.id, sku: product.sku });
   }
 }

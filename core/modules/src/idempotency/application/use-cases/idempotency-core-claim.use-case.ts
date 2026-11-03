@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { BodyFingerprintHelper } from '@acme-libs/toolkit';
+import { BodyFingerprintHelper, MysqlErrorHelper } from '@acme-libs/toolkit';
 import {
   IdempotencyCoreClaimOutcomeEnum,
   IIdempotencyCoreClaimCommand,
   IIdempotencyCoreClaimView,
 } from '@acme-core/contracts/idempotency';
 
-import { IdempotencyCoreKeyModel } from '../../domain';
+import { IdempotencyCoreKeyModel, IIdempotencyCoreKeyDraft } from '../../domain';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
   type IIdempotencyCoreClaimRepositoryPort,
@@ -24,17 +24,19 @@ export class IdempotencyCoreClaimUseCase {
     const { key, body } = command;
     const requestFingerprint = BodyFingerprintHelper.compute(body);
     const draft = IdempotencyCoreKeyModel.createDraft({ key, requestFingerprint });
-    const inserted = await this.repository.insert(draft);
+    const inserted = await this.insert(draft);
 
     if (inserted) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.CLAIMED, storedResponse: undefined };
     }
 
-    const existing = await this.repository.findByKey(key);
+    const record = await this.repository.findByKey(key);
 
-    if (!existing) {
+    if (!record) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
     }
+
+    const existing = IdempotencyCoreKeyModel.reconstitute(record);
 
     if (!existing.matches(requestFingerprint)) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.MISMATCH, storedResponse: undefined };
@@ -47,5 +49,26 @@ export class IdempotencyCoreClaimUseCase {
     }
 
     return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
+  }
+
+  private async insert(draft: IIdempotencyCoreKeyDraft): Promise<boolean> {
+    const { key, requestFingerprint, status, responseBody } = draft;
+
+    try {
+      await this.repository.insert({
+        idempotencyKey: key,
+        requestFingerprint,
+        status,
+        responseBody,
+      });
+
+      return true;
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return false;
+      }
+
+      throw error;
+    }
   }
 }

@@ -5,11 +5,14 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { MysqlErrorHelper, Nullable } from '@acme-libs/toolkit';
+import { Nullable } from '@acme-libs/toolkit';
 import { IdempotencyKey } from '@acme-core/entities';
 
-import { IIdempotencyCoreKeyDraft, IdempotencyCoreKeyModel } from '../../../domain';
-import { IIdempotencyCoreClaimRepositoryPort } from '../../../outbound';
+import {
+  IIdempotencyCoreClaimRepositoryPort,
+  IIdempotencyCoreKeyFoundRecord,
+  IIdempotencyCoreKeyInsertCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepositoryPort {
@@ -22,29 +25,12 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
-  public async insert(draft: IIdempotencyCoreKeyDraft): Promise<boolean> {
-    const { key, requestFingerprint, status, responseBody } = draft;
-
-    try {
-      await this.idempotencyKeyRepository.insert({
-        idempotencyKey: key,
-        requestFingerprint,
-        status,
-        responseBody,
-      });
-
-      return true;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        return false;
-      }
-
-      throw error;
-    }
+  public async insert(command: IIdempotencyCoreKeyInsertCommand): Promise<void> {
+    await this.idempotencyKeyRepository.insert(command);
   }
 
-  public async findByKey(key: string): Promise<Nullable<IdempotencyCoreKeyModel>> {
-    const entity = await this.idempotencyKeyRepository
+  public async findByKey(key: string): Promise<Nullable<IIdempotencyCoreKeyFoundRecord>> {
+    return await this.idempotencyKeyRepository
       .createQueryBuilder('IdempotencyKey')
       .select([
         'IdempotencyKey.id',
@@ -56,18 +42,5 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
       ])
       .where('IdempotencyKey.idempotencyKey = :key', { key })
       .getOne();
-
-    if (!entity) {
-      return null;
-    }
-
-    return IdempotencyCoreKeyModel.reconstitute({
-      id: entity.id,
-      key: entity.idempotencyKey,
-      requestFingerprint: entity.requestFingerprint,
-      status: entity.status,
-      responseBody: entity.responseBody,
-      createdAt: entity.createdAt,
-    });
   }
 }

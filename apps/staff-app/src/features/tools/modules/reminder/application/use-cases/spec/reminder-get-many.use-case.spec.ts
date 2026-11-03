@@ -1,6 +1,5 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
-import { ReminderModel } from '../../../domain';
 import { ReminderGetManyUseCase } from '../reminder-get-many.use-case';
 
 describe('ReminderGetManyUseCase', () => {
@@ -8,13 +7,9 @@ describe('ReminderGetManyUseCase', () => {
   let useCase: ReminderGetManyUseCase;
 
   beforeEach(() => {
-    list = jest.fn().mockResolvedValue({
-      page: 1,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [
-        ReminderModel.reconstitute({
+    list = jest.fn().mockResolvedValue([
+      [
+        {
           id: '7',
           ownerId: 'owner-1',
           title: 'Call the bank',
@@ -24,9 +19,10 @@ describe('ReminderGetManyUseCase', () => {
           version: 1,
           createdAt: new Date('2026-01-01T00:00:00.000Z'),
           updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-        }),
+        },
       ],
-    });
+      1,
+    ]);
     useCase = new ReminderGetManyUseCase({ list });
   });
 

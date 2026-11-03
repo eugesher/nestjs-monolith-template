@@ -1,6 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
-
-import { AuthCommonStaffUserModel } from '../../../domain';
 import { AuthCommonValidateSubjectUseCase } from '../auth-common-validate-subject.use-case';
 
 describe('AuthCommonValidateSubjectUseCase', () => {
@@ -9,13 +6,11 @@ describe('AuthCommonValidateSubjectUseCase', () => {
 
   beforeEach(() => {
     repository = {
-      findActiveById: jest.fn().mockResolvedValue(
-        AuthCommonStaffUserModel.reconstitute({
-          id: 'user-1',
-          email: 'editor@example.com',
-          roles: [RoleEnum.EDITOR],
-        }),
-      ),
+      findActiveById: jest.fn().mockResolvedValue({
+        id: 'user-1',
+        email: 'editor@example.com',
+        userRoles: [{ role: { name: 'editor' } }],
+      }),
     };
     useCase = new AuthCommonValidateSubjectUseCase(repository);
   });

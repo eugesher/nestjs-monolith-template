@@ -8,8 +8,11 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Order } from '@acme-core/entities';
 
-import { IOrderRecord } from '../../../domain';
-import { IOrderFindOwnedQuery, IOrderGetOneRepositoryPort } from '../../../outbound';
+import {
+  IOrderFindOwnedQuery,
+  IOrderFoundRecord,
+  IOrderGetOneRepositoryPort,
+} from '../../../outbound';
 
 @Injectable()
 export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
@@ -22,7 +25,7 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<IOrderRecord>> {
+  public async findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<IOrderFoundRecord>> {
     const { orderId, customerId } = query;
 
     return await this.orderRepository

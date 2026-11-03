@@ -8,8 +8,7 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
-import { AuthStaffUserModel } from '../../../domain';
-import { IAuthLoginRepositoryPort } from '../../../outbound';
+import { IAuthLoginRepositoryPort, IAuthStaffUserFoundRecord } from '../../../outbound';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -22,22 +21,11 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findByEmail(email: string): Promise<Nullable<AuthStaffUserModel>> {
-    const user = await this.staffUserRepository
+  public async findByEmail(email: string): Promise<Nullable<IAuthStaffUserFoundRecord>> {
+    return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
       .where('StaffUser.email = :email', { email })
       .getOne();
-
-    if (!user) {
-      return null;
-    }
-
-    return AuthStaffUserModel.reconstitute({
-      id: user.id,
-      email: user.email,
-      passwordHash: user.passwordHash,
-      status: user.status,
-    });
   }
 }

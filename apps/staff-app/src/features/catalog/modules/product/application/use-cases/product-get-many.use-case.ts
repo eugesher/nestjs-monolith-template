@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
+import { ProductModel } from '../../domain';
 import {
   type IProductGetManyRepositoryPort,
   PRODUCT_GET_MANY_REPOSITORY_PORT,
@@ -18,9 +19,13 @@ export class ProductGetManyUseCase {
   public async execute(query: IProductGetManyQuery): Promise<IPage<IProductView>> {
     const { page, size } = query;
     const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list({ ...window });
-    const data = result.data.map((product) => product.toView());
+    const [records, total] = await this.repository.list({ ...window });
+    const data = records.map((record) => {
+      const product = ProductModel.reconstitute(record);
 
-    return { ...result, data };
+      return product.toView();
+    });
+
+    return PaginationHelper.toPage(data, total, window);
   }
 }

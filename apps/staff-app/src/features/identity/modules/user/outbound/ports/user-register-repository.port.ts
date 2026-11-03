@@ -1,7 +1,15 @@
-import { IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
+import { RoleEnum } from '@acme-libs/kernel';
+
+import {
+  IUserStaffRoleFoundRecord,
+  IUserStaffUserInsertCommand,
+  IUserStaffUserRoleInsertCommand,
+} from '../interfaces';
 
 export interface IUserRegisterRepositoryPort {
-  insert(draft: IUserStaffUserDraft): Promise<UserStaffUserModel>;
+  insertUser(command: IUserStaffUserInsertCommand): Promise<string>;
+  findRoles(names: RoleEnum[]): Promise<IUserStaffRoleFoundRecord[]>;
+  insertUserRoles(commands: IUserStaffUserRoleInsertCommand[]): Promise<void>;
 }
 
 export const USER_REGISTER_REPOSITORY_PORT = Symbol('USER_REGISTER_REPOSITORY_PORT');

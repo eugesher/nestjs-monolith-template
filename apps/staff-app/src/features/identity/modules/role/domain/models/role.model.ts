@@ -13,9 +13,12 @@ export class RoleModel {
   ) {}
 
   public static reconstitute(record: IRoleRecord): RoleModel {
-    const { id, name, permissionCodes } = record;
+    const { id, name, rolePermissions } = record;
+    const permissionCodes = rolePermissions
+      .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
+      .sort();
 
-    return new RoleModel(id, name, [...permissionCodes]);
+    return new RoleModel(id, name as RoleEnum, permissionCodes);
   }
 
   public get permissionCodes(): readonly PermissionCodeEnum[] {

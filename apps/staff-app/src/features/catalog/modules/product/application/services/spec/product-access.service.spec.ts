@@ -1,6 +1,5 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 
-import { ProductModel } from '../../../domain';
 import { ProductAccessService } from '../product-access.service';
 
 describe('ProductAccessService', () => {
@@ -8,17 +7,15 @@ describe('ProductAccessService', () => {
   let service: ProductAccessService;
 
   beforeEach(() => {
-    findById = jest.fn().mockResolvedValue(
-      ProductModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        name: 'Lamp',
-        status: ProductStatusEnum.ACTIVE,
-        version: 3,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
-    );
+    findById = jest.fn().mockResolvedValue({
+      id: '12',
+      sku: 'SKU-0001',
+      name: 'Lamp',
+      status: ProductStatusEnum.ACTIVE,
+      version: 3,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
     service = new ProductAccessService({ findById });
   });
 

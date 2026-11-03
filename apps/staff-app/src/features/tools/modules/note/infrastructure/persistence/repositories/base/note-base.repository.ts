@@ -11,10 +11,10 @@ export abstract class NoteBaseRepository {
   }
 
   public async update(command: INoteWriteUpdateCommand): Promise<boolean> {
-    const { note, versionAsRead } = command;
+    const { id, versionAsRead, body, resolved, version } = command;
     const result = await this.noteRepository.update(
-      { id: note.id, version: versionAsRead },
-      { body: note.body, resolved: note.resolved, version: note.version },
+      { id, version: versionAsRead },
+      { body, resolved, version },
     );
 
     return result.affected === 1;

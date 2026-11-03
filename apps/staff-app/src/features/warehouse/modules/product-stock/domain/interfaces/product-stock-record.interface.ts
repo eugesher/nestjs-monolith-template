@@ -1,4 +1,4 @@
 export interface IProductStockRecord {
-  productId: string;
+  id: string;
   sku: string;
 }

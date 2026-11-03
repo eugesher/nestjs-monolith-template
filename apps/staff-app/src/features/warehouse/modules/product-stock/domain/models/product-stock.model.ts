@@ -15,9 +15,9 @@ export class ProductStockModel extends AggregateRoot<string> {
   }
 
   public static reconstitute(record: IProductStockRecord): ProductStockModel {
-    const { productId, sku } = record;
+    const { id, sku } = record;
 
-    return new ProductStockModel(productId, sku);
+    return new ProductStockModel(id, sku);
   }
 
   private static validQuantity(quantity: number): number {
