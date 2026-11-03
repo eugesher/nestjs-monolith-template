@@ -1,4 +1,5 @@
 export interface ICatalogPageQuery {
   page: number;
-  size: number;
+  limit: number;
+  offset: number;
 }

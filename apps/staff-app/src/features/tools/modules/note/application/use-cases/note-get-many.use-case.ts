@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
-import { NoteSubjectInvalidException } from '../../domain';
+import { NoteModel, NoteSubjectInvalidException } from '../../domain';
 import { type INoteGetManyRepositoryPort, NOTE_GET_MANY_REPOSITORY_PORT } from '../../outbound';
 import { INoteGetManyQuery, INoteView } from '../interfaces';
 
@@ -14,22 +14,26 @@ export class NoteGetManyUseCase {
   ) {}
 
   public async execute(query: INoteGetManyQuery): Promise<IPage<INoteView>> {
-    const { page, size, subjectType, subjectId, resolved, authorId } = query;
+    const { page, limit, subjectType, subjectId, resolved, authorId } = query;
 
     if ((subjectType === undefined) !== (subjectId === undefined)) {
       throw new NoteSubjectInvalidException();
     }
 
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list({
-      ...window,
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const [records, total] = await this.repository.list({
+      ...pageWindow,
       subjectType,
       subjectId,
       resolved,
       authorId,
     });
-    const data = result.data.map((note) => note.toView());
+    const data = records.map((record) => {
+      const note = NoteModel.reconstitute(record);
 
-    return { ...result, data };
+      return note.toView();
+    });
+
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

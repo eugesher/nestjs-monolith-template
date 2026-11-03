@@ -8,9 +8,9 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductCoreModel } from '../../../domain';
 import {
   IProductCoreArchiveRepositoryPort,
+  IProductCoreLockedRecord,
   IProductCoreWriteUpdateCommand,
 } from '../../../outbound';
 
@@ -25,32 +25,18 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async lockById(productId: string): Promise<Nullable<ProductCoreModel>> {
-    const product = await this.productRepository
+  public async lockById(productId: string): Promise<Nullable<IProductCoreLockedRecord>> {
+    return await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku', 'Product.status', 'Product.version'])
       .where('Product.id = :productId', { productId })
       .setLock('pessimistic_write')
       .getOne();
-
-    if (!product) {
-      return null;
-    }
-
-    return ProductCoreModel.reconstitute({
-      id: product.id,
-      sku: product.sku,
-      status: product.status,
-      version: product.version,
-    });
   }
 
   public async update(command: IProductCoreWriteUpdateCommand): Promise<void> {
-    const { product, versionAsRead } = command;
+    const { id, versionAsRead, status, version } = command;
 
-    await this.productRepository.update(
-      { id: product.id, version: versionAsRead },
-      { status: product.status, version: product.version },
-    );
+    await this.productRepository.update({ id, version: versionAsRead }, { status, version });
   }
 }

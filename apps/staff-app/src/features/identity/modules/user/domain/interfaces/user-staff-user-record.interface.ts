@@ -1,9 +1,17 @@
-import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
+
+interface IUserStaffUserRecordRole {
+  name: string;
+}
+
+interface IUserStaffUserRecordUserRole {
+  role: IUserStaffUserRecordRole;
+}
 
 export interface IUserStaffUserRecord {
   id: string;
   email: string;
   passwordHash: string;
   status: UserStatusEnum;
-  roles: RoleEnum[];
+  userRoles: IUserStaffUserRecordUserRole[];
 }

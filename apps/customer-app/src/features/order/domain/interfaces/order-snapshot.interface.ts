@@ -1,7 +1,7 @@
-import { IOrderProductRecord } from './order-product-record.interface';
+import { IOrderProduct } from './order-product.interface';
 
 export interface IOrderSnapshot {
   id: string;
   createdAt: string;
-  products: IOrderProductRecord[];
+  products: IOrderProduct[];
 }

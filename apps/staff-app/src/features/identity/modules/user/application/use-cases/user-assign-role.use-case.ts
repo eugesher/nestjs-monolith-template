@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { AuthRoleNotFoundException, AuthUserNotFoundException } from '../../domain';
+import {
+  AuthRoleNotFoundException,
+  AuthUserNotFoundException,
+  UserStaffUserModel,
+} from '../../domain';
 import {
   USER_ASSIGN_ROLE_REPOSITORY_PORT,
   type IUserAssignRoleRepositoryPort,
@@ -19,17 +23,23 @@ export class UserAssignRoleUseCase {
 
   public async execute(command: IUserAssignRoleCommand): Promise<IUserAssignRoleView> {
     const { userId, role } = command;
-    const user = await this.repository.findById(userId);
+    const record = await this.repository.findById(userId);
 
-    if (!user) {
+    if (!record) {
       throw new AuthUserNotFoundException(userId);
     }
 
+    const user = UserStaffUserModel.reconstitute(record);
     const added = user.assignRole(role);
-    const stored = added ? await this.repository.addRole(user.id, role) : true;
 
-    if (!stored) {
-      throw new AuthRoleNotFoundException(role);
+    if (added) {
+      const stored = await this.repository.findRole(role);
+
+      if (!stored) {
+        throw new AuthRoleNotFoundException(role);
+      }
+
+      await this.repository.insertUserRole({ userId: user.id, roleId: stored.id });
     }
 
     this.logger.info({ userId, role }, 'Role assigned');

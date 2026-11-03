@@ -10,6 +10,6 @@ export const CACHE_KEYS = {
   reminderSummary: (ownerId: string): string =>
     `${CACHE_KEYS.reminderSummaryPrefix(ownerId)}${ALL_FACETS}`,
   catalogPrefix: (): string => `${ROOT}:catalog:${CATALOG_KEY_VERSION}:`,
-  catalogPage: (page: number, size: number): string =>
-    `${CACHE_KEYS.catalogPrefix()}page:${page}:size:${size}`,
+  catalogPage: (page: number, limit: number): string =>
+    `${CACHE_KEYS.catalogPrefix()}page:${page}:limit:${limit}`,
 };

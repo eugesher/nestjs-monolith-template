@@ -4,6 +4,6 @@ import { ICatalogProductRowView } from '../views/catalog-product-row.view';
 
 export interface ICatalogCacheReadQuery {
   page: number;
-  size: number;
+  limit: number;
   compute: () => Promise<IPage<ICatalogProductRowView>>;
 }

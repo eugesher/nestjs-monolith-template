@@ -2,19 +2,29 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { ILedgerRecordEntryDraft } from '../../../domain';
 import { LedgerRecordAppendUseCase } from '../ledger-record-append.use-case';
 
 describe('LedgerRecordAppendUseCase', () => {
-  let append: jest.Mock;
+  let insert: jest.Mock;
+  let findByOperationKey: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: LedgerRecordAppendUseCase;
 
   beforeEach(() => {
-    append = jest.fn().mockResolvedValue({ id: '4210', appended: true });
+    insert = jest.fn().mockResolvedValue('4210');
+    findByOperationKey = jest.fn().mockResolvedValue({ id: '4210' });
     logger = makePinoLoggerMock();
-    useCase = new LedgerRecordAppendUseCase({ append }, logger as unknown as PinoLogger);
+    useCase = new LedgerRecordAppendUseCase(
+      { insert, findByOperationKey },
+      logger as unknown as PinoLogger,
+    );
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('execute', () => {
@@ -30,7 +40,7 @@ describe('LedgerRecordAppendUseCase', () => {
         }),
       );
 
-      const [draft] = append.mock.calls[0] as [ILedgerRecordEntryDraft];
+      const [draft] = insert.mock.calls[0] as [ILedgerRecordEntryDraft];
 
       expect(draft).toEqual({
         operationKey: 'product-archived:12:2',
@@ -54,7 +64,8 @@ describe('LedgerRecordAppendUseCase', () => {
     });
 
     it('logs a record the ledger already holds as already appended, without an error', async () => {
-      append.mockResolvedValue({ id: '4210', appended: false });
+      insert.mockRejectedValue(new Error('Duplicate entry'));
+      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
 
       await CorrelationContextHelper.run('corr-2', () =>
         useCase.execute({
@@ -88,11 +99,11 @@ describe('LedgerRecordAppendUseCase', () => {
       await expect(executing).rejects.toThrow(
         'occurredAt must be an ISO-8601 instant with an explicit timezone offset',
       );
-      expect(append).not.toHaveBeenCalled();
+      expect(insert).not.toHaveBeenCalled();
     });
 
     it('passes a failing append through, so Bull retries the job', async () => {
-      append.mockRejectedValue(new Error('deadlock'));
+      insert.mockRejectedValue(new Error('deadlock'));
 
       const executing = CorrelationContextHelper.run('corr-4', () =>
         useCase.execute({

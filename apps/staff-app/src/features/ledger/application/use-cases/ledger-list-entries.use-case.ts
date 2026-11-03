@@ -16,9 +16,9 @@ export class LedgerListEntriesUseCase {
   ) {}
 
   public async execute(query: ILedgerListEntriesQuery): Promise<IPage<ILedgerEntryView>> {
-    const { page, size, subjectType, subjectId, correlationId } = query;
-    const window = PaginationHelper.clampPageWindow(page, size);
+    const { page, limit, subjectType, subjectId, correlationId } = query;
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 
-    return await this.repository.list({ ...window, subjectType, subjectId, correlationId });
+    return await this.repository.list({ ...pageWindow, subjectType, subjectId, correlationId });
   }
 }

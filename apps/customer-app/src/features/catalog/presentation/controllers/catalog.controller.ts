@@ -16,8 +16,8 @@ export class CatalogController {
   public async handleGetMany(
     @Query() query: CatalogGetManyRequestDto,
   ): Promise<CatalogProductPageResponseDto> {
-    const { page, size } = query;
+    const { page, limit } = query;
 
-    return await this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, limit });
   }
 }

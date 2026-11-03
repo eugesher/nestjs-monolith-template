@@ -1,4 +1,3 @@
-import { OrderModel } from '../../../domain';
 import { OrderGetOneUseCase } from '../order-get-one.use-case';
 
 describe('OrderGetOneUseCase', () => {
@@ -6,14 +5,12 @@ describe('OrderGetOneUseCase', () => {
   let useCase: OrderGetOneUseCase;
 
   beforeEach(() => {
-    findOwned = jest.fn().mockResolvedValue(
-      OrderModel.reconstitute({
-        id: '600',
-        customerId: 'customer-1',
-        createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
-      }),
-    );
+    findOwned = jest.fn().mockResolvedValue({
+      id: '600',
+      customerId: 'customer-1',
+      createdAt: new Date('2026-01-03T00:00:00.000Z'),
+      orderProducts: [{ id: '600', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } }],
+    });
     useCase = new OrderGetOneUseCase({ findOwned });
   });
 

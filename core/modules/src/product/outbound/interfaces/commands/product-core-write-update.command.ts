@@ -1,6 +1,8 @@
-import { ProductCoreModel } from '../../../domain';
+import { ProductStatusEnum } from '@acme-libs/kernel';
 
 export interface IProductCoreWriteUpdateCommand {
-  product: ProductCoreModel;
+  id: string;
   versionAsRead: number;
+  status: ProductStatusEnum;
+  version: number;
 }

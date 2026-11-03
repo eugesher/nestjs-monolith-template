@@ -5,21 +5,26 @@ import { IPageWindowOptions } from './page-window-options.interface';
 export class PaginationHelper {
   public static clampPageWindow(
     page: number | undefined,
-    size: number | undefined,
+    limit: number | undefined,
     options: IPageWindowOptions = {},
   ): IPageRequest {
-    const { defaultPage = 1, defaultSize = 20, maxSize = 100 } = options;
+    const { defaultPage = 1, defaultLimit = 20, maxLimit = 100 } = options;
     const flooredPage = Math.floor(page ?? 0);
-    const flooredSize = Math.floor(size ?? 0);
+    const flooredLimit = Math.floor(limit ?? 0);
     const clampedPage = flooredPage > 0 ? flooredPage : defaultPage;
-    const clampedSize = flooredSize > 0 ? Math.min(flooredSize, maxSize) : defaultSize;
+    const clampedLimit = flooredLimit > 0 ? Math.min(flooredLimit, maxLimit) : defaultLimit;
+    const offset = (clampedPage - 1) * clampedLimit;
 
-    return { page: clampedPage, size: clampedSize };
+    return { page: clampedPage, limit: clampedLimit, offset };
   }
 
-  public static toPage<T>(data: T[], total: number, request: IPageRequest): IPage<T> {
-    const { page, size } = request;
-    const pageCount = Math.ceil(total / size);
+  public static toPage<T>(
+    data: T[],
+    total: number,
+    request: Pick<IPageRequest, 'page' | 'limit'>,
+  ): IPage<T> {
+    const { page, limit } = request;
+    const pageCount = Math.ceil(total / limit);
 
     return { page, count: data.length, pageCount, total, data };
   }

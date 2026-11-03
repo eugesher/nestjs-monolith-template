@@ -8,6 +8,7 @@ import {
   ProductCoreArchiveOutcomeEnum,
 } from '@acme-core/contracts/product';
 
+import { ProductCoreModel } from '../../domain';
 import {
   type IProductCoreArchiveRepositoryPort,
   type IProductCoreCatalogCachePort,
@@ -44,11 +45,13 @@ export class ProductCoreArchiveUseCase {
 
   private async archive(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
     const { productId, expectedVersion } = command;
-    const product = await this.repository.lockById(productId);
+    const record = await this.repository.lockById(productId);
 
-    if (!product) {
+    if (!record) {
       return { outcome: ProductCoreArchiveOutcomeEnum.NOT_FOUND, currentVersion: undefined };
     }
+
+    const product = ProductCoreModel.reconstitute(record);
 
     if (expectedVersion !== undefined && expectedVersion !== product.version) {
       return {
@@ -69,13 +72,18 @@ export class ProductCoreArchiveUseCase {
 
     product.archive();
 
-    await this.repository.update({ product, versionAsRead });
+    await this.repository.update({
+      id: product.id,
+      versionAsRead,
+      status: product.status,
+      version: product.version,
+    });
 
     const { id, sku, version } = product;
-    const record = { productId: id, sku, version, previousStatus };
+    const archived = { productId: id, sku, version, previousStatus };
 
     this.transaction.afterCommit(() => this.catalogCache.invalidate());
-    this.transaction.afterCommit(() => this.ledgerService.recordArchived(record));
+    this.transaction.afterCommit(() => this.ledgerService.recordArchived(archived));
 
     return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: version };
   }

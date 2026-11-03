@@ -1,4 +1,5 @@
 export interface IProductPageQuery {
   page: number;
-  size: number;
+  limit: number;
+  offset: number;
 }

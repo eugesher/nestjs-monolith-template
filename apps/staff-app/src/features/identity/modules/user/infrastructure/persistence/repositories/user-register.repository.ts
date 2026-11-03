@@ -6,11 +6,14 @@ import {
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
-import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../../domain';
-import { IUserRegisterRepositoryPort } from '../../../outbound';
+import {
+  IUserRegisterRepositoryPort,
+  IUserStaffRoleFoundRecord,
+  IUserStaffUserInsertCommand,
+  IUserStaffUserRoleInsertCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class UserRegisterRepository implements IUserRegisterRepositoryPort {
@@ -31,41 +34,27 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async insert(draft: IUserStaffUserDraft): Promise<UserStaffUserModel> {
-    const { email, passwordHash, status, roles } = draft;
-    const id = await this.insertRow(draft);
-
-    await this.insertRoles(id, roles);
-
-    return UserStaffUserModel.reconstitute({ id, email, passwordHash, status, roles });
+  public async insertUser(command: IUserStaffUserInsertCommand): Promise<string> {
+    return await this.staffUserRepository.insertOne(command);
   }
 
-  private async insertRow(draft: IUserStaffUserDraft): Promise<string> {
-    const { email, passwordHash, status } = draft;
-
-    try {
-      return await this.staffUserRepository.insertOne({ email, passwordHash, status });
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new AuthEmailTakenException(email);
-      }
-
-      throw error;
-    }
-  }
-
-  private async insertRoles(userId: string, names: RoleEnum[]): Promise<void> {
+  public async findRoles(names: RoleEnum[]): Promise<IUserStaffRoleFoundRecord[]> {
     if (names.length === 0) {
-      return;
+      return [];
     }
 
-    const roles = await this.staffRoleRepository
+    return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id'])
       .where('StaffRole.name IN (:...names)', { names })
       .getMany();
-    const rows = roles.map((role) => ({ userId, roleId: role.id }));
+  }
 
-    await this.staffUserRoleRepository.insert(rows);
+  public async insertUserRoles(commands: IUserStaffUserRoleInsertCommand[]): Promise<void> {
+    if (commands.length === 0) {
+      return;
+    }
+
+    await this.staffUserRoleRepository.insert(commands);
   }
 }

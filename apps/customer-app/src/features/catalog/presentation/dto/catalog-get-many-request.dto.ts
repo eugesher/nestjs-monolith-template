@@ -15,5 +15,5 @@ export class CatalogGetManyRequestDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  public size?: number;
+  public limit?: number;
 }

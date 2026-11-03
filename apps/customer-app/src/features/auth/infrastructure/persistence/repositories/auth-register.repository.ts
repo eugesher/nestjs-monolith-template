@@ -5,11 +5,9 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
-import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../../domain';
-import { IAuthRegisterRepositoryPort } from '../../../outbound';
+import { IAuthCustomerInsertCommand, IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
@@ -22,24 +20,7 @@ export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
     return this.repositoryHost.getRepository(Customer);
   }
 
-  public async insert(draft: IAuthCustomerDraft): Promise<AuthCustomerModel> {
-    const { email, passwordHash, status } = draft;
-    const id = await this.insertRow(draft);
-
-    return AuthCustomerModel.reconstitute({ id, email, passwordHash, status });
-  }
-
-  private async insertRow(draft: IAuthCustomerDraft): Promise<string> {
-    const { email, passwordHash, status } = draft;
-
-    try {
-      return await this.customerRepository.insertOne({ email, passwordHash, status });
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new AuthEmailTakenException(email);
-      }
-
-      throw error;
-    }
+  public async insert(command: IAuthCustomerInsertCommand): Promise<string> {
+    return await this.customerRepository.insertOne(command);
   }
 }

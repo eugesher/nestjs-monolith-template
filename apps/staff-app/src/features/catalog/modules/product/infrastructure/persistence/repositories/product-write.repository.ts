@@ -15,10 +15,10 @@ export class ProductWriteRepository
   }
 
   public async update(command: IProductWriteUpdateCommand): Promise<boolean> {
-    const { product, versionAsRead } = command;
+    const { id, versionAsRead, name, status, version } = command;
     const result = await this.productRepository.update(
-      { id: product.id, version: versionAsRead },
-      { name: product.name, status: product.status, version: product.version },
+      { id, version: versionAsRead },
+      { name, status, version },
     );
 
     return result.affected === 1;

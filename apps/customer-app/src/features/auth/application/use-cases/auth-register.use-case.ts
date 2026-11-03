@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { AuthCustomerModel } from '../../domain';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
+
+import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../domain';
 import {
   AUTH_PASSWORD_HASHER_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
@@ -30,12 +32,25 @@ export class AuthRegisterUseCase {
 
     const passwordHash = await this.passwordHasher.hash(password);
     const draft = AuthCustomerModel.createDraft({ email, passwordHash });
-    const customer = await this.repository.insert(draft);
+    const id = await this.insert(draft);
+    const customer = AuthCustomerModel.reconstitute({ id, ...draft });
 
     this.logger.info({ customerId: customer.id }, 'Customer registered');
 
     await this.ledgerService.recordRegistered({ customerId: customer.id, email: customer.email });
 
     return { id: customer.id, email: customer.email };
+  }
+
+  private async insert(draft: IAuthCustomerDraft): Promise<string> {
+    try {
+      return await this.repository.insert(draft);
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        throw new AuthEmailTakenException(draft.email);
+      }
+
+      throw error;
+    }
   }
 }

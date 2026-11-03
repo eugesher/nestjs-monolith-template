@@ -6,13 +6,12 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
-import { ILedgerRecordEntryDraft } from '../../../domain';
 import {
   ILedgerRecordAppendRepositoryPort,
-  ILedgerRecordAppendOutcomeView,
+  ILedgerRecordEntryFoundRecord,
+  ILedgerRecordEntryInsertCommand,
 } from '../../../outbound';
 
 @Injectable()
@@ -26,32 +25,17 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async append(entry: ILedgerRecordEntryDraft): Promise<ILedgerRecordAppendOutcomeView> {
-    try {
-      const payload = entry.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
-      const id = await this.ledgerEntryRepository.insertOne({
-        operationKey: entry.operationKey,
-        subjectType: entry.subjectType,
-        subjectId: entry.subjectId,
-        action: entry.action,
-        payload,
-        correlationId: entry.correlationId,
-        occurredAt: entry.occurredAt,
-      });
-      return { id, appended: true };
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        const { operationKey } = entry;
-        const existing = await this.ledgerEntryRepository
-          .createQueryBuilder('LedgerEntry')
-          .select(['LedgerEntry.id'])
-          .where('LedgerEntry.operationKey = :operationKey', { operationKey })
-          .getOneOrFail();
+  public async insert(command: ILedgerRecordEntryInsertCommand): Promise<string> {
+    const payload = command.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
 
-        return { id: existing.id, appended: false };
-      }
+    return await this.ledgerEntryRepository.insertOne({ ...command, payload });
+  }
 
-      throw error;
-    }
+  public async findByOperationKey(operationKey: string): Promise<ILedgerRecordEntryFoundRecord> {
+    return await this.ledgerEntryRepository
+      .createQueryBuilder('LedgerEntry')
+      .select(['LedgerEntry.id'])
+      .where('LedgerEntry.operationKey = :operationKey', { operationKey })
+      .getOneOrFail();
   }
 }

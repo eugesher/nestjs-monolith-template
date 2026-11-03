@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { RoleModel } from '../../domain';
 import { ROLE_LIST_REPOSITORY_PORT, type IRoleListRepositoryPort } from '../../outbound';
 import { IRoleView } from '../interfaces';
 
@@ -11,8 +12,12 @@ export class RoleListUseCase {
   ) {}
 
   public async execute(): Promise<IRoleView[]> {
-    const roles = await this.repository.list();
+    const records = await this.repository.list();
 
-    return roles.map((role) => role.toView());
+    return records.map((record) => {
+      const role = RoleModel.reconstitute(record);
+
+      return role.toView();
+    });
   }
 }

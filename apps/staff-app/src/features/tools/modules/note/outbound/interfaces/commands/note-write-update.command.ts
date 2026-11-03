@@ -1,6 +1,7 @@
-import { NoteModel } from '../../../domain';
-
 export interface INoteWriteUpdateCommand {
-  note: NoteModel;
+  id: string;
   versionAsRead: number;
+  body: string;
+  resolved: boolean;
+  version: number;
 }

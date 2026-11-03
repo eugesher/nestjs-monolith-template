@@ -3,26 +3,24 @@ import { PinoLogger } from 'nestjs-pino';
 import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { UserStaffUserModel } from '../../../domain';
 import { UserAssignRoleUseCase } from '../user-assign-role.use-case';
 
 describe('UserAssignRoleUseCase', () => {
-  let repository: { findById: jest.Mock; addRole: jest.Mock };
+  let repository: { findById: jest.Mock; findRole: jest.Mock; insertUserRole: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserAssignRoleUseCase;
 
   beforeEach(() => {
     repository = {
-      findById: jest.fn().mockResolvedValue(
-        UserStaffUserModel.reconstitute({
-          id: 'user-1',
-          email: 'editor@example.com',
-          passwordHash: 'hash',
-          status: UserStatusEnum.ACTIVE,
-          roles: [RoleEnum.EDITOR],
-        }),
-      ),
-      addRole: jest.fn().mockResolvedValue(true),
+      findById: jest.fn().mockResolvedValue({
+        id: 'user-1',
+        email: 'editor@example.com',
+        passwordHash: 'hash',
+        status: UserStatusEnum.ACTIVE,
+        userRoles: [{ role: { name: 'editor' } }],
+      }),
+      findRole: jest.fn().mockResolvedValue({ id: '3' }),
+      insertUserRole: jest.fn().mockResolvedValue(undefined),
     };
     logger = makePinoLoggerMock();
     useCase = new UserAssignRoleUseCase(repository, logger as unknown as PinoLogger);
@@ -32,7 +30,8 @@ describe('UserAssignRoleUseCase', () => {
     const view = await useCase.execute({ userId: 'user-1', role: RoleEnum.VIEWER });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor', 'viewer'] });
-    expect(repository.addRole).toHaveBeenCalledWith('user-1', 'viewer');
+    expect(repository.findRole).toHaveBeenCalledWith('viewer');
+    expect(repository.insertUserRole).toHaveBeenCalledWith({ userId: 'user-1', roleId: '3' });
     expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1', role: 'viewer' }, 'Role assigned');
   });
 
@@ -40,7 +39,7 @@ describe('UserAssignRoleUseCase', () => {
     const view = await useCase.execute({ userId: 'user-1', role: RoleEnum.EDITOR });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor'] });
-    expect(repository.addRole).not.toHaveBeenCalled();
+    expect(repository.insertUserRole).not.toHaveBeenCalled();
   });
 
   it('rejects an unknown user', async () => {
@@ -55,7 +54,7 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('rejects a role missing from the role table', async () => {
-    repository.addRole.mockResolvedValue(false);
+    repository.findRole.mockResolvedValue(null);
 
     const assign = useCase.execute({ userId: 'user-1', role: RoleEnum.ADMIN });
 
@@ -67,15 +66,13 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('assigns a role to a disabled user too', async () => {
-    repository.findById.mockResolvedValue(
-      UserStaffUserModel.reconstitute({
-        id: 'user-2',
-        email: 'viewer@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.DISABLED,
-        roles: [],
-      }),
-    );
+    repository.findById.mockResolvedValue({
+      id: 'user-2',
+      email: 'viewer@example.com',
+      passwordHash: 'hash',
+      status: UserStatusEnum.DISABLED,
+      userRoles: [],
+    });
 
     const view = await useCase.execute({ userId: 'user-2', role: RoleEnum.VIEWER });
 

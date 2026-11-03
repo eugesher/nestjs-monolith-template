@@ -11,6 +11,6 @@ export class RolePermissionModel {
   public static reconstitute(record: IRolePermissionRecord): RolePermissionModel {
     const { id, code } = record;
 
-    return new RolePermissionModel(id, code);
+    return new RolePermissionModel(id, code as PermissionCodeEnum);
   }
 }

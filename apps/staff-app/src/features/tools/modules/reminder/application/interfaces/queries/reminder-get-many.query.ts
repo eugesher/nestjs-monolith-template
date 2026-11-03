@@ -3,7 +3,7 @@ import { Maybe } from '@acme-libs/toolkit';
 
 export interface IReminderGetManyQuery {
   page: Maybe<number>;
-  size: Maybe<number>;
+  limit: Maybe<number>;
   ownerId: string;
   status: Maybe<ReminderStatusEnum>;
 }

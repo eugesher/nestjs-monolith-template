@@ -27,9 +27,9 @@ export class OrderController {
   public async handleGetMany(
     @Query() query: OrderGetManyRequestDto,
   ): Promise<OrderSummaryPageResponseDto> {
-    const { page, size } = query;
+    const { page, limit } = query;
 
-    return await this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, limit });
   }
 
   @Get(':orderId')

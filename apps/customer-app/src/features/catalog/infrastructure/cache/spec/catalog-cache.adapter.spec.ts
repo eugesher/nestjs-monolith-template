@@ -16,10 +16,10 @@ describe('CatalogCacheAdapter', () => {
       const compute = jest.fn();
       wrap.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
-      const page = await adapter.read({ page: 2, size: 10, compute });
+      const page = await adapter.read({ page: 2, limit: 10, compute });
 
       expect(page).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
-      expect(wrap).toHaveBeenCalledWith('acme:catalog:v1:page:2:size:10', 60_000, compute);
+      expect(wrap).toHaveBeenCalledWith('acme:catalog:v1:page:2:limit:10', 60_000, compute);
       expect(compute).not.toHaveBeenCalled();
     });
   });

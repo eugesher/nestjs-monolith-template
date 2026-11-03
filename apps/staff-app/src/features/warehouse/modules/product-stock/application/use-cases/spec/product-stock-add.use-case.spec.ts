@@ -2,7 +2,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductStockAddedEvent, ProductStockModel } from '../../../domain';
+import { ProductStockAddedEvent } from '../../../domain';
 import { ProductStockLedgerService } from '../../services/product-stock-ledger.service';
 import { ProductStockAddUseCase } from '../product-stock-add.use-case';
 
@@ -19,9 +19,7 @@ describe('ProductStockAddUseCase', () => {
   let useCase: ProductStockAddUseCase;
 
   beforeEach(() => {
-    findById = jest
-      .fn()
-      .mockResolvedValue(ProductStockModel.reconstitute({ productId: '12', sku: 'SKU-0001' }));
+    findById = jest.fn().mockResolvedValue({ id: '12', sku: 'SKU-0001' });
     lock = jest.fn().mockResolvedValue(undefined);
     add = jest.fn().mockResolvedValue({ productStockId: '700', quantity: 15 });
     claim = jest.fn().mockResolvedValue({ outcome: 'claimed' });

@@ -310,13 +310,13 @@ exports[`App Catalog GET /api/products should refuse a caller without a token 1`
 }
 `;
 
-exports[`App Catalog GET /api/products should refuse a size of zero with 400 from validation 1`] = `
+exports[`App Catalog GET /api/products should refuse a limit of zero with 400 from validation 1`] = `
 {
   "response": {
     "body": {
       "error": "Bad Request",
       "message": [
-        "size must not be less than 1",
+        "limit must not be less than 1",
       ],
       "statusCode": 400,
     },

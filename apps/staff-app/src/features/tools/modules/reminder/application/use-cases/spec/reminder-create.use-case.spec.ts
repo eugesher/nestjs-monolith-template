@@ -3,33 +3,33 @@ import { PinoLogger } from 'nestjs-pino';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ReminderModel } from '../../../domain';
+import { IReminderDraft } from '../../../domain';
 import { ReminderCreateUseCase } from '../reminder-create.use-case';
 
 describe('ReminderCreateUseCase', () => {
   let insert: jest.Mock;
+  let findInserted: jest.Mock;
   let invalidate: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: ReminderCreateUseCase;
 
   beforeEach(() => {
-    insert = jest.fn().mockResolvedValue(
-      ReminderModel.reconstitute({
-        id: '7',
-        ownerId: 'owner-1',
-        title: 'Call the bank',
-        body: '',
-        dueOn: '2026-11-05',
-        status: ReminderStatusEnum.PENDING,
-        version: 1,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-      }),
-    );
+    insert = jest.fn().mockResolvedValue('7');
+    findInserted = jest.fn().mockResolvedValue({
+      id: '7',
+      ownerId: 'owner-1',
+      title: 'Call the bank',
+      body: '',
+      dueOn: '2026-11-05',
+      status: ReminderStatusEnum.PENDING,
+      version: 1,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    });
     invalidate = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
     useCase = new ReminderCreateUseCase(
-      { insert },
+      { insert, findInserted },
       { read: jest.fn(), invalidate },
       logger as unknown as PinoLogger,
     );
@@ -43,7 +43,7 @@ describe('ReminderCreateUseCase', () => {
         body: undefined,
         dueOn: '2026-11-05',
       });
-      const [reminder] = insert.mock.calls[0] as [ReminderModel];
+      const [reminder] = insert.mock.calls[0] as [IReminderDraft];
 
       expect(reminder.title).toBe('Call the bank');
       expect(reminder.body).toBe('');

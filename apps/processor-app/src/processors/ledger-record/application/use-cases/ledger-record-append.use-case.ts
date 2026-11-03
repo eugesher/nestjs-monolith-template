@@ -2,13 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { LedgerRecordEntryModel, LedgerRecordHelper } from '../../domain';
+import { ILedgerRecordEntryDraft, LedgerRecordEntryModel, LedgerRecordHelper } from '../../domain';
 import {
   type ILedgerRecordAppendRepositoryPort,
   LEDGER_RECORD_APPEND_REPOSITORY_PORT,
 } from '../../outbound';
-import { ILedgerRecordAppendCommand } from '../interfaces';
+import { ILedgerRecordAppendCommand, ILedgerRecordAppendOutcomeView } from '../interfaces';
 
 @Injectable()
 export class LedgerRecordAppendUseCase {
@@ -35,10 +36,26 @@ export class LedgerRecordAppendUseCase {
       correlationId,
       occurredAt: instant,
     });
-    const outcome = await this.repository.append(draft);
+    const outcome = await this.append(draft);
     const { id, appended } = outcome;
     const message = appended ? 'Ledger record appended' : 'Ledger record already appended';
 
     this.logger.info({ id, operationKey: draft.operationKey, appended }, message);
+  }
+
+  private async append(draft: ILedgerRecordEntryDraft): Promise<ILedgerRecordAppendOutcomeView> {
+    try {
+      const id = await this.repository.insert(draft);
+
+      return { id, appended: true };
+    } catch (error) {
+      if (!MysqlErrorHelper.isDuplicateKey(error)) {
+        throw error;
+      }
+
+      const existing = await this.repository.findByOperationKey(draft.operationKey);
+
+      return { id: existing.id, appended: false };
+    }
   }
 }

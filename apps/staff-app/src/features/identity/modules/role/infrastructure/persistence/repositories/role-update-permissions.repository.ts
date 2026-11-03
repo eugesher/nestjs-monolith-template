@@ -9,9 +9,10 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
-import { RoleModel, RolePermissionModel } from '../../../domain';
 import {
-  IRoleReplacePermissionsCommand,
+  IRoleFoundRecord,
+  IRolePermissionFoundRecord,
+  IRolePermissionInsertCommand,
   IRoleUpdatePermissionsRepositoryPort,
 } from '../../../outbound';
 
@@ -34,8 +35,8 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  public async findRole(name: RoleEnum): Promise<Nullable<RoleModel>> {
-    const role = await this.staffRoleRepository
+  public async findRole(name: RoleEnum): Promise<Nullable<IRoleFoundRecord>> {
+    return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id', 'StaffRole.name'])
       .leftJoin('StaffRole.rolePermissions', 'StaffRolePermission')
@@ -44,49 +45,29 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .addSelect(['StaffPermission.id', 'StaffPermission.code'])
       .where('StaffRole.name = :name', { name })
       .getOne();
-
-    if (!role) {
-      return null;
-    }
-
-    const permissionCodes = role.rolePermissions
-      .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
-      .sort();
-
-    return RoleModel.reconstitute({ id: role.id, name: role.name as RoleEnum, permissionCodes });
   }
 
-  public async findPermissions(codes: PermissionCodeEnum[]): Promise<RolePermissionModel[]> {
+  public async findPermissions(codes: PermissionCodeEnum[]): Promise<IRolePermissionFoundRecord[]> {
     if (codes.length === 0) {
       return [];
     }
 
-    const permissions = await this.staffPermissionRepository
+    return await this.staffPermissionRepository
       .createQueryBuilder('StaffPermission')
       .select(['StaffPermission.id', 'StaffPermission.code'])
       .where('StaffPermission.code IN (:...codes)', { codes })
       .getMany();
-
-    return permissions.map((permission) =>
-      RolePermissionModel.reconstitute({
-        id: permission.id,
-        code: permission.code as PermissionCodeEnum,
-      }),
-    );
   }
 
-  public async replacePermissions(command: IRoleReplacePermissionsCommand): Promise<void> {
-    const { role, permissions } = command;
+  public async deleteRolePermissions(roleId: string): Promise<void> {
+    await this.staffRolePermissionRepository.delete({ roleId });
+  }
 
-    await this.staffRolePermissionRepository.delete({ roleId: role.id });
-
-    const rows = permissions.map((permission) => ({
-      roleId: role.id,
-      permissionId: permission.id,
-    }));
-
-    if (rows.length > 0) {
-      await this.staffRolePermissionRepository.insert(rows);
+  public async insertRolePermissions(commands: IRolePermissionInsertCommand[]): Promise<void> {
+    if (commands.length === 0) {
+      return;
     }
+
+    await this.staffRolePermissionRepository.insert(commands);
   }
 }

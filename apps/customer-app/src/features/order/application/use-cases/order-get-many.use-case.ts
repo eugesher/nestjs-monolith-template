@@ -14,11 +14,11 @@ export class OrderGetManyUseCase {
   ) {}
 
   public async execute(query: IOrderGetManyQuery): Promise<IPage<IOrderSummaryView>> {
-    const { customerId, page, size } = query;
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list({ ...window, customerId });
-    const data = result.data.map((order) => OrderViewMapper.toSummaryView(order));
+    const { customerId, page, limit } = query;
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const [orders, total] = await this.repository.list({ ...pageWindow, customerId });
+    const data = orders.map((order) => OrderViewMapper.toSummaryView(order));
 
-    return { ...result, data };
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

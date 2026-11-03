@@ -1,7 +1,13 @@
-import { RoleEnum } from '@acme-libs/kernel';
+interface IAuthCommonStaffUserRecordRole {
+  name: string;
+}
+
+interface IAuthCommonStaffUserRecordUserRole {
+  role: IAuthCommonStaffUserRecordRole;
+}
 
 export interface IAuthCommonStaffUserRecord {
   id: string;
   email: string;
-  roles: RoleEnum[];
+  userRoles: IAuthCommonStaffUserRecordUserRole[];
 }

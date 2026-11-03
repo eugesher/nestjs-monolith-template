@@ -1,10 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { ReminderModel } from '../../domain';
-import { IReminderAccessFindOwnedQuery } from '../interfaces';
+import { IReminderAccessFindOwnedQuery, IReminderFoundRecord } from '../interfaces';
 
 export interface IReminderAccessRepositoryPort {
-  findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<ReminderModel>>;
+  findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<IReminderFoundRecord>>;
 }
 
 export const REMINDER_ACCESS_REPOSITORY_PORT = Symbol('REMINDER_ACCESS_REPOSITORY_PORT');

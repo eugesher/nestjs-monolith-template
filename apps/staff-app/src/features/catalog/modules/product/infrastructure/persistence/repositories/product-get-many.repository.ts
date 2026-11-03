@@ -5,11 +5,13 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { ProductModel } from '../../../domain';
-import { IProductGetManyRepositoryPort, IProductPageQuery } from '../../../outbound';
+import {
+  IProductGetManyRepositoryPort,
+  IProductListedRecord,
+  IProductPageQuery,
+} from '../../../outbound';
 
 @Injectable()
 export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
@@ -22,9 +24,10 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async list(query: IProductPageQuery): Promise<IPage<ProductModel>> {
-    const { page, size } = query;
-    const [products, total] = await this.productRepository
+  public async list(query: IProductPageQuery): Promise<[IProductListedRecord[], number]> {
+    const { limit, offset } = query;
+
+    return await this.productRepository
       .createQueryBuilder('Product')
       .select([
         'Product.id',
@@ -36,22 +39,8 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
         'Product.updatedAt',
       ])
       .orderBy('Product.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
-
-    const data = products.map((product) =>
-      ProductModel.reconstitute({
-        id: product.id,
-        sku: product.sku,
-        name: product.name,
-        status: product.status,
-        version: product.version,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      }),
-    );
-
-    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

@@ -24,7 +24,7 @@ export class OrderE2E {
       it('should answer the page window it was asked for', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/sales/orders')
-          .query({ page: 2, size: 1 })
+          .query({ page: 2, limit: 1 })
           .auth(this.ctx.viewerToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 

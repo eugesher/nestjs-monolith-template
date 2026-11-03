@@ -59,14 +59,14 @@ describe('NoteController', () => {
       getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany(
-        { page: 2, size: 5, subjectType: 'product', subjectId: '42', resolved: false },
+        { page: 2, limit: 5, subjectType: 'product', subjectId: '42', resolved: false },
         { id: 'user-1', email: 'ann@example.com' },
       );
 
       expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
-        size: 5,
+        limit: 5,
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
@@ -128,7 +128,7 @@ describe('NoteController', () => {
 
       const response = await controller.handleGetRevisions(
         { noteId: '17' },
-        { page: 1, size: 20 },
+        { page: 1, limit: 20 },
         { id: 'user-1', email: 'ann@example.com' },
       );
 
@@ -137,7 +137,7 @@ describe('NoteController', () => {
         noteId: '17',
         authorId: 'user-1',
         page: 1,
-        size: 20,
+        limit: 20,
       });
     });
   });

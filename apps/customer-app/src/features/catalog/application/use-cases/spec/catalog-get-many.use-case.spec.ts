@@ -15,37 +15,37 @@ describe('CatalogGetManyUseCase', () => {
     it('reads the page window of the query through the cache', async () => {
       list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
-      await useCase.execute({ page: 2, size: 10 });
+      await useCase.execute({ page: 2, limit: 10 });
 
-      const [query] = read.mock.calls[0] as [{ page: number; size: number }];
+      const [query] = read.mock.calls[0] as [{ page: number; limit: number }];
 
       expect(read).toHaveBeenCalledTimes(1);
       expect(query.page).toBe(2);
-      expect(query.size).toBe(10);
+      expect(query.limit).toBe(10);
     });
 
     it('computes a miss with the repository page of the same window', async () => {
       list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
-      await useCase.execute({ page: 2, size: 10 });
+      await useCase.execute({ page: 2, limit: 10 });
 
-      expect(list).toHaveBeenCalledWith({ page: 2, size: 10 });
+      expect(list).toHaveBeenCalledWith({ page: 2, limit: 10, offset: 10 });
     });
 
     it('asks for the first page of 20 when the query has no window', async () => {
       list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
-      await useCase.execute({ page: undefined, size: undefined });
+      await useCase.execute({ page: undefined, limit: undefined });
 
-      expect(list).toHaveBeenCalledWith({ page: 1, size: 20 });
+      expect(list).toHaveBeenCalledWith({ page: 1, limit: 20, offset: 0 });
     });
 
-    it('caps the size at 100', async () => {
+    it('caps the limit at 100', async () => {
       list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
-      await useCase.execute({ page: 1, size: 500 });
+      await useCase.execute({ page: 1, limit: 500 });
 
-      expect(list).toHaveBeenCalledWith({ page: 1, size: 100 });
+      expect(list).toHaveBeenCalledWith({ page: 1, limit: 100, offset: 0 });
     });
 
     it('answers a cached page without asking the repository', async () => {
@@ -57,7 +57,7 @@ describe('CatalogGetManyUseCase', () => {
         data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
 
-      const page = await useCase.execute({ page: undefined, size: undefined });
+      const page = await useCase.execute({ page: undefined, limit: undefined });
 
       expect(page).toEqual({
         page: 1,

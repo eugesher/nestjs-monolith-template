@@ -17,7 +17,7 @@ export class ReminderGetManyRequestDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  public size?: number;
+  public limit?: number;
 
   @ApiPropertyOptional({ enum: ReminderStatusEnum })
   @IsOptional()

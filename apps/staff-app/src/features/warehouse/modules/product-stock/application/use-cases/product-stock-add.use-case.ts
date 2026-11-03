@@ -7,6 +7,7 @@ import {
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
   ProductNotFoundException,
+  ProductStockModel,
 } from '../../domain';
 import {
   type IProductStockAddRepositoryPort,
@@ -80,11 +81,13 @@ export class ProductStockAddUseCase {
     const { productId, quantity, idempotencyKey } = command;
     await this.movement.lock({ productId });
 
-    const productStock = await this.repository.findById(productId);
+    const record = await this.repository.findById(productId);
 
-    if (!productStock) {
+    if (!record) {
       throw new ProductNotFoundException(productId);
     }
+
+    const productStock = ProductStockModel.reconstitute(record);
 
     productStock.add(quantity);
 

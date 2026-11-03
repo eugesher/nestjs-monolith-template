@@ -28,13 +28,15 @@ export class AuthLoginUseCase {
   public async execute(command: IAuthLoginCommand): Promise<IAuthAccessTokenView> {
     const { email, password } = command;
     const normalized = AuthStaffUserModel.normalizeEmail(email);
-    const user = await this.repository.findByEmail(normalized);
+    const record = await this.repository.findByEmail(normalized);
 
-    if (!user) {
+    if (!record) {
       this.logger.warn({ email: normalized }, 'Login failed: unknown email');
 
       throw new AuthInvalidCredentialsException();
     }
+
+    const user = AuthStaffUserModel.reconstitute(record);
 
     const { passwordHash } = user;
     const valid = await this.passwordHasher.verify({ passwordHash, password });

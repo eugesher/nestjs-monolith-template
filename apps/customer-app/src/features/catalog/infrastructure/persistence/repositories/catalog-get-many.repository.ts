@@ -27,16 +27,16 @@ export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
   }
 
   public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
-    const { page, size } = query;
+    const { page, limit, offset } = query;
     const [data, total] = await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku', 'Product.name'])
       .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
       .orderBy('Product.id', 'ASC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
 
-    return PaginationHelper.toPage(data, total, { page, size });
+    return PaginationHelper.toPage(data, total, { page, limit });
   }
 }

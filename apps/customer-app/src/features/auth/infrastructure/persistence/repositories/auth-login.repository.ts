@@ -8,8 +8,7 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
-import { AuthCustomerModel } from '../../../domain';
-import { IAuthLoginRepositoryPort } from '../../../outbound';
+import { IAuthCustomerFoundRecord, IAuthLoginRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -22,22 +21,11 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
     return this.repositoryHost.getRepository(Customer);
   }
 
-  public async findByEmail(email: string): Promise<Nullable<AuthCustomerModel>> {
-    const customer = await this.customerRepository
+  public async findByEmail(email: string): Promise<Nullable<IAuthCustomerFoundRecord>> {
+    return await this.customerRepository
       .createQueryBuilder('Customer')
       .select(['Customer.id', 'Customer.email', 'Customer.passwordHash', 'Customer.status'])
       .where('Customer.email = :email', { email })
       .getOne();
-
-    if (!customer) {
-      return null;
-    }
-
-    return AuthCustomerModel.reconstitute({
-      id: customer.id,
-      email: customer.email,
-      passwordHash: customer.passwordHash,
-      status: customer.status,
-    });
   }
 }

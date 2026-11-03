@@ -8,8 +8,11 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { Note } from '@acme-staff/common/entities';
 
-import { NoteModel } from '../../../domain';
-import { INoteAccessFindOwnedQuery, INoteAccessRepositoryPort } from '../../../outbound';
+import {
+  INoteAccessFindOwnedQuery,
+  INoteAccessRepositoryPort,
+  INoteFoundRecord,
+} from '../../../outbound';
 
 @Injectable()
 export class NoteAccessRepository implements INoteAccessRepositoryPort {
@@ -22,9 +25,10 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<NoteModel>> {
+  public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<INoteFoundRecord>> {
     const { noteId, authorId } = query;
-    const note = await this.noteRepository
+
+    return await this.noteRepository
       .createQueryBuilder('Note')
       .select([
         'Note.id',
@@ -40,21 +44,5 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
       .where('Note.id = :noteId', { noteId })
       .andWhere('Note.authorId = :authorId', { authorId })
       .getOne();
-
-    if (!note) {
-      return null;
-    }
-
-    return NoteModel.reconstitute({
-      id: note.id,
-      subjectType: note.subjectType,
-      subjectId: note.subjectId,
-      body: note.body,
-      authorId: note.authorId,
-      resolved: note.resolved,
-      version: note.version,
-      createdAt: note.createdAt,
-      updatedAt: note.updatedAt,
-    });
   }
 }

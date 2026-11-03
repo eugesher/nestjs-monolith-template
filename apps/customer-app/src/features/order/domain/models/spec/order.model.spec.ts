@@ -7,7 +7,9 @@ describe('OrderModel', () => {
         id: '600',
         customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [{ id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+        orderProducts: [
+          { id: '600', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
+        ],
       });
 
       expect(order.id).toBe('600');
@@ -118,9 +120,9 @@ describe('OrderModel', () => {
         id: '600',
         customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [
-          { id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-          { id: '602', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+        orderProducts: [
+          { id: '601', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
+          { id: '602', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
         ],
       });
 
@@ -137,7 +139,9 @@ describe('OrderModel', () => {
         id: '600',
         customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
-        products: [{ id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],
+        orderProducts: [
+          { id: '601', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
+        ],
       });
 
       expect(order.toView()).toEqual({

@@ -20,8 +20,8 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
   ) {}
 
   public async read(query: ICatalogCacheReadQuery): Promise<IPage<ICatalogProductRowView>> {
-    const { page, size, compute } = query;
-    const key = CACHE_KEYS.catalogPage(page, size);
+    const { page, limit, compute } = query;
+    const key = CACHE_KEYS.catalogPage(page, limit);
 
     return await this.cache.wrap(key, this.ttlMs, compute);
   }

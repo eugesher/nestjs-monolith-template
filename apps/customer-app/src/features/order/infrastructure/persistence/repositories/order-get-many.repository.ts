@@ -5,7 +5,6 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Order } from '@acme-core/entities';
 
 import { IOrderGetManyRepositoryPort, IOrderListedView, IOrderPageQuery } from '../../../outbound';
@@ -21,17 +20,16 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  public async list(query: IOrderPageQuery): Promise<IPage<IOrderListedView>> {
-    const { page, size, customerId } = query;
-    const [data, total] = await this.orderRepository
+  public async list(query: IOrderPageQuery): Promise<[IOrderListedView[], number]> {
+    const { limit, offset, customerId } = query;
+
+    return await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.createdAt'])
       .where('Order.customerId = :customerId', { customerId })
       .orderBy('Order.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
-
-    return PaginationHelper.toPage(data, total, { page, size });
   }
 }

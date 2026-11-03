@@ -1,10 +1,7 @@
-import { IPage } from '@acme-libs/toolkit';
-
-import { NoteModel } from '../../domain';
-import { INotePageQuery } from '../interfaces';
+import { INoteListedRecord, INotePageQuery } from '../interfaces';
 
 export interface INoteGetManyRepositoryPort {
-  list(query: INotePageQuery): Promise<IPage<NoteModel>>;
+  list(query: INotePageQuery): Promise<[INoteListedRecord[], number]>;
 }
 
 export const NOTE_GET_MANY_REPOSITORY_PORT = Symbol('NOTE_GET_MANY_REPOSITORY_PORT');

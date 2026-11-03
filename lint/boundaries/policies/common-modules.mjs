@@ -25,7 +25,6 @@ export const commonModules = [
     packages('nestjs-pino'),
   ]),
   from('acme-app:common:modules:infrastructure', [
-    layer('domain'),
     layer('outbound'),
     layer('infrastructure'),
     layer('infrastructure:core-adapters'),
@@ -38,14 +37,12 @@ export const commonModules = [
   ]),
   fromSpec('acme-app:common:modules:infrastructure:core-adapters'),
   from('acme-app:common:modules:infrastructure:core-adapters', [
-    layer('domain'),
     layer('outbound'),
     to('acme-core:contracts'),
     baseLibs(),
   ]),
   fromSpec('acme-app:common:modules:infrastructure:common-adapters'),
   from('acme-app:common:modules:infrastructure:common-adapters', [
-    layer('domain'),
     layer('outbound'),
     to('acme-app:contracts', own('app')),
     baseLibs(),

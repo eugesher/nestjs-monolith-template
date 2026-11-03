@@ -1,4 +1,4 @@
-export interface IOrderFoundProductView {
+export interface IOrderProduct {
   id: string;
   productId: string;
   sku: string;

@@ -1,10 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { ProductCoreModel } from '../../domain';
-import { IProductCoreWriteUpdateCommand } from '../interfaces';
+import { IProductCoreLockedRecord, IProductCoreWriteUpdateCommand } from '../interfaces';
 
 export interface IProductCoreArchiveRepositoryPort {
-  lockById(productId: string): Promise<Nullable<ProductCoreModel>>;
+  lockById(productId: string): Promise<Nullable<IProductCoreLockedRecord>>;
   update(command: IProductCoreWriteUpdateCommand): Promise<void>;
 }
 

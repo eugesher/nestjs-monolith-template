@@ -26,7 +26,7 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
   }
 
   public async list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryView>> {
-    const { page, size, subjectType, subjectId, correlationId } = query;
+    const { page, limit, offset, subjectType, subjectId, correlationId } = query;
     const builder = this.ledgerEntryRepository
       .createQueryBuilder('LedgerEntry')
       .select([
@@ -55,8 +55,8 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
 
     const [entries, total] = await builder
       .orderBy('LedgerEntry.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
 
     const data = entries.map((entry) => ({
@@ -71,6 +71,6 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
       recordedAt: entry.recordedAt.toISOString(),
     }));
 
-    return PaginationHelper.toPage(data, total, { page, size });
+    return PaginationHelper.toPage(data, total, { page, limit });
   }
 }

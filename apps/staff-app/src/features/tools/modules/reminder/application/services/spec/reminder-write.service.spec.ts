@@ -4,6 +4,7 @@ import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ReminderModel } from '../../../domain';
+import { IReminderWriteUpdateCommand } from '../../../outbound';
 import { ReminderAccessService } from '../reminder-access.service';
 import { ReminderWriteService } from '../reminder-write.service';
 
@@ -30,19 +31,17 @@ describe('ReminderWriteService', () => {
         }),
       ),
     );
-    findById = jest.fn().mockResolvedValue(
-      ReminderModel.reconstitute({
-        id: '7',
-        ownerId: 'owner-1',
-        title: 'Call the bank',
-        body: '',
-        dueOn: '2026-11-05',
-        status: ReminderStatusEnum.DONE,
-        version: 3,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-03T00:00:00.000Z'),
-      }),
-    );
+    findById = jest.fn().mockResolvedValue({
+      id: '7',
+      ownerId: 'owner-1',
+      title: 'Call the bank',
+      body: '',
+      dueOn: '2026-11-05',
+      status: ReminderStatusEnum.DONE,
+      version: 3,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-03T00:00:00.000Z'),
+    });
     update = jest.fn().mockResolvedValue(true);
     logger = makePinoLoggerMock();
     service = new ReminderWriteService(
@@ -58,14 +57,12 @@ describe('ReminderWriteService', () => {
       const written = await service.write({ reminderId: '7', ownerId: 'owner-1' }, (reminder) =>
         reminder.complete(),
       );
-      const [command] = update.mock.calls[0] as [
-        { reminder: ReminderModel; versionAsRead: number },
-      ];
+      const [command] = update.mock.calls[0] as [IReminderWriteUpdateCommand];
 
       expect(loadOwned).toHaveBeenCalledWith({ reminderId: '7', ownerId: 'owner-1' });
       expect(command.versionAsRead).toBe(2);
-      expect(command.reminder.status).toBe('done');
-      expect(command.reminder.version).toBe(3);
+      expect(command.status).toBe('done');
+      expect(command.version).toBe(3);
       expect(findById).toHaveBeenCalledWith('7');
       expect(written.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
       expect(logger.info).not.toHaveBeenCalled();

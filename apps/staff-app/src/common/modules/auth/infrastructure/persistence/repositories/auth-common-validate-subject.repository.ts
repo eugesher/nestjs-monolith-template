@@ -5,12 +5,14 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
-import { AuthCommonStaffUserModel } from '../../../domain';
-import { IAuthCommonValidateSubjectRepositoryPort } from '../../../outbound';
+import {
+  IAuthCommonStaffUserFoundRecord,
+  IAuthCommonValidateSubjectRepositoryPort,
+} from '../../../outbound';
 
 @Injectable()
 export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateSubjectRepositoryPort {
@@ -23,8 +25,8 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findActiveById(id: string): Promise<Nullable<AuthCommonStaffUserModel>> {
-    const user = await this.staffUserRepository
+  public async findActiveById(id: string): Promise<Nullable<IAuthCommonStaffUserFoundRecord>> {
+    return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email'])
       .leftJoin('StaffUser.userRoles', 'StaffUserRole')
@@ -34,13 +36,5 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
       .where('StaffUser.id = :id', { id })
       .andWhere('StaffUser.status = :status', { status: UserStatusEnum.ACTIVE })
       .getOne();
-
-    if (!user) {
-      return null;
-    }
-
-    const roles = user.userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
-
-    return AuthCommonStaffUserModel.reconstitute({ id: user.id, email: user.email, roles });
   }
 }

@@ -1,5 +1,6 @@
 export interface IOrderPageQuery {
   page: number;
-  size: number;
+  limit: number;
+  offset: number;
   customerId: string;
 }

@@ -63,9 +63,9 @@ export class ProductController {
   public async handleGetMany(
     @Query() query: ProductGetManyRequestDto,
   ): Promise<ProductPageResponseDto> {
-    const { page, size } = query;
+    const { page, limit } = query;
 
-    return await this.getMany.execute({ page, size });
+    return await this.getMany.execute({ page, limit });
   }
 
   @Get(':productId')

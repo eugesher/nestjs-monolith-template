@@ -28,17 +28,15 @@ describe('ProductWriteService', () => {
         }),
       ),
     );
-    findById = jest.fn().mockResolvedValue(
-      ProductModel.reconstitute({
-        id: '12',
-        sku: 'SKU-0001',
-        name: 'Desk lamp',
-        status: ProductStatusEnum.ACTIVE,
-        version: 4,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2026-01-03T00:00:00.000Z'),
-      }),
-    );
+    findById = jest.fn().mockResolvedValue({
+      id: '12',
+      sku: 'SKU-0001',
+      name: 'Desk lamp',
+      status: ProductStatusEnum.ACTIVE,
+      version: 4,
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-03T00:00:00.000Z'),
+    });
     update = jest.fn().mockResolvedValue(true);
     logger = makePinoLoggerMock();
     service = new ProductWriteService(
@@ -55,12 +53,14 @@ describe('ProductWriteService', () => {
         { productId: '12', expectedVersion: undefined },
         (product) => product.update({ name: 'Desk lamp' }),
       );
-      const [command] = update.mock.calls[0] as [{ product: ProductModel; versionAsRead: number }];
-
       expect(load).toHaveBeenCalledWith({ productId: '12' });
-      expect(command.versionAsRead).toBe(3);
-      expect(command.product.name).toBe('Desk lamp');
-      expect(command.product.version).toBe(4);
+      expect(update).toHaveBeenCalledWith({
+        id: '12',
+        versionAsRead: 3,
+        name: 'Desk lamp',
+        status: 'active',
+        version: 4,
+      });
       expect(findById).toHaveBeenCalledWith('12');
       expect(written.product.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
       expect(written.events).toHaveLength(1);

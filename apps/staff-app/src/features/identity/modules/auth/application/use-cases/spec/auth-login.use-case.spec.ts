@@ -3,7 +3,6 @@ import { PinoLogger } from 'nestjs-pino';
 import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { AuthStaffUserModel } from '../../../domain';
 import { AuthLoginUseCase } from '../auth-login.use-case';
 
 describe('AuthLoginUseCase', () => {
@@ -16,14 +15,12 @@ describe('AuthLoginUseCase', () => {
   beforeEach(() => {
     issue = jest.fn().mockResolvedValue('access-token');
     repository = {
-      findByEmail: jest.fn().mockResolvedValue(
-        AuthStaffUserModel.reconstitute({
-          id: 'user-1',
-          email: 'editor@example.com',
-          passwordHash: 'hash',
-          status: UserStatusEnum.ACTIVE,
-        }),
-      ),
+      findByEmail: jest.fn().mockResolvedValue({
+        id: 'user-1',
+        email: 'editor@example.com',
+        passwordHash: 'hash',
+        status: UserStatusEnum.ACTIVE,
+      }),
     };
     passwordHasher = { verify: jest.fn().mockResolvedValue(true) };
     logger = makePinoLoggerMock();
@@ -81,14 +78,12 @@ describe('AuthLoginUseCase', () => {
   });
 
   it('rejects a disabled user after checking the password', async () => {
-    repository.findByEmail.mockResolvedValue(
-      AuthStaffUserModel.reconstitute({
-        id: 'user-1',
-        email: 'editor@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.DISABLED,
-      }),
-    );
+    repository.findByEmail.mockResolvedValue({
+      id: 'user-1',
+      email: 'editor@example.com',
+      passwordHash: 'hash',
+      status: UserStatusEnum.DISABLED,
+    });
 
     const login = useCase.execute({ email: 'editor@example.com', password: 'correct-horse' });
 

@@ -9,8 +9,12 @@ import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
 
-import { UserStaffUserModel } from '../../../domain';
-import { IUserAssignRoleRepositoryPort } from '../../../outbound';
+import {
+  IUserAssignRoleRepositoryPort,
+  IUserStaffRoleFoundRecord,
+  IUserStaffUserFoundRecord,
+  IUserStaffUserRoleInsertCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
@@ -31,8 +35,8 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findById(id: string): Promise<Nullable<UserStaffUserModel>> {
-    const user = await this.staffUserRepository
+  public async findById(id: string): Promise<Nullable<IUserStaffUserFoundRecord>> {
+    return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
       .leftJoin('StaffUser.userRoles', 'StaffUserRole')
@@ -41,35 +45,17 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .addSelect(['StaffRole.id', 'StaffRole.name'])
       .where('StaffUser.id = :id', { id })
       .getOne();
-
-    if (!user) {
-      return null;
-    }
-
-    const roles = user.userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
-
-    return UserStaffUserModel.reconstitute({
-      id: user.id,
-      email: user.email,
-      passwordHash: user.passwordHash,
-      status: user.status,
-      roles,
-    });
   }
 
-  public async addRole(userId: string, role: RoleEnum): Promise<boolean> {
-    const stored = await this.staffRoleRepository
+  public async findRole(name: RoleEnum): Promise<Nullable<IUserStaffRoleFoundRecord>> {
+    return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id'])
-      .where('StaffRole.name = :role', { role })
+      .where('StaffRole.name = :name', { name })
       .getOne();
+  }
 
-    if (!stored) {
-      return false;
-    }
-
-    await this.staffUserRoleRepository.insert({ userId, roleId: stored.id });
-
-    return true;
+  public async insertUserRole(command: IUserStaffUserRoleInsertCommand): Promise<void> {
+    await this.staffUserRoleRepository.insert(command);
   }
 }

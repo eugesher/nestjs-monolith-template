@@ -1,4 +1,3 @@
-import { NoteModel } from '../../../domain';
 import { NoteGetManyUseCase } from '../note-get-many.use-case';
 
 describe('NoteGetManyUseCase', () => {
@@ -6,13 +5,9 @@ describe('NoteGetManyUseCase', () => {
   let useCase: NoteGetManyUseCase;
 
   beforeEach(() => {
-    list = jest.fn().mockResolvedValue({
-      page: 1,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [
-        NoteModel.reconstitute({
+    list = jest.fn().mockResolvedValue([
+      [
+        {
           id: '7',
           subjectType: 'product',
           subjectId: '42',
@@ -22,9 +17,10 @@ describe('NoteGetManyUseCase', () => {
           version: 2,
           createdAt: new Date('2026-01-01T00:00:00.000Z'),
           updatedAt: new Date('2026-01-02T00:00:00.000Z'),
-        }),
+        },
       ],
-    });
+      1,
+    ]);
     useCase = new NoteGetManyUseCase({ list });
   });
 
@@ -32,7 +28,7 @@ describe('NoteGetManyUseCase', () => {
     it('lists the notes of the author on the default page when nothing else is filtered', async () => {
       const page = await useCase.execute({
         page: undefined,
-        size: undefined,
+        limit: undefined,
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
@@ -41,7 +37,8 @@ describe('NoteGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
+        offset: 0,
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
@@ -71,7 +68,7 @@ describe('NoteGetManyUseCase', () => {
     it('passes a subject, a resolution filter and a clamped window', async () => {
       await useCase.execute({
         page: 0,
-        size: 500,
+        limit: 500,
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
@@ -80,7 +77,8 @@ describe('NoteGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 100,
+        limit: 100,
+        offset: 0,
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
@@ -95,7 +93,7 @@ describe('NoteGetManyUseCase', () => {
       await expect(
         useCase.execute({
           page: undefined,
-          size: undefined,
+          limit: undefined,
           subjectType,
           subjectId,
           resolved: undefined,

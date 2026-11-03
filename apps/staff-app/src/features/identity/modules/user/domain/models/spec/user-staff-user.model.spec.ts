@@ -43,7 +43,7 @@ describe('UserStaffUserModel', () => {
         email: 'viewer@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.DISABLED,
-        roles: [RoleEnum.VIEWER],
+        userRoles: [{ role: { name: 'viewer' } }],
       });
 
       expect(user).toMatchObject({
@@ -84,7 +84,7 @@ describe('UserStaffUserModel', () => {
         email: 'viewer@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
-        roles: [RoleEnum.VIEWER],
+        userRoles: [{ role: { name: 'viewer' } }],
       });
     });
 

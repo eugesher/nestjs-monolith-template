@@ -1,9 +1,9 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { AuthCustomerModel, AuthEmailTakenException } from '../../../domain';
 import { AuthLedgerService } from '../../services/auth-ledger.service';
 import { AuthRegisterUseCase } from '../auth-register.use-case';
 
@@ -17,14 +17,7 @@ describe('AuthRegisterUseCase', () => {
   beforeEach(() => {
     recordRegistered = jest.fn().mockResolvedValue(undefined);
     repository = {
-      insert: jest.fn().mockResolvedValue(
-        AuthCustomerModel.reconstitute({
-          id: '105',
-          email: 'eve@example.com',
-          passwordHash: 'argon-hash',
-          status: UserStatusEnum.ACTIVE,
-        }),
-      ),
+      insert: jest.fn().mockResolvedValue('105'),
     };
     passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
     logger = makePinoLoggerMock();
@@ -34,6 +27,10 @@ describe('AuthRegisterUseCase', () => {
       passwordHasher,
       logger as unknown as PinoLogger,
     );
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('hashes the password and stores an active customer', async () => {
@@ -70,8 +67,9 @@ describe('AuthRegisterUseCase', () => {
     expect(repository.insert).not.toHaveBeenCalled();
   });
 
-  it('lets the taken email refusal of the repository through without logging a sign-up', async () => {
-    repository.insert.mockRejectedValue(new AuthEmailTakenException('ann@example.com'));
+  it('refuses a duplicate email of the repository as taken without logging a sign-up', async () => {
+    repository.insert.mockRejectedValue(new Error('Duplicate entry'));
+    jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
 
     const register = useCase.execute({
       email: 'ann@example.com',

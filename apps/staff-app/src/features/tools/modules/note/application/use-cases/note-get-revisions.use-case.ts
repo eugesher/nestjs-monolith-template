@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
+import { NoteRevisionModel } from '../../domain';
 import {
   type INoteGetRevisionsRepositoryPort,
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
@@ -18,14 +19,18 @@ export class NoteGetRevisionsUseCase {
   ) {}
 
   public async execute(query: INoteGetRevisionsQuery): Promise<IPage<INoteRevisionView>> {
-    const { noteId, authorId, page, size } = query;
+    const { noteId, authorId, page, limit } = query;
 
     await this.accessService.loadOwned({ noteId, authorId });
 
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.listForNote({ ...window, noteId });
-    const data = result.data.map((revision) => revision.toView());
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const [records, total] = await this.repository.listForNote({ ...pageWindow, noteId });
+    const data = records.map((record) => {
+      const revision = NoteRevisionModel.reconstitute(record);
 
-    return { ...result, data };
+      return revision.toView();
+    });
+
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

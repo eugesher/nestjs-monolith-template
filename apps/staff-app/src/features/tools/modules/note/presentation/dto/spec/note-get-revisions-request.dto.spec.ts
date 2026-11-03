@@ -13,17 +13,17 @@ describe('NoteGetRevisionsRequestDto', () => {
   });
 
   it('turns the query strings into numbers', () => {
-    const dto = plainToInstance(NoteGetRevisionsRequestDto, { page: '3', size: '10' });
+    const dto = plainToInstance(NoteGetRevisionsRequestDto, { page: '3', limit: '10' });
 
     const errors = validateSync(dto);
 
     expect(errors).toEqual([]);
-    expect(dto).toEqual({ page: 3, size: 10 });
+    expect(dto).toEqual({ page: 3, limit: 10 });
   });
 
   it.each([
     ['page zero', { page: '0' }, 'page', ['min']],
-    ['a word as the size', { size: 'ten' }, 'size', ['min', 'isInt']],
+    ['a word as the limit', { limit: 'ten' }, 'limit', ['min', 'isInt']],
   ])('rejects %s', (_case, query, property, constraints) => {
     const dto = plainToInstance(NoteGetRevisionsRequestDto, query);
 

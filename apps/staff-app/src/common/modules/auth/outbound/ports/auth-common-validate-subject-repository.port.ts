@@ -1,9 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { AuthCommonStaffUserModel } from '../../domain';
+import { IAuthCommonStaffUserFoundRecord } from '../interfaces';
 
 export interface IAuthCommonValidateSubjectRepositoryPort {
-  findActiveById(id: string): Promise<Nullable<AuthCommonStaffUserModel>>;
+  findActiveById(id: string): Promise<Nullable<IAuthCommonStaffUserFoundRecord>>;
 }
 
 export const AUTH_COMMON_VALIDATE_SUBJECT_REPOSITORY_PORT = Symbol(

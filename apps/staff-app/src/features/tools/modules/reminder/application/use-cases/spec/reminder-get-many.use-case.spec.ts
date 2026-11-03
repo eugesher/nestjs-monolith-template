@@ -1,6 +1,5 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
-import { ReminderModel } from '../../../domain';
 import { ReminderGetManyUseCase } from '../reminder-get-many.use-case';
 
 describe('ReminderGetManyUseCase', () => {
@@ -8,13 +7,9 @@ describe('ReminderGetManyUseCase', () => {
   let useCase: ReminderGetManyUseCase;
 
   beforeEach(() => {
-    list = jest.fn().mockResolvedValue({
-      page: 1,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [
-        ReminderModel.reconstitute({
+    list = jest.fn().mockResolvedValue([
+      [
+        {
           id: '7',
           ownerId: 'owner-1',
           title: 'Call the bank',
@@ -24,9 +19,10 @@ describe('ReminderGetManyUseCase', () => {
           version: 1,
           createdAt: new Date('2026-01-01T00:00:00.000Z'),
           updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-        }),
+        },
       ],
-    });
+      1,
+    ]);
     useCase = new ReminderGetManyUseCase({ list });
   });
 
@@ -34,14 +30,15 @@ describe('ReminderGetManyUseCase', () => {
     it('lists the reminders of the owner in the default window', async () => {
       const page = await useCase.execute({
         page: undefined,
-        size: undefined,
+        limit: undefined,
         ownerId: 'owner-1',
         status: undefined,
       });
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
+        offset: 0,
         ownerId: 'owner-1',
         status: undefined,
       });
@@ -66,17 +63,18 @@ describe('ReminderGetManyUseCase', () => {
       });
     });
 
-    it('passes the status filter and caps the page size at 100', async () => {
+    it('passes the status filter and caps the page limit at 100', async () => {
       await useCase.execute({
         page: 2,
-        size: 500,
+        limit: 500,
         ownerId: 'owner-1',
         status: ReminderStatusEnum.DONE,
       });
 
       expect(list).toHaveBeenCalledWith({
         page: 2,
-        size: 100,
+        limit: 100,
+        offset: 100,
         ownerId: 'owner-1',
         status: 'done',
       });

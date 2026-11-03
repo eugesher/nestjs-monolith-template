@@ -1,10 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { OrderModel } from '../../domain';
-import { IOrderFindOwnedQuery } from '../interfaces';
+import { IOrderFindOwnedQuery, IOrderFoundRecord } from '../interfaces';
 
 export interface IOrderGetOneRepositoryPort {
-  findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<OrderModel>>;
+  findOwned(query: IOrderFindOwnedQuery): Promise<Nullable<IOrderFoundRecord>>;
 }
 
 export const ORDER_GET_ONE_REPOSITORY_PORT = Symbol('ORDER_GET_ONE_REPOSITORY_PORT');
