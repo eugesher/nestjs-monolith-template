@@ -7,7 +7,7 @@ import { IOrderActiveProduct } from '../interfaces/order-active-product.interfac
 import { IOrderCandidate } from '../interfaces/order-candidate.interface';
 import { IOrderDraft } from '../interfaces/order-draft.interface';
 import { IOrderMovement } from '../interfaces/order-movement.interface';
-import { IOrderProductRecord } from '../interfaces/order-product-record.interface';
+import { IOrderProduct } from '../interfaces/order-product.interface';
 import { IOrderRecord } from '../interfaces/order-record.interface';
 import { IOrderSnapshot } from '../interfaces/order-snapshot.interface';
 import { IOrderStock } from '../interfaces/order-stock.interface';
@@ -16,14 +16,20 @@ export class OrderModel extends AggregateRoot<string> {
   private constructor(
     id: string,
     public readonly customerId: string,
-    public readonly products: readonly IOrderProductRecord[],
+    public readonly products: readonly IOrderProduct[],
     public readonly createdAt: Date,
   ) {
     super(id);
   }
 
   public static reconstitute(record: IOrderRecord): OrderModel {
-    const { id, customerId, createdAt, products } = record;
+    const { id, customerId, createdAt, orderProducts } = record;
+    const products = orderProducts.map((orderProduct) => ({
+      id: orderProduct.id,
+      productId: orderProduct.productId,
+      sku: orderProduct.product.sku,
+      name: orderProduct.product.name,
+    }));
 
     return new OrderModel(id, customerId, products, createdAt);
   }
@@ -39,6 +45,28 @@ export class OrderModel extends AggregateRoot<string> {
     OrderModel.assertInStock(productIds, stock);
 
     return { customerId, productIds: [...productIds] };
+  }
+
+  public getMovements(): IOrderMovement[] {
+    return this.products.map((product) => ({
+      productId: product.productId,
+      orderProductId: product.id,
+    }));
+  }
+
+  public toView(): IOrderSnapshot {
+    const products = this.products.map((product) => ({
+      id: product.id,
+      productId: product.productId,
+      sku: product.sku,
+      name: product.name,
+    }));
+
+    return {
+      id: this.id,
+      createdAt: this.createdAt.toISOString(),
+      products,
+    };
   }
 
   private static assertFound(productIds: string[], products: IOrderActiveProduct[]): void {
@@ -63,27 +91,5 @@ export class OrderModel extends AggregateRoot<string> {
         throw new OrderStockInsufficientException(productId, requested, available);
       }
     }
-  }
-
-  public getMovements(): IOrderMovement[] {
-    return this.products.map((product) => ({
-      productId: product.productId,
-      orderProductId: product.id,
-    }));
-  }
-
-  public toView(): IOrderSnapshot {
-    const products = this.products.map((product) => ({
-      id: product.id,
-      productId: product.productId,
-      sku: product.sku,
-      name: product.name,
-    }));
-
-    return {
-      id: this.id,
-      createdAt: this.createdAt.toISOString(),
-      products,
-    };
   }
 }

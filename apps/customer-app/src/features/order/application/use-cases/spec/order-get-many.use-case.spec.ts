@@ -5,13 +5,9 @@ describe('OrderGetManyUseCase', () => {
   let useCase: OrderGetManyUseCase;
 
   beforeEach(() => {
-    list = jest.fn().mockResolvedValue({
-      page: 1,
-      count: 1,
-      pageCount: 1,
-      total: 1,
-      data: [{ id: '600', createdAt: new Date('2026-01-03T00:00:00.000Z') }],
-    });
+    list = jest
+      .fn()
+      .mockResolvedValue([[{ id: '600', createdAt: new Date('2026-01-03T00:00:00.000Z') }], 1]);
     useCase = new OrderGetManyUseCase({ list });
   });
 

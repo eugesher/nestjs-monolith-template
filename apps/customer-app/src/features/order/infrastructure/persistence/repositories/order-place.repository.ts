@@ -8,8 +8,13 @@ import {
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-import { IOrderDraft, OrderModel } from '../../../domain';
-import { IOrderPlaceRepositoryPort, IOrderPlaceProductView } from '../../../outbound';
+import { IOrderRecord } from '../../../domain';
+import {
+  IOrderInsertCommand,
+  IOrderPlaceProductView,
+  IOrderPlaceRepositoryPort,
+  IOrderProductInsertCommand,
+} from '../../../outbound';
 
 @Injectable()
 export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
@@ -43,14 +48,16 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .getMany();
   }
 
-  public async insert(draft: IOrderDraft): Promise<OrderModel> {
-    const { customerId, productIds } = draft;
-    const orderId = await this.orderRepository.insertOne({ customerId });
-    const lines = productIds.map((productId) => ({ orderId, productId }));
+  public async insertOrder(command: IOrderInsertCommand): Promise<string> {
+    return await this.orderRepository.insertOne(command);
+  }
 
-    await this.orderProductRepository.insert(lines);
+  public async insertOrderProducts(commands: IOrderProductInsertCommand[]): Promise<void> {
+    await this.orderProductRepository.insert(commands);
+  }
 
-    const stored = await this.orderRepository
+  public async findOrder(orderId: string): Promise<IOrderRecord> {
+    return await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .leftJoin('Order.orderProducts', 'OrderProduct')
@@ -60,17 +67,5 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .where('Order.id = :orderId', { orderId })
       .orderBy('OrderProduct.id', 'ASC')
       .getOneOrFail();
-    const products = stored.orderProducts.map((orderProduct) => {
-      const { id, productId, product } = orderProduct;
-
-      return { id, productId, sku: product.sku, name: product.name };
-    });
-
-    return OrderModel.reconstitute({
-      id: stored.id,
-      customerId: stored.customerId,
-      createdAt: stored.createdAt,
-      products,
-    });
   }
 }

@@ -4,5 +4,5 @@ export interface IOrderRecord {
   id: string;
   customerId: string;
   createdAt: Date;
-  products: IOrderProductRecord[];
+  orderProducts: IOrderProductRecord[];
 }
