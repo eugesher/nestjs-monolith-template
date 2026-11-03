@@ -37,7 +37,7 @@ describe('CACHE_KEYS', () => {
     it('builds a versioned, namespaced key of one page window', () => {
       const key = CACHE_KEYS.catalogPage(2, 20);
 
-      expect(key).toBe('acme:catalog:v1:page:2:size:20');
+      expect(key).toBe('acme:catalog:v1:page:2:limit:20');
     });
 
     it('starts with the catalog prefix, so delByPrefix clears every page', () => {

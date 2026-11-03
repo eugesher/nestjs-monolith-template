@@ -241,7 +241,7 @@ export class ProductE2E {
   public handleUpdate(): void {
     describe('PATCH /api/catalog/products/:productId', () => {
       it('should update the name with a quoted If-Match, bump the version and drop the cached customer catalog', async () => {
-        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+        await this.ctx.redis.set('acme:catalog:v1:page:1:limit:20', '{}');
 
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/catalog/products/102')
@@ -336,7 +336,7 @@ export class ProductE2E {
   public handleArchive(): void {
     describe('PUT /api/catalog/products/:productId/archive', () => {
       it('should archive, queue one ledger record under the correlation id and drop the cached customer catalog', async () => {
-        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+        await this.ctx.redis.set('acme:catalog:v1:page:1:limit:20', '{}');
 
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/103/archive')
@@ -381,7 +381,7 @@ export class ProductE2E {
   public handlePublish(): void {
     describe('PUT /api/catalog/products/:productId/publish', () => {
       it('should publish a draft, queue one ledger record under the correlation id and drop the cached customer catalog', async () => {
-        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+        await this.ctx.redis.set('acme:catalog:v1:page:1:limit:20', '{}');
 
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/101/publish')

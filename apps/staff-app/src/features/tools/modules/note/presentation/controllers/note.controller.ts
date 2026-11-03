@@ -54,11 +54,11 @@ export class NoteController {
     @Query() query: NoteGetManyRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NotePageResponseDto> {
-    const { page, size, subjectType, subjectId, resolved } = query;
+    const { page, limit, subjectType, subjectId, resolved } = query;
 
     return await this.getMany.execute({
       page,
-      size,
+      limit,
       subjectType,
       subjectId,
       resolved,
@@ -115,8 +115,8 @@ export class NoteController {
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteRevisionPageResponseDto> {
     const { noteId } = params;
-    const { page, size } = query;
+    const { page, limit } = query;
 
-    return await this.getRevisions.execute({ noteId, authorId: user.id, page, size });
+    return await this.getRevisions.execute({ noteId, authorId: user.id, page, limit });
   }
 }

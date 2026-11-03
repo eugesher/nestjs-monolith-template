@@ -34,7 +34,7 @@ export class CatalogE2E {
       it('should answer the page of the window with the total of every page', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/products')
-          .query({ page: 2, size: 1 })
+          .query({ page: 2, limit: 1 })
           .auth(this.ctx.bobToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -44,11 +44,11 @@ export class CatalogE2E {
       it('should keep the page in the cache under the key of its window for the TTL', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/products')
-          .query({ page: 1, size: 2 })
+          .query({ page: 1, limit: 2 })
           .auth(this.ctx.bobToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        const key = 'acme:catalog:v1:page:1:size:2';
+        const key = 'acme:catalog:v1:page:1:limit:2';
         const cached = await this.ctx.redis.get(key);
 
         expect(await this.ctx.redis.keys('acme:catalog:*')).toEqual([key]);
@@ -59,7 +59,7 @@ export class CatalogE2E {
 
       it('should answer a cached page without reading the database', async () => {
         await this.ctx.redis.set(
-          'acme:catalog:v1:page:1:size:20',
+          'acme:catalog:v1:page:1:limit:20',
           JSON.stringify({
             page: 1,
             count: 1,
@@ -77,10 +77,10 @@ export class CatalogE2E {
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse a size of zero with 400 from validation', async () => {
+      it('should refuse a limit of zero with 400 from validation', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/products')
-          .query({ size: 0 })
+          .query({ limit: 0 })
           .auth(this.ctx.bobToken, { type: 'bearer' })
           .expect(HttpStatus.BAD_REQUEST);
 

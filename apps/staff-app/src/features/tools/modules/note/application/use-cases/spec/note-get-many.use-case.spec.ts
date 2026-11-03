@@ -28,7 +28,7 @@ describe('NoteGetManyUseCase', () => {
     it('lists the notes of the author on the default page when nothing else is filtered', async () => {
       const page = await useCase.execute({
         page: undefined,
-        size: undefined,
+        limit: undefined,
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
@@ -37,7 +37,8 @@ describe('NoteGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
+        offset: 0,
         subjectType: undefined,
         subjectId: undefined,
         resolved: undefined,
@@ -67,7 +68,7 @@ describe('NoteGetManyUseCase', () => {
     it('passes a subject, a resolution filter and a clamped window', async () => {
       await useCase.execute({
         page: 0,
-        size: 500,
+        limit: 500,
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
@@ -76,7 +77,8 @@ describe('NoteGetManyUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 100,
+        limit: 100,
+        offset: 0,
         subjectType: 'product',
         subjectId: '42',
         resolved: false,
@@ -91,7 +93,7 @@ describe('NoteGetManyUseCase', () => {
       await expect(
         useCase.execute({
           page: undefined,
-          size: undefined,
+          limit: undefined,
           subjectType,
           subjectId,
           resolved: undefined,

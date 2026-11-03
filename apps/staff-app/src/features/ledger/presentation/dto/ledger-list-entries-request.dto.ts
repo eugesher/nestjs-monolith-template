@@ -15,7 +15,7 @@ export class LedgerListEntriesRequestDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  public size?: number;
+  public limit?: number;
 
   @ApiPropertyOptional({ example: 'product' })
   @IsOptional()

@@ -22,7 +22,7 @@ describe('CatalogController', () => {
         data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
 
-      const response = await controller.handleGetMany({ page: 2, size: 10 });
+      const response = await controller.handleGetMany({ page: 2, limit: 10 });
 
       expect(response).toEqual({
         page: 2,
@@ -31,7 +31,7 @@ describe('CatalogController', () => {
         total: 1,
         data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
-      expect(list).toHaveBeenCalledWith({ page: 2, size: 10 });
+      expect(list).toHaveBeenCalledWith({ page: 2, limit: 10, offset: 10 });
     });
   });
 });

@@ -26,9 +26,9 @@ describe('ProductGetManyUseCase', () => {
 
   describe('execute', () => {
     it('answers a page of views', async () => {
-      const page = await useCase.execute({ page: 2, size: 20 });
+      const page = await useCase.execute({ page: 2, limit: 20 });
 
-      expect(list).toHaveBeenCalledWith({ page: 2, size: 20 });
+      expect(list).toHaveBeenCalledWith({ page: 2, limit: 20, offset: 20 });
       expect(page).toEqual({
         page: 2,
         count: 1,
@@ -49,12 +49,12 @@ describe('ProductGetManyUseCase', () => {
     });
 
     it.each([
-      ['defaults an absent window', undefined, undefined, { page: 1, size: 20 }],
-      ['caps the size at 100', 1, 500, { page: 1, size: 100 }],
-    ])('%s', async (_, page, size, window) => {
-      await useCase.execute({ page, size });
+      ['defaults an absent window', undefined, undefined, { page: 1, limit: 20, offset: 0 }],
+      ['caps the limit at 100', 1, 500, { page: 1, limit: 100, offset: 0 }],
+    ])('%s', async (_, page, limit, pageWindow) => {
+      await useCase.execute({ page, limit });
 
-      expect(list).toHaveBeenCalledWith({ ...window });
+      expect(list).toHaveBeenCalledWith({ ...pageWindow });
     });
   });
 });

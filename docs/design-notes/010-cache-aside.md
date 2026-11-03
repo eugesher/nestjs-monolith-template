@@ -37,7 +37,7 @@ use cases call it without a guard; a stale entry then expires on its TTL.
 **Keys are versioned and prefixed** (`acme:<area>:v1:<scope>:`), so one `delByPrefix` drops every
 facet of a scope and a change of the cached shape bumps the version instead of reading old values.
 
-**A paged list is a poor fit** when every write touches it: a key per page, size and filter gives
+**A paged list is a poor fit** when every write touches it: a key per page, limit and filter gives
 each write as many keys to drop as there are queries. `020-cross-app-cache-invalidation.md` shows
 the case where dropping every page is cheap.
 

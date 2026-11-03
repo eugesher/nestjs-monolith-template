@@ -2117,7 +2117,7 @@ exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId
 {
   "cache": {
     "keys": [
-      "acme:catalog:v1:page:1:size:20",
+      "acme:catalog:v1:page:1:limit:20",
     ],
   },
   "db": {

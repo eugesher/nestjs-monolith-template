@@ -15,7 +15,7 @@ describe('LedgerListEntriesUseCase', () => {
 
       await useCase.execute({
         page: 2,
-        size: 10,
+        limit: 10,
         subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
@@ -23,7 +23,8 @@ describe('LedgerListEntriesUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 2,
-        size: 10,
+        limit: 10,
+        offset: 10,
         subjectType: 'product',
         subjectId: '12',
         correlationId: 'corr-1',
@@ -37,21 +38,23 @@ describe('LedgerListEntriesUseCase', () => {
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
+        offset: 0,
         subjectType: 'product',
         subjectId: undefined,
         correlationId: undefined,
       });
     });
 
-    it('caps the page size at 100', async () => {
+    it('caps the page limit at 100', async () => {
       list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
 
-      await useCase.execute({ size: 500 });
+      await useCase.execute({ limit: 500 });
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 100,
+        limit: 100,
+        offset: 0,
         subjectType: undefined,
         subjectId: undefined,
         correlationId: undefined,

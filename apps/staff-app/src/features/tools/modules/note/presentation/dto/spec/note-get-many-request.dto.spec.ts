@@ -15,7 +15,7 @@ describe('NoteGetManyRequestDto', () => {
   it('turns the query strings into numbers and a boolean and keeps the subject', () => {
     const dto = plainToInstance(NoteGetManyRequestDto, {
       page: '2',
-      size: '500',
+      limit: '500',
       subjectType: 'product',
       subjectId: '42',
       resolved: 'false',
@@ -26,7 +26,7 @@ describe('NoteGetManyRequestDto', () => {
     expect(errors).toEqual([]);
     expect(dto).toEqual({
       page: 2,
-      size: 500,
+      limit: 500,
       subjectType: 'product',
       subjectId: '42',
       resolved: false,
@@ -52,7 +52,7 @@ describe('NoteGetManyRequestDto', () => {
 
   it.each([
     ['page zero', { page: '0' }, 'page', ['min']],
-    ['a fractional size', { size: '1.5' }, 'size', ['isInt']],
+    ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
     ['an uppercase subject type', { subjectType: 'Product' }, 'subjectType', ['matches']],
     ['an empty subject id', { subjectId: '' }, 'subjectId', ['minLength']],
     ['a subject id of 65 characters', { subjectId: 's'.repeat(65) }, 'subjectId', ['maxLength']],

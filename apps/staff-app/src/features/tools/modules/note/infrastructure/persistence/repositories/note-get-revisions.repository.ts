@@ -27,7 +27,7 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
   public async listForNote(
     query: INoteRevisionPageQuery,
   ): Promise<[INoteRevisionListedRecord[], number]> {
-    const { page, size, noteId } = query;
+    const { limit, offset, noteId } = query;
 
     return await this.noteRevisionRepository
       .createQueryBuilder('NoteRevision')
@@ -43,8 +43,8 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
       ])
       .where('NoteRevision.noteId = :noteId', { noteId })
       .orderBy('NoteRevision.noteVersion', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
   }
 }

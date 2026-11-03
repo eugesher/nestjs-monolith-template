@@ -19,7 +19,7 @@ describe('LedgerController', () => {
       expect(response).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
         subjectType: 'product',
         subjectId: '12',
         correlationId: undefined,

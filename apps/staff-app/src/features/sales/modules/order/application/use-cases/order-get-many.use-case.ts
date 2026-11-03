@@ -14,9 +14,9 @@ export class OrderGetManyUseCase {
   ) {}
 
   public async execute(query: IOrderGetManyQuery): Promise<IPage<IOrderSummaryView>> {
-    const { page, size } = query;
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const result = await this.repository.list(window);
+    const { page, limit } = query;
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const result = await this.repository.list(pageWindow);
     const data = result.data.map((order) => OrderViewMapper.toSummaryView(order));
 
     return { ...result, data };

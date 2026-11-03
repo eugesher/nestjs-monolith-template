@@ -15,19 +15,19 @@ describe('ReminderGetManyRequestDto', () => {
   it('turns the query strings into numbers and keeps the status', () => {
     const dto = plainToInstance(ReminderGetManyRequestDto, {
       page: '2',
-      size: '500',
+      limit: '500',
       status: 'done',
     });
 
     const errors = validateSync(dto);
 
     expect(errors).toEqual([]);
-    expect(dto).toEqual({ page: 2, size: 500, status: 'done' });
+    expect(dto).toEqual({ page: 2, limit: 500, status: 'done' });
   });
 
   it.each([
     ['page zero', { page: '0' }, 'page', ['min']],
-    ['a fractional size', { size: '1.5' }, 'size', ['isInt']],
+    ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
     ['an unknown status', { status: 'archived' }, 'status', ['isEnum']],
   ])('rejects %s', (_case, query, property, constraints) => {
     const dto = plainToInstance(ReminderGetManyRequestDto, query);

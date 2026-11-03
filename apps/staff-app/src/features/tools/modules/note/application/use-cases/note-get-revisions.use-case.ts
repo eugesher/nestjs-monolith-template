@@ -19,18 +19,18 @@ export class NoteGetRevisionsUseCase {
   ) {}
 
   public async execute(query: INoteGetRevisionsQuery): Promise<IPage<INoteRevisionView>> {
-    const { noteId, authorId, page, size } = query;
+    const { noteId, authorId, page, limit } = query;
 
     await this.accessService.loadOwned({ noteId, authorId });
 
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const [records, total] = await this.repository.listForNote({ ...window, noteId });
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const [records, total] = await this.repository.listForNote({ ...pageWindow, noteId });
     const data = records.map((record) => {
       const revision = NoteRevisionModel.reconstitute(record);
 
       return revision.toView();
     });
 
-    return PaginationHelper.toPage(data, total, window);
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

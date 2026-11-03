@@ -13,7 +13,7 @@ export class ProductStockE2E {
   public handleAdd(): void {
     describe('POST /api/warehouse/product-stock/:productId/add', () => {
       it('should add the units to a sold-out product, record the key, queue the ledger record under the correlation id and keep the cached customer catalog', async () => {
-        await this.ctx.redis.set('acme:catalog:v1:page:1:size:20', '{}');
+        await this.ctx.redis.set('acme:catalog:v1:page:1:limit:20', '{}');
 
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/warehouse/product-stock/106/add')

@@ -1,5 +1,5 @@
 export interface IPageWindowOptions {
   defaultPage?: number;
-  defaultSize?: number;
-  maxSize?: number;
+  defaultLimit?: number;
+  maxLimit?: number;
 }

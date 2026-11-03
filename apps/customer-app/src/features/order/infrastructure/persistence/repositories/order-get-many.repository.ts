@@ -21,15 +21,15 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
   }
 
   public async list(query: IOrderPageQuery): Promise<[IOrderListedView[], number]> {
-    const { page, size, customerId } = query;
+    const { limit, offset, customerId } = query;
 
     return await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.createdAt'])
       .where('Order.customerId = :customerId', { customerId })
       .orderBy('Order.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
   }
 }

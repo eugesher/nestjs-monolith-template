@@ -43,10 +43,10 @@ describe('NoteGetRevisionsUseCase', () => {
 
   describe('execute', () => {
     it('answers a page of the revisions of an existing note', async () => {
-      const page = await useCase.execute({ noteId: '7', authorId: 'admin-1', page: 2, size: 5 });
+      const page = await useCase.execute({ noteId: '7', authorId: 'admin-1', page: 2, limit: 5 });
 
       expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
-      expect(listForNote).toHaveBeenCalledWith({ page: 2, size: 5, noteId: '7' });
+      expect(listForNote).toHaveBeenCalledWith({ page: 2, limit: 5, offset: 5, noteId: '7' });
       expect(page).toEqual({
         page: 2,
         count: 1,
@@ -71,7 +71,7 @@ describe('NoteGetRevisionsUseCase', () => {
       loadOwned.mockRejectedValue(new Error('Note 7 was not found'));
 
       await expect(
-        useCase.execute({ noteId: '7', authorId: 'admin-1', page: undefined, size: undefined }),
+        useCase.execute({ noteId: '7', authorId: 'admin-1', page: undefined, limit: undefined }),
       ).rejects.toThrow('Note 7 was not found');
       expect(listForNote).not.toHaveBeenCalled();
     });

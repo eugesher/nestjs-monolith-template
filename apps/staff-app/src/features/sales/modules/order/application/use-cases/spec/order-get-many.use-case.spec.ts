@@ -19,9 +19,9 @@ describe('OrderGetManyUseCase', () => {
 
   describe('execute', () => {
     it('lists the orders of all customers in the default window', async () => {
-      const page = await useCase.execute({ page: undefined, size: undefined });
+      const page = await useCase.execute({ page: undefined, limit: undefined });
 
-      expect(list).toHaveBeenCalledWith({ page: 1, size: 20 });
+      expect(list).toHaveBeenCalledWith({ page: 1, limit: 20, offset: 0 });
       expect(page).toEqual({
         page: 1,
         count: 1,
@@ -31,10 +31,10 @@ describe('OrderGetManyUseCase', () => {
       });
     });
 
-    it('clamps the page size to 100', async () => {
-      await useCase.execute({ page: 3, size: 500 });
+    it('clamps the page limit to 100', async () => {
+      await useCase.execute({ page: 3, limit: 500 });
 
-      expect(list).toHaveBeenCalledWith({ page: 3, size: 100 });
+      expect(list).toHaveBeenCalledWith({ page: 3, limit: 100, offset: 200 });
     });
   });
 });

@@ -1,6 +1,6 @@
 # 005 — Page window
 
-A paged read takes `page` and `size`, and the use case owns the limits.
+A paged read takes `page` and `limit`, and the use case owns the bounds.
 
 | Part     | Example                                                                                    |
 | -------- | ------------------------------------------------------------------------------------------ |
@@ -9,9 +9,12 @@ A paged read takes `page` and `size`, and the use case owns the limits.
 | helper   | `PaginationHelper.clampPageWindow` in `libs/toolkit`                                       |
 
 **The DTO checks the type, the use case the limits.** The DTO accepts positive integers, and the
-use case applies the defaults (page 1, size 20) and caps `size` at 100 with
-`PaginationHelper.clampPageWindow`. A size above the cap is capped, not rejected, and the response
+use case applies the defaults (page 1, limit 20) and caps `limit` at 100 with
+`PaginationHelper.clampPageWindow`. A limit above the cap is capped, not rejected, and the response
 echoes the window it used.
+
+**The helper computes the offset.** `clampPageWindow` answers `{ page, limit, offset }`, and the
+repository passes `offset` and `limit` to the query as they are.
 
 **A read-only module has no domain.** `apps/staff-app/src/features/ledger` refuses nothing by code,
 so it has no domain exception and no exception filter.

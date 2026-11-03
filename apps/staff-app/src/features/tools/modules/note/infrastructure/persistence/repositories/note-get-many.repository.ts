@@ -21,7 +21,7 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
   }
 
   public async list(query: INotePageQuery): Promise<[INoteListedRecord[], number]> {
-    const { page, size, subjectType, subjectId, resolved, authorId } = query;
+    const { limit, offset, subjectType, subjectId, resolved, authorId } = query;
     const builder = this.noteRepository
       .createQueryBuilder('Note')
       .select([
@@ -47,10 +47,6 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
       builder.andWhere('Note.resolved = :resolved', { resolved });
     }
 
-    return await builder
-      .orderBy('Note.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
-      .getManyAndCount();
+    return await builder.orderBy('Note.id', 'DESC').skip(offset).take(limit).getManyAndCount();
   }
 }

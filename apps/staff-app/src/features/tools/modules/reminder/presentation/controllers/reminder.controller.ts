@@ -71,9 +71,9 @@ export class ReminderController {
     @Query() query: ReminderGetManyRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderPageResponseDto> {
-    const { page, size, status } = query;
+    const { page, limit, status } = query;
 
-    return await this.getMany.execute({ page, size, ownerId: user.id, status });
+    return await this.getMany.execute({ page, limit, ownerId: user.id, status });
   }
 
   @Get('summary')

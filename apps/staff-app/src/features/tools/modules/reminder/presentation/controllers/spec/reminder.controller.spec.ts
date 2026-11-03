@@ -61,7 +61,7 @@ describe('ReminderController', () => {
       getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
       const response = await controller.handleGetMany(
-        { page: 2, size: 5, status: ReminderStatusEnum.DONE },
+        { page: 2, limit: 5, status: ReminderStatusEnum.DONE },
         {
           id: 'staff-1',
           email: 'ann@example.com',
@@ -71,7 +71,7 @@ describe('ReminderController', () => {
       expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(getMany).toHaveBeenCalledWith({
         page: 2,
-        size: 5,
+        limit: 5,
         ownerId: 'staff-1',
         status: 'done',
       });

@@ -30,14 +30,15 @@ describe('ReminderGetManyUseCase', () => {
     it('lists the reminders of the owner in the default window', async () => {
       const page = await useCase.execute({
         page: undefined,
-        size: undefined,
+        limit: undefined,
         ownerId: 'owner-1',
         status: undefined,
       });
 
       expect(list).toHaveBeenCalledWith({
         page: 1,
-        size: 20,
+        limit: 20,
+        offset: 0,
         ownerId: 'owner-1',
         status: undefined,
       });
@@ -62,17 +63,18 @@ describe('ReminderGetManyUseCase', () => {
       });
     });
 
-    it('passes the status filter and caps the page size at 100', async () => {
+    it('passes the status filter and caps the page limit at 100', async () => {
       await useCase.execute({
         page: 2,
-        size: 500,
+        limit: 500,
         ownerId: 'owner-1',
         status: ReminderStatusEnum.DONE,
       });
 
       expect(list).toHaveBeenCalledWith({
         page: 2,
-        size: 100,
+        limit: 100,
+        offset: 100,
         ownerId: 'owner-1',
         status: 'done',
       });

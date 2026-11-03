@@ -1,6 +1,7 @@
 export interface ILedgerEntryPageQuery {
   page: number;
-  size: number;
+  limit: number;
+  offset: number;
   subjectType?: string;
   subjectId?: string;
   correlationId?: string;

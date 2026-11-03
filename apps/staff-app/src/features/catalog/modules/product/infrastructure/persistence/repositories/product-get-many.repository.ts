@@ -25,7 +25,7 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
   }
 
   public async list(query: IProductPageQuery): Promise<[IProductListedRecord[], number]> {
-    const { page, size } = query;
+    const { limit, offset } = query;
 
     return await this.productRepository
       .createQueryBuilder('Product')
@@ -39,8 +39,8 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
         'Product.updatedAt',
       ])
       .orderBy('Product.id', 'DESC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
   }
 }

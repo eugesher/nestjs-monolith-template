@@ -14,15 +14,15 @@ export class NoteGetManyUseCase {
   ) {}
 
   public async execute(query: INoteGetManyQuery): Promise<IPage<INoteView>> {
-    const { page, size, subjectType, subjectId, resolved, authorId } = query;
+    const { page, limit, subjectType, subjectId, resolved, authorId } = query;
 
     if ((subjectType === undefined) !== (subjectId === undefined)) {
       throw new NoteSubjectInvalidException();
     }
 
-    const window = PaginationHelper.clampPageWindow(page, size);
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.list({
-      ...window,
+      ...pageWindow,
       subjectType,
       subjectId,
       resolved,
@@ -34,6 +34,6 @@ export class NoteGetManyUseCase {
       return note.toView();
     });
 
-    return PaginationHelper.toPage(data, total, window);
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

@@ -13,17 +13,17 @@ describe('ProductGetManyRequestDto', () => {
   });
 
   it('turns the query strings into numbers', () => {
-    const dto = plainToInstance(ProductGetManyRequestDto, { page: '2', size: '500' });
+    const dto = plainToInstance(ProductGetManyRequestDto, { page: '2', limit: '500' });
 
     const errors = validateSync(dto);
 
     expect(errors).toEqual([]);
-    expect(dto).toEqual({ page: 2, size: 500 });
+    expect(dto).toEqual({ page: 2, limit: 500 });
   });
 
   it.each([
     ['page zero', { page: '0' }, 'page', ['min']],
-    ['a fractional size', { size: '1.5' }, 'size', ['isInt']],
+    ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
     ['a word as the page', { page: 'first' }, 'page', ['min', 'isInt']],
   ])('rejects %s', (_case, query, property, constraints) => {
     const dto = plainToInstance(ProductGetManyRequestDto, query);

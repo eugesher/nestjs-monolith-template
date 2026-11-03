@@ -17,15 +17,15 @@ export class ProductGetManyUseCase {
   ) {}
 
   public async execute(query: IProductGetManyQuery): Promise<IPage<IProductView>> {
-    const { page, size } = query;
-    const window = PaginationHelper.clampPageWindow(page, size);
-    const [records, total] = await this.repository.list({ ...window });
+    const { page, limit } = query;
+    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const [records, total] = await this.repository.list({ ...pageWindow });
     const data = records.map((record) => {
       const product = ProductModel.reconstitute(record);
 
       return product.toView();
     });
 
-    return PaginationHelper.toPage(data, total, window);
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

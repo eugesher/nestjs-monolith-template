@@ -1,5 +1,6 @@
 export interface INoteRevisionPageQuery {
   page: number;
-  size: number;
+  limit: number;
+  offset: number;
   noteId: string;
 }

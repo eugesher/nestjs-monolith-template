@@ -52,9 +52,9 @@ export class OrderController {
     @Query() query: OrderGetManyRequestDto,
   ): Promise<OrderSummaryPageResponseDto> {
     const { id: customerId } = user;
-    const { page, size } = query;
+    const { page, limit } = query;
 
-    return await this.getMany.execute({ customerId, page, size });
+    return await this.getMany.execute({ customerId, page, limit });
   }
 
   @Get(':orderId')

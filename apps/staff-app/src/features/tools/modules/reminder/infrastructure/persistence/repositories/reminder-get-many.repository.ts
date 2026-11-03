@@ -25,7 +25,7 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
   }
 
   public async list(query: IReminderPageQuery): Promise<[IReminderListedRecord[], number]> {
-    const { page, size, ownerId, status } = query;
+    const { limit, offset, ownerId, status } = query;
     const builder = this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([
@@ -48,8 +48,8 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
     return await builder
       .orderBy('Reminder.dueOn', 'ASC')
       .addOrderBy('Reminder.id', 'ASC')
-      .skip((page - 1) * size)
-      .take(size)
+      .skip(offset)
+      .take(limit)
       .getManyAndCount();
   }
 }
