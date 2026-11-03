@@ -12,7 +12,6 @@ export * from './interfaces/order-active-product.interface';
 export * from './interfaces/order-candidate.interface';
 export * from './interfaces/order-draft.interface';
 export * from './interfaces/order-movement.interface';
-export * from './interfaces/order-product-record.interface';
 export * from './interfaces/order-product.interface';
 export * from './interfaces/order-record.interface';
 export * from './interfaces/order-snapshot.interface';

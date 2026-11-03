@@ -1,8 +1,13 @@
-import { IOrderFoundProductView } from './order-found-product.view';
+interface IOrderFoundViewProduct {
+  id: string;
+  productId: string;
+  sku: string;
+  name: string;
+}
 
 export interface IOrderFoundView {
   id: string;
   customerId: string;
   createdAt: Date;
-  products: IOrderFoundProductView[];
+  products: IOrderFoundViewProduct[];
 }
