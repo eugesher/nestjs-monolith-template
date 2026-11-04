@@ -1,3 +1,3 @@
-export * from './commands/product-core-write-update.command';
+export * from './queries/product-core-write-update.query';
 
 export * from './records/product-core-locked.record';

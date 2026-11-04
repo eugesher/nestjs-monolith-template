@@ -1,4 +1,4 @@
-export * from './commands/role-permission-insert.command';
+export * from './queries/role-permission-insert.query';
 
 export * from './records/role-found.record';
 export * from './records/role-listed.record';

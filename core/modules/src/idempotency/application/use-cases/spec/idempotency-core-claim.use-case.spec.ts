@@ -1,7 +1,7 @@
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreKeyInsertCommand } from '../../../outbound';
+import { IIdempotencyCoreKeyInsertQuery } from '../../../outbound';
 import { IdempotencyCoreClaimUseCase } from '../idempotency-core-claim.use-case';
 
 describe('IdempotencyCoreClaimUseCase', () => {
@@ -20,7 +20,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
   describe('execute', () => {
     it('claims a new key with the fingerprint of the body', async () => {
       const claim = await useCase.execute({ key: 'key-1', body: { sku: 'A-1', name: 'Lamp' } });
-      const [command] = repository.insert.mock.calls[0] as [IIdempotencyCoreKeyInsertCommand];
+      const [command] = repository.insert.mock.calls[0] as [IIdempotencyCoreKeyInsertQuery];
 
       expect(claim).toEqual({ outcome: 'claimed', storedResponse: undefined });
       expect(command).toEqual({

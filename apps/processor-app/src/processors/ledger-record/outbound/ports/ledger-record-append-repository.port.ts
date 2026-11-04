@@ -1,7 +1,7 @@
-import { ILedgerRecordEntryFoundRecord, ILedgerRecordEntryInsertCommand } from '../interfaces';
+import { ILedgerRecordEntryFoundRecord, ILedgerRecordEntryInsertQuery } from '../interfaces';
 
 export interface ILedgerRecordAppendRepositoryPort {
-  insert(command: ILedgerRecordEntryInsertCommand): Promise<string>;
+  insert(record: ILedgerRecordEntryInsertQuery): Promise<string>;
   findByOperationKey(operationKey: string): Promise<ILedgerRecordEntryFoundRecord>;
 }
 

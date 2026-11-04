@@ -1,3 +1,3 @@
-export * from './queries/catalog-get-many.query';
+export * from './commands/catalog-get-many.command';
 
 export * from './views/catalog-product.view';

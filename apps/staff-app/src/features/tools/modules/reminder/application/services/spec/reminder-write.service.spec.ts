@@ -4,7 +4,7 @@ import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ReminderModel } from '../../../domain';
-import { IReminderWriteUpdateCommand } from '../../../outbound';
+import { IReminderWriteUpdateQuery } from '../../../outbound';
 import { ReminderAccessService } from '../reminder-access.service';
 import { ReminderWriteService } from '../reminder-write.service';
 
@@ -57,7 +57,7 @@ describe('ReminderWriteService', () => {
       const written = await service.write({ reminderId: '7', ownerId: 'owner-1' }, (reminder) =>
         reminder.complete(),
       );
-      const [command] = update.mock.calls[0] as [IReminderWriteUpdateCommand];
+      const [command] = update.mock.calls[0] as [IReminderWriteUpdateQuery];
 
       expect(loadOwned).toHaveBeenCalledWith({ reminderId: '7', ownerId: 'owner-1' });
       expect(command.versionAsRead).toBe(2);

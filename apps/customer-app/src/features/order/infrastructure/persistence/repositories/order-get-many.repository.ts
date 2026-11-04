@@ -7,7 +7,11 @@ import {
 } from '@acme-libs/contracts/database';
 import { Order } from '@acme-core/entities';
 
-import { IOrderGetManyRepositoryPort, IOrderListedView, IOrderPageQuery } from '../../../outbound';
+import {
+  IOrderGetManyRepositoryPort,
+  IOrderListedRecord,
+  IOrderPageQuery,
+} from '../../../outbound';
 
 @Injectable()
 export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
@@ -20,7 +24,7 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  public async list(query: IOrderPageQuery): Promise<[IOrderListedView[], number]> {
+  public async list(query: IOrderPageQuery): Promise<[IOrderListedRecord[], number]> {
     const { limit, offset, customerId } = query;
 
     return await this.orderRepository

@@ -13,7 +13,7 @@ import {
   IUserAssignRoleRepositoryPort,
   IUserStaffRoleFoundRecord,
   IUserStaffUserFoundRecord,
-  IUserStaffUserRoleInsertCommand,
+  IUserStaffUserRoleInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -55,7 +55,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .getOne();
   }
 
-  public async insertUserRole(command: IUserStaffUserRoleInsertCommand): Promise<void> {
-    await this.staffUserRoleRepository.insert(command);
+  public async insertUserRole(query: IUserStaffUserRoleInsertQuery): Promise<void> {
+    await this.staffUserRoleRepository.insert(query);
   }
 }

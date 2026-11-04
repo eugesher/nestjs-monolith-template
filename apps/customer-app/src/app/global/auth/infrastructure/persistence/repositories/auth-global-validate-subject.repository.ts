@@ -10,7 +10,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Customer } from '@acme-core/entities';
 
 import {
-  IAuthGlobalCustomerView,
+  IAuthGlobalCustomerRecord,
   IAuthGlobalValidateSubjectRepositoryPort,
 } from '../../../outbound';
 
@@ -25,7 +25,7 @@ export class AuthGlobalValidateSubjectRepository implements IAuthGlobalValidateS
     return this.repositoryHost.getRepository(Customer);
   }
 
-  public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerView>> {
+  public async findActiveById(id: string): Promise<Nullable<IAuthGlobalCustomerRecord>> {
     return await this.customerRepository
       .createQueryBuilder('Customer')
       .select(['Customer.id', 'Customer.email'])

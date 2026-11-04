@@ -1,10 +1,10 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IProductFoundRecord, IProductWriteUpdateCommand } from '../interfaces';
+import { IProductFoundRecord, IProductWriteUpdateQuery } from '../interfaces';
 
 export interface IProductWriteRepositoryPort {
   findById(productId: string): Promise<Nullable<IProductFoundRecord>>;
-  update(command: IProductWriteUpdateCommand): Promise<boolean>;
+  update(query: IProductWriteUpdateQuery): Promise<boolean>;
 }
 
 export const PRODUCT_WRITE_REPOSITORY_PORT = Symbol('PRODUCT_WRITE_REPOSITORY_PORT');

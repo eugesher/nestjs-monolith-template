@@ -1,12 +1,11 @@
+export * from './commands/reminder-access-load-owned.command';
 export * from './commands/reminder-complete.command';
 export * from './commands/reminder-create.command';
 export * from './commands/reminder-delete.command';
+export * from './commands/reminder-get-many.command';
+export * from './commands/reminder-get-summary.command';
 export * from './commands/reminder-reschedule.command';
 export * from './commands/reminder-write.command';
-
-export * from './queries/reminder-access-load-owned.query';
-export * from './queries/reminder-get-many.query';
-export * from './queries/reminder-get-summary.query';
 
 export * from './views/reminder-summary.view';
 export * from './views/reminder.view';

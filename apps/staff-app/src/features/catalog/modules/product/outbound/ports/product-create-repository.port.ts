@@ -1,8 +1,8 @@
-import { IProductFoundRecord, IProductInsertCommand } from '../interfaces';
+import { IProductFoundRecord, IProductInsertQuery } from '../interfaces';
 
 export interface IProductCreateRepositoryPort {
   existsBySku(sku: string): Promise<boolean>;
-  insert(command: IProductInsertCommand): Promise<string>;
+  insert(query: IProductInsertQuery): Promise<string>;
   findInserted(productId: string): Promise<IProductFoundRecord>;
 }
 

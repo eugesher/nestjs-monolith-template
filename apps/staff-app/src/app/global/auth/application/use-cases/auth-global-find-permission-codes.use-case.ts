@@ -6,7 +6,7 @@ import {
   AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT,
   type IAuthGlobalFindPermissionCodesRepositoryPort,
 } from '../../outbound';
-import { IAuthGlobalFindPermissionCodesQuery } from '../interfaces';
+import { IAuthGlobalFindPermissionCodesCommand } from '../interfaces';
 
 @Injectable()
 export class AuthGlobalFindPermissionCodesUseCase {
@@ -15,8 +15,10 @@ export class AuthGlobalFindPermissionCodesUseCase {
     private readonly repository: IAuthGlobalFindPermissionCodesRepositoryPort,
   ) {}
 
-  public async execute(query: IAuthGlobalFindPermissionCodesQuery): Promise<PermissionCodeEnum[]> {
-    const { userId } = query;
+  public async execute(
+    command: IAuthGlobalFindPermissionCodesCommand,
+  ): Promise<PermissionCodeEnum[]> {
+    const { userId } = command;
 
     return await this.repository.findPermissionCodes(userId);
   }

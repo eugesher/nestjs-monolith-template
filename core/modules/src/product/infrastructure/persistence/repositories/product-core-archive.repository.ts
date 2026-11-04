@@ -11,7 +11,7 @@ import { Product } from '@acme-core/entities';
 import {
   IProductCoreArchiveRepositoryPort,
   IProductCoreLockedRecord,
-  IProductCoreWriteUpdateCommand,
+  IProductCoreWriteUpdateQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -34,8 +34,8 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
       .getOne();
   }
 
-  public async update(command: IProductCoreWriteUpdateCommand): Promise<void> {
-    const { id, versionAsRead, status, version } = command;
+  public async update(query: IProductCoreWriteUpdateQuery): Promise<void> {
+    const { id, versionAsRead, status, version } = query;
 
     await this.productRepository.update({ id, version: versionAsRead }, { status, version });
   }

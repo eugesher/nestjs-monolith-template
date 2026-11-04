@@ -1,14 +1,14 @@
 import {
-  IOrderInsertCommand,
+  IOrderInsertQuery,
   IOrderPlacedRecord,
-  IOrderPlaceProductView,
-  IOrderProductInsertCommand,
+  IOrderPlaceProductRecord,
+  IOrderProductInsertQuery,
 } from '../interfaces';
 
 export interface IOrderPlaceRepositoryPort {
-  findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]>;
-  insertOrder(command: IOrderInsertCommand): Promise<string>;
-  insertOrderProducts(commands: IOrderProductInsertCommand[]): Promise<void>;
+  findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord[]>;
+  insertOrder(query: IOrderInsertQuery): Promise<string>;
+  insertOrderProducts(queries: IOrderProductInsertQuery[]): Promise<void>;
   findOrder(orderId: string): Promise<IOrderPlacedRecord>;
 }
 

@@ -12,7 +12,7 @@ import { Product } from '@acme-core/entities';
 import {
   ICatalogGetManyRepositoryPort,
   ICatalogPageQuery,
-  ICatalogProductRowView,
+  ICatalogProductRowRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowView>> {
+  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowRecord>> {
     const { page, limit, offset } = query;
     const [data, total] = await this.productRepository
       .createQueryBuilder('Product')

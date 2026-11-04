@@ -9,11 +9,11 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import {
-  IOrderInsertCommand,
+  IOrderInsertQuery,
   IOrderPlacedRecord,
-  IOrderPlaceProductView,
+  IOrderPlaceProductRecord,
   IOrderPlaceRepositoryPort,
-  IOrderProductInsertCommand,
+  IOrderProductInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductView[]> {
+  public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }
@@ -48,12 +48,12 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .getMany();
   }
 
-  public async insertOrder(command: IOrderInsertCommand): Promise<string> {
-    return await this.orderRepository.insertOne(command);
+  public async insertOrder(query: IOrderInsertQuery): Promise<string> {
+    return await this.orderRepository.insertOne(query);
   }
 
-  public async insertOrderProducts(commands: IOrderProductInsertCommand[]): Promise<void> {
-    await this.orderProductRepository.insert(commands);
+  public async insertOrderProducts(queries: IOrderProductInsertQuery[]): Promise<void> {
+    await this.orderProductRepository.insert(queries);
   }
 
   public async findOrder(orderId: string): Promise<IOrderPlacedRecord> {

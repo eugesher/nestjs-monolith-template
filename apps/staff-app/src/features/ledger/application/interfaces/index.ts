@@ -1,3 +1,3 @@
-export * from './queries/ledger-list-entries.query';
+export * from './commands/ledger-list-entries.command';
 
 export * from './views/ledger-entry.view';

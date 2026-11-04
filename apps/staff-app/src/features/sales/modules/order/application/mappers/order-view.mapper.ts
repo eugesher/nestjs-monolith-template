@@ -1,8 +1,8 @@
-import { IOrderFoundView, IOrderListedView } from '../../outbound';
+import { IOrderFoundRecord, IOrderListedRecord } from '../../outbound';
 import { IOrderSummaryView, IOrderView } from '../interfaces';
 
 export class OrderViewMapper {
-  public static toView(order: IOrderFoundView): IOrderView {
+  public static toView(order: IOrderFoundRecord): IOrderView {
     const products = order.products.map((product) => ({
       id: product.id,
       productId: product.productId,
@@ -18,7 +18,7 @@ export class OrderViewMapper {
     };
   }
 
-  public static toSummaryView(order: IOrderListedView): IOrderSummaryView {
+  public static toSummaryView(order: IOrderListedRecord): IOrderSummaryView {
     return {
       id: order.id,
       customerId: order.customerId,

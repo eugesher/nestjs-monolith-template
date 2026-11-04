@@ -12,7 +12,7 @@ import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/com
 import {
   IRoleFoundRecord,
   IRolePermissionFoundRecord,
-  IRolePermissionInsertCommand,
+  IRolePermissionInsertQuery,
   IRoleUpdatePermissionsRepositoryPort,
 } from '../../../outbound';
 
@@ -63,11 +63,11 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     await this.staffRolePermissionRepository.delete({ roleId });
   }
 
-  public async insertRolePermissions(commands: IRolePermissionInsertCommand[]): Promise<void> {
-    if (commands.length === 0) {
+  public async insertRolePermissions(queries: IRolePermissionInsertQuery[]): Promise<void> {
+    if (queries.length === 0) {
       return;
     }
 
-    await this.staffRolePermissionRepository.insert(commands);
+    await this.staffRolePermissionRepository.insert(queries);
   }
 }

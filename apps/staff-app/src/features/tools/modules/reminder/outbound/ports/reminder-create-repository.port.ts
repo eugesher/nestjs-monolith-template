@@ -1,7 +1,7 @@
-import { IReminderFoundRecord, IReminderInsertCommand } from '../interfaces';
+import { IReminderFoundRecord, IReminderInsertQuery } from '../interfaces';
 
 export interface IReminderCreateRepositoryPort {
-  insert(command: IReminderInsertCommand): Promise<string>;
+  insert(query: IReminderInsertQuery): Promise<string>;
   findInserted(reminderId: string): Promise<IReminderFoundRecord>;
 }
 

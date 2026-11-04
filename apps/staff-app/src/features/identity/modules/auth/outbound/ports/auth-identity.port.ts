@@ -1,9 +1,11 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthIdentityFindSubjectQuery, IAuthIdentitySubjectView } from '../interfaces';
+import { IAuthIdentityFindSubjectCommand, IAuthIdentitySubjectView } from '../interfaces';
 
 export interface IAuthIdentityPort {
-  findSubject(query: IAuthIdentityFindSubjectQuery): Promise<Nullable<IAuthIdentitySubjectView>>;
+  findSubject(
+    command: IAuthIdentityFindSubjectCommand,
+  ): Promise<Nullable<IAuthIdentitySubjectView>>;
 }
 
 export const AUTH_IDENTITY_PORT = Symbol('AUTH_IDENTITY_PORT');

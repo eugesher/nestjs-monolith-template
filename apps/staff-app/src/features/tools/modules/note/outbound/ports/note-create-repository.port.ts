@@ -1,7 +1,7 @@
-import { INoteFoundRecord, INoteInsertCommand } from '../interfaces';
+import { INoteFoundRecord, INoteInsertQuery } from '../interfaces';
 
 export interface INoteCreateRepositoryPort {
-  insert(command: INoteInsertCommand): Promise<string>;
+  insert(query: INoteInsertQuery): Promise<string>;
   findInserted(noteId: string): Promise<INoteFoundRecord>;
 }
 

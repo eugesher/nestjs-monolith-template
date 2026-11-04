@@ -5,7 +5,7 @@ import {
   type IReminderAccessRepositoryPort,
   REMINDER_ACCESS_REPOSITORY_PORT,
 } from '../../outbound';
-import { IReminderAccessLoadOwnedQuery } from '../interfaces';
+import { IReminderAccessLoadOwnedCommand } from '../interfaces';
 
 @Injectable()
 export class ReminderAccessService {
@@ -14,8 +14,8 @@ export class ReminderAccessService {
     private readonly repository: IReminderAccessRepositoryPort,
   ) {}
 
-  public async loadOwned(query: IReminderAccessLoadOwnedQuery): Promise<ReminderModel> {
-    const { reminderId, ownerId } = query;
+  public async loadOwned(command: IReminderAccessLoadOwnedCommand): Promise<ReminderModel> {
+    const { reminderId, ownerId } = command;
     const record = await this.repository.findOwned({ reminderId, ownerId });
 
     if (!record) {

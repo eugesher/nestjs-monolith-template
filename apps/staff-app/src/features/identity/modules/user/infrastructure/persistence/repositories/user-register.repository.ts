@@ -11,8 +11,8 @@ import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities
 import {
   IUserRegisterRepositoryPort,
   IUserStaffRoleFoundRecord,
-  IUserStaffUserInsertCommand,
-  IUserStaffUserRoleInsertCommand,
+  IUserStaffUserInsertQuery,
+  IUserStaffUserRoleInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -34,8 +34,8 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async insertUser(command: IUserStaffUserInsertCommand): Promise<string> {
-    return await this.staffUserRepository.insertOne(command);
+  public async insertUser(query: IUserStaffUserInsertQuery): Promise<string> {
+    return await this.staffUserRepository.insertOne(query);
   }
 
   public async findRoles(names: RoleEnum[]): Promise<IUserStaffRoleFoundRecord[]> {
@@ -50,11 +50,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       .getMany();
   }
 
-  public async insertUserRoles(commands: IUserStaffUserRoleInsertCommand[]): Promise<void> {
-    if (commands.length === 0) {
+  public async insertUserRoles(queries: IUserStaffUserRoleInsertQuery[]): Promise<void> {
+    if (queries.length === 0) {
       return;
     }
 
-    await this.staffUserRoleRepository.insert(commands);
+    await this.staffUserRoleRepository.insert(queries);
   }
 }

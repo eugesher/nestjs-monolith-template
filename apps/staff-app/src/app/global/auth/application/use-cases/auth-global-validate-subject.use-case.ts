@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Nullable } from '@acme-libs/toolkit';
 
 import { AUTH_GLOBAL_SUBJECT_PORT, type IAuthGlobalSubjectPort } from '../../outbound';
-import { IAuthGlobalSubjectView, IAuthGlobalValidateSubjectQuery } from '../interfaces';
+import { IAuthGlobalSubjectView, IAuthGlobalValidateSubjectCommand } from '../interfaces';
 
 @Injectable()
 export class AuthGlobalValidateSubjectUseCase {
@@ -13,9 +13,9 @@ export class AuthGlobalValidateSubjectUseCase {
   ) {}
 
   public async execute(
-    query: IAuthGlobalValidateSubjectQuery,
+    command: IAuthGlobalValidateSubjectCommand,
   ): Promise<Nullable<IAuthGlobalSubjectView>> {
-    const { userId } = query;
+    const { userId } = command;
     const user = await this.subject.findSubject(userId);
 
     return user ? { id: user.id, email: user.email } : null;

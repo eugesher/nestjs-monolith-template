@@ -1,9 +1,9 @@
 import { IPage } from '@acme-libs/toolkit';
 
-import { ILedgerEntryPageQuery, ILedgerStoredEntryView } from '../interfaces';
+import { ILedgerEntryPageQuery, ILedgerStoredEntryRecord } from '../interfaces';
 
 export interface ILedgerListEntriesRepositoryPort {
-  list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryView>>;
+  list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryRecord>>;
 }
 
 export const LEDGER_LIST_ENTRIES_REPOSITORY_PORT = Symbol('LEDGER_LIST_ENTRIES_REPOSITORY_PORT');

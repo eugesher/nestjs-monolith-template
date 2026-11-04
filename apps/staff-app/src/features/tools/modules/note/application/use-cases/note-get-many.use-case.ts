@@ -4,7 +4,7 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { NoteModel, NoteSubjectInvalidException } from '../../domain';
 import { type INoteGetManyRepositoryPort, NOTE_GET_MANY_REPOSITORY_PORT } from '../../outbound';
-import { INoteGetManyQuery, INoteView } from '../interfaces';
+import { INoteGetManyCommand, INoteView } from '../interfaces';
 
 @Injectable()
 export class NoteGetManyUseCase {
@@ -13,8 +13,8 @@ export class NoteGetManyUseCase {
     private readonly repository: INoteGetManyRepositoryPort,
   ) {}
 
-  public async execute(query: INoteGetManyQuery): Promise<IPage<INoteView>> {
-    const { page, limit, subjectType, subjectId, resolved, authorId } = query;
+  public async execute(command: INoteGetManyCommand): Promise<IPage<INoteView>> {
+    const { page, limit, subjectType, subjectId, resolved, authorId } = command;
 
     if ((subjectType === undefined) !== (subjectId === undefined)) {
       throw new NoteSubjectInvalidException();

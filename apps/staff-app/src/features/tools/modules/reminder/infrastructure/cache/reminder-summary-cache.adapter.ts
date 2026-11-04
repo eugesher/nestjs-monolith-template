@@ -4,7 +4,7 @@ import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/ca
 
 import {
   IReminderSummaryPort,
-  IReminderSummaryReadQuery,
+  IReminderSummaryReadCommand,
   IReminderSummarySnapshotView,
   REMINDER_SUMMARY_TTL_MS,
 } from '../../outbound';
@@ -18,8 +18,8 @@ export class ReminderSummaryCacheAdapter implements IReminderSummaryPort {
     private readonly cache: ICachePort,
   ) {}
 
-  public async read(query: IReminderSummaryReadQuery): Promise<IReminderSummarySnapshotView> {
-    const { ownerId, compute } = query;
+  public async read(command: IReminderSummaryReadCommand): Promise<IReminderSummarySnapshotView> {
+    const { ownerId, compute } = command;
     const key = CACHE_KEYS.reminderSummary(ownerId);
 
     return await this.cache.wrap(key, this.ttlMs, compute);

@@ -1,7 +1,7 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Product, ProductStock } from '@acme-core/entities';
 
-import { IProductStockCoreSumView } from '../../../../outbound';
+import { IProductStockCoreSumRecord } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
@@ -30,7 +30,7 @@ export abstract class ProductStockCoreBaseRepository {
     return products.map((product) => product.id);
   }
 
-  public async sumStock(productIds: string[]): Promise<IProductStockCoreSumView[]> {
+  public async sumStock(productIds: string[]): Promise<IProductStockCoreSumRecord[]> {
     if (productIds.length === 0) {
       return [];
     }

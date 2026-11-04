@@ -10,7 +10,7 @@ import { IdempotencyKey } from '@acme-core/entities';
 
 import {
   IIdempotencyCoreCompleteRepositoryPort,
-  IIdempotencyCoreKeyCompletionCommand,
+  IIdempotencyCoreKeyCompletionQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,8 +24,8 @@ export class IdempotencyCoreCompleteRepository implements IIdempotencyCoreComple
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
-  public async complete(command: IIdempotencyCoreKeyCompletionCommand): Promise<void> {
-    const { key, responseBody } = command;
+  public async complete(query: IIdempotencyCoreKeyCompletionQuery): Promise<void> {
+    const { key, responseBody } = query;
 
     await this.idempotencyKeyRepository.update(
       { idempotencyKey: key },

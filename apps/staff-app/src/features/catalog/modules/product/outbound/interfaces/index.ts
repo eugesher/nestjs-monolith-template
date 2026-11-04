@@ -1,11 +1,11 @@
 export * from './commands/product-idempotency-claim.command';
 export * from './commands/product-idempotency-complete.command';
 export * from './commands/product-idempotency-release.command';
-export * from './commands/product-insert.command';
 export * from './commands/product-status-archive.command';
-export * from './commands/product-write-update.command';
 
+export * from './queries/product-insert.query';
 export * from './queries/product-page.query';
+export * from './queries/product-write-update.query';
 
 export * from './records/product-found.record';
 export * from './records/product-listed.record';

@@ -11,7 +11,7 @@ import { Reminder } from '@acme-staff/common/entities';
 import {
   IReminderFoundRecord,
   IReminderWriteRepositoryPort,
-  IReminderWriteUpdateCommand,
+  IReminderWriteUpdateQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -43,8 +43,8 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       .getOne();
   }
 
-  public async update(command: IReminderWriteUpdateCommand): Promise<boolean> {
-    const { id, versionAsRead, dueOn, status, version } = command;
+  public async update(query: IReminderWriteUpdateQuery): Promise<boolean> {
+    const { id, versionAsRead, dueOn, status, version } = query;
     const result = await this.reminderRepository.update(
       { id, version: versionAsRead },
       { dueOn, status, version },

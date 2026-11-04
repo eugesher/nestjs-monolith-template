@@ -7,7 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
-import { INoteCreateRepositoryPort, INoteFoundRecord, INoteInsertCommand } from '../../../outbound';
+import { INoteCreateRepositoryPort, INoteFoundRecord, INoteInsertQuery } from '../../../outbound';
 
 @Injectable()
 export class NoteCreateRepository implements INoteCreateRepositoryPort {
@@ -20,8 +20,8 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async insert(command: INoteInsertCommand): Promise<string> {
-    return await this.noteRepository.insertOne(command);
+  public async insert(query: INoteInsertQuery): Promise<string> {
+    return await this.noteRepository.insertOne(query);
   }
 
   public async findInserted(noteId: string): Promise<INoteFoundRecord> {

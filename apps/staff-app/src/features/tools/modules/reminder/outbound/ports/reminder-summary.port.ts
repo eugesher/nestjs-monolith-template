@@ -1,7 +1,7 @@
-import { IReminderSummaryReadQuery, IReminderSummarySnapshotView } from '../interfaces';
+import { IReminderSummaryReadCommand, IReminderSummarySnapshotView } from '../interfaces';
 
 export interface IReminderSummaryPort {
-  read(query: IReminderSummaryReadQuery): Promise<IReminderSummarySnapshotView>;
+  read(command: IReminderSummaryReadCommand): Promise<IReminderSummarySnapshotView>;
   invalidate(ownerId: string): Promise<void>;
 }
 

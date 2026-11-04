@@ -1,8 +1,8 @@
-import { INoteRevisionInsertCommand, INoteWriteUpdateCommand } from '../interfaces';
+import { INoteRevisionInsertQuery, INoteWriteUpdateQuery } from '../interfaces';
 
 export interface INoteEditRepositoryPort {
-  update(command: INoteWriteUpdateCommand): Promise<boolean>;
-  appendRevision(command: INoteRevisionInsertCommand): Promise<void>;
+  update(query: INoteWriteUpdateQuery): Promise<boolean>;
+  appendRevision(query: INoteRevisionInsertQuery): Promise<void>;
 }
 
 export const NOTE_EDIT_REPOSITORY_PORT = Symbol('NOTE_EDIT_REPOSITORY_PORT');

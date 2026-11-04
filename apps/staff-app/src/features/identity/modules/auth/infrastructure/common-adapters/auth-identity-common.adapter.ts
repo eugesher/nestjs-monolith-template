@@ -4,7 +4,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { AUTH_COMMON_PORT, type IAuthCommonPort } from '@acme-staff/contracts/auth';
 
 import {
-  IAuthIdentityFindSubjectQuery,
+  IAuthIdentityFindSubjectCommand,
   IAuthIdentityPort,
   IAuthIdentitySubjectView,
 } from '../../outbound';
@@ -17,9 +17,9 @@ export class AuthIdentityCommonAdapter implements IAuthIdentityPort {
   ) {}
 
   public async findSubject(
-    query: IAuthIdentityFindSubjectQuery,
+    command: IAuthIdentityFindSubjectCommand,
   ): Promise<Nullable<IAuthIdentitySubjectView>> {
-    const { userId } = query;
+    const { userId } = command;
 
     return await this.authCommon.validateSubject({ userId });
   }

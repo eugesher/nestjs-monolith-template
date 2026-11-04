@@ -1,7 +1,7 @@
-import { IOrderListedView, IOrderPageQuery } from '../interfaces';
+import { IOrderListedRecord, IOrderPageQuery } from '../interfaces';
 
 export interface IOrderGetManyRepositoryPort {
-  list(query: IOrderPageQuery): Promise<[IOrderListedView[], number]>;
+  list(query: IOrderPageQuery): Promise<[IOrderListedRecord[], number]>;
 }
 
 export const ORDER_GET_MANY_REPOSITORY_PORT = Symbol('ORDER_GET_MANY_REPOSITORY_PORT');

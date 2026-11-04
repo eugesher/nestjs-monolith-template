@@ -8,7 +8,7 @@ import {
   type ICatalogCachePort,
   type ICatalogGetManyRepositoryPort,
 } from '../../outbound';
-import { ICatalogGetManyQuery, ICatalogProductView } from '../interfaces';
+import { ICatalogGetManyCommand, ICatalogProductView } from '../interfaces';
 
 @Injectable()
 export class CatalogGetManyUseCase {
@@ -19,8 +19,8 @@ export class CatalogGetManyUseCase {
     private readonly cache: ICatalogCachePort,
   ) {}
 
-  public async execute(query: ICatalogGetManyQuery): Promise<IPage<ICatalogProductView>> {
-    const { page, limit } = query;
+  public async execute(command: ICatalogGetManyCommand): Promise<IPage<ICatalogProductView>> {
+    const { page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 
     return await this.cache.read({

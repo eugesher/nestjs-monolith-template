@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { AuthUserNotFoundException } from '../../domain';
 import { type IAuthIdentityPort, AUTH_IDENTITY_PORT } from '../../outbound';
-import { IAuthMeQuery, IAuthMeView } from '../interfaces';
+import { IAuthMeCommand, IAuthMeView } from '../interfaces';
 
 @Injectable()
 export class AuthMeUseCase {
@@ -11,8 +11,8 @@ export class AuthMeUseCase {
     private readonly identity: IAuthIdentityPort,
   ) {}
 
-  public async execute(query: IAuthMeQuery): Promise<IAuthMeView> {
-    const { userId } = query;
+  public async execute(command: IAuthMeCommand): Promise<IAuthMeView> {
+    const { userId } = command;
     const subject = await this.identity.findSubject({ userId });
 
     if (!subject) {

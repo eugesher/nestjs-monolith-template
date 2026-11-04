@@ -4,7 +4,7 @@ import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contr
 
 import {
   IProductStockCoreMoveRepositoryPort,
-  IProductStockCoreMovementInsertCommand,
+  IProductStockCoreMovementInsertQuery,
 } from '../../../outbound';
 import { ProductStockCoreBaseRepository } from './base/product-stock-core-base.repository';
 
@@ -17,12 +17,12 @@ export class ProductStockCoreMoveRepository
     super(repositoryHost);
   }
 
-  public async insertMany(commands: IProductStockCoreMovementInsertCommand[]): Promise<string[]> {
-    if (commands.length === 0) {
+  public async insertMany(queries: IProductStockCoreMovementInsertQuery[]): Promise<string[]> {
+    if (queries.length === 0) {
       return [];
     }
 
-    const result = await this.productStockRepository.insert(commands);
+    const result = await this.productStockRepository.insert(queries);
     const identifiers = result.identifiers as { id: number | string }[];
 
     return identifiers.map((identifier) => String(identifier.id));
