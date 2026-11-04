@@ -5,10 +5,12 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-staff/common/entities';
 
-import { IAuthGlobalFindPermissionCodesRepositoryPort } from '../../../outbound';
+import {
+  IAuthGlobalFindPermissionCodesRepositoryPort,
+  IAuthGlobalPermissionCodeFoundRecord,
+} from '../../../outbound';
 
 @Injectable()
 export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindPermissionCodesRepositoryPort {
@@ -21,8 +23,10 @@ export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindP
     return this.repositoryHost.getRepository(StaffPermission);
   }
 
-  public async findPermissionCodes(userId: string): Promise<PermissionCodeEnum[]> {
-    const rows = await this.staffPermissionRepository
+  public async findPermissionCodes(
+    userId: string,
+  ): Promise<IAuthGlobalPermissionCodeFoundRecord[]> {
+    return await this.staffPermissionRepository
       .createQueryBuilder('StaffPermission')
       .select('StaffPermission.code', 'code')
       .distinct(true)
@@ -38,8 +42,6 @@ export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindP
       )
       .where('StaffUserRole.userId = :userId', { userId })
       .orderBy('StaffPermission.code')
-      .getRawMany<{ code: PermissionCodeEnum }>();
-
-    return rows.map((row) => row.code);
+      .getRawMany<IAuthGlobalPermissionCodeFoundRecord>();
   }
 }

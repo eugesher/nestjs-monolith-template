@@ -5,7 +5,6 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
@@ -25,8 +24,8 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async list(query: ILedgerEntryPageQuery): Promise<IPage<ILedgerStoredEntryRecord>> {
-    const { page, limit, offset, subjectType, subjectId, correlationId } = query;
+  public async list(query: ILedgerEntryPageQuery): Promise<[ILedgerStoredEntryRecord[], number]> {
+    const { limit, offset, subjectType, subjectId, correlationId } = query;
     const builder = this.ledgerEntryRepository
       .createQueryBuilder('LedgerEntry')
       .select([
@@ -53,24 +52,10 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
       builder.andWhere('LedgerEntry.correlationId = :correlationId', { correlationId });
     }
 
-    const [entries, total] = await builder
+    return await builder
       .orderBy('LedgerEntry.id', 'DESC')
       .skip(offset)
       .take(limit)
       .getManyAndCount();
-
-    const data = entries.map((entry) => ({
-      id: entry.id,
-      operationKey: entry.operationKey,
-      subjectType: entry.subjectType,
-      subjectId: entry.subjectId,
-      action: entry.action,
-      payload: entry.payload,
-      correlationId: entry.correlationId,
-      occurredAt: entry.occurredAt.toISOString(),
-      recordedAt: entry.recordedAt.toISOString(),
-    }));
-
-    return PaginationHelper.toPage(data, total, { page, limit });
   }
 }

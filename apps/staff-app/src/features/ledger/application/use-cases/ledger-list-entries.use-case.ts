@@ -7,6 +7,7 @@ import {
   LEDGER_LIST_ENTRIES_REPOSITORY_PORT,
 } from '../../outbound';
 import { ILedgerListEntriesView, ILedgerListEntriesCommand } from '../interfaces';
+import { LedgerViewMapper } from '../mappers/ledger-view.mapper';
 
 @Injectable()
 export class LedgerListEntriesUseCase {
@@ -19,6 +20,14 @@ export class LedgerListEntriesUseCase {
     const { page, limit, subjectType, subjectId, correlationId } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 
-    return await this.repository.list({ ...pageWindow, subjectType, subjectId, correlationId });
+    const [entries, total] = await this.repository.list({
+      ...pageWindow,
+      subjectType,
+      subjectId,
+      correlationId,
+    });
+    const data = entries.map((entry) => LedgerViewMapper.toListEntriesViewItem(entry));
+
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

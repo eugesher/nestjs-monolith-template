@@ -6,7 +6,6 @@ import {
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import {
@@ -26,9 +25,10 @@ export class CatalogProductListRepository implements ICatalogProductListReposito
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async list(query: ICatalogPageQuery): Promise<IPage<ICatalogProductRowRecord>> {
-    const { page, limit, offset } = query;
-    const [data, total] = await this.productRepository
+  public async list(query: ICatalogPageQuery): Promise<[ICatalogProductRowRecord[], number]> {
+    const { limit, offset } = query;
+
+    return await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku', 'Product.name'])
       .where('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
@@ -36,7 +36,5 @@ export class CatalogProductListRepository implements ICatalogProductListReposito
       .skip(offset)
       .take(limit)
       .getManyAndCount();
-
-    return PaginationHelper.toPage(data, total, { page, limit });
   }
 }

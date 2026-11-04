@@ -22,7 +22,7 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
   }
 
   public async findById(orderId: string): Promise<Nullable<IOrderFoundRecord>> {
-    const order = await this.orderRepository
+    return await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
       .leftJoin('Order.orderProducts', 'OrderProduct')
@@ -33,17 +33,5 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
       .orderBy('OrderProduct.id', 'ASC')
       .withDeleted()
       .getOne();
-
-    if (!order) {
-      return null;
-    }
-
-    const products = order.orderProducts.map((orderProduct) => {
-      const { id, productId, product } = orderProduct;
-
-      return { id, productId, sku: product.sku, name: product.name };
-    });
-
-    return { id: order.id, customerId: order.customerId, createdAt: order.createdAt, products };
   }
 }

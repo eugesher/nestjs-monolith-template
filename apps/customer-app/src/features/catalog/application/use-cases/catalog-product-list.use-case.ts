@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PaginationHelper } from '@acme-libs/toolkit';
+import { IPageRequest, PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
@@ -25,7 +25,13 @@ export class CatalogProductListUseCase {
 
     return await this.cache.read({
       ...pageWindow,
-      compute: () => this.repository.list({ ...pageWindow }),
+      compute: () => this.listPage(pageWindow),
     });
+  }
+
+  private async listPage(pageWindow: IPageRequest): Promise<ICatalogProductListView> {
+    const [products, total] = await this.repository.list({ ...pageWindow });
+
+    return PaginationHelper.toPage(products, total, pageWindow);
   }
 }

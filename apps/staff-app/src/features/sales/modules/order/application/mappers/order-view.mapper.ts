@@ -3,11 +3,11 @@ import { IOrderGetManyView, IOrderGetOneView } from '../interfaces';
 
 export class OrderViewMapper {
   public static toGetOneView(order: IOrderFoundRecord): IOrderGetOneView {
-    const products = order.products.map((product) => ({
-      id: product.id,
-      productId: product.productId,
-      sku: product.sku,
-      name: product.name,
+    const products = order.orderProducts.map((orderProduct) => ({
+      id: orderProduct.id,
+      productId: orderProduct.productId,
+      sku: orderProduct.product.sku,
+      name: orderProduct.product.name,
     }));
 
     return {

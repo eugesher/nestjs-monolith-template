@@ -18,7 +18,9 @@ describe('ProductStockArchiveOutOfStockUseCase', () => {
     findActive = jest.fn((productIds: string[]) => {
       outcomes.push('findActive');
 
-      return Promise.resolve(productIds.filter((productId) => productId !== '102'));
+      const active = productIds.filter((productId) => productId !== '102');
+
+      return Promise.resolve(active.map((id) => ({ id })));
     });
     lock = jest.fn(() => {
       outcomes.push('lock');

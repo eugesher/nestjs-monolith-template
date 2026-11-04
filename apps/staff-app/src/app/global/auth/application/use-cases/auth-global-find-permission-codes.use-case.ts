@@ -20,6 +20,8 @@ export class AuthGlobalFindPermissionCodesUseCase {
   ): Promise<PermissionCodeEnum[]> {
     const { userId } = command;
 
-    return await this.repository.findPermissionCodes(userId);
+    const permissions = await this.repository.findPermissionCodes(userId);
+
+    return permissions.map((permission) => permission.code);
   }
 }

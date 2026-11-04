@@ -1,8 +1,15 @@
-import { IProductStockCoreMovementInsertQuery, IProductStockCoreSumRecord } from '../interfaces';
+import {
+  IProductStockCoreMovementInsertedRecord,
+  IProductStockCoreMovementInsertQuery,
+  IProductStockCoreProductLockedRecord,
+  IProductStockCoreSumRecord,
+} from '../interfaces';
 
 export interface IProductStockCoreMoveRepositoryPort {
-  lockProducts(productIds: string[]): Promise<string[]>;
-  insertMany(queries: IProductStockCoreMovementInsertQuery[]): Promise<string[]>;
+  lockProducts(productIds: string[]): Promise<IProductStockCoreProductLockedRecord[]>;
+  insertMany(
+    queries: IProductStockCoreMovementInsertQuery[],
+  ): Promise<IProductStockCoreMovementInsertedRecord[]>;
   sumStock(productIds: string[]): Promise<IProductStockCoreSumRecord[]>;
 }
 

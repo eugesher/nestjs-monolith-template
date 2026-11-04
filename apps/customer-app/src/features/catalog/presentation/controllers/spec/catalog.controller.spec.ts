@@ -14,13 +14,7 @@ describe('CatalogController', () => {
 
   describe('handleProductList', () => {
     it('answers the page for the window of the query string', async () => {
-      list.mockResolvedValue({
-        page: 2,
-        count: 1,
-        pageCount: 1,
-        total: 1,
-        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-      });
+      list.mockResolvedValue([[{ id: '12', sku: 'SKU-0001', name: 'Lamp' }], 1]);
 
       const response = await controller.handleProductList({ page: 2, limit: 10 });
 

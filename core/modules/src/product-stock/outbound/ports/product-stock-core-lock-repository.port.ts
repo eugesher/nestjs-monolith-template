@@ -1,7 +1,7 @@
-import { IProductStockCoreSumRecord } from '../interfaces';
+import { IProductStockCoreProductLockedRecord, IProductStockCoreSumRecord } from '../interfaces';
 
 export interface IProductStockCoreLockRepositoryPort {
-  lockProducts(productIds: string[]): Promise<string[]>;
+  lockProducts(productIds: string[]): Promise<IProductStockCoreProductLockedRecord[]>;
   sumStock(productIds: string[]): Promise<IProductStockCoreSumRecord[]>;
 }
 

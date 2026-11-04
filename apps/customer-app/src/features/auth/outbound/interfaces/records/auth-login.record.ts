@@ -1,6 +1,6 @@
 import { UserStatusEnum } from '@acme-libs/kernel';
 
-export interface IAuthCustomerFoundRecord {
+export interface IAuthLoginCustomerRecord {
   id: string;
   email: string;
   passwordHash: string;

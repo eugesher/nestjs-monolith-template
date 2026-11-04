@@ -1,6 +1,6 @@
 import { Nullable } from '@acme-libs/toolkit';
 
 export interface IReminderSummarySnapshotRecord {
-  pending: number;
+  pending: number | string;
   nextDueOn: Nullable<string>;
 }

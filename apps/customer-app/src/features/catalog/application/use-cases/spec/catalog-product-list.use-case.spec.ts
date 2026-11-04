@@ -13,7 +13,7 @@ describe('CatalogProductListUseCase', () => {
 
   describe('execute', () => {
     it('reads the page window of the query through the cache', async () => {
-      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ page: 2, limit: 10 });
 
@@ -25,15 +25,29 @@ describe('CatalogProductListUseCase', () => {
     });
 
     it('computes a miss with the repository page of the same window', async () => {
-      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ page: 2, limit: 10 });
 
       expect(list).toHaveBeenCalledWith({ page: 2, limit: 10, offset: 10 });
     });
 
+    it('builds the page of a miss from the repository rows and their total', async () => {
+      list.mockResolvedValue([[{ id: '12', sku: 'SKU-0001', name: 'Lamp' }], 21]);
+
+      const page = await useCase.execute({ page: 2, limit: 10 });
+
+      expect(page).toEqual({
+        page: 2,
+        count: 1,
+        pageCount: 3,
+        total: 21,
+        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
+      });
+    });
+
     it('asks for the first page of 20 when the query has no window', async () => {
-      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ page: undefined, limit: undefined });
 
@@ -41,7 +55,7 @@ describe('CatalogProductListUseCase', () => {
     });
 
     it('caps the limit at 100', async () => {
-      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ page: 1, limit: 500 });
 

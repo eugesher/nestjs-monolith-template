@@ -6,6 +6,6 @@ export interface ILedgerStoredEntryRecord {
   action: string;
   payload: Record<string, unknown>;
   correlationId: string;
-  occurredAt: string;
-  recordedAt: string;
+  occurredAt: Date;
+  recordedAt: Date;
 }

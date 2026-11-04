@@ -1,13 +1,17 @@
 interface IOrderFoundRecordProduct {
-  id: string;
-  productId: string;
   sku: string;
   name: string;
+}
+
+interface IOrderFoundRecordOrderProduct {
+  id: string;
+  productId: string;
+  product: IOrderFoundRecordProduct;
 }
 
 export interface IOrderFoundRecord {
   id: string;
   customerId: string;
   createdAt: Date;
-  products: IOrderFoundRecordProduct[];
+  orderProducts: IOrderFoundRecordOrderProduct[];
 }

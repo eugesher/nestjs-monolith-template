@@ -31,7 +31,7 @@ describe('AuthGlobalClaimsFacade', () => {
 
   describe('findPermissionCodes', () => {
     it('answers the permission codes stored for the user', async () => {
-      findPermissionCodes.mockResolvedValue(['product:read']);
+      findPermissionCodes.mockResolvedValue([{ code: 'product:read' }]);
 
       const codes = await facade.findPermissionCodes({ userId: 'user-1' });
 

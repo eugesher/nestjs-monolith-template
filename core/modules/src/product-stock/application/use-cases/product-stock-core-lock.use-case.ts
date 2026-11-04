@@ -9,6 +9,7 @@ import {
   type IProductStockCoreLockRepositoryPort,
   PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
 } from '../../outbound';
+import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
 @Injectable()
 export class ProductStockCoreLockUseCase {
@@ -22,7 +23,9 @@ export class ProductStockCoreLockUseCase {
   ): Promise<IProductStockCoreOnHandView[]> {
     const { productIds } = command;
     const locked = await this.repository.lockProducts(productIds);
+    const lockedIds = locked.map((product) => product.id);
+    const sums = await this.repository.sumStock(lockedIds);
 
-    return await this.repository.sumStock(locked);
+    return ProductStockCoreOnHandMapper.toViews(lockedIds, sums);
   }
 }
