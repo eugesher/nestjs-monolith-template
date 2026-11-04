@@ -1,8 +1,3 @@
-interface IHealthStatusReadinessViewDependency {
-  status: 'ok' | 'error';
-  latencyMs?: number;
-}
-
 export interface IHealthStatusLivenessView {
   status: 'ok';
   app: string;
@@ -11,5 +6,5 @@ export interface IHealthStatusLivenessView {
 
 export interface IHealthStatusReadinessView {
   status: 'ready' | 'not-ready';
-  dependencies: Record<string, IHealthStatusReadinessViewDependency>;
+  dependencies: Record<string, { status: 'ok' | 'error'; latencyMs?: number }>;
 }

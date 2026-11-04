@@ -1,11 +1,7 @@
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-type IOrderGetOneRecordProduct = Pick<Product, 'sku' | 'name'>;
-
-interface IOrderGetOneRecordOrderProduct extends Pick<OrderProduct, 'id' | 'productId'> {
-  product: IOrderGetOneRecordProduct;
-}
-
-export interface IOrderGetOneRecord extends Pick<Order, 'id' | 'customerId' | 'createdAt'> {
-  orderProducts: IOrderGetOneRecordOrderProduct[];
-}
+export type IOrderGetOneRecord = Pick<Order, 'id' | 'customerId' | 'createdAt'> & {
+  orderProducts: (Pick<OrderProduct, 'id' | 'productId'> & {
+    product: Pick<Product, 'sku' | 'name'>;
+  })[];
+};

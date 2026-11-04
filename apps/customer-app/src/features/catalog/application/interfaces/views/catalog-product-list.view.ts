@@ -1,9 +1,7 @@
 import { IPage } from '@acme-libs/toolkit';
 
-interface ICatalogProductListViewItem {
+export type ICatalogProductListView = IPage<{
   id: string;
   sku: string;
   name: string;
-}
-
-export type ICatalogProductListView = IPage<ICatalogProductListViewItem>;
+}>;

@@ -9,8 +9,8 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
 import {
-  IOrderPlaceOrderInsertQuery,
-  IOrderPlaceOrderRecord,
+  IOrderPlaceInsertQuery,
+  IOrderPlaceRecord,
   IOrderPlaceProductRecord,
   IOrderPlaceRepositoryPort,
   IOrderPlaceOrderProductInsertQuery,
@@ -48,7 +48,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
       .getMany();
   }
 
-  public async insertOrder(query: IOrderPlaceOrderInsertQuery): Promise<string> {
+  public async insertOrder(query: IOrderPlaceInsertQuery): Promise<string> {
     return await this.orderRepository.insertOne(query);
   }
 
@@ -56,7 +56,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     await this.orderProductRepository.insert(queries);
   }
 
-  public async findOrder(orderId: string): Promise<IOrderPlaceOrderRecord> {
+  public async findOrder(orderId: string): Promise<IOrderPlaceRecord> {
     return await this.orderRepository
       .createQueryBuilder('Order')
       .select(['Order.id', 'Order.customerId', 'Order.createdAt'])

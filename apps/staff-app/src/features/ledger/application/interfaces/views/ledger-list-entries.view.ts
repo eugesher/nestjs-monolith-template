@@ -1,6 +1,6 @@
 import { IPage } from '@acme-libs/toolkit';
 
-interface ILedgerListEntriesViewItem {
+export type ILedgerListEntriesView = IPage<{
   id: string;
   operationKey: string;
   subjectType: string;
@@ -10,6 +10,4 @@ interface ILedgerListEntriesViewItem {
   correlationId: string;
   occurredAt: string;
   recordedAt: string;
-}
-
-export type ILedgerListEntriesView = IPage<ILedgerListEntriesViewItem>;
+}>;

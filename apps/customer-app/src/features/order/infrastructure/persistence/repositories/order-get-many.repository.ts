@@ -10,7 +10,7 @@ import { Order } from '@acme-core/entities';
 import {
   IOrderGetManyRepositoryPort,
   IOrderGetManyRecord,
-  IOrderGetManyListQuery,
+  IOrderGetManyQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  public async list(query: IOrderGetManyListQuery): Promise<IOrderGetManyRecord> {
+  public async list(query: IOrderGetManyQuery): Promise<IOrderGetManyRecord> {
     const { limit, offset, customerId } = query;
 
     return await this.orderRepository

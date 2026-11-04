@@ -1,13 +1,7 @@
 import { StaffPermission, StaffRole } from '@acme-staff/common/entities';
 
-type IRoleUpdatePermissionsRoleRecordPermission = Pick<StaffPermission, 'code'>;
-
-interface IRoleUpdatePermissionsRoleRecordRolePermission {
-  permission: IRoleUpdatePermissionsRoleRecordPermission;
-}
-
-export interface IRoleUpdatePermissionsRoleRecord extends Pick<StaffRole, 'id' | 'name'> {
-  rolePermissions: IRoleUpdatePermissionsRoleRecordRolePermission[];
-}
+export type IRoleUpdatePermissionsRoleRecord = Pick<StaffRole, 'id' | 'name'> & {
+  rolePermissions: { permission: Pick<StaffPermission, 'code'> }[];
+};
 
 export type IRoleUpdatePermissionsPermissionRecord = Pick<StaffPermission, 'id' | 'code'>;

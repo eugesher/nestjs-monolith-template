@@ -1,8 +1,6 @@
 import { IPage } from '@acme-libs/toolkit';
 
-interface IOrderGetManyViewItem {
+export type IOrderGetManyView = IPage<{
   id: string;
   createdAt: string;
-}
-
-export type IOrderGetManyView = IPage<IOrderGetManyViewItem>;
+}>;

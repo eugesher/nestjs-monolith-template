@@ -1,6 +1,6 @@
 import { IPage } from '@acme-libs/toolkit';
 
-interface INoteGetRevisionsViewItem {
+export type INoteGetRevisionsView = IPage<{
   id: string;
   noteId: string;
   noteVersion: number;
@@ -9,6 +9,4 @@ interface INoteGetRevisionsViewItem {
   editorId: string;
   correlationId: string;
   recordedAt: string;
-}
-
-export type INoteGetRevisionsView = IPage<INoteGetRevisionsViewItem>;
+}>;

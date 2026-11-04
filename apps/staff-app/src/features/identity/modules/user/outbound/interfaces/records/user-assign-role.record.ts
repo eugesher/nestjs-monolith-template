@@ -1,14 +1,10 @@
 import { StaffRole, StaffUser } from '@acme-staff/common/entities';
 
-interface IUserAssignRoleStaffUserRecordUserRole {
-  role: Pick<StaffRole, 'name'>;
-}
-
-export interface IUserAssignRoleStaffUserRecord extends Pick<
+export type IUserAssignRoleStaffUserRecord = Pick<
   StaffUser,
   'id' | 'email' | 'passwordHash' | 'status'
-> {
-  userRoles: IUserAssignRoleStaffUserRecordUserRole[];
-}
+> & {
+  userRoles: { role: Pick<StaffRole, 'name'> }[];
+};
 
 export type IUserAssignRoleStaffRoleRecord = Pick<StaffRole, 'id'>;

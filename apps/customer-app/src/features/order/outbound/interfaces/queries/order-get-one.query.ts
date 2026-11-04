@@ -1,4 +1,4 @@
-export interface IOrderGetOneFindOwnedQuery {
+export interface IOrderGetOneQuery {
   orderId: string;
   customerId: string;
 }

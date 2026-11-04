@@ -1,9 +1,5 @@
 import { StaffRole, StaffUser } from '@acme-staff/common/entities';
 
-interface IAuthCommonValidateSubjectStaffUserRecordUserRole {
-  role: Pick<StaffRole, 'name'>;
-}
-
-export interface IAuthCommonValidateSubjectStaffUserRecord extends Pick<StaffUser, 'id' | 'email'> {
-  userRoles: IAuthCommonValidateSubjectStaffUserRecordUserRole[];
-}
+export type IAuthCommonValidateSubjectStaffUserRecord = Pick<StaffUser, 'id' | 'email'> & {
+  userRoles: { role: Pick<StaffRole, 'name'> }[];
+};

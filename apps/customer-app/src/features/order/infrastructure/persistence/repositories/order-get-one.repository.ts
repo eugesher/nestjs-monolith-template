@@ -9,7 +9,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Order } from '@acme-core/entities';
 
 import {
-  IOrderGetOneFindOwnedQuery,
+  IOrderGetOneQuery,
   IOrderGetOneRecord,
   IOrderGetOneRepositoryPort,
 } from '../../../outbound';
@@ -25,7 +25,7 @@ export class OrderGetOneRepository implements IOrderGetOneRepositoryPort {
     return this.repositoryHost.getRepository(Order);
   }
 
-  public async findOwned(query: IOrderGetOneFindOwnedQuery): Promise<Nullable<IOrderGetOneRecord>> {
+  public async findOwned(query: IOrderGetOneQuery): Promise<Nullable<IOrderGetOneRecord>> {
     const { orderId, customerId } = query;
 
     return await this.orderRepository
