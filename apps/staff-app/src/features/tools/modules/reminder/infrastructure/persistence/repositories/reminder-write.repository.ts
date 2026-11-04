@@ -9,7 +9,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import {
-  IReminderFoundRecord,
+  IReminderWriteRecord,
   IReminderWriteRepositoryPort,
   IReminderWriteUpdateQuery,
 } from '../../../outbound';
@@ -25,7 +25,7 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async findById(reminderId: string): Promise<Nullable<IReminderFoundRecord>> {
+  public async findById(reminderId: string): Promise<Nullable<IReminderWriteRecord>> {
     return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([

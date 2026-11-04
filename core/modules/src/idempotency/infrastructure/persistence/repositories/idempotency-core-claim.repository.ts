@@ -10,8 +10,8 @@ import { IdempotencyKey } from '@acme-core/entities';
 
 import {
   IIdempotencyCoreClaimRepositoryPort,
-  IIdempotencyCoreKeyFoundRecord,
-  IIdempotencyCoreKeyInsertQuery,
+  IIdempotencyCoreClaimRecord,
+  IIdempotencyCoreClaimInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,11 +25,11 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
-  public async insert(query: IIdempotencyCoreKeyInsertQuery): Promise<void> {
+  public async insert(query: IIdempotencyCoreClaimInsertQuery): Promise<void> {
     await this.idempotencyKeyRepository.insert(query);
   }
 
-  public async findByKey(key: string): Promise<Nullable<IIdempotencyCoreKeyFoundRecord>> {
+  public async findByKey(key: string): Promise<Nullable<IIdempotencyCoreClaimRecord>> {
     return await this.idempotencyKeyRepository
       .createQueryBuilder('IdempotencyKey')
       .select([

@@ -1,16 +1,16 @@
 import {
-  IProductStockCoreMovementInsertedRecord,
-  IProductStockCoreMovementInsertQuery,
-  IProductStockCoreProductLockedRecord,
-  IProductStockCoreSumRecord,
+  IProductStockCoreMoveInsertRecord,
+  IProductStockCoreMoveInsertQuery,
+  IProductStockCoreMoveProductRecord,
+  IProductStockCoreMoveSumRecord,
 } from '../interfaces';
 
 export interface IProductStockCoreMoveRepositoryPort {
-  lockProducts(productIds: string[]): Promise<IProductStockCoreProductLockedRecord[]>;
+  lockProducts(productIds: string[]): Promise<IProductStockCoreMoveProductRecord>;
   insertMany(
-    queries: IProductStockCoreMovementInsertQuery[],
-  ): Promise<IProductStockCoreMovementInsertedRecord[]>;
-  sumStock(productIds: string[]): Promise<IProductStockCoreSumRecord[]>;
+    queries: IProductStockCoreMoveInsertQuery[],
+  ): Promise<IProductStockCoreMoveInsertRecord>;
+  sumStock(productIds: string[]): Promise<IProductStockCoreMoveSumRecord>;
 }
 
 export const PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT = Symbol(

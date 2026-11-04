@@ -2,8 +2,9 @@ import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/dat
 import { Product, ProductStock } from '@acme-core/entities';
 
 import {
-  IProductStockCoreProductLockedRecord,
-  IProductStockCoreSumRecord,
+  IProductStockCoreLockProductRecord,
+  IProductStockCoreLockSumRecord,
+  IProductStockCoreLockSumRecordItem,
 } from '../../../../outbound';
 
 export abstract class ProductStockCoreBaseRepository {
@@ -17,7 +18,7 @@ export abstract class ProductStockCoreBaseRepository {
     return this.repositoryHost.getRepository(ProductStock);
   }
 
-  public async lockProducts(productIds: string[]): Promise<IProductStockCoreProductLockedRecord[]> {
+  public async lockProducts(productIds: string[]): Promise<IProductStockCoreLockProductRecord> {
     if (productIds.length === 0) {
       return [];
     }
@@ -31,7 +32,7 @@ export abstract class ProductStockCoreBaseRepository {
       .getMany();
   }
 
-  public async sumStock(productIds: string[]): Promise<IProductStockCoreSumRecord[]> {
+  public async sumStock(productIds: string[]): Promise<IProductStockCoreLockSumRecord> {
     if (productIds.length === 0) {
       return [];
     }
@@ -43,6 +44,6 @@ export abstract class ProductStockCoreBaseRepository {
       .where('ProductStock.productId IN (:...productIds)', { productIds })
       .groupBy('ProductStock.productId')
       .setLock('pessimistic_read')
-      .getRawMany<IProductStockCoreSumRecord>();
+      .getRawMany<IProductStockCoreLockSumRecordItem>();
   }
 }

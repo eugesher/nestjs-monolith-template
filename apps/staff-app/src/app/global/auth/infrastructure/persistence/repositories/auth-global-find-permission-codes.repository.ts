@@ -9,7 +9,8 @@ import { StaffPermission, StaffRolePermission, StaffUserRole } from '@acme-staff
 
 import {
   IAuthGlobalFindPermissionCodesRepositoryPort,
-  IAuthGlobalPermissionCodeFoundRecord,
+  IAuthGlobalFindPermissionCodesRecord,
+  IAuthGlobalFindPermissionCodesRecordItem,
 } from '../../../outbound';
 
 @Injectable()
@@ -23,9 +24,7 @@ export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindP
     return this.repositoryHost.getRepository(StaffPermission);
   }
 
-  public async findPermissionCodes(
-    userId: string,
-  ): Promise<IAuthGlobalPermissionCodeFoundRecord[]> {
+  public async findPermissionCodes(userId: string): Promise<IAuthGlobalFindPermissionCodesRecord> {
     return await this.staffPermissionRepository
       .createQueryBuilder('StaffPermission')
       .select('StaffPermission.code', 'code')
@@ -42,6 +41,6 @@ export class AuthGlobalFindPermissionCodesRepository implements IAuthGlobalFindP
       )
       .where('StaffUserRole.userId = :userId', { userId })
       .orderBy('StaffPermission.code')
-      .getRawMany<IAuthGlobalPermissionCodeFoundRecord>();
+      .getRawMany<IAuthGlobalFindPermissionCodesRecordItem>();
   }
 }

@@ -85,6 +85,33 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it.each(['records', 'queries'])(
+      'outbound/interfaces/%s MAY reach the entities — they mirror what persistence reads',
+      async (folder) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/product/outbound/interfaces/${folder}/__fixture__.ts`,
+          code: 'import { x } from "../../../../../../../../core/entities/src";',
+        }).toPassArchitectureLint();
+      },
+    );
+
+    it.each(['commands', 'views'])(
+      'outbound/interfaces/%s may NOT reach the entities',
+      async (folder) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/product/outbound/interfaces/${folder}/__fixture__.ts`,
+          code: 'import { x } from "../../../../../../../../core/entities/src";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('outbound/ports may NOT reach the entities', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/outbound/ports/__fixture__.ts',
+        code: 'import { x } from "../../../../../../../core/entities/src";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it('application MAY use the observability lib', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/application/use-cases/__fixture__.ts',

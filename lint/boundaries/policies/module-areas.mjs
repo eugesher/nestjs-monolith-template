@@ -1,12 +1,14 @@
 import {
   baseLibs,
   from,
+  fromFile,
   fromSpec,
   layerOf,
   libContracts,
   libs,
   own,
   packages,
+  persistenceInterfaces,
   to,
 } from './selectors.mjs';
 
@@ -28,6 +30,10 @@ const areaPolicies = (area, sharedFacing) => {
       layer('outbound'),
       baseLibs(),
       ...sharedFacing.outbound,
+    ]),
+    fromFile(`${prefix}:outbound`, persistenceInterfaces, [
+      to('acme-core:entities'),
+      to('acme-app:common:entities', own('app')),
     ]),
     from(`${prefix}:application`, [
       layer('domain'),

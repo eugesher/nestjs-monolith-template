@@ -11,7 +11,7 @@ import { Note } from '@acme-staff/common/entities';
 import {
   INoteAccessFindOwnedQuery,
   INoteAccessRepositoryPort,
-  INoteFoundRecord,
+  INoteAccessRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class NoteAccessRepository implements INoteAccessRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<INoteFoundRecord>> {
+  public async findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<INoteAccessRecord>> {
     const { noteId, authorId } = query;
 
     return await this.noteRepository

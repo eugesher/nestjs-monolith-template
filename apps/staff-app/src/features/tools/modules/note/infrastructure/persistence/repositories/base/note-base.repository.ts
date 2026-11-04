@@ -1,7 +1,7 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
-import { INoteWriteUpdateQuery } from '../../../../outbound';
+import { INoteEditUpdateQuery } from '../../../../outbound';
 
 export abstract class NoteBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
@@ -10,7 +10,7 @@ export abstract class NoteBaseRepository {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async update(query: INoteWriteUpdateQuery): Promise<boolean> {
+  public async update(query: INoteEditUpdateQuery): Promise<boolean> {
     const { id, versionAsRead, body, resolved, version } = query;
     const result = await this.noteRepository.update(
       { id, version: versionAsRead },

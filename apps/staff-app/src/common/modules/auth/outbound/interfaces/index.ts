@@ -1,1 +1,1 @@
-export * from './records/auth-common-staff-user-found.record';
+export * from './records/auth-common-validate-subject.record';

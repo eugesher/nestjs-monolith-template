@@ -9,8 +9,8 @@ import { Reminder } from '@acme-staff/common/entities';
 
 import {
   IReminderGetManyRepositoryPort,
-  IReminderListedRecord,
-  IReminderPageQuery,
+  IReminderGetManyRecord,
+  IReminderGetManyListQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ReminderGetManyRepository implements IReminderGetManyRepositoryPort
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async list(query: IReminderPageQuery): Promise<[IReminderListedRecord[], number]> {
+  public async list(query: IReminderGetManyListQuery): Promise<IReminderGetManyRecord> {
     const { limit, offset, ownerId, status } = query;
     const builder = this.reminderRepository
       .createQueryBuilder('Reminder')

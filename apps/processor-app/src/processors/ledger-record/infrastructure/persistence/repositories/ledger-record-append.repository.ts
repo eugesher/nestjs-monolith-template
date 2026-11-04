@@ -10,8 +10,8 @@ import { LedgerEntry } from '@acme-core/entities';
 
 import {
   ILedgerRecordAppendRepositoryPort,
-  ILedgerRecordEntryFoundRecord,
-  ILedgerRecordEntryInsertQuery,
+  ILedgerRecordAppendEntryRecord,
+  ILedgerRecordAppendEntryInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,13 +25,13 @@ export class LedgerRecordAppendRepository implements ILedgerRecordAppendReposito
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async insert(record: ILedgerRecordEntryInsertQuery): Promise<string> {
+  public async insert(record: ILedgerRecordAppendEntryInsertQuery): Promise<string> {
     const payload = record.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
 
     return await this.ledgerEntryRepository.insertOne({ ...record, payload });
   }
 
-  public async findByOperationKey(operationKey: string): Promise<ILedgerRecordEntryFoundRecord> {
+  public async findByOperationKey(operationKey: string): Promise<ILedgerRecordAppendEntryRecord> {
     return await this.ledgerEntryRepository
       .createQueryBuilder('LedgerEntry')
       .select(['LedgerEntry.id'])

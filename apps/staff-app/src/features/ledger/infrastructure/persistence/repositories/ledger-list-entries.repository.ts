@@ -8,9 +8,9 @@ import {
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
-  ILedgerEntryPageQuery,
+  ILedgerListEntriesQuery,
   ILedgerListEntriesRepositoryPort,
-  ILedgerStoredEntryRecord,
+  ILedgerListEntriesRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class LedgerListEntriesRepository implements ILedgerListEntriesRepository
     return this.repositoryHost.getRepository(LedgerEntry);
   }
 
-  public async list(query: ILedgerEntryPageQuery): Promise<[ILedgerStoredEntryRecord[], number]> {
+  public async list(query: ILedgerListEntriesQuery): Promise<ILedgerListEntriesRecord> {
     const { limit, offset, subjectType, subjectId, correlationId } = query;
     const builder = this.ledgerEntryRepository
       .createQueryBuilder('LedgerEntry')

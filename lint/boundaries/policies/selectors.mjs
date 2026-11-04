@@ -27,6 +27,13 @@ export const fromLibContracts = (lib, allow) => ({
   allow,
 });
 
+export const fromFile = (category, file, allow) => ({
+  from: { file: { categories: category, captured: { file } } },
+  allow,
+});
+
+export const persistenceInterfaces = 'interfaces/{records,queries}/*.ts';
+
 export const fromSpec = (category) => ({
   from: { file: { categories: category, captured: { file: 'spec/*.spec.ts' } } },
   allow: [to(category, own('app', 'module'))],

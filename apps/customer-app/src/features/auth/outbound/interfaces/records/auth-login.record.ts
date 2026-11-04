@@ -1,8 +1,3 @@
-import { UserStatusEnum } from '@acme-libs/kernel';
+import { Customer } from '@acme-core/entities';
 
-export interface IAuthLoginCustomerRecord {
-  id: string;
-  email: string;
-  passwordHash: string;
-  status: UserStatusEnum;
-}
+export type IAuthLoginCustomerRecord = Pick<Customer, 'id' | 'email' | 'passwordHash' | 'status'>;

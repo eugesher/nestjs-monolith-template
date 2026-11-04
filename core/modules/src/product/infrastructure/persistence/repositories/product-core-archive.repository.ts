@@ -10,8 +10,8 @@ import { Product } from '@acme-core/entities';
 
 import {
   IProductCoreArchiveRepositoryPort,
-  IProductCoreLockedRecord,
-  IProductCoreWriteUpdateQuery,
+  IProductCoreArchiveRecord,
+  IProductCoreArchiveUpdateQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async lockById(productId: string): Promise<Nullable<IProductCoreLockedRecord>> {
+  public async lockById(productId: string): Promise<Nullable<IProductCoreArchiveRecord>> {
     return await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id', 'Product.sku', 'Product.status', 'Product.version'])
@@ -34,7 +34,7 @@ export class ProductCoreArchiveRepository implements IProductCoreArchiveReposito
       .getOne();
   }
 
-  public async update(query: IProductCoreWriteUpdateQuery): Promise<void> {
+  public async update(query: IProductCoreArchiveUpdateQuery): Promise<void> {
     const { id, versionAsRead, status, version } = query;
 
     await this.productRepository.update({ id, version: versionAsRead }, { status, version });

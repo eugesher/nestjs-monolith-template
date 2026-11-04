@@ -2,7 +2,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { INoteWriteUpdateQuery } from '../../../outbound';
+import { INoteResolveUpdateQuery } from '../../../outbound';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteWriteService } from '../../services/note-write.service';
 import { NoteResolveUseCase } from '../note-resolve.use-case';
@@ -58,7 +58,7 @@ describe('NoteResolveUseCase', () => {
   describe('execute', () => {
     it('saves the resolved note against the version as read and answers the stored note', async () => {
       const view = await useCase.execute({ noteId: '7', authorId: 'admin-1' });
-      const [command] = update.mock.calls[0] as [INoteWriteUpdateQuery];
+      const [command] = update.mock.calls[0] as [INoteResolveUpdateQuery];
 
       expect(command.versionAsRead).toBe(2);
       expect(command.resolved).toBe(true);

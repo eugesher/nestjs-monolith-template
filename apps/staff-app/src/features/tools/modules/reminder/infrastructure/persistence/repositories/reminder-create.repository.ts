@@ -9,8 +9,8 @@ import { Reminder } from '@acme-staff/common/entities';
 
 import {
   IReminderCreateRepositoryPort,
-  IReminderFoundRecord,
-  IReminderInsertQuery,
+  IReminderCreateRecord,
+  IReminderCreateInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,11 +24,11 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async insert(query: IReminderInsertQuery): Promise<string> {
+  public async insert(query: IReminderCreateInsertQuery): Promise<string> {
     return await this.reminderRepository.insertOne(query);
   }
 
-  public async findInserted(reminderId: string): Promise<IReminderFoundRecord> {
+  public async findInserted(reminderId: string): Promise<IReminderCreateRecord> {
     return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([

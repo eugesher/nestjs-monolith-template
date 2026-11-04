@@ -1,9 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthStaffUserFoundRecord } from '../interfaces';
+import { IAuthLoginStaffUserRecord } from '../interfaces';
 
 export interface IAuthLoginRepositoryPort {
-  findByEmail(email: string): Promise<Nullable<IAuthStaffUserFoundRecord>>;
+  findByEmail(email: string): Promise<Nullable<IAuthLoginStaffUserRecord>>;
 }
 
 export const AUTH_LOGIN_REPOSITORY_PORT = Symbol('AUTH_LOGIN_REPOSITORY_PORT');

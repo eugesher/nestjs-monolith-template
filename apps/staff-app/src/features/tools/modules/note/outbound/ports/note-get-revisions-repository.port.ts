@@ -1,7 +1,7 @@
-import { INoteRevisionListedRecord, INoteRevisionPageQuery } from '../interfaces';
+import { INoteGetRevisionsRecord, INoteGetRevisionsListForNoteQuery } from '../interfaces';
 
 export interface INoteGetRevisionsRepositoryPort {
-  listForNote(query: INoteRevisionPageQuery): Promise<[INoteRevisionListedRecord[], number]>;
+  listForNote(query: INoteGetRevisionsListForNoteQuery): Promise<INoteGetRevisionsRecord>;
 }
 
 export const NOTE_GET_REVISIONS_REPOSITORY_PORT = Symbol('NOTE_GET_REVISIONS_REPOSITORY_PORT');

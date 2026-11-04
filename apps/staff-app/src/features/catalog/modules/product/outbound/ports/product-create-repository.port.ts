@@ -1,9 +1,9 @@
-import { IProductFoundRecord, IProductInsertQuery } from '../interfaces';
+import { IProductCreateRecord, IProductCreateInsertQuery } from '../interfaces';
 
 export interface IProductCreateRepositoryPort {
   existsBySku(sku: string): Promise<boolean>;
-  insert(query: IProductInsertQuery): Promise<string>;
-  findInserted(productId: string): Promise<IProductFoundRecord>;
+  insert(query: IProductCreateInsertQuery): Promise<string>;
+  findInserted(productId: string): Promise<IProductCreateRecord>;
 }
 
 export const PRODUCT_CREATE_REPOSITORY_PORT = Symbol('PRODUCT_CREATE_REPOSITORY_PORT');

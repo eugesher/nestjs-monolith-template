@@ -1,7 +1,7 @@
-import { IAuthGlobalPermissionCodeFoundRecord } from '../interfaces';
+import { IAuthGlobalFindPermissionCodesRecord } from '../interfaces';
 
 export interface IAuthGlobalFindPermissionCodesRepositoryPort {
-  findPermissionCodes(userId: string): Promise<IAuthGlobalPermissionCodeFoundRecord[]>;
+  findPermissionCodes(userId: string): Promise<IAuthGlobalFindPermissionCodesRecord>;
 }
 
 export const AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT = Symbol(

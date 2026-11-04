@@ -1,9 +1,7 @@
-import { IPage } from '@acme-libs/toolkit';
-
-import { ICatalogCacheReadCommand, ICatalogProductRowView } from '../interfaces';
+import { ICatalogCacheProductListReadCommand, ICatalogCacheProductListView } from '../interfaces';
 
 export interface ICatalogCachePort {
-  read(command: ICatalogCacheReadCommand): Promise<IPage<ICatalogProductRowView>>;
+  read(command: ICatalogCacheProductListReadCommand): Promise<ICatalogCacheProductListView>;
 }
 
 export const CATALOG_CACHE_PORT = Symbol('CATALOG_CACHE_PORT');

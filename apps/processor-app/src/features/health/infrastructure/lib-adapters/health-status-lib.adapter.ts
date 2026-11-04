@@ -2,7 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
-import { IHealthLivenessView, IHealthReadinessView, IHealthStatusPort } from '../../outbound';
+import {
+  IHealthStatusLivenessView,
+  IHealthStatusReadinessView,
+  IHealthStatusPort,
+} from '../../outbound';
 
 @Injectable()
 export class HealthStatusLibAdapter implements IHealthStatusPort {
@@ -11,11 +15,11 @@ export class HealthStatusLibAdapter implements IHealthStatusPort {
     private readonly health: IHealthLibPort,
   ) {}
 
-  public liveness(): IHealthLivenessView {
+  public liveness(): IHealthStatusLivenessView {
     return this.health.liveness();
   }
 
-  public async readiness(): Promise<IHealthReadinessView> {
+  public async readiness(): Promise<IHealthStatusReadinessView> {
     return await this.health.readiness();
   }
 }

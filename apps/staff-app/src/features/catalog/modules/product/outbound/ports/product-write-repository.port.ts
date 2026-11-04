@@ -1,9 +1,9 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IProductFoundRecord, IProductWriteUpdateQuery } from '../interfaces';
+import { IProductWriteRecord, IProductWriteUpdateQuery } from '../interfaces';
 
 export interface IProductWriteRepositoryPort {
-  findById(productId: string): Promise<Nullable<IProductFoundRecord>>;
+  findById(productId: string): Promise<Nullable<IProductWriteRecord>>;
   update(query: IProductWriteUpdateQuery): Promise<boolean>;
 }
 

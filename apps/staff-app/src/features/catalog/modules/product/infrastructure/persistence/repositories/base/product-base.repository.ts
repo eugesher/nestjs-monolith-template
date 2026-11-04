@@ -2,7 +2,7 @@ import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/dat
 import { Nullable } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
-import { IProductFoundRecord } from '../../../../outbound';
+import { IProductAccessRecord } from '../../../../outbound';
 
 export abstract class ProductBaseRepository {
   protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
@@ -11,7 +11,7 @@ export abstract class ProductBaseRepository {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findById(productId: string): Promise<Nullable<IProductFoundRecord>> {
+  public async findById(productId: string): Promise<Nullable<IProductAccessRecord>> {
     return await this.productRepository
       .createQueryBuilder('Product')
       .select([

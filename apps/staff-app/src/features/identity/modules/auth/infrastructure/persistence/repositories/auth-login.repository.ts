@@ -8,7 +8,7 @@ import {
 import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
-import { IAuthLoginRepositoryPort, IAuthStaffUserFoundRecord } from '../../../outbound';
+import { IAuthLoginRepositoryPort, IAuthLoginStaffUserRecord } from '../../../outbound';
 
 @Injectable()
 export class AuthLoginRepository implements IAuthLoginRepositoryPort {
@@ -21,7 +21,7 @@ export class AuthLoginRepository implements IAuthLoginRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findByEmail(email: string): Promise<Nullable<IAuthStaffUserFoundRecord>> {
+  public async findByEmail(email: string): Promise<Nullable<IAuthLoginStaffUserRecord>> {
     return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])

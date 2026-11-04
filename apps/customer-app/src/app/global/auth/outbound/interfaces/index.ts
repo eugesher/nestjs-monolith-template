@@ -1,1 +1,1 @@
-export * from './records/auth-global-customer.record';
+export * from './records/auth-global-validate-subject.record';

@@ -1,7 +1,3 @@
-import { UserStatusEnum } from '@acme-libs/kernel';
+import { Customer } from '@acme-core/entities';
 
-export interface IAuthRegisterCustomerInsertQuery {
-  email: string;
-  passwordHash: string;
-  status: UserStatusEnum;
-}
+export type IAuthRegisterCustomerInsertQuery = Pick<Customer, 'email' | 'passwordHash' | 'status'>;

@@ -1,12 +1,14 @@
 import {
   appContracts,
   from,
+  fromFile,
   fromSpec,
   layerOf,
   baseLibs,
   libContracts,
   own,
   packages,
+  persistenceInterfaces,
   to,
 } from './selectors.mjs';
 
@@ -15,6 +17,10 @@ const layer = layerOf('acme-app:common:modules', ['app', 'module']);
 export const commonModules = [
   from('acme-app:common:modules:domain', [layer('domain'), baseLibs()]),
   from('acme-app:common:modules:outbound', [layer('domain'), layer('outbound'), baseLibs()]),
+  fromFile('acme-app:common:modules:outbound', persistenceInterfaces, [
+    to('acme-core:entities'),
+    to('acme-app:common:entities', own('app')),
+  ]),
   from('acme-app:common:modules:application', [
     layer('domain'),
     layer('outbound'),

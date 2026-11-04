@@ -1,1 +1,1 @@
-export * from './records/idempotency-purge-key-deleted.record';
+export * from './records/idempotency-purge-run.record';

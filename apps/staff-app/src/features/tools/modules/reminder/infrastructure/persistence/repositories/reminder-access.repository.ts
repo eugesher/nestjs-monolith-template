@@ -11,7 +11,7 @@ import { Reminder } from '@acme-staff/common/entities';
 import {
   IReminderAccessFindOwnedQuery,
   IReminderAccessRepositoryPort,
-  IReminderFoundRecord,
+  IReminderAccessRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ReminderAccessRepository implements IReminderAccessRepositoryPort {
 
   public async findOwned(
     query: IReminderAccessFindOwnedQuery,
-  ): Promise<Nullable<IReminderFoundRecord>> {
+  ): Promise<Nullable<IReminderAccessRecord>> {
     const { reminderId, ownerId } = query;
 
     return await this.reminderRepository

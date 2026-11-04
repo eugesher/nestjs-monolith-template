@@ -1,7 +1,7 @@
-import { IReminderListedRecord, IReminderPageQuery } from '../interfaces';
+import { IReminderGetManyRecord, IReminderGetManyListQuery } from '../interfaces';
 
 export interface IReminderGetManyRepositoryPort {
-  list(query: IReminderPageQuery): Promise<[IReminderListedRecord[], number]>;
+  list(query: IReminderGetManyListQuery): Promise<IReminderGetManyRecord>;
 }
 
 export const REMINDER_GET_MANY_REPOSITORY_PORT = Symbol('REMINDER_GET_MANY_REPOSITORY_PORT');

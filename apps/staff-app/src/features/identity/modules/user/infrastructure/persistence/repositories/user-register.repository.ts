@@ -10,9 +10,9 @@ import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities
 
 import {
   IUserRegisterRepositoryPort,
-  IUserStaffRoleFoundRecord,
-  IUserStaffUserInsertQuery,
-  IUserStaffUserRoleInsertQuery,
+  IUserRegisterStaffRoleRecord,
+  IUserRegisterStaffUserInsertQuery,
+  IUserRegisterStaffUserRoleInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -34,11 +34,11 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async insertUser(query: IUserStaffUserInsertQuery): Promise<string> {
+  public async insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string> {
     return await this.staffUserRepository.insertOne(query);
   }
 
-  public async findRoles(names: RoleEnum[]): Promise<IUserStaffRoleFoundRecord[]> {
+  public async findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord> {
     if (names.length === 0) {
       return [];
     }
@@ -50,7 +50,7 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       .getMany();
   }
 
-  public async insertUserRoles(queries: IUserStaffUserRoleInsertQuery[]): Promise<void> {
+  public async insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void> {
     if (queries.length === 0) {
       return;
     }

@@ -1,6 +1,6 @@
 export const acmeCore = [
   ['acme-core:modules:domain', 'core/modules/src/*/domain/**', ['module']],
-  ['acme-core:modules:outbound', 'core/modules/src/*/outbound/**', ['module']],
+  ['acme-core:modules:outbound', 'core/modules/src/*/outbound/**', ['module', 'file']],
   ['acme-core:modules:application', 'core/modules/src/*/application/**', ['module']],
   [
     'acme-core:modules:infrastructure:queue',

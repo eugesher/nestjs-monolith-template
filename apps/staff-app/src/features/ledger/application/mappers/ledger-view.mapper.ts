@@ -1,9 +1,9 @@
-import { ILedgerStoredEntryRecord } from '../../outbound';
+import { ILedgerListEntriesRecordItem } from '../../outbound';
 import { ILedgerListEntriesView } from '../interfaces';
 
 export class LedgerViewMapper {
   public static toListEntriesViewItem(
-    entry: ILedgerStoredEntryRecord,
+    entry: ILedgerListEntriesRecordItem,
   ): ILedgerListEntriesView['data'][number] {
     return {
       id: entry.id,

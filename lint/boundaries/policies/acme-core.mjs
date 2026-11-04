@@ -1,4 +1,15 @@
-import { baseLibs, from, layerOf, libContracts, libs, own, packages, to } from './selectors.mjs';
+import {
+  baseLibs,
+  from,
+  fromFile,
+  layerOf,
+  libContracts,
+  libs,
+  own,
+  packages,
+  persistenceInterfaces,
+  to,
+} from './selectors.mjs';
 
 const layer = layerOf('acme-core:modules', ['module']);
 
@@ -12,6 +23,7 @@ export const acmeCore = [
     baseLibs(),
     libs('ledger'),
   ]),
+  fromFile('acme-core:modules:outbound', persistenceInterfaces, [to('acme-core:entities')]),
   from('acme-core:modules:application', [
     layer('domain'),
     layer('outbound'),

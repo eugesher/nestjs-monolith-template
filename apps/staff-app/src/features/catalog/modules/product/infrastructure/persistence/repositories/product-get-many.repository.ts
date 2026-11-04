@@ -9,8 +9,8 @@ import { Product } from '@acme-core/entities';
 
 import {
   IProductGetManyRepositoryPort,
-  IProductListedRecord,
-  IProductPageQuery,
+  IProductGetManyRecord,
+  IProductGetManyListQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async list(query: IProductPageQuery): Promise<[IProductListedRecord[], number]> {
+  public async list(query: IProductGetManyListQuery): Promise<IProductGetManyRecord> {
     const { limit, offset } = query;
 
     return await this.productRepository

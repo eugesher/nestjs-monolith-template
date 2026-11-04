@@ -9,10 +9,7 @@ import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
-import {
-  IReminderGetSummaryRepositoryPort,
-  IReminderSummarySnapshotRecord,
-} from '../../../outbound';
+import { IReminderGetSummaryRepositoryPort, IReminderGetSummaryRecord } from '../../../outbound';
 
 @Injectable()
 export class ReminderGetSummaryRepository implements IReminderGetSummaryRepositoryPort {
@@ -25,13 +22,13 @@ export class ReminderGetSummaryRepository implements IReminderGetSummaryReposito
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async summarize(ownerId: string): Promise<Maybe<IReminderSummarySnapshotRecord>> {
+  public async summarize(ownerId: string): Promise<Maybe<IReminderGetSummaryRecord>> {
     return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select('COUNT(*)', 'pending')
       .addSelect('MIN(Reminder.dueOn)', 'nextDueOn')
       .where('Reminder.ownerId = :ownerId', { ownerId })
       .andWhere('Reminder.status = :status', { status: ReminderStatusEnum.PENDING })
-      .getRawOne<IReminderSummarySnapshotRecord>();
+      .getRawOne<IReminderGetSummaryRecord>();
   }
 }

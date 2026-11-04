@@ -1,10 +1,10 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreKeyFoundRecord, IIdempotencyCoreKeyInsertQuery } from '../interfaces';
+import { IIdempotencyCoreClaimRecord, IIdempotencyCoreClaimInsertQuery } from '../interfaces';
 
 export interface IIdempotencyCoreClaimRepositoryPort {
-  insert(query: IIdempotencyCoreKeyInsertQuery): Promise<void>;
-  findByKey(key: string): Promise<Nullable<IIdempotencyCoreKeyFoundRecord>>;
+  insert(query: IIdempotencyCoreClaimInsertQuery): Promise<void>;
+  findByKey(key: string): Promise<Nullable<IIdempotencyCoreClaimRecord>>;
 }
 
 export const IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT = Symbol(

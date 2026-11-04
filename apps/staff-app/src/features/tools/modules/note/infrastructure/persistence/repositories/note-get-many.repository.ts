@@ -7,7 +7,11 @@ import {
 } from '@acme-libs/contracts/database';
 import { Note } from '@acme-staff/common/entities';
 
-import { INoteGetManyRepositoryPort, INoteListedRecord, INotePageQuery } from '../../../outbound';
+import {
+  INoteGetManyRepositoryPort,
+  INoteGetManyRecord,
+  INoteGetManyListQuery,
+} from '../../../outbound';
 
 @Injectable()
 export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
@@ -20,7 +24,7 @@ export class NoteGetManyRepository implements INoteGetManyRepositoryPort {
     return this.repositoryHost.getRepository(Note);
   }
 
-  public async list(query: INotePageQuery): Promise<[INoteListedRecord[], number]> {
+  public async list(query: INoteGetManyListQuery): Promise<INoteGetManyRecord> {
     const { limit, offset, subjectType, subjectId, resolved, authorId } = query;
     const builder = this.noteRepository
       .createQueryBuilder('Note')

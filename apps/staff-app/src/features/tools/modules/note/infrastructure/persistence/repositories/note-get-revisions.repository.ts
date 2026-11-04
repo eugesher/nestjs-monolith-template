@@ -9,8 +9,8 @@ import { NoteRevision } from '@acme-staff/common/entities';
 
 import {
   INoteGetRevisionsRepositoryPort,
-  INoteRevisionListedRecord,
-  INoteRevisionPageQuery,
+  INoteGetRevisionsRecord,
+  INoteGetRevisionsListForNoteQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,8 +25,8 @@ export class NoteGetRevisionsRepository implements INoteGetRevisionsRepositoryPo
   }
 
   public async listForNote(
-    query: INoteRevisionPageQuery,
-  ): Promise<[INoteRevisionListedRecord[], number]> {
+    query: INoteGetRevisionsListForNoteQuery,
+  ): Promise<INoteGetRevisionsRecord> {
     const { limit, offset, noteId } = query;
 
     return await this.noteRevisionRepository

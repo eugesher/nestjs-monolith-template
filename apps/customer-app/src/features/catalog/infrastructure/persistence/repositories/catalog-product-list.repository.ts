@@ -10,8 +10,8 @@ import { Product } from '@acme-core/entities';
 
 import {
   ICatalogProductListRepositoryPort,
-  ICatalogPageQuery,
-  ICatalogProductRowRecord,
+  ICatalogProductListQuery,
+  ICatalogProductListRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class CatalogProductListRepository implements ICatalogProductListReposito
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async list(query: ICatalogPageQuery): Promise<[ICatalogProductRowRecord[], number]> {
+  public async list(query: ICatalogProductListQuery): Promise<ICatalogProductListRecord> {
     const { limit, offset } = query;
 
     return await this.productRepository

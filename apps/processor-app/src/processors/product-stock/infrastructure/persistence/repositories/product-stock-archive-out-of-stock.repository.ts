@@ -10,7 +10,7 @@ import { Product } from '@acme-core/entities';
 
 import {
   IProductStockArchiveOutOfStockRepositoryPort,
-  IProductStockProductFoundRecord,
+  IProductStockArchiveOutOfStockProductRecord,
 } from '../../../outbound';
 
 @Injectable()
@@ -24,7 +24,9 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findActive(productIds: string[]): Promise<IProductStockProductFoundRecord[]> {
+  public async findActive(
+    productIds: string[],
+  ): Promise<IProductStockArchiveOutOfStockProductRecord> {
     if (productIds.length === 0) {
       return [];
     }

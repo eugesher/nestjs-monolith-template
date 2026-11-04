@@ -1,9 +1,0 @@
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { Nullable } from '@acme-libs/toolkit';
-
-export interface IIdempotencyCoreKeyInsertQuery {
-  idempotencyKey: string;
-  requestFingerprint: string;
-  status: IdempotencyStatusEnum;
-  responseBody: Nullable<string>;
-}

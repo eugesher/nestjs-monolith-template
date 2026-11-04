@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
-import { IPage } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_TTL_MS,
   ICatalogCachePort,
-  ICatalogCacheReadCommand,
-  ICatalogProductRowView,
+  ICatalogCacheProductListReadCommand,
+  ICatalogCacheProductListView,
 } from '../../outbound';
 
 @Injectable()
@@ -19,7 +18,9 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
     private readonly cache: ICachePort,
   ) {}
 
-  public async read(command: ICatalogCacheReadCommand): Promise<IPage<ICatalogProductRowView>> {
+  public async read(
+    command: ICatalogCacheProductListReadCommand,
+  ): Promise<ICatalogCacheProductListView> {
     const { page, limit, compute } = command;
     const key = CACHE_KEYS.catalogPage(page, limit);
 
