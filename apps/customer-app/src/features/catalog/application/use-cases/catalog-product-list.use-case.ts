@@ -4,22 +4,22 @@ import { PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
-  CATALOG_GET_MANY_REPOSITORY_PORT,
+  CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
   type ICatalogCachePort,
-  type ICatalogGetManyRepositoryPort,
+  type ICatalogProductListRepositoryPort,
 } from '../../outbound';
-import { ICatalogGetManyCommand, ICatalogGetManyView } from '../interfaces';
+import { ICatalogProductListCommand, ICatalogProductListView } from '../interfaces';
 
 @Injectable()
-export class CatalogGetManyUseCase {
+export class CatalogProductListUseCase {
   constructor(
-    @Inject(CATALOG_GET_MANY_REPOSITORY_PORT)
-    private readonly repository: ICatalogGetManyRepositoryPort,
+    @Inject(CATALOG_PRODUCT_LIST_REPOSITORY_PORT)
+    private readonly repository: ICatalogProductListRepositoryPort,
     @Inject(CATALOG_CACHE_PORT)
     private readonly cache: ICatalogCachePort,
   ) {}
 
-  public async execute(command: ICatalogGetManyCommand): Promise<ICatalogGetManyView> {
+  public async execute(command: ICatalogProductListCommand): Promise<ICatalogProductListView> {
     const { page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 

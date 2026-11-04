@@ -49,7 +49,7 @@ describe('App', () => {
 
   describe('Catalog', () => {
     catalogE2E.hooks();
-    catalogE2E.handleGetMany();
+    catalogE2E.handleProductList();
   });
 
   describe('Order', () => {

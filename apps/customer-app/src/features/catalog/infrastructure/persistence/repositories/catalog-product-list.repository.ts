@@ -10,13 +10,13 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 import { Product } from '@acme-core/entities';
 
 import {
-  ICatalogGetManyRepositoryPort,
+  ICatalogProductListRepositoryPort,
   ICatalogPageQuery,
   ICatalogProductRowRecord,
 } from '../../../outbound';
 
 @Injectable()
-export class CatalogGetManyRepository implements ICatalogGetManyRepositoryPort {
+export class CatalogProductListRepository implements ICatalogProductListRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,

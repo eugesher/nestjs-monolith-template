@@ -20,7 +20,7 @@ export class CatalogE2E {
     });
   }
 
-  public handleGetMany(): void {
+  public handleProductList(): void {
     describe('GET /api/products', () => {
       it('should list every active product by id, whatever its stock', async () => {
         const response = await request(this.ctx.app.getHttpServer())

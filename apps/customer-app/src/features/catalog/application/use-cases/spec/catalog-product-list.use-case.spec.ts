@@ -1,14 +1,14 @@
-import { CatalogGetManyUseCase } from '../catalog-get-many.use-case';
+import { CatalogProductListUseCase } from '../catalog-product-list.use-case';
 
-describe('CatalogGetManyUseCase', () => {
+describe('CatalogProductListUseCase', () => {
   let list: jest.Mock;
   let read: jest.Mock;
-  let useCase: CatalogGetManyUseCase;
+  let useCase: CatalogProductListUseCase;
 
   beforeEach(() => {
     list = jest.fn();
     read = jest.fn((query: { compute: () => Promise<unknown> }) => query.compute());
-    useCase = new CatalogGetManyUseCase({ list }, { read });
+    useCase = new CatalogProductListUseCase({ list }, { read });
   });
 
   describe('execute', () => {

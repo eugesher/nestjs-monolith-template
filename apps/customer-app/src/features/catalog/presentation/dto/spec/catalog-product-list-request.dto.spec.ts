@@ -1,11 +1,11 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-import { CatalogGetManyRequestDto } from '../catalog-get-many-request.dto';
+import { CatalogProductListRequestDto } from '../catalog-product-list-request.dto';
 
-describe('CatalogGetManyRequestDto', () => {
+describe('CatalogProductListRequestDto', () => {
   it('accepts an empty query string', () => {
-    const dto = plainToInstance(CatalogGetManyRequestDto, {});
+    const dto = plainToInstance(CatalogProductListRequestDto, {});
 
     const errors = validateSync(dto);
 
@@ -13,7 +13,7 @@ describe('CatalogGetManyRequestDto', () => {
   });
 
   it('turns the page window of the query string into numbers', () => {
-    const dto = plainToInstance(CatalogGetManyRequestDto, { page: '2', limit: '50' });
+    const dto = plainToInstance(CatalogProductListRequestDto, { page: '2', limit: '50' });
 
     const errors = validateSync(dto);
 
@@ -22,7 +22,7 @@ describe('CatalogGetManyRequestDto', () => {
   });
 
   it('leaves a limit above 100 to the use case, which caps it', () => {
-    const dto = plainToInstance(CatalogGetManyRequestDto, { limit: '500' });
+    const dto = plainToInstance(CatalogProductListRequestDto, { limit: '500' });
 
     const errors = validateSync(dto);
 
@@ -35,7 +35,7 @@ describe('CatalogGetManyRequestDto', () => {
     ['a fractional limit', { limit: '2.5' }, 'limit', 'isInt'],
     ['a limit of zero', { limit: '0' }, 'limit', 'min'],
   ])('rejects %s', (_case, query, property, constraint) => {
-    const dto = plainToInstance(CatalogGetManyRequestDto, query);
+    const dto = plainToInstance(CatalogProductListRequestDto, query);
 
     const errors = validateSync(dto);
 
