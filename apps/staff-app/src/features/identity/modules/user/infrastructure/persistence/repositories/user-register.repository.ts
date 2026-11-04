@@ -38,7 +38,7 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
     return await this.staffUserRepository.insertOne(query);
   }
 
-  public async findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord> {
+  public async findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord[]> {
     if (names.length === 0) {
       return [];
     }

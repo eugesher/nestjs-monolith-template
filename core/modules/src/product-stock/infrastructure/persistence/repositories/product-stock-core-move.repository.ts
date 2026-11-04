@@ -20,13 +20,13 @@ export class ProductStockCoreMoveRepository
 
   public async insertMany(
     queries: IProductStockCoreMoveInsertQuery[],
-  ): Promise<IProductStockCoreMoveInsertRecord> {
+  ): Promise<IProductStockCoreMoveInsertRecord[]> {
     if (queries.length === 0) {
       return [];
     }
 
     const result = await this.productStockRepository.insert(queries);
 
-    return result.identifiers as IProductStockCoreMoveInsertRecord;
+    return result.identifiers as IProductStockCoreMoveInsertRecord[];
   }
 }

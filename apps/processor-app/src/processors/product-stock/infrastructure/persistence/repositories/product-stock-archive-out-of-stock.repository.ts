@@ -26,7 +26,7 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
 
   public async findActive(
     productIds: string[],
-  ): Promise<IProductStockArchiveOutOfStockProductRecord> {
+  ): Promise<IProductStockArchiveOutOfStockProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }

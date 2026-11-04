@@ -1,7 +1,5 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-export interface IAuthGlobalFindPermissionCodesRecordItem {
+export interface IAuthGlobalFindPermissionCodesRecord {
   code: PermissionCodeEnum;
 }
-
-export type IAuthGlobalFindPermissionCodesRecord = IAuthGlobalFindPermissionCodesRecordItem[];

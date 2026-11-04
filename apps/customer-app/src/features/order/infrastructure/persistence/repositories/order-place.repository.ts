@@ -35,7 +35,7 @@ export class OrderPlaceRepository implements IOrderPlaceRepositoryPort {
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord> {
+  public async findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }

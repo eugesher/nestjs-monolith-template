@@ -1,11 +1,11 @@
 import { IProductStockCoreOnHandView } from '@acme-core/contracts/product-stock';
 
-import { IProductStockCoreLockSumRecordItem } from '../../outbound';
+import { IProductStockCoreLockSumRecord } from '../../outbound';
 
 export class ProductStockCoreOnHandMapper {
   public static toViews(
     productIds: string[],
-    sums: IProductStockCoreLockSumRecordItem[],
+    sums: IProductStockCoreLockSumRecord[],
   ): IProductStockCoreOnHandView[] {
     return productIds.map((productId) => {
       const sum = sums.find((candidate) => candidate.productId === productId);

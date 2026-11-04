@@ -1,12 +1,8 @@
 import { Product } from '@acme-core/entities';
 
-type IProductStockCoreLockProductRecordItem = Pick<Product, 'id'>;
+export type IProductStockCoreLockProductRecord = Pick<Product, 'id'>;
 
-export type IProductStockCoreLockProductRecord = IProductStockCoreLockProductRecordItem[];
-
-export interface IProductStockCoreLockSumRecordItem {
+export interface IProductStockCoreLockSumRecord {
   productId: string;
   quantity: number | string;
 }
-
-export type IProductStockCoreLockSumRecord = IProductStockCoreLockSumRecordItem[];

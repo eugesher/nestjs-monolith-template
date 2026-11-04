@@ -9,7 +9,7 @@ import {
 
 export interface IRoleUpdatePermissionsRepositoryPort {
   findRole(name: RoleEnum): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>>;
-  findPermissions(codes: PermissionCodeEnum[]): Promise<IRoleUpdatePermissionsPermissionRecord>;
+  findPermissions(codes: PermissionCodeEnum[]): Promise<IRoleUpdatePermissionsPermissionRecord[]>;
   deleteRolePermissions(roleId: string): Promise<void>;
   insertRolePermissions(queries: IRoleUpdatePermissionsRolePermissionInsertQuery[]): Promise<void>;
 }

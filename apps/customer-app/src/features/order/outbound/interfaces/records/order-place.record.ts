@@ -1,8 +1,6 @@
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-type IOrderPlaceProductRecordItem = Pick<Product, 'id'>;
-
-export type IOrderPlaceProductRecord = IOrderPlaceProductRecordItem[];
+export type IOrderPlaceProductRecord = Pick<Product, 'id'>;
 
 type IOrderPlaceOrderRecordProduct = Pick<Product, 'sku' | 'name'>;
 

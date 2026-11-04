@@ -1,18 +1,12 @@
 import { Product } from '@acme-core/entities';
 
-type IProductStockCoreMoveProductRecordItem = Pick<Product, 'id'>;
+export type IProductStockCoreMoveProductRecord = Pick<Product, 'id'>;
 
-export type IProductStockCoreMoveProductRecord = IProductStockCoreMoveProductRecordItem[];
-
-interface IProductStockCoreMoveInsertRecordItem {
+export interface IProductStockCoreMoveInsertRecord {
   id: number | string;
 }
 
-export type IProductStockCoreMoveInsertRecord = IProductStockCoreMoveInsertRecordItem[];
-
-interface IProductStockCoreMoveSumRecordItem {
+export interface IProductStockCoreMoveSumRecord {
   productId: string;
   quantity: number | string;
 }
-
-export type IProductStockCoreMoveSumRecord = IProductStockCoreMoveSumRecordItem[];

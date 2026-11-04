@@ -6,8 +6,6 @@ interface IRoleListRecordItemRolePermission {
   permission: IRoleListRecordItemPermission;
 }
 
-interface IRoleListRecordItem extends Pick<StaffRole, 'id' | 'name'> {
+export interface IRoleListRecord extends Pick<StaffRole, 'id' | 'name'> {
   rolePermissions: IRoleListRecordItemRolePermission[];
 }
-
-export type IRoleListRecord = IRoleListRecordItem[];

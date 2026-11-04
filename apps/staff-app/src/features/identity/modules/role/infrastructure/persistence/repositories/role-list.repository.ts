@@ -20,7 +20,7 @@ export class RoleListRepository implements IRoleListRepositoryPort {
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  public async list(): Promise<IRoleListRecord> {
+  public async list(): Promise<IRoleListRecord[]> {
     return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id', 'StaffRole.name'])

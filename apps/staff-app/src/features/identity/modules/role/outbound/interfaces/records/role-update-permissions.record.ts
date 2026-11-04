@@ -10,6 +10,4 @@ export interface IRoleUpdatePermissionsRoleRecord extends Pick<StaffRole, 'id' |
   rolePermissions: IRoleUpdatePermissionsRoleRecordRolePermission[];
 }
 
-type IRoleUpdatePermissionsPermissionRecordItem = Pick<StaffPermission, 'id' | 'code'>;
-
-export type IRoleUpdatePermissionsPermissionRecord = IRoleUpdatePermissionsPermissionRecordItem[];
+export type IRoleUpdatePermissionsPermissionRecord = Pick<StaffPermission, 'id' | 'code'>;

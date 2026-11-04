@@ -49,7 +49,7 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
 
   public async findPermissions(
     codes: PermissionCodeEnum[],
-  ): Promise<IRoleUpdatePermissionsPermissionRecord> {
+  ): Promise<IRoleUpdatePermissionsPermissionRecord[]> {
     if (codes.length === 0) {
       return [];
     }

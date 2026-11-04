@@ -6,7 +6,7 @@ import {
 } from '../interfaces';
 
 export interface IOrderPlaceRepositoryPort {
-  findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord>;
+  findActiveProducts(productIds: string[]): Promise<IOrderPlaceProductRecord[]>;
   insertOrder(query: IOrderPlaceOrderInsertQuery): Promise<string>;
   insertOrderProducts(queries: IOrderPlaceOrderProductInsertQuery[]): Promise<void>;
   findOrder(orderId: string): Promise<IOrderPlaceOrderRecord>;
