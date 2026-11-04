@@ -1,4 +1,6 @@
-export interface ILedgerEntryView {
+import { IPage } from '@acme-libs/toolkit';
+
+interface ILedgerListEntriesViewItem {
   id: string;
   operationKey: string;
   subjectType: string;
@@ -9,3 +11,5 @@ export interface ILedgerEntryView {
   occurredAt: string;
   recordedAt: string;
 }
+
+export type ILedgerListEntriesView = IPage<ILedgerListEntriesViewItem>;

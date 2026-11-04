@@ -10,7 +10,7 @@ import {
   type IAuthLoginRepositoryPort,
   type IAuthPasswordHasherPort,
 } from '../../outbound';
-import { IAuthAccessTokenView, IAuthLoginCommand } from '../interfaces';
+import { IAuthLoginView, IAuthLoginCommand } from '../interfaces';
 
 @Injectable()
 export class AuthLoginUseCase {
@@ -25,7 +25,7 @@ export class AuthLoginUseCase {
     private readonly logger: PinoLogger,
   ) {}
 
-  public async execute(command: IAuthLoginCommand): Promise<IAuthAccessTokenView> {
+  public async execute(command: IAuthLoginCommand): Promise<IAuthLoginView> {
     const { email, password } = command;
     const normalized = AuthCustomerModel.normalizeEmail(email);
     const record = await this.repository.findByEmail(normalized);

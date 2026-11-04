@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Nullable } from '@acme-libs/toolkit';
 import {
   IAuthCommonSubjectView,
-  IAuthCommonValidateSubjectQuery,
+  IAuthCommonValidateSubjectCommand,
 } from '@acme-staff/contracts/auth';
 
 import { AuthCommonStaffUserModel } from '../../domain';
@@ -20,9 +20,9 @@ export class AuthCommonValidateSubjectUseCase {
   ) {}
 
   public async execute(
-    query: IAuthCommonValidateSubjectQuery,
+    command: IAuthCommonValidateSubjectCommand,
   ): Promise<Nullable<IAuthCommonSubjectView>> {
-    const { userId } = query;
+    const { userId } = command;
     const record = await this.repository.findActiveById(userId);
 
     if (!record) {

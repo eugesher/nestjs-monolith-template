@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { OrderNotFoundException } from '../../domain';
 import { type IOrderGetOneRepositoryPort, ORDER_GET_ONE_REPOSITORY_PORT } from '../../outbound';
-import { IOrderGetOneCommand, IOrderView } from '../interfaces';
+import { IOrderGetOneCommand, IOrderGetOneView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class OrderGetOneUseCase {
     private readonly repository: IOrderGetOneRepositoryPort,
   ) {}
 
-  public async execute(command: IOrderGetOneCommand): Promise<IOrderView> {
+  public async execute(command: IOrderGetOneCommand): Promise<IOrderGetOneView> {
     const { orderId } = command;
     const order = await this.repository.findById(orderId);
 
@@ -20,6 +20,6 @@ export class OrderGetOneUseCase {
       throw new OrderNotFoundException(orderId);
     }
 
-    return OrderViewMapper.toView(order);
+    return OrderViewMapper.toGetOneView(order);
   }
 }

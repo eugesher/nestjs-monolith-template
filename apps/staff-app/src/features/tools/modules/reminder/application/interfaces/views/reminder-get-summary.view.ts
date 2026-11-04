@@ -1,6 +1,6 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-export interface IReminderSummaryView {
+export interface IReminderGetSummaryView {
   pending: number;
   nextDueOn: Nullable<string>;
 }

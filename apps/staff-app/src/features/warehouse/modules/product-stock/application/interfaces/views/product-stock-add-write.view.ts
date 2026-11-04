@@ -1,9 +1,9 @@
 import { DomainEvent } from '@acme-libs/toolkit';
 
-import { IProductStockView } from './product-stock.view';
+import { IProductStockAddView } from './product-stock-add.view';
 
 export interface IProductStockAddWriteView {
-  stock: IProductStockView;
+  stock: IProductStockAddView;
   productStockId: string;
   events: DomainEvent<string>[];
 }

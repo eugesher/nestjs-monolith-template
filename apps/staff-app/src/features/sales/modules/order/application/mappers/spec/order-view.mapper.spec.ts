@@ -1,9 +1,9 @@
 import { OrderViewMapper } from '../order-view.mapper';
 
 describe('OrderViewMapper', () => {
-  describe('toView', () => {
+  describe('toGetOneView', () => {
     it('maps a found order with its owner and its products', () => {
-      const view = OrderViewMapper.toView({
+      const view = OrderViewMapper.toGetOneView({
         id: '600',
         customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
@@ -19,9 +19,9 @@ describe('OrderViewMapper', () => {
     });
   });
 
-  describe('toSummaryView', () => {
+  describe('toGetManyViewItem', () => {
     it('maps a listed order with its owner and without its products', () => {
-      const view = OrderViewMapper.toSummaryView({
+      const view = OrderViewMapper.toGetManyViewItem({
         id: '600',
         customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),

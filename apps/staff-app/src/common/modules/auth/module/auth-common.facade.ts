@@ -4,7 +4,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import {
   IAuthCommonPort,
   IAuthCommonSubjectView,
-  IAuthCommonValidateSubjectQuery,
+  IAuthCommonValidateSubjectCommand,
 } from '@acme-staff/contracts/auth';
 
 import { AuthCommonValidateSubjectUseCase } from '../application';
@@ -14,8 +14,8 @@ export class AuthCommonFacade implements IAuthCommonPort {
   constructor(private readonly authCommonValidateSubject: AuthCommonValidateSubjectUseCase) {}
 
   public async validateSubject(
-    query: IAuthCommonValidateSubjectQuery,
+    command: IAuthCommonValidateSubjectCommand,
   ): Promise<Nullable<IAuthCommonSubjectView>> {
-    return await this.authCommonValidateSubject.execute(query);
+    return await this.authCommonValidateSubject.execute(command);
   }
 }

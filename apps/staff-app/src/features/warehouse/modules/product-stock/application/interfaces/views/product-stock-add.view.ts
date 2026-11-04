@@ -1,4 +1,4 @@
-export interface IProductStockView {
+export interface IProductStockAddView {
   productId: string;
   quantity: number;
 }

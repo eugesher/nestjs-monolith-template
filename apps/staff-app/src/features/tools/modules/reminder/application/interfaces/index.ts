@@ -7,5 +7,5 @@ export * from './commands/reminder-get-summary.command';
 export * from './commands/reminder-reschedule.command';
 export * from './commands/reminder-write.command';
 
-export * from './views/reminder-summary.view';
+export * from './views/reminder-get-summary.view';
 export * from './views/reminder.view';

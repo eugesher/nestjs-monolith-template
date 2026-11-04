@@ -10,5 +10,5 @@ export * from './commands/note-write-reload.command';
 export * from './commands/note-write.command';
 
 export * from './views/note-edit-outcome.view';
-export * from './views/note-revision.view';
+export * from './views/note-get-revisions.view';
 export * from './views/note.view';

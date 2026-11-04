@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
@@ -8,7 +8,7 @@ import {
   type ICatalogCachePort,
   type ICatalogGetManyRepositoryPort,
 } from '../../outbound';
-import { ICatalogGetManyCommand, ICatalogProductView } from '../interfaces';
+import { ICatalogGetManyCommand, ICatalogGetManyView } from '../interfaces';
 
 @Injectable()
 export class CatalogGetManyUseCase {
@@ -19,7 +19,7 @@ export class CatalogGetManyUseCase {
     private readonly cache: ICatalogCachePort,
   ) {}
 
-  public async execute(command: ICatalogGetManyCommand): Promise<IPage<ICatalogProductView>> {
+  public async execute(command: ICatalogGetManyCommand): Promise<ICatalogGetManyView> {
     const { page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   type ILedgerListEntriesRepositoryPort,
   LEDGER_LIST_ENTRIES_REPOSITORY_PORT,
 } from '../../outbound';
-import { ILedgerEntryView, ILedgerListEntriesCommand } from '../interfaces';
+import { ILedgerListEntriesView, ILedgerListEntriesCommand } from '../interfaces';
 
 @Injectable()
 export class LedgerListEntriesUseCase {
@@ -15,7 +15,7 @@ export class LedgerListEntriesUseCase {
     private readonly repository: ILedgerListEntriesRepositoryPort,
   ) {}
 
-  public async execute(command: ILedgerListEntriesCommand): Promise<IPage<ILedgerEntryView>> {
+  public async execute(command: ILedgerListEntriesCommand): Promise<ILedgerListEntriesView> {
     const { page, limit, subjectType, subjectId, correlationId } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
 

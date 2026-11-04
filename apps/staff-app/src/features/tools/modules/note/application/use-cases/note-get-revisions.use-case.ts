@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper } from '@acme-libs/toolkit';
 
 import { NoteRevisionModel } from '../../domain';
 import {
   type INoteGetRevisionsRepositoryPort,
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
 } from '../../outbound';
-import { INoteGetRevisionsCommand, INoteRevisionView } from '../interfaces';
+import { INoteGetRevisionsCommand, INoteGetRevisionsView } from '../interfaces';
 import { NoteAccessService } from '../services/note-access.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class NoteGetRevisionsUseCase {
     private readonly repository: INoteGetRevisionsRepositoryPort,
   ) {}
 
-  public async execute(command: INoteGetRevisionsCommand): Promise<IPage<INoteRevisionView>> {
+  public async execute(command: INoteGetRevisionsCommand): Promise<INoteGetRevisionsView> {
     const { noteId, authorId, page, limit } = command;
 
     await this.accessService.loadOwned({ noteId, authorId });
