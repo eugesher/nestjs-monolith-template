@@ -1,5 +1,3 @@
-export * from './interfaces';
-
 export * from './services/note-access.service';
 export * from './services/note-write.service';
 

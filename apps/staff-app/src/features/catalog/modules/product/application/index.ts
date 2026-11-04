@@ -1,5 +1,3 @@
-export * from './interfaces';
-
 export * from './services/product-access.service';
 export * from './services/product-ledger.service';
 export * from './services/product-write.service';
