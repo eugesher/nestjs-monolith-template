@@ -1,4 +1,4 @@
-export * from './commands/auth-password-verify.command';
+export * from './commands/auth-credentials-verify-password.command';
 
 export * from './queries/auth-register.query';
 

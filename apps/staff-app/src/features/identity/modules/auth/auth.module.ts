@@ -6,17 +6,11 @@ import { AuthCommonModule } from '@acme-staff/common/modules/auth';
 
 import { AuthLoginUseCase, AuthMeUseCase } from './application';
 import {
-  AuthAccessTokenLibAdapter,
+  AuthCredentialsLibAdapter,
   AuthIdentityCommonAdapter,
   AuthLoginRepository,
-  AuthPasswordHasherLibAdapter,
 } from './infrastructure';
-import {
-  AUTH_ACCESS_TOKEN_PORT,
-  AUTH_IDENTITY_PORT,
-  AUTH_LOGIN_REPOSITORY_PORT,
-  AUTH_PASSWORD_HASHER_PORT,
-} from './outbound';
+import { AUTH_CREDENTIALS_PORT, AUTH_IDENTITY_PORT, AUTH_LOGIN_REPOSITORY_PORT } from './outbound';
 import { AuthController } from './presentation';
 
 @Module({
@@ -28,8 +22,7 @@ import { AuthController } from './presentation';
     AuthMeUseCase,
     { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
     { provide: AUTH_IDENTITY_PORT, useClass: AuthIdentityCommonAdapter },
-    { provide: AUTH_ACCESS_TOKEN_PORT, useClass: AuthAccessTokenLibAdapter },
-    { provide: AUTH_PASSWORD_HASHER_PORT, useClass: AuthPasswordHasherLibAdapter },
+    { provide: AUTH_CREDENTIALS_PORT, useClass: AuthCredentialsLibAdapter },
   ],
 })
 export class AuthModule {}

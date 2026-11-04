@@ -5,9 +5,9 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../domain';
 import {
-  AUTH_PASSWORD_HASHER_PORT,
+  AUTH_CREDENTIALS_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
-  type IAuthPasswordHasherPort,
+  type IAuthCredentialsPort,
   type IAuthRegisterRepositoryPort,
 } from '../../outbound';
 import { IAuthRegisterCommand, IAuthRegisterView } from '../interfaces';
@@ -19,8 +19,8 @@ export class AuthRegisterUseCase {
     private readonly ledgerService: AuthLedgerService,
     @Inject(AUTH_REGISTER_REPOSITORY_PORT)
     private readonly repository: IAuthRegisterRepositoryPort,
-    @Inject(AUTH_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: IAuthPasswordHasherPort,
+    @Inject(AUTH_CREDENTIALS_PORT)
+    private readonly credentials: IAuthCredentialsPort,
     @InjectPinoLogger(AuthRegisterUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -30,7 +30,7 @@ export class AuthRegisterUseCase {
 
     AuthCustomerModel.assertPasswordStrength(password);
 
-    const passwordHash = await this.passwordHasher.hash(password);
+    const passwordHash = await this.credentials.hashPassword(password);
     const draft = AuthCustomerModel.createDraft({ email, passwordHash });
     const id = await this.insert(draft);
     const customer = AuthCustomerModel.reconstitute({ id, ...draft });

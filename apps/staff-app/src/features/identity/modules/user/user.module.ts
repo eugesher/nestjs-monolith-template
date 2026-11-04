@@ -6,12 +6,12 @@ import { HttpExceptionFilter } from '@acme-libs/http';
 import { UserAssignRoleUseCase, UserRegisterUseCase } from './application';
 import {
   UserAssignRoleRepository,
-  UserPasswordHasherLibAdapter,
+  UserCredentialsLibAdapter,
   UserRegisterRepository,
 } from './infrastructure';
 import {
   USER_ASSIGN_ROLE_REPOSITORY_PORT,
-  USER_PASSWORD_HASHER_PORT,
+  USER_CREDENTIALS_PORT,
   USER_REGISTER_REPOSITORY_PORT,
 } from './outbound';
 import { UserController } from './presentation';
@@ -25,7 +25,7 @@ import { UserController } from './presentation';
     UserAssignRoleUseCase,
     { provide: USER_ASSIGN_ROLE_REPOSITORY_PORT, useClass: UserAssignRoleRepository },
     { provide: USER_REGISTER_REPOSITORY_PORT, useClass: UserRegisterRepository },
-    { provide: USER_PASSWORD_HASHER_PORT, useClass: UserPasswordHasherLibAdapter },
+    { provide: USER_CREDENTIALS_PORT, useClass: UserCredentialsLibAdapter },
   ],
 })
 export class UserModule {}

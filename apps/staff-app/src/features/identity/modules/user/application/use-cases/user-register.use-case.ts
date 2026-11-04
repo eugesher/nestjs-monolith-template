@@ -6,9 +6,9 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
 import {
-  type IUserPasswordHasherPort,
+  type IUserCredentialsPort,
   type IUserRegisterRepositoryPort,
-  USER_PASSWORD_HASHER_PORT,
+  USER_CREDENTIALS_PORT,
   USER_REGISTER_REPOSITORY_PORT,
 } from '../../outbound';
 import { IUserRegisterCommand, IUserRegisterView } from '../interfaces';
@@ -20,8 +20,8 @@ export class UserRegisterUseCase {
     private readonly repository: IUserRegisterRepositoryPort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @Inject(USER_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: IUserPasswordHasherPort,
+    @Inject(USER_CREDENTIALS_PORT)
+    private readonly credentials: IUserCredentialsPort,
     @InjectPinoLogger(UserRegisterUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -31,7 +31,7 @@ export class UserRegisterUseCase {
 
     UserStaffUserModel.assertPasswordStrength(password);
 
-    const passwordHash = await this.passwordHasher.hash(password);
+    const passwordHash = await this.credentials.hashPassword(password);
     const draft = UserStaffUserModel.createDraft({ email, passwordHash, roles });
     const id = await this.transaction.run(() => this.insert(draft));
 

@@ -1,23 +1,23 @@
-import { UserPasswordHasherLibAdapter } from '../user-password-hasher-lib.adapter';
+import { UserCredentialsLibAdapter } from '../user-credentials-lib.adapter';
 
-describe('UserPasswordHasherLibAdapter', () => {
+describe('UserCredentialsLibAdapter', () => {
   let hashPassword: jest.Mock;
-  let adapter: UserPasswordHasherLibAdapter;
+  let adapter: UserCredentialsLibAdapter;
 
   beforeEach(() => {
     hashPassword = jest.fn();
-    adapter = new UserPasswordHasherLibAdapter({
+    adapter = new UserCredentialsLibAdapter({
       signAccessToken: jest.fn(),
       hashPassword,
       verifyPassword: jest.fn(),
     });
   });
 
-  describe('hash', () => {
+  describe('hashPassword', () => {
     it('hashes the password with the credentials lib', async () => {
       hashPassword.mockResolvedValue('argon-hash');
 
-      const passwordHash = await adapter.hash('correct-horse-battery');
+      const passwordHash = await adapter.hashPassword('correct-horse-battery');
 
       expect(passwordHash).toBe('argon-hash');
       expect(hashPassword).toHaveBeenCalledWith('correct-horse-battery');

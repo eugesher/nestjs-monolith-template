@@ -3,12 +3,10 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { AuthCustomerModel, AuthInvalidCredentialsException } from '../../domain';
 import {
-  AUTH_ACCESS_TOKEN_PORT,
+  AUTH_CREDENTIALS_PORT,
   AUTH_LOGIN_REPOSITORY_PORT,
-  AUTH_PASSWORD_HASHER_PORT,
-  type IAuthAccessTokenPort,
+  type IAuthCredentialsPort,
   type IAuthLoginRepositoryPort,
-  type IAuthPasswordHasherPort,
 } from '../../outbound';
 import { IAuthLoginView, IAuthLoginCommand } from '../interfaces';
 
@@ -17,10 +15,8 @@ export class AuthLoginUseCase {
   constructor(
     @Inject(AUTH_LOGIN_REPOSITORY_PORT)
     private readonly repository: IAuthLoginRepositoryPort,
-    @Inject(AUTH_ACCESS_TOKEN_PORT)
-    private readonly accessToken: IAuthAccessTokenPort,
-    @Inject(AUTH_PASSWORD_HASHER_PORT)
-    private readonly passwordHasher: IAuthPasswordHasherPort,
+    @Inject(AUTH_CREDENTIALS_PORT)
+    private readonly credentials: IAuthCredentialsPort,
     @InjectPinoLogger(AuthLoginUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -39,7 +35,7 @@ export class AuthLoginUseCase {
     const customer = AuthCustomerModel.reconstitute(record);
 
     const { passwordHash } = customer;
-    const valid = await this.passwordHasher.verify({ passwordHash, password });
+    const valid = await this.credentials.verifyPassword({ passwordHash, password });
 
     if (!valid) {
       this.logger.warn({ customerId: customer.id }, 'Login failed: wrong password');
@@ -49,7 +45,7 @@ export class AuthLoginUseCase {
 
     customer.assertActive();
 
-    const accessToken = await this.accessToken.issue(customer.id);
+    const accessToken = await this.credentials.issueAccessToken(customer.id);
 
     this.logger.info({ customerId: customer.id }, 'Customer logged in');
 
