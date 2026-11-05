@@ -8,4 +8,7 @@ VALUES
   (8, 'product:write'),
   (9, 'product:archive'),
   (10, 'order:read'),
-  (11, 'product:restock');
+  (11, 'product:restock'),
+  (12, 'queue:read'),
+  (13, 'queue:retry'),
+  (14, 'queue:delete');

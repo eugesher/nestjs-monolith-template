@@ -3,18 +3,13 @@ import { Job } from 'bull';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import {
-  LedgerAppendUseCase,
-  LedgerAppendReportFailureUseCase,
-  LedgerAppendRetryFailedUseCase,
-} from '../../application';
+import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from '../../application';
 import { LedgerAppendConsumer } from '../ledger-append.consumer';
 
 describe('LedgerAppendConsumer', () => {
   let correlationIds: string[];
   let execute: jest.Mock;
   let report: jest.Mock;
-  let retry: jest.Mock;
   let consumer: LedgerAppendConsumer;
 
   beforeEach(() => {
@@ -27,15 +22,9 @@ describe('LedgerAppendConsumer', () => {
     report = jest.fn().mockImplementation(() => {
       correlationIds.push(CorrelationContextHelper.current('LedgerAppendReportFailureUseCase'));
     });
-    retry = jest.fn().mockImplementation(() => {
-      correlationIds.push(CorrelationContextHelper.current('LedgerAppendRetryFailedUseCase'));
-
-      return Promise.resolve();
-    });
     consumer = new LedgerAppendConsumer(
       { execute } as unknown as LedgerAppendUseCase,
       { execute: report } as unknown as LedgerAppendReportFailureUseCase,
-      { execute: retry } as unknown as LedgerAppendRetryFailedUseCase,
     );
   });
 
@@ -135,27 +124,6 @@ describe('LedgerAppendConsumer', () => {
         attempts: 1,
         error: new Error('deadlock'),
       });
-    });
-  });
-
-  describe('handleRetryTick', () => {
-    it('retries the failed records inside a correlation context of its own', async () => {
-      await consumer.handleRetryTick();
-
-      expect(retry).toHaveBeenCalledWith();
-      expect(correlationIds).toEqual([
-        expect.stringMatching(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-        ),
-      ]);
-    });
-
-    it('opens a new correlation context on every tick', async () => {
-      await consumer.handleRetryTick();
-      await consumer.handleRetryTick();
-
-      expect(correlationIds).toHaveLength(2);
-      expect(correlationIds[0]).not.toEqual(correlationIds[1]);
     });
   });
 });

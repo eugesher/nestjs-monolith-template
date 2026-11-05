@@ -1,0 +1,40 @@
+import { Global, Module } from '@nestjs/common';
+
+import { AuthClaimsLibModule, AuthLibModule } from '@acme-libs/auth';
+import { AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
+import { AuthCommonModule } from '@acme-processor/common/modules/auth';
+
+import {
+  AuthGlobalFindPermissionCodesUseCase,
+  AuthGlobalFindRolesUseCase,
+  AuthGlobalValidateSubjectUseCase,
+} from '../application';
+import {
+  AuthGlobalFindPermissionCodesRepository,
+  AuthGlobalSubjectCommonAdapter,
+} from '../infrastructure';
+import {
+  AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT,
+  AUTH_GLOBAL_SUBJECT_PORT,
+} from '../outbound';
+import { AuthGlobalClaimsFacade } from './auth-global-claims.facade';
+import { AuthGlobalFacade } from './auth-global.facade';
+
+@Global()
+@Module({
+  imports: [AuthLibModule, AuthClaimsLibModule, AuthCommonModule],
+  exports: [AUTH_CLAIMS_PORT, AUTH_USER_VALIDATOR_PORT],
+  providers: [
+    { provide: AUTH_CLAIMS_PORT, useClass: AuthGlobalClaimsFacade },
+    { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },
+    AuthGlobalFindPermissionCodesUseCase,
+    AuthGlobalFindRolesUseCase,
+    AuthGlobalValidateSubjectUseCase,
+    {
+      provide: AUTH_GLOBAL_FIND_PERMISSION_CODES_REPOSITORY_PORT,
+      useClass: AuthGlobalFindPermissionCodesRepository,
+    },
+    { provide: AUTH_GLOBAL_SUBJECT_PORT, useClass: AuthGlobalSubjectCommonAdapter },
+  ],
+})
+export class AuthGlobalModule {}

@@ -100,29 +100,6 @@ exports[`App Ledger queue ledger-record should keep a record that fails its last
 }
 `;
 
-exports[`App Ledger schedule ledger-append-retry should return a failed record to the queue and append it once its cause is gone 1`] = `
-{
-  "db": {
-    "ledger_entry": [
-      {
-        "action": "ProductArchived",
-        "correlation_id": "e2e-processor-retry",
-        "id": Any<String>,
-        "occurred_at": 2026-01-05T11:00:00.000Z,
-        "operation_key": "e2e-retry:1",
-        "payload": {
-          "previousStatus": "active",
-          "sku": "SKU-0004",
-        },
-        "recorded_at": Any<Date>,
-        "subject_id": "103",
-        "subject_type": "product",
-      },
-    ],
-  },
-}
-`;
-
 exports[`App ProductStock queue product-stock-post-subtract should archive a published product without stock and record the archive in the ledger under the correlation id 1`] = `
 {
   "db": {
@@ -165,5 +142,227 @@ exports[`App ProductStock queue product-stock-post-subtract should leave a publi
       },
     ],
   },
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should delete a failed job 1`] = `
+{
+  "failed": 0,
+  "job": null,
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should refuse a user without queue:delete with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown job with 404 QUEUE_JOB_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FOUND",
+      "message": "Job 999999 was not found in queue ledger-record",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues should list the queues with their job counts 1`] = `
+{
+  "response": {
+    "body": [
+      {
+        "jobCounts": {
+          "active": 0,
+          "completed": 0,
+          "delayed": 0,
+          "failed": 0,
+          "paused": 0,
+          "waiting": 0,
+        },
+        "name": "ledger-record",
+      },
+      {
+        "jobCounts": {
+          "active": 0,
+          "completed": 0,
+          "delayed": 0,
+          "failed": 0,
+          "paused": 0,
+          "waiting": 0,
+        },
+        "name": "product-stock-post-subtract",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues should refuse a request without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should answer a page of the failed jobs as their JSON 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 1,
+      "data": [
+        {
+          "attemptsMade": 1,
+          "data": {
+            "action": "ProductCreated",
+            "correlationId": "e2e-processor-queue-list",
+            "occurredAt": "2026-01-06T08:00:00.000Z",
+            "operationKey": "e2e-queue:1",
+            "payload": {},
+            "subjectId": "200",
+            "subjectType": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+          },
+          "debounceId": null,
+          "delay": 0,
+          "failedReason": "Data too long for column 'subject_type' at row 1",
+          "finishedOn": Any<Number>,
+          "id": Anything,
+          "name": "__default__",
+          "opts": {
+            "attempts": 1,
+            "backoff": {
+              "delay": 1000,
+              "type": "exponential",
+            },
+            "delay": 0,
+            "removeOnComplete": true,
+            "timestamp": Any<Number>,
+          },
+          "processedOn": Any<Number>,
+          "progress": 0,
+          "returnvalue": null,
+          "stacktrace": [
+            Any<String>,
+          ],
+          "timestamp": Any<Number>,
+        },
+      ],
+      "page": 1,
+      "pageCount": 1,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should refuse an unknown queue with 404 QUEUE_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_NOT_FOUND",
+      "message": "Queue unknown was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse a job that is not failed with 409 QUEUE_JOB_NOT_FAILED 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FAILED",
+      "message": StringMatching /\\^Job \\\\S\\+ of queue ledger-record is delayed, not failed\\$/,
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse a user without queue:retry with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown job with 404 QUEUE_JOB_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FOUND",
+      "message": "Job 999999 was not found in queue ledger-record",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown queue with 404 QUEUE_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_NOT_FOUND",
+      "message": "Queue unknown was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should return a failed record to the queue and append it once its cause is gone 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "correlation_id": "e2e-processor-queue-retry",
+        "id": Any<String>,
+        "occurred_at": 2026-01-06T09:00:00.000Z,
+        "operation_key": "e2e-queue:2",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0004",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "201",
+        "subject_type": "product",
+      },
+    ],
+  },
+  "failed": 0,
 }
 `;

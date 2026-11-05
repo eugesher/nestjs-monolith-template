@@ -27,6 +27,8 @@ describe('app entry points', () => {
       '@acme-processor/app/*',
       '@acme-processor/common',
       '@acme-processor/common/*',
+      '@acme-processor/contracts',
+      '@acme-processor/contracts/*',
       '@acme-processor/features',
       '@acme-processor/features/*',
       '@acme-processor/processors',
@@ -53,7 +55,9 @@ describe('app entry points', () => {
     '@acme-customer/common/shared/ledger-record',
     '@acme-customer/features',
     '@acme-processor/app/app.module',
+    '@acme-processor/common/modules/auth',
     '@acme-processor/common/shared/ledger-record',
+    '@acme-processor/contracts/auth',
     '@acme-processor/features',
     '@acme-processor/processors',
   ])('%s resolves', (source) => {
@@ -291,6 +295,29 @@ describe('app entry points', () => {
       code: 'import { x } from "@acme-core/contracts/idempotency";',
     }).toBreakRule('boundaries/dependencies');
   });
+
+  it.each([
+    'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
+    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
+  ])('%s MAY import the queue contract of the core product stock', async (file) => {
+    await expect({
+      file,
+      code: 'import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from "@acme-core/contracts/product-stock";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
+    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
+  ])(
+    '%s may NOT import a core contract other than the ledger and the product stock',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { x } from "@acme-core/contracts/idempotency";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
 
   it.each([
     [

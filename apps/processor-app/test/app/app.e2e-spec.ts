@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E } from '../features';
+import { HealthE2E, QueueE2E } from '../features';
 import { IdempotencyE2E, LedgerE2E, ProductStockE2E } from '../processors';
 
 describe('App', () => {
@@ -14,6 +14,7 @@ describe('App', () => {
   const ledgerE2E = LedgerE2E.of(ctx);
   const idempotencyE2E = IdempotencyE2E.of(ctx);
   const productStockE2E = ProductStockE2E.of(ctx);
+  const queueE2E = QueueE2E.of(ctx);
 
   beforeAll(async () => {
     await ctx.init();
@@ -41,7 +42,6 @@ describe('App', () => {
 
   describe('Ledger', () => {
     ledgerE2E.handleRecord();
-    ledgerE2E.handleRetryTick();
   });
 
   describe('Idempotency', () => {
@@ -50,5 +50,12 @@ describe('App', () => {
 
   describe('ProductStock', () => {
     productStockE2E.handleRecord();
+  });
+
+  describe('Queue', () => {
+    queueE2E.list();
+    queueE2E.listFailedJobs();
+    queueE2E.retryFailedJob();
+    queueE2E.deleteFailedJob();
   });
 });

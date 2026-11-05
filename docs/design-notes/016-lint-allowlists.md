@@ -63,8 +63,7 @@ helper and a repository, `ledger` neither. The entries stay, so a processor that
 follows the same rules
 a feature does.
 
-`infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger`
-returns the failed jobs to the queue. It takes `InjectQueue` and the `Queue` type and nothing else of
+`infrastructure/queue` of a processor may inject a queue to manage its jobs. It takes `InjectQueue` and the `Queue` type and nothing else of
 Bull, under the same rule as a feature queue adapter in `queue.mjs`.
 
 The module root of a feature or a processor may reach a shared barrel, as the module root of a

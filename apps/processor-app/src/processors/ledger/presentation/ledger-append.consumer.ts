@@ -1,22 +1,16 @@
 import { OnQueueFailed, Process, Processor } from '@nestjs/bull';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import {
-  LedgerAppendUseCase,
-  LedgerAppendReportFailureUseCase,
-  LedgerAppendRetryFailedUseCase,
-} from '../application';
+import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from '../application';
 
 @Processor(LEDGER_RECORD_QUEUE)
 export class LedgerAppendConsumer {
   constructor(
     private readonly append: LedgerAppendUseCase,
     private readonly reportFailure: LedgerAppendReportFailureUseCase,
-    private readonly retryFailed: LedgerAppendRetryFailedUseCase,
   ) {}
 
   @Process()
@@ -41,10 +35,5 @@ export class LedgerAppendConsumer {
 
       return Promise.resolve();
     });
-  }
-
-  @Cron(CronExpression.EVERY_DAY_AT_3AM, { name: 'ledger-append-retry' })
-  public async handleRetryTick(): Promise<void> {
-    await CorrelationContextHelper.run(undefined, () => this.retryFailed.execute());
   }
 }

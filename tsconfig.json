@@ -32,6 +32,8 @@
       "@acme-processor/app/*": ["./apps/processor-app/src/app/*"],
       "@acme-processor/common": ["./apps/processor-app/src/common"],
       "@acme-processor/common/*": ["./apps/processor-app/src/common/*"],
+      "@acme-processor/contracts": ["./apps/processor-app/src/contracts"],
+      "@acme-processor/contracts/*": ["./apps/processor-app/src/contracts/*"],
       "@acme-processor/features": ["./apps/processor-app/src/features"],
       "@acme-processor/features/*": ["./apps/processor-app/src/features/*"],
       "@acme-processor/processors": ["./apps/processor-app/src/processors"],

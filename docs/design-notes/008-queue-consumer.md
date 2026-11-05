@@ -2,17 +2,16 @@
 
 `apps/processor-app/src/processors/ledger` consumes the `ledger-record` queue and appends
 each job to `ledger_entry` (see `004-append-only-journal.md`). It is a processor, not a feature: a job of the
-Bull queue `ledger-record` or a daily schedule enters it, not an HTTP request, and it has no
+Bull queue `ledger-record` enters it, not an HTTP request, and it has no
 controller.
 
-| Layer                        | What it holds                                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `presentation`               | `LedgerAppendConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
-| `application`                | `LedgerAppendUseCase`, `LedgerAppendReportFailureUseCase`, `LedgerAppendRetryFailedUseCase`                  |
-| `domain`                     | `LedgerAppendEntryModel`, `LedgerAppendHelper`                                                               |
-| `outbound`                   | `LEDGER_APPEND_REPOSITORY_PORT`, `LEDGER_APPEND_QUEUE_PORT`                                                  |
-| `infrastructure/persistence` | `LedgerAppendRepository` over `ledger_entry`                                                                 |
-| `infrastructure/queue`       | `LedgerAppendQueueAdapter` over the `ledger-record` queue                                                    |
+| Layer                        | What it holds                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `presentation`               | `LedgerAppendConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one |
+| `application`                | `LedgerAppendUseCase`, `LedgerAppendReportFailureUseCase`                       |
+| `domain`                     | `LedgerAppendEntryModel`, `LedgerAppendHelper`                                  |
+| `outbound`                   | `LEDGER_APPEND_REPOSITORY_PORT`                                                 |
+| `infrastructure/persistence` | `LedgerAppendRepository` over `ledger_entry`                                    |
 
 ## A job is a ready record
 
@@ -54,39 +53,10 @@ job and appends it through `LEDGER_APPEND_REPOSITORY_PORT`. It lets a failed app
 so Bull retries the job. Every failed attempt
 reaches `@OnQueueFailed`, and `LedgerAppendReportFailureUseCase` logs it: at `warn` while attempts are
 left, at `error` after the last one. A job that ran out of attempts stays in the failed set of the
-queue until the daily retry returns it to the queue (see below).
+queue until someone returns it to the queue or deletes it through `/queues` (see
+`023-processor-app.md`).
 
 A retry of a job that did append is harmless: the ledger answers `appended: false` for a known key.
-
-## Retrying the failed records
-
-**One consumer serves the queue and its failures.** `handleRetryTick` of `LedgerAppendConsumer`
-runs once a day at 03:00 under `@Cron` named `ledger-append-retry`, and
-`LedgerAppendRetryFailedUseCase` moves every job of the failed set back to the waiting list through
-`LEDGER_APPEND_QUEUE_PORT`. `LedgerAppendQueueAdapter` calls `getFailed()`, then `job.retry()` on
-each.
-
-**Every failed job is retried, whatever its age.** A job lands in the failed set only after its last
-attempt, and `@OnQueueFailed` has already logged it at `error`. A job that fails for good fails
-again every night and logs again: the log keeps showing it until someone fixes its cause or removes
-it.
-
-**A retried job gets one attempt.** Bull keeps `attemptsMade` on `retry()`, so the job is past its
-`attempts` and the next failure sends it straight back to the failed set, without backoff. The retry
-is a daily second chance, not a new round of attempts.
-
-**A retry never duplicates a record.** The ledger deduplicates on the operation key: a job that
-appended and then failed answers `appended: false` on its retry.
-
-**The use case logs one line.** A tick logs `Failed ledger records are back in the queue` at `info`
-with the count, zero included. A failing retry logs `Ledger record retry failed, the next tick
-retries` at `warn` and does not throw. The consumer opens a correlation context of its own, like
-the purge.
-
-**The queue adapter lives in the processor.** Lint lets `infrastructure/queue` of a processor take
-`InjectQueue` and the `Queue` type, as it lets a feature queue adapter. The consumer still takes
-only `Processor`, `Process` and `OnQueueFailed` from Bull, and `Cron` and `CronExpression` from the
-scheduler.
 
 ## Logs
 

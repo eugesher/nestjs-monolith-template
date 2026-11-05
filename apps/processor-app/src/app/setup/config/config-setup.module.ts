@@ -30,6 +30,8 @@ export class ConfigSetupModule {
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
         QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
 
+        JWT_SECRET: Joi.string().min(32).required(),
+
         LOG_LEVEL: Joi.string()
           .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace')
           .optional(),

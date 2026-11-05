@@ -89,46 +89,4 @@ export class LedgerE2E {
       });
     });
   }
-
-  public handleRetryTick(): void {
-    describe('schedule ledger-append-retry', () => {
-      it('should return a failed record to the queue and append it once its cause is gone', async () => {
-        const job = await this.ctx.ledgerRecordQueue.add(
-          {
-            operationKey: 'e2e-retry:1',
-            subjectType: 'p'.repeat(65),
-            subjectId: '103',
-            action: 'ProductArchived',
-            payload: { sku: 'SKU-0004', previousStatus: 'active' },
-            occurredAt: '2026-01-05T11:00:00.000Z',
-            correlationId: 'e2e-processor-retry',
-          },
-          { attempts: 1 },
-        );
-
-        await this.ctx.waitFor('the record to fail', () => job.isFailed());
-        await job.update({ ...job.data, subjectType: 'product' });
-
-        this.ctx.fireSchedule('ledger-append-retry');
-
-        await this.ctx.waitFor('the record to leave the failed jobs', async () => {
-          const failed = await this.ctx.ledgerRecordQueue.getFailedCount();
-
-          return failed === 0;
-        });
-        await this.ctx.waitForLedgerRecordQueue();
-
-        expect({
-          db: {
-            ledger_entry: await this.ctx.dataSource.query(
-              'SELECT * FROM ledger_entry WHERE operation_key = ? ORDER BY id',
-              ['e2e-retry:1'],
-            ),
-          },
-        }).toMatchSnapshot({
-          db: { ledger_entry: [{ id: expect.any(String), recorded_at: expect.any(Date) }] },
-        });
-      });
-    });
-  }
 }
