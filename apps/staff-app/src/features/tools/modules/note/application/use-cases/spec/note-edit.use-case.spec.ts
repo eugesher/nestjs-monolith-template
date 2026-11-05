@@ -4,7 +4,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { NoteRevisionModel } from '../../../domain';
-import { INoteWriteUpdateCommand } from '../../../outbound';
+import { INoteEditUpdateQuery } from '../../../outbound';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteWriteService } from '../../services/note-write.service';
 import { NoteEditUseCase } from '../note-edit.use-case';
@@ -67,7 +67,7 @@ describe('NoteEditUseCase', () => {
       const view = await CorrelationContextHelper.run('corr-1', () =>
         useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-1' }),
       );
-      const [command] = update.mock.calls[0] as [INoteWriteUpdateCommand];
+      const [command] = update.mock.calls[0] as [INoteEditUpdateQuery];
       const [revision] = appendRevision.mock.calls[0] as [NoteRevisionModel];
 
       expect(run).toHaveBeenCalledTimes(1);

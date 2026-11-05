@@ -7,7 +7,7 @@ import {
   type IReminderGetManyRepositoryPort,
   REMINDER_GET_MANY_REPOSITORY_PORT,
 } from '../../outbound';
-import { IReminderGetManyQuery, IReminderView } from '../interfaces';
+import { IReminderGetManyCommand, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderGetManyUseCase {
@@ -16,8 +16,8 @@ export class ReminderGetManyUseCase {
     private readonly repository: IReminderGetManyRepositoryPort,
   ) {}
 
-  public async execute(query: IReminderGetManyQuery): Promise<IPage<IReminderView>> {
-    const { page, limit, ownerId, status } = query;
+  public async execute(command: IReminderGetManyCommand): Promise<IPage<IReminderView>> {
+    const { page, limit, ownerId, status } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.list({ ...pageWindow, ownerId, status });
     const data = records.map((record) => {

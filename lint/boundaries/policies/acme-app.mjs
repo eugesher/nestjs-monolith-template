@@ -2,10 +2,12 @@ import {
   appContracts,
   baseLibs,
   from,
+  fromFile,
   libContracts,
   libs,
   own,
   packages,
+  persistenceInterfaces,
   to,
 } from './selectors.mjs';
 
@@ -64,6 +66,10 @@ export const acmeApp = [
   from('acme-app:app:global:outbound', [
     to('acme-app:app:global:outbound', own('app', 'module')),
     baseLibs(),
+  ]),
+  fromFile('acme-app:app:global:outbound', persistenceInterfaces, [
+    to('acme-core:entities'),
+    to('acme-app:common:entities', own('app')),
   ]),
   from('acme-app:app:global:application', [
     to('acme-app:app:global:application', own('app', 'module')),

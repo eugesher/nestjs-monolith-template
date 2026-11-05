@@ -1,15 +1,15 @@
 import { RoleEnum } from '@acme-libs/kernel';
 
 import {
-  IUserStaffRoleFoundRecord,
-  IUserStaffUserInsertCommand,
-  IUserStaffUserRoleInsertCommand,
+  IUserRegisterStaffRoleRecord,
+  IUserRegisterStaffUserInsertQuery,
+  IUserRegisterStaffUserRoleInsertQuery,
 } from '../interfaces';
 
 export interface IUserRegisterRepositoryPort {
-  insertUser(command: IUserStaffUserInsertCommand): Promise<string>;
-  findRoles(names: RoleEnum[]): Promise<IUserStaffRoleFoundRecord[]>;
-  insertUserRoles(commands: IUserStaffUserRoleInsertCommand[]): Promise<void>;
+  insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string>;
+  findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord[]>;
+  insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void>;
 }
 
 export const USER_REGISTER_REPOSITORY_PORT = Symbol('USER_REGISTER_REPOSITORY_PORT');

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { NoteModel, NoteNotFoundException } from '../../domain';
 import { type INoteAccessRepositoryPort, NOTE_ACCESS_REPOSITORY_PORT } from '../../outbound';
-import { INoteAccessLoadOwnedQuery } from '../interfaces';
+import { INoteAccessLoadOwnedCommand } from '../interfaces';
 
 @Injectable()
 export class NoteAccessService {
@@ -11,8 +11,8 @@ export class NoteAccessService {
     private readonly repository: INoteAccessRepositoryPort,
   ) {}
 
-  public async loadOwned(query: INoteAccessLoadOwnedQuery): Promise<NoteModel> {
-    const { noteId, authorId } = query;
+  public async loadOwned(command: INoteAccessLoadOwnedCommand): Promise<NoteModel> {
+    const { noteId, authorId } = command;
     const record = await this.repository.findOwned({ noteId, authorId });
 
     if (!record) {

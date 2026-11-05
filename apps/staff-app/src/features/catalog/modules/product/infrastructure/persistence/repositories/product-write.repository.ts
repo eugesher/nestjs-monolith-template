@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
-import { IProductWriteRepositoryPort, IProductWriteUpdateCommand } from '../../../outbound';
+import { IProductWriteRepositoryPort, IProductWriteUpdateQuery } from '../../../outbound';
 import { ProductBaseRepository } from './base/product-base.repository';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class ProductWriteRepository
     super(repositoryHost);
   }
 
-  public async update(command: IProductWriteUpdateCommand): Promise<boolean> {
-    const { id, versionAsRead, name, status, version } = command;
+  public async update(query: IProductWriteUpdateQuery): Promise<boolean> {
+    const { id, versionAsRead, name, status, version } = query;
     const result = await this.productRepository.update(
       { id, version: versionAsRead },
       { name, status, version },

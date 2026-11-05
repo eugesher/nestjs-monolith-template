@@ -10,7 +10,7 @@ import { Nullable } from '@acme-libs/toolkit';
 import { StaffUser } from '@acme-staff/common/entities';
 
 import {
-  IAuthCommonStaffUserFoundRecord,
+  IAuthCommonValidateSubjectStaffUserRecord,
   IAuthCommonValidateSubjectRepositoryPort,
 } from '../../../outbound';
 
@@ -25,7 +25,9 @@ export class AuthCommonValidateSubjectRepository implements IAuthCommonValidateS
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findActiveById(id: string): Promise<Nullable<IAuthCommonStaffUserFoundRecord>> {
+  public async findActiveById(
+    id: string,
+  ): Promise<Nullable<IAuthCommonValidateSubjectStaffUserRecord>> {
     return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email'])

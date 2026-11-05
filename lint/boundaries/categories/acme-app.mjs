@@ -9,7 +9,11 @@ export const acmeApp = [
     ['app', 'module'],
   ],
   ['acme-app:app:global:application', 'apps/*/src/app/global/*/application/**', ['app', 'module']],
-  ['acme-app:app:global:outbound', 'apps/*/src/app/global/*/outbound/**', ['app', 'module']],
+  [
+    'acme-app:app:global:outbound',
+    'apps/*/src/app/global/*/outbound/**',
+    ['app', 'module', 'file'],
+  ],
   [
     'acme-app:app:global:infrastructure',
     'apps/*/src/app/global/*/infrastructure/**',
@@ -22,7 +26,7 @@ export const acmeApp = [
   [
     'acme-app:common:modules:outbound',
     'apps/*/src/common/modules/*/outbound/**',
-    ['app', 'module'],
+    ['app', 'module', 'file'],
   ],
   [
     'acme-app:common:modules:application',
@@ -62,7 +66,7 @@ export const acmeApp = [
     ...moduleAreaLayers.map((layer) => [
       `acme-app:${area}:${layer}`,
       `apps/*/src/${area}/{*,*/modules/*}/${layer.replace(':', '/')}/**`,
-      layer.includes(':')
+      layer.includes(':') || layer === 'outbound'
         ? ['app', 'module', 'single', 'area', 'submodule', 'file']
         : ['app', 'module'],
     ]),

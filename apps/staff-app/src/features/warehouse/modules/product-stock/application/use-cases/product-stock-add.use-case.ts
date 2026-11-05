@@ -20,7 +20,7 @@ import {
 import {
   IProductStockAddCommand,
   IProductStockAddWriteView,
-  IProductStockView,
+  IProductStockAddView,
 } from '../interfaces';
 import { ProductStockLedgerService } from '../services/product-stock-ledger.service';
 
@@ -40,9 +40,9 @@ export class ProductStockAddUseCase {
     private readonly logger: PinoLogger,
   ) {}
 
-  public async execute(command: IProductStockAddCommand): Promise<IProductStockView> {
+  public async execute(command: IProductStockAddCommand): Promise<IProductStockAddView> {
     const { productId, quantity, idempotencyKey } = command;
-    const claim = await this.idempotency.claim<IProductStockView>({
+    const claim = await this.idempotency.claim<IProductStockAddView>({
       key: idempotencyKey,
       body: { productId, quantity },
     });

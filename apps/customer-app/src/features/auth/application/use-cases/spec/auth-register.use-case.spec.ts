@@ -10,7 +10,11 @@ import { AuthRegisterUseCase } from '../auth-register.use-case';
 describe('AuthRegisterUseCase', () => {
   let recordRegistered: jest.Mock;
   let repository: { insert: jest.Mock };
-  let passwordHasher: { hash: jest.Mock; verify: jest.Mock };
+  let credentials: {
+    issueAccessToken: jest.Mock;
+    hashPassword: jest.Mock;
+    verifyPassword: jest.Mock;
+  };
   let logger: PinoLoggerMock;
   let useCase: AuthRegisterUseCase;
 
@@ -19,12 +23,16 @@ describe('AuthRegisterUseCase', () => {
     repository = {
       insert: jest.fn().mockResolvedValue('105'),
     };
-    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash'), verify: jest.fn() };
+    credentials = {
+      issueAccessToken: jest.fn(),
+      hashPassword: jest.fn().mockResolvedValue('argon-hash'),
+      verifyPassword: jest.fn(),
+    };
     logger = makePinoLoggerMock();
     useCase = new AuthRegisterUseCase(
       { recordRegistered } as unknown as AuthLedgerService,
       repository,
-      passwordHasher,
+      credentials,
       logger as unknown as PinoLogger,
     );
   });
@@ -40,7 +48,7 @@ describe('AuthRegisterUseCase', () => {
     });
 
     expect(view).toEqual({ id: '105', email: 'eve@example.com' });
-    expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
+    expect(credentials.hashPassword).toHaveBeenCalledWith('correct-horse-battery');
     expect(repository.insert).toHaveBeenCalledWith({
       email: 'eve@example.com',
       passwordHash: 'argon-hash',
@@ -55,7 +63,7 @@ describe('AuthRegisterUseCase', () => {
     await expect(register).rejects.toMatchObject({
       code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
     });
-    expect(passwordHasher.hash).not.toHaveBeenCalled();
+    expect(credentials.hashPassword).not.toHaveBeenCalled();
   });
 
   it('rejects a malformed email before storing anything', async () => {

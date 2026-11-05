@@ -6,7 +6,7 @@ describe('ReminderGetSummaryUseCase', () => {
   let useCase: ReminderGetSummaryUseCase;
 
   beforeEach(() => {
-    summarize = jest.fn().mockResolvedValue({ pending: 2, nextDueOn: '2026-11-05' });
+    summarize = jest.fn().mockResolvedValue({ pending: '2', nextDueOn: '2026-11-05' });
     read = jest.fn().mockResolvedValue({ pending: 3, nextDueOn: '2026-11-01' });
     useCase = new ReminderGetSummaryUseCase({ summarize }, { read, invalidate: jest.fn() });
   });
@@ -31,6 +31,17 @@ describe('ReminderGetSummaryUseCase', () => {
 
       expect(summarize).toHaveBeenCalledWith('owner-1');
       expect(computed).toEqual({ pending: 2, nextDueOn: '2026-11-05' });
+    });
+
+    it('computes no pending reminders when the owner has no summary row', async () => {
+      summarize.mockResolvedValue(undefined);
+
+      await useCase.execute({ ownerId: 'owner-1' });
+
+      const [query] = read.mock.calls[0] as [{ compute: () => Promise<unknown> }];
+      const computed = await query.compute();
+
+      expect(computed).toEqual({ pending: 0, nextDueOn: null });
     });
 
     it('answers no next due date when nothing is pending', async () => {

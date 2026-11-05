@@ -1,4 +1,4 @@
-import { CatalogGetManyUseCase } from '../../../application';
+import { CatalogProductListUseCase } from '../../../application';
 import { CatalogController } from '../catalog.controller';
 
 describe('CatalogController', () => {
@@ -9,20 +9,14 @@ describe('CatalogController', () => {
   beforeEach(() => {
     list = jest.fn();
     read = jest.fn((query: { compute: () => Promise<unknown> }) => query.compute());
-    controller = new CatalogController(new CatalogGetManyUseCase({ list }, { read }));
+    controller = new CatalogController(new CatalogProductListUseCase({ list }, { read }));
   });
 
-  describe('handleGetMany', () => {
+  describe('handleProductList', () => {
     it('answers the page for the window of the query string', async () => {
-      list.mockResolvedValue({
-        page: 2,
-        count: 1,
-        pageCount: 1,
-        total: 1,
-        data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
-      });
+      list.mockResolvedValue([[{ id: '12', sku: 'SKU-0001', name: 'Lamp' }], 1]);
 
-      const response = await controller.handleGetMany({ page: 2, limit: 10 });
+      const response = await controller.handleProductList({ page: 2, limit: 10 });
 
       expect(response).toEqual({
         page: 2,

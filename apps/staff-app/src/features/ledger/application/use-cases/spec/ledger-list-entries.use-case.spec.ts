@@ -11,7 +11,7 @@ describe('LedgerListEntriesUseCase', () => {
 
   describe('execute', () => {
     it('asks the ledger for the page and the filters of the query', async () => {
-      list.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({
         page: 2,
@@ -32,7 +32,7 @@ describe('LedgerListEntriesUseCase', () => {
     });
 
     it('reads the first page of 20 when the query names no window', async () => {
-      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ subjectType: 'product' });
 
@@ -47,7 +47,7 @@ describe('LedgerListEntriesUseCase', () => {
     });
 
     it('caps the page limit at 100', async () => {
-      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       await useCase.execute({ limit: 500 });
 
@@ -62,12 +62,8 @@ describe('LedgerListEntriesUseCase', () => {
     });
 
     it('answers the page of the ledger', async () => {
-      list.mockResolvedValue({
-        page: 1,
-        count: 1,
-        pageCount: 1,
-        total: 1,
-        data: [
+      list.mockResolvedValue([
+        [
           {
             id: '7',
             operationKey: 'product-archived:12',
@@ -76,11 +72,12 @@ describe('LedgerListEntriesUseCase', () => {
             action: 'ProductArchived',
             payload: { title: 'Lamp' },
             correlationId: 'corr-1',
-            occurredAt: '2026-01-01T00:00:00.000Z',
-            recordedAt: '2026-01-01T00:00:01.000Z',
+            occurredAt: new Date('2026-01-01T00:00:00.000Z'),
+            recordedAt: new Date('2026-01-01T00:00:01.000Z'),
           },
         ],
-      });
+        1,
+      ]);
 
       const page = await useCase.execute({});
 

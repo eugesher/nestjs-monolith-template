@@ -7,7 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { StaffRole } from '@acme-staff/common/entities';
 
-import { IRoleListedRecord, IRoleListRepositoryPort } from '../../../outbound';
+import { IRoleListRecord, IRoleListRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class RoleListRepository implements IRoleListRepositoryPort {
@@ -20,7 +20,7 @@ export class RoleListRepository implements IRoleListRepositoryPort {
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  public async list(): Promise<IRoleListedRecord[]> {
+  public async list(): Promise<IRoleListRecord[]> {
     return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id', 'StaffRole.name'])

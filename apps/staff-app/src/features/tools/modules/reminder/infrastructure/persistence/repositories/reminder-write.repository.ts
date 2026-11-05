@@ -9,9 +9,9 @@ import { Nullable } from '@acme-libs/toolkit';
 import { Reminder } from '@acme-staff/common/entities';
 
 import {
-  IReminderFoundRecord,
+  IReminderWriteRecord,
   IReminderWriteRepositoryPort,
-  IReminderWriteUpdateCommand,
+  IReminderWriteUpdateQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
     return this.repositoryHost.getRepository(Reminder);
   }
 
-  public async findById(reminderId: string): Promise<Nullable<IReminderFoundRecord>> {
+  public async findById(reminderId: string): Promise<Nullable<IReminderWriteRecord>> {
     return await this.reminderRepository
       .createQueryBuilder('Reminder')
       .select([
@@ -43,8 +43,8 @@ export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
       .getOne();
   }
 
-  public async update(command: IReminderWriteUpdateCommand): Promise<boolean> {
-    const { id, versionAsRead, dueOn, status, version } = command;
+  public async update(query: IReminderWriteUpdateQuery): Promise<boolean> {
+    const { id, versionAsRead, dueOn, status, version } = query;
     const result = await this.reminderRepository.update(
       { id, version: versionAsRead },
       { dueOn, status, version },

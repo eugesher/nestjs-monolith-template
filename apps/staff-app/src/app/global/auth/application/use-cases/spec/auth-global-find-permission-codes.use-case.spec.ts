@@ -7,7 +7,10 @@ describe('AuthGlobalFindPermissionCodesUseCase', () => {
     const repository = {
       findPermissionCodes: jest
         .fn()
-        .mockResolvedValue([PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.IAM_ROLE_EDIT]),
+        .mockResolvedValue([
+          { code: PermissionCodeEnum.IAM_ASSIGN },
+          { code: PermissionCodeEnum.IAM_ROLE_EDIT },
+        ]),
     };
     const useCase = new AuthGlobalFindPermissionCodesUseCase(repository);
 

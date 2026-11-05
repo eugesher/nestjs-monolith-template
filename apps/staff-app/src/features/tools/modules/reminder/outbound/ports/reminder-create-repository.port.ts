@@ -1,8 +1,8 @@
-import { IReminderFoundRecord, IReminderInsertCommand } from '../interfaces';
+import { IReminderCreateRecord, IReminderCreateInsertQuery } from '../interfaces';
 
 export interface IReminderCreateRepositoryPort {
-  insert(command: IReminderInsertCommand): Promise<string>;
-  findInserted(reminderId: string): Promise<IReminderFoundRecord>;
+  insert(query: IReminderCreateInsertQuery): Promise<string>;
+  findInserted(reminderId: string): Promise<IReminderCreateRecord>;
 }
 
 export const REMINDER_CREATE_REPOSITORY_PORT = Symbol('REMINDER_CREATE_REPOSITORY_PORT');

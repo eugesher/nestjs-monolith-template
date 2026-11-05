@@ -1,4 +1,7 @@
-export * from './queries/catalog-cache-read.query';
-export * from './queries/catalog-page.query';
+export * from './commands/catalog-cache.command';
 
-export * from './views/catalog-product-row.view';
+export * from './queries/catalog-product-list.query';
+
+export * from './records/catalog-product-list.record';
+
+export * from './views/catalog-cache.view';

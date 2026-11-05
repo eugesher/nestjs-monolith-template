@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import {
   IAuthClaimsPort,
-  IAuthFindPermissionCodesQuery,
-  IAuthFindRolesQuery,
+  IAuthFindPermissionCodesCommand,
+  IAuthFindRolesCommand,
 } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
@@ -16,13 +16,13 @@ export class AuthGlobalClaimsFacade implements IAuthClaimsPort {
     private readonly authGlobalFindRoles: AuthGlobalFindRolesUseCase,
   ) {}
 
-  public async findRoles(query: IAuthFindRolesQuery): Promise<RoleEnum[]> {
-    return await this.authGlobalFindRoles.execute(query);
+  public async findRoles(command: IAuthFindRolesCommand): Promise<RoleEnum[]> {
+    return await this.authGlobalFindRoles.execute(command);
   }
 
   public async findPermissionCodes(
-    query: IAuthFindPermissionCodesQuery,
+    command: IAuthFindPermissionCodesCommand,
   ): Promise<PermissionCodeEnum[]> {
-    return await this.authGlobalFindPermissionCodes.execute(query);
+    return await this.authGlobalFindPermissionCodes.execute(command);
   }
 }

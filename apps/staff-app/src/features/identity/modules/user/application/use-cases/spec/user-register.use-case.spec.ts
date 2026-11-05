@@ -10,7 +10,7 @@ describe('UserRegisterUseCase', () => {
   let outcomes: string[];
   let repository: { insertUser: jest.Mock; findRoles: jest.Mock; insertUserRoles: jest.Mock };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
-  let passwordHasher: { hash: jest.Mock };
+  let credentials: { hashPassword: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserRegisterUseCase;
 
@@ -37,12 +37,12 @@ describe('UserRegisterUseCase', () => {
         return result;
       }),
     };
-    passwordHasher = { hash: jest.fn().mockResolvedValue('argon-hash') };
+    credentials = { hashPassword: jest.fn().mockResolvedValue('argon-hash') };
     logger = makePinoLoggerMock();
     useCase = new UserRegisterUseCase(
       repository,
       transaction,
-      passwordHasher,
+      credentials,
       logger as unknown as PinoLogger,
     );
   });
@@ -59,7 +59,7 @@ describe('UserRegisterUseCase', () => {
     });
 
     expect(view).toEqual({ id: '5', email: 'editor@example.com' });
-    expect(passwordHasher.hash).toHaveBeenCalledWith('correct-horse-battery');
+    expect(credentials.hashPassword).toHaveBeenCalledWith('correct-horse-battery');
     expect(repository.insertUser).toHaveBeenCalledWith({
       email: 'editor@example.com',
       passwordHash: 'argon-hash',
@@ -77,7 +77,7 @@ describe('UserRegisterUseCase', () => {
     await expect(register).rejects.toMatchObject({
       code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
     });
-    expect(passwordHasher.hash).not.toHaveBeenCalled();
+    expect(credentials.hashPassword).not.toHaveBeenCalled();
   });
 
   it('rejects a malformed email before opening the transaction', async () => {

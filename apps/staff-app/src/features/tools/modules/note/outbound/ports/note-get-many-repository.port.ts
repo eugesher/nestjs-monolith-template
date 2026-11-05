@@ -1,7 +1,7 @@
-import { INoteListedRecord, INotePageQuery } from '../interfaces';
+import { INoteGetManyRecord, INoteGetManyListQuery } from '../interfaces';
 
 export interface INoteGetManyRepositoryPort {
-  list(query: INotePageQuery): Promise<[INoteListedRecord[], number]>;
+  list(query: INoteGetManyListQuery): Promise<INoteGetManyRecord>;
 }
 
 export const NOTE_GET_MANY_REPOSITORY_PORT = Symbol('NOTE_GET_MANY_REPOSITORY_PORT');

@@ -1,3 +1,3 @@
-export * from './commands/ledger-record-entry-insert.command';
+export * from './queries/ledger-record-append.query';
 
-export * from './records/ledger-record-entry-found.record';
+export * from './records/ledger-record-append.record';

@@ -1,4 +1,4 @@
-export * from './commands/idempotency-core-key-completion.command';
-export * from './commands/idempotency-core-key-insert.command';
+export * from './queries/idempotency-core-claim.query';
+export * from './queries/idempotency-core-complete.query';
 
-export * from './records/idempotency-core-key-found.record';
+export * from './records/idempotency-core-claim.record';

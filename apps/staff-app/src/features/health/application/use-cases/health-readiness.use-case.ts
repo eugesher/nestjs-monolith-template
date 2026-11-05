@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { HEALTH_STATUS_PORT, IHealthReadinessView, type IHealthStatusPort } from '../../outbound';
+import {
+  HEALTH_STATUS_PORT,
+  IHealthStatusReadinessView,
+  type IHealthStatusPort,
+} from '../../outbound';
 
 @Injectable()
 export class HealthReadinessUseCase {
@@ -9,7 +13,7 @@ export class HealthReadinessUseCase {
     private readonly status: IHealthStatusPort,
   ) {}
 
-  public async execute(): Promise<IHealthReadinessView> {
+  public async execute(): Promise<IHealthStatusReadinessView> {
     return await this.status.readiness();
   }
 }

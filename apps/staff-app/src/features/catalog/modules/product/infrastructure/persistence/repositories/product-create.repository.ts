@@ -9,8 +9,8 @@ import { Product } from '@acme-core/entities';
 
 import {
   IProductCreateRepositoryPort,
-  IProductFoundRecord,
-  IProductInsertCommand,
+  IProductCreateRecord,
+  IProductCreateInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -31,11 +31,11 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
       .getExists();
   }
 
-  public async insert(command: IProductInsertCommand): Promise<string> {
-    return await this.productRepository.insertOne(command);
+  public async insert(query: IProductCreateInsertQuery): Promise<string> {
+    return await this.productRepository.insertOne(query);
   }
 
-  public async findInserted(productId: string): Promise<IProductFoundRecord> {
+  public async findInserted(productId: string): Promise<IProductCreateRecord> {
     return await this.productRepository
       .createQueryBuilder('Product')
       .select([

@@ -8,7 +8,10 @@ import {
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Product } from '@acme-core/entities';
 
-import { IProductStockArchiveOutOfStockRepositoryPort } from '../../../outbound';
+import {
+  IProductStockArchiveOutOfStockRepositoryPort,
+  IProductStockArchiveOutOfStockProductRecord,
+} from '../../../outbound';
 
 @Injectable()
 export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {
@@ -21,19 +24,19 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findActive(productIds: string[]): Promise<string[]> {
+  public async findActive(
+    productIds: string[],
+  ): Promise<IProductStockArchiveOutOfStockProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }
 
-    const products = await this.productRepository
+    return await this.productRepository
       .createQueryBuilder('Product')
       .select(['Product.id'])
       .where('Product.id IN (:...productIds)', { productIds })
       .andWhere('Product.status = :status', { status: ProductStatusEnum.ACTIVE })
       .orderBy('Product.id', 'ASC')
       .getMany();
-
-    return products.map((product) => product.id);
   }
 }

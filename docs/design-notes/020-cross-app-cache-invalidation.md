@@ -14,7 +14,7 @@ definition.
 that several apps use is defined once. It works because every app points `REDIS_URL` at one Redis,
 as the queues already require.
 
-**The read is cache-aside** (see `010-cache-aside.md`): `CatalogGetManyUseCase` passes `compute` to
+**The read is cache-aside** (see `010-cache-aside.md`): `CatalogProductListUseCase` passes `compute` to
 `CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_PORT.wrap` under a key of the clamped page
 window, so windows that clamp to the same value share one entry.
 

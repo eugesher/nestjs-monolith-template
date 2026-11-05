@@ -1,5 +1,5 @@
-export * from './commands/user-staff-user-insert.command';
-export * from './commands/user-staff-user-role-insert.command';
+export * from './queries/user-assign-role.query';
+export * from './queries/user-register.query';
 
-export * from './records/user-staff-role-found.record';
-export * from './records/user-staff-user-found.record';
+export * from './records/user-assign-role.record';
+export * from './records/user-register.record';

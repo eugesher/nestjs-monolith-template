@@ -11,9 +11,9 @@ import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities
 
 import {
   IUserAssignRoleRepositoryPort,
-  IUserStaffRoleFoundRecord,
-  IUserStaffUserFoundRecord,
-  IUserStaffUserRoleInsertCommand,
+  IUserAssignRoleStaffRoleRecord,
+  IUserAssignRoleStaffUserRecord,
+  IUserAssignRoleStaffUserRoleInsertQuery,
 } from '../../../outbound';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
     return this.repositoryHost.getRepository(StaffUser);
   }
 
-  public async findById(id: string): Promise<Nullable<IUserStaffUserFoundRecord>> {
+  public async findById(id: string): Promise<Nullable<IUserAssignRoleStaffUserRecord>> {
     return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
       .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
@@ -47,7 +47,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .getOne();
   }
 
-  public async findRole(name: RoleEnum): Promise<Nullable<IUserStaffRoleFoundRecord>> {
+  public async findRole(name: RoleEnum): Promise<Nullable<IUserAssignRoleStaffRoleRecord>> {
     return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id'])
@@ -55,7 +55,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
       .getOne();
   }
 
-  public async insertUserRole(command: IUserStaffUserRoleInsertCommand): Promise<void> {
-    await this.staffUserRoleRepository.insert(command);
+  public async insertUserRole(query: IUserAssignRoleStaffUserRoleInsertQuery): Promise<void> {
+    await this.staffUserRoleRepository.insert(query);
   }
 }

@@ -7,7 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { Customer } from '@acme-core/entities';
 
-import { IAuthCustomerInsertCommand, IAuthRegisterRepositoryPort } from '../../../outbound';
+import { IAuthRegisterCustomerInsertQuery, IAuthRegisterRepositoryPort } from '../../../outbound';
 
 @Injectable()
 export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
@@ -20,7 +20,7 @@ export class AuthRegisterRepository implements IAuthRegisterRepositoryPort {
     return this.repositoryHost.getRepository(Customer);
   }
 
-  public async insert(command: IAuthCustomerInsertCommand): Promise<string> {
-    return await this.customerRepository.insertOne(command);
+  public async insert(query: IAuthRegisterCustomerInsertQuery): Promise<string> {
+    return await this.customerRepository.insertOne(query);
   }
 }

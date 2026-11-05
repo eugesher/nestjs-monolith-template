@@ -1,8 +1,10 @@
-import { IOrderListedView } from '../../outbound';
-import { IOrderSummaryView } from '../interfaces';
+import { IOrderGetManyRecordItem } from '../../outbound';
+import { IOrderGetManyView } from '../interfaces';
 
 export class OrderViewMapper {
-  public static toSummaryView(order: IOrderListedView): IOrderSummaryView {
+  public static toGetManyViewItem(
+    order: IOrderGetManyRecordItem,
+  ): IOrderGetManyView['data'][number] {
     return {
       id: order.id,
       createdAt: order.createdAt.toISOString(),

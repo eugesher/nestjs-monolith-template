@@ -6,7 +6,7 @@ import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
   type IAuthGlobalValidateSubjectRepositoryPort,
 } from '../../outbound';
-import { IAuthGlobalSubjectView, IAuthGlobalValidateSubjectQuery } from '../interfaces';
+import { IAuthGlobalValidateSubjectView, IAuthGlobalValidateSubjectCommand } from '../interfaces';
 
 @Injectable()
 export class AuthGlobalValidateSubjectUseCase {
@@ -16,9 +16,9 @@ export class AuthGlobalValidateSubjectUseCase {
   ) {}
 
   public async execute(
-    query: IAuthGlobalValidateSubjectQuery,
-  ): Promise<Nullable<IAuthGlobalSubjectView>> {
-    const { customerId } = query;
+    command: IAuthGlobalValidateSubjectCommand,
+  ): Promise<Nullable<IAuthGlobalValidateSubjectView>> {
+    const { customerId } = command;
 
     return await this.repository.findActiveById(customerId);
   }

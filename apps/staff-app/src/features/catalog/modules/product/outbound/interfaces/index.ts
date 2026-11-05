@@ -1,15 +1,14 @@
-export * from './commands/product-idempotency-claim.command';
-export * from './commands/product-idempotency-complete.command';
-export * from './commands/product-idempotency-release.command';
-export * from './commands/product-insert.command';
-export * from './commands/product-status-archive.command';
-export * from './commands/product-write-update.command';
+export * from './commands/product-idempotency.command';
+export * from './commands/product-status.command';
 
-export * from './queries/product-page.query';
+export * from './queries/product-create.query';
+export * from './queries/product-get-many.query';
+export * from './queries/product-write.query';
 
-export * from './records/product-found.record';
-export * from './records/product-listed.record';
+export * from './records/product-access.record';
+export * from './records/product-create.record';
+export * from './records/product-get-many.record';
+export * from './records/product-write.record';
 
-export * from './views/product-idempotency-outcome.view';
-export * from './views/product-idempotency-replay.view';
-export * from './views/product-status-archive.view';
+export * from './views/product-idempotency.view';
+export * from './views/product-status.view';

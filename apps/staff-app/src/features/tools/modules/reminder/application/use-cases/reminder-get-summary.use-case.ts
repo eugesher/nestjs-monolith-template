@@ -6,7 +6,7 @@ import {
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
   REMINDER_SUMMARY_PORT,
 } from '../../outbound';
-import { IReminderGetSummaryQuery, IReminderSummaryView } from '../interfaces';
+import { IReminderGetSummaryCommand, IReminderGetSummaryView } from '../interfaces';
 
 @Injectable()
 export class ReminderGetSummaryUseCase {
@@ -17,11 +17,18 @@ export class ReminderGetSummaryUseCase {
     private readonly summary: IReminderSummaryPort,
   ) {}
 
-  public async execute(query: IReminderGetSummaryQuery): Promise<IReminderSummaryView> {
-    const { ownerId } = query;
+  public async execute(command: IReminderGetSummaryCommand): Promise<IReminderGetSummaryView> {
+    const { ownerId } = command;
+
     return await this.summary.read({
       ownerId,
-      compute: () => this.repository.summarize(ownerId),
+      compute: () => this.summarize(ownerId),
     });
+  }
+
+  private async summarize(ownerId: string): Promise<IReminderGetSummaryView> {
+    const snapshot = await this.repository.summarize(ownerId);
+
+    return { pending: Number(snapshot?.pending ?? 0), nextDueOn: snapshot?.nextDueOn ?? null };
   }
 }

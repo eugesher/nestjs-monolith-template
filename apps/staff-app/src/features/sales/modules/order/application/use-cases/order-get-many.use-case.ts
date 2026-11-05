@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper } from '@acme-libs/toolkit';
 
 import { type IOrderGetManyRepositoryPort, ORDER_GET_MANY_REPOSITORY_PORT } from '../../outbound';
-import { IOrderGetManyQuery, IOrderSummaryView } from '../interfaces';
+import { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';
 
 @Injectable()
@@ -13,12 +13,12 @@ export class OrderGetManyUseCase {
     private readonly repository: IOrderGetManyRepositoryPort,
   ) {}
 
-  public async execute(query: IOrderGetManyQuery): Promise<IPage<IOrderSummaryView>> {
-    const { page, limit } = query;
+  public async execute(command: IOrderGetManyCommand): Promise<IOrderGetManyView> {
+    const { page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
-    const result = await this.repository.list(pageWindow);
-    const data = result.data.map((order) => OrderViewMapper.toSummaryView(order));
+    const [orders, total] = await this.repository.list(pageWindow);
+    const data = orders.map((order) => OrderViewMapper.toGetManyViewItem(order));
 
-    return { ...result, data };
+    return PaginationHelper.toPage(data, total, pageWindow);
   }
 }

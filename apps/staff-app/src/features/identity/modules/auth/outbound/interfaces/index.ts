@@ -1,7 +1,6 @@
-export * from './commands/auth-password-verify.command';
+export * from './commands/auth-credentials.command';
+export * from './commands/auth-identity.command';
 
-export * from './queries/auth-identity-find-subject.query';
+export * from './records/auth-login.record';
 
-export * from './records/auth-staff-user-found.record';
-
-export * from './views/auth-identity-subject.view';
+export * from './views/auth-identity.view';

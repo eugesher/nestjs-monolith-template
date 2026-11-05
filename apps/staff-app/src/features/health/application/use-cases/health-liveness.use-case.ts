@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { HEALTH_STATUS_PORT, IHealthLivenessView, type IHealthStatusPort } from '../../outbound';
+import {
+  HEALTH_STATUS_PORT,
+  IHealthStatusLivenessView,
+  type IHealthStatusPort,
+} from '../../outbound';
 
 @Injectable()
 export class HealthLivenessUseCase {
@@ -9,7 +13,7 @@ export class HealthLivenessUseCase {
     private readonly status: IHealthStatusPort,
   ) {}
 
-  public execute(): IHealthLivenessView {
+  public execute(): IHealthStatusLivenessView {
     return this.status.liveness();
   }
 }

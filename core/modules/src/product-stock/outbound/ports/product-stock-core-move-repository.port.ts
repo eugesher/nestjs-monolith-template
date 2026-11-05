@@ -1,9 +1,16 @@
-import { IProductStockCoreMovementInsertCommand, IProductStockCoreSumView } from '../interfaces';
+import {
+  IProductStockCoreMoveInsertRecord,
+  IProductStockCoreMoveInsertQuery,
+  IProductStockCoreMoveProductRecord,
+  IProductStockCoreMoveSumRecord,
+} from '../interfaces';
 
 export interface IProductStockCoreMoveRepositoryPort {
-  lockProducts(productIds: string[]): Promise<string[]>;
-  insertMany(commands: IProductStockCoreMovementInsertCommand[]): Promise<string[]>;
-  sumStock(productIds: string[]): Promise<IProductStockCoreSumView[]>;
+  lockProducts(productIds: string[]): Promise<IProductStockCoreMoveProductRecord[]>;
+  insertMany(
+    queries: IProductStockCoreMoveInsertQuery[],
+  ): Promise<IProductStockCoreMoveInsertRecord[]>;
+  sumStock(productIds: string[]): Promise<IProductStockCoreMoveSumRecord[]>;
 }
 
 export const PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT = Symbol(

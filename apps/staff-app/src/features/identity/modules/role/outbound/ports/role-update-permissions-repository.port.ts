@@ -2,16 +2,16 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IRoleFoundRecord,
-  IRolePermissionFoundRecord,
-  IRolePermissionInsertCommand,
+  IRoleUpdatePermissionsRoleRecord,
+  IRoleUpdatePermissionsPermissionRecord,
+  IRoleUpdatePermissionsRolePermissionInsertQuery,
 } from '../interfaces';
 
 export interface IRoleUpdatePermissionsRepositoryPort {
-  findRole(name: RoleEnum): Promise<Nullable<IRoleFoundRecord>>;
-  findPermissions(codes: PermissionCodeEnum[]): Promise<IRolePermissionFoundRecord[]>;
+  findRole(name: RoleEnum): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>>;
+  findPermissions(codes: PermissionCodeEnum[]): Promise<IRoleUpdatePermissionsPermissionRecord[]>;
   deleteRolePermissions(roleId: string): Promise<void>;
-  insertRolePermissions(commands: IRolePermissionInsertCommand[]): Promise<void>;
+  insertRolePermissions(queries: IRoleUpdatePermissionsRolePermissionInsertQuery[]): Promise<void>;
 }
 
 export const ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT = Symbol(

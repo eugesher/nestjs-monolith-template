@@ -1,5 +1,3 @@
-export * from './interfaces';
-
 export * from './services/reminder-access.service';
 export * from './services/reminder-write.service';
 

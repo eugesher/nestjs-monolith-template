@@ -18,6 +18,7 @@ import {
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS,
 } from '../../outbound';
+import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
 @Injectable()
 export class ProductStockCoreMoveUseCase {
@@ -51,8 +52,10 @@ export class ProductStockCoreMoveUseCase {
 
     await this.repository.lockProducts(productIds);
 
-    const productStockIds = await this.repository.insertMany(rows);
-    const stock = await this.repository.sumStock(productIds);
+    const inserted = await this.repository.insertMany(rows);
+    const productStockIds = inserted.map((identifier) => String(identifier.id));
+    const sums = await this.repository.sumStock(productIds);
+    const stock = ProductStockCoreOnHandMapper.toViews(productIds, sums);
 
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {
       const correlationId = CorrelationContextHelper.current(ProductStockCoreMoveUseCase.name);

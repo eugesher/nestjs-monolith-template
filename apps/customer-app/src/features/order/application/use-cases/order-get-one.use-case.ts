@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { OrderModel, OrderNotFoundException } from '../../domain';
 import { type IOrderGetOneRepositoryPort, ORDER_GET_ONE_REPOSITORY_PORT } from '../../outbound';
-import { IOrderGetOneQuery, IOrderView } from '../interfaces';
+import { IOrderGetOneCommand, IOrderView } from '../interfaces';
 
 @Injectable()
 export class OrderGetOneUseCase {
@@ -11,8 +11,8 @@ export class OrderGetOneUseCase {
     private readonly repository: IOrderGetOneRepositoryPort,
   ) {}
 
-  public async execute(query: IOrderGetOneQuery): Promise<IOrderView> {
-    const { customerId, orderId } = query;
+  public async execute(command: IOrderGetOneCommand): Promise<IOrderView> {
+    const { customerId, orderId } = command;
     const record = await this.repository.findOwned({ orderId, customerId });
 
     if (!record) {

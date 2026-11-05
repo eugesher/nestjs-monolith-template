@@ -1,10 +1,10 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthCommonSubjectView, IAuthCommonValidateSubjectQuery } from '../interfaces';
+import { IAuthCommonSubjectView, IAuthCommonValidateSubjectCommand } from '../interfaces';
 
 export interface IAuthCommonPort {
   validateSubject(
-    query: IAuthCommonValidateSubjectQuery,
+    command: IAuthCommonValidateSubjectCommand,
   ): Promise<Nullable<IAuthCommonSubjectView>>;
 }
 

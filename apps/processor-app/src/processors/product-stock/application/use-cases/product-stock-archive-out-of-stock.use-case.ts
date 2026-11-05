@@ -37,8 +37,9 @@ export class ProductStockArchiveOutOfStockUseCase {
     const stock = await this.onHand.lock({ productIds });
     const outOfStock = stock.filter((row) => row.quantity <= 0).map((row) => row.productId);
     const active = await this.repository.findActive(outOfStock);
+    const activeIds = active.map((product) => product.id);
 
-    for (const productId of active) {
+    for (const productId of activeIds) {
       const archived = await this.archive.archive({ productId });
 
       if (archived.archived) {

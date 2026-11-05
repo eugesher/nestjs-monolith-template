@@ -1,5 +1,5 @@
-export * from './queries/auth-global-find-permission-codes.query';
-export * from './queries/auth-global-find-roles.query';
-export * from './queries/auth-global-validate-subject.query';
+export * from './commands/auth-global-find-permission-codes.command';
+export * from './commands/auth-global-find-roles.command';
+export * from './commands/auth-global-validate-subject.command';
 
-export * from './views/auth-global-subject.view';
+export * from './views/auth-global-validate-subject.view';

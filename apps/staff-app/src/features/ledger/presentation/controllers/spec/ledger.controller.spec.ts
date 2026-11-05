@@ -12,7 +12,7 @@ describe('LedgerController', () => {
 
   describe('handleList', () => {
     it('answers the page for the filters of the query string', async () => {
-      list.mockResolvedValue({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      list.mockResolvedValue([[], 0]);
 
       const response = await controller.handleList({ subjectType: 'product', subjectId: '12' });
 

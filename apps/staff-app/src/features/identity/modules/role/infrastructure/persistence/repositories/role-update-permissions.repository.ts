@@ -10,9 +10,9 @@ import { Nullable } from '@acme-libs/toolkit';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
 
 import {
-  IRoleFoundRecord,
-  IRolePermissionFoundRecord,
-  IRolePermissionInsertCommand,
+  IRoleUpdatePermissionsRoleRecord,
+  IRoleUpdatePermissionsPermissionRecord,
+  IRoleUpdatePermissionsRolePermissionInsertQuery,
   IRoleUpdatePermissionsRepositoryPort,
 } from '../../../outbound';
 
@@ -35,7 +35,7 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     return this.repositoryHost.getRepository(StaffRole);
   }
 
-  public async findRole(name: RoleEnum): Promise<Nullable<IRoleFoundRecord>> {
+  public async findRole(name: RoleEnum): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
     return await this.staffRoleRepository
       .createQueryBuilder('StaffRole')
       .select(['StaffRole.id', 'StaffRole.name'])
@@ -47,7 +47,9 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
       .getOne();
   }
 
-  public async findPermissions(codes: PermissionCodeEnum[]): Promise<IRolePermissionFoundRecord[]> {
+  public async findPermissions(
+    codes: PermissionCodeEnum[],
+  ): Promise<IRoleUpdatePermissionsPermissionRecord[]> {
     if (codes.length === 0) {
       return [];
     }
@@ -63,11 +65,13 @@ export class RoleUpdatePermissionsRepository implements IRoleUpdatePermissionsRe
     await this.staffRolePermissionRepository.delete({ roleId });
   }
 
-  public async insertRolePermissions(commands: IRolePermissionInsertCommand[]): Promise<void> {
-    if (commands.length === 0) {
+  public async insertRolePermissions(
+    queries: IRoleUpdatePermissionsRolePermissionInsertQuery[],
+  ): Promise<void> {
+    if (queries.length === 0) {
       return;
     }
 
-    await this.staffRolePermissionRepository.insert(commands);
+    await this.staffRolePermissionRepository.insert(queries);
   }
 }

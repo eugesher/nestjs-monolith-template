@@ -16,10 +16,10 @@ describe('ProductStockCoreMoveUseCase', () => {
   let useCase: ProductStockCoreMoveUseCase;
 
   beforeEach(() => {
-    lockProducts = jest.fn().mockResolvedValue(['100', '103']);
-    insertMany = jest.fn().mockResolvedValue(['700', '701', '702']);
+    lockProducts = jest.fn().mockResolvedValue([{ id: '100' }, { id: '103' }]);
+    insertMany = jest.fn().mockResolvedValue([{ id: 700 }, { id: 701 }, { id: 702 }]);
     sumStock = jest.fn().mockResolvedValue([
-      { productId: '100', quantity: 6 },
+      { productId: '100', quantity: '6' },
       { productId: '103', quantity: 2 },
     ]);
     enqueue = jest.fn().mockResolvedValue(undefined);

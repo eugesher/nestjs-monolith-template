@@ -1,10 +1,6 @@
 import { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
-interface IAuthRequestHeaders {
-  authorization?: string;
-}
-
 export interface IAuthRequest {
-  headers: IAuthRequestHeaders;
+  headers: { authorization?: string };
   user?: IAuthCurrentUserView;
 }

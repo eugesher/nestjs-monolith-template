@@ -1,4 +1,4 @@
-export * from './queries/order-page.query';
+export * from './queries/order-get-many.query';
 
-export * from './views/order-found.view';
-export * from './views/order-listed.view';
+export * from './records/order-get-many.record';
+export * from './records/order-get-one.record';

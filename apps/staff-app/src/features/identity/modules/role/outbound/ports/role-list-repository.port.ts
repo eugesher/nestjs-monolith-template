@@ -1,7 +1,7 @@
-import { IRoleListedRecord } from '../interfaces';
+import { IRoleListRecord } from '../interfaces';
 
 export interface IRoleListRepositoryPort {
-  list(): Promise<IRoleListedRecord[]>;
+  list(): Promise<IRoleListRecord[]>;
 }
 
 export const ROLE_LIST_REPOSITORY_PORT = Symbol('ROLE_LIST_REPOSITORY_PORT');

@@ -7,7 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { NoteRevision } from '@acme-staff/common/entities';
 
-import { INoteEditRepositoryPort, INoteRevisionInsertCommand } from '../../../outbound';
+import { INoteEditRepositoryPort, INoteEditRevisionInsertQuery } from '../../../outbound';
 import { NoteBaseRepository } from './base/note-base.repository';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class NoteEditRepository extends NoteBaseRepository implements INoteEditR
     return this.repositoryHost.getRepository(NoteRevision);
   }
 
-  public async appendRevision(command: INoteRevisionInsertCommand): Promise<void> {
-    await this.noteRevisionRepository.insert(command);
+  public async appendRevision(query: INoteEditRevisionInsertQuery): Promise<void> {
+    await this.noteRevisionRepository.insert(query);
   }
 }

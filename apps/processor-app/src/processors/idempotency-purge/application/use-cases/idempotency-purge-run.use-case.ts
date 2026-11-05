@@ -42,7 +42,8 @@ export class IdempotencyPurgeRunUseCase {
   private async purge(): Promise<void> {
     const now = new Date();
     const cutoff = IdempotencyPurgeHelper.expiryCutoff(now, this.ttlHours);
-    const removed = await this.repository.deleteCreatedBefore(cutoff);
+    const deleted = await this.repository.deleteCreatedBefore(cutoff);
+    const removed = deleted.affected ?? 0;
 
     this.logger.info(
       { cutoff: cutoff.toISOString(), removed, ttlHours: this.ttlHours },
