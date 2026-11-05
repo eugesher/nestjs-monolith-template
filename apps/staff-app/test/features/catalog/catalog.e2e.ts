@@ -16,6 +16,8 @@ export class CatalogE2E {
       this.productE2E.handleUpdate();
       this.productE2E.handleArchive();
       this.productE2E.handlePublish();
+      this.productE2E.handleGetTags();
+      this.productE2E.handleReplaceTags();
     });
   }
 }

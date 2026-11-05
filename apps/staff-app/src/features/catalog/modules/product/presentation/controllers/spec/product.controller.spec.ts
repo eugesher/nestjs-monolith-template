@@ -3,7 +3,9 @@ import {
   ProductCreateUseCase,
   ProductGetManyUseCase,
   ProductGetOneUseCase,
+  ProductGetTagsUseCase,
   ProductPublishUseCase,
+  ProductReplaceTagsUseCase,
   ProductUpdateUseCase,
 } from '../../../application';
 import { ProductController } from '../product.controller';
@@ -15,6 +17,8 @@ describe('ProductController', () => {
   let update: jest.Mock;
   let publish: jest.Mock;
   let archive: jest.Mock;
+  let getTags: jest.Mock;
+  let replaceTags: jest.Mock;
   let controller: ProductController;
 
   beforeEach(() => {
@@ -24,6 +28,8 @@ describe('ProductController', () => {
     update = jest.fn();
     publish = jest.fn();
     archive = jest.fn();
+    getTags = jest.fn();
+    replaceTags = jest.fn();
 
     controller = new ProductController(
       { execute: create } as unknown as ProductCreateUseCase,
@@ -32,6 +38,8 @@ describe('ProductController', () => {
       { execute: update } as unknown as ProductUpdateUseCase,
       { execute: publish } as unknown as ProductPublishUseCase,
       { execute: archive } as unknown as ProductArchiveUseCase,
+      { execute: getTags } as unknown as ProductGetTagsUseCase,
+      { execute: replaceTags } as unknown as ProductReplaceTagsUseCase,
     );
   });
 
@@ -51,13 +59,13 @@ describe('ProductController', () => {
   });
 
   describe('handleGetMany', () => {
-    it('lists the products of the page window', async () => {
+    it('lists the products of the page window and the tag', async () => {
       getMany.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
-      const response = await controller.handleGetMany({ page: 2, limit: 5 });
+      const response = await controller.handleGetMany({ page: 2, limit: 5, tagId: '300' });
 
       expect(response).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
-      expect(getMany).toHaveBeenCalledWith({ page: 2, limit: 5 });
+      expect(getMany).toHaveBeenCalledWith({ page: 2, limit: 5, tagId: '300' });
     });
   });
 
@@ -121,6 +129,28 @@ describe('ProductController', () => {
         productId: '12',
         expectedVersion: undefined,
       });
+    });
+  });
+
+  describe('handleGetTags', () => {
+    it('reads the tags of the product of the path', async () => {
+      getTags.mockResolvedValue({ tags: [{ id: '300', name: 'fragile' }] });
+
+      const response = await controller.handleGetTags({ productId: '12' });
+
+      expect(response).toEqual({ tags: [{ id: '300', name: 'fragile' }] });
+      expect(getTags).toHaveBeenCalledWith({ productId: '12' });
+    });
+  });
+
+  describe('handleReplaceTags', () => {
+    it('replaces the tags of the product of the path with the tags of the body', async () => {
+      replaceTags.mockResolvedValue({ tags: [{ id: '300', name: 'fragile' }] });
+
+      const response = await controller.handleReplaceTags({ productId: '12' }, { tagIds: ['300'] });
+
+      expect(response).toEqual({ tags: [{ id: '300', name: 'fragile' }] });
+      expect(replaceTags).toHaveBeenCalledWith({ productId: '12', tagIds: ['300'] });
     });
   });
 });

@@ -25,14 +25,15 @@ export class OrderGetManyRepository implements IOrderGetManyRepositoryPort {
   }
 
   public async list(query: IOrderGetManyListQuery): Promise<IOrderGetManyRecord> {
-    const { limit, offset } = query;
-
-    return await this.orderRepository
+    const { limit, offset, orderIds } = query;
+    const builder = this.orderRepository
       .createQueryBuilder('Order')
-      .select(['Order.id', 'Order.customerId', 'Order.createdAt'])
-      .orderBy('Order.id', 'DESC')
-      .skip(offset)
-      .take(limit)
-      .getManyAndCount();
+      .select(['Order.id', 'Order.customerId', 'Order.createdAt']);
+
+    if (orderIds !== undefined) {
+      builder.where('Order.id IN (:...orderIds)', { orderIds });
+    }
+
+    return await builder.orderBy('Order.id', 'DESC').skip(offset).take(limit).getManyAndCount();
   }
 }

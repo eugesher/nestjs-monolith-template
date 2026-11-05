@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Catalog Product GET /api/catalog/products should list only the products that carry the tag 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 2,
+      "data": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "101",
+          "name": "Seeded draft product",
+          "sku": "SKU-0002",
+          "status": "draft",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "100",
+          "name": "Seeded reference product",
+          "sku": "SKU-0001",
+          "status": "active",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "version": 1,
+        },
+      ],
+      "page": 1,
+      "pageCount": 1,
+      "total": 2,
+    },
+  },
+}
+`;
+
 exports[`App Catalog Product GET /api/catalog/products should list the catalog, newest first 1`] = `
 {
   "response": {
@@ -78,6 +111,20 @@ exports[`App Catalog Product GET /api/catalog/products should list the catalog, 
 }
 `;
 
+exports[`App Catalog Product GET /api/catalog/products should refuse a malformed tag id with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "tagId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
 exports[`App Catalog Product GET /api/catalog/products/:productId should answer an unknown product with 404 1`] = `
 {
   "response": {
@@ -101,6 +148,37 @@ exports[`App Catalog Product GET /api/catalog/products/:productId should read a 
       "status": "draft",
       "updatedAt": "2026-01-01T00:00:00.000Z",
       "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product GET /api/catalog/products/:productId/tags should answer an unknown product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product GET /api/catalog/products/:productId/tags should read the tags of the product, by name 1`] = `
+{
+  "response": {
+    "body": {
+      "tags": [
+        {
+          "id": "300",
+          "name": "fragile",
+        },
+        {
+          "id": "301",
+          "name": "promo",
+        },
+      ],
     },
   },
 }
@@ -631,6 +709,126 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
 }
 `;
 
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should answer an unknown product with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_NOT_FOUND",
+      "message": "Product 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should link the tags of the body and answer them by name 1`] = `
+{
+  "db": {
+    "subject_tag": [
+      {
+        "subject_id": "103",
+        "subject_type": "product",
+        "tag_id": "300",
+      },
+      {
+        "subject_id": "103",
+        "subject_type": "product",
+        "tag_id": "301",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "tags": [
+        {
+          "id": "300",
+          "name": "fragile",
+        },
+        {
+          "id": "301",
+          "name": "promo",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should refuse a role without product:write with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should refuse a word among the tag ids with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each tagId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should refuse an unknown tag with 422 and keep the tags the product had 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "PRODUCT_TAG_NOT_FOUND",
+      "details": {
+        "missingTagIds": [
+          "998",
+          "999",
+        ],
+      },
+      "message": "Some of the tags do not exist",
+      "statusCode": 422,
+    },
+  },
+  "tags": {
+    "tags": [
+      {
+        "id": "300",
+        "name": "fragile",
+      },
+      {
+        "id": "301",
+        "name": "promo",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/tags should replace the tags the product had and clear them with an empty list 1`] = `
+{
+  "cleared": {
+    "tags": [],
+  },
+  "db": {
+    "subject_tag": [],
+  },
+  "replaced": {
+    "tags": [
+      {
+        "id": "301",
+        "name": "promo",
+      },
+    ],
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
@@ -815,6 +1013,7 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
           "iam:user-create",
           "ledger:read",
           "order:read",
+          "order:write",
           "product:archive",
           "product:read",
           "product:restock",
@@ -822,6 +1021,8 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
           "queue:delete",
           "queue:read",
           "queue:retry",
+          "tag:read",
+          "tag:write",
         ],
       },
       {
@@ -829,10 +1030,13 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
         "permissionCodes": [
           "ledger:read",
           "order:read",
+          "order:write",
           "product:archive",
           "product:read",
           "product:restock",
           "product:write",
+          "tag:read",
+          "tag:write",
         ],
       },
       {
@@ -842,6 +1046,7 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
           "order:read",
           "product:read",
           "queue:read",
+          "tag:read",
         ],
       },
     ],
@@ -889,13 +1094,21 @@ exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refu
         "permission_id": "10",
         "role_id": "3",
       },
+      {
+        "permission_id": "12",
+        "role_id": "3",
+      },
+      {
+        "permission_id": "16",
+        "role_id": "3",
+      },
     ],
   },
   "response": {
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read, queue:read, queue:retry, queue:delete",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
       ],
       "statusCode": 400,
     },
@@ -1105,6 +1318,26 @@ exports[`App Sales Order GET /api/sales/orders should answer the page window it 
 }
 `;
 
+exports[`App Sales Order GET /api/sales/orders should list only the orders that carry the tag 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 1,
+      "data": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "customerId": "101",
+          "id": "600",
+        },
+      ],
+      "page": 1,
+      "pageCount": 1,
+      "total": 1,
+    },
+  },
+}
+`;
+
 exports[`App Sales Order GET /api/sales/orders should list the orders of every customer, newest first 1`] = `
 {
   "response": {
@@ -1149,6 +1382,20 @@ exports[`App Sales Order GET /api/sales/orders should refuse a malformed page wi
       "message": [
         "page must not be less than 1",
         "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders should refuse a malformed tag id with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "tagId must be a positive integer",
       ],
       "statusCode": 400,
     },
@@ -1239,6 +1486,149 @@ exports[`App Sales Order GET /api/sales/orders/:orderId should refuse a role wit
       "message": "Insufficient permissions",
       "statusCode": 403,
     },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId/tags should answer an unknown order with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId/tags should read the tags of the order, by name 1`] = `
+{
+  "response": {
+    "body": {
+      "tags": [
+        {
+          "id": "302",
+          "name": "vip",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should answer an unknown order with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_NOT_FOUND",
+      "message": "Order 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should link the tags of the body and answer them by name 1`] = `
+{
+  "db": {
+    "subject_tag": [
+      {
+        "subject_id": "601",
+        "subject_type": "order",
+        "tag_id": "300",
+      },
+      {
+        "subject_id": "601",
+        "subject_type": "order",
+        "tag_id": "302",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "tags": [
+        {
+          "id": "300",
+          "name": "fragile",
+        },
+        {
+          "id": "302",
+          "name": "vip",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should refuse a role without order:write with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should refuse a word among the tag ids with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each tagId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should refuse an unknown tag with 422 and keep the tags the order had 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "ORDER_TAG_NOT_FOUND",
+      "details": {
+        "missingTagIds": [
+          "998",
+          "999",
+        ],
+      },
+      "message": "Some of the tags do not exist",
+      "statusCode": 422,
+    },
+  },
+  "tags": {
+    "tags": [
+      {
+        "id": "302",
+        "name": "vip",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Sales Order PUT /api/sales/orders/:orderId/tags should replace the tags the order had and clear them with an empty list 1`] = `
+{
+  "cleared": {
+    "tags": [],
+  },
+  "db": {
+    "subject_tag": [],
+  },
+  "replaced": {
+    "tags": [
+      {
+        "id": "300",
+        "name": "fragile",
+      },
+    ],
   },
 }
 `;
@@ -2112,6 +2502,245 @@ exports[`App Tools Reminder POST /api/tools/reminders should refuse an instant w
         "dueOn must be a calendar date formatted YYYY-MM-DD",
       ],
       "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag DELETE /api/tools/tags/:tagId should answer an unknown tag with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "TAG_NOT_FOUND",
+      "message": "Tag 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag DELETE /api/tools/tags/:tagId should refuse a role without tag:write with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag GET /api/tools/tags should answer the page window it was asked for 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 1,
+      "data": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "302",
+          "name": "vip",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      "page": 2,
+      "pageCount": 2,
+      "total": 3,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag GET /api/tools/tags should list the tags by name 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 3,
+      "data": [
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "300",
+          "name": "fragile",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "301",
+          "name": "promo",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+        },
+        {
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "id": "302",
+          "name": "vip",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      "page": 1,
+      "pageCount": 1,
+      "total": 3,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag GET /api/tools/tags should refuse a role without tag:read with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag PATCH /api/tools/tags/:tagId should answer an unknown tag with 404 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "TAG_NOT_FOUND",
+      "message": "Tag 999 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag PATCH /api/tools/tags/:tagId should answer the tag as it is when the name does not change 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "390",
+      "name": "seasonal",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag PATCH /api/tools/tags/:tagId should refuse a malformed tag id with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "tagId must be a positive integer",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag PATCH /api/tools/tags/:tagId should refuse the name of another tag with 409 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "TAG_NAME_TAKEN",
+      "message": "A tag named vip already exists",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag PATCH /api/tools/tags/:tagId should rename the tag 1`] = `
+{
+  "db": {
+    "tag": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "390",
+        "name": "winter",
+        "updated_at": Any<Date>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "390",
+      "name": "winter",
+      "updatedAt": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag POST /api/tools/tags should create a tag with the trimmed name 1`] = `
+{
+  "db": {
+    "tag": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "name": "heavy",
+        "updated_at": Any<Date>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "name": "heavy",
+      "updatedAt": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag POST /api/tools/tags should refuse a missing name with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "name must be shorter than or equal to 64 characters",
+        "name must be longer than or equal to 1 characters",
+        "name must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag POST /api/tools/tags should refuse a name of spaces with 400 from the domain 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "TAG_NAME_INVALID",
+      "message": "Tag.name must be a non-empty string of at most 64 characters",
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag POST /api/tools/tags should refuse a name that differs from a taken one only in case with 409 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "TAG_NAME_TAKEN",
+      "message": "A tag named Fragile already exists",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Tools Tag POST /api/tools/tags should refuse a role without tag:write with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
     },
   },
 }

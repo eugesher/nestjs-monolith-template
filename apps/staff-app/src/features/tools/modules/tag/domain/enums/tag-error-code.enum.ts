@@ -1,0 +1,5 @@
+export enum TagErrorCodeEnum {
+  TAG_NAME_INVALID = 'TAG_NAME_INVALID',
+  TAG_NOT_FOUND = 'TAG_NOT_FOUND',
+  TAG_NAME_TAKEN = 'TAG_NAME_TAKEN',
+}

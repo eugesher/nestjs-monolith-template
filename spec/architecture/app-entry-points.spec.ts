@@ -35,6 +35,8 @@ describe('app entry points', () => {
       '@acme-staff/app/*',
       '@acme-staff/common',
       '@acme-staff/common/*',
+      '@acme-staff/contracts',
+      '@acme-staff/contracts/*',
       '@acme-staff/features',
       '@acme-staff/features/*',
     ]);

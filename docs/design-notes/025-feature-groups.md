@@ -3,12 +3,12 @@
 The features of staff-app sit in groups: a parent module that
 mounts its child modules and holds no code of its own.
 
-| Group      | Modules                | Routes                                                 |
-| ---------- | ---------------------- | ------------------------------------------------------ |
-| `identity` | `auth`, `role`, `user` | `/identity/auth`, `/identity/roles`, `/identity/users` |
-| `tools`    | `note`, `reminder`     | `/tools/notes`, `/tools/reminders`                     |
-| `catalog`  | `product`              | `/catalog/products`                                    |
-| `sales`    | `order`                | `/sales/orders`                                        |
+| Group      | Modules                   | Routes                                                 |
+| ---------- | ------------------------- | ------------------------------------------------------ |
+| `identity` | `auth`, `role`, `user`    | `/identity/auth`, `/identity/roles`, `/identity/users` |
+| `tools`    | `note`, `reminder`, `tag` | `/tools/notes`, `/tools/reminders`, `/tools/tags`      |
+| `catalog`  | `product`                 | `/catalog/products`                                    |
+| `sales`    | `order`                   | `/sales/orders`                                        |
 
 `health` and `ledger` stay top-level features. customer-app has no groups.
 

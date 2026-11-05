@@ -65,7 +65,7 @@ export class RoleE2E {
         } finally {
           await this.ctx.dataSource.query('DELETE FROM staff_role_permissions WHERE role_id = 3');
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1), (3, 7), (3, 10)',
+            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1), (3, 7), (3, 10), (3, 12), (3, 16)',
           );
         }
       });

@@ -20,6 +20,36 @@ export class ProductE2E {
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
+
+      it('should list only the products that carry the tag', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products')
+          .query({ tagId: '300' })
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should answer an empty page for a tag no product carries', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products')
+          .query({ tagId: '302' })
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      });
+
+      it('should refuse a malformed tag id with 400 from validation', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products')
+          .query({ tagId: 'fragile' })
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.BAD_REQUEST);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
     });
   }
 
@@ -462,6 +492,150 @@ export class ProductE2E {
             product: await this.ctx.dataSource.query('SELECT * FROM product WHERE id = 102'),
           },
         }).toMatchSnapshot({ db: { product: [{ updated_at: expect.any(Date) }] } });
+      });
+    });
+  }
+
+  public handleGetTags(): void {
+    describe('GET /api/catalog/products/:productId/tags', () => {
+      it('should read the tags of the product, by name', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products/100/tags')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should answer an empty list for a product without tags', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products/103/tags')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toEqual({ tags: [] });
+      });
+
+      it('should answer an unknown product with 404', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products/999/tags')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+    });
+  }
+
+  public handleReplaceTags(): void {
+    describe('PUT /api/catalog/products/:productId/tags', () => {
+      afterEach(async () => {
+        await this.ctx.dataSource.query(
+          "DELETE FROM subject_tag WHERE subject_type = 'product' AND subject_id = 103",
+        );
+      });
+
+      it('should link the tags of the body and answer them by name', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/103/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['301', '300', '300'] })
+          .expect(HttpStatus.OK);
+
+        const actual = {
+          response: { body: response.body },
+          db: {
+            subject_tag: await this.ctx.dataSource.query(
+              "SELECT subject_type, subject_id, tag_id FROM subject_tag WHERE subject_type = 'product' AND subject_id = 103 ORDER BY tag_id",
+            ),
+          },
+        };
+
+        expect(actual).toMatchSnapshot();
+      });
+
+      it('should replace the tags the product had and clear them with an empty list', async () => {
+        await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/103/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['300', '301'] })
+          .expect(HttpStatus.OK);
+
+        const replaced = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/103/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['301'] })
+          .expect(HttpStatus.OK);
+        const cleared = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/103/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: [] })
+          .expect(HttpStatus.OK);
+
+        expect({
+          replaced: replaced.body,
+          cleared: cleared.body,
+          db: {
+            subject_tag: await this.ctx.dataSource.query(
+              "SELECT * FROM subject_tag WHERE subject_type = 'product' AND subject_id = 103",
+            ),
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should refuse an unknown tag with 422 and keep the tags the product had', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/100/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['300', '998', '999'] })
+          .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        const tags = await request(this.ctx.app.getHttpServer())
+          .get('/api/catalog/products/100/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body }, tags: tags.body }).toMatchSnapshot();
+      });
+
+      it('should answer an unknown product with 404', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/999/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['300'] })
+          .expect(HttpStatus.NOT_FOUND);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a word among the tag ids with 400 from validation', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/catalog/products/103/tags')
+          .auth(this.ctx.editorToken, { type: 'bearer' })
+          .send({ tagIds: ['fragile'] })
+          .expect(HttpStatus.BAD_REQUEST);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a role without product:write with 403', async () => {
+        try {
+          await this.ctx.dataSource.query(
+            'DELETE FROM staff_role_permissions WHERE role_id = 2 AND permission_id = 8',
+          );
+
+          const response = await request(this.ctx.app.getHttpServer())
+            .put('/api/catalog/products/103/tags')
+            .auth(this.ctx.editorToken, { type: 'bearer' })
+            .send({ tagIds: ['300'] })
+            .expect(HttpStatus.FORBIDDEN);
+
+          expect({ response: { body: response.body } }).toMatchSnapshot();
+        } finally {
+          await this.ctx.dataSource.query(
+            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (2, 8)',
+          );
+        }
       });
     });
   }
