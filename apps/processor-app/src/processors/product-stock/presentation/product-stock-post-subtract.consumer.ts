@@ -7,11 +7,11 @@ import {
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
 } from '@acme-core/contracts/product-stock';
 
-import { ProductStockArchiveOutOfStockUseCase } from '../application';
+import { ProductStockPostSubtractUseCase } from '../application';
 
 @Processor(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
 export class ProductStockPostSubtractConsumer {
-  constructor(private readonly archiveOutOfStock: ProductStockArchiveOutOfStockUseCase) {}
+  constructor(private readonly postSubtract: ProductStockPostSubtractUseCase) {}
 
   @Process()
   public async handleRecord(job: Job<IProductStockPostSubtractPayload>): Promise<void> {
@@ -19,7 +19,7 @@ export class ProductStockPostSubtractConsumer {
     const { productIds, correlationId } = data;
 
     await CorrelationContextHelper.run(correlationId, () =>
-      this.archiveOutOfStock.execute({ productIds }),
+      this.postSubtract.execute({ productIds }),
     );
   }
 }

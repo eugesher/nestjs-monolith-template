@@ -2,16 +2,16 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductStockArchiveOutOfStockUseCase } from '../product-stock-archive-out-of-stock.use-case';
+import { ProductStockPostSubtractUseCase } from '../product-stock-post-subtract.use-case';
 
-describe('ProductStockArchiveOutOfStockUseCase', () => {
+describe('ProductStockPostSubtractUseCase', () => {
   let outcomes: string[];
   let findActive: jest.Mock;
   let lock: jest.Mock;
   let archive: jest.Mock;
   let run: jest.Mock;
   let logger: PinoLoggerMock;
-  let useCase: ProductStockArchiveOutOfStockUseCase;
+  let useCase: ProductStockPostSubtractUseCase;
 
   beforeEach(() => {
     outcomes = [];
@@ -47,7 +47,7 @@ describe('ProductStockArchiveOutOfStockUseCase', () => {
       return result;
     });
     logger = makePinoLoggerMock();
-    useCase = new ProductStockArchiveOutOfStockUseCase(
+    useCase = new ProductStockPostSubtractUseCase(
       { findActive },
       { lock },
       { archive },

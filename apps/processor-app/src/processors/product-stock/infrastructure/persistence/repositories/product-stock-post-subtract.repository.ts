@@ -9,12 +9,12 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { Product } from '@acme-core/entities';
 
 import {
-  IProductStockArchiveOutOfStockRepositoryPort,
-  IProductStockArchiveOutOfStockProductRecord,
+  IProductStockPostSubtractRepositoryPort,
+  IProductStockPostSubtractProductRecord,
 } from '../../../outbound';
 
 @Injectable()
-export class ProductStockArchiveOutOfStockRepository implements IProductStockArchiveOutOfStockRepositoryPort {
+export class ProductStockPostSubtractRepository implements IProductStockPostSubtractRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,
@@ -24,9 +24,7 @@ export class ProductStockArchiveOutOfStockRepository implements IProductStockArc
     return this.repositoryHost.getRepository(Product);
   }
 
-  public async findActive(
-    productIds: string[],
-  ): Promise<IProductStockArchiveOutOfStockProductRecord[]> {
+  public async findActive(productIds: string[]): Promise<IProductStockPostSubtractProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }

@@ -5,34 +5,34 @@ import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/da
 
 import {
   type IProductStockArchivePort,
-  type IProductStockArchiveOutOfStockRepositoryPort,
+  type IProductStockPostSubtractRepositoryPort,
   type IProductStockOnHandPort,
   PRODUCT_STOCK_ARCHIVE_PORT,
-  PRODUCT_STOCK_ARCHIVE_OUT_OF_STOCK_REPOSITORY_PORT,
+  PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
   PRODUCT_STOCK_ON_HAND_PORT,
 } from '../../outbound';
-import { IProductStockArchiveOutOfStockCommand } from '../interfaces';
+import { IProductStockPostSubtractCommand } from '../interfaces';
 
 @Injectable()
-export class ProductStockArchiveOutOfStockUseCase {
+export class ProductStockPostSubtractUseCase {
   constructor(
-    @Inject(PRODUCT_STOCK_ARCHIVE_OUT_OF_STOCK_REPOSITORY_PORT)
-    private readonly repository: IProductStockArchiveOutOfStockRepositoryPort,
+    @Inject(PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT)
+    private readonly repository: IProductStockPostSubtractRepositoryPort,
     @Inject(PRODUCT_STOCK_ON_HAND_PORT)
     private readonly onHand: IProductStockOnHandPort,
     @Inject(PRODUCT_STOCK_ARCHIVE_PORT)
     private readonly archive: IProductStockArchivePort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @InjectPinoLogger(ProductStockArchiveOutOfStockUseCase.name)
+    @InjectPinoLogger(ProductStockPostSubtractUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
 
-  public async execute(command: IProductStockArchiveOutOfStockCommand): Promise<void> {
+  public async execute(command: IProductStockPostSubtractCommand): Promise<void> {
     await this.transaction.run(() => this.archiveOutOfStock(command));
   }
 
-  private async archiveOutOfStock(command: IProductStockArchiveOutOfStockCommand): Promise<void> {
+  private async archiveOutOfStock(command: IProductStockPostSubtractCommand): Promise<void> {
     const { productIds } = command;
     const stock = await this.onHand.lock({ productIds });
     const outOfStock = stock.filter((row) => row.quantity <= 0).map((row) => row.productId);

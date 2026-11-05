@@ -3,7 +3,7 @@ import { Job } from 'bull';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 
-import { ProductStockArchiveOutOfStockUseCase } from '../../application';
+import { ProductStockPostSubtractUseCase } from '../../application';
 import { ProductStockPostSubtractConsumer } from '../product-stock-post-subtract.consumer';
 
 describe('ProductStockPostSubtractConsumer', () => {
@@ -14,13 +14,13 @@ describe('ProductStockPostSubtractConsumer', () => {
   beforeEach(() => {
     correlationIds = [];
     execute = jest.fn().mockImplementation(() => {
-      correlationIds.push(CorrelationContextHelper.current('ProductStockArchiveOutOfStockUseCase'));
+      correlationIds.push(CorrelationContextHelper.current('ProductStockPostSubtractUseCase'));
 
       return Promise.resolve();
     });
     consumer = new ProductStockPostSubtractConsumer({
       execute,
-    } as unknown as ProductStockArchiveOutOfStockUseCase);
+    } as unknown as ProductStockPostSubtractUseCase);
   });
 
   describe('handleRecord', () => {
