@@ -1,6 +1,6 @@
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { IdempotencyPurgeRunUseCase } from '../../application';
+import { IdempotencyPurgeUseCase } from '../../application';
 import { IdempotencyPurgeConsumer } from '../idempotency-purge.consumer';
 
 describe('IdempotencyPurgeConsumer', () => {
@@ -11,11 +11,11 @@ describe('IdempotencyPurgeConsumer', () => {
   beforeEach(() => {
     correlationIds = [];
     execute = jest.fn().mockImplementation(() => {
-      correlationIds.push(CorrelationContextHelper.current('IdempotencyPurgeRunUseCase'));
+      correlationIds.push(CorrelationContextHelper.current('IdempotencyPurgeUseCase'));
 
       return Promise.resolve();
     });
-    consumer = new IdempotencyPurgeConsumer({ execute } as unknown as IdempotencyPurgeRunUseCase);
+    consumer = new IdempotencyPurgeConsumer({ execute } as unknown as IdempotencyPurgeUseCase);
   });
 
   describe('handleTick', () => {

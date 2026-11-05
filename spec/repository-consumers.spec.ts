@@ -9,7 +9,7 @@ describe('one repository per use case, service or facade', () => {
         'UserAssignRoleUseCase',
         'AuthCommonValidateSubjectUseCase',
         'AuthGlobalFindPermissionCodesUseCase',
-        'IdempotencyPurgeRunUseCase',
+        'IdempotencyPurgeUseCase',
         'IdempotencyCoreClaimUseCase',
       ]),
     );

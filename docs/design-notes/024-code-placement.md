@@ -22,13 +22,13 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 
 Everything else sits with its only caller, for example:
 
-| Code                                   | Lives in                                              |
-| -------------------------------------- | ----------------------------------------------------- |
-| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger`            |
-| the read of `ledger_entry`             | `apps/staff-app/src/features/ledger`                  |
-| the delete of expired idempotency keys | `apps/processor-app/src/processors/idempotency-purge` |
-| a login                                | `apps/<app>/src/features/**/auth`                     |
-| the permission codes of a user         | `apps/staff-app/src/app/global/auth`                  |
+| Code                                   | Lives in                                        |
+| -------------------------------------- | ----------------------------------------------- |
+| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger`      |
+| the read of `ledger_entry`             | `apps/staff-app/src/features/ledger`            |
+| the delete of expired idempotency keys | `apps/processor-app/src/processors/idempotency` |
+| a login                                | `apps/<app>/src/features/**/auth`               |
+| the permission codes of a user         | `apps/staff-app/src/app/global/auth`            |
 
 ## Why per method
 

@@ -6,11 +6,7 @@ import { HttpExceptionFilter } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
 import { HealthModule } from '@acme-processor/features';
-import {
-  IdempotencyPurgeModule,
-  LedgerModule,
-  ProductStockModule,
-} from '@acme-processor/processors';
+import { IdempotencyModule, LedgerModule, ProductStockModule } from '@acme-processor/processors';
 
 import { ConfigSetupModule } from './setup/config/config-setup.module';
 import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
@@ -27,7 +23,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     QueueSetupModule,
     CacheModule,
     HealthModule,
-    IdempotencyPurgeModule,
+    IdempotencyModule,
     LedgerModule,
     ProductStockModule,
   ],

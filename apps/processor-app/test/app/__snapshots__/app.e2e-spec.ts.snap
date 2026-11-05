@@ -32,7 +32,7 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 }
 `;
 
-exports[`App IdempotencyPurge schedule idempotency-purge should purge the keys older than the TTL and keep the fresh ones 1`] = `
+exports[`App Idempotency schedule idempotency-purge should purge the keys older than the TTL and keep the fresh ones 1`] = `
 {
   "db": {
     "idempotency_key": [

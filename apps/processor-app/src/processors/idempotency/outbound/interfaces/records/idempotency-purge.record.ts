@@ -1,5 +1,5 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-export interface IIdempotencyPurgeRunRecord {
+export interface IIdempotencyPurgeRecord {
   affected?: Nullable<number>;
 }

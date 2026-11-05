@@ -3,14 +3,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { IdempotencyPurgeRunUseCase } from '../application';
+import { IdempotencyPurgeUseCase } from '../application';
 
 @Injectable()
 export class IdempotencyPurgeConsumer {
-  constructor(private readonly run: IdempotencyPurgeRunUseCase) {}
+  constructor(private readonly purge: IdempotencyPurgeUseCase) {}
 
   @Cron(CronExpression.EVERY_HOUR, { name: 'idempotency-purge' })
   public async handleTick(): Promise<void> {
-    await CorrelationContextHelper.run(undefined, () => this.run.execute());
+    await CorrelationContextHelper.run(undefined, () => this.purge.execute());
   }
 }

@@ -8,10 +8,10 @@ import {
 } from '@acme-libs/contracts/database';
 import { IdempotencyKey } from '@acme-core/entities';
 
-import { IIdempotencyPurgeRunRecord, IIdempotencyPurgeRunRepositoryPort } from '../../../outbound';
+import { IIdempotencyPurgeRecord, IIdempotencyPurgeRepositoryPort } from '../../../outbound';
 
 @Injectable()
-export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunRepositoryPort {
+export class IdempotencyPurgeRepository implements IIdempotencyPurgeRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     private readonly repositoryHost: IRepositoryHostPort,
@@ -21,7 +21,7 @@ export class IdempotencyPurgeRunRepository implements IIdempotencyPurgeRunReposi
     return this.repositoryHost.getRepository(IdempotencyKey);
   }
 
-  public async deleteCreatedBefore(cutoff: Date): Promise<IIdempotencyPurgeRunRecord> {
+  public async deleteCreatedBefore(cutoff: Date): Promise<IIdempotencyPurgeRecord> {
     return await this.idempotencyKeyRepository.delete({ createdAt: LessThan(cutoff) });
   }
 }

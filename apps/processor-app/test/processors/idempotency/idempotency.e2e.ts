@@ -1,10 +1,10 @@
 import { AppE2EContext } from '../../context/app-e2e.context';
 
-export class IdempotencyPurgeE2E {
+export class IdempotencyE2E {
   private constructor(private readonly ctx: AppE2EContext) {}
 
-  public static of(ctx: AppE2EContext): IdempotencyPurgeE2E {
-    return new IdempotencyPurgeE2E(ctx);
+  public static of(ctx: AppE2EContext): IdempotencyE2E {
+    return new IdempotencyE2E(ctx);
   }
 
   public handleTick(): void {

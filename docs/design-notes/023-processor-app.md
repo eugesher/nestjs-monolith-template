@@ -3,12 +3,12 @@
 `apps/processor-app` runs the background work of the template: the queue consumers and the
 schedules. staff-app and customer-app only enqueue. All three apps share one database and one Redis.
 
-| Processor           | Entered by                                       | What it does                                                            |
-| ------------------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
-| `ledger`            | a job of the `ledger-record` queue               | appends the record (see `008-queue-consumer.md`)                        |
-| `ledger`            | `@Cron(EVERY_DAY_AT_3AM)`                        | returns every failed `ledger-record` job to the queue (same note)       |
-| `idempotency-purge` | `@Cron(EVERY_HOUR)`                              | deletes the expired idempotency keys (see `009-scheduled-processor.md`) |
-| `product-stock`     | a job of the `product-stock-post-subtract` queue | a transaction over two core modules (see below)                         |
+| Processor       | Entered by                                       | What it does                                                            |
+| --------------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
+| `ledger`        | a job of the `ledger-record` queue               | appends the record (see `008-queue-consumer.md`)                        |
+| `ledger`        | `@Cron(EVERY_DAY_AT_3AM)`                        | returns every failed `ledger-record` job to the queue (same note)       |
+| `idempotency`   | `@Cron(EVERY_HOUR)`                              | deletes the expired idempotency keys (see `009-scheduled-processor.md`) |
+| `product-stock` | a job of the `product-stock-post-subtract` queue | a transaction over two core modules (see below)                         |
 
 ## Why a third app
 

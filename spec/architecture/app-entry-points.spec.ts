@@ -127,7 +127,7 @@ describe('app entry points', () => {
     ['apps/staff-app/src/app/global/auth/module/__fixture__.ts', '@acme-staff/app/app.module'],
     ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/app/app.module'],
     [
-      'apps/processor-app/src/processors/idempotency-purge/__fixture__.ts',
+      'apps/processor-app/src/processors/idempotency/__fixture__.ts',
       '@acme-processor/app/app.module',
     ],
     ['apps/staff-app/src/common/shared/concurrency/__fixture__.ts', '@acme-staff/app/app.module'],
@@ -248,7 +248,7 @@ describe('app entry points', () => {
   it.each([
     'apps/staff-app/src/features/health/health.module.ts',
     'apps/customer-app/src/features/health/health.module.ts',
-    'apps/processor-app/src/processors/idempotency-purge/idempotency-purge.module.ts',
+    'apps/processor-app/src/processors/idempotency/idempotency.module.ts',
   ])('%s MAY mount the idempotency core module by its alias', async (file) => {
     await expect({
       file,
@@ -315,7 +315,7 @@ describe('app entry points', () => {
   it.each([
     'apps/staff-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
     'apps/customer-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
-    'apps/processor-app/src/processors/idempotency-purge/infrastructure/core-adapters/__fixture__.ts',
+    'apps/processor-app/src/processors/idempotency/infrastructure/core-adapters/__fixture__.ts',
   ])('%s MAY import the idempotency core contracts by their alias', async (file) => {
     await expect({
       file,

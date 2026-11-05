@@ -2,18 +2,18 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { IdempotencyPurgeRunUseCase } from '../idempotency-purge-run.use-case';
+import { IdempotencyPurgeUseCase } from '../idempotency-purge.use-case';
 
-describe('IdempotencyPurgeRunUseCase', () => {
+describe('IdempotencyPurgeUseCase', () => {
   let deleteCreatedBefore: jest.Mock;
   let logger: PinoLoggerMock;
-  let useCase: IdempotencyPurgeRunUseCase;
+  let useCase: IdempotencyPurgeUseCase;
 
   beforeEach(() => {
     jest.useFakeTimers({ now: new Date('2026-01-02T12:00:00.000Z') });
     deleteCreatedBefore = jest.fn().mockResolvedValue({ affected: 3 });
     logger = makePinoLoggerMock();
-    useCase = new IdempotencyPurgeRunUseCase(
+    useCase = new IdempotencyPurgeUseCase(
       { deleteCreatedBefore },
       24,
       logger as unknown as PinoLogger,
