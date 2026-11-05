@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, QueueE2E } from '../features';
+import { AuthE2E, HealthE2E, QueueE2E } from '../features';
 import { IdempotencyE2E, LedgerE2E, ProductStockE2E } from '../processors';
 
 describe('App', () => {
@@ -10,6 +10,7 @@ describe('App', () => {
 
   const ctx = new AppE2EContext();
 
+  const authE2E = AuthE2E.of(ctx);
   const healthE2E = HealthE2E.of(ctx);
   const ledgerE2E = LedgerE2E.of(ctx);
   const idempotencyE2E = IdempotencyE2E.of(ctx);
@@ -34,6 +35,10 @@ describe('App', () => {
       await request(ctx.app.getHttpServer()).get(path).expect(HttpStatus.NOT_FOUND);
     },
   );
+
+  describe('Auth', () => {
+    authE2E.handleLogin();
+  });
 
   describe('Health', () => {
     healthE2E.live();

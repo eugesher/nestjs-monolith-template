@@ -3,15 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import {
-  AUTH_CLAIMS_PORT,
-  AUTH_USER_VALIDATOR_PORT,
-  IAuthCurrentUserView,
-} from '@acme-libs/contracts/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
-import { Roles } from '../../decorators/auth-roles.decorator';
 import { AuthClaimsLibModule } from '../auth-claims-lib.module';
 import { AuthLibModule } from '../auth-lib.module';
 
@@ -32,12 +27,6 @@ describe('AuthClaimsLibModule', () => {
       public note(): string {
         return 'note';
       }
-
-      @Roles(RoleEnum.ADMIN)
-      @Get('admin')
-      public admin(): string {
-        return 'admin';
-      }
     }
 
     @Global()
@@ -55,37 +44,24 @@ describe('AuthClaimsLibModule', () => {
           useValue: {
             validate: (query: { sub: string }) => {
               const users: Record<string, IAuthCurrentUserView> = {
-                ann: { id: 'ann', email: 'ann@example.com' },
-                bob: { id: 'bob', email: 'bob@example.com' },
+                ann: {
+                  id: 'ann',
+                  email: 'ann@example.com',
+                  permissionCodes: [PermissionCodeEnum.PRODUCT_READ],
+                },
+                bob: {
+                  id: 'bob',
+                  email: 'bob@example.com',
+                  permissionCodes: [PermissionCodeEnum.LEDGER_READ],
+                },
               };
 
               return Promise.resolve(users[query.sub]);
             },
           },
         },
-        {
-          provide: AUTH_CLAIMS_PORT,
-          useValue: {
-            findRoles: (query: { userId: string }) => {
-              const roles: Record<string, RoleEnum[]> = {
-                ann: [RoleEnum.ADMIN],
-                bob: [RoleEnum.VIEWER],
-              };
-
-              return Promise.resolve(roles[query.userId]);
-            },
-            findPermissionCodes: (query: { userId: string }) => {
-              const permissions: Record<string, PermissionCodeEnum[]> = {
-                ann: [PermissionCodeEnum.PRODUCT_READ],
-                bob: [PermissionCodeEnum.LEDGER_READ],
-              };
-
-              return Promise.resolve(permissions[query.userId]);
-            },
-          },
-        },
       ],
-      exports: [AUTH_USER_VALIDATOR_PORT, AUTH_CLAIMS_PORT],
+      exports: [AUTH_USER_VALIDATOR_PORT],
     })
     class ValidatorModule {}
 
@@ -104,50 +80,34 @@ describe('AuthClaimsLibModule', () => {
     await app.close();
   });
 
-  it('answers 401 without a token on a gated route, the JWT guard runs before the claim guards', async () => {
-    const statuses = [];
+  it('answers 401 without a token on a gated route, the JWT guard runs before the permissions guard', async () => {
+    const response = await fetch(`${url}/note`);
 
-    for (const route of ['note', 'admin']) {
-      const response = await fetch(`${url}/${route}`);
-
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([401, 401]);
+    expect(response.status).toBe(401);
   });
 
-  it('admits a user holding a required permission and a required role', async () => {
+  it('admits a user holding a required permission', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
     }).signAsync({ sub: 'ann' });
-    const statuses = [];
 
-    for (const route of ['note', 'admin']) {
-      const response = await fetch(`${url}/${route}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+    const response = await fetch(`${url}/note`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
 
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([200, 200]);
+    expect(response.status).toBe(200);
   });
 
-  it('answers 403 to a user without the permission or the role', async () => {
+  it('answers 403 to a user without the permission', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
     }).signAsync({ sub: 'bob' });
-    const statuses = [];
 
-    for (const route of ['note', 'admin']) {
-      const response = await fetch(`${url}/${route}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+    const response = await fetch(`${url}/note`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
 
-      statuses.push(response.status);
-    }
-
-    expect(statuses).toEqual([403, 403]);
+    expect(response.status).toBe(403);
   });
 
   it('lets a route without claim decorators through for any authenticated user', async () => {

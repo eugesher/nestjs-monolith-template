@@ -261,6 +261,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/toolkit/tsconfig.lib.json"
       }
+    },
+    "core-contracts-staff-auth": {
+      "type": "library",
+      "root": "core/contracts/src/staff-auth",
+      "entryFile": "index",
+      "sourceRoot": "core/contracts/src/staff-auth",
+      "compilerOptions": {
+        "tsConfigPath": "core/contracts/tsconfig.lib.json"
+      }
+    },
+    "core-modules-staff-auth": {
+      "type": "library",
+      "root": "core/modules/src/staff-auth",
+      "entryFile": "index",
+      "sourceRoot": "core/modules/src/staff-auth",
+      "compilerOptions": {
+        "tsConfigPath": "core/modules/tsconfig.lib.json"
+      }
     }
   }
 }

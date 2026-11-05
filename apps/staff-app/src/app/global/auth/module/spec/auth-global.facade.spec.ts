@@ -11,13 +11,21 @@ describe('AuthGlobalFacade', () => {
   });
 
   describe('validate', () => {
-    it('answers the user the common auth module re-derives for the token subject', async () => {
-      findSubject.mockResolvedValue({ id: 'user-1', email: 'ann@example.com', roles: ['admin'] });
+    it('answers the user with its permission codes for the token subject', async () => {
+      findSubject.mockResolvedValue({
+        id: 'user-1',
+        email: 'ann@example.com',
+        permissionCodes: ['ledger:read'],
+      });
 
       const user = await facade.validate({ sub: 'user-1' });
 
-      expect(user).toEqual({ id: 'user-1', email: 'ann@example.com' });
-      expect(findSubject).toHaveBeenCalledWith('user-1');
+      expect(user).toEqual({
+        id: 'user-1',
+        email: 'ann@example.com',
+        permissionCodes: ['ledger:read'],
+      });
+      expect(findSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
 
     it('answers no user when the subject is not an active staff user', async () => {

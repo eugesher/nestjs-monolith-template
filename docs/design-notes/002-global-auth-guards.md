@@ -13,20 +13,23 @@ the bearer token and hands the subject to `AUTH_USER_VALIDATOR_PORT`. Each app b
 its global `AuthGlobalModule`, which has the layers of a feature (see `024-code-placement.md`):
 every facade method calls a use case, and the use case reaches the data through an outbound port.
 
-| App          | Subject and roles                                                                                                                                                                            | Permission codes                                          | Ports bound                                    |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------- |
-| staff-app    | `AuthGlobalValidateSubjectUseCase`, `AuthGlobalFindRolesUseCase` over `AUTH_GLOBAL_SUBJECT_PORT`, which `AuthGlobalSubjectCommonAdapter` implements with `AUTH_COMMON_PORT` of common `auth` | `AuthGlobalFindPermissionCodesUseCase` and its repository | `AUTH_USER_VALIDATOR_PORT`, `AUTH_CLAIMS_PORT` |
-| customer-app | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                                                                        | none                                                      | `AUTH_USER_VALIDATOR_PORT`                     |
+| App           | The user and its permission codes                                                                                                               | Ports bound                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| staff-app     | `AuthGlobalValidateSubjectUseCase` over `AUTH_GLOBAL_SUBJECT_PORT`, which `AuthGlobalSubjectCoreAdapter` implements with `STAFF_AUTH_CORE_PORT` | `AUTH_USER_VALIDATOR_PORT` |
+| processor-app | the same, file for file                                                                                                                         | `AUTH_USER_VALIDATOR_PORT` |
+| customer-app  | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                           | `AUTH_USER_VALIDATOR_PORT` |
 
-The subject check of staff-app lives in a common module because `GET /identity/auth/me` asks the same
-question; the permission codes and the customer check have one caller each, so they live here.
+The staff subject lives in the core module `core/modules/src/staff-auth`: two apps ask for it, and
+staff-app asks twice, from the guard and from `GET /identity/auth/me`. One query reads the user, its
+roles and the codes of their permissions; the global module keeps the id, the email and the codes.
+The customer check has one caller, so it lives in customer-app.
 
 The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.
 
 **Global classes carry the `AuthGlobal` prefix.** The folder stays `app/global/auth`, paired with
 the lib contract below, but the `auth` feature owns the plain names: `AuthModule`, and
-`AuthIdentityCommonAdapter` for the common adapter of its own. The prefix keeps the two apart in
+`AuthIdentityCoreAdapter` for the core adapter of its own. The prefix keeps the two apart in
 imports, in stack traces and in DI errors.
 
 **A global module pairs with the lib contract of its own name.** `app/global/auth` may import
@@ -36,19 +39,20 @@ without a new policy.
 
 ## Two lib modules
 
-| Module                | Guards                                   | Needs                      | Imported by             |
-| --------------------- | ---------------------------------------- | -------------------------- | ----------------------- |
-| `AuthLibModule`       | `AuthJwtGuard`                           | `AUTH_USER_VALIDATOR_PORT` | staff-app, customer-app |
-| `AuthClaimsLibModule` | `AuthRolesGuard`, `AuthPermissionsGuard` | `AUTH_CLAIMS_PORT`         | staff-app               |
+| Module                | Guards                 | Needs                               | Imported by                            |
+| --------------------- | ---------------------- | ----------------------------------- | -------------------------------------- |
+| `AuthLibModule`       | `AuthJwtGuard`         | `AUTH_USER_VALIDATOR_PORT`          | staff-app, processor-app, customer-app |
+| `AuthClaimsLibModule` | `AuthPermissionsGuard` | `permissionCodes` on `request.user` | staff-app, processor-app               |
 
-**Who the user is and what the user may do are two ports.** `AUTH_USER_VALIDATOR_PORT.validate`
-answers `{ id, email }`, which every principal has. `AUTH_CLAIMS_PORT` answers `findRoles` and
-`findPermissionCodes`. customer-app imports `AuthLibModule` alone and binds no claims port.
+**Who the user is and what the user may do come in one answer.** `AUTH_USER_VALIDATOR_PORT.validate`
+answers `{ id, email, permissionCodes? }`. A staff app fills `permissionCodes`; customer-app leaves
+it out and imports `AuthLibModule` alone. There is no roles guard and no `@Roles`: routes are gated
+by permissions only, and a role is a named set of them.
 
 **Two static modules, not a flag.** `AuthLibModule.forRoot({ claims: true })` would hide the choice
 in an argument that no lint can read. An import of `AuthClaimsLibModule` is visible, and the lint
-policy `customer-claims.mjs` refuses it in customer-app, together with `@Roles`,
-`@RequiresPermission`, `AUTH_CLAIMS_PORT`, `RoleEnum` and `PermissionCodeEnum`. Without the claims
+policy `customer-claims.mjs` refuses it in customer-app, together with
+`@RequiresPermission`, `RoleEnum` and `PermissionCodeEnum`. Without the claims
 module the decorators would be silently ignored, so a route of customer-app cannot even name them.
 
 ## Order
@@ -58,13 +62,12 @@ Each guard is one `APP_GUARD` provider, and Nest runs global guards in registrat
 1. `AuthJwtGuard` — lets a `@Public()` route through, otherwise needs a valid
    `Authorization: Bearer` token and a subject the validator still accepts. Anything else is 401.
    It puts the user on `request.user`.
-2. `AuthRolesGuard` — `@Roles(...)`: 403 unless the user holds ANY of the listed roles.
-3. `AuthPermissionsGuard` — `@RequiresPermission(...)`: 403 unless the user holds ANY of the
-   listed codes.
+2. `AuthPermissionsGuard` — `@RequiresPermission(...)`: 403 unless `request.user.permissionCodes`
+   holds ANY of the listed codes.
 
-**Authentication must come first.** The claim guards read `request.user`. Ahead of the JWT guard
+**Authentication must come first.** The permissions guard reads `request.user`. Ahead of the JWT guard
 they would see an anonymous request on every gated route and answer 403 where 401 is meant. The
-staff-app `AuthGlobalModule` imports `AuthLibModule` before `AuthClaimsLibModule`, and the spec of the
+`AuthGlobalModule` of a staff app imports `AuthLibModule` before `AuthClaimsLibModule`, and the spec of the
 claims module checks that a gated route without a token answers 401.
 
 **Deny by default.** A route without decorators needs a token. `@Public()` is the only way out, and
@@ -78,17 +81,17 @@ and the verified payload holds `sub`, `iat` and `exp`. Roles and permissions nev
 token, so there is no stale copy of them to trust or to refresh.
 
 **Claims in the token are not trusted.** The guard reads only `sub` from the verified payload and
-asks the validator for the user: id and email. The user comes from the database on every request,
-so a disabled account stops working on the next call, not at token expiry. The cost is one read per
-request.
+asks the validator for the user: id, email and, in a staff app, permission codes. The user comes
+from the database on every request, so a disabled account or a revoked permission stops working on
+the next call, not at token expiry. The cost is one read per request.
 
-**Claims are read only where a route asks for them.** Each claim guard returns early on a route
-without its decorator. On a route with it, the guard asks the claims port for the roles or the
-permission codes of the user, one read, and checks them. A revoked permission therefore refuses the
-very next gated request, while an ungated request pays for the user alone.
+**One read per request, gated or not.** The staff validator reads the user with its permission codes
+in one query, so the permissions guard reads nothing. An ungated request pays for the codes too;
+the price is a join, and a gated request saves its second read.
 
-**One secret per app.** The guard verifies with `JWT_SECRET` of the app, the secret its `auth`
-feature signs the access token with. The two apps have different secrets, so a token of one app
-fails the signature check in the other. Even with a shared secret it would fail: the subject of a
+**One secret per audience.** The guard verifies with `JWT_SECRET` of the app, the secret its `auth`
+feature signs the access token with. staff-app and processor-app serve the same staff and share the
+secret, so a staff token works in both and either app signs one in. customer-app has its own secret,
+so its tokens fail the signature check in the staff apps. Even with a shared secret it would fail: the subject of a
 customer is not a row of `staff_user`, and the other way round. The auth e2e of each app sends
 both kinds of foreign token and expects 401.

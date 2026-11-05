@@ -23,20 +23,21 @@ app would serve the others through a shared Redis anyway; a third app says so.
 
 The app has the folders of an HTTP app and uses fewer of them:
 
-| Folder                                                                 | What it holds                                                                             |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `src/main.ts`                                                          | the same bootstrap as the other apps; it listens only for the health probes               |
-| `src/app/setup`                                                        | config, ORM, queue and schedule; processor-app is the only app with `ScheduleSetupModule` |
-| `src/app/global/auth`                                                  | `AuthGlobalModule`, a copy of the staff-app one                                           |
-| `src/common/modules/auth`, `src/contracts/auth`, `src/common/entities` | the staff subject behind the guards, copied from staff-app                                |
-| `src/common/shared`                                                    | the registrations of the `ledger-record` and `product-stock-post-subtract` queues         |
-| `src/features/health`                                                  | `GET /health` and `GET /health/ready` for the orchestrator                                |
-| `src/features/queue`                                                   | the failed jobs of the queues for the staff                                               |
-| `src/processors`                                                       | the three processors                                                                      |
+| Folder                | What it holds                                                                             |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| `src/main.ts`         | the same bootstrap as the other apps; it listens only for the health probes               |
+| `src/app/setup`       | config, ORM, queue and schedule; processor-app is the only app with `ScheduleSetupModule` |
+| `src/app/global/auth` | `AuthGlobalModule` over the core module `staff-auth`, as in staff-app                     |
+| `src/features/auth`   | `POST /auth/login` for the staff, over the same core module                               |
+| `src/common/shared`   | the registrations of the `ledger-record` and `product-stock-post-subtract` queues         |
+| `src/features/health` | `GET /health` and `GET /health/ready` for the orchestrator                                |
+| `src/features/queue`  | the failed jobs of the queues for the staff                                               |
+| `src/processors`      | the three processors                                                                      |
 
-**HTTP serves the probes and the queues.** `AuthGlobalModule` is a copy of the staff-app one: the
-guards read a staff access token, so processor-app shares `JWT_SECRET` with staff-app and maps the
-staff identity tables. The health routes carry `@Public()`. `APP_PIPE` and `APP_FILTER` are the
+**HTTP serves the probes, the login and the queues.** `AuthGlobalModule` and the login reach the
+staff through the core module `staff-auth` (see `017-credentials-lib.md`). processor-app shares
+`JWT_SECRET` with staff-app, so a token of either app works in both, and lists the staff identity
+entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` and `APP_FILTER` are the
 ones of staff-app.
 
 | Route                                          | Permission     | What it does                                              |
@@ -53,7 +54,7 @@ that did append writes nothing.
 
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
 `LEDGER_RETRY_ATTEMPTS` and `QUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and
-tracing, and `JWT_SECRET` to verify the staff tokens. No argon2 or cache TTL.
+tracing, and `JWT_SECRET`, `JWT_EXPIRES_IN` and the argon2 costs for the staff login. No cache TTL.
 
 **The entity list holds `IdempotencyKey`, `LedgerEntry`, `Product` and `ProductStock`**, the tables
 of the purge, the ledger append and the stock check, with `Order`, `OrderProduct` and `Customer`,

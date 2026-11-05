@@ -5,7 +5,7 @@ import { CacheModule } from '@acme-libs/cache';
 import { HttpExceptionFilter, StrictValidationPipe } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
-import { HealthModule, QueueModule } from '@acme-processor/features';
+import { AuthModule, HealthModule, QueueModule } from '@acme-processor/features';
 import { IdempotencyModule, LedgerModule, ProductStockModule } from '@acme-processor/processors';
 
 import { AuthGlobalModule } from './global';
@@ -24,6 +24,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     QueueSetupModule,
     CacheModule,
     AuthGlobalModule,
+    AuthModule,
     HealthModule,
     QueueModule,
     IdempotencyModule,

@@ -31,18 +31,20 @@ token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
 Modules that read the same table keep models of their own, narrowed to what each uses (see
 `024-code-placement.md`). Example: `AuthStaffUserModel`
 (`apps/staff-app/src/features/identity/modules/auth/domain/models`), `UserStaffUserModel`
-(`apps/staff-app/src/features/identity/modules/user/domain/models`) and `AuthCommonStaffUserModel`
-(`apps/staff-app/src/common/modules/auth/domain/models`) all map `staff_user`.
+(`apps/staff-app/src/features/identity/modules/user/domain/models`) and `StaffAuthCoreSubjectModel`
+(`core/modules/src/staff-auth/domain/models`) all map `staff_user`.
 
-## A common module for a method of two modules
+## A core module for the staff of two apps
 
-`validateSubject` is called by a feature and by a global module of staff-app, so it lives in
-`apps/staff-app/src/common/modules/auth` behind `AUTH_COMMON_PORT`
-(`apps/staff-app/src/contracts/auth`). The feature reaches it through
-`AuthIdentityCommonAdapter`, the global module through `AuthGlobalSubjectCommonAdapter`.
+staff-app and processor-app both sign the staff in and check the subject of every request, so the
+reads live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
+(`core/contracts/src/staff-auth`): `findSubject` for the guard and `GET /identity/auth/me`,
+`findByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its `auth`
+feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the token
+stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the credentials.
 
 ## Table naming
 
 Tables of one module share a prefix, and indexes and foreign keys repeat the table name, so a
 constraint error in a log points at the module at once. A prefix also avoids reserved words such as
-`user`. Examples: the entities of `apps/staff-app/src/common/entities/staff-identity/`.
+`user`. Examples: the entities of `core/entities/src/staff-identity/`.

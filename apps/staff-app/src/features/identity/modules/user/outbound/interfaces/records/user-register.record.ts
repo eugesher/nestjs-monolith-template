@@ -1,3 +1,3 @@
-import { StaffRole } from '@acme-staff/common/entities';
+import { StaffRole } from '@acme-core/entities';
 
 export type IUserRegisterStaffRoleRecord = Pick<StaffRole, 'id'>;

@@ -18,17 +18,16 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 | core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                                            |
 | core `product`       | `archive`                      | staff `product`, the processor `product-stock`                               |
 | core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`, `lock` also the processor `product-stock` |
-| staff common `auth`  | `validateSubject`              | staff `auth` (`GET /identity/auth/me`), staff `app/global/auth`              |
+| core `staff-auth`    | `findSubject`, `findByEmail`   | `app/global/auth` and `auth` of staff-app and of processor-app               |
 
 Everything else sits with its only caller, for example:
 
-| Code                                   | Lives in                                        |
-| -------------------------------------- | ----------------------------------------------- |
-| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger`      |
-| the read of `ledger_entry`             | `apps/staff-app/src/features/ledger`            |
-| the delete of expired idempotency keys | `apps/processor-app/src/processors/idempotency` |
-| a login                                | `apps/<app>/src/features/**/auth`               |
-| the permission codes of a user         | `apps/staff-app/src/app/global/auth`            |
+| Code                                        | Lives in                                        |
+| ------------------------------------------- | ----------------------------------------------- |
+| the append to `ledger_entry`                | `apps/processor-app/src/processors/ledger`      |
+| the read of `ledger_entry`                  | `apps/staff-app/src/features/ledger`            |
+| the delete of expired idempotency keys      | `apps/processor-app/src/processors/idempotency` |
+| the password check and the token of a login | `apps/<app>/src/features/**/auth`               |
 
 ## Why per method
 
@@ -46,10 +45,10 @@ are.
 `017-credentials-lib.md`). A shared model would be a facade method in disguise: a change for one
 caller would ripple into the others. The copies share the table and the kernel enums, nothing else.
 
-**The names say where a symbol lives.** A symbol of a common module carries `Common`
-(`AuthCommonModule`, `AUTH_COMMON_PORT`), a symbol of a core module carries `Core`, and a feature
-symbol carries neither. A feature and a common module may share a name, as staff `auth` and staff
-common `auth` do, and the infix keeps them apart.
+**The names say where a symbol lives.** A symbol of a common module carries `Common`, a symbol of a
+core module carries `Core` (`StaffAuthCoreModule`, `STAFF_AUTH_CORE_PORT`), and a feature symbol
+carries neither. A feature and a common or core module may share a name, and the infix keeps them
+apart.
 
 ## Global modules have layers too
 

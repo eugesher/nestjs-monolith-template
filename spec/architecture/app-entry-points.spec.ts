@@ -27,8 +27,6 @@ describe('app entry points', () => {
       '@acme-processor/app/*',
       '@acme-processor/common',
       '@acme-processor/common/*',
-      '@acme-processor/contracts',
-      '@acme-processor/contracts/*',
       '@acme-processor/features',
       '@acme-processor/features/*',
       '@acme-processor/processors',
@@ -37,8 +35,6 @@ describe('app entry points', () => {
       '@acme-staff/app/*',
       '@acme-staff/common',
       '@acme-staff/common/*',
-      '@acme-staff/contracts',
-      '@acme-staff/contracts/*',
       '@acme-staff/features',
       '@acme-staff/features/*',
     ]);
@@ -46,18 +42,14 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff/app/app.module',
-    '@acme-staff/common/modules/auth',
     '@acme-staff/common/shared/concurrency',
     '@acme-staff/common/shared/ledger-record',
-    '@acme-staff/contracts/auth',
     '@acme-staff/features',
     '@acme-customer/app/app.module',
     '@acme-customer/common/shared/ledger-record',
     '@acme-customer/features',
     '@acme-processor/app/app.module',
-    '@acme-processor/common/modules/auth',
     '@acme-processor/common/shared/ledger-record',
-    '@acme-processor/contracts/auth',
     '@acme-processor/features',
     '@acme-processor/processors',
   ])('%s resolves', (source) => {
@@ -79,10 +71,6 @@ describe('app entry points', () => {
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/common/shared/concurrency/decorators/if-match.decorator',
-    ],
-    [
-      'apps/staff-app/src/features/product/__fixture__.ts',
-      '@acme-staff/common/modules/auth/module/auth-common.module',
     ],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',

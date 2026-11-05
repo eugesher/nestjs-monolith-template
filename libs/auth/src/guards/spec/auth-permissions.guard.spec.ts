@@ -4,59 +4,53 @@ import { Reflector } from '@nestjs/core';
 import { AuthPermissionsGuard } from '../auth-permissions.guard';
 
 describe('AuthPermissionsGuard', () => {
-  let findPermissionCodes: jest.Mock;
   let getAllAndOverride: jest.Mock;
   let request: Record<string, unknown>;
   let context: ExecutionContext;
   let guard: AuthPermissionsGuard;
 
   beforeEach(() => {
-    findPermissionCodes = jest.fn().mockResolvedValue(['product:write']);
     getAllAndOverride = jest.fn().mockReturnValue(['product:write']);
-    request = { user: { id: 'user-1' } };
+    request = { user: { id: 'user-1', permissionCodes: ['product:write'] } };
     context = {
       getHandler: () => 'handler',
       getClass: () => 'class',
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;
-    guard = new AuthPermissionsGuard({ findRoles: jest.fn(), findPermissionCodes }, {
-      getAllAndOverride,
-    } as unknown as Reflector);
+    guard = new AuthPermissionsGuard({ getAllAndOverride } as unknown as Reflector);
   });
 
-  it('admits a user holding a required permission, reading the permissions once', async () => {
-    const allowed = await guard.canActivate(context);
+  it('admits a user holding a required permission', () => {
+    const allowed = guard.canActivate(context);
 
     expect(allowed).toBe(true);
     expect(getAllAndOverride).toHaveBeenCalledWith('auth:permissions', ['handler', 'class']);
-    expect(findPermissionCodes).toHaveBeenCalledTimes(1);
-    expect(findPermissionCodes).toHaveBeenCalledWith({ userId: 'user-1' });
   });
 
-  it('lets a route without required permissions through without reading any permissions', async () => {
+  it('lets a route without required permissions through', () => {
     getAllAndOverride.mockReturnValue(undefined);
     request = {};
 
-    const allowed = await guard.canActivate(context);
+    const allowed = guard.canActivate(context);
 
     expect(allowed).toBe(true);
-    expect(findPermissionCodes).not.toHaveBeenCalled();
   });
 
-  it('refuses a user holding none of the required permissions with 403', async () => {
-    findPermissionCodes.mockResolvedValue(['product:read']);
+  it('refuses a user holding none of the required permissions with 403', () => {
+    request = { user: { id: 'user-1', permissionCodes: ['product:read'] } };
 
-    const allowed = guard.canActivate(context);
-
-    await expect(allowed).rejects.toBeInstanceOf(ForbiddenException);
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 
-  it('refuses an anonymous request on a gated route with 403 without reading any permissions', async () => {
+  it('refuses a user whose validator gave no permissions with 403', () => {
+    request = { user: { id: 'user-1' } };
+
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('refuses an anonymous request on a gated route with 403', () => {
     request = {};
 
-    const allowed = guard.canActivate(context);
-
-    await expect(allowed).rejects.toBeInstanceOf(ForbiddenException);
-    expect(findPermissionCodes).not.toHaveBeenCalled();
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 });
