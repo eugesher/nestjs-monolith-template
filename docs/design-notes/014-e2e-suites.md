@@ -83,7 +83,7 @@ records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. 
 `acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull writes its
 own keys at any moment.
 
-**staff-app and customer-app read the job, not the ledger.** Neither consumes the queue, so their
+**staff-app and customer-app read the job, not the ledger.** Neither processes the queue, so their
 contexts have `takeLedgerRecords()`: it returns the data of the waiting jobs of the `ledger-record`
 queue and empties the queue, as `takeRootWarnings()` takes the warnings. A case that enqueues takes
 the jobs, so the next case starts from an empty queue.

@@ -1,17 +1,17 @@
 # 023 — Processor app
 
-`apps/processor-app` runs the background work of the template: the queue consumers and the
+`apps/processor-app` runs the background work of the template: the queue processors and the
 schedules, and serves the staff the failed jobs of its queues. staff-app and customer-app only enqueue. All three apps share one database and one Redis.
 
 | Processor       | Entered by                                       | What it does                                                            |
 | --------------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
-| `ledger`        | a job of the `ledger-record` queue               | appends the record (see `008-queue-consumer.md`)                        |
+| `ledger`        | a job of the `ledger-record` queue               | appends the record (see `008-queue-processor.md`)                       |
 | `idempotency`   | `@Cron(EVERY_HOUR)`                              | deletes the expired idempotency keys (see `009-scheduled-processor.md`) |
 | `product-stock` | a job of the `product-stock-post-subtract` queue | a transaction over two core modules (see below)                         |
 
 ## Why a third app
 
-**Background work scales and fails apart from HTTP.** A consumer inside an HTTP app shares the CPU
+**Background work scales and fails apart from HTTP.** A processor inside an HTTP app shares the CPU
 of the requests, and a schedule inside it runs once per replica: three replicas of staff-app would
 purge three times an hour. processor-app is its own deployable, so the HTTP apps scale with traffic
 and processor-app with the queue.
@@ -63,7 +63,7 @@ guards read.
 
 ## The product-stock processor
 
-`apps/processor-app/src/processors/product-stock` consumes a queue that a core module fills after
+`apps/processor-app/src/processors/product-stock` processes a queue that a core module fills after
 its commits (see `022-enqueue-after-commit.md`). `ProductStockPostSubtractProcessor` opens the
 correlation context of the job and runs one use case in one transaction:
 
@@ -88,5 +88,5 @@ comes after it waits (see `021-pessimistic-locking.md`).
 `yarn start:dev` starts the three apps. The root `docker-compose.yml` runs processor-app on port
 3002 from the same `Dockerfile`, with `APP_NAME=processor-app`.
 
-**Every app points `REDIS_URL` at one Redis.** The producers and the consumer meet only in the
+**Every app points `REDIS_URL` at one Redis.** The producers and the processor meet only in the
 queue: a producer with another Redis enqueues into a queue nobody reads.

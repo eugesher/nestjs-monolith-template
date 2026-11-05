@@ -7,7 +7,7 @@ one processor appends.
 | -------------- | ---------------------------------------------------------------------------------------------------- |
 | queue contract | `core/contracts/src/ledger/queues/ledger-record.queue.ts`                                            |
 | a producer     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts` |
-| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-consumer.md`)                             |
+| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-processor.md`)                            |
 | a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                      |
 
 **Producers enqueue, one processor appends.** No HTTP app writes the table, so the append has one
@@ -40,5 +40,5 @@ The rejected insert still consumes an auto-increment value, so ids may have gaps
 every server stores the same instant.
 
 **The correlation id comes from the context.** The job carries the id of the request that produced
-it, the consumer opens the context with that id, and `LedgerAppendUseCase` reads it with
+it, the processor opens the context with that id, and `LedgerAppendUseCase` reads it with
 `CorrelationContextHelper.current()`.

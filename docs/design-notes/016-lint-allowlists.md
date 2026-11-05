@@ -41,7 +41,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
   and the test helpers of the observability lib;
-- a feature queue adapter and a processor consumer that reach app contracts: a queue between the
+- a feature queue adapter and a processor that reach app contracts: a queue between the
   modules of one app keeps its contract in the app, while a queue written by more than one app
   keeps it in core, `ledger-record` in `@acme-core/contracts/ledger` and
   `product-stock-post-subtract` in `@acme-core/contracts/product-stock`;

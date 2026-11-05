@@ -11,7 +11,7 @@ export const queue = [
       { ...packages('bull'), dependency: { specifiers: ['!Job'] } },
     ],
     message:
-      'a processor consumer only takes Processor, Process and OnQueueFailed from @nestjs/bull and the Job type from bull; queues are registered in common/shared',
+      'a processor only takes Processor, Process and OnQueueFailed from @nestjs/bull and the Job type from bull; queues are registered in common/shared',
   },
   {
     from: {

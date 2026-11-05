@@ -1,6 +1,6 @@
-# 008 — Queue consumer
+# 008 — Queue processor
 
-`apps/processor-app/src/processors/ledger` consumes the `ledger-record` queue and appends
+`apps/processor-app/src/processors/ledger` processes the `ledger-record` queue and appends
 each job to `ledger_entry` (see `004-append-only-journal.md`). It is a processor, not a feature: a job of the
 Bull queue `ledger-record` enters it, not an HTTP request, and it has no
 controller.
@@ -16,7 +16,7 @@ controller.
 ## A job is a ready record
 
 The job type `ILedgerRecordProcessorPayload` carries the whole record, and the processor appends it
-as it is, so a new producer needs no change here. The producers do not consume the queue:
+as it is, so a new producer needs no change here. The producers do not process the queue:
 processor-app does (see `023-processor-app.md`), and the apps reach the queue through one Redis.
 
 The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
@@ -42,7 +42,7 @@ own states it again.
 ## Correlation
 
 A job runs outside any request, so the producer puts the correlation id into the job, and the
-consumer opens the context with `CorrelationContextHelper.run(correlationId, ...)`. The append and
+processor opens the context with `CorrelationContextHelper.run(correlationId, ...)`. The append and
 the ledger row then carry the id of the request that produced the record. The failure handler opens
 the same context, so its log lines carry the id too.
 

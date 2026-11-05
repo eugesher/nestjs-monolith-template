@@ -530,7 +530,7 @@ describe('libs by layer', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('a consumer MAY read the correlation context from the observability lib', async () => {
+  it('a processor MAY read the correlation context from the observability lib', async () => {
     await expect({
       file: 'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
       code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',

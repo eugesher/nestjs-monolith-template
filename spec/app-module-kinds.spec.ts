@@ -74,7 +74,7 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
       ]);
     });
 
-    it('flags the submodule that aggregates modules of its own and the processors without a consumer', () => {
+    it('flags the submodule that aggregates modules of its own and the processors without a .processor.ts', () => {
       expect(
         appModules(root)
           .filter((module) => moduleKindViolationOf(module) !== null)
@@ -240,7 +240,7 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
         },
       ],
       [
-        'a processor without a consumer',
+        'a processor without a .processor.ts',
         {
           relPath: 'x',
           name: 'x',

@@ -325,7 +325,7 @@ describe('core modules', () => {
       }).toPassArchitectureLint();
     });
 
-    it('the module root may NOT consume a queue', async () => {
+    it('the module root may NOT process a queue', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
         code: 'import { Processor } from "@nestjs/bull";',
