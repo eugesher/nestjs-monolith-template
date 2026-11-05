@@ -4,8 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '@acme-libs/auth';
 
 import { AuthLoginUseCase } from '../../application';
-import { AuthAccessTokenResponseDto } from '../dto/auth-access-token-response.dto';
-import { AuthLoginRequestDto } from '../dto/auth-login-request.dto';
+import { AuthAccessTokenResponseDto, AuthLoginRequestDto } from '../dto';
 import { AuthHttpExceptionFilter } from '../filters/auth-http-exception.filter';
 
 @ApiTags('Auth')

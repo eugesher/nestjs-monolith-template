@@ -12,14 +12,16 @@ import {
   NoteGetRevisionsUseCase,
   NoteResolveUseCase,
 } from '../../application';
-import { NoteCreateRequestDto } from '../dto/note-create-request.dto';
-import { NoteEditRequestDto } from '../dto/note-edit-request.dto';
-import { NoteGetManyRequestDto } from '../dto/note-get-many-request.dto';
-import { NoteGetRevisionsRequestDto } from '../dto/note-get-revisions-request.dto';
-import { NoteIdRequestDto } from '../dto/note-id-request.dto';
-import { NotePageResponseDto } from '../dto/note-page-response.dto';
-import { NoteResponseDto } from '../dto/note-response.dto';
-import { NoteRevisionPageResponseDto } from '../dto/note-revision-page-response.dto';
+import {
+  NoteCreateRequestDto,
+  NoteEditRequestDto,
+  NoteGetManyQueryDto,
+  NoteGetRevisionsQueryDto,
+  NoteIdParamDto,
+  NotePageResponseDto,
+  NoteResponseDto,
+  NoteRevisionPageResponseDto,
+} from '../dto';
 import { NoteHttpExceptionFilter } from '../filters/note-http-exception.filter';
 
 @ApiTags('Tools/Note')
@@ -51,7 +53,7 @@ export class NoteController {
   @ApiOperation({ summary: 'Browse your notes, newest first, optionally of one subject' })
   @ApiOkResponse({ type: NotePageResponseDto })
   public async handleGetMany(
-    @Query() query: NoteGetManyRequestDto,
+    @Query() query: NoteGetManyQueryDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NotePageResponseDto> {
     const { page, limit, subjectType, subjectId, resolved } = query;
@@ -70,7 +72,7 @@ export class NoteController {
   @ApiOperation({ summary: 'Read one of your notes' })
   @ApiOkResponse({ type: NoteResponseDto })
   public async handleGetOne(
-    @Param() params: NoteIdRequestDto,
+    @Param() params: NoteIdParamDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
     const { noteId } = params;
@@ -84,7 +86,7 @@ export class NoteController {
   })
   @ApiOkResponse({ type: NoteResponseDto })
   public async handleEdit(
-    @Param() params: NoteIdRequestDto,
+    @Param() params: NoteIdParamDto,
     @Body() request: NoteEditRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
@@ -98,7 +100,7 @@ export class NoteController {
   @ApiOperation({ summary: 'Resolve one of your notes for good; it can no longer be edited' })
   @ApiOkResponse({ type: NoteResponseDto })
   public async handleResolve(
-    @Param() params: NoteIdRequestDto,
+    @Param() params: NoteIdParamDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteResponseDto> {
     const { noteId } = params;
@@ -110,8 +112,8 @@ export class NoteController {
   @ApiOperation({ summary: 'Read the edit history of one of your notes, newest first' })
   @ApiOkResponse({ type: NoteRevisionPageResponseDto })
   public async handleGetRevisions(
-    @Param() params: NoteIdRequestDto,
-    @Query() query: NoteGetRevisionsRequestDto,
+    @Param() params: NoteIdParamDto,
+    @Query() query: NoteGetRevisionsQueryDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<NoteRevisionPageResponseDto> {
     const { noteId } = params;

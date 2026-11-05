@@ -12,11 +12,13 @@ import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 import { IdempotencyKey } from '@acme-libs/http';
 
 import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from '../../application';
-import { OrderGetManyRequestDto } from '../dto/order-get-many-request.dto';
-import { OrderIdRequestDto } from '../dto/order-id-request.dto';
-import { OrderPlaceRequestDto } from '../dto/order-place-request.dto';
-import { OrderResponseDto } from '../dto/order-response.dto';
-import { OrderSummaryPageResponseDto } from '../dto/order-summary-page-response.dto';
+import {
+  OrderGetManyQueryDto,
+  OrderIdParamDto,
+  OrderPlaceRequestDto,
+  OrderResponseDto,
+  OrderSummaryPageResponseDto,
+} from '../dto';
 import { OrderHttpExceptionFilter } from '../filters/order-http-exception.filter';
 
 @ApiTags('Order')
@@ -49,7 +51,7 @@ export class OrderController {
   @ApiOkResponse({ type: OrderSummaryPageResponseDto })
   public async handleGetMany(
     @CurrentUser() user: IAuthCurrentUserView,
-    @Query() query: OrderGetManyRequestDto,
+    @Query() query: OrderGetManyQueryDto,
   ): Promise<OrderSummaryPageResponseDto> {
     const { id: customerId } = user;
     const { page, limit } = query;
@@ -62,7 +64,7 @@ export class OrderController {
   @ApiOkResponse({ type: OrderResponseDto })
   public async handleGetOne(
     @CurrentUser() user: IAuthCurrentUserView,
-    @Param() params: OrderIdRequestDto,
+    @Param() params: OrderIdParamDto,
   ): Promise<OrderResponseDto> {
     const { id: customerId } = user;
     const { orderId } = params;

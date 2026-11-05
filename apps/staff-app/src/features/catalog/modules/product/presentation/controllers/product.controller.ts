@@ -23,14 +23,16 @@ import {
   ProductReplaceTagsUseCase,
   ProductUpdateUseCase,
 } from '../../application';
-import { ProductCreateRequestDto } from '../dto/product-create-request.dto';
-import { ProductGetManyRequestDto } from '../dto/product-get-many-request.dto';
-import { ProductIdRequestDto } from '../dto/product-id-request.dto';
-import { ProductPageResponseDto } from '../dto/product-page-response.dto';
-import { ProductResponseDto } from '../dto/product-response.dto';
-import { ProductTagsReplaceRequestDto } from '../dto/product-tags-replace-request.dto';
-import { ProductTagsResponseDto } from '../dto/product-tags-response.dto';
-import { ProductUpdateRequestDto } from '../dto/product-update-request.dto';
+import {
+  ProductCreateRequestDto,
+  ProductGetManyQueryDto,
+  ProductIdParamDto,
+  ProductPageResponseDto,
+  ProductResponseDto,
+  ProductTagsReplaceRequestDto,
+  ProductTagsResponseDto,
+  ProductUpdateRequestDto,
+} from '../dto';
 import { ProductHttpExceptionFilter } from '../filters/product-http-exception.filter';
 
 @ApiTags('Catalog/Product')
@@ -67,7 +69,7 @@ export class ProductController {
   @ApiOperation({ summary: 'List the catalog products, newest first, optionally by tag' })
   @ApiOkResponse({ type: ProductPageResponseDto })
   public async handleGetMany(
-    @Query() query: ProductGetManyRequestDto,
+    @Query() query: ProductGetManyQueryDto,
   ): Promise<ProductPageResponseDto> {
     const { page, limit, tagId } = query;
 
@@ -78,7 +80,7 @@ export class ProductController {
   @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
   @ApiOperation({ summary: 'Read one catalog product' })
   @ApiOkResponse({ type: ProductResponseDto })
-  public async handleGetOne(@Param() params: ProductIdRequestDto): Promise<ProductResponseDto> {
+  public async handleGetOne(@Param() params: ProductIdParamDto): Promise<ProductResponseDto> {
     const { productId } = params;
 
     return await this.getOne.execute({ productId });
@@ -90,7 +92,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Update the fields of a product (optimistic concurrency)' })
   @ApiOkResponse({ type: ProductResponseDto })
   public async handleUpdate(
-    @Param() params: ProductIdRequestDto,
+    @Param() params: ProductIdParamDto,
     @Body() body: ProductUpdateRequestDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
@@ -108,7 +110,7 @@ export class ProductController {
   })
   @ApiOkResponse({ type: ProductResponseDto })
   public async handlePublish(
-    @Param() params: ProductIdRequestDto,
+    @Param() params: ProductIdParamDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
     const { productId } = params;
@@ -122,7 +124,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Archive a product (optimistic concurrency)' })
   @ApiOkResponse({ type: ProductResponseDto })
   public async handleArchive(
-    @Param() params: ProductIdRequestDto,
+    @Param() params: ProductIdParamDto,
     @IfMatch() expectedVersion: Maybe<number>,
   ): Promise<ProductResponseDto> {
     const { productId } = params;
@@ -134,9 +136,7 @@ export class ProductController {
   @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
   @ApiOperation({ summary: 'Read the tags of a product, by name' })
   @ApiOkResponse({ type: ProductTagsResponseDto })
-  public async handleGetTags(
-    @Param() params: ProductIdRequestDto,
-  ): Promise<ProductTagsResponseDto> {
+  public async handleGetTags(@Param() params: ProductIdParamDto): Promise<ProductTagsResponseDto> {
     const { productId } = params;
 
     return await this.getTags.execute({ productId });
@@ -147,7 +147,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Replace the tags of a product' })
   @ApiOkResponse({ type: ProductTagsResponseDto })
   public async handleReplaceTags(
-    @Param() params: ProductIdRequestDto,
+    @Param() params: ProductIdParamDto,
     @Body() body: ProductTagsReplaceRequestDto,
   ): Promise<ProductTagsResponseDto> {
     const { productId } = params;

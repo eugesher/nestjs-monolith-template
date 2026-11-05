@@ -5,9 +5,7 @@ import { CurrentUser, Public } from '@acme-libs/auth';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { AuthLoginUseCase, AuthMeUseCase } from '../../application';
-import { AuthAccessTokenResponseDto } from '../dto/auth-access-token-response.dto';
-import { AuthLoginRequestDto } from '../dto/auth-login-request.dto';
-import { AuthMeResponseDto } from '../dto/auth-me-response.dto';
+import { AuthAccessTokenResponseDto, AuthLoginRequestDto, AuthMeResponseDto } from '../dto';
 import { AuthHttpExceptionFilter } from '../filters/auth-http-exception.filter';
 
 @ApiTags('Identity/Auth')

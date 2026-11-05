@@ -5,10 +5,12 @@ import { RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../application';
-import { UserAssignRoleRequestDto } from '../dto/user-assign-role-request.dto';
-import { UserRegisterRequestDto } from '../dto/user-register-request.dto';
-import { UserResponseDto } from '../dto/user-response.dto';
-import { UserRolesResponseDto } from '../dto/user-roles-response.dto';
+import {
+  UserAssignRoleRequestDto,
+  UserRegisterRequestDto,
+  UserResponseDto,
+  UserRolesResponseDto,
+} from '../dto';
 import { UserHttpExceptionFilter } from '../filters/user-http-exception.filter';
 
 @ApiTags('Identity/User')

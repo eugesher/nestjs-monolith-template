@@ -9,8 +9,7 @@ import {
 import { Public } from '@acme-libs/auth';
 
 import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../application';
-import { HealthLivenessResponseDto } from '../dto/health-liveness-response.dto';
-import { HealthReadinessResponseDto } from '../dto/health-readiness-response.dto';
+import { HealthLivenessResponseDto, HealthReadinessResponseDto } from '../dto';
 
 @ApiTags('Health')
 @Public()

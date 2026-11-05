@@ -20,11 +20,13 @@ import {
   QueueListUseCase,
   QueueRetryFailedJobUseCase,
 } from '../../application';
-import { QueueFailedJobPageResponseDto } from '../dto/queue-failed-job-page-response.dto';
-import { QueueJobRequestDto } from '../dto/queue-job-request.dto';
-import { QueueListFailedJobsRequestDto } from '../dto/queue-list-failed-jobs-request.dto';
-import { QueueNameRequestDto } from '../dto/queue-name-request.dto';
-import { QueueResponseDto } from '../dto/queue-response.dto';
+import {
+  QueueFailedJobPageResponseDto,
+  QueueJobParamDto,
+  QueueListFailedJobsQueryDto,
+  QueueNameParamDto,
+  QueueResponseDto,
+} from '../dto';
 import { QueueHttpExceptionFilter } from '../filters/queue-http-exception.filter';
 
 @ApiTags('Queues')
@@ -51,8 +53,8 @@ export class QueueController {
   @ApiOperation({ summary: 'Browse the failed jobs of a queue, newest first' })
   @ApiOkResponse({ type: QueueFailedJobPageResponseDto })
   public async handleListFailedJobs(
-    @Param() params: QueueNameRequestDto,
-    @Query() query: QueueListFailedJobsRequestDto,
+    @Param() params: QueueNameParamDto,
+    @Query() query: QueueListFailedJobsQueryDto,
   ): Promise<QueueFailedJobPageResponseDto> {
     const { queueName } = params;
     const { page, limit } = query;
@@ -65,7 +67,7 @@ export class QueueController {
   @RequiresPermission(PermissionCodeEnum.QUEUE_RETRY)
   @ApiOperation({ summary: 'Return a failed job to the queue' })
   @ApiNoContentResponse()
-  public async handleRetryFailedJob(@Param() params: QueueJobRequestDto): Promise<void> {
+  public async handleRetryFailedJob(@Param() params: QueueJobParamDto): Promise<void> {
     await this.retryFailedJob.execute(params);
   }
 
@@ -74,7 +76,7 @@ export class QueueController {
   @RequiresPermission(PermissionCodeEnum.QUEUE_DELETE)
   @ApiOperation({ summary: 'Delete a failed job' })
   @ApiNoContentResponse()
-  public async handleDeleteFailedJob(@Param() params: QueueJobRequestDto): Promise<void> {
+  public async handleDeleteFailedJob(@Param() params: QueueJobParamDto): Promise<void> {
     await this.deleteFailedJob.execute(params);
   }
 }
