@@ -59,11 +59,11 @@ Removing one of them turns its spec red.
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
 (`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency-purge` has a domain
-helper and a repository, `ledger-record` neither. The entries stay, so a processor that grows a layer
+helper and a repository, `ledger` neither. The entries stay, so a processor that grows a layer
 follows the same rules
 a feature does.
 
-`infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger-record`
+`infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger`
 returns the failed jobs to the queue. It takes `InjectQueue` and the `Queue` type and nothing else of
 Bull, under the same rule as a feature queue adapter in `queue.mjs`.
 

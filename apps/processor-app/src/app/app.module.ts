@@ -8,7 +8,7 @@ import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observabil
 import { HealthModule } from '@acme-processor/features';
 import {
   IdempotencyPurgeModule,
-  LedgerRecordModule,
+  LedgerModule,
   ProductStockModule,
 } from '@acme-processor/processors';
 
@@ -28,7 +28,7 @@ import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
     CacheModule,
     HealthModule,
     IdempotencyPurgeModule,
-    LedgerRecordModule,
+    LedgerModule,
     ProductStockModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],

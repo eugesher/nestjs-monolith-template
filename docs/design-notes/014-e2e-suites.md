@@ -94,7 +94,7 @@ waiting, active or delayed, and throws after 100 polls; the jobs run in the e2e 
 queue means the rows are written. `fireSchedule(name)` fires a schedule through `SchedulerRegistry`
 without waiting for it, and `waitFor(description, settled)` polls until the outcome shows. A failing
 job is a record whose `subjectType` is longer than its column, enqueued with `attempts: 1`; the retry
-case fixes it with `job.update` before it fires `ledger-record-retry`.
+case fixes it with `job.update` before it fires `ledger-append-retry`.
 
 The Jest files outside the apps live in `jest/`:
 

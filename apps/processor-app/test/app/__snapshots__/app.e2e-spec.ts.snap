@@ -45,7 +45,7 @@ exports[`App IdempotencyPurge schedule idempotency-purge should purge the keys o
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should append a record replayed under the same operation key only once 1`] = `
+exports[`App Ledger queue ledger-record should append a record replayed under the same operation key only once 1`] = `
 {
   "db": {
     "ledger_entry": [
@@ -58,7 +58,7 @@ exports[`App LedgerRecord queue ledger-record should append a record replayed un
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should append the record as a ledger entry under its correlation id 1`] = `
+exports[`App Ledger queue ledger-record should append the record as a ledger entry under its correlation id 1`] = `
 {
   "db": {
     "ledger_entry": [
@@ -81,7 +81,7 @@ exports[`App LedgerRecord queue ledger-record should append the record as a ledg
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should keep a record that fails its last attempt among the failed jobs 1`] = `
+exports[`App Ledger queue ledger-record should keep a record that fails its last attempt among the failed jobs 1`] = `
 {
   "db": {
     "ledger_entry": [],
@@ -100,7 +100,7 @@ exports[`App LedgerRecord queue ledger-record should keep a record that fails it
 }
 `;
 
-exports[`App LedgerRecord schedule ledger-record-retry should return a failed record to the queue and append it once its cause is gone 1`] = `
+exports[`App Ledger schedule ledger-append-retry should return a failed record to the queue and append it once its cause is gone 1`] = `
 {
   "db": {
     "ledger_entry": [

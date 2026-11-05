@@ -7,7 +7,7 @@ one processor appends.
 | -------------- | ---------------------------------------------------------------------------------------------------- |
 | queue contract | `core/contracts/src/ledger/queues/ledger-record.queue.ts`                                            |
 | a producer     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts` |
-| the appender   | `apps/processor-app/src/processors/ledger-record` (see `008-queue-consumer.md`)                      |
+| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-consumer.md`)                             |
 | a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                      |
 
 **Producers enqueue, one processor appends.** No HTTP app writes the table, so the append has one
@@ -17,13 +17,13 @@ another.
 
 ## Append is the only verb
 
-**An entry is a frozen value object.** `LedgerRecordEntryModel`
-(`apps/processor-app/src/processors/ledger-record/domain/models/ledger-record-entry.model.ts`)
+**An entry is a frozen value object.** `LedgerAppendEntryModel`
+(`apps/processor-app/src/processors/ledger/domain/models/ledger-append-entry.model.ts`)
 calls `Object.freeze`, has no behavior beyond its invariants, and a broken invariant throws a plain
 `Error`: it is a programming mistake of a producer, not a refusal a client sees.
 
 **The operation key makes the append idempotent.** Every record carries an `operationKey` with a
-UNIQUE index. `LedgerRecordAppendRepository` catches exactly the duplicate-key error, reads the id
+UNIQUE index. `LedgerAppendRepository` catches exactly the duplicate-key error, reads the id
 of the existing row and answers `{ id, appended: false }`, so a job delivered twice gets one row and
 no exception. Any other database error passes through, and Bull retries the job.
 
@@ -35,10 +35,10 @@ The rejected insert still consumes an auto-increment value, so ids may have gaps
 
 ## Time and correlation
 
-**An instant must carry its zone.** `LedgerRecordHelper.parseInstant` refuses
+**An instant must carry its zone.** `LedgerAppendHelper.parseInstant` refuses
 `2026-01-01T00:00:00`, because `Date` would read it in the server's zone. With `Z` or an offset,
 every server stores the same instant.
 
 **The correlation id comes from the context.** The job carries the id of the request that produced
-it, the consumer opens the context with that id, and `LedgerRecordAppendUseCase` reads it with
+it, the consumer opens the context with that id, and `LedgerAppendUseCase` reads it with
 `CorrelationContextHelper.current()`.

@@ -1,18 +1,18 @@
 # 008 — Queue consumer
 
-`apps/processor-app/src/processors/ledger-record` consumes the `ledger-record` queue and appends
+`apps/processor-app/src/processors/ledger` consumes the `ledger-record` queue and appends
 each job to `ledger_entry` (see `004-append-only-journal.md`). It is a processor, not a feature: a job of the
 Bull queue `ledger-record` or a daily schedule enters it, not an HTTP request, and it has no
 controller.
 
 | Layer                        | What it holds                                                                                                |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `presentation`               | `LedgerRecordConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
-| `application`                | `LedgerRecordAppendUseCase`, `LedgerRecordReportFailureUseCase`, `LedgerRecordRetryFailedUseCase`            |
-| `domain`                     | `LedgerRecordEntryModel`, `LedgerRecordHelper`                                                               |
-| `outbound`                   | `LEDGER_RECORD_APPEND_REPOSITORY_PORT`, `LEDGER_RECORD_QUEUE_PORT`                                           |
-| `infrastructure/persistence` | `LedgerRecordAppendRepository` over `ledger_entry`                                                           |
-| `infrastructure/queue`       | `LedgerRecordQueueAdapter` over the `ledger-record` queue                                                    |
+| `presentation`               | `LedgerAppendConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one, `@Cron` for the daily retry |
+| `application`                | `LedgerAppendUseCase`, `LedgerAppendReportFailureUseCase`, `LedgerAppendRetryFailedUseCase`                  |
+| `domain`                     | `LedgerAppendEntryModel`, `LedgerAppendHelper`                                                               |
+| `outbound`                   | `LEDGER_APPEND_REPOSITORY_PORT`, `LEDGER_APPEND_QUEUE_PORT`                                                  |
+| `infrastructure/persistence` | `LedgerAppendRepository` over `ledger_entry`                                                                 |
+| `infrastructure/queue`       | `LedgerAppendQueueAdapter` over the `ledger-record` queue                                                    |
 
 ## A job is a ready record
 
@@ -49,10 +49,10 @@ the same context, so its log lines carry the id too.
 
 ## Failures
 
-`LedgerRecordAppendUseCase` parses the instant, builds the entry under the correlation id of the
-job and appends it through `LEDGER_RECORD_APPEND_REPOSITORY_PORT`. It lets a failed append throw,
+`LedgerAppendUseCase` parses the instant, builds the entry under the correlation id of the
+job and appends it through `LEDGER_APPEND_REPOSITORY_PORT`. It lets a failed append throw,
 so Bull retries the job. Every failed attempt
-reaches `@OnQueueFailed`, and `LedgerRecordReportFailureUseCase` logs it: at `warn` while attempts are
+reaches `@OnQueueFailed`, and `LedgerAppendReportFailureUseCase` logs it: at `warn` while attempts are
 left, at `error` after the last one. A job that ran out of attempts stays in the failed set of the
 queue until the daily retry returns it to the queue (see below).
 
@@ -60,10 +60,10 @@ A retry of a job that did append is harmless: the ledger answers `appended: fals
 
 ## Retrying the failed records
 
-**One consumer serves the queue and its failures.** `handleRetryTick` of `LedgerRecordConsumer`
-runs once a day at 03:00 under `@Cron` named `ledger-record-retry`, and
-`LedgerRecordRetryFailedUseCase` moves every job of the failed set back to the waiting list through
-`LEDGER_RECORD_QUEUE_PORT`. `LedgerRecordQueueAdapter` calls `getFailed()`, then `job.retry()` on
+**One consumer serves the queue and its failures.** `handleRetryTick` of `LedgerAppendConsumer`
+runs once a day at 03:00 under `@Cron` named `ledger-append-retry`, and
+`LedgerAppendRetryFailedUseCase` moves every job of the failed set back to the waiting list through
+`LEDGER_APPEND_QUEUE_PORT`. `LedgerAppendQueueAdapter` calls `getFailed()`, then `job.retry()` on
 each.
 
 **Every failed job is retried, whatever its age.** A job lands in the failed set only after its last

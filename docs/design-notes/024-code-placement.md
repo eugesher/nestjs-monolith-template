@@ -24,7 +24,7 @@ Everything else sits with its only caller, for example:
 
 | Code                                   | Lives in                                              |
 | -------------------------------------- | ----------------------------------------------------- |
-| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger-record`     |
+| the append to `ledger_entry`           | `apps/processor-app/src/processors/ledger`            |
 | the read of `ledger_entry`             | `apps/staff-app/src/features/ledger`                  |
 | the delete of expired idempotency keys | `apps/processor-app/src/processors/idempotency-purge` |
 | a login                                | `apps/<app>/src/features/**/auth`                     |

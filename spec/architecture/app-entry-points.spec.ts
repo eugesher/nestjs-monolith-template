@@ -67,10 +67,7 @@ describe('app entry points', () => {
   it.each([
     ['apps/staff-app/src/app/app.module.ts', '@acme-staff/features/health/health.module'],
     ['apps/customer-app/src/app/app.module.ts', '@acme-customer/features/health/health.module'],
-    [
-      'apps/processor-app/src/app/app.module.ts',
-      '@acme-processor/processors/ledger-record/ledger-record.module',
-    ],
+    ['apps/processor-app/src/app/app.module.ts', '@acme-processor/processors/ledger/ledger.module'],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/app/setup/config/config-setup.module',
@@ -194,7 +191,7 @@ describe('app entry points', () => {
   it('apps/processor-app/src/app/app.module.ts MAY import the processors of its own app by @acme-processor/processors', async () => {
     await expect({
       file: 'apps/processor-app/src/app/app.module.ts',
-      code: 'import { LedgerRecordModule } from "@acme-processor/processors";',
+      code: 'import { LedgerModule } from "@acme-processor/processors";',
     }).toPassArchitectureLint();
   });
 
@@ -206,7 +203,7 @@ describe('app entry points', () => {
   ])('%s may NOT import the processor-app processors index', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerRecordModule } from "@acme-processor/processors";',
+      code: 'import { LedgerModule } from "@acme-processor/processors";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -269,7 +266,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.consumer.ts',
     'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
     'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
@@ -284,7 +281,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.consumer.ts',
     'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
     'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
@@ -297,7 +294,7 @@ describe('app entry points', () => {
 
   it.each([
     [
-      'apps/processor-app/src/processors/ledger-record/ledger-record.module.ts',
+      'apps/processor-app/src/processors/ledger/ledger.module.ts',
       '@acme-processor/common/shared/ledger-record',
     ],
     [

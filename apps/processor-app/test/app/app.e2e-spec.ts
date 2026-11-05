@@ -3,7 +3,7 @@ import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
 import { HealthE2E } from '../features';
-import { IdempotencyPurgeE2E, LedgerRecordE2E, ProductStockE2E } from '../processors';
+import { IdempotencyPurgeE2E, LedgerE2E, ProductStockE2E } from '../processors';
 
 describe('App', () => {
   jest.setTimeout(90000);
@@ -11,7 +11,7 @@ describe('App', () => {
   const ctx = new AppE2EContext();
 
   const healthE2E = HealthE2E.of(ctx);
-  const ledgerRecordE2E = LedgerRecordE2E.of(ctx);
+  const ledgerE2E = LedgerE2E.of(ctx);
   const idempotencyPurgeE2E = IdempotencyPurgeE2E.of(ctx);
   const productStockE2E = ProductStockE2E.of(ctx);
 
@@ -39,9 +39,9 @@ describe('App', () => {
     healthE2E.ready();
   });
 
-  describe('LedgerRecord', () => {
-    ledgerRecordE2E.handleRecord();
-    ledgerRecordE2E.handleRetryTick();
+  describe('Ledger', () => {
+    ledgerE2E.handleRecord();
+    ledgerE2E.handleRetryTick();
   });
 
   describe('IdempotencyPurge', () => {
