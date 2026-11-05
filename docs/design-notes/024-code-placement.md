@@ -13,12 +13,13 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 
 ## What lives where today
 
-| Module               | Methods                        | Callers                                                                      |
-| -------------------- | ------------------------------ | ---------------------------------------------------------------------------- |
-| core `idempotency`   | `claim`, `complete`, `release` | staff `product`, customer `order`                                            |
-| core `product`       | `archive`                      | staff `product`, the processor `product-stock`                               |
-| core `product-stock` | `lock`, `move`                 | staff `product`, customer `order`, `lock` also the processor `product-stock` |
-| core `staff-auth`    | `findSubject`, `findByEmail`   | `app/global/auth` and `auth` of staff-app and of processor-app               |
+| Module               | Methods                             | Callers                                                                      |
+| -------------------- | ----------------------------------- | ---------------------------------------------------------------------------- |
+| core `idempotency`   | `claim`, `complete`, `release`      | staff `product`, customer `order`                                            |
+| core `product`       | `archive`                           | staff `product`, the processor `product-stock`                               |
+| core `product-stock` | `lock`, `move`                      | staff `product`, customer `order`, `lock` also the processor `product-stock` |
+| core `staff-auth`    | `findSubject`, `findByEmail`        | `app/global/auth` and `auth` of staff-app and of processor-app               |
+| common `tag`         | `find`, `replace`, `findSubjectIds` | staff `product`, staff `order`                                               |
 
 Everything else sits with its only caller, for example:
 
@@ -28,6 +29,7 @@ Everything else sits with its only caller, for example:
 | the read of `ledger_entry`                  | `apps/staff-app/src/features/ledger`            |
 | the delete of expired idempotency keys      | `apps/processor-app/src/processors/idempotency` |
 | the password check and the token of a login | `apps/<app>/src/features/**/auth`               |
+| the create, list, rename and delete of tags | `apps/staff-app/src/features/tools/modules/tag` |
 
 ## Why per method
 

@@ -1,0 +1,23 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import { ITagCommonFindSubjectIdsCommand } from '@acme-staff/contracts/tag';
+
+import {
+  type ITagCommonFindSubjectIdsRepositoryPort,
+  TAG_COMMON_FIND_SUBJECT_IDS_REPOSITORY_PORT,
+} from '../../outbound';
+
+@Injectable()
+export class TagCommonFindSubjectIdsUseCase {
+  constructor(
+    @Inject(TAG_COMMON_FIND_SUBJECT_IDS_REPOSITORY_PORT)
+    private readonly repository: ITagCommonFindSubjectIdsRepositoryPort,
+  ) {}
+
+  public async execute(command: ITagCommonFindSubjectIdsCommand): Promise<string[]> {
+    const { subjectType, tagId } = command;
+    const records = await this.repository.list({ subjectType, tagId });
+
+    return records.map((record) => record.subjectId);
+  }
+}

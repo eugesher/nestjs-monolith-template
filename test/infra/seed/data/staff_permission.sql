@@ -11,4 +11,7 @@ VALUES
   (11, 'product:restock'),
   (12, 'queue:read'),
   (13, 'queue:retry'),
-  (14, 'queue:delete');
+  (14, 'queue:delete'),
+  (15, 'order:write'),
+  (16, 'tag:read'),
+  (17, 'tag:write');

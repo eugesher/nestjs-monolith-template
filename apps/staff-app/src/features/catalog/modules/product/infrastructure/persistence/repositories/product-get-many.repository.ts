@@ -25,9 +25,8 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
   }
 
   public async list(query: IProductGetManyListQuery): Promise<IProductGetManyRecord> {
-    const { limit, offset } = query;
-
-    return await this.productRepository
+    const { limit, offset, productIds } = query;
+    const builder = this.productRepository
       .createQueryBuilder('Product')
       .select([
         'Product.id',
@@ -37,10 +36,12 @@ export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
         'Product.version',
         'Product.createdAt',
         'Product.updatedAt',
-      ])
-      .orderBy('Product.id', 'DESC')
-      .skip(offset)
-      .take(limit)
-      .getManyAndCount();
+      ]);
+
+    if (productIds !== undefined) {
+      builder.where('Product.id IN (:...productIds)', { productIds });
+    }
+
+    return await builder.orderBy('Product.id', 'DESC').skip(offset).take(limit).getManyAndCount();
   }
 }

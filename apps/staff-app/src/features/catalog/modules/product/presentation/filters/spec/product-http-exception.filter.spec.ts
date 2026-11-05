@@ -10,6 +10,7 @@ import {
   ProductNotFoundException,
   ProductSkuInvalidException,
   ProductSkuTakenException,
+  ProductTagNotFoundException,
   ProductVersionInvalidException,
   ProductVersionMismatchException,
 } from '../../../domain';
@@ -55,6 +56,7 @@ describe('ProductHttpExceptionFilter', () => {
       422,
       new ProductIdempotencyKeyReusedException('key-1', 'domain message'),
     ],
+    ['PRODUCT_TAG_NOT_FOUND', 422, new ProductTagNotFoundException(['999'], 'domain message')],
   ])(
     'maps %s to %i with the code and the domain message in the body',
     (code, status, exception) => {
@@ -84,6 +86,19 @@ describe('ProductHttpExceptionFilter', () => {
       message: 'domain message',
       code: 'VERSION_MISMATCH',
       details: { currentVersion: 4 },
+    });
+  });
+
+  it('adds the missing tags to the body', () => {
+    filter.catch(new ProductTagNotFoundException(['998', '999']), {} as ArgumentsHost);
+
+    const [error] = httpExceptionFilter.catch.mock.calls[0];
+
+    expect(error.getResponse()).toEqual({
+      statusCode: 422,
+      message: 'Some of the tags do not exist',
+      code: 'PRODUCT_TAG_NOT_FOUND',
+      details: { missingTagIds: ['998', '999'] },
     });
   });
 });

@@ -34,4 +34,24 @@ describe('ProductGetManyRequestDto', () => {
     expect(errors[0].property).toBe(property);
     expect(Object.keys(errors[0].constraints ?? {})).toEqual(constraints);
   });
+
+  it('accepts a tag id', () => {
+    const dto = plainToInstance(ProductGetManyRequestDto, { tagId: '300' });
+
+    const errors = validateSync(dto);
+
+    expect(errors).toEqual([]);
+  });
+
+  it.each([
+    ['zero', '0'],
+    ['a word', 'fragile'],
+  ])('rejects %s as the tag id', (_case, tagId) => {
+    const dto = plainToInstance(ProductGetManyRequestDto, { tagId });
+
+    const errors = validateSync(dto);
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].constraints).toEqual({ matches: 'tagId must be a positive integer' });
+  });
 });

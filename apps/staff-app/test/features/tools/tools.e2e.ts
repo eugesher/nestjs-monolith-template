@@ -1,15 +1,17 @@
 import { AppE2EContext } from '../../context/app-e2e.context';
 import { NoteE2E } from './modules/note.e2e';
 import { ReminderE2E } from './modules/reminder.e2e';
+import { TagE2E } from './modules/tag.e2e';
 
 export class ToolsE2E {
   private constructor(
     private readonly noteE2E: NoteE2E,
     private readonly reminderE2E: ReminderE2E,
+    private readonly tagE2E: TagE2E,
   ) {}
 
   public static of(ctx: AppE2EContext): ToolsE2E {
-    return new ToolsE2E(NoteE2E.of(ctx), ReminderE2E.of(ctx));
+    return new ToolsE2E(NoteE2E.of(ctx), ReminderE2E.of(ctx), TagE2E.of(ctx));
   }
 
   public execute(): void {
@@ -30,6 +32,13 @@ export class ToolsE2E {
       this.reminderE2E.handleComplete();
       this.reminderE2E.handleReschedule();
       this.reminderE2E.handleDelete();
+    });
+
+    describe('Tag', () => {
+      this.tagE2E.handleGetMany();
+      this.tagE2E.handleCreate();
+      this.tagE2E.handleRename();
+      this.tagE2E.handleDelete();
     });
   }
 }

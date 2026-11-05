@@ -18,7 +18,9 @@ import {
   ProductCreateUseCase,
   ProductGetManyUseCase,
   ProductGetOneUseCase,
+  ProductGetTagsUseCase,
   ProductPublishUseCase,
+  ProductReplaceTagsUseCase,
   ProductUpdateUseCase,
 } from '../../application';
 import { ProductCreateRequestDto } from '../dto/product-create-request.dto';
@@ -26,6 +28,8 @@ import { ProductGetManyRequestDto } from '../dto/product-get-many-request.dto';
 import { ProductIdRequestDto } from '../dto/product-id-request.dto';
 import { ProductPageResponseDto } from '../dto/product-page-response.dto';
 import { ProductResponseDto } from '../dto/product-response.dto';
+import { ProductTagsReplaceRequestDto } from '../dto/product-tags-replace-request.dto';
+import { ProductTagsResponseDto } from '../dto/product-tags-response.dto';
 import { ProductUpdateRequestDto } from '../dto/product-update-request.dto';
 import { ProductHttpExceptionFilter } from '../filters/product-http-exception.filter';
 
@@ -40,6 +44,8 @@ export class ProductController {
     private readonly update: ProductUpdateUseCase,
     private readonly publish: ProductPublishUseCase,
     private readonly archive: ProductArchiveUseCase,
+    private readonly getTags: ProductGetTagsUseCase,
+    private readonly replaceTags: ProductReplaceTagsUseCase,
   ) {}
 
   @Post()
@@ -58,14 +64,14 @@ export class ProductController {
 
   @Get()
   @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
-  @ApiOperation({ summary: 'List the catalog products, newest first' })
+  @ApiOperation({ summary: 'List the catalog products, newest first, optionally by tag' })
   @ApiOkResponse({ type: ProductPageResponseDto })
   public async handleGetMany(
     @Query() query: ProductGetManyRequestDto,
   ): Promise<ProductPageResponseDto> {
-    const { page, limit } = query;
+    const { page, limit, tagId } = query;
 
-    return await this.getMany.execute({ page, limit });
+    return await this.getMany.execute({ page, limit, tagId });
   }
 
   @Get(':productId')
@@ -122,5 +128,31 @@ export class ProductController {
     const { productId } = params;
 
     return await this.archive.execute({ productId, expectedVersion });
+  }
+
+  @Get(':productId/tags')
+  @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
+  @ApiOperation({ summary: 'Read the tags of a product, by name' })
+  @ApiOkResponse({ type: ProductTagsResponseDto })
+  public async handleGetTags(
+    @Param() params: ProductIdRequestDto,
+  ): Promise<ProductTagsResponseDto> {
+    const { productId } = params;
+
+    return await this.getTags.execute({ productId });
+  }
+
+  @Put(':productId/tags')
+  @RequiresPermission(PermissionCodeEnum.PRODUCT_WRITE)
+  @ApiOperation({ summary: 'Replace the tags of a product' })
+  @ApiOkResponse({ type: ProductTagsResponseDto })
+  public async handleReplaceTags(
+    @Param() params: ProductIdRequestDto,
+    @Body() body: ProductTagsReplaceRequestDto,
+  ): Promise<ProductTagsResponseDto> {
+    const { productId } = params;
+    const { tagIds } = body;
+
+    return await this.replaceTags.execute({ productId, tagIds });
   }
 }

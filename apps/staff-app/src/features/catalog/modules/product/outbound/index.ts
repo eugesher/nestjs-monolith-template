@@ -6,7 +6,9 @@ export * from './ports/product-create-repository.port';
 export * from './ports/product-get-many-repository.port';
 export * from './ports/product-idempotency.port';
 export * from './ports/product-ledger-record.port';
+export * from './ports/product-replace-tags-repository.port';
 export * from './ports/product-status.port';
+export * from './ports/product-tag.port';
 export * from './ports/product-write-repository.port';
 
 export * from './tokens/product-ledger-record-timeout-ms.token';

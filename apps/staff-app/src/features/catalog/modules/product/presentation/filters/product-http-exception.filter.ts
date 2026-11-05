@@ -16,6 +16,7 @@ export class ProductHttpExceptionFilter implements ExceptionFilter<ProductBaseEx
     [ProductErrorCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT]: HttpStatus.CONFLICT,
     [ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH]: HttpStatus.CONFLICT,
     [ProductErrorCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED]: HttpStatus.UNPROCESSABLE_ENTITY,
+    [ProductErrorCodeEnum.PRODUCT_TAG_NOT_FOUND]: HttpStatus.UNPROCESSABLE_ENTITY,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

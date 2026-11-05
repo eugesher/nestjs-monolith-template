@@ -14,7 +14,7 @@ import {
   StaffUser,
   StaffUserRole,
 } from '@acme-core/entities';
-import { Note, NoteRevision, Reminder } from '@acme-staff/common/entities';
+import { Note, NoteRevision, Reminder, SubjectTag, Tag } from '@acme-staff/common/entities';
 
 export const entities: TypeOrmModuleOptions['entities'] = [
   Customer,
@@ -32,4 +32,6 @@ export const entities: TypeOrmModuleOptions['entities'] = [
   StaffRolePermission,
   StaffUser,
   StaffUserRole,
+  SubjectTag,
+  Tag,
 ];

@@ -12,6 +12,8 @@ export class SalesE2E {
     describe('Order', () => {
       this.orderE2E.handleGetMany();
       this.orderE2E.handleGetOne();
+      this.orderE2E.handleGetTags();
+      this.orderE2E.handleReplaceTags();
     });
   }
 }

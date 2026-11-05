@@ -40,6 +40,8 @@
       "@acme-staff/app/*": ["./apps/staff-app/src/app/*"],
       "@acme-staff/common": ["./apps/staff-app/src/common"],
       "@acme-staff/common/*": ["./apps/staff-app/src/common/*"],
+      "@acme-staff/contracts": ["./apps/staff-app/src/contracts"],
+      "@acme-staff/contracts/*": ["./apps/staff-app/src/contracts/*"],
       "@acme-staff/features": ["./apps/staff-app/src/features"],
       "@acme-staff/features/*": ["./apps/staff-app/src/features/*"],
       "@acme-core/contracts": ["./core/contracts/src"],
