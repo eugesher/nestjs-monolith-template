@@ -819,6 +819,9 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
           "product:read",
           "product:restock",
           "product:write",
+          "queue:delete",
+          "queue:read",
+          "queue:retry",
         ],
       },
       {
@@ -838,6 +841,7 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
           "ledger:read",
           "order:read",
           "product:read",
+          "queue:read",
         ],
       },
     ],
@@ -891,7 +895,7 @@ exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refu
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read",
+        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read, queue:read, queue:retry, queue:delete",
       ],
       "statusCode": 400,
     },

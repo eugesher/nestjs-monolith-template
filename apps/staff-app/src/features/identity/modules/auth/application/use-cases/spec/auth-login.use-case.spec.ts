@@ -6,13 +6,14 @@ import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/tes
 import { AuthLoginUseCase } from '../auth-login.use-case';
 
 describe('AuthLoginUseCase', () => {
-  let repository: { findByEmail: jest.Mock };
+  let identity: { findSubject: jest.Mock; findByEmail: jest.Mock };
   let credentials: { issueAccessToken: jest.Mock; verifyPassword: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: AuthLoginUseCase;
 
   beforeEach(() => {
-    repository = {
+    identity = {
+      findSubject: jest.fn(),
       findByEmail: jest.fn().mockResolvedValue({
         id: 'user-1',
         email: 'editor@example.com',
@@ -25,7 +26,7 @@ describe('AuthLoginUseCase', () => {
       verifyPassword: jest.fn().mockResolvedValue(true),
     };
     logger = makePinoLoggerMock();
-    useCase = new AuthLoginUseCase(repository, credentials, logger as unknown as PinoLogger);
+    useCase = new AuthLoginUseCase(identity, credentials, logger as unknown as PinoLogger);
   });
 
   it('issues an access token for the right password', async () => {
@@ -35,7 +36,7 @@ describe('AuthLoginUseCase', () => {
     });
 
     expect(view).toEqual({ accessToken: 'access-token' });
-    expect(repository.findByEmail).toHaveBeenCalledWith('editor@example.com');
+    expect(identity.findByEmail).toHaveBeenCalledWith({ email: 'editor@example.com' });
     expect(credentials.verifyPassword).toHaveBeenCalledWith({
       passwordHash: 'hash',
       password: 'correct-horse',
@@ -45,7 +46,7 @@ describe('AuthLoginUseCase', () => {
   });
 
   it('rejects an unknown email with the same error as a wrong password', async () => {
-    repository.findByEmail.mockResolvedValue(null);
+    identity.findByEmail.mockResolvedValue(null);
 
     const login = useCase.execute({ email: 'ghost@example.com', password: 'correct-horse' });
 
@@ -74,7 +75,7 @@ describe('AuthLoginUseCase', () => {
   });
 
   it('rejects a disabled user after checking the password', async () => {
-    repository.findByEmail.mockResolvedValue({
+    identity.findByEmail.mockResolvedValue({
       id: 'user-1',
       email: 'editor@example.com',
       passwordHash: 'hash',

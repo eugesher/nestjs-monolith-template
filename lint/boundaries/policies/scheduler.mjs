@@ -10,7 +10,7 @@ export const scheduler = [
       },
     ],
     message:
-      'a processor consumer only schedules with Cron and CronExpression from @nestjs/schedule; the app sets up ScheduleModule',
+      'a processor only schedules with Cron and CronExpression from @nestjs/schedule; the app sets up ScheduleModule',
   },
   {
     from: { file: { categories: ['acme-app:app:module', 'acme-app:app'] } },
@@ -18,7 +18,7 @@ export const scheduler = [
       { ...packages('@nestjs/schedule'), dependency: { specifiers: ['!ScheduleModule'] } },
     ],
     message:
-      'the app only sets up ScheduleModule from @nestjs/schedule; schedules belong to processor consumers',
+      'the app only sets up ScheduleModule from @nestjs/schedule; schedules belong to processors',
   },
   {
     from: { file: { categories: 'acme-app:test' } },

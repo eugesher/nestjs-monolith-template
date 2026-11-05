@@ -8,4 +8,7 @@ export enum PermissionCodeEnum {
   PRODUCT_ARCHIVE = 'product:archive',
   PRODUCT_RESTOCK = 'product:restock',
   ORDER_READ = 'order:read',
+  QUEUE_READ = 'queue:read',
+  QUEUE_RETRY = 'queue:retry',
+  QUEUE_DELETE = 'queue:delete',
 }

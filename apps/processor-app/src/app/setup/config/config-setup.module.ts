@@ -30,6 +30,12 @@ export class ConfigSetupModule {
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
         QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
 
+        JWT_SECRET: Joi.string().min(32).required(),
+        JWT_EXPIRES_IN: Joi.string().default('30d'),
+        AUTH_ARGON2_MEMORY_COST: Joi.number().integer().positive().default(19_456),
+        AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().default(2),
+        AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().default(1),
+
         LOG_LEVEL: Joi.string()
           .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace')
           .optional(),

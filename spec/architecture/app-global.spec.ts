@@ -62,10 +62,26 @@ describe('global modules (app/global) — modules without controllers', () => {
     }).toPassArchitectureLint();
   });
 
-  it('the module root may NOT mount a core module — what one app needs lives in that app', async () => {
+  it('the module root MAY mount a core module — the staff subject of two apps lives in core', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/module/__fixture__.ts',
       code: 'import { x } from "../../../../../../../core/modules/src/__identity-fixture__";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a core adapter MAY reach the core contracts and its own outbound', async () => {
+    await expect({
+      file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+      code:
+        'import { x } from "../../../../../../../../core/contracts/src/__identity-fixture__";\n' +
+        'import { y } from "../../outbound";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a core adapter may NOT reach the core entities', async () => {
+    await expect({
+      file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
+      code: 'import { x } from "../../../../../../../../core/entities/src";',
     }).toBreakRule('boundaries/dependencies');
   });
 

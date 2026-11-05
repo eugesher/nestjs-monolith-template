@@ -10,6 +10,10 @@ Object.assign(process.env, {
   IDEMPOTENCY_KEY_TTL_HOURS: '24',
   LEDGER_RETRY_ATTEMPTS: '3',
   QUEUE_RETRY_ATTEMPTS: '3',
+  JWT_SECRET: 'e2e-secret-at-least-32-characters-long',
+  AUTH_ARGON2_MEMORY_COST: '19456',
+  AUTH_ARGON2_TIME_COST: '2',
+  AUTH_ARGON2_PARALLELISM: '1',
   LOG_LEVEL: 'error',
   OTEL_SDK_DISABLED: 'true',
 });

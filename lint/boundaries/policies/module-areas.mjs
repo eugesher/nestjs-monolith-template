@@ -81,7 +81,7 @@ const areaPolicies = (area, sharedFacing) => {
     from(`${prefix}:infrastructure:queue`, [
       layer('outbound'),
       to('acme-app:contracts', own('app')),
-      to('acme-core:contracts', { module: 'ledger' }),
+      to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
       baseLibs(),
       ...sharedFacing.queue,
     ]),

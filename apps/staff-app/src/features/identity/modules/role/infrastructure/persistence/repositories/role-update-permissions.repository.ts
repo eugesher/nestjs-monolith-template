@@ -7,7 +7,7 @@ import {
 } from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-staff/common/entities';
+import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 import {
   IRoleUpdatePermissionsRoleRecord,

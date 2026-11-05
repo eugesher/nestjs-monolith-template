@@ -6,11 +6,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Public } from '@acme-libs/auth';
+
 import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../application';
 import { HealthLivenessResponseDto } from '../dto/health-liveness-response.dto';
 import { HealthReadinessResponseDto } from '../dto/health-readiness-response.dto';
 
 @ApiTags('Health')
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

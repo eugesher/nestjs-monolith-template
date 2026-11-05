@@ -6,7 +6,7 @@ import {
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-staff/common/entities';
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
 
 import {
   IUserRegisterRepositoryPort,

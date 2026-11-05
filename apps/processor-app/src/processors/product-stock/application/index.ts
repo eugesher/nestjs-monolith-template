@@ -1,1 +1,1 @@
-export * from './use-cases/product-stock-archive-out-of-stock.use-case';
+export * from './use-cases/product-stock-post-subtract.use-case';

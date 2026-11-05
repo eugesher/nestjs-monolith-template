@@ -3,7 +3,7 @@
 staff-app, customer-app and processor-app are three deployables over one module graph: each has its
 own `main.ts`, its own `AppModule` and its own port, and all three read the same database and Redis.
 staff-app and customer-app serve HTTP; processor-app serves only the health probes and runs the
-queue consumers and the schedules (see `023-processor-app.md`).
+queue processors and the schedules (see `023-processor-app.md`).
 
 ## main.ts
 
@@ -64,7 +64,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
 | `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                                                         |
 | `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
-| features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the consumers                                                                |
+| features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                               |
 | `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
 | `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
 
@@ -79,7 +79,7 @@ feature first and hands the response to `HttpExceptionFilter`.
 route and opens the context with `run`, never with `enterWith`. It stores the id under `CLS_ID`.
 `TypeOrmSetupModule` adds the transactional plugin with `ClsModule.registerPlugins`, and
 `TRANSACTION_PORT.run` opens a nested context with `ifNested: 'inherit'`, so the id stays inside
-the transaction. A consumer or a tick has no request, so `CorrelationContextHelper.run` opens a
+the transaction. A queue job or a tick has no request, so `CorrelationContextHelper.run` opens a
 context of its own (`ifNested: 'override'`).
 
 **The context and the request logger see one id.** Both call `CorrelationIdHelper.resolve`, which

@@ -40,7 +40,7 @@ apps/<app>/test/
 ```
 
 `processors/` exists in processor-app only: a processor class has one public method per entry,
-`handleRecord()` for a queue and `handleTick()` or `handleRetryTick()` for a schedule.
+`handleRecord()` for a queue and `handleTick()` for a schedule.
 
 **`app.e2e-spec.ts` is the only Jest entry.** The app boots once, in `beforeAll`. The entry holds
 one `describe` per feature and calls the methods of the feature class inside it:
@@ -83,7 +83,7 @@ records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. 
 `acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull writes its
 own keys at any moment.
 
-**staff-app and customer-app read the job, not the ledger.** Neither consumes the queue, so their
+**staff-app and customer-app read the job, not the ledger.** Neither processes the queue, so their
 contexts have `takeLedgerRecords()`: it returns the data of the waiting jobs of the `ledger-record`
 queue and empties the queue, as `takeRootWarnings()` takes the warnings. A case that enqueues takes
 the jobs, so the next case starts from an empty queue.
@@ -93,8 +93,8 @@ and read the ledger. `waitForLedgerRecordQueue()` polls `getJobCounts()` every 1
 waiting, active or delayed, and throws after 100 polls; the jobs run in the e2e process, so a drained
 queue means the rows are written. `fireSchedule(name)` fires a schedule through `SchedulerRegistry`
 without waiting for it, and `waitFor(description, settled)` polls until the outcome shows. A failing
-job is a record whose `subjectType` is longer than its column, enqueued with `attempts: 1`; the retry
-case fixes it with `job.update` before it fires `ledger-record-retry`.
+job is a record whose `subjectType` is longer than its column, enqueued with `attempts: 1`; the
+`/queues` cases retry and delete such jobs over HTTP with the tokens of the seeded staff users.
 
 The Jest files outside the apps live in `jest/`:
 

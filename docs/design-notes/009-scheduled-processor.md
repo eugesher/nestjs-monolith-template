@@ -1,17 +1,17 @@
 # 009 — Scheduled processor
 
-`apps/processor-app/src/processors/idempotency-purge` deletes expired rows of `idempotency_key` on a
+`apps/processor-app/src/processors/idempotency` deletes expired rows of `idempotency_key` on a
 schedule. The keys are written by the core idempotency module (see `006-idempotency-keys.md`), but
 nothing else deletes them, so the delete lives here with a repository of its own (see
 `024-code-placement.md`). It is a processor: a schedule enters it, not an HTTP request.
 
-| Layer                        | What it holds                                                              |
-| ---------------------------- | -------------------------------------------------------------------------- |
-| `presentation`               | `IdempotencyPurgeConsumer`, `@Cron(CronExpression.EVERY_HOUR)`             |
-| `application`                | `IdempotencyPurgeRunUseCase`                                               |
-| `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                      |
-| `outbound`                   | `IDEMPOTENCY_PURGE_RUN_REPOSITORY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS` |
-| `infrastructure/persistence` | `IdempotencyPurgeRunRepository`                                            |
+| Layer                        | What it holds                                                          |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| `presentation`               | `IdempotencyPurgeProcessor`, `@Cron(CronExpression.EVERY_HOUR)`        |
+| `application`                | `IdempotencyPurgeUseCase`                                              |
+| `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                  |
+| `outbound`                   | `IDEMPOTENCY_PURGE_REPOSITORY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS` |
+| `infrastructure/persistence` | `IdempotencyPurgeRepository`                                           |
 
 The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
 `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`. On every tick the use case computes the cutoff, the instant the
@@ -20,7 +20,7 @@ core module reads no configuration, so staff-app and customer-app need no TTL.
 
 ## The schedule decides only when
 
-**The consumer opens a correlation context and nothing else.** A tick is not a request, so no
+**The processor opens a correlation context and nothing else.** A tick is not a request, so no
 middleware has opened a context for it. `handleTick` runs the use case inside
 `CorrelationContextHelper.run` with no inbound id, which mints a new id for every tick. Everything
 the tick logs carries it, and nothing logs the root warning about a missing context.
@@ -31,7 +31,7 @@ interval that `onModuleDestroy` removes, or the timer would keep the process ali
 
 ## The use case owns the outcome
 
-The use case, not the consumer, holds the guard and the logs, because a processor consumer does not
+The use case, not the processor, holds the guard and the logs, because a processor does not
 log: outcomes are logged by the application.
 
 - **An overlapping tick is skipped, not raced.** `@Cron` fires on its cadence whatever the previous
@@ -47,11 +47,11 @@ retries` at `warn` with the error. Expired keys only cost space until the next t
 
 ## Wiring
 
-processor-app mounts `IdempotencyPurgeModule` through
+processor-app mounts `IdempotencyModule` through
 `@acme-processor/processors`. `@Cron` only marks the method: the tick fires because processor-app
 imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
 `idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.
 
-Lint lets a processor consumer take only `Cron` and `CronExpression` from `@nestjs/schedule`, the
+Lint lets a processor take only `Cron` and `CronExpression` from `@nestjs/schedule`, the
 app only `ScheduleModule`, and the e2e code only `SchedulerRegistry`. No other layer imports the
 package.

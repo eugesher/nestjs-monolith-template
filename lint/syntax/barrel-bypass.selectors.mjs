@@ -1,5 +1,5 @@
 const barrelBypass =
-  '/^\\.\\.?\\x2F(.*\\x2F)?(domain|outbound|application|infrastructure|presentation)\\x2F(?![\\w-]+\\.consumer$)./';
+  '/^\\.\\.?\\x2F(.*\\x2F)?(domain|outbound|application|infrastructure|presentation)\\x2F(?![\\w-]+\\.processor$)./';
 
 const message = "cross-layer imports go through the target layer's barrel (index.ts)";
 

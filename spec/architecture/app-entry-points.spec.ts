@@ -35,8 +35,6 @@ describe('app entry points', () => {
       '@acme-staff/app/*',
       '@acme-staff/common',
       '@acme-staff/common/*',
-      '@acme-staff/contracts',
-      '@acme-staff/contracts/*',
       '@acme-staff/features',
       '@acme-staff/features/*',
     ]);
@@ -44,10 +42,8 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff/app/app.module',
-    '@acme-staff/common/modules/auth',
     '@acme-staff/common/shared/concurrency',
     '@acme-staff/common/shared/ledger-record',
-    '@acme-staff/contracts/auth',
     '@acme-staff/features',
     '@acme-customer/app/app.module',
     '@acme-customer/common/shared/ledger-record',
@@ -67,10 +63,7 @@ describe('app entry points', () => {
   it.each([
     ['apps/staff-app/src/app/app.module.ts', '@acme-staff/features/health/health.module'],
     ['apps/customer-app/src/app/app.module.ts', '@acme-customer/features/health/health.module'],
-    [
-      'apps/processor-app/src/app/app.module.ts',
-      '@acme-processor/processors/ledger-record/ledger-record.module',
-    ],
+    ['apps/processor-app/src/app/app.module.ts', '@acme-processor/processors/ledger/ledger.module'],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/app/setup/config/config-setup.module',
@@ -78,10 +71,6 @@ describe('app entry points', () => {
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/common/shared/concurrency/decorators/if-match.decorator',
-    ],
-    [
-      'apps/staff-app/src/features/product/__fixture__.ts',
-      '@acme-staff/common/modules/auth/module/auth-common.module',
     ],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
@@ -130,7 +119,7 @@ describe('app entry points', () => {
     ['apps/staff-app/src/app/global/auth/module/__fixture__.ts', '@acme-staff/app/app.module'],
     ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/app/app.module'],
     [
-      'apps/processor-app/src/processors/idempotency-purge/__fixture__.ts',
+      'apps/processor-app/src/processors/idempotency/__fixture__.ts',
       '@acme-processor/app/app.module',
     ],
     ['apps/staff-app/src/common/shared/concurrency/__fixture__.ts', '@acme-staff/app/app.module'],
@@ -194,7 +183,7 @@ describe('app entry points', () => {
   it('apps/processor-app/src/app/app.module.ts MAY import the processors of its own app by @acme-processor/processors', async () => {
     await expect({
       file: 'apps/processor-app/src/app/app.module.ts',
-      code: 'import { LedgerRecordModule } from "@acme-processor/processors";',
+      code: 'import { LedgerModule } from "@acme-processor/processors";',
     }).toPassArchitectureLint();
   });
 
@@ -206,7 +195,7 @@ describe('app entry points', () => {
   ])('%s may NOT import the processor-app processors index', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerRecordModule } from "@acme-processor/processors";',
+      code: 'import { LedgerModule } from "@acme-processor/processors";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -251,7 +240,7 @@ describe('app entry points', () => {
   it.each([
     'apps/staff-app/src/features/health/health.module.ts',
     'apps/customer-app/src/features/health/health.module.ts',
-    'apps/processor-app/src/processors/idempotency-purge/idempotency-purge.module.ts',
+    'apps/processor-app/src/processors/idempotency/idempotency.module.ts',
   ])('%s MAY mount the idempotency core module by its alias', async (file) => {
     await expect({
       file,
@@ -269,7 +258,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
     'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
     'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
@@ -284,7 +273,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
     'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
     'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
@@ -296,8 +285,31 @@ describe('app entry points', () => {
   });
 
   it.each([
+    'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
+    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
+  ])('%s MAY import the queue contract of the core product stock', async (file) => {
+    await expect({
+      file,
+      code: 'import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from "@acme-core/contracts/product-stock";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
+    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
+  ])(
+    '%s may NOT import a core contract other than the ledger and the product stock',
+    async (file) => {
+      await expect({
+        file,
+        code: 'import { x } from "@acme-core/contracts/idempotency";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
+
+  it.each([
     [
-      'apps/processor-app/src/processors/ledger-record/ledger-record.module.ts',
+      'apps/processor-app/src/processors/ledger/ledger.module.ts',
       '@acme-processor/common/shared/ledger-record',
     ],
     [
@@ -318,7 +330,7 @@ describe('app entry points', () => {
   it.each([
     'apps/staff-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
     'apps/customer-app/src/features/health/infrastructure/core-adapters/__fixture__.ts',
-    'apps/processor-app/src/processors/idempotency-purge/infrastructure/core-adapters/__fixture__.ts',
+    'apps/processor-app/src/processors/idempotency/infrastructure/core-adapters/__fixture__.ts',
   ])('%s MAY import the idempotency core contracts by their alias', async (file) => {
     await expect({
       file,

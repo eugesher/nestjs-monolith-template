@@ -14,7 +14,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/processors/ledger-record/application/services/ledger-record.service.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/index.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+      'apps/__processors-fixture__/src/processors/ledger-record/presentation/ledger-record.processor.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/handlers/ledger-record.handler.ts',
       'apps/__processors-fixture__/src/processors/purge/purge.module.ts',
       'apps/__processors-fixture__/src/processors/purge/application/index.ts',
@@ -103,14 +103,14 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('no-restricted-syntax');
     });
 
-    it('MAY reach its consumer directly', async () => {
+    it('MAY reach its processor directly', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
-        code: 'import { x } from "./presentation/ledger-record.consumer";',
+        code: 'import { x } from "./presentation/ledger-record.processor";',
       }).toPassArchitectureLint();
     });
 
-    it('may NOT reach a nested presentation file that is not a consumer', async () => {
+    it('may NOT reach a nested presentation file that is not a processor', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
         code: 'import { x } from "./presentation/handlers/ledger-record.handler";',
@@ -224,8 +224,8 @@ describe('processors (processors/<module>) — modules entered by queues and sch
     });
   });
 
-  describe('consumers (presentation)', () => {
-    it('a consumer MAY reach its application, app contracts and the observability lib', async () => {
+  describe('processors (presentation)', () => {
+    it('a processor MAY reach its application, app contracts and the observability lib', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code:
@@ -235,42 +235,42 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it('a consumer may NOT reach a core contract other than the ledger queue — core is called by the application through a port', async () => {
+    it('a processor may NOT reach a core contract other than the ledger queue — core is called by the application through a port', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { x } from "../../../../../../core/contracts/src/__ledger-fixture__";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer may NOT import crypto — the correlation id comes from the observability lib', async () => {
+    it('a processor may NOT import crypto — the correlation id comes from the observability lib', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { randomUUID } from "crypto";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer may NOT reach the http lib', async () => {
+    it('a processor may NOT reach the http lib', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { x } from "../../../../../../libs/http/src";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer MAY take the DI names from @nestjs/common', async () => {
+    it('a processor MAY take the DI names from @nestjs/common', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { Injectable } from "@nestjs/common";',
       }).toPassArchitectureLint();
     });
 
-    it('a consumer may NOT be an HTTP controller', async () => {
+    it('a processor may NOT be an HTTP controller', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { Controller, Post } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer MAY process a queue with Processor, Process, OnQueueFailed and the Job type', async () => {
+    it('a processor MAY process a queue with Processor, Process, OnQueueFailed and the Job type', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { OnQueueFailed, Process, Processor } from "@nestjs/bull";\nimport type { Job } from "bull";',
@@ -282,7 +282,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'import { BullModule, Processor } from "@nestjs/bull";',
       'import type { Queue } from "bull";',
     ])(
-      'a consumer may NOT take the queue itself (%s) — queues are registered in common/shared',
+      'a processor may NOT take the queue itself (%s) — queues are registered in common/shared',
       async (code) => {
         await expect({
           file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
@@ -297,7 +297,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/features/product/presentation/__fixture__.ts',
       'apps/__processors-fixture__/src/features/product/infrastructure/__fixture__.ts',
       'apps/__processors-fixture__/src/app/__fixture__.ts',
-    ])('%s may NOT process a queue — only processor consumers do', async (file) => {
+    ])('%s may NOT process a queue — only processors do', async (file) => {
       await expect({
         file,
         code: 'import { Processor } from "@nestjs/bull";',
@@ -358,7 +358,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer MAY schedule with Cron and CronExpression', async () => {
+    it('a processor MAY schedule with Cron and CronExpression', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/purge/presentation/__fixture__.ts',
         code: 'import { Cron, CronExpression } from "@nestjs/schedule";',
@@ -369,7 +369,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'import { SchedulerRegistry } from "@nestjs/schedule";',
       'import { Cron, ScheduleModule } from "@nestjs/schedule";',
     ])(
-      'a consumer may NOT take the scheduler itself (%s) — the app sets up ScheduleModule',
+      'a processor may NOT take the scheduler itself (%s) — the app sets up ScheduleModule',
       async (code) => {
         await expect({
           file: 'apps/__processors-fixture__/src/processors/purge/presentation/__fixture__.ts',
@@ -384,7 +384,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/processors/purge/__fixture__.ts',
       'apps/__processors-fixture__/src/features/product/presentation/__fixture__.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
-    ])('%s may NOT schedule — only processor consumers do', async (file) => {
+    ])('%s may NOT schedule — only processors do', async (file) => {
       await expect({
         file,
         code: 'import { Cron } from "@nestjs/schedule";',
@@ -415,14 +415,14 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it('the app may NOT schedule a job itself — schedules belong to processor consumers', async () => {
+    it('the app may NOT schedule a job itself — schedules belong to processors', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/app/setup/schedule/__fixture__.ts',
         code: 'import { Cron } from "@nestjs/schedule";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a consumer may NOT import the HTTP platform', async () => {
+    it('a processor may NOT import the HTTP platform', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
         code: 'import { x } from "@nestjs/platform-express";',

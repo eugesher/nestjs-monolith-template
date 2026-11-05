@@ -1,23 +1,9 @@
-import { libContracts, libs } from './selectors.mjs';
+import { libs } from './selectors.mjs';
 
 export const customerClaims = {
   from: { file: { categories: 'acme-app:*', captured: { app: 'customer-app' } } },
   disallow: [
-    {
-      ...libs('auth'),
-      dependency: { specifiers: ['AuthClaimsLibModule', 'RequiresPermission', 'Roles'] },
-    },
-    {
-      ...libContracts('auth'),
-      dependency: {
-        specifiers: [
-          'AUTH_CLAIMS_PORT',
-          'IAuthClaimsPort',
-          'IAuthFindPermissionCodesQuery',
-          'IAuthFindRolesQuery',
-        ],
-      },
-    },
+    { ...libs('auth'), dependency: { specifiers: ['AuthClaimsLibModule', 'RequiresPermission'] } },
     { ...libs('kernel'), dependency: { specifiers: ['PermissionCodeEnum', 'RoleEnum'] } },
   ],
   message:

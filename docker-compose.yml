@@ -110,6 +110,7 @@ services:
       IDEMPOTENCY_KEY_TTL_HOURS: 24
       LEDGER_RETRY_ATTEMPTS: 3
       QUEUE_RETRY_ATTEMPTS: 3
+      JWT_SECRET: development-secret-do-not-use-in-prod-32
       OTEL_SDK_DISABLED: 'true'
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
     networks:

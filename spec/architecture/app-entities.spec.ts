@@ -60,7 +60,7 @@ describe('app entities (@acme-<app>/common/entities)', () => {
         'import { Entity } from "typeorm";\n' +
         'import { ReminderStatusEnum } from "@acme-libs/kernel";\n' +
         'import { Product } from "@acme-core/entities";\n' +
-        'import { StaffUser } from "../staff-identity/staff-user.entity";',
+        'import { NoteRevision } from "./note-revision.entity";',
     }).toPassArchitectureLint();
   });
 
@@ -68,7 +68,7 @@ describe('app entities (@acme-<app>/common/entities)', () => {
     '@nestjs/common',
     'class-validator',
     '@acme-libs/toolkit',
-    '@acme-staff/contracts/auth',
+    '@acme-core/contracts/staff-auth',
   ])(
     'an app entity may NOT import %s — a table carries no framework or module code',
     async (source) => {

@@ -2,18 +2,20 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E } from '../features';
-import { IdempotencyPurgeE2E, LedgerRecordE2E, ProductStockE2E } from '../processors';
+import { AuthE2E, HealthE2E, QueueE2E } from '../features';
+import { IdempotencyE2E, LedgerE2E, ProductStockE2E } from '../processors';
 
 describe('App', () => {
   jest.setTimeout(90000);
 
   const ctx = new AppE2EContext();
 
+  const authE2E = AuthE2E.of(ctx);
   const healthE2E = HealthE2E.of(ctx);
-  const ledgerRecordE2E = LedgerRecordE2E.of(ctx);
-  const idempotencyPurgeE2E = IdempotencyPurgeE2E.of(ctx);
+  const ledgerE2E = LedgerE2E.of(ctx);
+  const idempotencyE2E = IdempotencyE2E.of(ctx);
   const productStockE2E = ProductStockE2E.of(ctx);
+  const queueE2E = QueueE2E.of(ctx);
 
   beforeAll(async () => {
     await ctx.init();
@@ -34,21 +36,31 @@ describe('App', () => {
     },
   );
 
+  describe('Auth', () => {
+    authE2E.handleLogin();
+  });
+
   describe('Health', () => {
     healthE2E.live();
     healthE2E.ready();
   });
 
-  describe('LedgerRecord', () => {
-    ledgerRecordE2E.handleRecord();
-    ledgerRecordE2E.handleRetryTick();
+  describe('Ledger', () => {
+    ledgerE2E.handleRecord();
   });
 
-  describe('IdempotencyPurge', () => {
-    idempotencyPurgeE2E.handleTick();
+  describe('Idempotency', () => {
+    idempotencyE2E.handleTick();
   });
 
   describe('ProductStock', () => {
     productStockE2E.handleRecord();
+  });
+
+  describe('Queue', () => {
+    queueE2E.list();
+    queueE2E.listFailedJobs();
+    queueE2E.retryFailedJob();
+    queueE2E.deleteFailedJob();
   });
 });

@@ -4,17 +4,17 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { AuthInvalidCredentialsException, AuthStaffUserModel } from '../../domain';
 import {
   AUTH_CREDENTIALS_PORT,
-  AUTH_LOGIN_REPOSITORY_PORT,
+  AUTH_IDENTITY_PORT,
   type IAuthCredentialsPort,
-  type IAuthLoginRepositoryPort,
+  type IAuthIdentityPort,
 } from '../../outbound';
 import { IAuthLoginView, IAuthLoginCommand } from '../interfaces';
 
 @Injectable()
 export class AuthLoginUseCase {
   constructor(
-    @Inject(AUTH_LOGIN_REPOSITORY_PORT)
-    private readonly repository: IAuthLoginRepositoryPort,
+    @Inject(AUTH_IDENTITY_PORT)
+    private readonly identity: IAuthIdentityPort,
     @Inject(AUTH_CREDENTIALS_PORT)
     private readonly credentials: IAuthCredentialsPort,
     @InjectPinoLogger(AuthLoginUseCase.name)
@@ -24,7 +24,7 @@ export class AuthLoginUseCase {
   public async execute(command: IAuthLoginCommand): Promise<IAuthLoginView> {
     const { email, password } = command;
     const normalized = AuthStaffUserModel.normalizeEmail(email);
-    const record = await this.repository.findByEmail(normalized);
+    const record = await this.identity.findByEmail({ email: normalized });
 
     if (!record) {
       this.logger.warn({ email: normalized }, 'Login failed: unknown email');

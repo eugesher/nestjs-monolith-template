@@ -5,7 +5,7 @@ import {
   type IRepositoryHostPort,
   REPOSITORY_HOST_PORT,
 } from '@acme-libs/contracts/database';
-import { StaffRole } from '@acme-staff/common/entities';
+import { StaffRole } from '@acme-core/entities';
 
 import { IRoleListRecord, IRoleListRepositoryPort } from '../../../outbound';
 

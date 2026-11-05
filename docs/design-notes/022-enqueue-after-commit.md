@@ -9,7 +9,7 @@ deadline and retries.
 | queue adapter      | `core/modules/src/product-stock/infrastructure/queue/product-stock-core-post-subtract-queue.adapter.ts` |
 | queue contract     | `core/contracts/src/product-stock/queues/product-stock-post-subtract.queue.ts`                          |
 | queue registration | `core/modules/src/product-stock/module/product-stock-core.module.ts`                                    |
-| the consumer       | `apps/processor-app/src/processors/product-stock/presentation/product-stock-post-subtract.consumer.ts`  |
+| the processor      | `apps/processor-app/src/processors/product-stock/presentation/product-stock-post-subtract.processor.ts` |
 | from a feature     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts`    |
 
 ## After the commit
@@ -36,7 +36,7 @@ the job.
 `LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. A ledger service
 extends `SubjectLedgerService` (`libs/ledger/src/subject-ledger/subject-ledger.service.ts`): it builds the
 record and hands it to `record`, which retries and logs under the subject and the operation key. A timed-out `add` may
-still reach Redis once it is back, so a consumer must tolerate a duplicate job.
+still reach Redis once it is back, so a processor must tolerate a duplicate job.
 
 ## Where the queue is declared
 
@@ -50,9 +50,9 @@ every registration reads the one constant of the contract.
 The lint edges for a core queue adapter are in `lint/boundaries/policies/acme-core.mjs` and
 `queue.mjs` (see `016-lint-allowlists.md`).
 
-## The consumer
+## The processor
 
-`ProductStockPostSubtractConsumer` opens the correlation context of the job and runs one use case
+`ProductStockPostSubtractProcessor` opens the correlation context of the job and runs one use case
 in one transaction: it locks and sums through the core module, reads the rows it needs under the
 same lock, and calls another core module (see `023-processor-app.md`). A replay of the job writes
 nothing, because the rows it changed are no longer picked.

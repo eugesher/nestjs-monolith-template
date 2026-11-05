@@ -41,7 +41,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
   and the test helpers of the observability lib;
-- a feature queue adapter and a processor consumer that reach app contracts: a queue between the
+- a feature queue adapter and a processor that reach app contracts: a queue between the
   modules of one app keeps its contract in the app, while a queue written by more than one app
   keeps it in core, `ledger-record` in `@acme-core/contracts/ledger` and
   `product-stock-post-subtract` in `@acme-core/contracts/product-stock`;
@@ -58,13 +58,12 @@ Removing one of them turns its spec red.
 ### `module-areas.mjs` — processors share the layer model of features
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
-(`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency-purge` has a domain
-helper and a repository, `ledger-record` neither. The entries stay, so a processor that grows a layer
+(`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency` has a domain
+helper and a repository, `ledger` neither. The entries stay, so a processor that grows a layer
 follows the same rules
 a feature does.
 
-`infrastructure/queue` of a processor injects a queue to manage its jobs, as `ledger-record`
-returns the failed jobs to the queue. It takes `InjectQueue` and the `Queue` type and nothing else of
+`infrastructure/queue` of a processor may inject a queue to manage its jobs. It takes `InjectQueue` and the `Queue` type and nothing else of
 Bull, under the same rule as a feature queue adapter in `queue.mjs`.
 
 The module root of a feature or a processor may reach a shared barrel, as the module root of a

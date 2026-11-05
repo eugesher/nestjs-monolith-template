@@ -8,6 +8,11 @@ import {
   OrderProduct,
   Product,
   ProductStock,
+  StaffPermission,
+  StaffRole,
+  StaffRolePermission,
+  StaffUser,
+  StaffUserRole,
 } from '@acme-core/entities';
 
 export const entities: TypeOrmModuleOptions['entities'] = [
@@ -18,4 +23,9 @@ export const entities: TypeOrmModuleOptions['entities'] = [
   OrderProduct,
   Product,
   ProductStock,
+  StaffPermission,
+  StaffRole,
+  StaffRolePermission,
+  StaffUser,
+  StaffUserRole,
 ];

@@ -1,5 +1,73 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Auth POST /api/auth/login should issue an access token that opens the routes the user holds a permission for 1`] = `
+{
+  "queues": [
+    "ledger-record",
+    "product-stock-post-subtract",
+  ],
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "User 4 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be shorter than or equal to 255 characters",
+        "email must be an email",
+        "password must be shorter than or equal to 256 characters",
+        "password must be longer than or equal to 1 characters",
+        "password must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
@@ -32,7 +100,7 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 }
 `;
 
-exports[`App IdempotencyPurge schedule idempotency-purge should purge the keys older than the TTL and keep the fresh ones 1`] = `
+exports[`App Idempotency schedule idempotency-purge should purge the keys older than the TTL and keep the fresh ones 1`] = `
 {
   "db": {
     "idempotency_key": [
@@ -45,7 +113,7 @@ exports[`App IdempotencyPurge schedule idempotency-purge should purge the keys o
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should append a record replayed under the same operation key only once 1`] = `
+exports[`App Ledger queue ledger-record should append a record replayed under the same operation key only once 1`] = `
 {
   "db": {
     "ledger_entry": [
@@ -58,7 +126,7 @@ exports[`App LedgerRecord queue ledger-record should append a record replayed un
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should append the record as a ledger entry under its correlation id 1`] = `
+exports[`App Ledger queue ledger-record should append the record as a ledger entry under its correlation id 1`] = `
 {
   "db": {
     "ledger_entry": [
@@ -81,7 +149,7 @@ exports[`App LedgerRecord queue ledger-record should append the record as a ledg
 }
 `;
 
-exports[`App LedgerRecord queue ledger-record should keep a record that fails its last attempt among the failed jobs 1`] = `
+exports[`App Ledger queue ledger-record should keep a record that fails its last attempt among the failed jobs 1`] = `
 {
   "db": {
     "ledger_entry": [],
@@ -97,29 +165,6 @@ exports[`App LedgerRecord queue ledger-record should keep a record that fails it
       "subjectType": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
     },
   ],
-}
-`;
-
-exports[`App LedgerRecord schedule ledger-record-retry should return a failed record to the queue and append it once its cause is gone 1`] = `
-{
-  "db": {
-    "ledger_entry": [
-      {
-        "action": "ProductArchived",
-        "correlation_id": "e2e-processor-retry",
-        "id": Any<String>,
-        "occurred_at": 2026-01-05T11:00:00.000Z,
-        "operation_key": "e2e-retry:1",
-        "payload": {
-          "previousStatus": "active",
-          "sku": "SKU-0004",
-        },
-        "recorded_at": Any<Date>,
-        "subject_id": "103",
-        "subject_type": "product",
-      },
-    ],
-  },
 }
 `;
 
@@ -165,5 +210,227 @@ exports[`App ProductStock queue product-stock-post-subtract should leave a publi
       },
     ],
   },
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should delete a failed job 1`] = `
+{
+  "failed": 0,
+  "job": null,
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should refuse a user without queue:delete with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Queue DELETE /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown job with 404 QUEUE_JOB_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FOUND",
+      "message": "Job 999999 was not found in queue ledger-record",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues should list the queues with their job counts 1`] = `
+{
+  "response": {
+    "body": [
+      {
+        "jobCounts": {
+          "active": 0,
+          "completed": 0,
+          "delayed": 0,
+          "failed": 0,
+          "paused": 0,
+          "waiting": 0,
+        },
+        "name": "ledger-record",
+      },
+      {
+        "jobCounts": {
+          "active": 0,
+          "completed": 0,
+          "delayed": 0,
+          "failed": 0,
+          "paused": 0,
+          "waiting": 0,
+        },
+        "name": "product-stock-post-subtract",
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues should refuse a request without a token with 401 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should answer a page of the failed jobs as their JSON 1`] = `
+{
+  "response": {
+    "body": {
+      "count": 1,
+      "data": [
+        {
+          "attemptsMade": 1,
+          "data": {
+            "action": "ProductCreated",
+            "correlationId": "e2e-processor-queue-list",
+            "occurredAt": "2026-01-06T08:00:00.000Z",
+            "operationKey": "e2e-queue:1",
+            "payload": {},
+            "subjectId": "200",
+            "subjectType": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+          },
+          "debounceId": null,
+          "delay": 0,
+          "failedReason": "Data too long for column 'subject_type' at row 1",
+          "finishedOn": Any<Number>,
+          "id": Anything,
+          "name": "__default__",
+          "opts": {
+            "attempts": 1,
+            "backoff": {
+              "delay": 1000,
+              "type": "exponential",
+            },
+            "delay": 0,
+            "removeOnComplete": true,
+            "timestamp": Any<Number>,
+          },
+          "processedOn": Any<Number>,
+          "progress": 0,
+          "returnvalue": null,
+          "stacktrace": [
+            Any<String>,
+          ],
+          "timestamp": Any<Number>,
+        },
+      ],
+      "page": 1,
+      "pageCount": 1,
+      "total": 1,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should refuse a malformed page with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "page must not be less than 1",
+        "page must be an integer number",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Queue GET /api/queues/:queueName/jobs/failed should refuse an unknown queue with 404 QUEUE_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_NOT_FOUND",
+      "message": "Queue unknown was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse a job that is not failed with 409 QUEUE_JOB_NOT_FAILED 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FAILED",
+      "message": StringMatching /\\^Job \\\\S\\+ of queue ledger-record is delayed, not failed\\$/,
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse a user without queue:retry with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown job with 404 QUEUE_JOB_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_JOB_NOT_FOUND",
+      "message": "Job 999999 was not found in queue ledger-record",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should refuse an unknown queue with 404 QUEUE_NOT_FOUND 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "QUEUE_NOT_FOUND",
+      "message": "Queue unknown was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should return a failed record to the queue and append it once its cause is gone 1`] = `
+{
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "correlation_id": "e2e-processor-queue-retry",
+        "id": Any<String>,
+        "occurred_at": 2026-01-06T09:00:00.000Z,
+        "operation_key": "e2e-queue:2",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0004",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "201",
+        "subject_type": "product",
+      },
+    ],
+  },
+  "failed": 0,
 }
 `;

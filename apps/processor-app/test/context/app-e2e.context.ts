@@ -1,6 +1,7 @@
 import { getQueueToken } from '@nestjs/bull';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Queue } from 'bull';
@@ -21,6 +22,8 @@ interface IAppE2EState {
   dataSource: DataSource;
   ledgerRecordQueue: Queue<ILedgerRecordProcessorPayload>;
   postSubtractQueue: Queue<IProductStockPostSubtractPayload>;
+  adminToken: string;
+  viewerToken: string;
   rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
 }
 
@@ -50,6 +53,14 @@ export class AppE2EContext {
     return this.started.postSubtractQueue;
   }
 
+  public get adminToken(): string {
+    return this.started.adminToken;
+  }
+
+  public get viewerToken(): string {
+    return this.started.viewerToken;
+  }
+
   public async init(): Promise<void> {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
@@ -61,6 +72,8 @@ export class AppE2EContext {
     );
     const config = moduleFixture.get(ConfigService);
     const prefix = config.getOrThrow<string>('API_PREFIX');
+    const secret = config.getOrThrow<string>('JWT_SECRET');
+    const jwt = new JwtService({ secret });
     const app = moduleFixture.createNestApplication({ bufferLogs: true });
     const appLogger = app.get(Logger);
 
@@ -69,6 +82,8 @@ export class AppE2EContext {
 
     await app.init();
 
+    const adminToken = jwt.sign({ sub: '1' });
+    const viewerToken = jwt.sign({ sub: '3' });
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
 
     this.state = {
@@ -77,6 +92,8 @@ export class AppE2EContext {
       dataSource,
       ledgerRecordQueue,
       postSubtractQueue,
+      adminToken,
+      viewerToken,
       rootLoggerWarn,
     };
   }

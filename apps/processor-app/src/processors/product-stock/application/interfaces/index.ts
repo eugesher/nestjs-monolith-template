@@ -1,1 +1,1 @@
-export * from './commands/product-stock-archive-out-of-stock.command';
+export * from './commands/product-stock-post-subtract.command';
