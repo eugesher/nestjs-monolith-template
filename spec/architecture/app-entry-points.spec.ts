@@ -118,7 +118,7 @@ describe('app entry points', () => {
 
   it.each([
     ['apps/staff-app/src/app/setup/orm/__fixture__.ts', '@acme-staff/app/app.module'],
-    ['apps/staff-app/src/app/global/auth/module/__fixture__.ts', '@acme-staff/app/app.module'],
+    ['apps/staff-app/src/app/global/auth/shell/__fixture__.ts', '@acme-staff/app/app.module'],
     ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/app/app.module'],
     [
       'apps/processor-app/src/processors/idempotency/__fixture__.ts',

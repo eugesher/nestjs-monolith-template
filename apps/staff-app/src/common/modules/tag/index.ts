@@ -1,1 +1,1 @@
-export * from './module/tag-common.module';
+export * from './shell/tag-common.module';

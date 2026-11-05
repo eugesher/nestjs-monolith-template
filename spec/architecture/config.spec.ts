@@ -70,15 +70,15 @@ describe('the config itself (eslint.config.mjs, as ESLint resolves it)', () => {
     ['acme-app:app:global:infrastructure:common-adapters', 'acme-app:app:global:infrastructure'],
     ['acme-app:app:global:index', 'acme-app:app'],
     ['acme-app:app:module', 'acme-app:app'],
-    ['acme-app:common:modules:module:facade', 'acme-app:common:modules:module'],
-    ['acme-core:modules:module:facade', 'acme-core:modules:module'],
+    ['acme-app:common:modules:shell:facade', 'acme-app:common:modules:shell'],
+    ['acme-core:modules:shell:facade', 'acme-core:modules:shell'],
     ['acme-libs:contracts', 'acme-libs'],
   ])('keeps %s AHEAD of %s — first match wins', (specific, general) => {
     expect(categories.indexOf(specific)).toBeGreaterThanOrEqual(0);
     expect(categories.indexOf(specific)).toBeLessThan(categories.indexOf(general));
   });
 
-  it('gives core modules the app layers, with facades in module/ instead of presentation/', () => {
+  it('gives core modules the app layers, with facades in shell/ instead of presentation/', () => {
     expect(categories).toEqual(
       expect.arrayContaining([
         'acme-app:features:domain',
@@ -90,7 +90,7 @@ describe('the config itself (eslint.config.mjs, as ESLint resolves it)', () => {
         'acme-app:features:infrastructure',
         'acme-core:modules:infrastructure',
         'acme-app:features:presentation',
-        'acme-core:modules:module:facade',
+        'acme-core:modules:shell:facade',
       ]),
     );
     expect(categories).not.toContain('acme-core:modules:presentation');

@@ -8,7 +8,7 @@ deadline and retries.
 | hook in a use case | `core/modules/src/product-stock/application/use-cases/product-stock-core-move.use-case.ts`              |
 | queue adapter      | `core/modules/src/product-stock/infrastructure/queue/product-stock-core-post-subtract-queue.adapter.ts` |
 | queue contract     | `core/contracts/src/product-stock/queues/product-stock-post-subtract.queue.ts`                          |
-| queue registration | `core/modules/src/product-stock/module/product-stock-core.module.ts`                                    |
+| queue registration | `core/modules/src/product-stock/shell/product-stock-core.module.ts`                                     |
 | the processor      | `apps/processor-app/src/processors/product-stock/presentation/product-stock-post-subtract.processor.ts` |
 | from a feature     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts`    |
 

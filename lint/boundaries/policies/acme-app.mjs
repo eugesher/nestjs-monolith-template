@@ -62,7 +62,7 @@ export const acmeApp = [
   ]),
   from('acme-app:common:shared:index', [to('acme-app:common:shared', own('app'))]),
   from('acme-app:app:global:index', [
-    to('acme-app:app:global:module', { ...own('app'), module: '*' }),
+    to('acme-app:app:global:shell', { ...own('app'), module: '*' }),
   ]),
   from('acme-app:app:global:outbound', [
     to('acme-app:app:global:outbound', own('app', 'module')),
@@ -78,8 +78,8 @@ export const acmeApp = [
     baseLibs(),
     packages('@nestjs/common'),
   ]),
-  from('acme-app:app:global:module', [
-    to('acme-app:app:global:module', own('app', 'module')),
+  from('acme-app:app:global:shell', [
+    to('acme-app:app:global:shell', own('app', 'module')),
     to('acme-app:app:global:application', own('app', 'module')),
     to('acme-app:app:global:outbound', own('app', 'module')),
     to('acme-app:app:global:infrastructure', own('app', 'module')),

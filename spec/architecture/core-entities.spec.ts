@@ -35,7 +35,7 @@ describe('core entities (@acme-core/entities)', () => {
     'apps/staff-app/src/common/shared/auth/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
     'apps/customer-app/src/main.ts',
   ])(
     '%s may NOT import the entities, a table is reached only through a repository',

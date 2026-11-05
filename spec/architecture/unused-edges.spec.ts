@@ -137,7 +137,7 @@ describe('unused edges', () => {
     it.each([
       [
         'the root of a global module may NOT reach the observability lib: it wires providers and logs nothing',
-        'apps/__unused-fixture__/src/app/global/auth/module/__fixture__.ts',
+        'apps/__unused-fixture__/src/app/global/auth/shell/__fixture__.ts',
         '../../../../../../../libs/observability/src',
       ],
       [
@@ -229,17 +229,17 @@ describe('unused edges', () => {
       ],
       [
         'a common facade may NOT reach the http lib: it hands the call to a use case',
-        'apps/__unused-fixture__/src/common/modules/idempotency/module/__fixture__.facade.ts',
+        'apps/__unused-fixture__/src/common/modules/idempotency/shell/__fixture__.facade.ts',
         '../../../../../../../libs/http/src',
       ],
       [
         'a common facade may NOT reach the observability lib: it hands the call to a use case',
-        'apps/__unused-fixture__/src/common/modules/idempotency/module/__fixture__.facade.ts',
+        'apps/__unused-fixture__/src/common/modules/idempotency/shell/__fixture__.facade.ts',
         '../../../../../../../libs/observability/src',
       ],
       [
         'the common module root may NOT reach its domain: it wires providers, and the domain has none',
-        'apps/__unused-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        'apps/__unused-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         '../domain',
       ],
     ])('%s', async (_, file, source) => {
@@ -268,17 +268,17 @@ describe('unused edges', () => {
       ],
       [
         'a core facade may NOT reach the http lib: it hands the call to a use case',
-        'core/modules/src/__unused-fixture__/module/__fixture__.facade.ts',
+        'core/modules/src/__unused-fixture__/shell/__fixture__.facade.ts',
         '../../../../../libs/http/src',
       ],
       [
         'a core facade may NOT reach the observability lib: it hands the call to a use case',
-        'core/modules/src/__unused-fixture__/module/__fixture__.facade.ts',
+        'core/modules/src/__unused-fixture__/shell/__fixture__.facade.ts',
         '../../../../../libs/observability/src',
       ],
       [
         'the core module root may NOT reach its domain: it wires providers, and the domain has none',
-        'core/modules/src/__unused-fixture__/module/__fixture__.ts',
+        'core/modules/src/__unused-fixture__/shell/__fixture__.ts',
         '../domain',
       ],
     ])('%s', async (_, file, source) => {

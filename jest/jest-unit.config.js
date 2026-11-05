@@ -32,7 +32,7 @@ module.exports = {
     '!**/*.module.ts',
     '!**/infrastructure/persistence/repositories/**',
     '!**/presentation/controllers/**',
-    '!**/module/*.facade.ts',
+    '!**/shell/*.facade.ts',
     '!apps/*/src/main.ts',
     '!libs/openapi/src/api-reference/api-reference.ts',
   ],

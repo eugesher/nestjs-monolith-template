@@ -1,1 +1,1 @@
-export * from './module/idempotency-core.module';
+export * from './shell/idempotency-core.module';
