@@ -64,7 +64,7 @@ guards read.
 ## The product-stock processor
 
 `apps/processor-app/src/processors/product-stock` consumes a queue that a core module fills after
-its commits (see `022-enqueue-after-commit.md`). `ProductStockPostSubtractConsumer` opens the
+its commits (see `022-enqueue-after-commit.md`). `ProductStockPostSubtractProcessor` opens the
 correlation context of the job and runs one use case in one transaction:
 
 1. `PRODUCT_STOCK_ON_HAND_PORT.lock` locks the rows and sums through `core/modules/src/product-stock`;

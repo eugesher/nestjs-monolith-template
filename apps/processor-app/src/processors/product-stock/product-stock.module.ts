@@ -14,12 +14,12 @@ import {
   PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
   PRODUCT_STOCK_ON_HAND_PORT,
 } from './outbound';
-import { ProductStockPostSubtractConsumer } from './presentation/product-stock-post-subtract.consumer';
+import { ProductStockPostSubtractProcessor } from './presentation/product-stock-post-subtract.processor';
 
 @Module({
   imports: [ProductCoreModule, ProductStockCoreModule],
   providers: [
-    ProductStockPostSubtractConsumer,
+    ProductStockPostSubtractProcessor,
     ProductStockPostSubtractUseCase,
     {
       provide: PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,

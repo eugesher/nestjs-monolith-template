@@ -6,7 +6,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { IdempotencyPurgeUseCase } from '../application';
 
 @Injectable()
-export class IdempotencyPurgeConsumer {
+export class IdempotencyPurgeProcessor {
   constructor(private readonly purge: IdempotencyPurgeUseCase) {}
 
   @Cron(CronExpression.EVERY_HOUR, { name: 'idempotency-purge' })

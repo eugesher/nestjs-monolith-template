@@ -4,13 +4,13 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
 import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from '../../application';
-import { LedgerAppendConsumer } from '../ledger-append.consumer';
+import { LedgerAppendProcessor } from '../ledger-append.processor';
 
-describe('LedgerAppendConsumer', () => {
+describe('LedgerAppendProcessor', () => {
   let correlationIds: string[];
   let execute: jest.Mock;
   let report: jest.Mock;
-  let consumer: LedgerAppendConsumer;
+  let processor: LedgerAppendProcessor;
 
   beforeEach(() => {
     correlationIds = [];
@@ -22,7 +22,7 @@ describe('LedgerAppendConsumer', () => {
     report = jest.fn().mockImplementation(() => {
       correlationIds.push(CorrelationContextHelper.current('LedgerAppendReportFailureUseCase'));
     });
-    consumer = new LedgerAppendConsumer(
+    processor = new LedgerAppendProcessor(
       { execute } as unknown as LedgerAppendUseCase,
       { execute: report } as unknown as LedgerAppendReportFailureUseCase,
     );
@@ -30,7 +30,7 @@ describe('LedgerAppendConsumer', () => {
 
   describe('handleRecord', () => {
     it('appends the record inside the correlation context of the producer', async () => {
-      await consumer.handleRecord({
+      await processor.handleRecord({
         data: {
           operationKey: 'product-created:12',
           subjectType: 'product',
@@ -56,7 +56,7 @@ describe('LedgerAppendConsumer', () => {
     it('passes a failing append through, so Bull retries the job', async () => {
       execute.mockRejectedValue(new Error('deadlock'));
 
-      const handling = consumer.handleRecord({
+      const handling = processor.handleRecord({
         data: {
           operationKey: 'product-created:12',
           subjectType: 'product',
@@ -74,7 +74,7 @@ describe('LedgerAppendConsumer', () => {
 
   describe('handleFailed', () => {
     it('reports the failed attempt inside the correlation context of the producer', async () => {
-      await consumer.handleFailed(
+      await processor.handleFailed(
         {
           data: {
             operationKey: 'product-created:12',
@@ -101,7 +101,7 @@ describe('LedgerAppendConsumer', () => {
     });
 
     it('treats a job without attempts as a single attempt', async () => {
-      await consumer.handleFailed(
+      await processor.handleFailed(
         {
           data: {
             operationKey: 'product-created:12',

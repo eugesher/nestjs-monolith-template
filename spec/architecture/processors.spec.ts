@@ -14,7 +14,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/processors/ledger-record/application/services/ledger-record.service.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/index.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/presentation/ledger-record.consumer.ts',
+      'apps/__processors-fixture__/src/processors/ledger-record/presentation/ledger-record.processor.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/handlers/ledger-record.handler.ts',
       'apps/__processors-fixture__/src/processors/purge/purge.module.ts',
       'apps/__processors-fixture__/src/processors/purge/application/index.ts',
@@ -106,7 +106,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
     it('MAY reach its consumer directly', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
-        code: 'import { x } from "./presentation/ledger-record.consumer";',
+        code: 'import { x } from "./presentation/ledger-record.processor";',
       }).toPassArchitectureLint();
     });
 

@@ -258,7 +258,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger/presentation/ledger-append.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
     'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
     'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
@@ -273,7 +273,7 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger/presentation/ledger-append.consumer.ts',
+    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
     'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
     'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',

@@ -7,7 +7,7 @@ import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/c
 import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from '../application';
 
 @Processor(LEDGER_RECORD_QUEUE)
-export class LedgerAppendConsumer {
+export class LedgerAppendProcessor {
   constructor(
     private readonly append: LedgerAppendUseCase,
     private readonly reportFailure: LedgerAppendReportFailureUseCase,

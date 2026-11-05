@@ -5,13 +5,13 @@ each job to `ledger_entry` (see `004-append-only-journal.md`). It is a processor
 Bull queue `ledger-record` enters it, not an HTTP request, and it has no
 controller.
 
-| Layer                        | What it holds                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------- |
-| `presentation`               | `LedgerAppendConsumer`: `@Process` for a job, `@OnQueueFailed` for a failed one |
-| `application`                | `LedgerAppendUseCase`, `LedgerAppendReportFailureUseCase`                       |
-| `domain`                     | `LedgerAppendEntryModel`, `LedgerAppendHelper`                                  |
-| `outbound`                   | `LEDGER_APPEND_REPOSITORY_PORT`                                                 |
-| `infrastructure/persistence` | `LedgerAppendRepository` over `ledger_entry`                                    |
+| Layer                        | What it holds                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| `presentation`               | `LedgerAppendProcessor`: `@Process` for a job, `@OnQueueFailed` for a failed one |
+| `application`                | `LedgerAppendUseCase`, `LedgerAppendReportFailureUseCase`                        |
+| `domain`                     | `LedgerAppendEntryModel`, `LedgerAppendHelper`                                   |
+| `outbound`                   | `LEDGER_APPEND_REPOSITORY_PORT`                                                  |
+| `infrastructure/persistence` | `LedgerAppendRepository` over `ledger_entry`                                     |
 
 ## A job is a ready record
 

@@ -1,12 +1,12 @@
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
 import { IdempotencyPurgeUseCase } from '../../application';
-import { IdempotencyPurgeConsumer } from '../idempotency-purge.consumer';
+import { IdempotencyPurgeProcessor } from '../idempotency-purge.processor';
 
-describe('IdempotencyPurgeConsumer', () => {
+describe('IdempotencyPurgeProcessor', () => {
   let correlationIds: string[];
   let execute: jest.Mock;
-  let consumer: IdempotencyPurgeConsumer;
+  let processor: IdempotencyPurgeProcessor;
 
   beforeEach(() => {
     correlationIds = [];
@@ -15,12 +15,12 @@ describe('IdempotencyPurgeConsumer', () => {
 
       return Promise.resolve();
     });
-    consumer = new IdempotencyPurgeConsumer({ execute } as unknown as IdempotencyPurgeUseCase);
+    processor = new IdempotencyPurgeProcessor({ execute } as unknown as IdempotencyPurgeUseCase);
   });
 
   describe('handleTick', () => {
     it('runs the purge inside a correlation context of its own', async () => {
-      await consumer.handleTick();
+      await processor.handleTick();
 
       expect(execute).toHaveBeenCalledWith();
       expect(correlationIds).toEqual([
@@ -31,8 +31,8 @@ describe('IdempotencyPurgeConsumer', () => {
     });
 
     it('opens a new correlation context on every tick', async () => {
-      await consumer.handleTick();
-      await consumer.handleTick();
+      await processor.handleTick();
+      await processor.handleTick();
 
       expect(correlationIds).toHaveLength(2);
       expect(correlationIds[0]).not.toEqual(correlationIds[1]);

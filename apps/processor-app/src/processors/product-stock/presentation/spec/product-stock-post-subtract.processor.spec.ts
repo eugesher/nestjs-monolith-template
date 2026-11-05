@@ -4,12 +4,12 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 
 import { ProductStockPostSubtractUseCase } from '../../application';
-import { ProductStockPostSubtractConsumer } from '../product-stock-post-subtract.consumer';
+import { ProductStockPostSubtractProcessor } from '../product-stock-post-subtract.processor';
 
-describe('ProductStockPostSubtractConsumer', () => {
+describe('ProductStockPostSubtractProcessor', () => {
   let correlationIds: string[];
   let execute: jest.Mock;
-  let consumer: ProductStockPostSubtractConsumer;
+  let processor: ProductStockPostSubtractProcessor;
 
   beforeEach(() => {
     correlationIds = [];
@@ -18,14 +18,14 @@ describe('ProductStockPostSubtractConsumer', () => {
 
       return Promise.resolve();
     });
-    consumer = new ProductStockPostSubtractConsumer({
+    processor = new ProductStockPostSubtractProcessor({
       execute,
     } as unknown as ProductStockPostSubtractUseCase);
   });
 
   describe('handleRecord', () => {
     it('checks the products of the job under the correlation id of the subtraction', async () => {
-      await consumer.handleRecord({
+      await processor.handleRecord({
         data: { productIds: ['100', '106'], correlationId: 'corr-1' },
       } as Job<IProductStockPostSubtractPayload>);
 

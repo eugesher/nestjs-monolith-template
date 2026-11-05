@@ -5,12 +5,12 @@ import { LedgerRecordQueueModule } from '@acme-processor/common/shared/ledger-re
 import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from './application';
 import { LedgerAppendRepository } from './infrastructure';
 import { LEDGER_APPEND_REPOSITORY_PORT } from './outbound';
-import { LedgerAppendConsumer } from './presentation/ledger-append.consumer';
+import { LedgerAppendProcessor } from './presentation/ledger-append.processor';
 
 @Module({
   imports: [LedgerRecordQueueModule],
   providers: [
-    LedgerAppendConsumer,
+    LedgerAppendProcessor,
     LedgerAppendUseCase,
     LedgerAppendReportFailureUseCase,
     { provide: LEDGER_APPEND_REPOSITORY_PORT, useClass: LedgerAppendRepository },

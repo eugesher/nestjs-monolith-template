@@ -10,7 +10,7 @@ import {
 import { ProductStockPostSubtractUseCase } from '../application';
 
 @Processor(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
-export class ProductStockPostSubtractConsumer {
+export class ProductStockPostSubtractProcessor {
   constructor(private readonly postSubtract: ProductStockPostSubtractUseCase) {}
 
   @Process()

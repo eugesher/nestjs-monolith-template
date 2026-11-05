@@ -13,8 +13,8 @@ const AREAS = {
   },
   processors: {
     folder: 'presentation',
-    suffix: '.consumer.ts',
-    missing: 'a processor must have a consumer in presentation',
+    suffix: '.processor.ts',
+    missing: 'a processor must have a .processor.ts in presentation',
   },
 };
 

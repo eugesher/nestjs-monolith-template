@@ -9,7 +9,7 @@ deadline and retries.
 | queue adapter      | `core/modules/src/product-stock/infrastructure/queue/product-stock-core-post-subtract-queue.adapter.ts` |
 | queue contract     | `core/contracts/src/product-stock/queues/product-stock-post-subtract.queue.ts`                          |
 | queue registration | `core/modules/src/product-stock/module/product-stock-core.module.ts`                                    |
-| the consumer       | `apps/processor-app/src/processors/product-stock/presentation/product-stock-post-subtract.consumer.ts`  |
+| the consumer       | `apps/processor-app/src/processors/product-stock/presentation/product-stock-post-subtract.processor.ts` |
 | from a feature     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts`    |
 
 ## After the commit
@@ -52,7 +52,7 @@ The lint edges for a core queue adapter are in `lint/boundaries/policies/acme-co
 
 ## The consumer
 
-`ProductStockPostSubtractConsumer` opens the correlation context of the job and runs one use case
+`ProductStockPostSubtractProcessor` opens the correlation context of the job and runs one use case
 in one transaction: it locks and sums through the core module, reads the rows it needs under the
 same lock, and calls another core module (see `023-processor-app.md`). A replay of the job writes
 nothing, because the rows it changed are no longer picked.
