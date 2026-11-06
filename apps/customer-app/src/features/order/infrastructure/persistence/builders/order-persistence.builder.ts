@@ -10,7 +10,7 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   public forList(query: IOrderGetManyQuery): this {
     const { limit, offset, customerId } = query;
 
-    this.selectColumns().placedBy(customerId).sort().paginate(limit, offset);
+    this.selectOrder().whereCustomer(customerId).orderByNewest().paginate(limit, offset);
 
     return this;
   }
@@ -18,23 +18,23 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   public forOwned(query: IOrderGetOneQuery): this {
     const { orderId, customerId } = query;
 
-    this.selectColumns()
+    this.selectOrder()
       .joinOrderProducts()
-      .joinProduct()
-      .byId(orderId)
-      .placedBy(customerId)
+      .joinProducts()
+      .whereId(orderId)
+      .whereCustomer(customerId)
       .withDeleted();
 
     return this;
   }
 
   public forPlaced(orderId: string): this {
-    this.selectColumns().joinOrderProducts().joinProduct().byId(orderId);
+    this.selectOrder().joinOrderProducts().joinProducts().whereId(orderId);
 
     return this;
   }
 
-  private selectColumns(): this {
+  private selectOrder(): this {
     this.select([`${this.alias}.id`, `${this.alias}.createdAt`]);
 
     return this;
@@ -48,7 +48,7 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
     return this;
   }
 
-  private joinProduct(): this {
+  private joinProducts(): this {
     this.leftJoin(`${this.orderProductAlias}.product`, this.productAlias).addSelect([
       `${this.productAlias}.id`,
       `${this.productAlias}.sku`,
@@ -58,19 +58,19 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
     return this;
   }
 
-  private byId(id: string): this {
+  private whereId(id: string): this {
     this.andWhere(`${this.alias}.id = :id`, { id });
 
     return this;
   }
 
-  private placedBy(customerId: string): this {
+  private whereCustomer(customerId: string): this {
     this.andWhere(`${this.alias}.customerId = :customerId`, { customerId });
 
     return this;
   }
 
-  private sort(): this {
+  private orderByNewest(): this {
     this.addOrderBy(`${this.alias}.id`, 'DESC');
 
     return this;
