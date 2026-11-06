@@ -21,6 +21,6 @@ export class ProductStockOnHandCoreAdapter implements IProductStockOnHandPort {
   public async lock(command: IProductStockOnHandLockCommand): Promise<IProductStockOnHandView[]> {
     const { productIds } = command;
 
-    return await this.productStock.lock({ productIds });
+    return await this.productStock.handleLock({ productIds });
   }
 }

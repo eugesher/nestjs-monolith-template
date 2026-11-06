@@ -1,4 +1,4 @@
-export enum TagErrorCodeEnum {
+export enum TagExceptionCodeEnum {
   TAG_NAME_INVALID = 'TAG_NAME_INVALID',
   TAG_NOT_FOUND = 'TAG_NOT_FOUND',
   TAG_NAME_TAKEN = 'TAG_NAME_TAKEN',

@@ -2,14 +2,14 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { QueueBaseException, QueueErrorCodeEnum } from '../../domain';
+import { QueueBaseException, QueueExceptionCodeEnum } from '../../domain';
 
 @Catch(QueueBaseException)
 export class QueueHttpExceptionFilter implements ExceptionFilter<QueueBaseException> {
-  private static readonly STATUS: Record<QueueErrorCodeEnum, HttpStatus> = {
-    [QueueErrorCodeEnum.QUEUE_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [QueueErrorCodeEnum.QUEUE_JOB_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [QueueErrorCodeEnum.QUEUE_JOB_NOT_FAILED]: HttpStatus.CONFLICT,
+  private static readonly STATUS: Record<QueueExceptionCodeEnum, HttpStatus> = {
+    [QueueExceptionCodeEnum.QUEUE_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [QueueExceptionCodeEnum.QUEUE_JOB_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [QueueExceptionCodeEnum.QUEUE_JOB_NOT_FAILED]: HttpStatus.CONFLICT,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthJwtGuard } from '../auth-jwt.guard';
 
 describe('AuthJwtGuard', () => {
-  let validate: jest.Mock;
+  let handleValidate: jest.Mock;
   let verifyAsync: jest.Mock;
   let getAllAndOverride: jest.Mock;
   let request: Record<string, unknown>;
@@ -13,7 +13,7 @@ describe('AuthJwtGuard', () => {
   let guard: AuthJwtGuard;
 
   beforeEach(() => {
-    validate = jest.fn().mockResolvedValue({
+    handleValidate = jest.fn().mockResolvedValue({
       id: 'user-1',
       email: 'ann@example.com',
     });
@@ -26,7 +26,7 @@ describe('AuthJwtGuard', () => {
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;
     guard = new AuthJwtGuard(
-      { validate },
+      { handleValidate },
       { verifyAsync } as unknown as JwtService,
       { getAllAndOverride } as unknown as Reflector,
     );
@@ -37,7 +37,7 @@ describe('AuthJwtGuard', () => {
 
     expect(allowed).toBe(true);
     expect(verifyAsync).toHaveBeenCalledWith('token');
-    expect(validate).toHaveBeenCalledWith({ sub: 'user-1' });
+    expect(handleValidate).toHaveBeenCalledWith({ sub: 'user-1' });
     expect(request.user).toEqual({
       id: 'user-1',
       email: 'ann@example.com',
@@ -82,11 +82,11 @@ describe('AuthJwtGuard', () => {
     const allowed = guard.canActivate(context);
 
     await expect(allowed).rejects.toBeInstanceOf(UnauthorizedException);
-    expect(validate).not.toHaveBeenCalled();
+    expect(handleValidate).not.toHaveBeenCalled();
   });
 
   it('rejects a user that is gone or disabled with 401', async () => {
-    validate.mockResolvedValue(null);
+    handleValidate.mockResolvedValue(null);
 
     const allowed = guard.canActivate(context);
 

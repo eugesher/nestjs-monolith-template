@@ -4,9 +4,9 @@ import {
 } from '../interfaces';
 
 export interface ICredentialsLibPort {
-  signAccessToken(command: ICredentialsLibSignAccessTokenCommand): Promise<string>;
-  hashPassword(password: string): Promise<string>;
-  verifyPassword(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean>;
+  handleSignAccessToken(command: ICredentialsLibSignAccessTokenCommand): Promise<string>;
+  handleHashPassword(password: string): Promise<string>;
+  handleVerifyPassword(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean>;
 }
 
 export const CREDENTIALS_LIB_PORT = Symbol('CREDENTIALS_LIB_PORT');

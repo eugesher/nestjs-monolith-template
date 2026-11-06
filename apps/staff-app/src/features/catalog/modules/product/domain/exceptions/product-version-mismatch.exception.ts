@@ -1,10 +1,10 @@
 import { Maybe } from '@acme-libs/toolkit';
 
-import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
+import { ProductExceptionCodeEnum } from '../enums/product-exception-code.enum';
 import { ProductBaseException } from './base/product-base.exception';
 
 export class ProductVersionMismatchException extends ProductBaseException {
-  public readonly code = ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH;
+  public readonly code = ProductExceptionCodeEnum.PRODUCT_VERSION_MISMATCH;
 
   constructor(
     productId: string,

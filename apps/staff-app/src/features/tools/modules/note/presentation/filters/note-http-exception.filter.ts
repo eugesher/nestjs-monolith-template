@@ -2,17 +2,17 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { NoteBaseException, NoteErrorCodeEnum } from '../../domain';
+import { NoteBaseException, NoteExceptionCodeEnum } from '../../domain';
 
 @Catch(NoteBaseException)
 export class NoteHttpExceptionFilter implements ExceptionFilter<NoteBaseException> {
-  private static readonly STATUS: Record<NoteErrorCodeEnum, HttpStatus> = {
-    [NoteErrorCodeEnum.NOTE_SUBJECT_INVALID]: HttpStatus.BAD_REQUEST,
-    [NoteErrorCodeEnum.NOTE_BODY_INVALID]: HttpStatus.BAD_REQUEST,
-    [NoteErrorCodeEnum.NOTE_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
-    [NoteErrorCodeEnum.NOTE_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [NoteErrorCodeEnum.NOTE_RESOLVED]: HttpStatus.CONFLICT,
-    [NoteErrorCodeEnum.NOTE_VERSION_MISMATCH]: HttpStatus.CONFLICT,
+  private static readonly STATUS: Record<NoteExceptionCodeEnum, HttpStatus> = {
+    [NoteExceptionCodeEnum.NOTE_SUBJECT_INVALID]: HttpStatus.BAD_REQUEST,
+    [NoteExceptionCodeEnum.NOTE_BODY_INVALID]: HttpStatus.BAD_REQUEST,
+    [NoteExceptionCodeEnum.NOTE_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
+    [NoteExceptionCodeEnum.NOTE_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [NoteExceptionCodeEnum.NOTE_RESOLVED]: HttpStatus.CONFLICT,
+    [NoteExceptionCodeEnum.NOTE_VERSION_MISMATCH]: HttpStatus.CONFLICT,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

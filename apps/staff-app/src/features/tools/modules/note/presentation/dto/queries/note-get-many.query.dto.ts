@@ -4,10 +4,10 @@ import {
   IsBoolean,
   IsInt,
   IsOptional,
+  IsPositive,
   IsString,
   Matches,
   MaxLength,
-  Min,
   MinLength,
 } from 'class-validator';
 
@@ -16,14 +16,14 @@ export class NoteGetManyQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public page?: number;
 
   @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public limit?: number;
 
   @ApiPropertyOptional({ example: 'product', description: 'Only together with subjectId' })

@@ -26,7 +26,7 @@ describe('ReminderGetManyQueryDto', () => {
   });
 
   it.each([
-    ['page zero', { page: '0' }, 'page', ['min']],
+    ['page zero', { page: '0' }, 'page', ['isPositive']],
     ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
     ['an unknown status', { status: 'archived' }, 'status', ['isEnum']],
   ])('rejects %s', (_case, query, property, constraints) => {

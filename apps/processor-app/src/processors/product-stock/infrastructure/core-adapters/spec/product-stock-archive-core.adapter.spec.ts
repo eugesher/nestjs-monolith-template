@@ -3,24 +3,24 @@ import { ProductCoreArchiveOutcomeEnum } from '@acme-core/contracts/product';
 import { ProductStockArchiveCoreAdapter } from '../product-stock-archive-core.adapter';
 
 describe('ProductStockArchiveCoreAdapter', () => {
-  let archive: jest.Mock;
+  let handleArchive: jest.Mock;
   let adapter: ProductStockArchiveCoreAdapter;
 
   beforeEach(() => {
-    archive = jest.fn();
-    adapter = new ProductStockArchiveCoreAdapter({ archive });
+    handleArchive = jest.fn();
+    adapter = new ProductStockArchiveCoreAdapter({ handleArchive });
   });
 
   describe('archive', () => {
     it('archives the product through the core module without an expected version', async () => {
-      archive.mockResolvedValue({
+      handleArchive.mockResolvedValue({
         outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED,
         currentVersion: 2,
       });
 
       const view = await adapter.archive({ productId: '106' });
 
-      expect(archive).toHaveBeenCalledWith({ productId: '106', expectedVersion: undefined });
+      expect(handleArchive).toHaveBeenCalledWith({ productId: '106', expectedVersion: undefined });
       expect(view).toEqual({ archived: true });
     });
 
@@ -29,7 +29,7 @@ describe('ProductStockArchiveCoreAdapter', () => {
       ProductCoreArchiveOutcomeEnum.NOT_FOUND,
       ProductCoreArchiveOutcomeEnum.VERSION_MISMATCH,
     ])('answers not archived for %s', async (outcome) => {
-      archive.mockResolvedValue({ outcome, currentVersion: 2 });
+      handleArchive.mockResolvedValue({ outcome, currentVersion: 2 });
 
       const view = await adapter.archive({ productId: '106' });
 

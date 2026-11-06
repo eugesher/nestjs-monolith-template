@@ -16,11 +16,11 @@ describe('ProductStockAddRequestDto', () => {
   });
 
   it.each([
-    ['zero', 0, ['min']],
-    ['a negative quantity', -3, ['min']],
+    ['zero', 0, ['isPositive']],
+    ['a negative quantity', -3, ['isPositive']],
     ['a fraction', 2.5, ['isInt']],
     ['more than 100000', 100_001, ['max']],
-    ['a string of digits', '5', ['max', 'min', 'isInt']],
+    ['a string of digits', '5', ['max', 'isPositive', 'isInt']],
   ])('rejects %s', (_case, quantity, constraints) => {
     const dto = plainToInstance(ProductStockAddRequestDto, { quantity });
 

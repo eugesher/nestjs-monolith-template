@@ -10,7 +10,7 @@ describe('AuthGlobalFacade', () => {
     facade = new AuthGlobalFacade(new AuthGlobalValidateSubjectUseCase({ findSubject }));
   });
 
-  describe('validate', () => {
+  describe('handleValidate', () => {
     it('answers the user with its permission codes for the token subject', async () => {
       findSubject.mockResolvedValue({
         id: 'user-1',
@@ -18,7 +18,7 @@ describe('AuthGlobalFacade', () => {
         permissionCodes: ['ledger:read'],
       });
 
-      const user = await facade.validate({ sub: 'user-1' });
+      const user = await facade.handleValidate({ sub: 'user-1' });
 
       expect(user).toEqual({
         id: 'user-1',
@@ -31,7 +31,7 @@ describe('AuthGlobalFacade', () => {
     it('answers no user when the subject is not an active staff user', async () => {
       findSubject.mockResolvedValue(null);
 
-      const user = await facade.validate({ sub: 'user-1' });
+      const user = await facade.handleValidate({ sub: 'user-1' });
 
       expect(user).toBeNull();
     });

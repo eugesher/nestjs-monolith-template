@@ -12,12 +12,12 @@ export class AuthCredentialsLibAdapter implements IAuthCredentialsPort {
   ) {}
 
   public async issueAccessToken(userId: string): Promise<string> {
-    return await this.credentials.signAccessToken({ sub: userId });
+    return await this.credentials.handleSignAccessToken({ sub: userId });
   }
 
   public async verifyPassword(command: IAuthCredentialsVerifyPasswordCommand): Promise<boolean> {
     const { passwordHash, password } = command;
 
-    return await this.credentials.verifyPassword({ passwordHash, password });
+    return await this.credentials.handleVerifyPassword({ passwordHash, password });
   }
 }

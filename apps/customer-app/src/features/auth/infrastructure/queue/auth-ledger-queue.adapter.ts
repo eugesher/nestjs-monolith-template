@@ -8,7 +8,7 @@ import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/c
 import { IAuthLedgerRecordPort, AUTH_LEDGER_RECORD_TIMEOUT_MS } from '../../outbound';
 
 @Injectable()
-export class AuthLedgerRecordQueueAdapter
+export class AuthLedgerQueueAdapter
   extends SubjectLedgerQueueAdapter
   implements IAuthLedgerRecordPort
 {

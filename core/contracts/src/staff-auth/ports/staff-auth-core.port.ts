@@ -8,10 +8,12 @@ import {
 } from '../interfaces';
 
 export interface IStaffAuthCorePort {
-  findSubject(
+  handleFindSubject(
     command: IStaffAuthCoreFindSubjectCommand,
   ): Promise<Nullable<IStaffAuthCoreSubjectView>>;
-  findByEmail(command: IStaffAuthCoreFindByEmailCommand): Promise<Nullable<IStaffAuthCoreUserView>>;
+  handleFindByEmail(
+    command: IStaffAuthCoreFindByEmailCommand,
+  ): Promise<Nullable<IStaffAuthCoreUserView>>;
 }
 
 export const STAFF_AUTH_CORE_PORT = Symbol('STAFF_AUTH_CORE_PORT');

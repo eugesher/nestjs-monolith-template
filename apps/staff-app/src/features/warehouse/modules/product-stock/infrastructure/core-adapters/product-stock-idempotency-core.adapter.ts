@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  IDEMPOTENCY_CORE_KEY_PORT,
+  IDEMPOTENCY_CORE_PORT,
   IdempotencyCoreClaimOutcomeEnum,
-  type IIdempotencyCoreKeyPort,
+  type IIdempotencyCorePort,
 } from '@acme-core/contracts/idempotency';
 
 import {
@@ -27,15 +27,15 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
   };
 
   constructor(
-    @Inject(IDEMPOTENCY_CORE_KEY_PORT)
-    private readonly idempotency: IIdempotencyCoreKeyPort,
+    @Inject(IDEMPOTENCY_CORE_PORT)
+    private readonly idempotency: IIdempotencyCorePort,
   ) {}
 
   public async claim<T>(
     command: IProductStockIdempotencyClaimCommand,
   ): Promise<IProductStockIdempotencyOutcomeView | IProductStockIdempotencyReplayView<T>> {
     const { key, body } = command;
-    const claim = await this.idempotency.claim({ key, body });
+    const claim = await this.idempotency.handleClaim({ key, body });
     const { outcome, storedResponse } = claim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
@@ -48,12 +48,12 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
   public async complete(command: IProductStockIdempotencyCompleteCommand): Promise<void> {
     const { key, response } = command;
 
-    await this.idempotency.complete({ key, response });
+    await this.idempotency.handleComplete({ key, response });
   }
 
   public async release(command: IProductStockIdempotencyReleaseCommand): Promise<void> {
     const { key } = command;
 
-    await this.idempotency.release({ key });
+    await this.idempotency.handleRelease({ key });
   }
 }

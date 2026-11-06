@@ -5,9 +5,9 @@ has used, for which request body, and what the first request answered. It is a c
 features of two apps claim keys while serving writes, for example
 `apps/staff-app/src/features/catalog/modules/product/application/use-cases/product-create.use-case.ts`. Its contract `core/contracts/src/idempotency` has one port:
 
-| Port                        | Facade                     | Consumer                                  |
-| --------------------------- | -------------------------- | ----------------------------------------- |
-| `IDEMPOTENCY_CORE_KEY_PORT` | `IdempotencyCoreKeyFacade` | a feature that serves an idempotent write |
+| Port                    | Facade                  | Consumer                                  |
+| ----------------------- | ----------------------- | ----------------------------------------- |
+| `IDEMPOTENCY_CORE_PORT` | `IdempotencyCoreFacade` | a feature that serves an idempotent write |
 
 Deleting the expired keys has one caller, the `idempotency` processor of processor-app, so it
 lives in the processor with a repository of its own (see `009-scheduled-processor.md` and

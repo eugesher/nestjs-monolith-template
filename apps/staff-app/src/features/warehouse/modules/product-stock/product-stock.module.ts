@@ -10,7 +10,7 @@ import { ProductStockAddUseCase, ProductStockLedgerService } from './application
 import {
   ProductStockAddRepository,
   ProductStockIdempotencyCoreAdapter,
-  ProductStockLedgerRecordQueueAdapter,
+  ProductStockLedgerQueueAdapter,
   ProductStockMovementCoreAdapter,
 } from './infrastructure';
 import {
@@ -33,7 +33,7 @@ import { ProductStockController } from './presentation';
     { provide: PRODUCT_STOCK_ADD_REPOSITORY_PORT, useClass: ProductStockAddRepository },
     { provide: PRODUCT_STOCK_IDEMPOTENCY_PORT, useClass: ProductStockIdempotencyCoreAdapter },
     { provide: PRODUCT_STOCK_MOVEMENT_PORT, useClass: ProductStockMovementCoreAdapter },
-    { provide: PRODUCT_STOCK_LEDGER_RECORD_PORT, useClass: ProductStockLedgerRecordQueueAdapter },
+    { provide: PRODUCT_STOCK_LEDGER_RECORD_PORT, useClass: ProductStockLedgerQueueAdapter },
     ConfigProviderHelper.value(PRODUCT_STOCK_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],

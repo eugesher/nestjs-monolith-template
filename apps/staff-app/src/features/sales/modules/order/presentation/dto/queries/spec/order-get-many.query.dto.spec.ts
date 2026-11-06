@@ -30,10 +30,10 @@ describe('OrderGetManyQueryDto', () => {
   });
 
   it.each([
-    ['a page of zero', { page: '0' }, 'page', 'min'],
+    ['a page of zero', { page: '0' }, 'page', 'isPositive'],
     ['a page that is not a number', { page: 'first' }, 'page', 'isInt'],
     ['a fractional limit', { limit: '2.5' }, 'limit', 'isInt'],
-    ['a limit of zero', { limit: '0' }, 'limit', 'min'],
+    ['a limit of zero', { limit: '0' }, 'limit', 'isPositive'],
   ])('rejects %s', (_case, query, property, constraint) => {
     const dto = plainToInstance(OrderGetManyQueryDto, query);
 

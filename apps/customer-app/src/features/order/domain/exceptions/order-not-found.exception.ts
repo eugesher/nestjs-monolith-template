@@ -1,9 +1,9 @@
-import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
+import { OrderExceptionCodeEnum } from '../enums/order-exception-code.enum';
 
 import { OrderBaseException } from './base/order-base.exception';
 
 export class OrderNotFoundException extends OrderBaseException {
-  public readonly code = OrderErrorCodeEnum.ORDER_NOT_FOUND;
+  public readonly code = OrderExceptionCodeEnum.ORDER_NOT_FOUND;
 
   constructor(orderId: string, message = `Order ${orderId} was not found`) {
     super(message);

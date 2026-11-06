@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { UserAssignRoleUseCase } from '../user-assign-role.use-case';
@@ -45,7 +45,7 @@ describe('UserAssignRoleUseCase', () => {
     const assign = useCase.execute({ userId: 'ghost', role: RoleEnum.VIEWER });
 
     await expect(assign).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_USER_NOT_FOUND,
+      code: IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND,
       message: 'User ghost was not found',
     });
   });
@@ -56,7 +56,7 @@ describe('UserAssignRoleUseCase', () => {
     const assign = useCase.execute({ userId: 'user-1', role: RoleEnum.ADMIN });
 
     await expect(assign).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND,
+      code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
       message: 'Role admin was not found',
     });
     expect(logger.info).not.toHaveBeenCalled();

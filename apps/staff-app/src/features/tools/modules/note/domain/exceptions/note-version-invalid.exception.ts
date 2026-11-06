@@ -1,8 +1,8 @@
-import { NoteErrorCodeEnum } from '../enums/note-error-code.enum';
+import { NoteExceptionCodeEnum } from '../enums/note-exception-code.enum';
 import { NoteBaseException } from './base/note-base.exception';
 
 export class NoteVersionInvalidException extends NoteBaseException {
-  public readonly code = NoteErrorCodeEnum.NOTE_VERSION_INVALID;
+  public readonly code = NoteExceptionCodeEnum.NOTE_VERSION_INVALID;
 
   constructor(
     version: number,

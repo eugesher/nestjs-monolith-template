@@ -1289,7 +1289,7 @@ exports[`App Ledger GET /api/ledger should refuse a malformed page with 400 from
     "body": {
       "error": "Bad Request",
       "message": [
-        "page must not be less than 1",
+        "page must be a positive number",
         "page must be an integer number",
       ],
       "statusCode": 400,
@@ -1380,7 +1380,7 @@ exports[`App Sales Order GET /api/sales/orders should refuse a malformed page wi
     "body": {
       "error": "Bad Request",
       "message": [
-        "page must not be less than 1",
+        "page must be a positive number",
         "page must be an integer number",
       ],
       "statusCode": 400,
@@ -2855,7 +2855,7 @@ exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId
     "body": {
       "error": "Bad Request",
       "message": [
-        "quantity must not be less than 1",
+        "quantity must be a positive number",
       ],
       "statusCode": 400,
     },

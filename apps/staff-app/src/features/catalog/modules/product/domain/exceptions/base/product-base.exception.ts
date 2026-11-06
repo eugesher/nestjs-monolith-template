@@ -1,9 +1,9 @@
 import { DomainException, Maybe } from '@acme-libs/toolkit';
 
-import { ProductErrorCodeEnum } from '../../enums/product-error-code.enum';
+import { ProductExceptionCodeEnum } from '../../enums/product-exception-code.enum';
 
 export abstract class ProductBaseException extends DomainException {
-  public abstract override readonly code: ProductErrorCodeEnum;
+  public abstract override readonly code: ProductExceptionCodeEnum;
   public readonly details: Maybe<Readonly<Record<string, unknown>>>;
 
   protected constructor(message: string, details?: Readonly<Record<string, unknown>>) {

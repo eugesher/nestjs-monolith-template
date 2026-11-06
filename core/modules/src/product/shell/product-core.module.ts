@@ -9,7 +9,7 @@ import { ProductCoreArchiveUseCase, ProductCoreLedgerService } from '../applicat
 import {
   ProductCoreArchiveRepository,
   ProductCoreCatalogCacheAdapter,
-  ProductCoreLedgerRecordQueueAdapter,
+  ProductCoreLedgerQueueAdapter,
 } from '../infrastructure';
 import {
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
@@ -33,7 +33,7 @@ import { ProductCoreFacade } from './product-core.facade';
     ProductCoreArchiveUseCase,
     ProductCoreLedgerService,
     { provide: PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT, useClass: ProductCoreArchiveRepository },
-    { provide: PRODUCT_CORE_LEDGER_RECORD_PORT, useClass: ProductCoreLedgerRecordQueueAdapter },
+    { provide: PRODUCT_CORE_LEDGER_RECORD_PORT, useClass: ProductCoreLedgerQueueAdapter },
     { provide: PRODUCT_CORE_CATALOG_CACHE_PORT, useClass: ProductCoreCatalogCacheAdapter },
     ConfigProviderHelper.value(PRODUCT_CORE_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),

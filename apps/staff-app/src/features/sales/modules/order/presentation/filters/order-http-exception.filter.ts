@@ -2,13 +2,13 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { OrderBaseException, OrderErrorCodeEnum } from '../../domain';
+import { OrderBaseException, OrderExceptionCodeEnum } from '../../domain';
 
 @Catch(OrderBaseException)
 export class OrderHttpExceptionFilter implements ExceptionFilter<OrderBaseException> {
-  private static readonly STATUS: Record<OrderErrorCodeEnum, HttpStatus> = {
-    [OrderErrorCodeEnum.ORDER_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [OrderErrorCodeEnum.ORDER_TAG_NOT_FOUND]: HttpStatus.UNPROCESSABLE_ENTITY,
+  private static readonly STATUS: Record<OrderExceptionCodeEnum, HttpStatus> = {
+    [OrderExceptionCodeEnum.ORDER_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [OrderExceptionCodeEnum.ORDER_TAG_NOT_FOUND]: HttpStatus.UNPROCESSABLE_ENTITY,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

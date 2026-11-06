@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { RoleUpdatePermissionsUseCase } from '../role-update-permissions.use-case';
@@ -84,7 +84,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     const update = useCase.execute({ role: RoleEnum.ADMIN, permissionCodes: [] });
 
     await expect(update).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND,
+      code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
       message: 'Role admin was not found',
     });
     expect(repository.findPermissions).not.toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     });
 
     await expect(update).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND,
+      code: IdentityExceptionCodeEnum.AUTH_PERMISSION_NOT_FOUND,
       message: 'Unknown permission codes: ledger:read',
     });
     expect(repository.deleteRolePermissions).not.toHaveBeenCalled();

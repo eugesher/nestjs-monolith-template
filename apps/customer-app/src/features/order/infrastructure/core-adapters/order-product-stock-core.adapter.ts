@@ -25,7 +25,7 @@ export class OrderProductStockCoreAdapter implements IOrderProductStockPort {
   public async lock(command: IOrderProductStockLockCommand): Promise<IOrderProductStockView[]> {
     const { productIds } = command;
 
-    return await this.productStock.lock({ productIds });
+    return await this.productStock.handleLock({ productIds });
   }
 
   public async withdraw(command: IOrderProductStockWithdrawCommand): Promise<void> {
@@ -36,7 +36,7 @@ export class OrderProductStockCoreAdapter implements IOrderProductStockPort {
       orderProductId: movement.orderProductId,
     }));
 
-    await this.productStock.move({
+    await this.productStock.handleMove({
       kind: ProductStockCoreMovementKindEnum.SUBTRACT,
       movements: lines,
     });

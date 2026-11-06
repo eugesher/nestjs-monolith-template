@@ -5,20 +5,17 @@ import type { Queue } from 'bull';
 import { SubjectLedgerQueueAdapter } from '@acme-libs/ledger';
 import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import {
-  IProductCoreLedgerRecordPort,
-  PRODUCT_CORE_LEDGER_RECORD_TIMEOUT_MS,
-} from '../../outbound';
+import { IOrderLedgerRecordPort, ORDER_LEDGER_RECORD_TIMEOUT_MS } from '../../outbound';
 
 @Injectable()
-export class ProductCoreLedgerRecordQueueAdapter
+export class OrderLedgerQueueAdapter
   extends SubjectLedgerQueueAdapter
-  implements IProductCoreLedgerRecordPort
+  implements IOrderLedgerRecordPort
 {
   constructor(
     @InjectQueue(LEDGER_RECORD_QUEUE)
     protected readonly queue: Queue<ILedgerRecordProcessorPayload>,
-    @Inject(PRODUCT_CORE_LEDGER_RECORD_TIMEOUT_MS)
+    @Inject(ORDER_LEDGER_RECORD_TIMEOUT_MS)
     protected readonly timeoutMs: number,
   ) {
     super();

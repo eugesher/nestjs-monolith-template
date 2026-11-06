@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthStaffUserModel } from '../auth-staff-user.model';
 
@@ -47,7 +47,7 @@ describe('AuthStaffUserModel', () => {
 
       expect(() => user.assertActive()).toThrow(
         expect.objectContaining({
-          code: IdentityErrorCodeEnum.AUTH_USER_INACTIVE,
+          code: IdentityExceptionCodeEnum.AUTH_USER_INACTIVE,
           message: 'User user-1 is disabled',
         }) as Error,
       );

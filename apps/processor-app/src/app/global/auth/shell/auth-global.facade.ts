@@ -11,11 +11,13 @@ import { AuthGlobalValidateSubjectUseCase } from '../application';
 
 @Injectable()
 export class AuthGlobalFacade implements IAuthUserValidatorPort {
-  constructor(private readonly authGlobalValidateSubject: AuthGlobalValidateSubjectUseCase) {}
+  constructor(private readonly validateSubject: AuthGlobalValidateSubjectUseCase) {}
 
-  public async validate(command: IAuthJwtPayloadCommand): Promise<Nullable<IAuthCurrentUserView>> {
+  public async handleValidate(
+    command: IAuthJwtPayloadCommand,
+  ): Promise<Nullable<IAuthCurrentUserView>> {
     const { sub } = command;
 
-    return await this.authGlobalValidateSubject.execute({ userId: sub });
+    return await this.validateSubject.execute({ userId: sub });
   }
 }

@@ -1,21 +1,21 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 
 import { RoleBaseException } from '../../domain';
 
 @Catch(RoleBaseException)
 export class RoleHttpExceptionFilter implements ExceptionFilter<RoleBaseException> {
-  private static readonly STATUS: Record<IdentityErrorCodeEnum, HttpStatus> = {
-    [IdentityErrorCodeEnum.AUTH_EMAIL_INVALID]: HttpStatus.BAD_REQUEST,
-    [IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK]: HttpStatus.BAD_REQUEST,
-    [IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS]: HttpStatus.UNAUTHORIZED,
-    [IdentityErrorCodeEnum.AUTH_USER_INACTIVE]: HttpStatus.FORBIDDEN,
-    [IdentityErrorCodeEnum.AUTH_USER_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [IdentityErrorCodeEnum.AUTH_ROLE_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND]: HttpStatus.BAD_REQUEST,
-    [IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN]: HttpStatus.CONFLICT,
+  private static readonly STATUS: Record<IdentityExceptionCodeEnum, HttpStatus> = {
+    [IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID]: HttpStatus.BAD_REQUEST,
+    [IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK]: HttpStatus.BAD_REQUEST,
+    [IdentityExceptionCodeEnum.AUTH_INVALID_CREDENTIALS]: HttpStatus.UNAUTHORIZED,
+    [IdentityExceptionCodeEnum.AUTH_USER_INACTIVE]: HttpStatus.FORBIDDEN,
+    [IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [IdentityExceptionCodeEnum.AUTH_PERMISSION_NOT_FOUND]: HttpStatus.BAD_REQUEST,
+    [IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN]: HttpStatus.CONFLICT,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

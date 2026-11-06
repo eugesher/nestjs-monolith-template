@@ -1,8 +1,8 @@
-import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
+import { ProductExceptionCodeEnum } from '../enums/product-exception-code.enum';
 import { ProductBaseException } from './base/product-base.exception';
 
 export class ProductIdempotentRequestInFlightException extends ProductBaseException {
-  public readonly code = ProductErrorCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT;
+  public readonly code = ProductExceptionCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT;
 
   constructor(
     idempotencyKey: string,

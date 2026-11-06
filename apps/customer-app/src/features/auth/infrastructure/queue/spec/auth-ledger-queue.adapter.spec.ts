@@ -2,15 +2,15 @@ import { Queue } from 'bull';
 
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import { ProductLedgerRecordQueueAdapter } from '../product-ledger-record-queue.adapter';
+import { AuthLedgerQueueAdapter } from '../auth-ledger-queue.adapter';
 
-describe('ProductLedgerRecordQueueAdapter', () => {
+describe('AuthLedgerQueueAdapter', () => {
   let add: jest.Mock;
-  let adapter: ProductLedgerRecordQueueAdapter;
+  let adapter: AuthLedgerQueueAdapter;
 
   beforeEach(() => {
     add = jest.fn().mockResolvedValue({ id: '1' });
-    adapter = new ProductLedgerRecordQueueAdapter(
+    adapter = new AuthLedgerQueueAdapter(
       { add } as unknown as Queue<ILedgerRecordProcessorPayload>,
       500,
     );
@@ -19,21 +19,21 @@ describe('ProductLedgerRecordQueueAdapter', () => {
   describe('enqueue', () => {
     it('adds the record with its correlation id as one job', async () => {
       await adapter.enqueue({
-        operationKey: 'product-created:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductCreated',
-        payload: { sku: 'SKU-0001', name: 'Lamp' },
+        operationKey: 'customer-registered:customer-1',
+        subjectType: 'customer',
+        subjectId: 'customer-1',
+        action: 'CustomerRegistered',
+        payload: { email: 'eve@example.com' },
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });
 
       expect(add).toHaveBeenCalledWith({
-        operationKey: 'product-created:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductCreated',
-        payload: { sku: 'SKU-0001', name: 'Lamp' },
+        operationKey: 'customer-registered:customer-1',
+        subjectType: 'customer',
+        subjectId: 'customer-1',
+        action: 'CustomerRegistered',
+        payload: { email: 'eve@example.com' },
         occurredAt: '2026-01-05T08:00:00.000Z',
         correlationId: 'corr-1',
       });

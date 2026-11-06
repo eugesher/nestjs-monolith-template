@@ -2,15 +2,15 @@ import { Queue } from 'bull';
 
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import { OrderLedgerRecordQueueAdapter } from '../order-ledger-record-queue.adapter';
+import { OrderLedgerQueueAdapter } from '../order-ledger-queue.adapter';
 
-describe('OrderLedgerRecordQueueAdapter', () => {
+describe('OrderLedgerQueueAdapter', () => {
   let add: jest.Mock;
-  let adapter: OrderLedgerRecordQueueAdapter;
+  let adapter: OrderLedgerQueueAdapter;
 
   beforeEach(() => {
     add = jest.fn().mockResolvedValue({ id: '1' });
-    adapter = new OrderLedgerRecordQueueAdapter(
+    adapter = new OrderLedgerQueueAdapter(
       { add } as unknown as Queue<ILedgerRecordProcessorPayload>,
       500,
     );

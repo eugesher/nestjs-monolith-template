@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
@@ -61,7 +61,7 @@ describe('AuthRegisterUseCase', () => {
     const register = useCase.execute({ email: 'eve@example.com', password: 'short' });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
+      code: IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK,
     });
     expect(credentials.hashPassword).not.toHaveBeenCalled();
   });
@@ -70,7 +70,7 @@ describe('AuthRegisterUseCase', () => {
     const register = useCase.execute({ email: 'not-an-email', password: 'correct-horse-battery' });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
+      code: IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID,
     });
     expect(repository.insert).not.toHaveBeenCalled();
   });
@@ -85,7 +85,7 @@ describe('AuthRegisterUseCase', () => {
     });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+      code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
       message: 'Email ann@example.com is already registered',
     });
     expect(logger.info).not.toHaveBeenCalled();

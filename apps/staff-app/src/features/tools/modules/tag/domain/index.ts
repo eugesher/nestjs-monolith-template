@@ -1,4 +1,4 @@
-export * from './enums/tag-error-code.enum';
+export * from './enums/tag-exception-code.enum';
 
 export * from './exceptions/base/tag-base.exception';
 export * from './exceptions/tag-name-invalid.exception';

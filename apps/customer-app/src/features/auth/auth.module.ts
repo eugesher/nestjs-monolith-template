@@ -8,7 +8,7 @@ import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-rec
 import { AuthLedgerService, AuthLoginUseCase, AuthRegisterUseCase } from './application';
 import {
   AuthCredentialsLibAdapter,
-  AuthLedgerRecordQueueAdapter,
+  AuthLedgerQueueAdapter,
   AuthLoginRepository,
   AuthRegisterRepository,
 } from './infrastructure';
@@ -32,7 +32,7 @@ import { AuthController } from './presentation';
     AuthLedgerService,
     { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
     { provide: AUTH_REGISTER_REPOSITORY_PORT, useClass: AuthRegisterRepository },
-    { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerRecordQueueAdapter },
+    { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerQueueAdapter },
     { provide: AUTH_CREDENTIALS_PORT, useClass: AuthCredentialsLibAdapter },
     ConfigProviderHelper.value(AUTH_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(AUTH_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),

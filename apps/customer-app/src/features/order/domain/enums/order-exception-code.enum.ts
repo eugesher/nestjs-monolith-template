@@ -1,4 +1,4 @@
-export enum OrderErrorCodeEnum {
+export enum OrderExceptionCodeEnum {
   ORDER_EMPTY = 'ORDER_EMPTY',
   ORDER_PRODUCT_NOT_FOUND = 'ORDER_PRODUCT_NOT_FOUND',
   ORDER_STOCK_INSUFFICIENT = 'ORDER_STOCK_INSUFFICIENT',

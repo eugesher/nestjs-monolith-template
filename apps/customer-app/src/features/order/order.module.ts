@@ -16,7 +16,7 @@ import {
   OrderGetManyRepository,
   OrderGetOneRepository,
   OrderIdempotencyCoreAdapter,
-  OrderLedgerRecordQueueAdapter,
+  OrderLedgerQueueAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
 } from './infrastructure';
@@ -46,7 +46,7 @@ import { OrderController } from './presentation';
     { provide: ORDER_PLACE_REPOSITORY_PORT, useClass: OrderPlaceRepository },
     { provide: ORDER_PRODUCT_STOCK_PORT, useClass: OrderProductStockCoreAdapter },
     { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },
-    { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerRecordQueueAdapter },
+    { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerQueueAdapter },
     ConfigProviderHelper.value(ORDER_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
     ConfigProviderHelper.value(ORDER_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
   ],

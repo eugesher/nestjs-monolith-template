@@ -1,4 +1,4 @@
-export enum QueueErrorCodeEnum {
+export enum QueueExceptionCodeEnum {
   QUEUE_NOT_FOUND = 'QUEUE_NOT_FOUND',
   QUEUE_JOB_NOT_FOUND = 'QUEUE_JOB_NOT_FOUND',
   QUEUE_JOB_NOT_FAILED = 'QUEUE_JOB_NOT_FAILED',

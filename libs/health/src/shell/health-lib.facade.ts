@@ -11,15 +11,15 @@ import { HealthLibCheckLivenessUseCase, HealthLibCheckReadinessUseCase } from '.
 @Injectable()
 export class HealthLibFacade implements IHealthLibPort {
   constructor(
-    private readonly healthLibCheckLiveness: HealthLibCheckLivenessUseCase,
-    private readonly healthLibCheckReadiness: HealthLibCheckReadinessUseCase,
+    private readonly checkLiveness: HealthLibCheckLivenessUseCase,
+    private readonly checkReadiness: HealthLibCheckReadinessUseCase,
   ) {}
 
-  public liveness(): IHealthLibLivenessView {
-    return this.healthLibCheckLiveness.execute();
+  public handleLiveness(): IHealthLibLivenessView {
+    return this.checkLiveness.execute();
   }
 
-  public async readiness(): Promise<IHealthLibReadinessView> {
-    return await this.healthLibCheckReadiness.execute();
+  public async handleReadiness(): Promise<IHealthLibReadinessView> {
+    return await this.checkReadiness.execute();
   }
 }

@@ -1,4 +1,4 @@
-export enum NoteErrorCodeEnum {
+export enum NoteExceptionCodeEnum {
   NOTE_SUBJECT_INVALID = 'NOTE_SUBJECT_INVALID',
   NOTE_BODY_INVALID = 'NOTE_BODY_INVALID',
   NOTE_VERSION_INVALID = 'NOTE_VERSION_INVALID',

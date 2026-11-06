@@ -1,4 +1,4 @@
-export enum IdentityErrorCodeEnum {
+export enum IdentityExceptionCodeEnum {
   AUTH_EMAIL_INVALID = 'AUTH_EMAIL_INVALID',
   AUTH_PASSWORD_TOO_WEAK = 'AUTH_PASSWORD_TOO_WEAK',
   AUTH_INVALID_CREDENTIALS = 'AUTH_INVALID_CREDENTIALS',

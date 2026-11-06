@@ -1,4 +1,4 @@
-export * from './enums/reminder-error-code.enum';
+export * from './enums/reminder-exception-code.enum';
 
 export * from './exceptions/reminder-already-done.exception';
 export * from './exceptions/reminder-body-invalid.exception';

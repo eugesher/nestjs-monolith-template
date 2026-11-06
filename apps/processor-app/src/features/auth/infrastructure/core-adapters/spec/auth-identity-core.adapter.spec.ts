@@ -3,17 +3,17 @@ import { UserStatusEnum } from '@acme-libs/kernel';
 import { AuthIdentityCoreAdapter } from '../auth-identity-core.adapter';
 
 describe('AuthIdentityCoreAdapter', () => {
-  let findByEmail: jest.Mock;
+  let handleFindByEmail: jest.Mock;
   let adapter: AuthIdentityCoreAdapter;
 
   beforeEach(() => {
-    findByEmail = jest.fn();
-    adapter = new AuthIdentityCoreAdapter({ findSubject: jest.fn(), findByEmail });
+    handleFindByEmail = jest.fn();
+    adapter = new AuthIdentityCoreAdapter({ handleFindSubject: jest.fn(), handleFindByEmail });
   });
 
   describe('findByEmail', () => {
     it('answers the user the core staff auth module finds for the email', async () => {
-      findByEmail.mockResolvedValue({
+      handleFindByEmail.mockResolvedValue({
         id: 'user-1',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
@@ -26,7 +26,7 @@ describe('AuthIdentityCoreAdapter', () => {
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       });
-      expect(findByEmail).toHaveBeenCalledWith({ email: 'ann@example.com' });
+      expect(handleFindByEmail).toHaveBeenCalledWith({ email: 'ann@example.com' });
     });
   });
 });

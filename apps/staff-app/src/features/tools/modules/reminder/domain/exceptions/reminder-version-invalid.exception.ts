@@ -1,8 +1,8 @@
-import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
+import { ReminderExceptionCodeEnum } from '../enums/reminder-exception-code.enum';
 import { ReminderBaseException } from './base/reminder-base.exception';
 
 export class ReminderVersionInvalidException extends ReminderBaseException {
-  public readonly code = ReminderErrorCodeEnum.REMINDER_VERSION_INVALID;
+  public readonly code = ReminderExceptionCodeEnum.REMINDER_VERSION_INVALID;
 
   constructor(
     version: number,

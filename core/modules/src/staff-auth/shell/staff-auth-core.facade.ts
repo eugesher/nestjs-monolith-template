@@ -14,19 +14,19 @@ import { StaffAuthCoreFindByEmailUseCase, StaffAuthCoreFindSubjectUseCase } from
 @Injectable()
 export class StaffAuthCoreFacade implements IStaffAuthCorePort {
   constructor(
-    private readonly staffAuthCoreFindSubject: StaffAuthCoreFindSubjectUseCase,
-    private readonly staffAuthCoreFindByEmail: StaffAuthCoreFindByEmailUseCase,
+    private readonly findSubject: StaffAuthCoreFindSubjectUseCase,
+    private readonly findByEmail: StaffAuthCoreFindByEmailUseCase,
   ) {}
 
-  public async findSubject(
+  public async handleFindSubject(
     command: IStaffAuthCoreFindSubjectCommand,
   ): Promise<Nullable<IStaffAuthCoreSubjectView>> {
-    return await this.staffAuthCoreFindSubject.execute(command);
+    return await this.findSubject.execute(command);
   }
 
-  public async findByEmail(
+  public async handleFindByEmail(
     command: IStaffAuthCoreFindByEmailCommand,
   ): Promise<Nullable<IStaffAuthCoreUserView>> {
-    return await this.staffAuthCoreFindByEmail.execute(command);
+    return await this.findByEmail.execute(command);
   }
 }

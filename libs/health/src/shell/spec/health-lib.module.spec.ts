@@ -43,7 +43,7 @@ describe('HealthLibModule', () => {
   });
 
   it('answers liveness with the deployable it was given', () => {
-    const view = port.liveness();
+    const view = port.handleLiveness();
 
     expect(view).toEqual({
       status: 'ok',
@@ -53,7 +53,7 @@ describe('HealthLibModule', () => {
   });
 
   it('answers readiness from the real probes', async () => {
-    const view = await port.readiness();
+    const view = await port.handleReadiness();
 
     expect(view).toEqual({
       status: 'not-ready',
