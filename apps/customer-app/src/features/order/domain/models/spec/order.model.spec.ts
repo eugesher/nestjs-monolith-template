@@ -5,7 +5,6 @@ describe('OrderModel', () => {
     it('restores a stored order with its products', () => {
       const order = OrderModel.reconstitute({
         id: '600',
-        customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
         orderProducts: [
           { id: '600', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
@@ -13,7 +12,6 @@ describe('OrderModel', () => {
       });
 
       expect(order.id).toBe('600');
-      expect(order.customerId).toBe('customer-1');
       expect(order.createdAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
       expect(order.products).toEqual([
         { id: '600', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
@@ -118,7 +116,6 @@ describe('OrderModel', () => {
     it('turns every ordered product into a movement of its order product', () => {
       const order = OrderModel.reconstitute({
         id: '600',
-        customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
         orderProducts: [
           { id: '601', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },
@@ -137,7 +134,6 @@ describe('OrderModel', () => {
     it('maps a stored order with its products', () => {
       const order = OrderModel.reconstitute({
         id: '600',
-        customerId: 'customer-1',
         createdAt: new Date('2026-01-03T00:00:00.000Z'),
         orderProducts: [
           { id: '601', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },

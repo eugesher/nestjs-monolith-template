@@ -7,14 +7,12 @@ describe('AuthStaffUserModel', () => {
     it('keeps the stored state as is', () => {
       const user = AuthStaffUserModel.reconstitute({
         id: 'user-1',
-        email: 'viewer@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.DISABLED,
       });
 
       expect(user).toMatchObject({
         id: 'user-1',
-        email: 'viewer@example.com',
         passwordHash: 'hash',
         status: 'disabled',
       });
@@ -33,7 +31,6 @@ describe('AuthStaffUserModel', () => {
     it('passes for an active user', () => {
       const user = AuthStaffUserModel.reconstitute({
         id: 'user-1',
-        email: 'viewer@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       });
@@ -44,7 +41,6 @@ describe('AuthStaffUserModel', () => {
     it('rejects a disabled user', () => {
       const user = AuthStaffUserModel.reconstitute({
         id: 'user-1',
-        email: 'viewer@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.DISABLED,
       });

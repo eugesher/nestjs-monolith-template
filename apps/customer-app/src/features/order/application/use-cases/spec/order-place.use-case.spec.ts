@@ -26,7 +26,6 @@ describe('OrderPlaceUseCase', () => {
     insertOrderProducts = jest.fn().mockResolvedValue(undefined);
     findOrder = jest.fn().mockResolvedValue({
       id: '610',
-      customerId: 'customer-1',
       createdAt: new Date('2026-01-05T08:00:00.000Z'),
       orderProducts: [
         { id: '620', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } },

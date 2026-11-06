@@ -18,8 +18,6 @@ describe('TagCommonSubjectTagsModel', () => {
   describe('replace', () => {
     it('links the new tags and unlinks the dropped ones', () => {
       const subjectTags = TagCommonSubjectTagsModel.reconstitute({
-        subjectType: 'product',
-        subjectId: '100',
         tagIds: ['1', '2'],
       });
 
@@ -30,8 +28,6 @@ describe('TagCommonSubjectTagsModel', () => {
 
     it('changes nothing when the subject already carries exactly the tags', () => {
       const subjectTags = TagCommonSubjectTagsModel.reconstitute({
-        subjectType: 'product',
-        subjectId: '100',
         tagIds: ['1', '2'],
       });
 
@@ -42,25 +38,12 @@ describe('TagCommonSubjectTagsModel', () => {
 
     it('unlinks every tag when the list is empty', () => {
       const subjectTags = TagCommonSubjectTagsModel.reconstitute({
-        subjectType: 'order',
-        subjectId: '600',
         tagIds: ['1', '2'],
       });
 
       const changes = subjectTags.replace([]);
 
       expect(changes).toEqual({ linkTagIds: [], unlinkTagIds: ['1', '2'] });
-    });
-
-    it('keeps the subject it was built for', () => {
-      const subjectTags = TagCommonSubjectTagsModel.reconstitute({
-        subjectType: 'order',
-        subjectId: '600',
-        tagIds: [],
-      });
-
-      expect(subjectTags.subjectType).toBe('order');
-      expect(subjectTags.subjectId).toBe('600');
     });
   });
 });

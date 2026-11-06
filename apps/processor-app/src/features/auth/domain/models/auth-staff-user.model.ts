@@ -6,15 +6,14 @@ import { IAuthStaffUserRecord } from '../interfaces/auth-staff-user-record.inter
 export class AuthStaffUserModel {
   private constructor(
     public readonly id: string,
-    public readonly email: string,
     public readonly passwordHash: string,
     public readonly status: UserStatusEnum,
   ) {}
 
   public static reconstitute(record: IAuthStaffUserRecord): AuthStaffUserModel {
-    const { id, email, passwordHash, status } = record;
+    const { id, passwordHash, status } = record;
 
-    return new AuthStaffUserModel(id, email, passwordHash, status);
+    return new AuthStaffUserModel(id, passwordHash, status);
   }
 
   public static normalizeEmail(email: string): string {

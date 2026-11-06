@@ -34,11 +34,9 @@ export class IdempotencyCoreClaimRepository implements IIdempotencyCoreClaimRepo
       .createQueryBuilder('IdempotencyKey')
       .select([
         'IdempotencyKey.id',
-        'IdempotencyKey.idempotencyKey',
         'IdempotencyKey.requestFingerprint',
         'IdempotencyKey.status',
         'IdempotencyKey.responseBody',
-        'IdempotencyKey.createdAt',
       ])
       .where('IdempotencyKey.idempotencyKey = :key', { key })
       .getOne();

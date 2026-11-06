@@ -29,7 +29,7 @@ export class StaffAuthCoreFindByEmailRepository implements IStaffAuthCoreFindByE
   ): Promise<Nullable<IStaffAuthCoreFindByEmailStaffUserRecord>> {
     return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
-      .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
+      .select(['StaffUser.id', 'StaffUser.passwordHash', 'StaffUser.status'])
       .where('StaffUser.email = :email', { email })
       .getOne();
   }

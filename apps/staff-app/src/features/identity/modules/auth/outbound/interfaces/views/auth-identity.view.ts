@@ -8,7 +8,6 @@ export interface IAuthIdentitySubjectView {
 
 export interface IAuthIdentityUserView {
   id: string;
-  email: string;
   passwordHash: string;
   status: UserStatusEnum;
 }

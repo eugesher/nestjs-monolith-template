@@ -7,7 +7,6 @@ describe('OrderGetOneUseCase', () => {
   beforeEach(() => {
     findOwned = jest.fn().mockResolvedValue({
       id: '600',
-      customerId: 'customer-1',
       createdAt: new Date('2026-01-03T00:00:00.000Z'),
       orderProducts: [{ id: '600', productId: '100', product: { sku: 'SKU-0001', name: 'Lamp' } }],
     });

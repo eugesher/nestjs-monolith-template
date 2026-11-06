@@ -38,7 +38,7 @@ export class OrderQueryBuilder extends SelectQueryBuilder<Order> {
   }
 
   private withProducts(): this {
-    this.select([`${this.alias}.id`, `${this.alias}.customerId`, `${this.alias}.createdAt`])
+    this.select([`${this.alias}.id`, `${this.alias}.createdAt`])
       .leftJoin(`${this.alias}.orderProducts`, 'OrderProduct')
       .addSelect(['OrderProduct.id', 'OrderProduct.productId'])
       .leftJoin('OrderProduct.product', 'Product')

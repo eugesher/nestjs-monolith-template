@@ -40,17 +40,11 @@ describe('UserStaffUserModel', () => {
     it('keeps the stored state as is', () => {
       const user = UserStaffUserModel.reconstitute({
         id: 'user-1',
-        email: 'viewer@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.DISABLED,
         userRoles: [{ role: { name: 'viewer' } }],
       });
 
       expect(user).toMatchObject({
         id: 'user-1',
-        email: 'viewer@example.com',
-        passwordHash: 'hash',
-        status: 'disabled',
         roles: ['viewer'],
       });
     });
@@ -81,9 +75,6 @@ describe('UserStaffUserModel', () => {
     beforeEach(() => {
       user = UserStaffUserModel.reconstitute({
         id: 'user-1',
-        email: 'viewer@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.ACTIVE,
         userRoles: [{ role: { name: 'viewer' } }],
       });
     });

@@ -19,7 +19,6 @@ describe('AuthLoginUseCase', () => {
     repository = {
       findByEmail: jest.fn().mockResolvedValue({
         id: 'customer-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       }),
@@ -81,7 +80,6 @@ describe('AuthLoginUseCase', () => {
   it('rejects a disabled customer after checking the password', async () => {
     repository.findByEmail.mockResolvedValue({
       id: 'customer-1',
-      email: 'ann@example.com',
       passwordHash: 'hash',
       status: UserStatusEnum.DISABLED,
     });

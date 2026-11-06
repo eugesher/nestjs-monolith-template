@@ -38,7 +38,7 @@ export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
   public async findById(id: string): Promise<Nullable<IUserAssignRoleStaffUserRecord>> {
     return await this.staffUserRepository
       .createQueryBuilder('StaffUser')
-      .select(['StaffUser.id', 'StaffUser.email', 'StaffUser.passwordHash', 'StaffUser.status'])
+      .select(['StaffUser.id'])
       .leftJoin('StaffUser.userRoles', 'StaffUserRole')
       .addSelect(['StaffUserRole.userId', 'StaffUserRole.roleId'])
       .leftJoin('StaffUserRole.role', 'StaffRole')

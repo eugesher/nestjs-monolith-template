@@ -6,21 +6,15 @@ describe('IdempotencyCoreKeyModel', () => {
   describe('reconstitute', () => {
     it('restores every field of the record, frozen', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.COMPLETED,
         responseBody: '{"id":"12"}',
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect({ ...key }).toEqual({
-        id: '7',
-        key: 'key-1',
         requestFingerprint: 'abc',
         status: 'completed',
         responseBody: '{"id":"12"}',
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
       expect(Object.isFrozen(key)).toBe(true);
     });
@@ -67,12 +61,9 @@ describe('IdempotencyCoreKeyModel', () => {
   describe('matches', () => {
     it('is true for the fingerprint the key was claimed with', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.IN_FLIGHT,
         responseBody: null,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect(key.matches('abc')).toBe(true);
@@ -80,12 +71,9 @@ describe('IdempotencyCoreKeyModel', () => {
 
     it('is false for another fingerprint', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.IN_FLIGHT,
         responseBody: null,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect(key.matches('xyz')).toBe(false);
@@ -95,12 +83,9 @@ describe('IdempotencyCoreKeyModel', () => {
   describe('isCompleted', () => {
     it('is true once the key is completed with a response', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.COMPLETED,
         responseBody: '{"id":"12"}',
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect(key.isCompleted()).toBe(true);
@@ -108,12 +93,9 @@ describe('IdempotencyCoreKeyModel', () => {
 
     it('is false while the key is in flight', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.IN_FLIGHT,
         responseBody: null,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect(key.isCompleted()).toBe(false);
@@ -121,12 +103,9 @@ describe('IdempotencyCoreKeyModel', () => {
 
     it('is false for a completed key that lost its response', () => {
       const key = IdempotencyCoreKeyModel.reconstitute({
-        id: '7',
-        idempotencyKey: 'key-1',
         requestFingerprint: 'abc',
         status: IdempotencyStatusEnum.COMPLETED,
         responseBody: null,
-        createdAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
       expect(key.isCompleted()).toBe(false);

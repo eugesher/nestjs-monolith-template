@@ -15,7 +15,6 @@ import { IOrderStock } from '../interfaces/order-stock.interface';
 export class OrderModel extends AggregateRoot<string> {
   private constructor(
     id: string,
-    public readonly customerId: string,
     public readonly products: readonly IOrderProduct[],
     public readonly createdAt: Date,
   ) {
@@ -23,7 +22,7 @@ export class OrderModel extends AggregateRoot<string> {
   }
 
   public static reconstitute(record: IOrderRecord): OrderModel {
-    const { id, customerId, createdAt, orderProducts } = record;
+    const { id, createdAt, orderProducts } = record;
     const products = orderProducts.map((orderProduct) => ({
       id: orderProduct.id,
       productId: orderProduct.productId,
@@ -31,7 +30,7 @@ export class OrderModel extends AggregateRoot<string> {
       name: orderProduct.product.name,
     }));
 
-    return new OrderModel(id, customerId, products, createdAt);
+    return new OrderModel(id, products, createdAt);
   }
 
   public static createDraft(candidate: IOrderCandidate): IOrderDraft {

@@ -74,8 +74,7 @@ describe('OrderQueryBuilder', () => {
       builder.forOwned({ orderId: '600', customerId: '7' });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Order`.`id` AS `Order_id`, `Order`.`customerId` AS `Order_customerId`, ' +
-          '`Order`.`createdAt` AS `Order_createdAt`, ' +
+        'SELECT `Order`.`id` AS `Order_id`, `Order`.`createdAt` AS `Order_createdAt`, ' +
           '`OrderProduct`.`id` AS `OrderProduct_id`, `OrderProduct`.`productId` AS `OrderProduct_productId`, ' +
           '`Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name` ' +
           'FROM `order` `Order` ' +
@@ -108,8 +107,7 @@ describe('OrderQueryBuilder', () => {
       builder.forPlaced('600');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Order`.`id` AS `Order_id`, `Order`.`customerId` AS `Order_customerId`, ' +
-          '`Order`.`createdAt` AS `Order_createdAt`, ' +
+        'SELECT `Order`.`id` AS `Order_id`, `Order`.`createdAt` AS `Order_createdAt`, ' +
           '`OrderProduct`.`id` AS `OrderProduct_id`, `OrderProduct`.`productId` AS `OrderProduct_productId`, ' +
           '`Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name` ' +
           'FROM `order` `Order` ' +

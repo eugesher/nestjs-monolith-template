@@ -13,15 +13,14 @@ export class AuthCustomerModel {
 
   private constructor(
     public readonly id: string,
-    public readonly email: string,
     public readonly passwordHash: string,
     public readonly status: UserStatusEnum,
   ) {}
 
   public static reconstitute(record: IAuthCustomerRecord): AuthCustomerModel {
-    const { id, email, passwordHash, status } = record;
+    const { id, passwordHash, status } = record;
 
-    return new AuthCustomerModel(id, email, passwordHash, status);
+    return new AuthCustomerModel(id, passwordHash, status);
   }
 
   public static createDraft(candidate: IAuthCustomerCandidate): IAuthCustomerDraft {
