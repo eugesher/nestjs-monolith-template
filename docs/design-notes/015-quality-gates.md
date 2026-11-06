@@ -20,6 +20,7 @@ a threshold.
 | `*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts` | declarations                                                    |
 | `*.module.ts`, `apps/*/src/main.ts`                                                | wiring, booted by the e2e suites                                |
 | `infrastructure/persistence/repositories/**`                                       | SQL, checked against the database by the e2e suites             |
+| `infrastructure/persistence/host/**`                                               | repository getters and query builder factories                  |
 | `presentation/controllers/**`                                                      | routes, guards and pipes, checked over HTTP by the e2e suites   |
 | `shell/*.facade.ts`                                                                | each method hands the call to a use case                        |
 | `libs/observability/src/tracer/index.ts`                                           | a side-effect entry; its logic is in `helpers/tracer.helper.ts` |
@@ -41,6 +42,9 @@ type is a class, so it guards the reference: `typeof X === "undefined" ? Object 
 counts that guard as a branch no test can take, and a use case with an injected service lands at
 75% of branches with 100% of lines. With the whole program the compiler knows `X` is a class and
 emits it as is. The e2e configs keep the faster per-file compile: they collect no coverage.
+
+**TS151002 is silenced on purpose.** ts-jest warns that a `nodenext` module needs
+`isolatedModules: true`; the per-file compile is exactly what loses the classes above.
 
 ## Git hooks
 

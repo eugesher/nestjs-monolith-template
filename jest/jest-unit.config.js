@@ -17,7 +17,10 @@ module.exports = {
   testRegex: '\\.spec.ts$',
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.claude/'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: { isolatedModules: false } }],
+    '^.+\\.ts$': [
+      'ts-jest',
+      { tsconfig: { isolatedModules: false }, diagnostics: { ignoreCodes: [151002] } },
+    ],
   },
   moduleNameMapper,
   coverageDirectory: 'coverage/unit',
@@ -31,6 +34,7 @@ module.exports = {
     '!**/*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts',
     '!**/*.module.ts',
     '!**/infrastructure/persistence/repositories/**',
+    '!**/infrastructure/persistence/host/**',
     '!**/presentation/controllers/**',
     '!**/shell/*.facade.ts',
     '!apps/*/src/main.ts',
