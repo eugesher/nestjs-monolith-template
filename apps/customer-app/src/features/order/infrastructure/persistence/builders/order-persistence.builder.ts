@@ -7,10 +7,6 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   private readonly orderProductAlias = OrderProduct.name;
   private readonly productAlias = Product.name;
 
-  constructor(queryBuilder: SelectQueryBuilder<Order>) {
-    super(queryBuilder);
-  }
-
   public forList(query: IOrderGetManyQuery): this {
     const { limit, offset, customerId } = query;
 
