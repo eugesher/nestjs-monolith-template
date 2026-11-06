@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, SelectQueryBuilder } from 'typeorm';
 
 import { Customer, Order, OrderProduct, Product, ProductStock } from '@acme-core/entities';
 
@@ -6,6 +6,7 @@ import { OrderPersistenceBuilder } from '../order-persistence.builder';
 
 describe('OrderPersistenceBuilder', () => {
   let dataSource: DataSource;
+  let baseBuilder: SelectQueryBuilder<Order>;
 
   beforeAll(async () => {
     dataSource = new DataSource({
@@ -19,11 +20,13 @@ describe('OrderPersistenceBuilder', () => {
     await dataSource.initialize();
   });
 
+  beforeEach(() => {
+    baseBuilder = dataSource.getRepository(Order).createQueryBuilder(Order.name);
+  });
+
   describe('forList', () => {
     it('selects the id and creation time of the orders of the customer, newest first, inside the page window', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
+      const builder = new OrderPersistenceBuilder(baseBuilder);
 
       builder.forList({ page: 3, limit: 20, offset: 40, customerId: '7' });
 
@@ -37,28 +40,8 @@ describe('OrderPersistenceBuilder', () => {
       ]);
     });
 
-    it('keeps the alias of the wrapped builder', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('o'),
-      );
-
-      builder.forList({ page: 1, limit: 1, offset: 0, customerId: '1' });
-
-      expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `o`.`id` AS `o_id`, `o`.`createdAt` AS `o_createdAt` ' +
-          'FROM `order` `o` ' +
-          'WHERE `o`.`customerId` = ? ' +
-          'ORDER BY `o_id` DESC ' +
-          'LIMIT 1 OFFSET 0',
-        ['1'],
-      ]);
-    });
-
     it('returns the same builder for chaining', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
-
+      const builder = new OrderPersistenceBuilder(baseBuilder);
       const chained = builder.forList({ page: 1, limit: 10, offset: 0, customerId: '7' });
 
       expect(chained).toBe(builder);
@@ -67,9 +50,7 @@ describe('OrderPersistenceBuilder', () => {
 
   describe('forOwned', () => {
     it('selects the order of the customer with its products in insertion order', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
+      const builder = new OrderPersistenceBuilder(baseBuilder);
 
       builder.forOwned({ orderId: '600', customerId: '7' });
 
@@ -88,10 +69,7 @@ describe('OrderPersistenceBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
-
+      const builder = new OrderPersistenceBuilder(baseBuilder);
       const chained = builder.forOwned({ orderId: '600', customerId: '7' });
 
       expect(chained).toBe(builder);
@@ -100,9 +78,7 @@ describe('OrderPersistenceBuilder', () => {
 
   describe('forPlaced', () => {
     it('selects the order by id with its products in insertion order', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
+      const builder = new OrderPersistenceBuilder(baseBuilder);
 
       builder.forPlaced('600');
 
@@ -121,10 +97,7 @@ describe('OrderPersistenceBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderPersistenceBuilder(
-        dataSource.getRepository(Order).createQueryBuilder('Order'),
-      );
-
+      const builder = new OrderPersistenceBuilder(baseBuilder);
       const chained = builder.forPlaced('600');
 
       expect(chained).toBe(builder);

@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, SelectQueryBuilder } from 'typeorm';
 
 import { Customer, Order, OrderProduct, Product, ProductStock } from '@acme-core/entities';
 
@@ -6,6 +6,7 @@ import { OrderPersistenceProductBuilder } from '../order-persistence-product.bui
 
 describe('OrderPersistenceProductBuilder', () => {
   let dataSource: DataSource;
+  let baseBuilder: SelectQueryBuilder<Product>;
 
   beforeAll(async () => {
     dataSource = new DataSource({
@@ -19,11 +20,13 @@ describe('OrderPersistenceProductBuilder', () => {
     await dataSource.initialize();
   });
 
+  beforeEach(() => {
+    baseBuilder = dataSource.getRepository(Product).createQueryBuilder(Product.name);
+  });
+
   describe('forActive', () => {
     it('selects the ids of the active products among the given ones', () => {
-      const builder = new OrderPersistenceProductBuilder(
-        dataSource.getRepository(Product).createQueryBuilder('Product'),
-      );
+      const builder = new OrderPersistenceProductBuilder(baseBuilder);
 
       builder.forActive(['100', '101']);
 
@@ -36,10 +39,7 @@ describe('OrderPersistenceProductBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderPersistenceProductBuilder(
-        dataSource.getRepository(Product).createQueryBuilder('Product'),
-      );
-
+      const builder = new OrderPersistenceProductBuilder(baseBuilder);
       const chained = builder.forActive(['100']);
 
       expect(chained).toBe(builder);
