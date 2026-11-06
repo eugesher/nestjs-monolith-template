@@ -12,11 +12,13 @@ nothing else deletes them, so the delete lives here with a repository of its own
 | `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                  |
 | `outbound`                   | `IDEMPOTENCY_PURGE_REPOSITORY_PORT`, `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN` |
 | `infrastructure/persistence` | `IdempotencyPurgeRepository`                                           |
+| `infrastructure/config`      | `IdempotencyConfigKeyTtlHoursProvider`                                 |
 
-The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
-`IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`. On every tick the use case computes the cutoff, the instant the
-TTL before now, and the repository deletes every key created before it, whatever its status. The
-core module reads no configuration, so staff-app and customer-app need no TTL.
+The processor owns the TTL: its `infrastructure/config` binds `IDEMPOTENCY_KEY_TTL_HOURS` to
+`IDEMPOTENCY_KEY_TTL_HOURS_TOKEN` (see `030-config-values.md`). On every tick the use case computes
+the cutoff, the instant the TTL before now, and the repository deletes every key created before it,
+whatever its status. The core module reads no configuration, so staff-app and customer-app need no
+TTL.
 
 ## The schedule decides only when
 

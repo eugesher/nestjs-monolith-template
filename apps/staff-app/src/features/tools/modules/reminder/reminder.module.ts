@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
@@ -15,6 +14,8 @@ import {
 } from './application';
 import {
   ReminderAccessRepository,
+  ReminderConfigCacheTtlMsDefaultProvider,
+  ReminderConfigOccRetryAttemptsProvider,
   ReminderCreateRepository,
   ReminderDeleteRepository,
   ReminderGetManyRepository,
@@ -22,17 +23,6 @@ import {
   ReminderSummaryCacheAdapter,
   ReminderWriteRepository,
 } from './infrastructure';
-import {
-  REMINDER_ACCESS_REPOSITORY_PORT,
-  REMINDER_CREATE_REPOSITORY_PORT,
-  REMINDER_DELETE_REPOSITORY_PORT,
-  REMINDER_GET_MANY_REPOSITORY_PORT,
-  REMINDER_GET_SUMMARY_REPOSITORY_PORT,
-  REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
-  REMINDER_SUMMARY_PORT,
-  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
-  REMINDER_WRITE_REPOSITORY_PORT,
-} from './outbound';
 import { ReminderController } from './presentation';
 
 @Module({
@@ -47,21 +37,15 @@ import { ReminderController } from './presentation';
     ReminderDeleteUseCase,
     ReminderAccessService,
     ReminderWriteService,
-    { provide: REMINDER_ACCESS_REPOSITORY_PORT, useClass: ReminderAccessRepository },
-    { provide: REMINDER_CREATE_REPOSITORY_PORT, useClass: ReminderCreateRepository },
-    { provide: REMINDER_DELETE_REPOSITORY_PORT, useClass: ReminderDeleteRepository },
-    { provide: REMINDER_GET_MANY_REPOSITORY_PORT, useClass: ReminderGetManyRepository },
-    { provide: REMINDER_GET_SUMMARY_REPOSITORY_PORT, useClass: ReminderGetSummaryRepository },
-    { provide: REMINDER_WRITE_REPOSITORY_PORT, useClass: ReminderWriteRepository },
-    { provide: REMINDER_SUMMARY_PORT, useClass: ReminderSummaryCacheAdapter },
-    ConfigValueProvider.provide({
-      provide: REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
-      property: 'OCC_RETRY_ATTEMPTS',
-    }),
-    ConfigValueProvider.provide({
-      provide: REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
-      property: 'CACHE_TTL_MS_DEFAULT',
-    }),
+    ReminderAccessRepository.provider,
+    ReminderCreateRepository.provider,
+    ReminderDeleteRepository.provider,
+    ReminderGetManyRepository.provider,
+    ReminderGetSummaryRepository.provider,
+    ReminderWriteRepository.provider,
+    ReminderSummaryCacheAdapter.provider,
+    ReminderConfigOccRetryAttemptsProvider,
+    ReminderConfigCacheTtlMsDefaultProvider,
   ],
 })
 export class ReminderModule {}

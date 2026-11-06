@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
@@ -9,6 +9,7 @@ import {
   IUserAssignRoleStaffRoleRecord,
   IUserAssignRoleStaffUserRecord,
   IUserAssignRoleStaffUserRoleInsertQuery,
+  USER_ASSIGN_ROLE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { UserPersistenceHost } from '../host/user-persistence.host';
 
@@ -17,6 +18,11 @@ export class UserAssignRoleRepository
   extends UserPersistenceHost
   implements IUserAssignRoleRepositoryPort
 {
+  public static readonly provider: ClassProvider<IUserAssignRoleRepositoryPort> = {
+    provide: USER_ASSIGN_ROLE_REPOSITORY_PORT,
+    useClass: UserAssignRoleRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

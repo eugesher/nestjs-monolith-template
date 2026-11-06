@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ClassProvider, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 
@@ -12,10 +12,16 @@ import {
   IQueueRegistryJobCommand,
   IQueueRegistryJobCountsView,
   IQueueRegistryPort,
+  QUEUE_REGISTRY_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class QueueRegistryQueueAdapter implements IQueueRegistryPort {
+  public static readonly provider: ClassProvider<IQueueRegistryPort> = {
+    provide: QUEUE_REGISTRY_PORT,
+    useClass: QueueRegistryQueueAdapter,
+  };
+
   private readonly queues: Map<string, Queue>;
 
   constructor(

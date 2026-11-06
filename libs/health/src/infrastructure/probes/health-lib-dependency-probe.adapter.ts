@@ -1,13 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 import { IHealthLibDependencyView } from '@acme-libs/contracts/health';
 
-import { IHealthLibDependencyProbePort } from '../../outbound';
+import { IHealthLibDependencyProbePort, HEALTH_LIB_DEPENDENCY_PROBE_PORT } from '../../outbound';
 
 @Injectable()
 export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProbePort {
+  public static readonly provider: ClassProvider<IHealthLibDependencyProbePort> = {
+    provide: HEALTH_LIB_DEPENDENCY_PROBE_PORT,
+    useClass: HealthLibDependencyProbeAdapter,
+  };
+
   private static readonly TIMEOUT_MS = 1000;
 
   constructor(

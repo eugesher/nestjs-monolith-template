@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 
@@ -11,10 +11,16 @@ import {
   IProductStockCorePostSubtractEnqueueCommand,
   IProductStockCorePostSubtractPort,
   PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
+  PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ProductStockCorePostSubtractQueueAdapter implements IProductStockCorePostSubtractPort {
+  public static readonly provider: ClassProvider<IProductStockCorePostSubtractPort> = {
+    provide: PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
+    useClass: ProductStockCorePostSubtractQueueAdapter,
+  };
+
   constructor(
     @InjectQueue(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
     private readonly queue: Queue<IProductStockPostSubtractPayload>,

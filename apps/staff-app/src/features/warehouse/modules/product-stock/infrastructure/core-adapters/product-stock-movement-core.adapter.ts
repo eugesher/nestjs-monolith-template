@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
   type IProductStockCorePort,
@@ -11,10 +11,16 @@ import {
   IProductStockMovementAddView,
   IProductStockMovementLockCommand,
   IProductStockMovementPort,
+  PRODUCT_STOCK_MOVEMENT_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ProductStockMovementCoreAdapter implements IProductStockMovementPort {
+  public static readonly provider: ClassProvider<IProductStockMovementPort> = {
+    provide: PRODUCT_STOCK_MOVEMENT_PORT,
+    useClass: ProductStockMovementCoreAdapter,
+  };
+
   constructor(
     @Inject(PRODUCT_STOCK_CORE_PORT)
     private readonly productStock: IProductStockCorePort,

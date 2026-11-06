@@ -428,11 +428,9 @@ describe('libs by layer', () => {
   );
 
   it.each([
-    'apps/__layers-fixture__/src/features/product/__fixture__.ts',
-    'apps/__layers-fixture__/src/processors/purge/__fixture__.ts',
-    'apps/__layers-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
-    'apps/__layers-fixture__/src/app/global/auth/shell/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/config/__fixture__.ts',
+    'apps/__layers-fixture__/src/processors/purge/infrastructure/config/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/config/__fixture__.ts',
     'apps/__layers-fixture__/src/app/setup/config/__fixture__.ts',
   ])('%s MAY bind config values through the config lib', async (file) => {
     await expect({
@@ -448,8 +446,13 @@ describe('libs by layer', () => {
     'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts',
+    'apps/__layers-fixture__/src/features/product/__fixture__.ts',
+    'apps/__layers-fixture__/src/processors/purge/__fixture__.ts',
+    'apps/__layers-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
+    'apps/__layers-fixture__/src/app/global/auth/shell/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
   ])(
-    '%s may NOT reach the config lib — values arrive through tokens bound at the module root',
+    '%s may NOT reach the config lib — values arrive through tokens bound in infrastructure/config',
     async (file) => {
       await expect({
         file,

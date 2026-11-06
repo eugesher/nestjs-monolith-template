@@ -13,10 +13,6 @@ import {
   CredentialsLibAccessTokenAdapter,
   CredentialsLibPasswordHasherAdapter,
 } from '../infrastructure';
-import {
-  CREDENTIALS_LIB_ACCESS_TOKEN_PORT,
-  CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
-} from '../outbound';
 import { CredentialsLibFacade } from './credentials-lib.facade';
 
 @Module({
@@ -37,11 +33,8 @@ import { CredentialsLibFacade } from './credentials-lib.facade';
     CredentialsLibSignAccessTokenUseCase,
     CredentialsLibHashPasswordUseCase,
     CredentialsLibVerifyPasswordUseCase,
-    { provide: CREDENTIALS_LIB_ACCESS_TOKEN_PORT, useClass: CredentialsLibAccessTokenAdapter },
-    {
-      provide: CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
-      useClass: CredentialsLibPasswordHasherAdapter,
-    },
+    CredentialsLibAccessTokenAdapter.provider,
+    CredentialsLibPasswordHasherAdapter.provider,
   ],
 })
 export class CredentialsLibModule {}

@@ -1,11 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
-import { IUserCredentialsPort } from '../../outbound';
+import { IUserCredentialsPort, USER_CREDENTIALS_PORT } from '../../outbound';
 
 @Injectable()
 export class UserCredentialsLibAdapter implements IUserCredentialsPort {
+  public static readonly provider: ClassProvider<IUserCredentialsPort> = {
+    provide: USER_CREDENTIALS_PORT,
+    useClass: UserCredentialsLibAdapter,
+  };
+
   constructor(
     @Inject(CREDENTIALS_LIB_PORT)
     private readonly credentials: ICredentialsLibPort,

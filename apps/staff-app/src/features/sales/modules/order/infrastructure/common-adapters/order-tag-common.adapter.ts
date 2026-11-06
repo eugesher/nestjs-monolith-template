@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
   type ITagCommonPort,
@@ -14,10 +14,16 @@ import {
   IOrderTagPort,
   IOrderTagReplaceCommand,
   IOrderTagReplaceView,
+  ORDER_TAG_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class OrderTagCommonAdapter implements IOrderTagPort {
+  public static readonly provider: ClassProvider<IOrderTagPort> = {
+    provide: ORDER_TAG_PORT,
+    useClass: OrderTagCommonAdapter,
+  };
+
   private static readonly OUTCOMES: Record<
     TagCommonReplaceOutcomeEnum,
     IOrderTagReplaceView['outcome']

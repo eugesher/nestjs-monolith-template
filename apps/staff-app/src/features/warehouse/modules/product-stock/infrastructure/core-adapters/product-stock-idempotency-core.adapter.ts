@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
   IDEMPOTENCY_CORE_PORT,
@@ -13,10 +13,16 @@ import {
   IProductStockIdempotencyPort,
   IProductStockIdempotencyReleaseCommand,
   IProductStockIdempotencyReplayView,
+  PRODUCT_STOCK_IDEMPOTENCY_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempotencyPort {
+  public static readonly provider: ClassProvider<IProductStockIdempotencyPort> = {
+    provide: PRODUCT_STOCK_IDEMPOTENCY_PORT,
+    useClass: ProductStockIdempotencyCoreAdapter,
+  };
+
   private static readonly OUTCOMES: Record<
     Exclude<IdempotencyCoreClaimOutcomeEnum, IdempotencyCoreClaimOutcomeEnum.REPLAY>,
     IProductStockIdempotencyOutcomeView['outcome']

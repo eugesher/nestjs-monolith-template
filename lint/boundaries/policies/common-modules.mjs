@@ -55,7 +55,6 @@ export const commonModules = [
   ]),
   from('acme-app:common:modules:shell:facade', [layer('application'), appContracts, baseLibs()]),
   from('acme-app:common:modules:shell', [
-    layer('outbound'),
     layer('application'),
     layer('infrastructure'),
     layer('shell:facade'),
@@ -64,7 +63,7 @@ export const commonModules = [
     to('acme-app:common:modules:index', own('app')),
     to('acme-app:common:shared:index', own('app')),
     to('acme-core:modules:index'),
-    baseLibs('config'),
+    baseLibs(),
   ]),
   from('acme-app:common:modules:index', [layer('shell')]),
 ];

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
@@ -7,6 +7,7 @@ import {
   IProductCoreArchiveRepositoryPort,
   IProductCoreArchiveRecord,
   IProductCoreArchiveUpdateQuery,
+  PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { ProductCorePersistenceHost } from '../host/product-core-persistence.host';
 
@@ -15,6 +16,11 @@ export class ProductCoreArchiveRepository
   extends ProductCorePersistenceHost
   implements IProductCoreArchiveRepositoryPort
 {
+  public static readonly provider: ClassProvider<IProductCoreArchiveRepositoryPort> = {
+    provide: PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
+    useClass: ProductCoreArchiveRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

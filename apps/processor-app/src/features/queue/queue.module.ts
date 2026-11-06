@@ -12,7 +12,6 @@ import {
   QueueRetryFailedJobUseCase,
 } from './application';
 import { QueueRegistryQueueAdapter } from './infrastructure';
-import { QUEUE_REGISTRY_PORT } from './outbound';
 import { QueueController } from './presentation';
 
 @Module({
@@ -25,7 +24,7 @@ import { QueueController } from './presentation';
     QueueRetryFailedJobUseCase,
     QueueDeleteFailedJobUseCase,
     QueueFailedJobService,
-    { provide: QUEUE_REGISTRY_PORT, useClass: QueueRegistryQueueAdapter },
+    QueueRegistryQueueAdapter.provider,
   ],
 })
 export class QueueModule {}

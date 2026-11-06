@@ -9,11 +9,6 @@ import {
   UserCredentialsLibAdapter,
   UserRegisterRepository,
 } from './infrastructure';
-import {
-  USER_ASSIGN_ROLE_REPOSITORY_PORT,
-  USER_CREDENTIALS_PORT,
-  USER_REGISTER_REPOSITORY_PORT,
-} from './outbound';
 import { UserController } from './presentation';
 
 @Module({
@@ -23,9 +18,9 @@ import { UserController } from './presentation';
     HttpExceptionFilter,
     UserRegisterUseCase,
     UserAssignRoleUseCase,
-    { provide: USER_ASSIGN_ROLE_REPOSITORY_PORT, useClass: UserAssignRoleRepository },
-    { provide: USER_REGISTER_REPOSITORY_PORT, useClass: UserRegisterRepository },
-    { provide: USER_CREDENTIALS_PORT, useClass: UserCredentialsLibAdapter },
+    UserAssignRoleRepository.provider,
+    UserRegisterRepository.provider,
+    UserCredentialsLibAdapter.provider,
   ],
 })
 export class UserModule {}

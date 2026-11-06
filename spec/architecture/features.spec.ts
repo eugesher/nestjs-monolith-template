@@ -331,6 +331,40 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('infrastructure/config MAY take the config lib and the outbound tokens', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/infrastructure/config/__fixture__.ts',
+        code: 'import { ConfigValueProvider } from "@acme-libs/config";\nimport { X_TOKEN } from "../../outbound";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['infrastructure/persistence', 'infrastructure/lib-adapters', 'application/use-cases'])(
+      '%s may NOT take the config lib — a config value is bound in infrastructure/config',
+      async (layer) => {
+        await expect({
+          file: `apps/__features-fixture__/src/features/product/${layer}/__fixture__.ts`,
+          code: 'import { ConfigValueProvider } from "@acme-libs/config";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it.each(['@nestjs/common', '@acme-libs/cache'])(
+      'infrastructure/config may NOT take %s — it only binds config values',
+      async (source) => {
+        await expect({
+          file: 'apps/__features-fixture__/src/features/product/infrastructure/config/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('the module root may NOT reach its own outbound — infrastructure binds the tokens', async () => {
+      await expect({
+        file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',
+        code: 'import { y } from "./outbound";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it('the module root MAY mount the credentials lib', async () => {
       await expect({
         file: 'apps/__features-fixture__/src/features/product/__fixture__.ts',

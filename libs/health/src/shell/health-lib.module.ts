@@ -5,11 +5,7 @@ import { AppNameEnum } from '@acme-libs/kernel';
 
 import { HealthLibCheckLivenessUseCase, HealthLibCheckReadinessUseCase } from '../application';
 import { HealthLibDependencyProbeAdapter, HealthLibUptimeAdapter } from '../infrastructure';
-import {
-  HEALTH_LIB_APP_NAME_TOKEN,
-  HEALTH_LIB_DEPENDENCY_PROBE_PORT,
-  HEALTH_LIB_UPTIME_PORT,
-} from '../outbound';
+import { HEALTH_LIB_APP_NAME_TOKEN } from '../outbound';
 import { HealthLibFacade } from './health-lib.facade';
 
 @Module({})
@@ -22,9 +18,9 @@ export class HealthLibModule {
         { provide: HEALTH_LIB_PORT, useClass: HealthLibFacade },
         HealthLibCheckLivenessUseCase,
         HealthLibCheckReadinessUseCase,
-        { provide: HEALTH_LIB_DEPENDENCY_PROBE_PORT, useClass: HealthLibDependencyProbeAdapter },
+        HealthLibDependencyProbeAdapter.provider,
         { provide: HEALTH_LIB_APP_NAME_TOKEN, useValue: appName },
-        { provide: HEALTH_LIB_UPTIME_PORT, useClass: HealthLibUptimeAdapter },
+        HealthLibUptimeAdapter.provider,
       ],
     };
   }

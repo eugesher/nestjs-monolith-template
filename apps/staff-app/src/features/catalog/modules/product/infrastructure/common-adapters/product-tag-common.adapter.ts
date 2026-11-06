@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
   type ITagCommonPort,
@@ -14,10 +14,16 @@ import {
   IProductTagPort,
   IProductTagReplaceCommand,
   IProductTagReplaceView,
+  PRODUCT_TAG_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ProductTagCommonAdapter implements IProductTagPort {
+  public static readonly provider: ClassProvider<IProductTagPort> = {
+    provide: PRODUCT_TAG_PORT,
+    useClass: ProductTagCommonAdapter,
+  };
+
   private static readonly OUTCOMES: Record<
     TagCommonReplaceOutcomeEnum,
     IProductTagReplaceView['outcome']

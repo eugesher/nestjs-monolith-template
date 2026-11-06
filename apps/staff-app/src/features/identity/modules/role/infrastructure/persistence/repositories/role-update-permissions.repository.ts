@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
@@ -9,6 +9,7 @@ import {
   IRoleUpdatePermissionsPermissionRecord,
   IRoleUpdatePermissionsRolePermissionInsertQuery,
   IRoleUpdatePermissionsRepositoryPort,
+  ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 
@@ -17,6 +18,11 @@ export class RoleUpdatePermissionsRepository
   extends RolePersistenceHost
   implements IRoleUpdatePermissionsRepositoryPort
 {
+  public static readonly provider: ClassProvider<IRoleUpdatePermissionsRepositoryPort> = {
+    provide: ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
+    useClass: RoleUpdatePermissionsRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

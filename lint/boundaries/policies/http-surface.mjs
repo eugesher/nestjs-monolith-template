@@ -1,6 +1,6 @@
 import { packages } from './selectors.mjs';
 
-const diNames = '{DynamicModule,Inject,Injectable,Module}';
+const diNames = '{ClassProvider,DynamicModule,Inject,Injectable,Module}';
 
 export const httpSurface = {
   from: {

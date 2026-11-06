@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
@@ -6,6 +6,7 @@ import {
   ICatalogProductListRepositoryPort,
   ICatalogProductListQuery,
   ICatalogProductListRecord,
+  CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
 } from '../../../outbound';
 import { CatalogPersistenceHost } from '../host/catalog-persistence.host';
 
@@ -14,6 +15,11 @@ export class CatalogProductListRepository
   extends CatalogPersistenceHost
   implements ICatalogProductListRepositoryPort
 {
+  public static readonly provider: ClassProvider<ICatalogProductListRepositoryPort> = {
+    provide: CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
+    useClass: CatalogProductListRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

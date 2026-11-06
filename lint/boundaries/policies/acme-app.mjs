@@ -81,12 +81,11 @@ export const acmeApp = [
   from('acme-app:app:global:shell', [
     to('acme-app:app:global:shell', own('app', 'module')),
     to('acme-app:app:global:application', own('app', 'module')),
-    to('acme-app:app:global:outbound', own('app', 'module')),
     to('acme-app:app:global:infrastructure', own('app', 'module')),
     appContracts,
     to('acme-app:common:modules:index', own('app')),
     to('acme-core:modules:index'),
-    baseLibs('auth', 'config'),
+    baseLibs('auth'),
     namesakeLibContracts,
     packages('@nestjs/common'),
   ]),

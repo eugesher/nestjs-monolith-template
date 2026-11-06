@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
@@ -7,6 +7,7 @@ import {
   IReminderWriteRecord,
   IReminderWriteRepositoryPort,
   IReminderWriteUpdateQuery,
+  REMINDER_WRITE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
@@ -15,6 +16,11 @@ export class ReminderWriteRepository
   extends ReminderPersistenceHost
   implements IReminderWriteRepositoryPort
 {
+  public static readonly provider: ClassProvider<IReminderWriteRepositoryPort> = {
+    provide: REMINDER_WRITE_REPOSITORY_PORT,
+    useClass: ReminderWriteRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

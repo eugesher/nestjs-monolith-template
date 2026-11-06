@@ -188,11 +188,18 @@ describe('global modules (app/global) — modules without controllers', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('the module root MAY reach its own application and outbound', async () => {
+  it('the module root MAY reach its own application', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/shell/__fixture__.ts',
-      code: 'import { x } from "../application";\nimport { y } from "../outbound";',
+      code: 'import { x } from "../application";',
     }).toPassArchitectureLint();
+  });
+
+  it('the module root may NOT reach its own outbound — infrastructure binds the tokens', async () => {
+    await expect({
+      file: 'apps/__global-fixture__/src/app/global/auth/shell/__fixture__.ts',
+      code: 'import { y } from "../outbound";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('application MAY reach its own outbound and @nestjs/common', async () => {

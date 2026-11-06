@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
@@ -8,6 +8,7 @@ import {
   ILedgerAppendRepositoryPort,
   ILedgerAppendEntryRecord,
   ILedgerAppendEntryInsertQuery,
+  LEDGER_APPEND_REPOSITORY_PORT,
 } from '../../../outbound';
 import { LedgerPersistenceHost } from '../host/ledger-persistence.host';
 
@@ -16,6 +17,11 @@ export class LedgerAppendRepository
   extends LedgerPersistenceHost
   implements ILedgerAppendRepositoryPort
 {
+  public static readonly provider: ClassProvider<ILedgerAppendRepositoryPort> = {
+    provide: LEDGER_APPEND_REPOSITORY_PORT,
+    useClass: LedgerAppendRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

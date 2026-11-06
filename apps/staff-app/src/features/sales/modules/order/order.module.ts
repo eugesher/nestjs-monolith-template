@@ -16,13 +16,6 @@ import {
   OrderReplaceTagsRepository,
   OrderTagCommonAdapter,
 } from './infrastructure';
-import {
-  ORDER_GET_MANY_REPOSITORY_PORT,
-  ORDER_GET_ONE_REPOSITORY_PORT,
-  ORDER_GET_TAGS_REPOSITORY_PORT,
-  ORDER_REPLACE_TAGS_REPOSITORY_PORT,
-  ORDER_TAG_PORT,
-} from './outbound';
 import { OrderController } from './presentation';
 
 @Module({
@@ -34,11 +27,11 @@ import { OrderController } from './presentation';
     OrderGetOneUseCase,
     OrderGetTagsUseCase,
     OrderReplaceTagsUseCase,
-    { provide: ORDER_GET_MANY_REPOSITORY_PORT, useClass: OrderGetManyRepository },
-    { provide: ORDER_GET_ONE_REPOSITORY_PORT, useClass: OrderGetOneRepository },
-    { provide: ORDER_GET_TAGS_REPOSITORY_PORT, useClass: OrderGetTagsRepository },
-    { provide: ORDER_REPLACE_TAGS_REPOSITORY_PORT, useClass: OrderReplaceTagsRepository },
-    { provide: ORDER_TAG_PORT, useClass: OrderTagCommonAdapter },
+    OrderGetManyRepository.provider,
+    OrderGetOneRepository.provider,
+    OrderGetTagsRepository.provider,
+    OrderReplaceTagsRepository.provider,
+    OrderTagCommonAdapter.provider,
   ],
 })
 export class OrderModule {}

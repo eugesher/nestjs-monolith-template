@@ -1,3 +1,5 @@
+export * from './config/reminder-config.provider';
+
 export * from './cache/reminder-summary-cache.adapter';
 
 export * from './persistence/repositories/reminder-access.repository';

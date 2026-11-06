@@ -12,11 +12,6 @@ import {
   IdempotencyCoreCompleteRepository,
   IdempotencyCoreReleaseRepository,
 } from '../infrastructure';
-import {
-  IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
-  IDEMPOTENCY_CORE_COMPLETE_REPOSITORY_PORT,
-  IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT,
-} from '../outbound';
 import { IdempotencyCoreFacade } from './idempotency-core.facade';
 
 @Module({
@@ -26,18 +21,9 @@ import { IdempotencyCoreFacade } from './idempotency-core.facade';
     IdempotencyCoreClaimUseCase,
     IdempotencyCoreCompleteUseCase,
     IdempotencyCoreReleaseUseCase,
-    {
-      provide: IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
-      useClass: IdempotencyCoreClaimRepository,
-    },
-    {
-      provide: IDEMPOTENCY_CORE_COMPLETE_REPOSITORY_PORT,
-      useClass: IdempotencyCoreCompleteRepository,
-    },
-    {
-      provide: IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT,
-      useClass: IdempotencyCoreReleaseRepository,
-    },
+    IdempotencyCoreClaimRepository.provider,
+    IdempotencyCoreCompleteRepository.provider,
+    IdempotencyCoreReleaseRepository.provider,
   ],
 })
 export class IdempotencyCoreModule {}

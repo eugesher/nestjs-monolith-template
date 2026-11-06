@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductCoreModule } from '@acme-core/modules/product';
@@ -23,6 +22,9 @@ import {
 import {
   ProductAccessRepository,
   ProductCatalogCacheAdapter,
+  ProductConfigLedgerRetryAttemptsProvider,
+  ProductConfigOccRetryAttemptsProvider,
+  ProductConfigRedisCommandTimeoutMsProvider,
   ProductCreateRepository,
   ProductGetManyRepository,
   ProductIdempotencyCoreAdapter,
@@ -32,21 +34,6 @@ import {
   ProductTagCommonAdapter,
   ProductWriteRepository,
 } from './infrastructure';
-import {
-  PRODUCT_ACCESS_REPOSITORY_PORT,
-  PRODUCT_CATALOG_CACHE_PORT,
-  PRODUCT_CREATE_REPOSITORY_PORT,
-  PRODUCT_GET_MANY_REPOSITORY_PORT,
-  PRODUCT_IDEMPOTENCY_PORT,
-  PRODUCT_LEDGER_RECORD_PORT,
-  PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
-  PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
-  PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
-  PRODUCT_STATUS_PORT,
-  PRODUCT_TAG_PORT,
-  PRODUCT_WRITE_REPOSITORY_PORT,
-} from './outbound';
 import { ProductController } from './presentation';
 
 @Module({
@@ -65,28 +52,19 @@ import { ProductController } from './presentation';
     ProductAccessService,
     ProductWriteService,
     ProductLedgerService,
-    { provide: PRODUCT_ACCESS_REPOSITORY_PORT, useClass: ProductAccessRepository },
-    { provide: PRODUCT_CREATE_REPOSITORY_PORT, useClass: ProductCreateRepository },
-    { provide: PRODUCT_GET_MANY_REPOSITORY_PORT, useClass: ProductGetManyRepository },
-    { provide: PRODUCT_REPLACE_TAGS_REPOSITORY_PORT, useClass: ProductReplaceTagsRepository },
-    { provide: PRODUCT_WRITE_REPOSITORY_PORT, useClass: ProductWriteRepository },
-    { provide: PRODUCT_TAG_PORT, useClass: ProductTagCommonAdapter },
-    { provide: PRODUCT_STATUS_PORT, useClass: ProductStatusCoreAdapter },
-    { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
-    { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerQueueAdapter },
-    { provide: PRODUCT_CATALOG_CACHE_PORT, useClass: ProductCatalogCacheAdapter },
-    ConfigValueProvider.provide({
-      provide: PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
-      property: 'OCC_RETRY_ATTEMPTS',
-    }),
-    ConfigValueProvider.provide({
-      provide: PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-      property: 'REDIS_COMMAND_TIMEOUT_MS',
-    }),
-    ConfigValueProvider.provide({
-      provide: PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
-      property: 'LEDGER_RETRY_ATTEMPTS',
-    }),
+    ProductAccessRepository.provider,
+    ProductCreateRepository.provider,
+    ProductGetManyRepository.provider,
+    ProductReplaceTagsRepository.provider,
+    ProductWriteRepository.provider,
+    ProductTagCommonAdapter.provider,
+    ProductStatusCoreAdapter.provider,
+    ProductIdempotencyCoreAdapter.provider,
+    ProductLedgerQueueAdapter.provider,
+    ProductCatalogCacheAdapter.provider,
+    ProductConfigOccRetryAttemptsProvider,
+    ProductConfigRedisCommandTimeoutMsProvider,
+    ProductConfigLedgerRetryAttemptsProvider,
   ],
 })
 export class ProductModule {}

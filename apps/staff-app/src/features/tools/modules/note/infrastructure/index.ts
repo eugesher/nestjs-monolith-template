@@ -1,3 +1,5 @@
+export * from './config/note-config.provider';
+
 export * from './persistence/repositories/note-access.repository';
 export * from './persistence/repositories/note-create.repository';
 export * from './persistence/repositories/note-edit.repository';

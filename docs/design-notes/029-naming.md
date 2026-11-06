@@ -2,16 +2,18 @@
 
 A name says who or where; the action lives in the method or in the port.
 
-| Element                      | Name                                                                        | Example                                                       |
-| ---------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| port of a core or lib module | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts` | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`               |
-| facade of that module        | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                       | `IdempotencyCoreFacade`                                       |
-| facade method                | `handle<Action>`                                                            | `handleClaim`, `handleSignAccessToken`                        |
-| use case held by a facade    | `<action>`, without the context                                             | `claim: IdempotencyCoreClaimUseCase`                          |
-| domain exception codes       | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`            | `OrderExceptionCodeEnum`                                      |
-| queue adapter                | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`      | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort` |
-| commands of a service        | one file `<context>-<service>.command.ts`                                   | `product-ledger.command.ts` for `ProductLedgerService`        |
-| token of a config value      | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                 | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                        |
+| Element                            | Name                                                                        | Example                                                       |
+| ---------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts` | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`               |
+| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                       | `IdempotencyCoreFacade`                                       |
+| facade method                      | `handle<Action>`                                                            | `handleClaim`, `handleSignAccessToken`                        |
+| use case held by a facade          | `<action>`, without the context                                             | `claim: IdempotencyCoreClaimUseCase`                          |
+| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`            | `OrderExceptionCodeEnum`                                      |
+| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`      | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort` |
+| commands of a service              | one file `<context>-<service>.command.ts`                                   | `product-ledger.command.ts` for `ProductLedgerService`        |
+| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                 | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                        |
+| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                    | `OrderIdempotencyCoreAdapter.provider`                        |
+| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`           | `OrderConfigRedisCommandTimeoutMsProvider`                    |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the

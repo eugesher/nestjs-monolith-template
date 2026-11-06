@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
   type IProductCorePort,
@@ -10,10 +10,16 @@ import {
   IProductStatusArchiveCommand,
   IProductStatusArchiveView,
   IProductStatusPort,
+  PRODUCT_STATUS_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ProductStatusCoreAdapter implements IProductStatusPort {
+  public static readonly provider: ClassProvider<IProductStatusPort> = {
+    provide: PRODUCT_STATUS_PORT,
+    useClass: ProductStatusCoreAdapter,
+  };
+
   private static readonly OUTCOMES: Record<
     ProductCoreArchiveOutcomeEnum,
     IProductStatusArchiveView['outcome']

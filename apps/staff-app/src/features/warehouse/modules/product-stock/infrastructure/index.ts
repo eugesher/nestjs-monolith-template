@@ -1,3 +1,5 @@
+export * from './config/product-stock-config.provider';
+
 export * from './core-adapters/product-stock-idempotency-core.adapter';
 export * from './core-adapters/product-stock-movement-core.adapter';
 
