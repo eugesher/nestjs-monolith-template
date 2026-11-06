@@ -10,7 +10,7 @@ import {
 } from '../../domain';
 import {
   type IReminderWriteRepositoryPort,
-  REMINDER_OCC_RETRY_ATTEMPTS,
+  REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   REMINDER_WRITE_REPOSITORY_PORT,
 } from '../../outbound';
 import { ReminderWriteConflictError } from '../errors/reminder-write-conflict.error';
@@ -23,7 +23,7 @@ export class ReminderWriteService {
     private readonly accessService: ReminderAccessService,
     @Inject(REMINDER_WRITE_REPOSITORY_PORT)
     private readonly repository: IReminderWriteRepositoryPort,
-    @Inject(REMINDER_OCC_RETRY_ATTEMPTS)
+    @Inject(REMINDER_OCC_RETRY_ATTEMPTS_TOKEN)
     private readonly occRetryAttempts: number,
     @InjectPinoLogger(ReminderWriteService.name)
     private readonly logger: PinoLogger,

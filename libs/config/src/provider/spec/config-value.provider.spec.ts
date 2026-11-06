@@ -5,7 +5,7 @@ import { ConfigValueProvider } from '../config-value.provider';
 describe('ConfigValueProvider', () => {
   describe('provide', () => {
     it('provides the token from ConfigService', () => {
-      const token = Symbol('ITEM_OCC_RETRY_ATTEMPTS');
+      const token = Symbol('ITEM_OCC_RETRY_ATTEMPTS_TOKEN');
 
       const provider = ConfigValueProvider.provide({
         provide: token,
@@ -18,7 +18,7 @@ describe('ConfigValueProvider', () => {
     it('reads the value of the property and fails when it is missing', () => {
       const config = { getOrThrow: jest.fn().mockReturnValue(5) };
       const provider = ConfigValueProvider.provide({
-        provide: Symbol('ITEM_OCC_RETRY_ATTEMPTS'),
+        provide: Symbol('ITEM_OCC_RETRY_ATTEMPTS_TOKEN'),
         property: 'OCC_RETRY_ATTEMPTS',
       });
 

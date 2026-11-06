@@ -16,7 +16,7 @@ import {
   type IProductStockCorePostSubtractPort,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
-  PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS,
+  PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS_TOKEN,
 } from '../../outbound';
 import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
@@ -34,7 +34,7 @@ export class ProductStockCoreMoveUseCase {
     private readonly postSubtract: IProductStockCorePostSubtractPort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @Inject(PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS)
+    @Inject(PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS_TOKEN)
     private readonly postSubtractRetryAttempts: number,
     @InjectPinoLogger(ProductStockCoreMoveUseCase.name)
     private readonly logger: PinoLogger,

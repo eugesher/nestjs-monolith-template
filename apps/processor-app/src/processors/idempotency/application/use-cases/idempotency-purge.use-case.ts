@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { IdempotencyPurgeHelper } from '../../domain';
 import {
   type IIdempotencyPurgeRepositoryPort,
-  IDEMPOTENCY_PURGE_KEY_TTL_HOURS,
+  IDEMPOTENCY_KEY_TTL_HOURS_TOKEN,
   IDEMPOTENCY_PURGE_REPOSITORY_PORT,
 } from '../../outbound';
 
@@ -15,7 +15,7 @@ export class IdempotencyPurgeUseCase {
   constructor(
     @Inject(IDEMPOTENCY_PURGE_REPOSITORY_PORT)
     private readonly repository: IIdempotencyPurgeRepositoryPort,
-    @Inject(IDEMPOTENCY_PURGE_KEY_TTL_HOURS)
+    @Inject(IDEMPOTENCY_KEY_TTL_HOURS_TOKEN)
     private readonly ttlHours: number,
     @InjectPinoLogger(IdempotencyPurgeUseCase.name)
     private readonly logger: PinoLogger,

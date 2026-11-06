@@ -25,8 +25,8 @@ import {
   ORDER_GET_ONE_REPOSITORY_PORT,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_LEDGER_RECORD_PORT,
-  ORDER_LEDGER_RECORD_TIMEOUT_MS,
-  ORDER_LEDGER_RETRY_ATTEMPTS,
+  ORDER_LEDGER_TIMEOUT_MS_TOKEN,
+  ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
 } from './outbound';
@@ -48,11 +48,11 @@ import { OrderController } from './presentation';
     { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },
     { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerQueueAdapter },
     ConfigValueProvider.provide({
-      provide: ORDER_LEDGER_RECORD_TIMEOUT_MS,
+      provide: ORDER_LEDGER_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',
     }),
     ConfigValueProvider.provide({
-      provide: ORDER_LEDGER_RETRY_ATTEMPTS,
+      provide: ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
       property: 'LEDGER_RETRY_ATTEMPTS',
     }),
   ],

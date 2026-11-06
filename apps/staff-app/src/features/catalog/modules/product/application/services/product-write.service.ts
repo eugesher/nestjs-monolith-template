@@ -11,7 +11,7 @@ import {
 } from '../../domain';
 import {
   type IProductWriteRepositoryPort,
-  PRODUCT_OCC_RETRY_ATTEMPTS,
+  PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_WRITE_REPOSITORY_PORT,
 } from '../../outbound';
 import { ProductWriteConflictError } from '../errors/product-write-conflict.error';
@@ -24,7 +24,7 @@ export class ProductWriteService {
     private readonly accessService: ProductAccessService,
     @Inject(PRODUCT_WRITE_REPOSITORY_PORT)
     private readonly repository: IProductWriteRepositoryPort,
-    @Inject(PRODUCT_OCC_RETRY_ATTEMPTS)
+    @Inject(PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN)
     private readonly occRetryAttempts: number,
     @InjectPinoLogger(ProductWriteService.name)
     private readonly logger: PinoLogger,

@@ -267,14 +267,14 @@ describe('lib entry points', () => {
   it('the Redis client token may NOT be imported outside specs', async () => {
     await expect({
       file: 'apps/staff-app/src/app/__fixture__.ts',
-      code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
+      code: 'import { REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
     }).toBreakRule('no-restricted-imports');
   });
 
   it('an e2e spec MAY take the Redis client token', async () => {
     await expect({
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
-      code: 'import { REDIS_CLIENT } from "@acme-libs/cache/testing";',
+      code: 'import { REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
     }).toPassArchitectureLint();
   });
 

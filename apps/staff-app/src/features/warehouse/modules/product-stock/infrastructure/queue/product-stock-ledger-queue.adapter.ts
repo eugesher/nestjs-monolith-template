@@ -7,7 +7,7 @@ import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/c
 
 import {
   IProductStockLedgerRecordPort,
-  PRODUCT_STOCK_LEDGER_RECORD_TIMEOUT_MS,
+  PRODUCT_STOCK_LEDGER_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ProductStockLedgerQueueAdapter
   constructor(
     @InjectQueue(LEDGER_RECORD_QUEUE)
     protected readonly queue: Queue<ILedgerRecordProcessorPayload>,
-    @Inject(PRODUCT_STOCK_LEDGER_RECORD_TIMEOUT_MS)
+    @Inject(PRODUCT_STOCK_LEDGER_TIMEOUT_MS_TOKEN)
     protected readonly timeoutMs: number,
   ) {
     super();

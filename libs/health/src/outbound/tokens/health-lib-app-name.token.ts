@@ -1,1 +1,1 @@
-export const HEALTH_LIB_APP_NAME = Symbol('HEALTH_LIB_APP_NAME');
+export const HEALTH_LIB_APP_NAME_TOKEN = Symbol('HEALTH_LIB_APP_NAME_TOKEN');

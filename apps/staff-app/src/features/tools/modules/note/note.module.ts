@@ -27,7 +27,7 @@ import {
   NOTE_EDIT_REPOSITORY_PORT,
   NOTE_GET_MANY_REPOSITORY_PORT,
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
-  NOTE_OCC_RETRY_ATTEMPTS,
+  NOTE_OCC_RETRY_ATTEMPTS_TOKEN,
   NOTE_RESOLVE_REPOSITORY_PORT,
 } from './outbound';
 import { NoteController } from './presentation';
@@ -51,7 +51,7 @@ import { NoteController } from './presentation';
     { provide: NOTE_GET_REVISIONS_REPOSITORY_PORT, useClass: NoteGetRevisionsRepository },
     { provide: NOTE_RESOLVE_REPOSITORY_PORT, useClass: NoteResolveRepository },
     ConfigValueProvider.provide({
-      provide: NOTE_OCC_RETRY_ATTEMPTS,
+      provide: NOTE_OCC_RETRY_ATTEMPTS_TOKEN,
       property: 'OCC_RETRY_ATTEMPTS',
     }),
   ],

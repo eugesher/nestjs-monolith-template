@@ -28,9 +28,9 @@ import {
   REMINDER_DELETE_REPOSITORY_PORT,
   REMINDER_GET_MANY_REPOSITORY_PORT,
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
-  REMINDER_OCC_RETRY_ATTEMPTS,
+  REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   REMINDER_SUMMARY_PORT,
-  REMINDER_SUMMARY_TTL_MS,
+  REMINDER_SUMMARY_TTL_MS_TOKEN,
   REMINDER_WRITE_REPOSITORY_PORT,
 } from './outbound';
 import { ReminderController } from './presentation';
@@ -55,11 +55,11 @@ import { ReminderController } from './presentation';
     { provide: REMINDER_WRITE_REPOSITORY_PORT, useClass: ReminderWriteRepository },
     { provide: REMINDER_SUMMARY_PORT, useClass: ReminderSummaryCacheAdapter },
     ConfigValueProvider.provide({
-      provide: REMINDER_OCC_RETRY_ATTEMPTS,
+      provide: REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
       property: 'OCC_RETRY_ATTEMPTS',
     }),
     ConfigValueProvider.provide({
-      provide: REMINDER_SUMMARY_TTL_MS,
+      provide: REMINDER_SUMMARY_TTL_MS_TOKEN,
       property: 'CACHE_TTL_MS_DEFAULT',
     }),
   ],

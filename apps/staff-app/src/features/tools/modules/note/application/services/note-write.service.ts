@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
 import { NoteModel, NoteVersionMismatchException } from '../../domain';
-import { NOTE_OCC_RETRY_ATTEMPTS } from '../../outbound';
+import { NOTE_OCC_RETRY_ATTEMPTS_TOKEN } from '../../outbound';
 import { NoteWriteConflictError } from '../errors/note-write-conflict.error';
 import { INoteWriteCommand, INoteWriteReloadCommand } from '../interfaces';
 import { NoteAccessService } from './note-access.service';
@@ -13,7 +13,7 @@ import { NoteAccessService } from './note-access.service';
 export class NoteWriteService {
   constructor(
     private readonly accessService: NoteAccessService,
-    @Inject(NOTE_OCC_RETRY_ATTEMPTS)
+    @Inject(NOTE_OCC_RETRY_ATTEMPTS_TOKEN)
     private readonly occRetryAttempts: number,
     @InjectPinoLogger(NoteWriteService.name)
     private readonly logger: PinoLogger,

@@ -8,7 +8,7 @@ import { Redis } from 'ioredis';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
-import { REDIS_CLIENT } from '@acme-libs/cache/testing';
+import { REDIS_CLIENT_TOKEN } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
 import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 import { AppModule } from '@acme-staff/app/app.module';
@@ -63,7 +63,7 @@ export class AppE2EContext {
   public async init(): Promise<void> {
     const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
     const dataSource = moduleFixture.get(DataSource);
-    const redis = moduleFixture.get<Redis>(REDIS_CLIENT);
+    const redis = moduleFixture.get<Redis>(REDIS_CLIENT_TOKEN);
     const config = moduleFixture.get(ConfigService);
     const secret = config.getOrThrow<string>('JWT_SECRET');
     const prefix = config.getOrThrow<string>('API_PREFIX');
