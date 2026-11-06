@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
@@ -15,13 +14,13 @@ import {
 } from './application';
 import {
   NoteAccessRepository,
+  NoteConfigOccRetryAttemptsProvider,
   NoteCreateRepository,
   NoteEditRepository,
   NoteGetManyRepository,
   NoteGetRevisionsRepository,
   NoteResolveRepository,
 } from './infrastructure';
-import { NOTE_OCC_RETRY_ATTEMPTS_TOKEN } from './outbound';
 import { NoteController } from './presentation';
 
 @Module({
@@ -42,10 +41,7 @@ import { NoteController } from './presentation';
     NoteGetManyRepository.provider,
     NoteGetRevisionsRepository.provider,
     NoteResolveRepository.provider,
-    ConfigValueProvider.provide({
-      provide: NOTE_OCC_RETRY_ATTEMPTS_TOKEN,
-      property: 'OCC_RETRY_ATTEMPTS',
-    }),
+    NoteConfigOccRetryAttemptsProvider,
   ],
 })
 export class NoteModule {}

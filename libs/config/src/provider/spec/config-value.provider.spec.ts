@@ -8,8 +8,8 @@ describe('ConfigValueProvider', () => {
       const token = Symbol('ITEM_OCC_RETRY_ATTEMPTS_TOKEN');
 
       const provider = ConfigValueProvider.provide({
-        provide: token,
-        property: 'OCC_RETRY_ATTEMPTS',
+        injectionToken: token,
+        configProperty: 'OCC_RETRY_ATTEMPTS',
       });
 
       expect(provider).toMatchObject({ provide: token, inject: [ConfigService] });
@@ -18,8 +18,8 @@ describe('ConfigValueProvider', () => {
     it('reads the value of the property and fails when it is missing', () => {
       const config = { getOrThrow: jest.fn().mockReturnValue(5) };
       const provider = ConfigValueProvider.provide({
-        provide: Symbol('ITEM_OCC_RETRY_ATTEMPTS_TOKEN'),
-        property: 'OCC_RETRY_ATTEMPTS',
+        injectionToken: Symbol('ITEM_OCC_RETRY_ATTEMPTS_TOKEN'),
+        configProperty: 'OCC_RETRY_ATTEMPTS',
       });
 
       const value = provider.useFactory(config);

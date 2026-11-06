@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
@@ -13,6 +12,8 @@ import {
   OrderPlaceUseCase,
 } from './application';
 import {
+  OrderConfigLedgerRetryAttemptsProvider,
+  OrderConfigRedisCommandTimeoutMsProvider,
   OrderGetManyRepository,
   OrderGetOneRepository,
   OrderIdempotencyCoreAdapter,
@@ -20,10 +21,6 @@ import {
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
 } from './infrastructure';
-import {
-  ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
-} from './outbound';
 import { OrderController } from './presentation';
 
 @Module({
@@ -41,14 +38,8 @@ import { OrderController } from './presentation';
     OrderProductStockCoreAdapter.provider,
     OrderIdempotencyCoreAdapter.provider,
     OrderLedgerQueueAdapter.provider,
-    ConfigValueProvider.provide({
-      provide: ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-      property: 'REDIS_COMMAND_TIMEOUT_MS',
-    }),
-    ConfigValueProvider.provide({
-      provide: ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
-      property: 'LEDGER_RETRY_ATTEMPTS',
-    }),
+    OrderConfigRedisCommandTimeoutMsProvider,
+    OrderConfigLedgerRetryAttemptsProvider,
   ],
 })
 export class OrderModule {}

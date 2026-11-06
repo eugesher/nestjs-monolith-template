@@ -57,6 +57,9 @@ describe('the config itself (eslint.config.mjs, as ESLint resolves it)', () => {
     ['acme-app:features:infrastructure:core-adapters', 'acme-app:features:infrastructure'],
     ['acme-app:features:infrastructure:common-adapters', 'acme-app:features:infrastructure'],
     ['acme-app:features:infrastructure:lib-adapters', 'acme-app:features:infrastructure'],
+    ['acme-app:features:infrastructure:config', 'acme-app:features:infrastructure'],
+    ['acme-app:processors:infrastructure:config', 'acme-app:processors:infrastructure'],
+    ['acme-core:modules:infrastructure:config', 'acme-core:modules:infrastructure'],
     ['acme-app:processors:infrastructure:core-adapters', 'acme-app:processors:infrastructure'],
     ['acme-app:processors:infrastructure:common-adapters', 'acme-app:processors:infrastructure'],
     [

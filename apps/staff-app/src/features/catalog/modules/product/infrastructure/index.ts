@@ -1,3 +1,5 @@
+export * from './config/product-config.provider';
+
 export * from './cache/product-catalog-cache.adapter';
 
 export * from './common-adapters/product-tag-common.adapter';

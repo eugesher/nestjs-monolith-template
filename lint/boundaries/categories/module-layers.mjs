@@ -8,6 +8,7 @@ export const moduleAreaLayers = [
   'infrastructure:common-adapters',
   'infrastructure:lib-adapters',
   'infrastructure:queue',
+  'infrastructure:config',
   'infrastructure',
   'presentation',
 ];

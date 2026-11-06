@@ -51,6 +51,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('infrastructure:common-adapters'),
       layer('infrastructure:lib-adapters'),
       layer('infrastructure:queue'),
+      layer('infrastructure:config'),
       to('acme-core:entities'),
       to('acme-app:common:entities', own('app')),
       baseLibs(),
@@ -85,6 +86,8 @@ const areaPolicies = (area, sharedFacing) => {
       baseLibs(),
       ...sharedFacing.queue,
     ]),
+    fromSpec(`${prefix}:infrastructure:config`),
+    from(`${prefix}:infrastructure:config`, [layer('outbound'), libs('config')]),
     from(`${prefix}:presentation`, [
       layer('domain'),
       layer('application'),
@@ -92,7 +95,6 @@ const areaPolicies = (area, sharedFacing) => {
       ...sharedFacing.presentation,
     ]),
     from(`${prefix}:module`, [
-      layer('outbound'),
       layer('application'),
       layer('infrastructure'),
       layer('presentation'),
@@ -119,10 +121,7 @@ export const moduleAreas = [
       baseLibs('auth', 'http'),
       packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
-    module: [
-      baseLibs('auth', 'config', 'credentials', 'health', 'http'),
-      packages('@nestjs/common'),
-    ],
+    module: [baseLibs('auth', 'credentials', 'health', 'http'), packages('@nestjs/common')],
   }),
   ...areaPolicies('processors', {
     outbound: [],
@@ -137,6 +136,6 @@ export const moduleAreas = [
       baseLibs('observability'),
       packages('@nestjs/bull', '@nestjs/schedule', 'bull'),
     ],
-    module: [baseLibs('config')],
+    module: [baseLibs()],
   }),
 ];

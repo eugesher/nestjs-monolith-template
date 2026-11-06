@@ -1,4 +1,4 @@
 export interface IConfigValueProvideOptions {
-  provide: symbol;
-  property: string;
+  injectionToken: symbol;
+  configProperty: string;
 }

@@ -342,11 +342,18 @@ describe('core modules', () => {
       },
     );
 
-    it('the module root MAY bind config values with the config lib', async () => {
+    it('infrastructure/config MAY bind config values with the config lib', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/config/__fixture__.ts',
+        code: 'import { ConfigValueProvider } from "@acme-libs/config";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the module root may NOT bind config values, infrastructure/config does', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
         code: 'import { ConfigValueProvider } from "@acme-libs/config";',
-      }).toPassArchitectureLint();
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each(['application', 'infrastructure'])(

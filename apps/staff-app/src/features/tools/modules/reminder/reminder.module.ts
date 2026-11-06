@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
@@ -15,6 +14,8 @@ import {
 } from './application';
 import {
   ReminderAccessRepository,
+  ReminderConfigCacheTtlMsDefaultProvider,
+  ReminderConfigOccRetryAttemptsProvider,
   ReminderCreateRepository,
   ReminderDeleteRepository,
   ReminderGetManyRepository,
@@ -22,7 +23,6 @@ import {
   ReminderSummaryCacheAdapter,
   ReminderWriteRepository,
 } from './infrastructure';
-import { REMINDER_OCC_RETRY_ATTEMPTS_TOKEN, REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN } from './outbound';
 import { ReminderController } from './presentation';
 
 @Module({
@@ -44,14 +44,8 @@ import { ReminderController } from './presentation';
     ReminderGetSummaryRepository.provider,
     ReminderWriteRepository.provider,
     ReminderSummaryCacheAdapter.provider,
-    ConfigValueProvider.provide({
-      provide: REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
-      property: 'OCC_RETRY_ATTEMPTS',
-    }),
-    ConfigValueProvider.provide({
-      provide: REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
-      property: 'CACHE_TTL_MS_DEFAULT',
-    }),
+    ReminderConfigOccRetryAttemptsProvider,
+    ReminderConfigCacheTtlMsDefaultProvider,
   ],
 })
 export class ReminderModule {}
