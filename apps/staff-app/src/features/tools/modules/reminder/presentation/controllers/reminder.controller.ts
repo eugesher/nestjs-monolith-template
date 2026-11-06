@@ -30,13 +30,15 @@ import {
   ReminderGetSummaryUseCase,
   ReminderRescheduleUseCase,
 } from '../../application';
-import { ReminderCreateRequestDto } from '../dto/reminder-create-request.dto';
-import { ReminderGetManyRequestDto } from '../dto/reminder-get-many-request.dto';
-import { ReminderIdRequestDto } from '../dto/reminder-id-request.dto';
-import { ReminderPageResponseDto } from '../dto/reminder-page-response.dto';
-import { ReminderRescheduleRequestDto } from '../dto/reminder-reschedule-request.dto';
-import { ReminderResponseDto } from '../dto/reminder-response.dto';
-import { ReminderSummaryResponseDto } from '../dto/reminder-summary-response.dto';
+import {
+  ReminderCreateRequestDto,
+  ReminderGetManyQueryDto,
+  ReminderIdParamDto,
+  ReminderPageResponseDto,
+  ReminderRescheduleRequestDto,
+  ReminderResponseDto,
+  ReminderSummaryResponseDto,
+} from '../dto';
 import { ReminderHttpExceptionFilter } from '../filters/reminder-http-exception.filter';
 
 @ApiTags('Tools/Reminder')
@@ -68,7 +70,7 @@ export class ReminderController {
   @ApiOperation({ summary: 'List your reminders, soonest first' })
   @ApiOkResponse({ type: ReminderPageResponseDto })
   public async handleGetMany(
-    @Query() query: ReminderGetManyRequestDto,
+    @Query() query: ReminderGetManyQueryDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderPageResponseDto> {
     const { page, limit, status } = query;
@@ -89,7 +91,7 @@ export class ReminderController {
   @ApiOperation({ summary: 'Mark one of your reminders as done' })
   @ApiOkResponse({ type: ReminderResponseDto })
   public async handleComplete(
-    @Param() params: ReminderIdRequestDto,
+    @Param() params: ReminderIdParamDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderResponseDto> {
     const { reminderId } = params;
@@ -101,7 +103,7 @@ export class ReminderController {
   @ApiOperation({ summary: 'Move one of your reminders to another day' })
   @ApiOkResponse({ type: ReminderResponseDto })
   public async handleReschedule(
-    @Param() params: ReminderIdRequestDto,
+    @Param() params: ReminderIdParamDto,
     @Body() body: ReminderRescheduleRequestDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<ReminderResponseDto> {
@@ -116,7 +118,7 @@ export class ReminderController {
   @ApiOperation({ summary: 'Delete one of your reminders' })
   @ApiNoContentResponse()
   public async handleDelete(
-    @Param() params: ReminderIdRequestDto,
+    @Param() params: ReminderIdParamDto,
     @CurrentUser() user: IAuthCurrentUserView,
   ): Promise<void> {
     const { reminderId } = params;

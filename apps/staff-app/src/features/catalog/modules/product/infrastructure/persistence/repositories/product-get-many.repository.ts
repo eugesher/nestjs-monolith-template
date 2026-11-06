@@ -1,47 +1,27 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Product } from '@acme-core/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
   IProductGetManyRepositoryPort,
   IProductGetManyRecord,
   IProductGetManyListQuery,
 } from '../../../outbound';
+import { ProductPersistenceHost } from '../host/product-persistence.host';
 
 @Injectable()
-export class ProductGetManyRepository implements IProductGetManyRepositoryPort {
+export class ProductGetManyRepository
+  extends ProductPersistenceHost
+  implements IProductGetManyRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async list(query: IProductGetManyListQuery): Promise<IProductGetManyRecord> {
-    const { limit, offset, productIds } = query;
-    const builder = this.productRepository
-      .createQueryBuilder('Product')
-      .select([
-        'Product.id',
-        'Product.sku',
-        'Product.name',
-        'Product.status',
-        'Product.version',
-        'Product.createdAt',
-        'Product.updatedAt',
-      ]);
-
-    if (productIds !== undefined) {
-      builder.where('Product.id IN (:...productIds)', { productIds });
-    }
-
-    return await builder.orderBy('Product.id', 'DESC').skip(offset).take(limit).getManyAndCount();
+    return await this.createProductBuilder().forList(query).getManyAndCount();
   }
 }

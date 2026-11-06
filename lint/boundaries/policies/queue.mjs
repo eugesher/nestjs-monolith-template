@@ -36,7 +36,7 @@ export const queue = [
     message: 'common/shared only registers queues with BullModule from @nestjs/bull',
   },
   {
-    from: { file: { categories: 'acme-core:modules:module' } },
+    from: { file: { categories: 'acme-core:modules:shell' } },
     disallow: [{ ...packages('@nestjs/bull'), dependency: { specifiers: ['!BullModule'] } }],
     message:
       'a core module only registers the queues it writes to with BullModule from @nestjs/bull',

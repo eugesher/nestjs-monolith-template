@@ -10,7 +10,10 @@ export class ProductStockCoreLockRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreLockRepositoryPort
 {
-  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
-    super(repositoryHost);
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 }

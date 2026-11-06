@@ -14,8 +14,11 @@ export class ProductStockCoreMoveRepository
   extends ProductStockCoreBaseRepository
   implements IProductStockCoreMoveRepositoryPort
 {
-  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
-    super(repositoryHost);
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async insertMany(

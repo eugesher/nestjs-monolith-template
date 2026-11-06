@@ -51,11 +51,7 @@ export class TagCommonReplaceUseCase {
 
     const linked = await this.repository.findLinked({ subjectType, subjectId });
     const linkedTagIds = linked.map((link) => link.tagId);
-    const subjectTags = TagCommonSubjectTagsModel.reconstitute({
-      subjectType,
-      subjectId,
-      tagIds: linkedTagIds,
-    });
+    const subjectTags = TagCommonSubjectTagsModel.reconstitute({ tagIds: linkedTagIds });
     const { linkTagIds, unlinkTagIds } = subjectTags.replace(foundTagIds);
 
     await this.repository.unlink({ subjectType, subjectId, tagIds: unlinkTagIds });

@@ -1,9 +1,6 @@
 import { StaffRole, StaffUser } from '@acme-core/entities';
 
-export type IUserAssignRoleStaffUserRecord = Pick<
-  StaffUser,
-  'id' | 'email' | 'passwordHash' | 'status'
-> & {
+export type IUserAssignRoleStaffUserRecord = Pick<StaffUser, 'id'> & {
   userRoles: { role: Pick<StaffRole, 'name'> }[];
 };
 

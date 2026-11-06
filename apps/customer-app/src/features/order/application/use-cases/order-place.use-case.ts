@@ -92,7 +92,7 @@ export class OrderPlaceUseCase {
     const orderProducts = draft.productIds.map((productId) => ({ orderId, productId }));
     await this.repository.insertOrderProducts(orderProducts);
 
-    const record = await this.repository.findOrder(orderId);
+    const record = await this.repository.findPlaced(orderId);
 
     const placed = OrderModel.reconstitute(record);
     const view = placed.toView();

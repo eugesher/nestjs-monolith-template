@@ -28,12 +28,14 @@ import {
   TagGetManyUseCase,
   TagRenameUseCase,
 } from '../../application';
-import { TagCreateRequestDto } from '../dto/tag-create-request.dto';
-import { TagGetManyRequestDto } from '../dto/tag-get-many-request.dto';
-import { TagIdRequestDto } from '../dto/tag-id-request.dto';
-import { TagPageResponseDto } from '../dto/tag-page-response.dto';
-import { TagRenameRequestDto } from '../dto/tag-rename-request.dto';
-import { TagResponseDto } from '../dto/tag-response.dto';
+import {
+  TagCreateRequestDto,
+  TagGetManyQueryDto,
+  TagIdParamDto,
+  TagPageResponseDto,
+  TagRenameRequestDto,
+  TagResponseDto,
+} from '../dto';
 import { TagHttpExceptionFilter } from '../filters/tag-http-exception.filter';
 
 @ApiTags('Tools/Tag')
@@ -61,7 +63,7 @@ export class TagController {
   @RequiresPermission(PermissionCodeEnum.TAG_READ)
   @ApiOperation({ summary: 'List the tags by name' })
   @ApiOkResponse({ type: TagPageResponseDto })
-  public async handleGetMany(@Query() query: TagGetManyRequestDto): Promise<TagPageResponseDto> {
+  public async handleGetMany(@Query() query: TagGetManyQueryDto): Promise<TagPageResponseDto> {
     const { page, limit } = query;
 
     return await this.getMany.execute({ page, limit });
@@ -72,7 +74,7 @@ export class TagController {
   @ApiOperation({ summary: 'Rename a tag' })
   @ApiOkResponse({ type: TagResponseDto })
   public async handleRename(
-    @Param() params: TagIdRequestDto,
+    @Param() params: TagIdParamDto,
     @Body() body: TagRenameRequestDto,
   ): Promise<TagResponseDto> {
     const { tagId } = params;
@@ -86,7 +88,7 @@ export class TagController {
   @RequiresPermission(PermissionCodeEnum.TAG_WRITE)
   @ApiOperation({ summary: 'Delete a tag and unlink it from every subject' })
   @ApiNoContentResponse()
-  public async handleDelete(@Param() params: TagIdRequestDto): Promise<void> {
+  public async handleDelete(@Param() params: TagIdParamDto): Promise<void> {
     const { tagId } = params;
 
     await this.remove.execute({ tagId });

@@ -53,18 +53,18 @@ export const commonModules = [
     to('acme-app:contracts', own('app')),
     baseLibs(),
   ]),
-  from('acme-app:common:modules:module:facade', [layer('application'), appContracts, baseLibs()]),
-  from('acme-app:common:modules:module', [
+  from('acme-app:common:modules:shell:facade', [layer('application'), appContracts, baseLibs()]),
+  from('acme-app:common:modules:shell', [
     layer('outbound'),
     layer('application'),
     layer('infrastructure'),
-    layer('module:facade'),
-    layer('module'),
+    layer('shell:facade'),
+    layer('shell'),
     appContracts,
     to('acme-app:common:modules:index', own('app')),
     to('acme-app:common:shared:index', own('app')),
     to('acme-core:modules:index'),
     baseLibs('config'),
   ]),
-  from('acme-app:common:modules:index', [layer('module')]),
+  from('acme-app:common:modules:index', [layer('shell')]),
 ];

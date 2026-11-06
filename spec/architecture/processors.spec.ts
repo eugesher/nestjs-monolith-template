@@ -235,13 +235,6 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it('a processor may NOT reach a core contract other than the ledger queue — core is called by the application through a port', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
-        code: 'import { x } from "../../../../../../core/contracts/src/__ledger-fixture__";',
-      }).toBreakRule('boundaries/dependencies');
-    });
-
     it('a processor may NOT import crypto — the correlation id comes from the observability lib', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',

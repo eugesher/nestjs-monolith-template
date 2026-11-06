@@ -1,27 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { IdempotencyKey } from '@acme-core/entities';
 
 import {
   IIdempotencyCoreCompleteRepositoryPort,
   IIdempotencyCoreCompleteQuery,
 } from '../../../outbound';
+import { IdempotencyCorePersistenceHost } from '../host/idempotency-core-persistence.host';
 
 @Injectable()
-export class IdempotencyCoreCompleteRepository implements IIdempotencyCoreCompleteRepositoryPort {
+export class IdempotencyCoreCompleteRepository
+  extends IdempotencyCorePersistenceHost
+  implements IIdempotencyCoreCompleteRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get idempotencyKeyRepository(): IHostedRepository<IdempotencyKey> {
-    return this.repositoryHost.getRepository(IdempotencyKey);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async complete(query: IIdempotencyCoreCompleteQuery): Promise<void> {

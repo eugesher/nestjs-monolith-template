@@ -1,37 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
-import { Product } from '@acme-core/entities';
 
 import {
   IProductCoreArchiveRepositoryPort,
   IProductCoreArchiveRecord,
   IProductCoreArchiveUpdateQuery,
 } from '../../../outbound';
+import { ProductCorePersistenceHost } from '../host/product-core-persistence.host';
 
 @Injectable()
-export class ProductCoreArchiveRepository implements IProductCoreArchiveRepositoryPort {
+export class ProductCoreArchiveRepository
+  extends ProductCorePersistenceHost
+  implements IProductCoreArchiveRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async lockById(productId: string): Promise<Nullable<IProductCoreArchiveRecord>> {
-    return await this.productRepository
-      .createQueryBuilder('Product')
-      .select(['Product.id', 'Product.sku', 'Product.status', 'Product.version'])
-      .where('Product.id = :productId', { productId })
-      .setLock('pessimistic_write')
-      .getOne();
+    return await this.createProductBuilder().forLockById(productId).getOne();
   }
 
   public async update(query: IProductCoreArchiveUpdateQuery): Promise<void> {

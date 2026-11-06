@@ -1,34 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { ReminderStatusEnum } from '@acme-libs/kernel';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Maybe } from '@acme-libs/toolkit';
-import { Reminder } from '@acme-staff/common/entities';
 
 import { IReminderGetSummaryRepositoryPort, IReminderGetSummaryRecord } from '../../../outbound';
+import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
 @Injectable()
-export class ReminderGetSummaryRepository implements IReminderGetSummaryRepositoryPort {
+export class ReminderGetSummaryRepository
+  extends ReminderPersistenceHost
+  implements IReminderGetSummaryRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get reminderRepository(): IHostedRepository<Reminder> {
-    return this.repositoryHost.getRepository(Reminder);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async summarize(ownerId: string): Promise<Maybe<IReminderGetSummaryRecord>> {
-    return await this.reminderRepository
-      .createQueryBuilder('Reminder')
-      .select('COUNT(*)', 'pending')
-      .addSelect('MIN(Reminder.dueOn)', 'nextDueOn')
-      .where('Reminder.ownerId = :ownerId', { ownerId })
-      .andWhere('Reminder.status = :status', { status: ReminderStatusEnum.PENDING })
+    return await this.createReminderBuilder()
+      .forSummarize(ownerId)
       .getRawOne<IReminderGetSummaryRecord>();
   }
 }

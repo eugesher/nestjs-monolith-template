@@ -6,9 +6,11 @@ import { IdempotencyKey } from '@acme-libs/http';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { ProductStockAddUseCase } from '../../application';
-import { ProductStockAddRequestDto } from '../dto/product-stock-add-request.dto';
-import { ProductStockProductIdRequestDto } from '../dto/product-stock-product-id-request.dto';
-import { ProductStockResponseDto } from '../dto/product-stock-response.dto';
+import {
+  ProductStockAddRequestDto,
+  ProductStockProductIdParamDto,
+  ProductStockResponseDto,
+} from '../dto';
 import { ProductStockHttpExceptionFilter } from '../filters/product-stock-http-exception.filter';
 
 @ApiTags('Warehouse/ProductStock')
@@ -23,7 +25,7 @@ export class ProductStockController {
   @ApiOperation({ summary: 'Add units to the stock of a product (idempotent)' })
   @ApiCreatedResponse({ type: ProductStockResponseDto })
   public async handleAdd(
-    @Param() params: ProductStockProductIdRequestDto,
+    @Param() params: ProductStockProductIdParamDto,
     @Body() body: ProductStockAddRequestDto,
     @IdempotencyKey() idempotencyKey: string,
   ): Promise<ProductStockResponseDto> {

@@ -31,10 +31,16 @@ created, so a spec that scaffolds `libs/kernel/src/index.ts` leaves a real `libs
 Scaffolded apps and modules are named `__<topic>-fixture__` so they never collide with real code.
 Libs keep their real names: the lint rules capture the lib name, and the edges are per lib.
 
-**`--runInBand` is mandatory.** Scaffolds write into the real tree. Two spec files running in
-parallel would see each other's half-built scaffolds: one removes a directory the other is still
+**One spec file at a time is mandatory.** Scaffolds write into the real tree. Two spec files running
+in parallel would see each other's half-built scaffolds: one removes a directory the other is still
 linting against, or an unknown-file case finds a file that belongs to its neighbor. `test:unit`
-runs Jest in band, and nothing else may run the specs in parallel.
+runs Jest with `--maxWorkers=1`, and nothing else may run the specs in parallel.
+
+**The worker restarts at 2 GB.** Every spec file gets its own module registry, and with
+`--experimental-vm-modules` Node keeps the compiled ES modules of every finished file alive, so one
+process grows by about 10 MB per file and by about 60 MB per architecture spec, which loads
+ESLint. In band the run outgrows the 4 GB heap of Node. A single worker with
+`--workerIdleMemoryLimit=2GB` keeps the order and drops the leak whenever Jest replaces it.
 
 **Imports are relative until the aliases exist.** A spec may import `@acme-libs/<lib>` only once
 `tsconfig.json` maps it; before that the alias does not resolve and the plugin treats it as an

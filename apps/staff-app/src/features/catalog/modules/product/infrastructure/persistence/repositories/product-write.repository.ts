@@ -10,8 +10,11 @@ export class ProductWriteRepository
   extends ProductBaseRepository
   implements IProductWriteRepositoryPort
 {
-  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
-    super(repositoryHost);
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async update(query: IProductWriteUpdateQuery): Promise<boolean> {

@@ -58,5 +58,5 @@ write and hands them to `ProductLedgerService`, which turns them into records of
 ## `PATCH` edits fields, `PUT` sets a state
 
 `PATCH /catalog/products/:productId` takes the fields to change, every one optional
-(`apps/staff-app/src/features/catalog/modules/product/presentation/dto/product-update-request.dto.ts`). A state change has no body: `PUT` on the
+(`apps/staff-app/src/features/catalog/modules/product/presentation/dto/requests/product-update.request.dto.ts`). A state change has no body: `PUT` on the
 state resource (`.../publish`, `.../archive`) says what the row becomes.

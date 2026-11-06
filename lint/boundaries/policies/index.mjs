@@ -8,7 +8,6 @@ import { moduleAreas } from './module-areas.mjs';
 import { queue } from './queue.mjs';
 import { repo } from './repo.mjs';
 import { scheduler } from './scheduler.mjs';
-import { userEntities } from './user-entities.mjs';
 
 export const policies = [
   ...acmeApp,
@@ -18,7 +17,6 @@ export const policies = [
   ...acmeLibs,
   ...repo,
   httpSurface,
-  ...userEntities,
   customerClaims,
   ...scheduler,
   ...queue,

@@ -1,15 +1,7 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
-import { Note } from '@acme-staff/common/entities';
-
 import { INoteEditUpdateQuery } from '../../../../outbound';
+import { NotePersistenceHost } from '../../host/note-persistence.host';
 
-export abstract class NoteBaseRepository {
-  protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
-
-  protected get noteRepository(): IHostedRepository<Note> {
-    return this.repositoryHost.getRepository(Note);
-  }
-
+export abstract class NoteBaseRepository extends NotePersistenceHost {
   public async update(query: INoteEditUpdateQuery): Promise<boolean> {
     const { id, versionAsRead, body, resolved, version } = query;
     const result = await this.noteRepository.update(

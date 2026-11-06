@@ -7,7 +7,6 @@ describe('StaffAuthCoreFindByEmailUseCase', () => {
   beforeEach(() => {
     findByEmail = jest.fn().mockResolvedValue({
       id: 'user-1',
-      email: 'admin@example.com',
       passwordHash: 'hash',
       status: 'active',
     });
@@ -20,7 +19,6 @@ describe('StaffAuthCoreFindByEmailUseCase', () => {
 
       expect(user).toEqual({
         id: 'user-1',
-        email: 'admin@example.com',
         passwordHash: 'hash',
         status: 'active',
       });

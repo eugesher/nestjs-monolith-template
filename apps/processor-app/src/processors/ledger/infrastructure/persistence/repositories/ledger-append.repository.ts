@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
@@ -13,16 +9,18 @@ import {
   ILedgerAppendEntryRecord,
   ILedgerAppendEntryInsertQuery,
 } from '../../../outbound';
+import { LedgerPersistenceHost } from '../host/ledger-persistence.host';
 
 @Injectable()
-export class LedgerAppendRepository implements ILedgerAppendRepositoryPort {
+export class LedgerAppendRepository
+  extends LedgerPersistenceHost
+  implements ILedgerAppendRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get ledgerEntryRepository(): IHostedRepository<LedgerEntry> {
-    return this.repositoryHost.getRepository(LedgerEntry);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async insert(record: ILedgerAppendEntryInsertQuery): Promise<string> {
@@ -32,10 +30,6 @@ export class LedgerAppendRepository implements ILedgerAppendRepositoryPort {
   }
 
   public async findByOperationKey(operationKey: string): Promise<ILedgerAppendEntryRecord> {
-    return await this.ledgerEntryRepository
-      .createQueryBuilder('LedgerEntry')
-      .select(['LedgerEntry.id'])
-      .where('LedgerEntry.operationKey = :operationKey', { operationKey })
-      .getOneOrFail();
+    return await this.createLedgerEntryBuilder().forByOperationKey(operationKey).getOneOrFail();
   }
 }

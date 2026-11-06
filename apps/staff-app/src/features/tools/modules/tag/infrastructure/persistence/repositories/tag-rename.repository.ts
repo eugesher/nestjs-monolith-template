@@ -1,23 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Tag } from '@acme-staff/common/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import { ITagRenameQuery, ITagRenameRepositoryPort } from '../../../outbound';
+import { TagPersistenceHost } from '../host/tag-persistence.host';
 
 @Injectable()
-export class TagRenameRepository implements ITagRenameRepositoryPort {
+export class TagRenameRepository extends TagPersistenceHost implements ITagRenameRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get tagRepository(): IHostedRepository<Tag> {
-    return this.repositoryHost.getRepository(Tag);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async update(query: ITagRenameQuery): Promise<void> {

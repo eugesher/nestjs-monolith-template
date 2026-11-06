@@ -1,34 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Product } from '@acme-core/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
   IProductCreateRepositoryPort,
   IProductCreateRecord,
   IProductCreateInsertQuery,
 } from '../../../outbound';
+import { ProductPersistenceHost } from '../host/product-persistence.host';
 
 @Injectable()
-export class ProductCreateRepository implements IProductCreateRepositoryPort {
+export class ProductCreateRepository
+  extends ProductPersistenceHost
+  implements IProductCreateRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async existsBySku(sku: string): Promise<boolean> {
-    return await this.productRepository
-      .createQueryBuilder('Product')
-      .where('Product.sku = :sku', { sku })
-      .getExists();
+    return await this.createProductBuilder().forExistsBySku(sku).getExists();
   }
 
   public async insert(query: IProductCreateInsertQuery): Promise<string> {
@@ -36,18 +30,6 @@ export class ProductCreateRepository implements IProductCreateRepositoryPort {
   }
 
   public async findInserted(productId: string): Promise<IProductCreateRecord> {
-    return await this.productRepository
-      .createQueryBuilder('Product')
-      .select([
-        'Product.id',
-        'Product.sku',
-        'Product.name',
-        'Product.status',
-        'Product.version',
-        'Product.createdAt',
-        'Product.updatedAt',
-      ])
-      .where('Product.id = :productId', { productId })
-      .getOneOrFail();
+    return await this.createProductBuilder().forInserted(productId).getOneOrFail();
   }
 }

@@ -33,13 +33,12 @@ export class AuthRegisterUseCase {
     const passwordHash = await this.credentials.hashPassword(password);
     const draft = AuthCustomerModel.createDraft({ email, passwordHash });
     const id = await this.insert(draft);
-    const customer = AuthCustomerModel.reconstitute({ id, ...draft });
 
-    this.logger.info({ customerId: customer.id }, 'Customer registered');
+    this.logger.info({ customerId: id }, 'Customer registered');
 
-    await this.ledgerService.recordRegistered({ customerId: customer.id, email: customer.email });
+    await this.ledgerService.recordRegistered({ customerId: id, email: draft.email });
 
-    return { id: customer.id, email: customer.email };
+    return { id, email: draft.email };
   }
 
   private async insert(draft: IAuthCustomerDraft): Promise<string> {

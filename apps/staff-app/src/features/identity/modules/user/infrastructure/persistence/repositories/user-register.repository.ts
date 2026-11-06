@@ -1,12 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
 
 import {
   IUserRegisterRepositoryPort,
@@ -14,24 +9,18 @@ import {
   IUserRegisterStaffUserInsertQuery,
   IUserRegisterStaffUserRoleInsertQuery,
 } from '../../../outbound';
+import { UserPersistenceHost } from '../host/user-persistence.host';
 
 @Injectable()
-export class UserRegisterRepository implements IUserRegisterRepositoryPort {
+export class UserRegisterRepository
+  extends UserPersistenceHost
+  implements IUserRegisterRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get staffRoleRepository(): IHostedRepository<StaffRole> {
-    return this.repositoryHost.getRepository(StaffRole);
-  }
-
-  private get staffUserRoleRepository(): IHostedRepository<StaffUserRole> {
-    return this.repositoryHost.getRepository(StaffUserRole);
-  }
-
-  private get staffUserRepository(): IHostedRepository<StaffUser> {
-    return this.repositoryHost.getRepository(StaffUser);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string> {
@@ -43,11 +32,7 @@ export class UserRegisterRepository implements IUserRegisterRepositoryPort {
       return [];
     }
 
-    return await this.staffRoleRepository
-      .createQueryBuilder('StaffRole')
-      .select(['StaffRole.id'])
-      .where('StaffRole.name IN (:...names)', { names })
-      .getMany();
+    return await this.createStaffRoleBuilder().forRoles(names).getMany();
   }
 
   public async insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void> {

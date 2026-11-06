@@ -1,0 +1,32 @@
+import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
+import { UserPersistenceStaffUserBuilder } from '../builders/user-persistence-staff-user.builder';
+import { UserPersistenceStaffRoleBuilder } from '../builders/user-persistence-staff-role.builder';
+
+export abstract class UserPersistenceHost {
+  protected abstract readonly repositoryHost: IRepositoryHostPort;
+
+  protected get staffRoleRepository(): IHostedRepository<StaffRole> {
+    return this.repositoryHost.getRepository(StaffRole);
+  }
+
+  protected get staffUserRepository(): IHostedRepository<StaffUser> {
+    return this.repositoryHost.getRepository(StaffUser);
+  }
+
+  protected get staffUserRoleRepository(): IHostedRepository<StaffUserRole> {
+    return this.repositoryHost.getRepository(StaffUserRole);
+  }
+
+  protected createStaffUserBuilder(): UserPersistenceStaffUserBuilder {
+    return new UserPersistenceStaffUserBuilder(
+      this.staffUserRepository.createQueryBuilder(StaffUser.name),
+    );
+  }
+
+  protected createStaffRoleBuilder(): UserPersistenceStaffRoleBuilder {
+    return new UserPersistenceStaffRoleBuilder(
+      this.staffRoleRepository.createQueryBuilder(StaffRole.name),
+    );
+  }
+}

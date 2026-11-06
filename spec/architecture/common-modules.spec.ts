@@ -7,7 +7,7 @@ describe('common modules (common/modules/<module>)', () => {
   beforeAll(() => {
     scaffold = Scaffold.create([
       'apps/__common-fixture__/src/common/modules/idempotency/index.ts',
-      'apps/__common-fixture__/src/common/modules/idempotency/module/idempotency.module.ts',
+      'apps/__common-fixture__/src/common/modules/idempotency/shell/idempotency.module.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/application/index.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/outbound/index.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/infrastructure/index.ts',
@@ -93,7 +93,7 @@ describe('common modules (common/modules/<module>)', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it.each(['application', 'module'])(
+    it.each(['application', 'shell'])(
       'common %s may NOT import typeorm, only infrastructure talks to the database',
       async (layer) => {
         await expect({
@@ -131,14 +131,14 @@ describe('common modules (common/modules/<module>)', () => {
   describe('core from a common module', () => {
     it('the common module root MAY import a core module to wire it', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/modules/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
     });
 
     it('the common module root may NOT reach core contracts', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/contracts/src/__ledger-fixture__";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -184,7 +184,7 @@ describe('common modules (common/modules/<module>)', () => {
   describe('other common modules and shared code', () => {
     it('the common module root MAY import a shared barrel', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../../../shared/concurrency";',
       }).toPassArchitectureLint();
     });
@@ -228,7 +228,7 @@ describe('common modules (common/modules/<module>)', () => {
 
     it('the common module root MAY import another common module to wire it', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../../audit";',
       }).toPassArchitectureLint();
     });
@@ -273,11 +273,11 @@ describe('common modules (common/modules/<module>)', () => {
     });
   });
 
-  describe('the module barrel and module/', () => {
+  describe('the module barrel and shell/', () => {
     it('the common module barrel MAY export the nest module', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/common/modules/idempotency/index.ts',
-        code: 'export * from "./module/idempotency.module";',
+        code: 'export * from "./shell/idempotency.module";',
       }).toPassArchitectureLint();
     });
 
@@ -290,14 +290,14 @@ describe('common modules (common/modules/<module>)', () => {
 
     it('a common module may NOT declare HTTP controllers', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { Controller } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a facade MAY reach the application layer and its own contracts', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/idempotency-common.facade.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/idempotency-common.facade.ts',
         code: 'import { x } from "../application";\nimport { y } from "../../../../contracts/idempotency";',
       }).toPassArchitectureLint();
     });
@@ -308,28 +308,28 @@ describe('common modules (common/modules/<module>)', () => {
       '../../../../../../../libs/cache/src',
     ])('a facade may NOT reach %s', async (source) => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/idempotency-common.facade.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/idempotency-common.facade.ts',
         code: `import { x } from "${source}";`,
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a facade may NOT import the HTTP platform', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/idempotency-common.facade.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/idempotency-common.facade.ts',
         code: 'import { x } from "@nestjs/platform-express";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('any other file in module/ is the composition root and MAY reach infrastructure', async () => {
+    it('any other file in shell/ is the composition root and MAY reach infrastructure', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../infrastructure";',
       }).toPassArchitectureLint();
     });
 
     it('the composition root may NOT import entities — it wires them through infrastructure', async () => {
       await expect({
-        file: 'apps/__common-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
+        file: 'apps/__common-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/entities/src";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -397,7 +397,7 @@ describe('common modules (common/modules/<module>)', () => {
         '../../common/modules/idempotency',
       ],
       [
-        'apps/__common-fixture__/src/app/global/auth/module/__fixture__.ts',
+        'apps/__common-fixture__/src/app/global/auth/shell/__fixture__.ts',
         '../../../../common/modules/idempotency',
       ],
     ])('the module root %s MAY mount a common module', async (file, source) => {
@@ -455,92 +455,35 @@ describe('common modules (common/modules/<module>)', () => {
     });
   });
 
-  describe('users by app', () => {
-    it.each([
-      'apps/staff-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/staff-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/processor-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/processor-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-    ])('%s MAY import the port of the core staff auth module', async (file) => {
-      await expect({
-        file,
-        code: 'import { STAFF_AUTH_CORE_PORT, IStaffAuthCorePort } from "@acme-core/contracts/staff-auth";',
-      }).toPassArchitectureLint();
-    });
-
-    it.each([
-      [
-        'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/features/auth/auth.module.ts',
-        'import { StaffAuthCoreModule } from "@acme-core/modules/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { StaffUser } from "@acme-core/entities";',
-      ],
-      [
-        'apps/customer-app/src/features/auth/infrastructure/persistence/__fixture__.ts',
-        'import { StaffUser } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach the staff users — they belong to staff-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      'apps/processor-app/src/features/queue/infrastructure/persistence/__fixture__.ts',
-      'apps/processor-app/src/app/setup/orm/__fixture__.ts',
-    ])(
-      '%s may NOT reach the staff entities — processor-app reads the staff through core',
-      async (file) => {
+  describe('core by app', () => {
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY import the port of any core module in its core adapters',
+      async (app) => {
         await expect({
-          file,
-          code: 'import { StaffUser } from "@acme-core/entities";',
-        }).toBreakRule('boundaries/dependencies');
+          file: `apps/${app}/src/features/auth/infrastructure/core-adapters/__fixture__.ts`,
+          code: 'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
+        }).toPassArchitectureLint();
       },
     );
 
-    it('the processor-app entity list MAY register the staff entities on its connection', async () => {
-      await expect({
-        file: 'apps/processor-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { StaffPermission, StaffUser } from "@acme-core/entities";',
-      }).toPassArchitectureLint();
-    });
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY import any core entity in its persistence',
+      async (app) => {
+        await expect({
+          file: `apps/${app}/src/features/auth/infrastructure/persistence/__fixture__.ts`,
+          code: 'import { Customer, StaffUser } from "@acme-core/entities";',
+        }).toPassArchitectureLint();
+      },
+    );
 
-    it.each([
-      [
-        'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
-        'import { Customer, Product } from "@acme-core/entities";',
-      ],
-      [
-        'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-        'import { Customer } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach the customers — they belong to customer-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      ['apps/customer-app/src/app/setup/orm/entities/index.ts', 'Customer'],
-      ['apps/staff-app/src/app/setup/orm/entities/index.ts', 'StaffUser'],
-    ])('%s MAY register the %s entity of its own users', async (file, entity) => {
-      await expect({
-        file,
-        code: `import { ${entity} } from "@acme-core/entities";`,
-      }).toPassArchitectureLint();
-    });
-
-    it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
-      await expect({
-        file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
-      }).toPassArchitectureLint();
-    });
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY mount any core module',
+      async (app) => {
+        await expect({
+          file: `apps/${app}/src/features/auth/auth.module.ts`,
+          code: 'import { StaffAuthCoreModule } from "@acme-core/modules/staff-auth";',
+        }).toPassArchitectureLint();
+      },
+    );
   });
 });

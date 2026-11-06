@@ -23,7 +23,7 @@
     "lint:all": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p migrations && tsc -p scripts && tsc -p test",
-    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config ./jest/jest-unit.config.js",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --maxWorkers=1 --workerIdleMemoryLimit=2GB --config ./jest/jest-unit.config.js",
     "test:unit:coverage": "yarn test:unit --coverage",
     "test:e2e:staff": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --ci --config ./apps/staff-app/test/jest-e2e.config.js",
     "test:e2e:customer": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --ci --config ./apps/customer-app/test/jest-e2e.config.js",

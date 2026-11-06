@@ -10,7 +10,10 @@ export class ProductAccessRepository
   extends ProductBaseRepository
   implements IProductAccessRepositoryPort
 {
-  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
-    super(repositoryHost);
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 }

@@ -41,7 +41,6 @@ describe('AuthIdentityCoreAdapter', () => {
     it('answers the user the core staff auth module finds for the email', async () => {
       findByEmail.mockResolvedValue({
         id: 'user-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       });
@@ -50,7 +49,6 @@ describe('AuthIdentityCoreAdapter', () => {
 
       expect(user).toEqual({
         id: 'user-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       });

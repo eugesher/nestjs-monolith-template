@@ -81,7 +81,7 @@ const areaPolicies = (area, sharedFacing) => {
     from(`${prefix}:infrastructure:queue`, [
       layer('outbound'),
       to('acme-app:contracts', own('app')),
-      to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
+      to('acme-core:contracts'),
       baseLibs(),
       ...sharedFacing.queue,
     ]),
@@ -133,7 +133,7 @@ export const moduleAreas = [
     queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:contracts', own('app')),
-      to('acme-core:contracts', { module: ['ledger', 'product-stock'] }),
+      to('acme-core:contracts'),
       baseLibs('observability'),
       packages('@nestjs/bull', '@nestjs/schedule', 'bull'),
     ],

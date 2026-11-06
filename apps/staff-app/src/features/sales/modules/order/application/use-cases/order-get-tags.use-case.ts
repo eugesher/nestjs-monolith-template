@@ -20,7 +20,7 @@ export class OrderGetTagsUseCase {
 
   public async execute(command: IOrderGetTagsCommand): Promise<IOrderTagsView> {
     const { orderId } = command;
-    const order = await this.repository.findById(orderId);
+    const order = await this.repository.findExisting(orderId);
 
     if (!order) {
       throw new OrderNotFoundException(orderId);

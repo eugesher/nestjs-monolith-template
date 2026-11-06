@@ -1,23 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Reminder } from '@acme-staff/common/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import { IReminderDeleteRepositoryPort } from '../../../outbound';
+import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
 @Injectable()
-export class ReminderDeleteRepository implements IReminderDeleteRepositoryPort {
+export class ReminderDeleteRepository
+  extends ReminderPersistenceHost
+  implements IReminderDeleteRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get reminderRepository(): IHostedRepository<Reminder> {
-    return this.repositoryHost.getRepository(Reminder);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async softDelete(reminderId: string): Promise<void> {

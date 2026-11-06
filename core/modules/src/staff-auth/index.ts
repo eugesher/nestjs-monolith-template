@@ -1,1 +1,1 @@
-export * from './module/staff-auth-core.module';
+export * from './shell/staff-auth-core.module';

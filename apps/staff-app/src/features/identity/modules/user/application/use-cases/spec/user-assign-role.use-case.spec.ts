@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { UserAssignRoleUseCase } from '../user-assign-role.use-case';
@@ -14,9 +14,6 @@ describe('UserAssignRoleUseCase', () => {
     repository = {
       findById: jest.fn().mockResolvedValue({
         id: 'user-1',
-        email: 'editor@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.ACTIVE,
         userRoles: [{ role: { name: 'editor' } }],
       }),
       findRole: jest.fn().mockResolvedValue({ id: '3' }),
@@ -63,19 +60,5 @@ describe('UserAssignRoleUseCase', () => {
       message: 'Role admin was not found',
     });
     expect(logger.info).not.toHaveBeenCalled();
-  });
-
-  it('assigns a role to a disabled user too', async () => {
-    repository.findById.mockResolvedValue({
-      id: 'user-2',
-      email: 'viewer@example.com',
-      passwordHash: 'hash',
-      status: UserStatusEnum.DISABLED,
-      userRoles: [],
-    });
-
-    const view = await useCase.execute({ userId: 'user-2', role: RoleEnum.VIEWER });
-
-    expect(view).toEqual({ id: 'user-2', roles: ['viewer'] });
   });
 });

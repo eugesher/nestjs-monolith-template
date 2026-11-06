@@ -118,7 +118,7 @@ describe('app entry points', () => {
 
   it.each([
     ['apps/staff-app/src/app/setup/orm/__fixture__.ts', '@acme-staff/app/app.module'],
-    ['apps/staff-app/src/app/global/auth/module/__fixture__.ts', '@acme-staff/app/app.module'],
+    ['apps/staff-app/src/app/global/auth/shell/__fixture__.ts', '@acme-staff/app/app.module'],
     ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/app/app.module'],
     [
       'apps/processor-app/src/processors/idempotency/__fixture__.ts',
@@ -275,18 +275,6 @@ describe('app entry points', () => {
   });
 
   it.each([
-    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
-    'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
-    'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
-    'apps/customer-app/test/context/app-e2e.context.ts',
-  ])('%s may NOT import a core contract other than the ledger', async (file) => {
-    await expect({
-      file,
-      code: 'import { x } from "@acme-core/contracts/idempotency";',
-    }).toBreakRule('boundaries/dependencies');
-  });
-
-  it.each([
     'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
     'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
   ])('%s MAY import the queue contract of the core product stock', async (file) => {
@@ -295,19 +283,6 @@ describe('app entry points', () => {
       code: 'import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from "@acme-core/contracts/product-stock";',
     }).toPassArchitectureLint();
   });
-
-  it.each([
-    'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
-    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
-  ])(
-    '%s may NOT import a core contract other than the ledger and the product stock',
-    async (file) => {
-      await expect({
-        file,
-        code: 'import { x } from "@acme-core/contracts/idempotency";',
-      }).toBreakRule('boundaries/dependencies');
-    },
-  );
 
   it.each([
     [

@@ -2,8 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CatalogProductListUseCase } from '../../application';
-import { CatalogProductListRequestDto } from '../dto/catalog-product-list-request.dto';
-import { CatalogProductPageResponseDto } from '../dto/catalog-product-page-response.dto';
+import { CatalogProductListQueryDto, CatalogProductPageResponseDto } from '../dto';
 
 @ApiTags('Catalog')
 @Controller('products')
@@ -14,7 +13,7 @@ export class CatalogController {
   @ApiOperation({ summary: 'List the active products, by id' })
   @ApiOkResponse({ type: CatalogProductPageResponseDto })
   public async handleProductList(
-    @Query() query: CatalogProductListRequestDto,
+    @Query() query: CatalogProductListQueryDto,
   ): Promise<CatalogProductPageResponseDto> {
     const { page, limit } = query;
 

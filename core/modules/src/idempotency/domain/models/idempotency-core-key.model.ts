@@ -9,27 +9,17 @@ export class IdempotencyCoreKeyModel {
   private static readonly MAX_KEY_LENGTH = 128;
 
   private constructor(
-    public readonly id: string,
-    public readonly key: string,
     public readonly requestFingerprint: string,
     public readonly status: IdempotencyStatusEnum,
     public readonly responseBody: Nullable<string>,
-    public readonly createdAt: Date,
   ) {
     Object.freeze(this);
   }
 
   public static reconstitute(record: IIdempotencyCoreKeyRecord): IdempotencyCoreKeyModel {
-    const { id, idempotencyKey, requestFingerprint, status, responseBody, createdAt } = record;
+    const { requestFingerprint, status, responseBody } = record;
 
-    return new IdempotencyCoreKeyModel(
-      id,
-      idempotencyKey,
-      requestFingerprint,
-      status,
-      responseBody,
-      createdAt,
-    );
+    return new IdempotencyCoreKeyModel(requestFingerprint, status, responseBody);
   }
 
   public static createDraft(candidate: IIdempotencyCoreKeyCandidate): IIdempotencyCoreKeyDraft {

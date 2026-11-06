@@ -38,14 +38,12 @@ describe('AuthCustomerModel', () => {
     it('keeps the stored state as is', () => {
       const customer = AuthCustomerModel.reconstitute({
         id: 'customer-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.DISABLED,
       });
 
       expect(customer).toMatchObject({
         id: 'customer-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: 'disabled',
       });
@@ -83,7 +81,6 @@ describe('AuthCustomerModel', () => {
     it('lets an active customer through', () => {
       const customer = AuthCustomerModel.reconstitute({
         id: 'customer-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       });
@@ -94,7 +91,6 @@ describe('AuthCustomerModel', () => {
     it('refuses a disabled customer with AUTH_USER_INACTIVE', () => {
       const customer = AuthCustomerModel.reconstitute({
         id: 'customer-1',
-        email: 'ann@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.DISABLED,
       });

@@ -10,7 +10,10 @@ export class NoteResolveRepository
   extends NoteBaseRepository
   implements INoteResolveRepositoryPort
 {
-  constructor(@Inject(REPOSITORY_HOST_PORT) repositoryHost: IRepositoryHostPort) {
-    super(repositoryHost);
+  constructor(
+    @Inject(REPOSITORY_HOST_PORT)
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 }

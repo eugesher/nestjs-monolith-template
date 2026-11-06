@@ -175,7 +175,7 @@ describe('libs by layer', () => {
 
   it.each([
     [
-      'apps/customer-app/src/app/global/auth/module/__fixture__.ts',
+      'apps/customer-app/src/app/global/auth/shell/__fixture__.ts',
       'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";',
     ],
   ])('%s may NOT wire the claim guards: %s', async (file, code) => {
@@ -184,7 +184,7 @@ describe('libs by layer', () => {
 
   it('the staff-app global auth module MAY wire the claim guards', async () => {
     await expect({
-      file: 'apps/staff-app/src/app/global/auth/module/__fixture__.ts',
+      file: 'apps/staff-app/src/app/global/auth/shell/__fixture__.ts',
       code:
         'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";\n' +
         'import { AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
@@ -276,7 +276,7 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs'],
-    ['core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts', '../../../../../libs'],
+    ['core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts', '../../../../../libs'],
     [
       'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
       '../../../../../../../libs',
@@ -338,7 +338,7 @@ describe('libs by layer', () => {
       'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       '../../../../../../../libs',
     ],
-    ['core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts', '../../../../../libs'],
+    ['core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts', '../../../../../libs'],
   ])(
     '%s may NOT reach the database contracts, transactions are run by the application',
     async (file, libs) => {
@@ -399,7 +399,7 @@ describe('libs by layer', () => {
       'health',
     ],
     [
-      'apps/__layers-fixture__/src/app/global/auth/module/__fixture__.ts',
+      'apps/__layers-fixture__/src/app/global/auth/shell/__fixture__.ts',
       '../../../../../../../libs',
       'auth',
     ],
@@ -414,7 +414,7 @@ describe('libs by layer', () => {
   );
 
   it.each([
-    ['core/modules/src/__ledger-fixture__/module/__fixture__.ts', '../../../../../libs', 'cache'],
+    ['core/modules/src/__ledger-fixture__/shell/__fixture__.ts', '../../../../../libs', 'cache'],
     ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs', 'cache'],
     ['apps/__layers-fixture__/src/processors/purge/__fixture__.ts', '../../../../../libs', 'auth'],
   ])(
@@ -430,9 +430,9 @@ describe('libs by layer', () => {
   it.each([
     'apps/__layers-fixture__/src/features/product/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/__fixture__.ts',
-    'apps/__layers-fixture__/src/common/modules/idempotency/module/__fixture__.ts',
-    'apps/__layers-fixture__/src/app/global/auth/module/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
+    'apps/__layers-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
+    'apps/__layers-fixture__/src/app/global/auth/shell/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
     'apps/__layers-fixture__/src/app/setup/config/__fixture__.ts',
   ])('%s MAY bind config values through the config lib', async (file) => {
     await expect({
@@ -447,7 +447,7 @@ describe('libs by layer', () => {
     'apps/__layers-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
     'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
+    'core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts',
   ])(
     '%s may NOT reach the config lib — values arrive through tokens bound at the module root',
     async (file) => {
@@ -461,7 +461,7 @@ describe('libs by layer', () => {
   it.each([
     'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
     'apps/__layers-fixture__/src/features/product/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/module/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
   ])('%s may NOT read ConfigService directly', async (file) => {
     await expect({
       file,
@@ -509,7 +509,7 @@ describe('libs by layer', () => {
     'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/presentation/__fixture__.ts',
     'apps/__layers-fixture__/src/features/product/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/module/ledger-core.facade.ts',
+    'core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts',
   ])(
     '%s may NOT log through nestjs-pino — outcomes are logged by the application',
     async (file) => {

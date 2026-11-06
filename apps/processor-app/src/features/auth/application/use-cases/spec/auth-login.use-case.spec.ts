@@ -15,7 +15,6 @@ describe('AuthLoginUseCase', () => {
     identity = {
       findByEmail: jest.fn().mockResolvedValue({
         id: 'user-1',
-        email: 'editor@example.com',
         passwordHash: 'hash',
         status: UserStatusEnum.ACTIVE,
       }),
@@ -76,7 +75,6 @@ describe('AuthLoginUseCase', () => {
   it('rejects a disabled user after checking the password', async () => {
     identity.findByEmail.mockResolvedValue({
       id: 'user-1',
-      email: 'editor@example.com',
       passwordHash: 'hash',
       status: UserStatusEnum.DISABLED,
     });

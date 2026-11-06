@@ -2,16 +2,12 @@ import { ITagCommonSubjectTagsChanges } from '../interfaces/tag-common-subject-t
 import { ITagCommonSubjectTagsRecord } from '../interfaces/tag-common-subject-tags-record.interface';
 
 export class TagCommonSubjectTagsModel {
-  private constructor(
-    public readonly subjectType: string,
-    public readonly subjectId: string,
-    private readonly tagIds: ReadonlySet<string>,
-  ) {}
+  private constructor(private readonly tagIds: ReadonlySet<string>) {}
 
   public static reconstitute(record: ITagCommonSubjectTagsRecord): TagCommonSubjectTagsModel {
-    const { subjectType, subjectId, tagIds } = record;
+    const { tagIds } = record;
 
-    return new TagCommonSubjectTagsModel(subjectType, subjectId, new Set(tagIds));
+    return new TagCommonSubjectTagsModel(new Set(tagIds));
   }
 
   public static missingTagIds(requested: readonly string[], found: readonly string[]): string[] {

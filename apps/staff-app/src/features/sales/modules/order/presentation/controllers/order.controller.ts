@@ -10,12 +10,14 @@ import {
   OrderGetTagsUseCase,
   OrderReplaceTagsUseCase,
 } from '../../application';
-import { OrderGetManyRequestDto } from '../dto/order-get-many-request.dto';
-import { OrderIdRequestDto } from '../dto/order-id-request.dto';
-import { OrderResponseDto } from '../dto/order-response.dto';
-import { OrderSummaryPageResponseDto } from '../dto/order-summary-page-response.dto';
-import { OrderTagsReplaceRequestDto } from '../dto/order-tags-replace-request.dto';
-import { OrderTagsResponseDto } from '../dto/order-tags-response.dto';
+import {
+  OrderGetManyQueryDto,
+  OrderIdParamDto,
+  OrderResponseDto,
+  OrderSummaryPageResponseDto,
+  OrderTagsReplaceRequestDto,
+  OrderTagsResponseDto,
+} from '../dto';
 import { OrderHttpExceptionFilter } from '../filters/order-http-exception.filter';
 
 @ApiTags('Sales/Order')
@@ -34,7 +36,7 @@ export class OrderController {
   @ApiOperation({ summary: 'List the orders of all customers, newest first, optionally by tag' })
   @ApiOkResponse({ type: OrderSummaryPageResponseDto })
   public async handleGetMany(
-    @Query() query: OrderGetManyRequestDto,
+    @Query() query: OrderGetManyQueryDto,
   ): Promise<OrderSummaryPageResponseDto> {
     const { page, limit, tagId } = query;
 
@@ -45,7 +47,7 @@ export class OrderController {
   @RequiresPermission(PermissionCodeEnum.ORDER_READ)
   @ApiOperation({ summary: 'Read one order with its products' })
   @ApiOkResponse({ type: OrderResponseDto })
-  public async handleGetOne(@Param() params: OrderIdRequestDto): Promise<OrderResponseDto> {
+  public async handleGetOne(@Param() params: OrderIdParamDto): Promise<OrderResponseDto> {
     const { orderId } = params;
 
     return await this.getOne.execute({ orderId });
@@ -55,7 +57,7 @@ export class OrderController {
   @RequiresPermission(PermissionCodeEnum.ORDER_READ)
   @ApiOperation({ summary: 'Read the tags of an order, by name' })
   @ApiOkResponse({ type: OrderTagsResponseDto })
-  public async handleGetTags(@Param() params: OrderIdRequestDto): Promise<OrderTagsResponseDto> {
+  public async handleGetTags(@Param() params: OrderIdParamDto): Promise<OrderTagsResponseDto> {
     const { orderId } = params;
 
     return await this.getTags.execute({ orderId });
@@ -66,7 +68,7 @@ export class OrderController {
   @ApiOperation({ summary: 'Replace the tags of an order' })
   @ApiOkResponse({ type: OrderTagsResponseDto })
   public async handleReplaceTags(
-    @Param() params: OrderIdRequestDto,
+    @Param() params: OrderIdParamDto,
     @Body() body: OrderTagsReplaceRequestDto,
   ): Promise<OrderTagsResponseDto> {
     const { orderId } = params;
