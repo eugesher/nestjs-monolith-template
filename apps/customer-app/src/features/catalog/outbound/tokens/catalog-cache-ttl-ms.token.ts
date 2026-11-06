@@ -1,1 +1,0 @@
-export const CATALOG_CACHE_TTL_MS = Symbol('CATALOG_CACHE_TTL_MS');

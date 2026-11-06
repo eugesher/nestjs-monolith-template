@@ -5,4 +5,4 @@ export * from './persistence/repositories/order-get-many.repository';
 export * from './persistence/repositories/order-get-one.repository';
 export * from './persistence/repositories/order-place.repository';
 
-export * from './queue/order-ledger-record-queue.adapter';
+export * from './queue/order-ledger-queue.adapter';

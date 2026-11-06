@@ -2,14 +2,14 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { TagBaseException, TagErrorCodeEnum } from '../../domain';
+import { TagBaseException, TagExceptionCodeEnum } from '../../domain';
 
 @Catch(TagBaseException)
 export class TagHttpExceptionFilter implements ExceptionFilter<TagBaseException> {
-  private static readonly STATUS: Record<TagErrorCodeEnum, HttpStatus> = {
-    [TagErrorCodeEnum.TAG_NAME_INVALID]: HttpStatus.BAD_REQUEST,
-    [TagErrorCodeEnum.TAG_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [TagErrorCodeEnum.TAG_NAME_TAKEN]: HttpStatus.CONFLICT,
+  private static readonly STATUS: Record<TagExceptionCodeEnum, HttpStatus> = {
+    [TagExceptionCodeEnum.TAG_NAME_INVALID]: HttpStatus.BAD_REQUEST,
+    [TagExceptionCodeEnum.TAG_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [TagExceptionCodeEnum.TAG_NAME_TAKEN]: HttpStatus.CONFLICT,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

@@ -13,13 +13,13 @@ apps stays in core; a method of it that one app calls moves into that app, and t
 
 ## What lives where today
 
-| Module               | Methods                             | Callers                                                                      |
-| -------------------- | ----------------------------------- | ---------------------------------------------------------------------------- |
-| core `idempotency`   | `claim`, `complete`, `release`      | staff `product`, customer `order`                                            |
-| core `product`       | `archive`                           | staff `product`, the processor `product-stock`                               |
-| core `product-stock` | `lock`, `move`                      | staff `product`, customer `order`, `lock` also the processor `product-stock` |
-| core `staff-auth`    | `findSubject`, `findByEmail`        | `app/global/auth` and `auth` of staff-app and of processor-app               |
-| common `tag`         | `find`, `replace`, `findSubjectIds` | staff `product`, staff `order`                                               |
+| Module               | Methods                                               | Callers                                                                            |
+| -------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| core `idempotency`   | `handleClaim`, `handleComplete`, `handleRelease`      | staff `product`, customer `order`                                                  |
+| core `product`       | `handleArchive`                                       | staff `product`, the processor `product-stock`                                     |
+| core `product-stock` | `handleLock`, `handleMove`                            | staff `product`, customer `order`, `handleLock` also the processor `product-stock` |
+| core `staff-auth`    | `handleFindSubject`, `handleFindByEmail`              | `app/global/auth` and `auth` of staff-app and of processor-app                     |
+| common `tag`         | `handleFind`, `handleReplace`, `handleFindSubjectIds` | staff `product`, staff `order`                                                     |
 
 Everything else sits with its only caller, for example:
 

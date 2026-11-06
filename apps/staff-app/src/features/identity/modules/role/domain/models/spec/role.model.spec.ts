@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { RolePermissionModel } from '../role-permission.model';
 import { RoleModel } from '../role.model';
@@ -67,7 +67,7 @@ describe('RoleModel', () => {
 
       expect(replace).toThrow(
         expect.objectContaining({
-          code: IdentityErrorCodeEnum.AUTH_PERMISSION_NOT_FOUND,
+          code: IdentityExceptionCodeEnum.AUTH_PERMISSION_NOT_FOUND,
           message: 'Unknown permission codes: product:read, ledger:read',
         }) as Error,
       );

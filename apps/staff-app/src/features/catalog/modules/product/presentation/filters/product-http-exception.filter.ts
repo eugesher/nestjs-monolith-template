@@ -2,21 +2,21 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { ProductBaseException, ProductErrorCodeEnum } from '../../domain';
+import { ProductBaseException, ProductExceptionCodeEnum } from '../../domain';
 
 @Catch(ProductBaseException)
 export class ProductHttpExceptionFilter implements ExceptionFilter<ProductBaseException> {
-  private static readonly STATUS: Record<ProductErrorCodeEnum, HttpStatus> = {
-    [ProductErrorCodeEnum.PRODUCT_SKU_INVALID]: HttpStatus.BAD_REQUEST,
-    [ProductErrorCodeEnum.PRODUCT_NAME_INVALID]: HttpStatus.BAD_REQUEST,
-    [ProductErrorCodeEnum.PRODUCT_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
-    [ProductErrorCodeEnum.PRODUCT_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [ProductErrorCodeEnum.PRODUCT_ALREADY_ARCHIVED]: HttpStatus.CONFLICT,
-    [ProductErrorCodeEnum.PRODUCT_SKU_TAKEN]: HttpStatus.CONFLICT,
-    [ProductErrorCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT]: HttpStatus.CONFLICT,
-    [ProductErrorCodeEnum.PRODUCT_VERSION_MISMATCH]: HttpStatus.CONFLICT,
-    [ProductErrorCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED]: HttpStatus.UNPROCESSABLE_ENTITY,
-    [ProductErrorCodeEnum.PRODUCT_TAG_NOT_FOUND]: HttpStatus.UNPROCESSABLE_ENTITY,
+  private static readonly STATUS: Record<ProductExceptionCodeEnum, HttpStatus> = {
+    [ProductExceptionCodeEnum.PRODUCT_SKU_INVALID]: HttpStatus.BAD_REQUEST,
+    [ProductExceptionCodeEnum.PRODUCT_NAME_INVALID]: HttpStatus.BAD_REQUEST,
+    [ProductExceptionCodeEnum.PRODUCT_VERSION_INVALID]: HttpStatus.BAD_REQUEST,
+    [ProductExceptionCodeEnum.PRODUCT_NOT_FOUND]: HttpStatus.NOT_FOUND,
+    [ProductExceptionCodeEnum.PRODUCT_ALREADY_ARCHIVED]: HttpStatus.CONFLICT,
+    [ProductExceptionCodeEnum.PRODUCT_SKU_TAKEN]: HttpStatus.CONFLICT,
+    [ProductExceptionCodeEnum.PRODUCT_IDEMPOTENT_REQUEST_IN_FLIGHT]: HttpStatus.CONFLICT,
+    [ProductExceptionCodeEnum.PRODUCT_VERSION_MISMATCH]: HttpStatus.CONFLICT,
+    [ProductExceptionCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED]: HttpStatus.UNPROCESSABLE_ENTITY,
+    [ProductExceptionCodeEnum.PRODUCT_TAG_NOT_FOUND]: HttpStatus.UNPROCESSABLE_ENTITY,
   };
 
   constructor(private readonly httpExceptionFilter: HttpExceptionFilter) {}

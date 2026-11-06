@@ -3,21 +3,25 @@ import { IdempotencyCoreClaimOutcomeEnum } from '@acme-core/contracts/idempotenc
 import { ProductStockIdempotencyCoreAdapter } from '../product-stock-idempotency-core.adapter';
 
 describe('ProductStockIdempotencyCoreAdapter', () => {
-  let claim: jest.Mock;
-  let complete: jest.Mock;
-  let release: jest.Mock;
+  let handleClaim: jest.Mock;
+  let handleComplete: jest.Mock;
+  let handleRelease: jest.Mock;
   let adapter: ProductStockIdempotencyCoreAdapter;
 
   beforeEach(() => {
-    claim = jest.fn();
-    complete = jest.fn();
-    release = jest.fn();
-    adapter = new ProductStockIdempotencyCoreAdapter({ claim, complete, release });
+    handleClaim = jest.fn();
+    handleComplete = jest.fn();
+    handleRelease = jest.fn();
+    adapter = new ProductStockIdempotencyCoreAdapter({
+      handleClaim,
+      handleComplete,
+      handleRelease,
+    });
   });
 
   describe('claim', () => {
     it('claims the key on the logical body', async () => {
-      claim.mockResolvedValue({
+      handleClaim.mockResolvedValue({
         outcome: IdempotencyCoreClaimOutcomeEnum.CLAIMED,
         storedResponse: undefined,
       });
@@ -25,7 +29,7 @@ describe('ProductStockIdempotencyCoreAdapter', () => {
       const outcome = await adapter.claim({ key: 'key-1', body: { productId: '12', quantity: 5 } });
 
       expect(outcome).toEqual({ outcome: 'claimed' });
-      expect(claim).toHaveBeenCalledWith({
+      expect(handleClaim).toHaveBeenCalledWith({
         key: 'key-1',
         body: { productId: '12', quantity: 5 },
       });
@@ -35,7 +39,7 @@ describe('ProductStockIdempotencyCoreAdapter', () => {
       [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, 'in-flight'],
       [IdempotencyCoreClaimOutcomeEnum.MISMATCH, 'mismatch'],
     ])('answers %s as %s without a stored response', async (core, outcome) => {
-      claim.mockResolvedValue({ outcome: core, storedResponse: undefined });
+      handleClaim.mockResolvedValue({ outcome: core, storedResponse: undefined });
 
       const result = await adapter.claim({ key: 'key-1', body: {} });
 
@@ -43,7 +47,7 @@ describe('ProductStockIdempotencyCoreAdapter', () => {
     });
 
     it('answers a replay with the stored response', async () => {
-      claim.mockResolvedValue({
+      handleClaim.mockResolvedValue({
         outcome: IdempotencyCoreClaimOutcomeEnum.REPLAY,
         storedResponse: { productId: '12', quantity: 15 },
       });
@@ -59,21 +63,21 @@ describe('ProductStockIdempotencyCoreAdapter', () => {
 
   describe('complete', () => {
     it('stores the response under the key', async () => {
-      complete.mockResolvedValue(undefined);
+      handleComplete.mockResolvedValue(undefined);
 
       await adapter.complete({ key: 'key-1', response: { productId: '12' } });
 
-      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: { productId: '12' } });
+      expect(handleComplete).toHaveBeenCalledWith({ key: 'key-1', response: { productId: '12' } });
     });
   });
 
   describe('release', () => {
     it('releases the key', async () => {
-      release.mockResolvedValue(undefined);
+      handleRelease.mockResolvedValue(undefined);
 
       await adapter.release({ key: 'key-1' });
 
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(handleRelease).toHaveBeenCalledWith({ key: 'key-1' });
     });
   });
 });

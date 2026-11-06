@@ -6,7 +6,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ICachePort } from '@acme-libs/contracts/cache';
 import { Maybe } from '@acme-libs/toolkit';
 
-import { REDIS_CLIENT } from './redis-client.token';
+import { REDIS_CLIENT_TOKEN } from './redis-client.token';
 
 @Injectable()
 export class RedisCacheAdapter implements ICachePort {
@@ -16,7 +16,7 @@ export class RedisCacheAdapter implements ICachePort {
   private readonly inFlight = new Map<string, Promise<unknown>>();
 
   constructor(
-    @Inject(REDIS_CLIENT)
+    @Inject(REDIS_CLIENT_TOKEN)
     private readonly redis: Redis,
     @InjectPinoLogger(RedisCacheAdapter.name)
     private readonly logger: PinoLogger,

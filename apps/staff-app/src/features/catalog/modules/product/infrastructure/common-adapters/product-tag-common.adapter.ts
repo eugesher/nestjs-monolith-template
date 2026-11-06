@@ -34,7 +34,7 @@ export class ProductTagCommonAdapter implements IProductTagPort {
   public async find(command: IProductTagFindCommand): Promise<IProductTagFindView[]> {
     const { productId } = command;
 
-    return await this.tag.find({
+    return await this.tag.handleFind({
       subjectType: TagCommonSubjectTypeEnum.PRODUCT,
       subjectId: productId,
     });
@@ -42,7 +42,7 @@ export class ProductTagCommonAdapter implements IProductTagPort {
 
   public async replace(command: IProductTagReplaceCommand): Promise<IProductTagReplaceView> {
     const { productId, tagIds } = command;
-    const replaced = await this.tag.replace({
+    const replaced = await this.tag.handleReplace({
       subjectType: TagCommonSubjectTypeEnum.PRODUCT,
       subjectId: productId,
       tagIds,
@@ -55,6 +55,9 @@ export class ProductTagCommonAdapter implements IProductTagPort {
   public async findProductIds(command: IProductTagFindProductIdsCommand): Promise<string[]> {
     const { tagId } = command;
 
-    return await this.tag.findSubjectIds({ subjectType: TagCommonSubjectTypeEnum.PRODUCT, tagId });
+    return await this.tag.handleFindSubjectIds({
+      subjectType: TagCommonSubjectTypeEnum.PRODUCT,
+      tagId,
+    });
   }
 }

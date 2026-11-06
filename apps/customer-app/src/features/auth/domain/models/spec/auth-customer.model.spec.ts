@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { IAuthCustomerDraft } from '../../interfaces/auth-customer-draft.interface';
 import { AuthCustomerModel } from '../auth-customer.model';
@@ -26,7 +26,7 @@ describe('AuthCustomerModel', () => {
 
         expect(register).toThrow(
           expect.objectContaining({
-            code: IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
+            code: IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID,
             message: 'Customer email must be a well-formed address',
           }) as Error,
         );
@@ -70,7 +70,7 @@ describe('AuthCustomerModel', () => {
 
       expect(assert).toThrow(
         expect.objectContaining({
-          code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
+          code: IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK,
           message: 'Password must be at least 12 characters',
         }) as Error,
       );
@@ -97,7 +97,7 @@ describe('AuthCustomerModel', () => {
 
       expect(() => customer.assertActive()).toThrow(
         expect.objectContaining({
-          code: IdentityErrorCodeEnum.AUTH_USER_INACTIVE,
+          code: IdentityExceptionCodeEnum.AUTH_USER_INACTIVE,
           message: 'Customer customer-1 is disabled',
         }) as Error,
       );

@@ -1,8 +1,8 @@
-import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
+import { OrderExceptionCodeEnum } from '../enums/order-exception-code.enum';
 import { OrderBaseException } from './base/order-base.exception';
 
 export class OrderIdempotentRequestInFlightException extends OrderBaseException {
-  public readonly code = OrderErrorCodeEnum.ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT;
+  public readonly code = OrderExceptionCodeEnum.ORDER_IDEMPOTENT_REQUEST_IN_FLIGHT;
 
   constructor(
     idempotencyKey: string,

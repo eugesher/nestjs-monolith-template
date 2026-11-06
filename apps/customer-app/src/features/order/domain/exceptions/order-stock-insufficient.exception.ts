@@ -1,8 +1,8 @@
-import { OrderErrorCodeEnum } from '../enums/order-error-code.enum';
+import { OrderExceptionCodeEnum } from '../enums/order-exception-code.enum';
 import { OrderBaseException } from './base/order-base.exception';
 
 export class OrderStockInsufficientException extends OrderBaseException {
-  public readonly code = OrderErrorCodeEnum.ORDER_STOCK_INSUFFICIENT;
+  public readonly code = OrderExceptionCodeEnum.ORDER_STOCK_INSUFFICIENT;
 
   constructor(
     productId: string,

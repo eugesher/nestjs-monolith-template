@@ -1,8 +1,8 @@
-import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
+import { ReminderExceptionCodeEnum } from '../enums/reminder-exception-code.enum';
 import { ReminderBaseException } from './base/reminder-base.exception';
 
 export class ReminderDueOnInvalidException extends ReminderBaseException {
-  public readonly code = ReminderErrorCodeEnum.REMINDER_DUE_ON_INVALID;
+  public readonly code = ReminderExceptionCodeEnum.REMINDER_DUE_ON_INVALID;
 
   constructor(
     dueOn: string,

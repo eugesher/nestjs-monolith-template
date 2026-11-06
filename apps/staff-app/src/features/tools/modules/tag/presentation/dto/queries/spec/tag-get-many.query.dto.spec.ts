@@ -22,9 +22,9 @@ describe('TagGetManyQueryDto', () => {
   });
 
   it.each([
-    ['page zero', { page: '0' }, 'page', ['min']],
+    ['page zero', { page: '0' }, 'page', ['isPositive']],
     ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
-    ['a word as the page', { page: 'first' }, 'page', ['min', 'isInt']],
+    ['a word as the page', { page: 'first' }, 'page', ['isPositive', 'isInt']],
   ])('rejects %s', (_case, query, property, constraints) => {
     const dto = plainToInstance(TagGetManyQueryDto, query);
 

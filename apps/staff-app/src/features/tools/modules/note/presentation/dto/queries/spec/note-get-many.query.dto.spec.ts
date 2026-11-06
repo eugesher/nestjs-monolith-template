@@ -51,7 +51,7 @@ describe('NoteGetManyQueryDto', () => {
   });
 
   it.each([
-    ['page zero', { page: '0' }, 'page', ['min']],
+    ['page zero', { page: '0' }, 'page', ['isPositive']],
     ['a fractional limit', { limit: '1.5' }, 'limit', ['isInt']],
     ['an uppercase subject type', { subjectType: 'Product' }, 'subjectType', ['matches']],
     ['an empty subject id', { subjectId: '' }, 'subjectId', ['minLength']],

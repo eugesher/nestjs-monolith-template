@@ -7,7 +7,7 @@ import { SubjectLedgerService } from '@acme-libs/ledger';
 import {
   type IAuthLedgerRecordPort,
   AUTH_LEDGER_RECORD_PORT,
-  AUTH_LEDGER_RETRY_ATTEMPTS,
+  AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN,
 } from '../../outbound';
 import { IAuthLedgerRecordRegisteredCommand } from '../interfaces';
 
@@ -16,7 +16,7 @@ export class AuthLedgerService extends SubjectLedgerService {
   constructor(
     @Inject(AUTH_LEDGER_RECORD_PORT)
     protected readonly queue: IAuthLedgerRecordPort,
-    @Inject(AUTH_LEDGER_RETRY_ATTEMPTS)
+    @Inject(AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
     @InjectPinoLogger(AuthLedgerService.name)
     protected readonly logger: PinoLogger,

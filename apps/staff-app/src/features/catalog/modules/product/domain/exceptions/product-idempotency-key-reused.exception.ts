@@ -1,8 +1,8 @@
-import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
+import { ProductExceptionCodeEnum } from '../enums/product-exception-code.enum';
 import { ProductBaseException } from './base/product-base.exception';
 
 export class ProductIdempotencyKeyReusedException extends ProductBaseException {
-  public readonly code = ProductErrorCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED;
+  public readonly code = ProductExceptionCodeEnum.PRODUCT_IDEMPOTENCY_KEY_REUSED;
 
   constructor(
     idempotencyKey: string,

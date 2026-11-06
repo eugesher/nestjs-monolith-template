@@ -22,8 +22,8 @@ describe('NoteGetRevisionsQueryDto', () => {
   });
 
   it.each([
-    ['page zero', { page: '0' }, 'page', ['min']],
-    ['a word as the limit', { limit: 'ten' }, 'limit', ['min', 'isInt']],
+    ['page zero', { page: '0' }, 'page', ['isPositive']],
+    ['a word as the limit', { limit: 'ten' }, 'limit', ['isPositive', 'isInt']],
   ])('rejects %s', (_case, query, property, constraints) => {
     const dto = plainToInstance(NoteGetRevisionsQueryDto, query);
 

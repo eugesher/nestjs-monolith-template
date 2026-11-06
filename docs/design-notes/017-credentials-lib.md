@@ -6,11 +6,11 @@ The lib has the shape of `libs/health`: one port in `libs/contracts/src/credenti
 `CREDENTIALS_LIB_PORT`, implemented by `CredentialsLibFacade`. The facade hands each method to a use
 case, and the use cases reach the libraries through ports of the lib's own `outbound`:
 
-| Facade method     | Use case                               | Adapter                               | Reads                                                                         |
-| ----------------- | -------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
-| `signAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
-| `hashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
-| `verifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
+| Facade method           | Use case                               | Adapter                               | Reads                                                                         |
+| ----------------------- | -------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
+| `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
+| `handleHashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
+| `verifyPassword`        | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
 
 **The lib reads the config of the app it runs in.** `CredentialsLibModule` takes the values from
 `ConfigService`, as `libs/cache` does, so the features bind no config tokens of their own, and each
@@ -38,8 +38,8 @@ Modules that read the same table keep models of their own, narrowed to what each
 
 staff-app and processor-app both sign the staff in and check the subject of every request, so the
 reads live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
-(`core/contracts/src/staff-auth`): `findSubject` for the guard and `GET /identity/auth/me`,
-`findByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its `auth`
+(`core/contracts/src/staff-auth`): `handleFindSubject` for the guard and `GET /identity/auth/me`,
+`handleFindByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its `auth`
 feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the token
 stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the credentials.
 

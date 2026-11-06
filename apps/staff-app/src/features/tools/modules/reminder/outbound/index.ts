@@ -9,4 +9,4 @@ export * from './ports/reminder-summary.port';
 export * from './ports/reminder-write-repository.port';
 
 export * from './tokens/reminder-occ-retry-attempts.token';
-export * from './tokens/reminder-summary-ttl-ms.token';
+export * from './tokens/reminder-cache-ttl-ms-default.token';

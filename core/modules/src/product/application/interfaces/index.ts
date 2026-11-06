@@ -1,1 +1,1 @@
-export * from './commands/product-core-ledger-record-archived.command';
+export * from './commands/product-core-ledger.command';

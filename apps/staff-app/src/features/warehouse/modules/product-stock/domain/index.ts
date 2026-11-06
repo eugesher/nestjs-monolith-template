@@ -1,4 +1,4 @@
-export * from './enums/product-stock-error-code.enum';
+export * from './enums/product-stock-exception-code.enum';
 
 export * from './events/product-stock-added.event';
 

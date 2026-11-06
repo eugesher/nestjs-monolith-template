@@ -8,7 +8,7 @@ import { ProductStockAddedEvent } from '../../domain';
 import {
   type IProductStockLedgerRecordPort,
   PRODUCT_STOCK_LEDGER_RECORD_PORT,
-  PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS,
+  PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS_TOKEN,
 } from '../../outbound';
 import { IProductStockLedgerRecordCommand } from '../interfaces';
 
@@ -17,7 +17,7 @@ export class ProductStockLedgerService extends SubjectLedgerService {
   constructor(
     @Inject(PRODUCT_STOCK_LEDGER_RECORD_PORT)
     protected readonly queue: IProductStockLedgerRecordPort,
-    @Inject(PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS)
+    @Inject(PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
     @InjectPinoLogger(ProductStockLedgerService.name)
     protected readonly logger: PinoLogger,

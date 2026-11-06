@@ -41,7 +41,7 @@ describe('CredentialsLibModule', () => {
   it('signs an access token with JWT_SECRET that expires after JWT_EXPIRES_IN', async () => {
     const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
 
-    const token = await credentials.signAccessToken({ sub: 'user-1' });
+    const token = await credentials.handleSignAccessToken({ sub: 'user-1' });
 
     const claims = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
@@ -56,16 +56,16 @@ describe('CredentialsLibModule', () => {
   it('hashes passwords with the costs of AUTH_ARGON2_*', async () => {
     const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
 
-    const passwordHash = await credentials.hashPassword('correct-horse-battery');
+    const passwordHash = await credentials.handleHashPassword('correct-horse-battery');
 
     expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,p=1,t=2\$/);
   });
 
   it('verifies a password against the hash it produced', async () => {
     const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
-    const passwordHash = await credentials.hashPassword('correct-horse-battery');
+    const passwordHash = await credentials.handleHashPassword('correct-horse-battery');
 
-    const valid = await credentials.verifyPassword({
+    const valid = await credentials.handleVerifyPassword({
       passwordHash,
       password: 'correct-horse-battery',
     });

@@ -42,6 +42,12 @@ process grows by about 10 MB per file and by about 60 MB per architecture spec, 
 ESLint. In band the run outgrows the 4 GB heap of Node. A single worker with
 `--workerIdleMemoryLimit=2GB` keeps the order and drops the leak whenever Jest replaces it.
 
+**Every test script logs the heap and hides the VM Modules warning.** `--logHeapUsage` prints the
+heap size after each spec file, so growth toward the 2 GB limit shows in the output of CI.
+`--disable-warning=ExperimentalWarning` in `NODE_OPTIONS` reaches every worker; without it each new
+worker process prints the VM Modules warning once. Jest prints the per-file lines only with its
+default reporter, which it replaces with a short summary when it detects an AI agent.
+
 **Imports are relative until the aliases exist.** A spec may import `@acme-libs/<lib>` only once
 `tsconfig.json` maps it; before that the alias does not resolve and the plugin treats it as an
 external package. Cases that are about aliases (`app-entry-points`, deep lib entry points) are

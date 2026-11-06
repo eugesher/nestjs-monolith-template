@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { AuthLoginUseCase } from '../auth-login.use-case';
@@ -50,7 +50,7 @@ describe('AuthLoginUseCase', () => {
     const login = useCase.execute({ email: 'ghost@example.com', password: 'correct-horse' });
 
     await expect(login).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS,
+      code: IdentityExceptionCodeEnum.AUTH_INVALID_CREDENTIALS,
       message: 'Invalid credentials',
     });
     expect(credentials.verifyPassword).not.toHaveBeenCalled();
@@ -66,7 +66,7 @@ describe('AuthLoginUseCase', () => {
     const login = useCase.execute({ email: 'editor@example.com', password: 'wrong-horse' });
 
     await expect(login).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_INVALID_CREDENTIALS,
+      code: IdentityExceptionCodeEnum.AUTH_INVALID_CREDENTIALS,
       message: 'Invalid credentials',
     });
     expect(credentials.issueAccessToken).not.toHaveBeenCalled();
@@ -82,7 +82,9 @@ describe('AuthLoginUseCase', () => {
 
     const login = useCase.execute({ email: 'editor@example.com', password: 'correct-horse' });
 
-    await expect(login).rejects.toMatchObject({ code: IdentityErrorCodeEnum.AUTH_USER_INACTIVE });
+    await expect(login).rejects.toMatchObject({
+      code: IdentityExceptionCodeEnum.AUTH_USER_INACTIVE,
+    });
     expect(credentials.issueAccessToken).not.toHaveBeenCalled();
   });
 });

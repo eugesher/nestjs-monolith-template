@@ -1,20 +1,20 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Matches, Min } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, Matches } from 'class-validator';
 
 export class ProductGetManyQueryDto {
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public page?: number;
 
   @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public limit?: number;
 
   @ApiPropertyOptional({ example: '300', description: 'Only the products with this tag' })

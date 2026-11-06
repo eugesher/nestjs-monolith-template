@@ -21,6 +21,6 @@ export class AuthIdentityCoreAdapter implements IAuthIdentityPort {
   ): Promise<Nullable<IAuthIdentityUserView>> {
     const { email } = command;
 
-    return await this.staffAuthCore.findByEmail({ email });
+    return await this.staffAuthCore.handleFindByEmail({ email });
   }
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { IDEMPOTENCY_CORE_KEY_PORT } from '@acme-core/contracts/idempotency';
+import { IDEMPOTENCY_CORE_PORT } from '@acme-core/contracts/idempotency';
 
 import {
   IdempotencyCoreClaimUseCase,
@@ -17,12 +17,12 @@ import {
   IDEMPOTENCY_CORE_COMPLETE_REPOSITORY_PORT,
   IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT,
 } from '../outbound';
-import { IdempotencyCoreKeyFacade } from './idempotency-core-key.facade';
+import { IdempotencyCoreFacade } from './idempotency-core.facade';
 
 @Module({
-  exports: [IDEMPOTENCY_CORE_KEY_PORT],
+  exports: [IDEMPOTENCY_CORE_PORT],
   providers: [
-    { provide: IDEMPOTENCY_CORE_KEY_PORT, useClass: IdempotencyCoreKeyFacade },
+    { provide: IDEMPOTENCY_CORE_PORT, useClass: IdempotencyCoreFacade },
     IdempotencyCoreClaimUseCase,
     IdempotencyCoreCompleteUseCase,
     IdempotencyCoreReleaseUseCase,

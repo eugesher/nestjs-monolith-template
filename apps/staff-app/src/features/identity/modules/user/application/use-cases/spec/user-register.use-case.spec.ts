@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityErrorCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
@@ -75,7 +75,7 @@ describe('UserRegisterUseCase', () => {
     const register = useCase.execute({ email: 'editor@example.com', password: 'short', roles: [] });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
+      code: IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK,
     });
     expect(credentials.hashPassword).not.toHaveBeenCalled();
   });
@@ -88,7 +88,7 @@ describe('UserRegisterUseCase', () => {
     });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
+      code: IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID,
     });
     expect(transaction.run).not.toHaveBeenCalled();
   });
@@ -104,7 +104,7 @@ describe('UserRegisterUseCase', () => {
     });
 
     await expect(register).rejects.toMatchObject({
-      code: IdentityErrorCodeEnum.AUTH_EMAIL_TAKEN,
+      code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
       message: 'Email editor@example.com is already registered',
     });
     expect(outcomes).toEqual(['begin']);

@@ -437,7 +437,7 @@ describe('libs by layer', () => {
   ])('%s MAY bind config values through the config lib', async (file) => {
     await expect({
       file,
-      code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+      code: 'import { ConfigValueProvider } from "@acme-libs/config";',
     }).toPassArchitectureLint();
   });
 
@@ -453,7 +453,7 @@ describe('libs by layer', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+        code: 'import { ConfigValueProvider } from "@acme-libs/config";',
       }).toBreakRule('boundaries/dependencies');
     },
   );

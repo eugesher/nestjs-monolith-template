@@ -21,7 +21,7 @@ export class ProductStockArchiveCoreAdapter implements IProductStockArchivePort 
 
   public async archive(command: IProductStockArchiveCommand): Promise<IProductStockArchiveView> {
     const { productId } = command;
-    const archived = await this.product.archive({ productId, expectedVersion: undefined });
+    const archived = await this.product.handleArchive({ productId, expectedVersion: undefined });
     const { outcome } = archived;
 
     return { archived: outcome === ProductCoreArchiveOutcomeEnum.ARCHIVED };

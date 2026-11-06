@@ -31,7 +31,7 @@ export class ProductStatusCoreAdapter implements IProductStatusPort {
 
   public async archive(command: IProductStatusArchiveCommand): Promise<IProductStatusArchiveView> {
     const { productId, expectedVersion } = command;
-    const archived = await this.product.archive({ productId, expectedVersion });
+    const archived = await this.product.handleArchive({ productId, expectedVersion });
     const { outcome, currentVersion } = archived;
 
     return { outcome: ProductStatusCoreAdapter.OUTCOMES[outcome], currentVersion };

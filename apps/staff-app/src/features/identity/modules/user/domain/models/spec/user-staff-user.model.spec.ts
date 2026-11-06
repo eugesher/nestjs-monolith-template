@@ -1,4 +1,4 @@
-import { IdentityErrorCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { IUserStaffUserDraft } from '../../interfaces/user-staff-user-draft.interface';
 import { UserStaffUserModel } from '../user-staff-user.model';
@@ -28,7 +28,7 @@ describe('UserStaffUserModel', () => {
 
         expect(register).toThrow(
           expect.objectContaining({
-            code: IdentityErrorCodeEnum.AUTH_EMAIL_INVALID,
+            code: IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID,
             message: 'User email must be a well-formed address',
           }) as Error,
         );
@@ -62,7 +62,7 @@ describe('UserStaffUserModel', () => {
 
       expect(assert).toThrow(
         expect.objectContaining({
-          code: IdentityErrorCodeEnum.AUTH_PASSWORD_TOO_WEAK,
+          code: IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK,
           message: 'Password must be at least 12 characters',
         }) as Error,
       );

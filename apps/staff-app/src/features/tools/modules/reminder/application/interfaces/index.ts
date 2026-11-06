@@ -1,4 +1,4 @@
-export * from './commands/reminder-access-load-owned.command';
+export * from './commands/reminder-access.command';
 export * from './commands/reminder-complete.command';
 export * from './commands/reminder-create.command';
 export * from './commands/reminder-delete.command';

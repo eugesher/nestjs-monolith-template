@@ -7,7 +7,7 @@ import { SubjectLedgerService } from '@acme-libs/ledger';
 import {
   type IProductCoreLedgerRecordPort,
   PRODUCT_CORE_LEDGER_RECORD_PORT,
-  PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS,
+  PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS_TOKEN,
 } from '../../outbound';
 import { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
 
@@ -16,7 +16,7 @@ export class ProductCoreLedgerService extends SubjectLedgerService {
   constructor(
     @Inject(PRODUCT_CORE_LEDGER_RECORD_PORT)
     protected readonly queue: IProductCoreLedgerRecordPort,
-    @Inject(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS)
+    @Inject(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
     @InjectPinoLogger(ProductCoreLedgerService.name)
     protected readonly logger: PinoLogger,

@@ -3,30 +3,30 @@ import { TagCommonReplaceOutcomeEnum } from '@acme-staff/contracts/tag';
 import { OrderTagCommonAdapter } from '../order-tag-common.adapter';
 
 describe('OrderTagCommonAdapter', () => {
-  let find: jest.Mock;
-  let replace: jest.Mock;
-  let findSubjectIds: jest.Mock;
+  let handleFind: jest.Mock;
+  let handleReplace: jest.Mock;
+  let handleFindSubjectIds: jest.Mock;
   let adapter: OrderTagCommonAdapter;
 
   beforeEach(() => {
-    find = jest.fn().mockResolvedValue([{ id: '302', name: 'vip' }]);
-    replace = jest.fn();
-    findSubjectIds = jest.fn().mockResolvedValue(['600']);
-    adapter = new OrderTagCommonAdapter({ find, replace, findSubjectIds });
+    handleFind = jest.fn().mockResolvedValue([{ id: '302', name: 'vip' }]);
+    handleReplace = jest.fn();
+    handleFindSubjectIds = jest.fn().mockResolvedValue(['600']);
+    adapter = new OrderTagCommonAdapter({ handleFind, handleReplace, handleFindSubjectIds });
   });
 
   describe('find', () => {
     it('reads the tags of the order through the common module', async () => {
       const tags = await adapter.find({ orderId: '600' });
 
-      expect(find).toHaveBeenCalledWith({ subjectType: 'order', subjectId: '600' });
+      expect(handleFind).toHaveBeenCalledWith({ subjectType: 'order', subjectId: '600' });
       expect(tags).toEqual([{ id: '302', name: 'vip' }]);
     });
   });
 
   describe('replace', () => {
     it('replaces the tags of the order through the common module', async () => {
-      replace.mockResolvedValue({
+      handleReplace.mockResolvedValue({
         outcome: TagCommonReplaceOutcomeEnum.REPLACED,
         tags: [{ id: '302', name: 'vip' }],
         missingTagIds: [],
@@ -34,7 +34,7 @@ describe('OrderTagCommonAdapter', () => {
 
       const view = await adapter.replace({ orderId: '600', tagIds: ['302'] });
 
-      expect(replace).toHaveBeenCalledWith({
+      expect(handleReplace).toHaveBeenCalledWith({
         subjectType: 'order',
         subjectId: '600',
         tagIds: ['302'],
@@ -47,7 +47,7 @@ describe('OrderTagCommonAdapter', () => {
     });
 
     it('turns the common outcome tag-not-found into its own', async () => {
-      replace.mockResolvedValue({
+      handleReplace.mockResolvedValue({
         outcome: TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND,
         tags: [],
         missingTagIds: ['999'],
@@ -63,7 +63,7 @@ describe('OrderTagCommonAdapter', () => {
     it('reads the ids of the orders that carry the tag', async () => {
       const orderIds = await adapter.findOrderIds({ tagId: '302' });
 
-      expect(findSubjectIds).toHaveBeenCalledWith({ subjectType: 'order', tagId: '302' });
+      expect(handleFindSubjectIds).toHaveBeenCalledWith({ subjectType: 'order', tagId: '302' });
       expect(orderIds).toEqual(['600']);
     });
   });

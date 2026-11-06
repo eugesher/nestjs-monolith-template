@@ -1,9 +1,9 @@
-import { QueueErrorCodeEnum } from '../enums/queue-error-code.enum';
+import { QueueExceptionCodeEnum } from '../enums/queue-exception-code.enum';
 
 import { QueueBaseException } from './base/queue-base.exception';
 
 export class QueueJobNotFoundException extends QueueBaseException {
-  public readonly code = QueueErrorCodeEnum.QUEUE_JOB_NOT_FOUND;
+  public readonly code = QueueExceptionCodeEnum.QUEUE_JOB_NOT_FOUND;
 
   constructor(
     queueName: string,

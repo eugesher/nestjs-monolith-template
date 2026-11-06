@@ -316,7 +316,7 @@ exports[`App Catalog GET /api/products should refuse a limit of zero with 400 fr
     "body": {
       "error": "Bad Request",
       "message": [
-        "limit must not be less than 1",
+        "limit must be a positive number",
       ],
       "statusCode": 400,
     },

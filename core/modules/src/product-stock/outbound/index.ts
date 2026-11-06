@@ -4,5 +4,5 @@ export * from './ports/product-stock-core-lock-repository.port';
 export * from './ports/product-stock-core-move-repository.port';
 export * from './ports/product-stock-core-post-subtract.port';
 
-export * from './tokens/product-stock-core-post-subtract-retry-attempts.token';
-export * from './tokens/product-stock-core-post-subtract-timeout-ms.token';
+export * from './tokens/product-stock-core-queue-retry-attempts.token';
+export * from './tokens/product-stock-core-redis-command-timeout-ms.token';

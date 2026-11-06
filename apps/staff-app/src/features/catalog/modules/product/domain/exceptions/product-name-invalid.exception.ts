@@ -1,8 +1,8 @@
-import { ProductErrorCodeEnum } from '../enums/product-error-code.enum';
+import { ProductExceptionCodeEnum } from '../enums/product-exception-code.enum';
 import { ProductBaseException } from './base/product-base.exception';
 
 export class ProductNameInvalidException extends ProductBaseException {
-  public readonly code = ProductErrorCodeEnum.PRODUCT_NAME_INVALID;
+  public readonly code = ProductExceptionCodeEnum.PRODUCT_NAME_INVALID;
 
   constructor(
     maxLength: number,

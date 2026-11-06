@@ -4,7 +4,7 @@ import { IHealthLibLivenessView } from '@acme-libs/contracts/health';
 import { AppNameEnum } from '@acme-libs/kernel';
 
 import {
-  HEALTH_LIB_APP_NAME,
+  HEALTH_LIB_APP_NAME_TOKEN,
   HEALTH_LIB_UPTIME_PORT,
   type IHealthLibUptimePort,
 } from '../../outbound';
@@ -12,7 +12,7 @@ import {
 @Injectable()
 export class HealthLibCheckLivenessUseCase {
   constructor(
-    @Inject(HEALTH_LIB_APP_NAME)
+    @Inject(HEALTH_LIB_APP_NAME_TOKEN)
     private readonly appName: AppNameEnum,
     @Inject(HEALTH_LIB_UPTIME_PORT)
     private readonly uptime: IHealthLibUptimePort,

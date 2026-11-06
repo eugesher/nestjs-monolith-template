@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
@@ -9,14 +9,14 @@ export class ReminderGetManyQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public page?: number;
 
   @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
+  @IsPositive()
   public limit?: number;
 
   @ApiPropertyOptional({ enum: ReminderStatusEnum })

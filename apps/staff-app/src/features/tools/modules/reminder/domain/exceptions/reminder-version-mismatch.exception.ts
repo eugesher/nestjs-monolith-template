@@ -1,8 +1,8 @@
-import { ReminderErrorCodeEnum } from '../enums/reminder-error-code.enum';
+import { ReminderExceptionCodeEnum } from '../enums/reminder-exception-code.enum';
 import { ReminderBaseException } from './base/reminder-base.exception';
 
 export class ReminderVersionMismatchException extends ReminderBaseException {
-  public readonly code = ReminderErrorCodeEnum.REMINDER_VERSION_MISMATCH;
+  public readonly code = ReminderExceptionCodeEnum.REMINDER_VERSION_MISMATCH;
 
   constructor(
     reminderId: string,

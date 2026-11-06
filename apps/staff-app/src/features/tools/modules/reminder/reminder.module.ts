@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
@@ -28,9 +28,9 @@ import {
   REMINDER_DELETE_REPOSITORY_PORT,
   REMINDER_GET_MANY_REPOSITORY_PORT,
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
-  REMINDER_OCC_RETRY_ATTEMPTS,
+  REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   REMINDER_SUMMARY_PORT,
-  REMINDER_SUMMARY_TTL_MS,
+  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
   REMINDER_WRITE_REPOSITORY_PORT,
 } from './outbound';
 import { ReminderController } from './presentation';
@@ -54,8 +54,14 @@ import { ReminderController } from './presentation';
     { provide: REMINDER_GET_SUMMARY_REPOSITORY_PORT, useClass: ReminderGetSummaryRepository },
     { provide: REMINDER_WRITE_REPOSITORY_PORT, useClass: ReminderWriteRepository },
     { provide: REMINDER_SUMMARY_PORT, useClass: ReminderSummaryCacheAdapter },
-    ConfigProviderHelper.value(REMINDER_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
-    ConfigProviderHelper.value(REMINDER_SUMMARY_TTL_MS, 'CACHE_TTL_MS_DEFAULT'),
+    ConfigValueProvider.provide({
+      provide: REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
+      property: 'OCC_RETRY_ATTEMPTS',
+    }),
+    ConfigValueProvider.provide({
+      provide: REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
+      property: 'CACHE_TTL_MS_DEFAULT',
+    }),
   ],
 })
 export class ReminderModule {}

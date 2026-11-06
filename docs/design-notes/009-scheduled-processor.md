@@ -10,11 +10,11 @@ nothing else deletes them, so the delete lives here with a repository of its own
 | `presentation`               | `IdempotencyPurgeProcessor`, `@Cron(CronExpression.EVERY_HOUR)`        |
 | `application`                | `IdempotencyPurgeUseCase`                                              |
 | `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                  |
-| `outbound`                   | `IDEMPOTENCY_PURGE_REPOSITORY_PORT`, `IDEMPOTENCY_PURGE_KEY_TTL_HOURS` |
+| `outbound`                   | `IDEMPOTENCY_PURGE_REPOSITORY_PORT`, `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN` |
 | `infrastructure/persistence` | `IdempotencyPurgeRepository`                                           |
 
 The processor owns the TTL: its module reads `IDEMPOTENCY_KEY_TTL_HOURS` into
-`IDEMPOTENCY_PURGE_KEY_TTL_HOURS`. On every tick the use case computes the cutoff, the instant the
+`IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`. On every tick the use case computes the cutoff, the instant the
 TTL before now, and the repository deletes every key created before it, whatever its status. The
 core module reads no configuration, so staff-app and customer-app need no TTL.
 

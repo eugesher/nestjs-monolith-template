@@ -18,18 +18,18 @@ describe('StaffAuthCoreFacade', () => {
     );
   });
 
-  describe('findSubject', () => {
+  describe('handleFindSubject', () => {
     it('hands the command to the find subject use case', async () => {
-      const subject = await facade.findSubject({ userId: 'user-1' });
+      const subject = await facade.handleFindSubject({ userId: 'user-1' });
 
       expect(subject).toBeNull();
       expect(findSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
   });
 
-  describe('findByEmail', () => {
+  describe('handleFindByEmail', () => {
     it('hands the command to the find by email use case', async () => {
-      const user = await facade.findByEmail({ email: 'admin@example.com' });
+      const user = await facade.handleFindByEmail({ email: 'admin@example.com' });
 
       expect(user).toBeNull();
       expect(findByEmail).toHaveBeenCalledWith({ email: 'admin@example.com' });

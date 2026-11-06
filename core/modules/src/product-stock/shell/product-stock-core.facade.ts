@@ -13,15 +13,19 @@ import { ProductStockCoreLockUseCase, ProductStockCoreMoveUseCase } from '../app
 @Injectable()
 export class ProductStockCoreFacade implements IProductStockCorePort {
   constructor(
-    private readonly productStockCoreLock: ProductStockCoreLockUseCase,
-    private readonly productStockCoreMove: ProductStockCoreMoveUseCase,
+    private readonly lock: ProductStockCoreLockUseCase,
+    private readonly move: ProductStockCoreMoveUseCase,
   ) {}
 
-  public async lock(command: IProductStockCoreLockCommand): Promise<IProductStockCoreOnHandView[]> {
-    return await this.productStockCoreLock.execute(command);
+  public async handleLock(
+    command: IProductStockCoreLockCommand,
+  ): Promise<IProductStockCoreOnHandView[]> {
+    return await this.lock.execute(command);
   }
 
-  public async move(command: IProductStockCoreMoveCommand): Promise<IProductStockCoreMoveView> {
-    return await this.productStockCoreMove.execute(command);
+  public async handleMove(
+    command: IProductStockCoreMoveCommand,
+  ): Promise<IProductStockCoreMoveView> {
+    return await this.move.execute(command);
   }
 }

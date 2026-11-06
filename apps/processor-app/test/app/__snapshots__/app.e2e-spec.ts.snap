@@ -342,7 +342,7 @@ exports[`App Queue GET /api/queues/:queueName/jobs/failed should refuse a malfor
     "body": {
       "error": "Bad Request",
       "message": [
-        "page must not be less than 1",
+        "page must be a positive number",
         "page must be an integer number",
       ],
       "statusCode": 400,

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductCoreModule } from '@acme-core/modules/product';
@@ -26,7 +26,7 @@ import {
   ProductCreateRepository,
   ProductGetManyRepository,
   ProductIdempotencyCoreAdapter,
-  ProductLedgerRecordQueueAdapter,
+  ProductLedgerQueueAdapter,
   ProductReplaceTagsRepository,
   ProductStatusCoreAdapter,
   ProductTagCommonAdapter,
@@ -39,9 +39,9 @@ import {
   PRODUCT_GET_MANY_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
   PRODUCT_LEDGER_RECORD_PORT,
-  PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
-  PRODUCT_LEDGER_RETRY_ATTEMPTS,
-  PRODUCT_OCC_RETRY_ATTEMPTS,
+  PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
+  PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
   PRODUCT_STATUS_PORT,
   PRODUCT_TAG_PORT,
@@ -73,11 +73,20 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_TAG_PORT, useClass: ProductTagCommonAdapter },
     { provide: PRODUCT_STATUS_PORT, useClass: ProductStatusCoreAdapter },
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
-    { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerRecordQueueAdapter },
+    { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerQueueAdapter },
     { provide: PRODUCT_CATALOG_CACHE_PORT, useClass: ProductCatalogCacheAdapter },
-    ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
-    ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
-    ConfigProviderHelper.value(PRODUCT_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
+      property: 'OCC_RETRY_ATTEMPTS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
+      property: 'LEDGER_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class ProductModule {}

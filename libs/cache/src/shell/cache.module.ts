@@ -7,7 +7,7 @@ import { CACHE_PORT } from '@acme-libs/contracts/cache';
 
 import { RedisCacheAdapter } from '../redis/redis-cache.adapter';
 import { RedisClientOptions } from '../redis/redis-client.options';
-import { REDIS_CLIENT } from '../redis/redis-client.token';
+import { REDIS_CLIENT_TOKEN } from '../redis/redis-client.token';
 
 @Global()
 @Module({
@@ -15,7 +15,7 @@ import { REDIS_CLIENT } from '../redis/redis-client.token';
   providers: [
     { provide: CACHE_PORT, useClass: RedisCacheAdapter },
     {
-      provide: REDIS_CLIENT,
+      provide: REDIS_CLIENT_TOKEN,
       inject: [ConfigService, PinoLogger],
       useFactory: (config: ConfigService, logger: PinoLogger): Redis => {
         const url = config.getOrThrow<string>('REDIS_URL');
@@ -33,7 +33,7 @@ import { REDIS_CLIENT } from '../redis/redis-client.token';
   ],
 })
 export class CacheModule implements OnApplicationShutdown {
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+  constructor(@Inject(REDIS_CLIENT_TOKEN) private readonly redis: Redis) {}
 
   public async onApplicationShutdown(): Promise<void> {
     if (this.redis.status === 'ready') {

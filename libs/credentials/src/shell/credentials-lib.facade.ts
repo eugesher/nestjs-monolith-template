@@ -15,20 +15,24 @@ import {
 @Injectable()
 export class CredentialsLibFacade implements ICredentialsLibPort {
   constructor(
-    private readonly credentialsLibSignAccessToken: CredentialsLibSignAccessTokenUseCase,
-    private readonly credentialsLibHashPassword: CredentialsLibHashPasswordUseCase,
-    private readonly credentialsLibVerifyPassword: CredentialsLibVerifyPasswordUseCase,
+    private readonly signAccessToken: CredentialsLibSignAccessTokenUseCase,
+    private readonly hashPassword: CredentialsLibHashPasswordUseCase,
+    private readonly verifyPassword: CredentialsLibVerifyPasswordUseCase,
   ) {}
 
-  public async signAccessToken(command: ICredentialsLibSignAccessTokenCommand): Promise<string> {
-    return await this.credentialsLibSignAccessToken.execute(command);
+  public async handleSignAccessToken(
+    command: ICredentialsLibSignAccessTokenCommand,
+  ): Promise<string> {
+    return await this.signAccessToken.execute(command);
   }
 
-  public async hashPassword(password: string): Promise<string> {
-    return await this.credentialsLibHashPassword.execute(password);
+  public async handleHashPassword(password: string): Promise<string> {
+    return await this.hashPassword.execute(password);
   }
 
-  public async verifyPassword(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean> {
-    return await this.credentialsLibVerifyPassword.execute(command);
+  public async handleVerifyPassword(
+    command: ICredentialsLibVerifyPasswordCommand,
+  ): Promise<boolean> {
+    return await this.verifyPassword.execute(command);
   }
 }

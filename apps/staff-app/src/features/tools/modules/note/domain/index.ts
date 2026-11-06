@@ -1,4 +1,4 @@
-export * from './enums/note-error-code.enum';
+export * from './enums/note-exception-code.enum';
 
 export * from './exceptions/note-body-invalid.exception';
 export * from './exceptions/base/note-base.exception';

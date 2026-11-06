@@ -1,8 +1,8 @@
-import { ProductStockErrorCodeEnum } from '../enums/product-stock-error-code.enum';
+import { ProductStockExceptionCodeEnum } from '../enums/product-stock-exception-code.enum';
 import { ProductStockBaseException } from './base/product-stock-base.exception';
 
 export class ProductQuantityInvalidException extends ProductStockBaseException {
-  public readonly code = ProductStockErrorCodeEnum.PRODUCT_QUANTITY_INVALID;
+  public readonly code = ProductStockExceptionCodeEnum.PRODUCT_QUANTITY_INVALID;
 
   constructor(
     maxQuantity: number,

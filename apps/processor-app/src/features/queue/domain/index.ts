@@ -1,4 +1,4 @@
-export * from './enums/queue-error-code.enum';
+export * from './enums/queue-exception-code.enum';
 
 export * from './exceptions/queue-job-not-failed.exception';
 export * from './exceptions/queue-job-not-found.exception';

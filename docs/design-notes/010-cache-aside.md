@@ -26,7 +26,7 @@ caching when Redis fails, so an adapter has no single-flight and no fallback of 
 nothing either: the cache lib logs its failures.
 
 **The TTL is a token of the module**, read from `CACHE_TTL_MS_DEFAULT` with
-`ConfigProviderHelper.value`.
+`ConfigValueProvider.provide`.
 
 ## Invalidation after the write
 

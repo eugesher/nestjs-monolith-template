@@ -42,7 +42,7 @@ describe('AuthClaimsLibModule', () => {
         {
           provide: AUTH_USER_VALIDATOR_PORT,
           useValue: {
-            validate: (query: { sub: string }) => {
+            handleValidate: (query: { sub: string }) => {
               const users: Record<string, IAuthCurrentUserView> = {
                 ann: {
                   id: 'ann',

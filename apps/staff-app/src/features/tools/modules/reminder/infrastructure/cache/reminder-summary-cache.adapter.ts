@@ -6,13 +6,13 @@ import {
   IReminderSummaryPort,
   IReminderSummaryReadCommand,
   IReminderSummarySnapshotView,
-  REMINDER_SUMMARY_TTL_MS,
+  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
 } from '../../outbound';
 
 @Injectable()
 export class ReminderSummaryCacheAdapter implements IReminderSummaryPort {
   constructor(
-    @Inject(REMINDER_SUMMARY_TTL_MS)
+    @Inject(REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN)
     private readonly ttlMs: number,
     @Inject(CACHE_PORT)
     private readonly cache: ICachePort,

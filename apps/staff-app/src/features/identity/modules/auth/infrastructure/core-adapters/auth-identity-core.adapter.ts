@@ -22,7 +22,7 @@ export class AuthIdentityCoreAdapter implements IAuthIdentityPort {
     command: IAuthIdentityFindSubjectCommand,
   ): Promise<Nullable<IAuthIdentitySubjectView>> {
     const { userId } = command;
-    const subject = await this.staffAuthCore.findSubject({ userId });
+    const subject = await this.staffAuthCore.handleFindSubject({ userId });
 
     return subject ? { id: subject.id, email: subject.email, roles: subject.roles } : null;
   }
@@ -32,6 +32,6 @@ export class AuthIdentityCoreAdapter implements IAuthIdentityPort {
   ): Promise<Nullable<IAuthIdentityUserView>> {
     const { email } = command;
 
-    return await this.staffAuthCore.findByEmail({ email });
+    return await this.staffAuthCore.handleFindByEmail({ email });
   }
 }

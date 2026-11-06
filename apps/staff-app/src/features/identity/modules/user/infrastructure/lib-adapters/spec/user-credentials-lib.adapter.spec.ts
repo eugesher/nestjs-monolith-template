@@ -1,26 +1,26 @@
 import { UserCredentialsLibAdapter } from '../user-credentials-lib.adapter';
 
 describe('UserCredentialsLibAdapter', () => {
-  let hashPassword: jest.Mock;
+  let handleHashPassword: jest.Mock;
   let adapter: UserCredentialsLibAdapter;
 
   beforeEach(() => {
-    hashPassword = jest.fn();
+    handleHashPassword = jest.fn();
     adapter = new UserCredentialsLibAdapter({
-      signAccessToken: jest.fn(),
-      hashPassword,
-      verifyPassword: jest.fn(),
+      handleSignAccessToken: jest.fn(),
+      handleHashPassword,
+      handleVerifyPassword: jest.fn(),
     });
   });
 
   describe('hashPassword', () => {
     it('hashes the password with the credentials lib', async () => {
-      hashPassword.mockResolvedValue('argon-hash');
+      handleHashPassword.mockResolvedValue('argon-hash');
 
       const passwordHash = await adapter.hashPassword('correct-horse-battery');
 
       expect(passwordHash).toBe('argon-hash');
-      expect(hashPassword).toHaveBeenCalledWith('correct-horse-battery');
+      expect(handleHashPassword).toHaveBeenCalledWith('correct-horse-battery');
     });
   });
 });

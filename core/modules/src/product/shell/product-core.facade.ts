@@ -10,9 +10,11 @@ import { ProductCoreArchiveUseCase } from '../application';
 
 @Injectable()
 export class ProductCoreFacade implements IProductCorePort {
-  constructor(private readonly productCoreArchive: ProductCoreArchiveUseCase) {}
+  constructor(private readonly archive: ProductCoreArchiveUseCase) {}
 
-  public async archive(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
-    return await this.productCoreArchive.execute(command);
+  public async handleArchive(
+    command: IProductCoreArchiveCommand,
+  ): Promise<IProductCoreArchiveView> {
+    return await this.archive.execute(command);
   }
 }
