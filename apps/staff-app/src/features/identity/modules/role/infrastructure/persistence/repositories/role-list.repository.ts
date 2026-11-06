@@ -1,34 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { StaffRole } from '@acme-core/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import { IRoleListRecord, IRoleListRepositoryPort } from '../../../outbound';
+import { RolePersistenceHost } from '../host/role-persistence.host';
 
 @Injectable()
-export class RoleListRepository implements IRoleListRepositoryPort {
+export class RoleListRepository extends RolePersistenceHost implements IRoleListRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get staffRoleRepository(): IHostedRepository<StaffRole> {
-    return this.repositoryHost.getRepository(StaffRole);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async list(): Promise<IRoleListRecord[]> {
-    return await this.staffRoleRepository
-      .createQueryBuilder('StaffRole')
-      .select(['StaffRole.id', 'StaffRole.name'])
-      .leftJoin('StaffRole.rolePermissions', 'StaffRolePermission')
-      .addSelect(['StaffRolePermission.roleId', 'StaffRolePermission.permissionId'])
-      .leftJoin('StaffRolePermission.permission', 'StaffPermission')
-      .addSelect(['StaffPermission.id', 'StaffPermission.code'])
-      .orderBy('StaffRole.id', 'ASC')
-      .getMany();
+    return await this.createStaffRoleBuilder().forList().getMany();
   }
 }

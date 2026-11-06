@@ -1,46 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
-import { Reminder } from '@acme-staff/common/entities';
 
 import {
   IReminderWriteRecord,
   IReminderWriteRepositoryPort,
   IReminderWriteUpdateQuery,
 } from '../../../outbound';
+import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
 @Injectable()
-export class ReminderWriteRepository implements IReminderWriteRepositoryPort {
+export class ReminderWriteRepository
+  extends ReminderPersistenceHost
+  implements IReminderWriteRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get reminderRepository(): IHostedRepository<Reminder> {
-    return this.repositoryHost.getRepository(Reminder);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async findById(reminderId: string): Promise<Nullable<IReminderWriteRecord>> {
-    return await this.reminderRepository
-      .createQueryBuilder('Reminder')
-      .select([
-        'Reminder.id',
-        'Reminder.ownerId',
-        'Reminder.title',
-        'Reminder.body',
-        'Reminder.dueOn',
-        'Reminder.status',
-        'Reminder.version',
-        'Reminder.createdAt',
-        'Reminder.updatedAt',
-      ])
-      .where('Reminder.id = :reminderId', { reminderId })
-      .getOne();
+    return await this.createReminderBuilder().forById(reminderId).getOne();
   }
 
   public async update(query: IReminderWriteUpdateQuery): Promise<boolean> {

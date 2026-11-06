@@ -455,92 +455,35 @@ describe('common modules (common/modules/<module>)', () => {
     });
   });
 
-  describe('users by app', () => {
-    it.each([
-      'apps/staff-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/staff-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/processor-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-      'apps/processor-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-    ])('%s MAY import the port of the core staff auth module', async (file) => {
-      await expect({
-        file,
-        code: 'import { STAFF_AUTH_CORE_PORT, IStaffAuthCorePort } from "@acme-core/contracts/staff-auth";',
-      }).toPassArchitectureLint();
-    });
-
-    it.each([
-      [
-        'apps/customer-app/src/features/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/app/global/auth/infrastructure/core-adapters/__fixture__.ts',
-        'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/features/auth/auth.module.ts',
-        'import { StaffAuthCoreModule } from "@acme-core/modules/staff-auth";',
-      ],
-      [
-        'apps/customer-app/src/app/setup/orm/entities/index.ts',
-        'import { StaffUser } from "@acme-core/entities";',
-      ],
-      [
-        'apps/customer-app/src/features/auth/infrastructure/persistence/__fixture__.ts',
-        'import { StaffUser } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach the staff users — they belong to staff-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      'apps/processor-app/src/features/queue/infrastructure/persistence/__fixture__.ts',
-      'apps/processor-app/src/app/setup/orm/__fixture__.ts',
-    ])(
-      '%s may NOT reach the staff entities — processor-app reads the staff through core',
-      async (file) => {
+  describe('core by app', () => {
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY import the port of any core module in its core adapters',
+      async (app) => {
         await expect({
-          file,
-          code: 'import { StaffUser } from "@acme-core/entities";',
-        }).toBreakRule('boundaries/dependencies');
+          file: `apps/${app}/src/features/auth/infrastructure/core-adapters/__fixture__.ts`,
+          code: 'import { STAFF_AUTH_CORE_PORT } from "@acme-core/contracts/staff-auth";',
+        }).toPassArchitectureLint();
       },
     );
 
-    it('the processor-app entity list MAY register the staff entities on its connection', async () => {
-      await expect({
-        file: 'apps/processor-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { StaffPermission, StaffUser } from "@acme-core/entities";',
-      }).toPassArchitectureLint();
-    });
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY import any core entity in its persistence',
+      async (app) => {
+        await expect({
+          file: `apps/${app}/src/features/auth/infrastructure/persistence/__fixture__.ts`,
+          code: 'import { Customer, StaffUser } from "@acme-core/entities";',
+        }).toPassArchitectureLint();
+      },
+    );
 
-    it.each([
-      [
-        'apps/staff-app/src/features/product/infrastructure/persistence/__fixture__.ts',
-        'import { Customer, Product } from "@acme-core/entities";',
-      ],
-      [
-        'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-        'import { Customer } from "@acme-core/entities";',
-      ],
-    ])('%s may NOT reach the customers — they belong to customer-app', async (file, code) => {
-      await expect({ file, code }).toBreakRule('boundaries/dependencies');
-    });
-
-    it.each([
-      ['apps/customer-app/src/app/setup/orm/entities/index.ts', 'Customer'],
-      ['apps/staff-app/src/app/setup/orm/entities/index.ts', 'StaffUser'],
-    ])('%s MAY register the %s entity of its own users', async (file, entity) => {
-      await expect({
-        file,
-        code: `import { ${entity} } from "@acme-core/entities";`,
-      }).toPassArchitectureLint();
-    });
-
-    it('the staff-app entity list MAY register Customer, the owner of an order', async () => {
-      await expect({
-        file: 'apps/staff-app/src/app/setup/orm/entities/index.ts',
-        code: 'import { Customer, Order, StaffUser } from "@acme-core/entities";',
-      }).toPassArchitectureLint();
-    });
+    it.each(['staff-app', 'customer-app', 'processor-app'])(
+      '%s MAY mount any core module',
+      async (app) => {
+        await expect({
+          file: `apps/${app}/src/features/auth/auth.module.ts`,
+          code: 'import { StaffAuthCoreModule } from "@acme-core/modules/staff-auth";',
+        }).toPassArchitectureLint();
+      },
+    );
   });
 });

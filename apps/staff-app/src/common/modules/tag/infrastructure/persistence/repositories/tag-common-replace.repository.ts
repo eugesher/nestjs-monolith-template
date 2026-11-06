@@ -1,12 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { SubjectTag, Tag } from '@acme-staff/common/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
   ITagCommonReplaceFindLinkedQuery,
@@ -16,20 +11,18 @@ import {
   ITagCommonReplaceTagRecord,
   ITagCommonReplaceUnlinkQuery,
 } from '../../../outbound';
+import { TagCommonPersistenceHost } from '../host/tag-common-persistence.host';
 
 @Injectable()
-export class TagCommonReplaceRepository implements ITagCommonReplaceRepositoryPort {
+export class TagCommonReplaceRepository
+  extends TagCommonPersistenceHost
+  implements ITagCommonReplaceRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get tagRepository(): IHostedRepository<Tag> {
-    return this.repositoryHost.getRepository(Tag);
-  }
-
-  private get subjectTagRepository(): IHostedRepository<SubjectTag> {
-    return this.repositoryHost.getRepository(SubjectTag);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async lockTags(tagIds: string[]): Promise<ITagCommonReplaceTagRecord[]> {
@@ -37,26 +30,13 @@ export class TagCommonReplaceRepository implements ITagCommonReplaceRepositoryPo
       return [];
     }
 
-    return await this.tagRepository
-      .createQueryBuilder('Tag')
-      .select(['Tag.id', 'Tag.name'])
-      .where('Tag.id IN (:...tagIds)', { tagIds })
-      .orderBy('Tag.name', 'ASC')
-      .setLock('pessimistic_read')
-      .getMany();
+    return await this.createTagBuilder().forLockTags(tagIds).getMany();
   }
 
   public async findLinked(
     query: ITagCommonReplaceFindLinkedQuery,
   ): Promise<ITagCommonReplaceSubjectTagRecord[]> {
-    const { subjectType, subjectId } = query;
-
-    return await this.subjectTagRepository
-      .createQueryBuilder('SubjectTag')
-      .select(['SubjectTag.id', 'SubjectTag.tagId'])
-      .where('SubjectTag.subjectType = :subjectType', { subjectType })
-      .andWhere('SubjectTag.subjectId = :subjectId', { subjectId })
-      .getMany();
+    return await this.createSubjectTagBuilder().forLinked(query).getMany();
   }
 
   public async link(query: ITagCommonReplaceLinkQuery): Promise<void> {

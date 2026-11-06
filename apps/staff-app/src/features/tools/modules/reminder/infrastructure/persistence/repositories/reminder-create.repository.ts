@@ -1,27 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Reminder } from '@acme-staff/common/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
   IReminderCreateRepositoryPort,
   IReminderCreateRecord,
   IReminderCreateInsertQuery,
 } from '../../../outbound';
+import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
 @Injectable()
-export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
+export class ReminderCreateRepository
+  extends ReminderPersistenceHost
+  implements IReminderCreateRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get reminderRepository(): IHostedRepository<Reminder> {
-    return this.repositoryHost.getRepository(Reminder);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async insert(query: IReminderCreateInsertQuery): Promise<string> {
@@ -29,20 +26,6 @@ export class ReminderCreateRepository implements IReminderCreateRepositoryPort {
   }
 
   public async findInserted(reminderId: string): Promise<IReminderCreateRecord> {
-    return await this.reminderRepository
-      .createQueryBuilder('Reminder')
-      .select([
-        'Reminder.id',
-        'Reminder.ownerId',
-        'Reminder.title',
-        'Reminder.body',
-        'Reminder.dueOn',
-        'Reminder.status',
-        'Reminder.version',
-        'Reminder.createdAt',
-        'Reminder.updatedAt',
-      ])
-      .where('Reminder.id = :reminderId', { reminderId })
-      .getOneOrFail();
+    return await this.createReminderBuilder().forInserted(reminderId).getOneOrFail();
   }
 }

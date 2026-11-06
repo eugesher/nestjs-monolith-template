@@ -1,34 +1,16 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
-import { Product, ProductStock } from '@acme-core/entities';
-
 import {
   IProductStockCoreLockProductRecord,
   IProductStockCoreLockSumRecord,
 } from '../../../../outbound';
+import { ProductStockCorePersistenceHost } from '../../host/product-stock-core-persistence.host';
 
-export abstract class ProductStockCoreBaseRepository {
-  protected constructor(protected readonly repositoryHost: IRepositoryHostPort) {}
-
-  protected get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
-  }
-
-  protected get productStockRepository(): IHostedRepository<ProductStock> {
-    return this.repositoryHost.getRepository(ProductStock);
-  }
-
+export abstract class ProductStockCoreBaseRepository extends ProductStockCorePersistenceHost {
   public async lockProducts(productIds: string[]): Promise<IProductStockCoreLockProductRecord[]> {
     if (productIds.length === 0) {
       return [];
     }
 
-    return await this.productRepository
-      .createQueryBuilder('Product')
-      .select(['Product.id'])
-      .where('Product.id IN (:...productIds)', { productIds })
-      .orderBy('Product.id', 'ASC')
-      .setLock('pessimistic_write')
-      .getMany();
+    return await this.createProductBuilder().forLockProducts(productIds).getMany();
   }
 
   public async sumStock(productIds: string[]): Promise<IProductStockCoreLockSumRecord[]> {
@@ -36,13 +18,8 @@ export abstract class ProductStockCoreBaseRepository {
       return [];
     }
 
-    return await this.productStockRepository
-      .createQueryBuilder('ProductStock')
-      .select('ProductStock.productId', 'productId')
-      .addSelect('SUM(ProductStock.quantity)', 'quantity')
-      .where('ProductStock.productId IN (:...productIds)', { productIds })
-      .groupBy('ProductStock.productId')
-      .setLock('pessimistic_read')
+    return await this.createProductStockBuilder()
+      .forSumStock(productIds)
       .getRawMany<IProductStockCoreLockSumRecord>();
   }
 }

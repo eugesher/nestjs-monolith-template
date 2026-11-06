@@ -1,27 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
-import { Note } from '@acme-staff/common/entities';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
 import {
   INoteCreateRepositoryPort,
   INoteCreateRecord,
   INoteCreateInsertQuery,
 } from '../../../outbound';
+import { NotePersistenceHost } from '../host/note-persistence.host';
 
 @Injectable()
-export class NoteCreateRepository implements INoteCreateRepositoryPort {
+export class NoteCreateRepository extends NotePersistenceHost implements INoteCreateRepositoryPort {
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get noteRepository(): IHostedRepository<Note> {
-    return this.repositoryHost.getRepository(Note);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async insert(query: INoteCreateInsertQuery): Promise<string> {
@@ -29,20 +23,6 @@ export class NoteCreateRepository implements INoteCreateRepositoryPort {
   }
 
   public async findInserted(noteId: string): Promise<INoteCreateRecord> {
-    return await this.noteRepository
-      .createQueryBuilder('Note')
-      .select([
-        'Note.id',
-        'Note.subjectType',
-        'Note.subjectId',
-        'Note.body',
-        'Note.authorId',
-        'Note.resolved',
-        'Note.version',
-        'Note.createdAt',
-        'Note.updatedAt',
-      ])
-      .where('Note.id = :noteId', { noteId })
-      .getOneOrFail();
+    return await this.createNoteBuilder().forInserted(noteId).getOneOrFail();
   }
 }

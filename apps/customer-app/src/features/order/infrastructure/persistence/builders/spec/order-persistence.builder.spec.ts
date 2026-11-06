@@ -1,6 +1,6 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import { Customer, Order, OrderProduct, Product, ProductStock } from '@acme-core/entities';
+import { Customer, Order, OrderProduct, Product } from '@acme-core/entities';
 
 import { OrderPersistenceBuilder } from '../order-persistence.builder';
 
@@ -12,7 +12,7 @@ describe('OrderPersistenceBuilder', () => {
     dataSource = new DataSource({
       type: 'mysql',
       database: 'acme',
-      entities: [Customer, Order, OrderProduct, Product, ProductStock],
+      entities: [Customer, Order, OrderProduct, Product],
     });
     jest.spyOn(dataSource.driver, 'connect').mockResolvedValue();
     jest.spyOn(dataSource.driver, 'afterConnect').mockResolvedValue();

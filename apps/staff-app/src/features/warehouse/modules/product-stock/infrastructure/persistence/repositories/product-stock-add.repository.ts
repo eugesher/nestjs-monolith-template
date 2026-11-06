@@ -1,31 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
-import { Product } from '@acme-core/entities';
 
 import { IProductStockAddRepositoryPort, IProductStockAddProductRecord } from '../../../outbound';
+import { ProductStockPersistenceHost } from '../host/product-stock-persistence.host';
 
 @Injectable()
-export class ProductStockAddRepository implements IProductStockAddRepositoryPort {
+export class ProductStockAddRepository
+  extends ProductStockPersistenceHost
+  implements IProductStockAddRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async findById(productId: string): Promise<Nullable<IProductStockAddProductRecord>> {
-    return await this.productRepository
-      .createQueryBuilder('Product')
-      .select(['Product.id', 'Product.sku'])
-      .where('Product.id = :productId', { productId })
-      .getOne();
+    return await this.createProductBuilder().forById(productId).getOne();
   }
 }

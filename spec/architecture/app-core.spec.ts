@@ -101,7 +101,6 @@ describe('app → core', () => {
   describe('app shared code (common/shared) → core', () => {
     it.each([
       '../../../../../../core/entities/src',
-      '../../../../../../core/contracts/src/__ledger-fixture__',
       '../../../../../../core/modules/src/__ledger-fixture__',
       '../../../features/product/product.module',
       '../../../app/global',

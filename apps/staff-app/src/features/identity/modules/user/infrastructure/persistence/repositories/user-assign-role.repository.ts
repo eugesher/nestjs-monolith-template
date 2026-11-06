@@ -1,13 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
-  IHostedRepository,
-  type IRepositoryHostPort,
-  REPOSITORY_HOST_PORT,
-} from '@acme-libs/contracts/database';
+import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
-import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
 
 import {
   IUserAssignRoleRepositoryPort,
@@ -15,44 +10,26 @@ import {
   IUserAssignRoleStaffUserRecord,
   IUserAssignRoleStaffUserRoleInsertQuery,
 } from '../../../outbound';
+import { UserPersistenceHost } from '../host/user-persistence.host';
 
 @Injectable()
-export class UserAssignRoleRepository implements IUserAssignRoleRepositoryPort {
+export class UserAssignRoleRepository
+  extends UserPersistenceHost
+  implements IUserAssignRoleRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
-    private readonly repositoryHost: IRepositoryHostPort,
-  ) {}
-
-  private get staffRoleRepository(): IHostedRepository<StaffRole> {
-    return this.repositoryHost.getRepository(StaffRole);
-  }
-
-  private get staffUserRoleRepository(): IHostedRepository<StaffUserRole> {
-    return this.repositoryHost.getRepository(StaffUserRole);
-  }
-
-  private get staffUserRepository(): IHostedRepository<StaffUser> {
-    return this.repositoryHost.getRepository(StaffUser);
+    protected readonly repositoryHost: IRepositoryHostPort,
+  ) {
+    super();
   }
 
   public async findById(id: string): Promise<Nullable<IUserAssignRoleStaffUserRecord>> {
-    return await this.staffUserRepository
-      .createQueryBuilder('StaffUser')
-      .select(['StaffUser.id'])
-      .leftJoin('StaffUser.userRoles', 'StaffUserRole')
-      .addSelect(['StaffUserRole.userId', 'StaffUserRole.roleId'])
-      .leftJoin('StaffUserRole.role', 'StaffRole')
-      .addSelect(['StaffRole.id', 'StaffRole.name'])
-      .where('StaffUser.id = :id', { id })
-      .getOne();
+    return await this.createStaffUserBuilder().forById(id).getOne();
   }
 
   public async findRole(name: RoleEnum): Promise<Nullable<IUserAssignRoleStaffRoleRecord>> {
-    return await this.staffRoleRepository
-      .createQueryBuilder('StaffRole')
-      .select(['StaffRole.id'])
-      .where('StaffRole.name = :name', { name })
-      .getOne();
+    return await this.createStaffRoleBuilder().forRole(name).getOne();
   }
 
   public async insertUserRole(query: IUserAssignRoleStaffUserRoleInsertQuery): Promise<void> {
