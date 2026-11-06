@@ -15,7 +15,7 @@ import {
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
   PRODUCT_CORE_CATALOG_CACHE_PORT,
   PRODUCT_CORE_LEDGER_RECORD_PORT,
-  PRODUCT_CORE_LEDGER_TIMEOUT_MS_TOKEN,
+  PRODUCT_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS_TOKEN,
 } from '../outbound';
 import { ProductCoreFacade } from './product-core.facade';
@@ -36,7 +36,7 @@ import { ProductCoreFacade } from './product-core.facade';
     { provide: PRODUCT_CORE_LEDGER_RECORD_PORT, useClass: ProductCoreLedgerQueueAdapter },
     { provide: PRODUCT_CORE_CATALOG_CACHE_PORT, useClass: ProductCoreCatalogCacheAdapter },
     ConfigValueProvider.provide({
-      provide: PRODUCT_CORE_LEDGER_TIMEOUT_MS_TOKEN,
+      provide: PRODUCT_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',
     }),
     ConfigValueProvider.provide({

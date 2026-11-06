@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
 import {
-  CATALOG_CACHE_TTL_MS_TOKEN,
+  CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN,
   ICatalogCachePort,
   ICatalogCacheProductListReadCommand,
   ICatalogCacheProductListView,
@@ -12,7 +12,7 @@ import {
 @Injectable()
 export class CatalogCacheAdapter implements ICatalogCachePort {
   constructor(
-    @Inject(CATALOG_CACHE_TTL_MS_TOKEN)
+    @Inject(CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN)
     private readonly ttlMs: number,
     @Inject(CACHE_PORT)
     private readonly cache: ICachePort,

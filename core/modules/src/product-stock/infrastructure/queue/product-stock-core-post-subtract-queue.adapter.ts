@@ -10,7 +10,7 @@ import {
 import {
   IProductStockCorePostSubtractEnqueueCommand,
   IProductStockCorePostSubtractPort,
-  PRODUCT_STOCK_CORE_POST_SUBTRACT_TIMEOUT_MS_TOKEN,
+  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ProductStockCorePostSubtractQueueAdapter implements IProductStockCo
   constructor(
     @InjectQueue(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
     private readonly queue: Queue<IProductStockPostSubtractPayload>,
-    @Inject(PRODUCT_STOCK_CORE_POST_SUBTRACT_TIMEOUT_MS_TOKEN)
+    @Inject(PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
     private readonly timeoutMs: number,
   ) {}
 

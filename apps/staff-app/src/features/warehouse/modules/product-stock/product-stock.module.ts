@@ -17,7 +17,7 @@ import {
   PRODUCT_STOCK_ADD_REPOSITORY_PORT,
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
   PRODUCT_STOCK_LEDGER_RECORD_PORT,
-  PRODUCT_STOCK_LEDGER_TIMEOUT_MS_TOKEN,
+  PRODUCT_STOCK_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_MOVEMENT_PORT,
 } from './outbound';
@@ -35,7 +35,7 @@ import { ProductStockController } from './presentation';
     { provide: PRODUCT_STOCK_MOVEMENT_PORT, useClass: ProductStockMovementCoreAdapter },
     { provide: PRODUCT_STOCK_LEDGER_RECORD_PORT, useClass: ProductStockLedgerQueueAdapter },
     ConfigValueProvider.provide({
-      provide: PRODUCT_STOCK_LEDGER_TIMEOUT_MS_TOKEN,
+      provide: PRODUCT_STOCK_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',
     }),
     ConfigValueProvider.provide({

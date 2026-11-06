@@ -11,7 +11,7 @@ A name says who or where; the action lives in the method or in the port.
 | domain exception codes       | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`            | `OrderExceptionCodeEnum`                                      |
 | queue adapter                | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`      | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort` |
 | commands of a service        | one file `<context>-<service>.command.ts`                                   | `product-ledger.command.ts` for `ProductLedgerService`        |
-| injection token of a value   | `<CONTEXT>_<SUBJECT>_TOKEN`, `<context>-<subject>.token.ts`                 | `ORDER_LEDGER_TIMEOUT_MS_TOKEN`                               |
+| token of a config value      | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                 | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                        |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
@@ -45,9 +45,13 @@ post-subtract queue.
 `product-ledger.command.ts`. The interfaces keep the names of what they carry; only the file follows
 the service. A use case keeps one command file of its own, `<context>-<verb>.command.ts`.
 
-**A value token ends in `_TOKEN` and names what it holds.** A token that carries a value rather than
-a port, such as a timeout read from the configuration, takes the suffix `_TOKEN`, so it stands apart
-from the `_PORT` tokens in the same `outbound` barrel. It names the subject without the action:
-`IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`, not `IDEMPOTENCY_PURGE_KEY_TTL_HOURS`, and
-`ORDER_LEDGER_TIMEOUT_MS_TOKEN`, not `ORDER_LEDGER_RECORD_TIMEOUT_MS`. The description of the
-`Symbol` repeats the constant, and the file drops the suffix: `order-ledger-timeout-ms.token.ts`.
+**A config token is the module, the property and `_TOKEN`.** A token that carries a value read with
+`ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration
+property it reads and the suffix `_TOKEN`: the order module reads `REDIS_COMMAND_TIMEOUT_MS` into
+`ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`, the product-stock core module reads `QUEUE_RETRY_ATTEMPTS`
+into `PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from,
+not what the module does with it, so a reader finds the variable of `.env` by the name alone. A
+property that already starts with the module name is not repeated: `IDEMPOTENCY_KEY_TTL_HOURS`
+becomes `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`. The suffix sets the token apart from the `_PORT` tokens
+in the same `outbound` barrel. The description of the `Symbol` repeats the constant, and the file
+drops the suffix: `order-redis-command-timeout-ms.token.ts`.

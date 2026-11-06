@@ -15,7 +15,7 @@ import {
 import {
   AUTH_CREDENTIALS_PORT,
   AUTH_LEDGER_RECORD_PORT,
-  AUTH_LEDGER_TIMEOUT_MS_TOKEN,
+  AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN,
   AUTH_LOGIN_REPOSITORY_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
@@ -35,7 +35,7 @@ import { AuthController } from './presentation';
     { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerQueueAdapter },
     { provide: AUTH_CREDENTIALS_PORT, useClass: AuthCredentialsLibAdapter },
     ConfigValueProvider.provide({
-      provide: AUTH_LEDGER_TIMEOUT_MS_TOKEN,
+      provide: AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',
     }),
     ConfigValueProvider.provide({

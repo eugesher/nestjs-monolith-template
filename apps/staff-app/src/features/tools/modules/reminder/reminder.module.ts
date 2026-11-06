@@ -30,7 +30,7 @@ import {
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
   REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   REMINDER_SUMMARY_PORT,
-  REMINDER_SUMMARY_TTL_MS_TOKEN,
+  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
   REMINDER_WRITE_REPOSITORY_PORT,
 } from './outbound';
 import { ReminderController } from './presentation';
@@ -59,7 +59,7 @@ import { ReminderController } from './presentation';
       property: 'OCC_RETRY_ATTEMPTS',
     }),
     ConfigValueProvider.provide({
-      provide: REMINDER_SUMMARY_TTL_MS_TOKEN,
+      provide: REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
       property: 'CACHE_TTL_MS_DEFAULT',
     }),
   ],
