@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
@@ -34,8 +34,14 @@ import { ProductStockController } from './presentation';
     { provide: PRODUCT_STOCK_IDEMPOTENCY_PORT, useClass: ProductStockIdempotencyCoreAdapter },
     { provide: PRODUCT_STOCK_MOVEMENT_PORT, useClass: ProductStockMovementCoreAdapter },
     { provide: PRODUCT_STOCK_LEDGER_RECORD_PORT, useClass: ProductStockLedgerQueueAdapter },
-    ConfigProviderHelper.value(PRODUCT_STOCK_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
-    ConfigProviderHelper.value(PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_STOCK_LEDGER_RECORD_TIMEOUT_MS,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS,
+      property: 'LEDGER_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class ProductStockModule {}

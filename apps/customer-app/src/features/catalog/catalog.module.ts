@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 
 import { CatalogProductListUseCase } from './application';
 import { CatalogCacheAdapter, CatalogProductListRepository } from './infrastructure';
@@ -17,7 +17,10 @@ import { CatalogController } from './presentation';
     CatalogProductListUseCase,
     { provide: CATALOG_PRODUCT_LIST_REPOSITORY_PORT, useClass: CatalogProductListRepository },
     { provide: CATALOG_CACHE_PORT, useClass: CatalogCacheAdapter },
-    ConfigProviderHelper.value(CATALOG_CACHE_TTL_MS, 'CACHE_TTL_MS_DEFAULT'),
+    ConfigValueProvider.provide({
+      provide: CATALOG_CACHE_TTL_MS,
+      property: 'CACHE_TTL_MS_DEFAULT',
+    }),
   ],
 })
 export class CatalogModule {}

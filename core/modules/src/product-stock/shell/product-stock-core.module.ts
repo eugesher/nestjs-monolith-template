@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import {
   PRODUCT_STOCK_CORE_PORT,
   PRODUCT_STOCK_POST_SUBTRACT_JOB_OPTIONS,
@@ -47,14 +47,14 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
       provide: PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
       useClass: ProductStockCorePostSubtractQueueAdapter,
     },
-    ConfigProviderHelper.value(
-      PRODUCT_STOCK_CORE_POST_SUBTRACT_TIMEOUT_MS,
-      'REDIS_COMMAND_TIMEOUT_MS',
-    ),
-    ConfigProviderHelper.value(
-      PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS,
-      'QUEUE_RETRY_ATTEMPTS',
-    ),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_STOCK_CORE_POST_SUBTRACT_TIMEOUT_MS,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_STOCK_CORE_POST_SUBTRACT_RETRY_ATTEMPTS,
+      property: 'QUEUE_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class ProductStockCoreModule {}

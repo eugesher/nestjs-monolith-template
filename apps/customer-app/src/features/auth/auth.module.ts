@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-record';
@@ -34,8 +34,14 @@ import { AuthController } from './presentation';
     { provide: AUTH_REGISTER_REPOSITORY_PORT, useClass: AuthRegisterRepository },
     { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerQueueAdapter },
     { provide: AUTH_CREDENTIALS_PORT, useClass: AuthCredentialsLibAdapter },
-    ConfigProviderHelper.value(AUTH_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
-    ConfigProviderHelper.value(AUTH_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
+    ConfigValueProvider.provide({
+      provide: AUTH_LEDGER_RECORD_TIMEOUT_MS,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: AUTH_LEDGER_RETRY_ATTEMPTS,
+      property: 'LEDGER_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class AuthModule {}

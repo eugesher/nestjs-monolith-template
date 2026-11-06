@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductCoreModule } from '@acme-core/modules/product';
@@ -75,9 +75,18 @@ import { ProductController } from './presentation';
     { provide: PRODUCT_IDEMPOTENCY_PORT, useClass: ProductIdempotencyCoreAdapter },
     { provide: PRODUCT_LEDGER_RECORD_PORT, useClass: ProductLedgerQueueAdapter },
     { provide: PRODUCT_CATALOG_CACHE_PORT, useClass: ProductCatalogCacheAdapter },
-    ConfigProviderHelper.value(PRODUCT_OCC_RETRY_ATTEMPTS, 'OCC_RETRY_ATTEMPTS'),
-    ConfigProviderHelper.value(PRODUCT_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
-    ConfigProviderHelper.value(PRODUCT_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_OCC_RETRY_ATTEMPTS,
+      property: 'OCC_RETRY_ATTEMPTS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_LEDGER_RECORD_TIMEOUT_MS,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_LEDGER_RETRY_ATTEMPTS,
+      property: 'LEDGER_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class ProductModule {}

@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import { ConfigProviderHelper } from '@acme-libs/config';
+import { ConfigValueProvider } from '@acme-libs/config';
 import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import { PRODUCT_CORE_PORT } from '@acme-core/contracts/product';
 
@@ -35,8 +35,14 @@ import { ProductCoreFacade } from './product-core.facade';
     { provide: PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT, useClass: ProductCoreArchiveRepository },
     { provide: PRODUCT_CORE_LEDGER_RECORD_PORT, useClass: ProductCoreLedgerQueueAdapter },
     { provide: PRODUCT_CORE_CATALOG_CACHE_PORT, useClass: ProductCoreCatalogCacheAdapter },
-    ConfigProviderHelper.value(PRODUCT_CORE_LEDGER_RECORD_TIMEOUT_MS, 'REDIS_COMMAND_TIMEOUT_MS'),
-    ConfigProviderHelper.value(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS, 'LEDGER_RETRY_ATTEMPTS'),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_CORE_LEDGER_RECORD_TIMEOUT_MS,
+      property: 'REDIS_COMMAND_TIMEOUT_MS',
+    }),
+    ConfigValueProvider.provide({
+      provide: PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS,
+      property: 'LEDGER_RETRY_ATTEMPTS',
+    }),
   ],
 })
 export class ProductCoreModule {}

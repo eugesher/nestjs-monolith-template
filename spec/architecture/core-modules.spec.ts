@@ -345,7 +345,7 @@ describe('core modules', () => {
     it('the module root MAY bind config values with the config lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-        code: 'import { ConfigProviderHelper } from "@acme-libs/config";',
+        code: 'import { ConfigValueProvider } from "@acme-libs/config";',
       }).toPassArchitectureLint();
     });
 
