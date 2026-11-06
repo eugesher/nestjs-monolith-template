@@ -39,7 +39,7 @@ export class OrderPlaceRepository
     await this.orderProductRepository.insert(queries);
   }
 
-  public async findOrder(orderId: string): Promise<IOrderPlaceRecord> {
+  public async findPlaced(orderId: string): Promise<IOrderPlaceRecord> {
     return await this.createOrderBuilder().forPlaced(orderId).getOneOrFail();
   }
 }

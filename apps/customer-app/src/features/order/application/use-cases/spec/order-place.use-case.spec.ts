@@ -9,7 +9,7 @@ describe('OrderPlaceUseCase', () => {
   let findActiveProducts: jest.Mock;
   let insertOrder: jest.Mock;
   let insertOrderProducts: jest.Mock;
-  let findOrder: jest.Mock;
+  let findPlaced: jest.Mock;
   let lock: jest.Mock;
   let withdraw: jest.Mock;
   let claim: jest.Mock;
@@ -24,7 +24,7 @@ describe('OrderPlaceUseCase', () => {
     findActiveProducts = jest.fn().mockResolvedValue([{ id: '100' }, { id: '103' }]);
     insertOrder = jest.fn().mockResolvedValue('610');
     insertOrderProducts = jest.fn().mockResolvedValue(undefined);
-    findOrder = jest.fn().mockResolvedValue({
+    findPlaced = jest.fn().mockResolvedValue({
       id: '610',
       createdAt: new Date('2026-01-05T08:00:00.000Z'),
       orderProducts: [
@@ -46,7 +46,7 @@ describe('OrderPlaceUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new OrderPlaceUseCase(
       { recordPlaced } as unknown as OrderLedgerService,
-      { findActiveProducts, insertOrder, insertOrderProducts, findOrder },
+      { findActiveProducts, insertOrder, insertOrderProducts, findPlaced },
       { lock, withdraw },
       { claim, complete, release },
       { run, afterCommit: jest.fn() },
@@ -77,7 +77,7 @@ describe('OrderPlaceUseCase', () => {
         { orderId: '610', productId: '103' },
         { orderId: '610', productId: '100' },
       ]);
-      expect(findOrder).toHaveBeenCalledWith('610');
+      expect(findPlaced).toHaveBeenCalledWith('610');
       expect(view).toEqual({
         id: '610',
         createdAt: '2026-01-05T08:00:00.000Z',
