@@ -1,5 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
+import { IPageRequest } from '@acme-libs/toolkit';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 import { IOrderGetManyQuery, IOrderGetOneQuery } from '../../../outbound';
 
@@ -10,7 +11,7 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   public forList(query: IOrderGetManyQuery): this {
     const { limit, offset, customerId } = query;
 
-    this.selectOrder().whereCustomer(customerId).orderByNewest().paginate(limit, offset);
+    this.selectOrder().whereCustomer(customerId).orderByNewest().paginate({ limit, offset });
 
     return this;
   }
@@ -76,7 +77,9 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
     return this;
   }
 
-  private paginate(limit: number, offset: number): this {
+  private paginate(pageWindow: Pick<IPageRequest, 'limit' | 'offset'>): this {
+    const { limit, offset } = pageWindow;
+
     this.skip(offset).take(limit);
 
     return this;
