@@ -35,8 +35,8 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 
 - the index of nested features and processors, and the module roots that mount through it;
 - a bootstrap file that mounts the features, processors and global modules through their indexes;
-- a global module that reaches app contracts, common modules, the entities, the config lib and
-  the database contracts;
+- a global module that reaches app contracts, common modules, the entities and the database
+  contracts;
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
@@ -48,7 +48,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 - the core-adapters and common-adapters of a common module, and a common module root that mounts
   a core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
-  database contracts, the entities and the config lib;
+  database contracts and the entities;
 - the libs a layer is meant to reach: the cache lib from the app root, the auth
   lib from a feature root, the database contracts from the application of a common module;
 - a script, a migration or a seed script that imports its own support files.
@@ -126,8 +126,14 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **No module registers entities.** The entities of an app are listed once in
   `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
   would add repository tokens that nothing injects.
+- **A module root binds no token.** An adapter carries its binding in a static `provider` (see
+  `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see
+  `030-config-values.md`), so the module root of a feature, a processor, a core, common or global
+  module may reach neither its own `outbound` nor `@acme-libs/config`. Only `infrastructure/config`,
+  `app/setup/config` and the observability lib import the config lib.
 - **A global module has the layers of a feature.** `application/` sees its own outbound, the base
-  libs and `@nestjs/common`; `outbound/` sees itself and the base libs; the module root sees both.
+  libs and `@nestjs/common`; `outbound/` sees itself and the base libs; the module root sees the
+  application.
 - **A global common-adapter reaches any contract of its app and its own outbound.** It implements
   a port of its module's outbound with the port of a common module, which is named after that
   module, not after the global module, so the namesake rule of `appContracts` would refuse it.
