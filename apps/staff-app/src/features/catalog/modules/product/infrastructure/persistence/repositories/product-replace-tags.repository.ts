@@ -1,9 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IProductReplaceTagsRecord, IProductReplaceTagsRepositoryPort } from '../../../outbound';
+import {
+  IProductReplaceTagsRecord,
+  IProductReplaceTagsRepositoryPort,
+  PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
+} from '../../../outbound';
 import { ProductPersistenceHost } from '../host/product-persistence.host';
 
 @Injectable()
@@ -11,6 +15,11 @@ export class ProductReplaceTagsRepository
   extends ProductPersistenceHost
   implements IProductReplaceTagsRepositoryPort
 {
+  public static readonly provider: ClassProvider<IProductReplaceTagsRepositoryPort> = {
+    provide: PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
+    useClass: ProductReplaceTagsRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

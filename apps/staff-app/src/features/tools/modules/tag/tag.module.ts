@@ -16,13 +16,6 @@ import {
   TagGetManyRepository,
   TagRenameRepository,
 } from './infrastructure';
-import {
-  TAG_ACCESS_REPOSITORY_PORT,
-  TAG_CREATE_REPOSITORY_PORT,
-  TAG_DELETE_REPOSITORY_PORT,
-  TAG_GET_MANY_REPOSITORY_PORT,
-  TAG_RENAME_REPOSITORY_PORT,
-} from './outbound';
 import { TagController } from './presentation';
 
 @Module({
@@ -34,11 +27,11 @@ import { TagController } from './presentation';
     TagGetManyUseCase,
     TagRenameUseCase,
     TagAccessService,
-    { provide: TAG_ACCESS_REPOSITORY_PORT, useClass: TagAccessRepository },
-    { provide: TAG_CREATE_REPOSITORY_PORT, useClass: TagCreateRepository },
-    { provide: TAG_DELETE_REPOSITORY_PORT, useClass: TagDeleteRepository },
-    { provide: TAG_GET_MANY_REPOSITORY_PORT, useClass: TagGetManyRepository },
-    { provide: TAG_RENAME_REPOSITORY_PORT, useClass: TagRenameRepository },
+    TagAccessRepository.provider,
+    TagCreateRepository.provider,
+    TagDeleteRepository.provider,
+    TagGetManyRepository.provider,
+    TagRenameRepository.provider,
   ],
 })
 export class TagModule {}

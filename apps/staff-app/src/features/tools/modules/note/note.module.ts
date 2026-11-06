@@ -21,15 +21,7 @@ import {
   NoteGetRevisionsRepository,
   NoteResolveRepository,
 } from './infrastructure';
-import {
-  NOTE_ACCESS_REPOSITORY_PORT,
-  NOTE_CREATE_REPOSITORY_PORT,
-  NOTE_EDIT_REPOSITORY_PORT,
-  NOTE_GET_MANY_REPOSITORY_PORT,
-  NOTE_GET_REVISIONS_REPOSITORY_PORT,
-  NOTE_OCC_RETRY_ATTEMPTS_TOKEN,
-  NOTE_RESOLVE_REPOSITORY_PORT,
-} from './outbound';
+import { NOTE_OCC_RETRY_ATTEMPTS_TOKEN } from './outbound';
 import { NoteController } from './presentation';
 
 @Module({
@@ -44,12 +36,12 @@ import { NoteController } from './presentation';
     NoteGetRevisionsUseCase,
     NoteAccessService,
     NoteWriteService,
-    { provide: NOTE_ACCESS_REPOSITORY_PORT, useClass: NoteAccessRepository },
-    { provide: NOTE_CREATE_REPOSITORY_PORT, useClass: NoteCreateRepository },
-    { provide: NOTE_EDIT_REPOSITORY_PORT, useClass: NoteEditRepository },
-    { provide: NOTE_GET_MANY_REPOSITORY_PORT, useClass: NoteGetManyRepository },
-    { provide: NOTE_GET_REVISIONS_REPOSITORY_PORT, useClass: NoteGetRevisionsRepository },
-    { provide: NOTE_RESOLVE_REPOSITORY_PORT, useClass: NoteResolveRepository },
+    NoteAccessRepository.provider,
+    NoteCreateRepository.provider,
+    NoteEditRepository.provider,
+    NoteGetManyRepository.provider,
+    NoteGetRevisionsRepository.provider,
+    NoteResolveRepository.provider,
     ConfigValueProvider.provide({
       provide: NOTE_OCC_RETRY_ATTEMPTS_TOKEN,
       property: 'OCC_RETRY_ATTEMPTS',

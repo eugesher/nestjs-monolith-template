@@ -1,12 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
-import { ITagCreateQuery, ITagCreateRecord, ITagCreateRepositoryPort } from '../../../outbound';
+import {
+  ITagCreateQuery,
+  ITagCreateRecord,
+  ITagCreateRepositoryPort,
+  TAG_CREATE_REPOSITORY_PORT,
+} from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
 
 @Injectable()
 export class TagCreateRepository extends TagPersistenceHost implements ITagCreateRepositoryPort {
+  public static readonly provider: ClassProvider<ITagCreateRepositoryPort> = {
+    provide: TAG_CREATE_REPOSITORY_PORT,
+    useClass: TagCreateRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

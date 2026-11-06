@@ -7,10 +7,6 @@ import {
   StaffAuthCoreFindByEmailRepository,
   StaffAuthCoreFindSubjectRepository,
 } from '../infrastructure';
-import {
-  STAFF_AUTH_CORE_FIND_BY_EMAIL_REPOSITORY_PORT,
-  STAFF_AUTH_CORE_FIND_SUBJECT_REPOSITORY_PORT,
-} from '../outbound';
 import { StaffAuthCoreFacade } from './staff-auth-core.facade';
 
 @Module({
@@ -19,14 +15,8 @@ import { StaffAuthCoreFacade } from './staff-auth-core.facade';
     { provide: STAFF_AUTH_CORE_PORT, useClass: StaffAuthCoreFacade },
     StaffAuthCoreFindSubjectUseCase,
     StaffAuthCoreFindByEmailUseCase,
-    {
-      provide: STAFF_AUTH_CORE_FIND_SUBJECT_REPOSITORY_PORT,
-      useClass: StaffAuthCoreFindSubjectRepository,
-    },
-    {
-      provide: STAFF_AUTH_CORE_FIND_BY_EMAIL_REPOSITORY_PORT,
-      useClass: StaffAuthCoreFindByEmailRepository,
-    },
+    StaffAuthCoreFindSubjectRepository.provider,
+    StaffAuthCoreFindByEmailRepository.provider,
   ],
 })
 export class StaffAuthCoreModule {}

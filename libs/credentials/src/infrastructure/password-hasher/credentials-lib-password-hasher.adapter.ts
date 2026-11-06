@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { ClassProvider, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { hash, verify } from 'argon2';
 
 import { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
 
-import { ICredentialsLibPasswordHasherPort } from '../../outbound';
+import {
+  ICredentialsLibPasswordHasherPort,
+  CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
+} from '../../outbound';
 import { CredentialsLibPasswordHasherOptions } from './credentials-lib-password-hasher.options';
 
 @Injectable()
 export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPasswordHasherPort {
+  public static readonly provider: ClassProvider<ICredentialsLibPasswordHasherPort> = {
+    provide: CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
+    useClass: CredentialsLibPasswordHasherAdapter,
+  };
+
   private readonly options: CredentialsLibPasswordHasherOptions;
 
   constructor(config: ConfigService) {

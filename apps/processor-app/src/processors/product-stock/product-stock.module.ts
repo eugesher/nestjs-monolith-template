@@ -9,11 +9,6 @@ import {
   ProductStockPostSubtractRepository,
   ProductStockOnHandCoreAdapter,
 } from './infrastructure';
-import {
-  PRODUCT_STOCK_ARCHIVE_PORT,
-  PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
-  PRODUCT_STOCK_ON_HAND_PORT,
-} from './outbound';
 import { ProductStockPostSubtractProcessor } from './presentation/product-stock-post-subtract.processor';
 
 @Module({
@@ -21,12 +16,9 @@ import { ProductStockPostSubtractProcessor } from './presentation/product-stock-
   providers: [
     ProductStockPostSubtractProcessor,
     ProductStockPostSubtractUseCase,
-    {
-      provide: PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
-      useClass: ProductStockPostSubtractRepository,
-    },
-    { provide: PRODUCT_STOCK_ON_HAND_PORT, useClass: ProductStockOnHandCoreAdapter },
-    { provide: PRODUCT_STOCK_ARCHIVE_PORT, useClass: ProductStockArchiveCoreAdapter },
+    ProductStockPostSubtractRepository.provider,
+    ProductStockOnHandCoreAdapter.provider,
+    ProductStockArchiveCoreAdapter.provider,
   ],
 })
 export class ProductStockModule {}

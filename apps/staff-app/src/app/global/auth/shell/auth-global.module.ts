@@ -6,7 +6,6 @@ import { StaffAuthCoreModule } from '@acme-core/modules/staff-auth';
 
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 import { AuthGlobalSubjectCoreAdapter } from '../infrastructure';
-import { AUTH_GLOBAL_SUBJECT_PORT } from '../outbound';
 import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
@@ -16,7 +15,7 @@ import { AuthGlobalFacade } from './auth-global.facade';
   providers: [
     { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },
     AuthGlobalValidateSubjectUseCase,
-    { provide: AUTH_GLOBAL_SUBJECT_PORT, useClass: AuthGlobalSubjectCoreAdapter },
+    AuthGlobalSubjectCoreAdapter.provider,
   ],
 })
 export class AuthGlobalModule {}

@@ -4,7 +4,6 @@ import { HttpExceptionFilter } from '@acme-libs/http';
 
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from './application';
 import { RoleListRepository, RoleUpdatePermissionsRepository } from './infrastructure';
-import { ROLE_LIST_REPOSITORY_PORT, ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT } from './outbound';
 import { RoleController } from './presentation';
 
 @Module({
@@ -13,8 +12,8 @@ import { RoleController } from './presentation';
     HttpExceptionFilter,
     RoleListUseCase,
     RoleUpdatePermissionsUseCase,
-    { provide: ROLE_LIST_REPOSITORY_PORT, useClass: RoleListRepository },
-    { provide: ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT, useClass: RoleUpdatePermissionsRepository },
+    RoleListRepository.provider,
+    RoleUpdatePermissionsRepository.provider,
   ],
 })
 export class RoleModule {}

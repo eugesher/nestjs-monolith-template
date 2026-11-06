@@ -5,7 +5,6 @@ import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
 
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 import { AuthGlobalValidateSubjectRepository } from '../infrastructure';
-import { AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT } from '../outbound';
 import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
@@ -15,10 +14,7 @@ import { AuthGlobalFacade } from './auth-global.facade';
   providers: [
     { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },
     AuthGlobalValidateSubjectUseCase,
-    {
-      provide: AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
-      useClass: AuthGlobalValidateSubjectRepository,
-    },
+    AuthGlobalValidateSubjectRepository.provider,
   ],
 })
 export class AuthGlobalModule {}

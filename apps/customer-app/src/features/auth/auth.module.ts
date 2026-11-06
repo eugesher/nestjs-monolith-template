@@ -12,14 +12,7 @@ import {
   AuthLoginRepository,
   AuthRegisterRepository,
 } from './infrastructure';
-import {
-  AUTH_CREDENTIALS_PORT,
-  AUTH_LEDGER_RECORD_PORT,
-  AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN,
-  AUTH_LOGIN_REPOSITORY_PORT,
-  AUTH_REGISTER_REPOSITORY_PORT,
-} from './outbound';
+import { AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN, AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN } from './outbound';
 import { AuthController } from './presentation';
 
 @Module({
@@ -30,10 +23,10 @@ import { AuthController } from './presentation';
     AuthLoginUseCase,
     AuthRegisterUseCase,
     AuthLedgerService,
-    { provide: AUTH_LOGIN_REPOSITORY_PORT, useClass: AuthLoginRepository },
-    { provide: AUTH_REGISTER_REPOSITORY_PORT, useClass: AuthRegisterRepository },
-    { provide: AUTH_LEDGER_RECORD_PORT, useClass: AuthLedgerQueueAdapter },
-    { provide: AUTH_CREDENTIALS_PORT, useClass: AuthCredentialsLibAdapter },
+    AuthLoginRepository.provider,
+    AuthRegisterRepository.provider,
+    AuthLedgerQueueAdapter.provider,
+    AuthCredentialsLibAdapter.provider,
     ConfigValueProvider.provide({
       provide: AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',

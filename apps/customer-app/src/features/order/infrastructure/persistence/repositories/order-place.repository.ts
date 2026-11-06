@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 
@@ -8,6 +8,7 @@ import {
   IOrderPlaceProductRecord,
   IOrderPlaceRepositoryPort,
   IOrderPlaceOrderProductInsertQuery,
+  ORDER_PLACE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { OrderPersistenceHost } from '../host/order-persistence.host';
 
@@ -16,6 +17,11 @@ export class OrderPlaceRepository
   extends OrderPersistenceHost
   implements IOrderPlaceRepositoryPort
 {
+  public static readonly provider: ClassProvider<IOrderPlaceRepositoryPort> = {
+    provide: ORDER_PLACE_REPOSITORY_PORT,
+    useClass: OrderPlaceRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

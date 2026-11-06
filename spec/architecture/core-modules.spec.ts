@@ -165,7 +165,7 @@ describe('core modules', () => {
     ])('%s MAY take the DI names from @nestjs/common', async (file) => {
       await expect({
         file,
-        code: 'import { DynamicModule, Inject, Injectable, Module } from "@nestjs/common";',
+        code: 'import { ClassProvider, DynamicModule, Inject, Injectable, Module } from "@nestjs/common";',
       }).toPassArchitectureLint();
     });
 

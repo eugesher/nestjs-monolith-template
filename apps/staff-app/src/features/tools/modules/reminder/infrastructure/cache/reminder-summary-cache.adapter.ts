@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
@@ -7,10 +7,16 @@ import {
   IReminderSummaryReadCommand,
   IReminderSummarySnapshotView,
   REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
+  REMINDER_SUMMARY_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class ReminderSummaryCacheAdapter implements IReminderSummaryPort {
+  public static readonly provider: ClassProvider<IReminderSummaryPort> = {
+    provide: REMINDER_SUMMARY_PORT,
+    useClass: ReminderSummaryCacheAdapter,
+  };
+
   constructor(
     @Inject(REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN)
     private readonly ttlMs: number,

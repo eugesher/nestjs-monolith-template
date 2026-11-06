@@ -21,14 +21,8 @@ import {
   OrderProductStockCoreAdapter,
 } from './infrastructure';
 import {
-  ORDER_GET_MANY_REPOSITORY_PORT,
-  ORDER_GET_ONE_REPOSITORY_PORT,
-  ORDER_IDEMPOTENCY_PORT,
-  ORDER_LEDGER_RECORD_PORT,
   ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
-  ORDER_PLACE_REPOSITORY_PORT,
-  ORDER_PRODUCT_STOCK_PORT,
 } from './outbound';
 import { OrderController } from './presentation';
 
@@ -41,12 +35,12 @@ import { OrderController } from './presentation';
     OrderGetManyUseCase,
     OrderGetOneUseCase,
     OrderLedgerService,
-    { provide: ORDER_GET_MANY_REPOSITORY_PORT, useClass: OrderGetManyRepository },
-    { provide: ORDER_GET_ONE_REPOSITORY_PORT, useClass: OrderGetOneRepository },
-    { provide: ORDER_PLACE_REPOSITORY_PORT, useClass: OrderPlaceRepository },
-    { provide: ORDER_PRODUCT_STOCK_PORT, useClass: OrderProductStockCoreAdapter },
-    { provide: ORDER_IDEMPOTENCY_PORT, useClass: OrderIdempotencyCoreAdapter },
-    { provide: ORDER_LEDGER_RECORD_PORT, useClass: OrderLedgerQueueAdapter },
+    OrderGetManyRepository.provider,
+    OrderGetOneRepository.provider,
+    OrderPlaceRepository.provider,
+    OrderProductStockCoreAdapter.provider,
+    OrderIdempotencyCoreAdapter.provider,
+    OrderLedgerQueueAdapter.provider,
     ConfigValueProvider.provide({
       provide: ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',

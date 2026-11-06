@@ -15,9 +15,6 @@ import {
   ProductStockCorePostSubtractQueueAdapter,
 } from '../infrastructure';
 import {
-  PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
-  PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
-  PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../outbound';
@@ -35,18 +32,9 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
     { provide: PRODUCT_STOCK_CORE_PORT, useClass: ProductStockCoreFacade },
     ProductStockCoreLockUseCase,
     ProductStockCoreMoveUseCase,
-    {
-      provide: PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
-      useClass: ProductStockCoreLockRepository,
-    },
-    {
-      provide: PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
-      useClass: ProductStockCoreMoveRepository,
-    },
-    {
-      provide: PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
-      useClass: ProductStockCorePostSubtractQueueAdapter,
-    },
+    ProductStockCoreLockRepository.provider,
+    ProductStockCoreMoveRepository.provider,
+    ProductStockCorePostSubtractQueueAdapter.provider,
     ConfigValueProvider.provide({
       provide: PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
       property: 'REDIS_COMMAND_TIMEOUT_MS',

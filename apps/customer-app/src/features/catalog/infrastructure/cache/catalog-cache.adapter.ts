@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
@@ -7,10 +7,16 @@ import {
   ICatalogCachePort,
   ICatalogCacheProductListReadCommand,
   ICatalogCacheProductListView,
+  CATALOG_CACHE_PORT,
 } from '../../outbound';
 
 @Injectable()
 export class CatalogCacheAdapter implements ICatalogCachePort {
+  public static readonly provider: ClassProvider<ICatalogCachePort> = {
+    provide: CATALOG_CACHE_PORT,
+    useClass: CatalogCacheAdapter,
+  };
+
   constructor(
     @Inject(CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN)
     private readonly ttlMs: number,

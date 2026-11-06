@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
@@ -10,6 +10,7 @@ import {
   ITagCommonReplaceSubjectTagRecord,
   ITagCommonReplaceTagRecord,
   ITagCommonReplaceUnlinkQuery,
+  TAG_COMMON_REPLACE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { TagCommonPersistenceHost } from '../host/tag-common-persistence.host';
 
@@ -18,6 +19,11 @@ export class TagCommonReplaceRepository
   extends TagCommonPersistenceHost
   implements ITagCommonReplaceRepositoryPort
 {
+  public static readonly provider: ClassProvider<ITagCommonReplaceRepositoryPort> = {
+    provide: TAG_COMMON_REPLACE_REPOSITORY_PORT,
+    useClass: TagCommonReplaceRepository,
+  };
+
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,
