@@ -2,9 +2,9 @@ import { DataSource } from 'typeorm';
 
 import { Customer, Order, OrderProduct, Product, ProductStock } from '@acme-core/entities';
 
-import { OrderQueryProductBuilder } from '../order-query-product.builder';
+import { OrderPersistenceProductBuilder } from '../order-persistence-product.builder';
 
-describe('OrderQueryProductBuilder', () => {
+describe('OrderPersistenceProductBuilder', () => {
   let dataSource: DataSource;
 
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe('OrderQueryProductBuilder', () => {
 
   describe('forActive', () => {
     it('selects the ids of the active products among the given ones', () => {
-      const builder = new OrderQueryProductBuilder(
+      const builder = new OrderPersistenceProductBuilder(
         dataSource.getRepository(Product).createQueryBuilder('Product'),
       );
 
@@ -36,7 +36,7 @@ describe('OrderQueryProductBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderQueryProductBuilder(
+      const builder = new OrderPersistenceProductBuilder(
         dataSource.getRepository(Product).createQueryBuilder('Product'),
       );
 

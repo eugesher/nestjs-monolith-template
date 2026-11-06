@@ -1,10 +1,10 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
 
-import { OrderQueryProductBuilder } from '../builders/order-query-product.builder';
-import { OrderQueryBuilder } from '../builders/order-query.builder';
+import { OrderPersistenceProductBuilder } from '../builders/order-persistence-product.builder';
+import { OrderPersistenceBuilder } from '../builders/order-persistence.builder';
 
-export abstract class OrderRepositoryHost {
+export abstract class OrderPersistenceHost {
   protected abstract readonly repositoryHost: IRepositoryHostPort;
 
   protected get orderRepository(): IHostedRepository<Order> {
@@ -19,11 +19,13 @@ export abstract class OrderRepositoryHost {
     return this.repositoryHost.getRepository(Product);
   }
 
-  protected createOrderBuilder(alias = Order.name): OrderQueryBuilder {
-    return new OrderQueryBuilder(this.orderRepository.createQueryBuilder(alias));
+  protected createOrderBuilder(): OrderPersistenceBuilder {
+    return new OrderPersistenceBuilder(this.orderRepository.createQueryBuilder(Order.name));
   }
 
-  protected createProductBuilder(alias = Product.name): OrderQueryProductBuilder {
-    return new OrderQueryProductBuilder(this.productRepository.createQueryBuilder(alias));
+  protected createProductBuilder(): OrderPersistenceProductBuilder {
+    return new OrderPersistenceProductBuilder(
+      this.productRepository.createQueryBuilder(Product.name),
+    );
   }
 }

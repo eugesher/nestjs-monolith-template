@@ -9,10 +9,13 @@ import {
   IOrderPlaceRepositoryPort,
   IOrderPlaceOrderProductInsertQuery,
 } from '../../../outbound';
-import { OrderRepositoryHost } from '../host/order.repository.host';
+import { OrderPersistenceHost } from '../host/order-persistence.host';
 
 @Injectable()
-export class OrderPlaceRepository extends OrderRepositoryHost implements IOrderPlaceRepositoryPort {
+export class OrderPlaceRepository
+  extends OrderPersistenceHost
+  implements IOrderPlaceRepositoryPort
+{
   constructor(
     @Inject(REPOSITORY_HOST_PORT)
     protected readonly repositoryHost: IRepositoryHostPort,

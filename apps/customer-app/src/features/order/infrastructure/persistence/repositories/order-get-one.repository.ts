@@ -8,11 +8,11 @@ import {
   IOrderGetOneRecord,
   IOrderGetOneRepositoryPort,
 } from '../../../outbound';
-import { OrderRepositoryHost } from '../host/order.repository.host';
+import { OrderPersistenceHost } from '../host/order-persistence.host';
 
 @Injectable()
 export class OrderGetOneRepository
-  extends OrderRepositoryHost
+  extends OrderPersistenceHost
   implements IOrderGetOneRepositoryPort
 {
   constructor(

@@ -2,9 +2,9 @@ import { DataSource } from 'typeorm';
 
 import { Customer, Order, OrderProduct, Product, ProductStock } from '@acme-core/entities';
 
-import { OrderQueryBuilder } from '../order-query.builder';
+import { OrderPersistenceBuilder } from '../order-persistence.builder';
 
-describe('OrderQueryBuilder', () => {
+describe('OrderPersistenceBuilder', () => {
   let dataSource: DataSource;
 
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe('OrderQueryBuilder', () => {
 
   describe('forList', () => {
     it('selects the id and creation time of the orders of the customer, newest first, inside the page window', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 
@@ -38,7 +38,7 @@ describe('OrderQueryBuilder', () => {
     });
 
     it('keeps the alias of the wrapped builder', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('o'),
       );
 
@@ -55,7 +55,7 @@ describe('OrderQueryBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 
@@ -67,7 +67,7 @@ describe('OrderQueryBuilder', () => {
 
   describe('forOwned', () => {
     it('selects the order of the customer with its products in insertion order', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 
@@ -88,7 +88,7 @@ describe('OrderQueryBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 
@@ -100,7 +100,7 @@ describe('OrderQueryBuilder', () => {
 
   describe('forPlaced', () => {
     it('selects the order by id with its products in insertion order', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 
@@ -121,7 +121,7 @@ describe('OrderQueryBuilder', () => {
     });
 
     it('returns the same builder for chaining', () => {
-      const builder = new OrderQueryBuilder(
+      const builder = new OrderPersistenceBuilder(
         dataSource.getRepository(Order).createQueryBuilder('Order'),
       );
 

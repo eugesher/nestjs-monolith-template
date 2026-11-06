@@ -7,11 +7,11 @@ import {
   IOrderGetManyRecord,
   IOrderGetManyQuery,
 } from '../../../outbound';
-import { OrderRepositoryHost } from '../host/order.repository.host';
+import { OrderPersistenceHost } from '../host/order-persistence.host';
 
 @Injectable()
 export class OrderGetManyRepository
-  extends OrderRepositoryHost
+  extends OrderPersistenceHost
   implements IOrderGetManyRepositoryPort
 {
   constructor(
