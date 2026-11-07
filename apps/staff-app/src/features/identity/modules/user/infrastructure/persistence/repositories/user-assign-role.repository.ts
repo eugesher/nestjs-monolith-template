@@ -1,8 +1,8 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
   IUserAssignRoleRepositoryPort,

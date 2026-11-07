@@ -1,5 +1,5 @@
-import { ISubjectLedgerQueue } from '../subject-ledger-queue.interface';
 import { SubjectLedgerQueueAdapter } from '../subject-ledger-queue.adapter';
+import { ISubjectLedgerQueue } from '../subject-ledger-queue.interface';
 
 describe('SubjectLedgerQueueAdapter', () => {
   class ItemLedgerQueueAdapter extends SubjectLedgerQueueAdapter {

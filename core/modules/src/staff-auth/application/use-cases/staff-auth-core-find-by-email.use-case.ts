@@ -7,8 +7,8 @@ import {
 } from '@acme-core/contracts/staff-auth';
 
 import {
-  type IStaffAuthCoreFindByEmailRepositoryPort,
   STAFF_AUTH_CORE_FIND_BY_EMAIL_REPOSITORY_PORT,
+  type IStaffAuthCoreFindByEmailRepositoryPort,
 } from '../../outbound';
 
 @Injectable()

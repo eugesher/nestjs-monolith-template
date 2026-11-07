@@ -1,7 +1,7 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
   ITagCommonReplaceFindLinkedQuery,

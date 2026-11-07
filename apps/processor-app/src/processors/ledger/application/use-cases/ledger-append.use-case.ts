@@ -5,7 +5,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { ILedgerAppendEntryDraft, LedgerAppendEntryModel, LedgerAppendHelper } from '../../domain';
-import { type ILedgerAppendRepositoryPort, LEDGER_APPEND_REPOSITORY_PORT } from '../../outbound';
+import { LEDGER_APPEND_REPOSITORY_PORT, type ILedgerAppendRepositoryPort } from '../../outbound';
 import { ILedgerAppendCommand, ILedgerAppendOutcomeView } from '../interfaces';
 
 @Injectable()

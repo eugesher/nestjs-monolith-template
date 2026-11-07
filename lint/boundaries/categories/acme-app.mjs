@@ -59,10 +59,16 @@ export const acmeApp = [
     ['app', 'module'],
   ],
   ['acme-app:common:modules:shell', 'apps/*/src/common/modules/*/shell/**', ['app', 'module']],
-  ['acme-app:common:modules:index', 'apps/*/src/common/modules/*/index.ts', ['app', 'module']],
+  ['acme-app:common:modules:index', 'apps/*/src/common/modules/index.ts', ['app']],
+  [
+    'acme-app:common:modules:module:index',
+    'apps/*/src/common/modules/*/index.ts',
+    ['app', 'module'],
+  ],
   ['acme-app:common:entities', 'apps/*/src/common/entities/**', ['app']],
   ['acme-app:contracts', 'apps/*/src/contracts/*/**', ['app', 'module']],
-  ['acme-app:common:shared:index', 'apps/*/src/common/shared/*/index.ts', ['app']],
+  ['acme-app:common:shared:index', 'apps/*/src/common/shared/index.ts', ['app']],
+  ['acme-app:common:shared:module:index', 'apps/*/src/common/shared/*/index.ts', ['app']],
   ['acme-app:common:shared', 'apps/*/src/common/shared/*/**', ['app', 'module']],
   ['acme-app:test', 'apps/*/test/**', ['app']],
   ...moduleAreas.flatMap((area) => [

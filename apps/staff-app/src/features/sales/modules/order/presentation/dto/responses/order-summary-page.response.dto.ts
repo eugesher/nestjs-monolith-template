@@ -1,6 +1,15 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { OrderSummaryResponseDto } from './order-summary.response.dto';
+class OrderSummaryPageResponseItemDto {
+  @ApiResponseProperty({ example: '600' })
+  public id: string;
+
+  @ApiResponseProperty({ example: '101' })
+  public customerId: string;
+
+  @ApiResponseProperty({ example: '2026-01-01T00:00:00.000Z' })
+  public createdAt: string;
+}
 
 export class OrderSummaryPageResponseDto {
   @ApiResponseProperty({ example: 1 })
@@ -15,6 +24,6 @@ export class OrderSummaryPageResponseDto {
   @ApiResponseProperty({ example: 42 })
   public total: number;
 
-  @ApiResponseProperty({ type: [OrderSummaryResponseDto] })
-  public data: OrderSummaryResponseDto[];
+  @ApiResponseProperty({ type: [OrderSummaryPageResponseItemDto] })
+  public data: OrderSummaryPageResponseItemDto[];
 }

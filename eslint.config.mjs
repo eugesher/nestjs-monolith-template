@@ -4,7 +4,10 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
 import {
   boundaries,
+  classes,
   e2e,
+  exports,
+  imports,
   libsDeepImports,
   plainNode,
   specs,
@@ -29,8 +32,11 @@ export default defineConfig(
   style,
   typescript,
   boundaries,
+  classes,
   specs,
   e2e,
+  exports,
+  imports,
   libsDeepImports,
   plainNode,
 );

@@ -1,17 +1,28 @@
-type HealthLibDependencyStatus = 'ok' | 'error';
+import {
+  HealthDependencyStatusEnum,
+  HealthLivenessStatusEnum,
+  HealthReadinessStatusEnum,
+} from '@acme-libs/kernel';
+import { Nullable } from '@acme-libs/toolkit';
 
 export interface IHealthLibLivenessView {
-  status: 'ok';
+  status: HealthLivenessStatusEnum;
   app: string;
   uptimeSeconds: number;
 }
 
 export interface IHealthLibDependencyView {
-  status: HealthLibDependencyStatus;
-  latencyMs?: number;
+  status: HealthDependencyStatusEnum;
+  latencyMs: Nullable<number>;
+}
+
+export interface IHealthLibDependenciesView {
+  database: IHealthLibDependencyView;
+  cache: IHealthLibDependencyView;
 }
 
 export interface IHealthLibReadinessView {
-  status: 'ready' | 'not-ready';
-  dependencies: Record<string, IHealthLibDependencyView>;
+  status: HealthReadinessStatusEnum;
+  app: string;
+  dependencies: IHealthLibDependenciesView;
 }

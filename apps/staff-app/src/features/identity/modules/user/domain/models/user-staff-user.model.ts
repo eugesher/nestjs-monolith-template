@@ -10,6 +10,10 @@ export class UserStaffUserModel {
   private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   private static readonly MIN_PASSWORD_LENGTH = 12;
 
+  public get roles(): readonly RoleEnum[] {
+    return this.assignedRoles;
+  }
+
   private constructor(
     public readonly id: string,
     private assignedRoles: RoleEnum[],
@@ -43,10 +47,6 @@ export class UserStaffUserModel {
 
   private static normalizeEmail(email: string): string {
     return email.trim().toLowerCase();
-  }
-
-  public get roles(): readonly RoleEnum[] {
-    return this.assignedRoles;
   }
 
   public assignRole(role: RoleEnum): boolean {

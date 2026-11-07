@@ -1,15 +1,36 @@
-import { ApiExtraModels, ApiProperty, ApiResponseProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 
-import { HealthDependencyResponseDto } from './health-dependency.response.dto';
+import { HealthDependencyStatusEnum, HealthReadinessStatusEnum } from '@acme-libs/kernel';
 
-@ApiExtraModels(HealthDependencyResponseDto)
-export class HealthReadinessResponseDto {
-  @ApiResponseProperty({ example: 'ready' })
-  public status: 'ready' | 'not-ready';
-
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: { $ref: getSchemaPath(HealthDependencyResponseDto) },
+class HealthDependenciesResponseDependenciesItemDto {
+  @ApiResponseProperty({
+    enum: HealthDependencyStatusEnum,
+    example: HealthDependencyStatusEnum.OK,
   })
-  public dependencies: Record<string, HealthDependencyResponseDto>;
+  public status: HealthDependencyStatusEnum;
+
+  @ApiProperty({ readOnly: true, nullable: true, example: 3 })
+  public latencyMs: number | null;
+}
+
+class HealthDependenciesResponseDependenciesDto {
+  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesItemDto })
+  public database: HealthDependenciesResponseDependenciesItemDto;
+
+  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesItemDto })
+  public cache: HealthDependenciesResponseDependenciesItemDto;
+}
+
+export class HealthReadinessResponseDto {
+  @ApiResponseProperty({
+    enum: HealthReadinessStatusEnum,
+    example: HealthReadinessStatusEnum.READY,
+  })
+  public status: HealthReadinessStatusEnum;
+
+  @ApiResponseProperty({ example: 'staff-app' })
+  public app: string;
+
+  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesDto })
+  public dependencies: HealthDependenciesResponseDependenciesDto;
 }

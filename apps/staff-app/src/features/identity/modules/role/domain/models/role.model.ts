@@ -6,6 +6,10 @@ import { IRoleSnapshot } from '../interfaces/role-snapshot.interface';
 import { RolePermissionModel } from './role-permission.model';
 
 export class RoleModel {
+  public get permissionCodes(): readonly PermissionCodeEnum[] {
+    return this.codes;
+  }
+
   private constructor(
     public readonly id: string,
     public readonly name: RoleEnum,
@@ -19,10 +23,6 @@ export class RoleModel {
       .sort();
 
     return new RoleModel(id, name as RoleEnum, permissionCodes);
-  }
-
-  public get permissionCodes(): readonly PermissionCodeEnum[] {
-    return this.codes;
   }
 
   public replacePermissions(requested: PermissionCodeEnum[], known: RolePermissionModel[]): void {

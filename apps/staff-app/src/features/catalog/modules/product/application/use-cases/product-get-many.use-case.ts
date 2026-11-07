@@ -4,10 +4,10 @@ import { IPage, Maybe, PaginationHelper } from '@acme-libs/toolkit';
 
 import { ProductModel } from '../../domain';
 import {
-  type IProductGetManyRepositoryPort,
-  type IProductTagPort,
   PRODUCT_GET_MANY_REPOSITORY_PORT,
   PRODUCT_TAG_PORT,
+  type IProductGetManyRepositoryPort,
+  type IProductTagPort,
 } from '../../outbound';
 import { IProductGetManyCommand, IProductView } from '../interfaces';
 

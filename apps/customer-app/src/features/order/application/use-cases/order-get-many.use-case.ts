@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PaginationHelper } from '@acme-libs/toolkit';
 
-import { type IOrderGetManyRepositoryPort, ORDER_GET_MANY_REPOSITORY_PORT } from '../../outbound';
+import { ORDER_GET_MANY_REPOSITORY_PORT, type IOrderGetManyRepositoryPort } from '../../outbound';
 import { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';
 

@@ -1,4 +1,4 @@
-import { INoteGetManyRecord, INoteGetManyListQuery } from '../interfaces';
+import { INoteGetManyListQuery, INoteGetManyRecord } from '../interfaces';
 
 export interface INoteGetManyRepositoryPort {
   list(query: INoteGetManyListQuery): Promise<INoteGetManyRecord>;

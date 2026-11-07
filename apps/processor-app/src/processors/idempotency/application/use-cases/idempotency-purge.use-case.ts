@@ -3,9 +3,9 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { IdempotencyPurgeHelper } from '../../domain';
 import {
-  type IIdempotencyPurgeRepositoryPort,
   IDEMPOTENCY_KEY_TTL_HOURS_TOKEN,
   IDEMPOTENCY_PURGE_REPOSITORY_PORT,
+  type IIdempotencyPurgeRepositoryPort,
 } from '../../outbound';
 
 @Injectable()

@@ -6,12 +6,12 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
 
-import { REPOSITORY_HOST_PORT, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import {
   RepositoryHostAdapter,
   SnakeNamingStrategy,
   TransactionAdapter,
 } from '@acme-libs/database';
+import { REPOSITORY_HOST_PORT, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
 import { entities } from './entities';
 

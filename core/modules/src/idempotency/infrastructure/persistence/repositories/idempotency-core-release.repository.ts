@@ -1,11 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
-  IIdempotencyCoreReleaseRepositoryPort,
   IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT,
+  IIdempotencyCoreReleaseRepositoryPort,
 } from '../../../outbound';
 import { IdempotencyCorePersistenceHost } from '../host/idempotency-core-persistence.host';
 

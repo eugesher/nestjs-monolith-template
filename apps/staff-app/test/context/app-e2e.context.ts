@@ -10,7 +10,7 @@ import { DataSource } from 'typeorm';
 
 import { REDIS_CLIENT_TOKEN } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
-import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
+import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import { AppModule } from '@acme-staff/app/app.module';
 
 interface IAppE2EState {
@@ -26,8 +26,6 @@ interface IAppE2EState {
 }
 
 export class AppE2EContext {
-  private state: Maybe<IAppE2EState>;
-
   public get app(): INestApplication {
     return this.started.app;
   }
@@ -58,6 +56,16 @@ export class AppE2EContext {
 
   public get viewerToken(): string {
     return this.started.viewerToken;
+  }
+
+  private state: Maybe<IAppE2EState>;
+
+  private get started(): IAppE2EState {
+    if (!this.state) {
+      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
+    }
+
+    return this.state;
   }
 
   public async init(): Promise<void> {
@@ -116,13 +124,5 @@ export class AppE2EContext {
     this.started.rootLoggerWarn.mockClear();
 
     return warnings;
-  }
-
-  private get started(): IAppE2EState {
-    if (!this.state) {
-      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
-    }
-
-    return this.state;
   }
 }

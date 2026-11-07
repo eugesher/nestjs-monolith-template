@@ -22,25 +22,28 @@ describe('OrderLedgerService', () => {
   });
 
   describe('recordPlaced', () => {
-    it('enqueues the placed order under the operation key and correlation id of the request', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordPlaced({
-          orderId: '610',
-          customerId: 'customer-1',
-          productIds: ['100', '100'],
-        }),
-      );
+    it(
+      'enqueues the placed order under the operation ' + 'key and correlation id of the request',
+      async () => {
+        await CorrelationContextHelper.run('corr-1', () =>
+          service.recordPlaced({
+            orderId: '610',
+            customerId: 'customer-1',
+            productIds: ['100', '100'],
+          }),
+        );
 
-      expect(enqueue).toHaveBeenCalledTimes(1);
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'order-placed:610',
-        subjectType: 'order',
-        subjectId: '610',
-        action: 'OrderPlaced',
-        payload: { customerId: 'customer-1', productIds: ['100', '100'] },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
-      });
-    });
+        expect(enqueue).toHaveBeenCalledTimes(1);
+        expect(enqueue).toHaveBeenCalledWith({
+          operationKey: 'order-placed:610',
+          subjectType: 'order',
+          subjectId: '610',
+          action: 'OrderPlaced',
+          payload: { customerId: 'customer-1', productIds: ['100', '100'] },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        });
+      },
+    );
   });
 });

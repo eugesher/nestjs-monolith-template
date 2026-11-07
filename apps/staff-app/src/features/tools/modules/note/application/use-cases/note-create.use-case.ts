@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { NoteModel } from '../../domain';
-import { type INoteCreateRepositoryPort, NOTE_CREATE_REPOSITORY_PORT } from '../../outbound';
+import { NOTE_CREATE_REPOSITORY_PORT, type INoteCreateRepositoryPort } from '../../outbound';
 import { INoteCreateCommand, INoteView } from '../interfaces';
 
 @Injectable()

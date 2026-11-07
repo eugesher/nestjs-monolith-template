@@ -4,6 +4,5 @@ export * from './requests/product-create.request.dto';
 export * from './requests/product-tags-replace.request.dto';
 export * from './requests/product-update.request.dto';
 export * from './responses/product-page.response.dto';
-export * from './responses/product-tag.response.dto';
 export * from './responses/product-tags.response.dto';
 export * from './responses/product.response.dto';

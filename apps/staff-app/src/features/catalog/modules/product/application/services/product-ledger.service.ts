@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs/ledger';
+import { CorrelationContextHelper } from '@acme-libs/observability';
 import { DomainEvent, Maybe } from '@acme-libs/toolkit';
 
 import { ProductPublishedEvent } from '../../domain';
 import {
-  type IProductLedgerRecordPort,
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  type IProductLedgerRecordPort,
 } from '../../outbound';
 import { IProductLedgerRecordCommand, IProductLedgerRecordCreatedCommand } from '../interfaces';
 

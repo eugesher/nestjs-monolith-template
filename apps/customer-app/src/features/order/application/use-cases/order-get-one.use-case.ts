@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { OrderModel, OrderNotFoundException } from '../../domain';
-import { type IOrderGetOneRepositoryPort, ORDER_GET_ONE_REPOSITORY_PORT } from '../../outbound';
+import { ORDER_GET_ONE_REPOSITORY_PORT, type IOrderGetOneRepositoryPort } from '../../outbound';
 import { IOrderGetOneCommand, IOrderView } from '../interfaces';
 
 @Injectable()

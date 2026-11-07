@@ -1,9 +1,9 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
-  type IProductCorePort,
   PRODUCT_CORE_PORT,
   ProductCoreArchiveOutcomeEnum,
+  type IProductCorePort,
 } from '@acme-core/contracts/product';
 
 import {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { TagCommonModule } from '@acme-staff/common/modules/tag';
+import { TagCommonModule } from '@acme-staff/common/modules';
 
 import {
   OrderGetManyUseCase,

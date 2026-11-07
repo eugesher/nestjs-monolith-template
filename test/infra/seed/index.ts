@@ -1,8 +1,8 @@
 import { readdirSync, readFileSync } from 'fs';
 import Joi from 'joi';
 import { basename, join } from 'path';
-import type { QueryRunner } from 'typeorm';
 import { DataSource } from 'typeorm';
+import type { QueryRunner } from 'typeorm';
 
 interface ISeedEnv {
   DATABASE_URL: string;

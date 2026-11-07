@@ -1,3 +1,5 @@
+import { Nullable } from '@acme-libs/toolkit';
+
 export interface IQueueListView {
   name: string;
   jobCounts: {
@@ -6,6 +8,6 @@ export interface IQueueListView {
     failed: number;
     delayed: number;
     waiting: number;
-    paused?: number;
+    paused: Nullable<number>;
   };
 }

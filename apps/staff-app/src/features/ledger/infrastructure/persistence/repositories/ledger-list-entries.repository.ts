@@ -1,11 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
   ILedgerListEntriesQuery,
-  ILedgerListEntriesRepositoryPort,
   ILedgerListEntriesRecord,
+  ILedgerListEntriesRepositoryPort,
   LEDGER_LIST_ENTRIES_REPOSITORY_PORT,
 } from '../../../outbound';
 import { LedgerPersistenceHost } from '../host/ledger-persistence.host';

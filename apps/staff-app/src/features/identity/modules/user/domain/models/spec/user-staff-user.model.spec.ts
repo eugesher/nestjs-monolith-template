@@ -5,20 +5,24 @@ import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {
   describe('createDraft', () => {
-    it('drafts an active user with a normalized email, unique roles and no id until it is stored', () => {
-      const draft = UserStaffUserModel.createDraft({
-        email: '  Editor@Example.COM ',
-        passwordHash: 'hash',
-        roles: [RoleEnum.EDITOR, RoleEnum.EDITOR, RoleEnum.VIEWER],
-      });
+    it(
+      'drafts an active user with a normalized email, ' +
+        'unique roles and no id until it is stored',
+      () => {
+        const draft = UserStaffUserModel.createDraft({
+          email: '  Editor@Example.COM ',
+          passwordHash: 'hash',
+          roles: [RoleEnum.EDITOR, RoleEnum.EDITOR, RoleEnum.VIEWER],
+        });
 
-      expect(draft).toEqual({
-        email: 'editor@example.com',
-        passwordHash: 'hash',
-        status: UserStatusEnum.ACTIVE,
-        roles: ['editor', 'viewer'],
-      });
-    });
+        expect(draft).toEqual({
+          email: 'editor@example.com',
+          passwordHash: 'hash',
+          status: UserStatusEnum.ACTIVE,
+          roles: ['editor', 'viewer'],
+        });
+      },
+    );
 
     it.each(['editor', 'editor@', '@example.com', 'editor@example', 'ed itor@example.com'])(
       'rejects the malformed email %s',

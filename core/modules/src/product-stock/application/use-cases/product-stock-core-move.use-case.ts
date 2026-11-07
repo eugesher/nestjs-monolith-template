@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 import {
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,
@@ -11,12 +11,12 @@ import {
 } from '@acme-core/contracts/product-stock';
 
 import {
-  type IProductStockCoreMoveRepositoryPort,
   IProductStockCorePostSubtractEnqueueCommand,
-  type IProductStockCorePostSubtractPort,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
+  type IProductStockCoreMoveRepositoryPort,
+  type IProductStockCorePostSubtractPort,
 } from '../../outbound';
 import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 

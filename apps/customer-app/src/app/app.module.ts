@@ -9,12 +9,10 @@ import {
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
-import { HealthModule, AuthModule, CatalogModule, OrderModule } from '@acme-customer/features';
+import { AuthModule, CatalogModule, HealthModule, OrderModule } from '@acme-customer/features';
 
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule } from './setup/config/config-setup.module';
-import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
-import { QueueSetupModule } from './setup/queue/queue-setup.module';
+import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup';
 
 @Module({
   imports: [

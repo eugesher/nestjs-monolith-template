@@ -14,6 +14,18 @@ export class NoteModel extends AggregateRoot<string> {
   private static readonly SUBJECT_ID_MAX_LENGTH = 64;
   private static readonly BODY_MAX_LENGTH = 4000;
 
+  public get body(): string {
+    return this.currentBody;
+  }
+
+  public get resolved(): boolean {
+    return this.currentResolved;
+  }
+
+  public get version(): number {
+    return this.currentVersion;
+  }
+
   private constructor(
     id: string,
     public readonly subjectType: string,
@@ -103,18 +115,6 @@ export class NoteModel extends AggregateRoot<string> {
     }
 
     return version;
-  }
-
-  public get body(): string {
-    return this.currentBody;
-  }
-
-  public get resolved(): boolean {
-    return this.currentResolved;
-  }
-
-  public get version(): number {
-    return this.currentVersion;
   }
 
   public edit(body: string): void {

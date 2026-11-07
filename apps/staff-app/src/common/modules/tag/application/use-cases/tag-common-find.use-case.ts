@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ITagCommonFindCommand, ITagCommonTagView } from '@acme-staff/contracts/tag';
 
-import { type ITagCommonFindRepositoryPort, TAG_COMMON_FIND_REPOSITORY_PORT } from '../../outbound';
+import { TAG_COMMON_FIND_REPOSITORY_PORT, type ITagCommonFindRepositoryPort } from '../../outbound';
 
 @Injectable()
 export class TagCommonFindUseCase {

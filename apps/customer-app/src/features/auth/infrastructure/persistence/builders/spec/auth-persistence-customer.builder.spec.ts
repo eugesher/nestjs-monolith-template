@@ -31,7 +31,10 @@ describe('AuthPersistenceCustomerBuilder', () => {
       builder.forByEmail('ann@example.com');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Customer`.`id` AS `Customer_id`, `Customer`.`passwordHash` AS `Customer_passwordHash`, `Customer`.`status` AS `Customer_status` ' +
+        'SELECT ' +
+          '`Customer`.`id` AS `Customer_id`, ' +
+          '`Customer`.`passwordHash` AS `Customer_passwordHash`, ' +
+          '`Customer`.`status` AS `Customer_status` ' +
           'FROM `customer` `Customer` ' +
           'WHERE `Customer`.`email` = ?',
         ['ann@example.com'],

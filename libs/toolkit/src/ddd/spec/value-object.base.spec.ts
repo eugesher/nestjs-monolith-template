@@ -58,12 +58,12 @@ describe('ValueObject', () => {
 
   it('freezes its props', () => {
     class MoneyValue extends ValueObject<{ amount: number }> {
-      constructor(amount: number) {
-        super({ amount });
-      }
-
       public get frozen(): boolean {
         return Object.isFrozen(this.props);
+      }
+
+      constructor(amount: number) {
+        super({ amount });
       }
     }
 

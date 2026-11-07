@@ -3,10 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PaginationHelper } from '@acme-libs/toolkit';
 
 import {
-  type ILedgerListEntriesRepositoryPort,
   LEDGER_LIST_ENTRIES_REPOSITORY_PORT,
+  type ILedgerListEntriesRepositoryPort,
 } from '../../outbound';
-import { ILedgerListEntriesView, ILedgerListEntriesCommand } from '../interfaces';
+import { ILedgerListEntriesCommand, ILedgerListEntriesView } from '../interfaces';
 import { LedgerViewMapper } from '../mappers/ledger-view.mapper';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 import {
   ITagCommonReplaceCommand,
   ITagCommonReplaceView,
@@ -10,8 +10,8 @@ import {
 
 import { TagCommonSubjectTagsModel } from '../../domain';
 import {
-  type ITagCommonReplaceRepositoryPort,
   TAG_COMMON_REPLACE_REPOSITORY_PORT,
+  type ITagCommonReplaceRepositoryPort,
 } from '../../outbound';
 
 @Injectable()

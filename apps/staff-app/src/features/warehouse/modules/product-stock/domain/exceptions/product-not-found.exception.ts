@@ -1,5 +1,4 @@
 import { ProductStockExceptionCodeEnum } from '../enums/product-stock-exception-code.enum';
-
 import { ProductStockBaseException } from './base/product-stock-base.exception';
 
 export class ProductNotFoundException extends ProductStockBaseException {

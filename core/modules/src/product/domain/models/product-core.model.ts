@@ -3,6 +3,18 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { IProductCoreRecord } from '../interfaces/product-core-record.interface';
 
 export class ProductCoreModel {
+  public get status(): ProductStatusEnum {
+    return this.currentStatus;
+  }
+
+  public get version(): number {
+    return this.currentVersion;
+  }
+
+  public get isArchived(): boolean {
+    return this.currentStatus === ProductStatusEnum.ARCHIVED;
+  }
+
   private constructor(
     public readonly id: string,
     public readonly sku: string,
@@ -14,18 +26,6 @@ export class ProductCoreModel {
     const { id, sku, status, version } = record;
 
     return new ProductCoreModel(id, sku, status, version);
-  }
-
-  public get status(): ProductStatusEnum {
-    return this.currentStatus;
-  }
-
-  public get version(): number {
-    return this.currentVersion;
-  }
-
-  public get isArchived(): boolean {
-    return this.currentStatus === ProductStatusEnum.ARCHIVED;
   }
 
   public archive(): void {

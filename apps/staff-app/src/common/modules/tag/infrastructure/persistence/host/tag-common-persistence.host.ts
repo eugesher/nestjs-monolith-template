@@ -1,7 +1,8 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { SubjectTag, Tag } from '@acme-staff/common/entities';
-import { TagCommonPersistenceBuilder } from '../builders/tag-common-persistence.builder';
+
 import { TagCommonPersistenceSubjectTagBuilder } from '../builders/tag-common-persistence-subject-tag.builder';
+import { TagCommonPersistenceBuilder } from '../builders/tag-common-persistence.builder';
 
 export abstract class TagCommonPersistenceHost {
   protected abstract readonly repositoryHost: IRepositoryHostPort;

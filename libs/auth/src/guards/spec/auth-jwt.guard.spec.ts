@@ -32,17 +32,20 @@ describe('AuthJwtGuard', () => {
     );
   });
 
-  it('lets a valid token of an active user in and puts the re-derived user on the request', async () => {
-    const allowed = await guard.canActivate(context);
+  it(
+    'lets a valid token of an active user in ' + 'and puts the re-derived user on the request',
+    async () => {
+      const allowed = await guard.canActivate(context);
 
-    expect(allowed).toBe(true);
-    expect(verifyAsync).toHaveBeenCalledWith('token');
-    expect(handleValidate).toHaveBeenCalledWith({ sub: 'user-1' });
-    expect(request.user).toEqual({
-      id: 'user-1',
-      email: 'ann@example.com',
-    });
-  });
+      expect(allowed).toBe(true);
+      expect(verifyAsync).toHaveBeenCalledWith('token');
+      expect(handleValidate).toHaveBeenCalledWith({ sub: 'user-1' });
+      expect(request.user).toEqual({
+        id: 'user-1',
+        email: 'ann@example.com',
+      });
+    },
+  );
 
   it('lets a public route in without looking at the token', async () => {
     getAllAndOverride.mockReturnValue(true);

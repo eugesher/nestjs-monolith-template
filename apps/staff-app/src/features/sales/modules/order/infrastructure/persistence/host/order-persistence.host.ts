@@ -1,5 +1,6 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Order } from '@acme-core/entities';
+
 import { OrderPersistenceBuilder } from '../builders/order-persistence.builder';
 
 export abstract class OrderPersistenceHost {

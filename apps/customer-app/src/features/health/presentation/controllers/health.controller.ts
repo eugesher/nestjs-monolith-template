@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 
 import { Public } from '@acme-libs/auth';
+import { HealthReadinessStatusEnum } from '@acme-libs/kernel';
 
 import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../application';
 import { HealthLivenessResponseDto, HealthReadinessResponseDto } from '../dto';
@@ -35,7 +36,10 @@ export class HealthController {
     @Res({ passthrough: true }) response: { status(code: HttpStatus): unknown },
   ): Promise<HealthReadinessResponseDto> {
     const view = await this.readiness.execute();
-    const status = view.status === 'ready' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
+    const status =
+      view.status === HealthReadinessStatusEnum.READY
+        ? HttpStatus.OK
+        : HttpStatus.SERVICE_UNAVAILABLE;
 
     response.status(status);
 

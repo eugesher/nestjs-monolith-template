@@ -20,9 +20,7 @@ import {
 } from '@acme-staff/features';
 
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule } from './setup/config/config-setup.module';
-import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
-import { QueueSetupModule } from './setup/queue/queue-setup.module';
+import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup';
 
 @Module({
   imports: [

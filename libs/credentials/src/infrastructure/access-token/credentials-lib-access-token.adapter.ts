@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
 
-import { ICredentialsLibAccessTokenPort, CREDENTIALS_LIB_ACCESS_TOKEN_PORT } from '../../outbound';
+import { CREDENTIALS_LIB_ACCESS_TOKEN_PORT, ICredentialsLibAccessTokenPort } from '../../outbound';
 
 @Injectable()
 export class CredentialsLibAccessTokenAdapter implements ICredentialsLibAccessTokenPort {

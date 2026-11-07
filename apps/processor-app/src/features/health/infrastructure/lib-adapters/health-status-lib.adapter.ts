@@ -3,10 +3,10 @@ import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
 import {
-  IHealthStatusLivenessView,
-  IHealthStatusReadinessView,
-  IHealthStatusPort,
   HEALTH_STATUS_PORT,
+  IHealthStatusLivenessView,
+  IHealthStatusPort,
+  IHealthStatusReadinessView,
 } from '../../outbound';
 
 @Injectable()

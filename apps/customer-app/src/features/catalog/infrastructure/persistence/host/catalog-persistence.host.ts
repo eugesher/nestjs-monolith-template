@@ -1,5 +1,6 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Product } from '@acme-core/entities';
+
 import { CatalogPersistenceProductBuilder } from '../builders/catalog-persistence-product.builder';
 
 export abstract class CatalogPersistenceHost {

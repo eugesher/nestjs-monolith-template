@@ -1,6 +1,6 @@
 import {
-  IProductStockCoreMoveInsertRecord,
   IProductStockCoreMoveInsertQuery,
+  IProductStockCoreMoveInsertRecord,
   IProductStockCoreMoveProductRecord,
   IProductStockCoreMoveSumRecord,
 } from '../interfaces';

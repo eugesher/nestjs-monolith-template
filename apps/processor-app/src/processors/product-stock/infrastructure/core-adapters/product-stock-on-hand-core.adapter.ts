@@ -1,8 +1,8 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
-  type IProductStockCorePort,
   PRODUCT_STOCK_CORE_PORT,
+  type IProductStockCorePort,
 } from '@acme-core/contracts/product-stock';
 
 import {

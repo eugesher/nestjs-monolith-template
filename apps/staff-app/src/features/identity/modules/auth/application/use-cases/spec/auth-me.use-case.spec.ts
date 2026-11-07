@@ -20,16 +20,19 @@ describe('AuthMeUseCase', () => {
       expect(findSubject).toHaveBeenCalledWith({ userId: 'user-1' });
     });
 
-    it('refuses with AUTH_USER_NOT_FOUND when identity no longer knows an active user', async () => {
-      findSubject.mockResolvedValue(null);
+    it(
+      'refuses with AUTH_USER_NOT_FOUND when ' + 'identity no longer knows an active user',
+      async () => {
+        findSubject.mockResolvedValue(null);
 
-      const execution = useCase.execute({ userId: 'user-1' });
+        const execution = useCase.execute({ userId: 'user-1' });
 
-      await expect(execution).rejects.toBeInstanceOf(AuthBaseException);
-      await expect(execution).rejects.toMatchObject({
-        code: 'AUTH_USER_NOT_FOUND',
-        message: 'User user-1 was not found',
-      });
-    });
+        await expect(execution).rejects.toBeInstanceOf(AuthBaseException);
+        await expect(execution).rejects.toMatchObject({
+          code: 'AUTH_USER_NOT_FOUND',
+          message: 'User user-1 was not found',
+        });
+      },
+    );
   });
 });

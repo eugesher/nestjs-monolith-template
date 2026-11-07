@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
 import { AuthClaimsLibModule } from '../auth-claims-lib.module';
@@ -80,11 +80,15 @@ describe('AuthClaimsLibModule', () => {
     await app.close();
   });
 
-  it('answers 401 without a token on a gated route, the JWT guard runs before the permissions guard', async () => {
-    const response = await fetch(`${url}/note`);
+  it(
+    'answers 401 without a token on a gated route, ' +
+      'the JWT guard runs before the permissions guard',
+    async () => {
+      const response = await fetch(`${url}/note`);
 
-    expect(response.status).toBe(401);
-  });
+      expect(response.status).toBe(401);
+    },
+  );
 
   it('admits a user holding a required permission', async () => {
     const token = await new JwtService({

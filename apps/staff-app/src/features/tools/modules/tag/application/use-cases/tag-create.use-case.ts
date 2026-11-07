@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { TagModel, TagNameTakenException } from '../../domain';
-import { type ITagCreateRepositoryPort, TAG_CREATE_REPOSITORY_PORT } from '../../outbound';
+import { TAG_CREATE_REPOSITORY_PORT, type ITagCreateRepositoryPort } from '../../outbound';
 import { ITagCreateCommand, ITagView } from '../interfaces';
 
 @Injectable()

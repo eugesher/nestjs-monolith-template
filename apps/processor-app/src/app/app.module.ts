@@ -9,10 +9,12 @@ import { AuthModule, HealthModule, QueueModule } from '@acme-processor/features'
 import { IdempotencyModule, LedgerModule, ProductStockModule } from '@acme-processor/processors';
 
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule } from './setup/config/config-setup.module';
-import { TypeOrmSetupModule } from './setup/orm/type-orm-setup.module';
-import { QueueSetupModule } from './setup/queue/queue-setup.module';
-import { ScheduleSetupModule } from './setup/schedule/schedule-setup.module';
+import {
+  ConfigSetupModule,
+  QueueSetupModule,
+  ScheduleSetupModule,
+  TypeOrmSetupModule,
+} from './setup';
 
 @Module({
   imports: [

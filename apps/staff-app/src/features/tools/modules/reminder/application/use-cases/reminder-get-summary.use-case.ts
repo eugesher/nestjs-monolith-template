@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  type IReminderGetSummaryRepositoryPort,
-  type IReminderSummaryPort,
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
   REMINDER_SUMMARY_PORT,
+  type IReminderGetSummaryRepositoryPort,
+  type IReminderSummaryPort,
 } from '../../outbound';
 import { IReminderGetSummaryCommand, IReminderGetSummaryView } from '../interfaces';
 

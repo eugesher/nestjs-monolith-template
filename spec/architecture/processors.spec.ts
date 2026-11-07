@@ -11,22 +11,28 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/processors/ledger-record/domain/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/outbound/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/application/index.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/application/services/ledger-record.service.ts',
+      'apps/__processors-fixture__/src/processors/ledger-record/application/services/' +
+        'ledger-record.service.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/index.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/presentation/ledger-record.processor.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/presentation/handlers/ledger-record.handler.ts',
+      'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+        'ledger-record.processor.ts',
+      'apps/__processors-fixture__/src/processors/ledger-record/presentation/handlers/' +
+        'ledger-record.handler.ts',
       'apps/__processors-fixture__/src/processors/purge/purge.module.ts',
       'apps/__processors-fixture__/src/processors/purge/application/index.ts',
       'apps/__processors-fixture__/src/processors/digest/digest.module.ts',
       'apps/__processors-fixture__/src/processors/digest/modules/index.ts',
-      'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/digest-daily.module.ts',
-      'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/presentation/index.ts',
+      'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/' +
+        'digest-daily.module.ts',
+      'apps/__processors-fixture__/src/processors/digest/modules/digest-daily/presentation/' +
+        'index.ts',
       'apps/__processors-fixture__/src/features/product/product.module.ts',
       'apps/__processors-fixture__/src/features/product/application/index.ts',
       'apps/__processors-fixture__/src/contracts/ledger-record/index.ts',
       'apps/__processors-fixture__/src/common/shared/ledger-record/index.ts',
       'apps/__processors-fixture__/src/contracts/idempotency/index.ts',
+      'apps/__processors-fixture__/src/common/modules/index.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'core/contracts/src/__ledger-fixture__/index.ts',
@@ -85,7 +91,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
           'import { x } from "./application";\n' +
           'import { y } from "./presentation";\n' +
           'import { z } from "../../../../../core/modules/src/__ledger-fixture__";\n' +
-          'import { w } from "../../common/modules/idempotency";',
+          'import { w } from "../../common/modules";',
       }).toPassArchitectureLint();
     });
 
@@ -135,49 +141,63 @@ describe('processors (processors/<module>) — modules entered by queues and sch
 
     it('application MAY reach its own domain and outbound', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/application/services/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/application/services/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../domain";\nimport { y } from "../../outbound";',
       }).toPassArchitectureLint();
     });
 
     it('application may NOT reach infrastructure', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/application/services/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/application/services/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../infrastructure";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure/core-adapters MAY reach core contracts', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/core-adapters/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+          'core-adapters/__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/contracts/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
     });
 
     it('infrastructure/common-adapters MAY reach app contracts', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/common-adapters/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+          'common-adapters/__fixture__.ts',
         code: 'import { x } from "../../../../contracts/ledger-record";',
       }).toPassArchitectureLint();
     });
 
     it('infrastructure/common-adapters MAY reach the contract of a common module', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/purge/infrastructure/common-adapters/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/purge/infrastructure/common-adapters/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../contracts/idempotency";',
       }).toPassArchitectureLint();
     });
 
     it('infrastructure/common-adapters MAY take the DI names from @nestjs/common', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/common-adapters/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+          'common-adapters/__fixture__.ts',
         code: 'import { Inject, Injectable } from "@nestjs/common";',
       }).toPassArchitectureLint();
     });
 
     it('infrastructure/common-adapters take only the DI names from @nestjs/common', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/common-adapters/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+          'common-adapters/__fixture__.ts',
         code: 'import { Injectable, Controller } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -195,10 +215,13 @@ describe('processors (processors/<module>) — modules entered by queues and sch
 
     it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+          'persistence/__fixture__.ts',
         code:
           'import { Repository } from "typeorm";\n' +
-          'import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
+          'import { type IRepositoryHostPort, ' +
+          'REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
@@ -210,65 +233,97 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
       async (source) => {
         await expect({
-          file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+            'persistence/__fixture__.ts',
           code: `import { x } from "${source}";`,
         }).toBreakRule('boundaries/dependencies');
       },
     );
 
-    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/persistence/__fixture__.ts',
-        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'infrastructure may NOT import @nestjs/typeorm — ' + 'the app setup registers the entities',
+      async () => {
+        await expect({
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/' +
+            'persistence/__fixture__.ts',
+          code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
   });
 
   describe('processors (presentation)', () => {
-    it('a processor MAY reach its application, app contracts and the observability lib', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
-        code:
-          'import { x } from "../application";\n' +
-          'import { y } from "../../../contracts/ledger-record";\n' +
-          'import { z } from "../../../../../../libs/observability/src";',
-      }).toPassArchitectureLint();
-    });
+    it(
+      'a processor MAY reach its application, ' + 'app contracts and the observability lib',
+      async () => {
+        await expect({
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+            '__fixture__.ts',
+          code:
+            'import { x } from "../application";\n' +
+            'import { y } from "../../../contracts/ledger-record";\n' +
+            'import { z } from "../../../../../../libs/observability/src";',
+        }).toPassArchitectureLint();
+      },
+    );
 
-    it('a processor may NOT import crypto — the correlation id comes from the observability lib', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
-        code: 'import { randomUUID } from "crypto";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'a processor may NOT import crypto — ' +
+        'the correlation id comes from the observability lib',
+      async () => {
+        await expect({
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+            '__fixture__.ts',
+          code: 'import { randomUUID } from "crypto";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('a processor may NOT reach the http lib', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../../../libs/http/src";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('a processor MAY take the DI names from @nestjs/common', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+          '__fixture__.ts',
         code: 'import { Injectable } from "@nestjs/common";',
       }).toPassArchitectureLint();
     });
 
     it('a processor may NOT be an HTTP controller', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+          '__fixture__.ts',
         code: 'import { Controller, Post } from "@nestjs/common";',
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a processor MAY process a queue with Processor, Process, OnQueueFailed and the Job type', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
-        code: 'import { OnQueueFailed, Process, Processor } from "@nestjs/bull";\nimport type { Job } from "bull";',
-      }).toPassArchitectureLint();
-    });
+    it(
+      'a processor MAY process a queue with Processor, ' +
+        'Process, OnQueueFailed and the Job type',
+      async () => {
+        await expect({
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+            '__fixture__.ts',
+          code:
+            'import { OnQueueFailed, Process, Processor } from "@nestjs/bull";\n' +
+            'import type { Job } from "bull";',
+        }).toPassArchitectureLint();
+      },
+    );
 
     it.each([
       'import { InjectQueue } from "@nestjs/bull";',
@@ -278,7 +333,9 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'a processor may NOT take the queue itself (%s) — queues are registered in common/shared',
       async (code) => {
         await expect({
-          file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+            '__fixture__.ts',
           code,
         }).toBreakRule('boundaries/dependencies');
       },
@@ -299,7 +356,9 @@ describe('processors (processors/<module>) — modules entered by queues and sch
 
     it('a processor infrastructure/queue MAY inject a Bull queue to manage its jobs', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/' +
+          '__fixture__.ts',
         code: [
           'import { InjectQueue } from "@nestjs/bull";',
           'import { Injectable } from "@nestjs/common";',
@@ -317,7 +376,9 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'a processor infrastructure/queue may NOT take more than InjectQueue and the Queue type (%s)',
       async (code) => {
         await expect({
-          file: 'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/__fixture__.ts',
+          file:
+            'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/' +
+            '__fixture__.ts',
           code,
         }).toBreakRule('boundaries/dependencies');
       },
@@ -326,16 +387,21 @@ describe('processors (processors/<module>) — modules entered by queues and sch
     it('common/shared MAY register a queue with BullModule', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
-        code: 'import { BullModule } from "@nestjs/bull";\nimport { x } from "../../../../contracts/ledger-record";',
+        code:
+          'import { BullModule } from "@nestjs/bull";\n' +
+          'import { x } from "../../../../contracts/ledger-record";',
       }).toPassArchitectureLint();
     });
 
-    it('common/shared may NOT inject a queue — producers inject it in infrastructure/queue', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
-        code: 'import { InjectQueue } from "@nestjs/bull";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'common/shared may NOT inject a queue — ' + 'producers inject it in infrastructure/queue',
+      async () => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
+          code: 'import { InjectQueue } from "@nestjs/bull";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('the app MAY connect Bull to Redis', async () => {
       await expect({
@@ -344,12 +410,15 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toPassArchitectureLint();
     });
 
-    it('the app may NOT register a queue of its own — queues are registered in common/shared', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/app/setup/queue/__fixture__.ts',
-        code: 'import { BullModule, InjectQueue } from "@nestjs/bull";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'the app may NOT register a queue of its own — ' + 'queues are registered in common/shared',
+      async () => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/app/setup/queue/__fixture__.ts',
+          code: 'import { BullModule, InjectQueue } from "@nestjs/bull";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('a processor MAY schedule with Cron and CronExpression', async () => {
       await expect({
@@ -417,7 +486,9 @@ describe('processors (processors/<module>) — modules entered by queues and sch
 
     it('a processor may NOT import the HTTP platform', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/presentation/__fixture__.ts',
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+          '__fixture__.ts',
         code: 'import { x } from "@nestjs/platform-express";',
       }).toBreakRule('boundaries/dependencies');
     });

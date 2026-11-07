@@ -1,6 +1,6 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
-import type { Queue } from 'bull';
+import { ClassProvider, Injectable } from '@nestjs/common';
+import { type Queue } from 'bull';
 
 import { Nullable } from '@acme-libs/toolkit';
 import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
@@ -46,7 +46,7 @@ export class QueueRegistryQueueAdapter implements IQueueRegistryPort {
       queues.map(async (queue) => {
         const jobCounts = await queue.getJobCounts();
 
-        return { name: queue.name, jobCounts };
+        return { name: queue.name, jobCounts: { paused: null, ...jobCounts } };
       }),
     );
   }
@@ -61,7 +61,7 @@ export class QueueRegistryQueueAdapter implements IQueueRegistryPort {
       queue.getFailed(offset, offset + limit - 1),
       queue.getFailedCount(),
     ]);
-    const data = jobs.map((job) => job.toJSON());
+    const data = jobs.map((job) => ({ debounceId: null, ...job.toJSON() }));
 
     return [data, total];
   }

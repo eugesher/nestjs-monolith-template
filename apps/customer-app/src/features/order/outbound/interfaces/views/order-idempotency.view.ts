@@ -1,8 +1,10 @@
+import { OrderIdempotencyOutcomeEnum } from '../../enums/order-idempotency-outcome.enum';
+
 export interface IOrderIdempotencyOutcomeView {
-  outcome: 'claimed' | 'in-flight' | 'mismatch';
+  outcome: Exclude<OrderIdempotencyOutcomeEnum, OrderIdempotencyOutcomeEnum.REPLAY>;
 }
 
 export interface IOrderIdempotencyReplayView<T> {
-  outcome: 'replay';
+  outcome: OrderIdempotencyOutcomeEnum.REPLAY;
   storedResponse: T;
 }

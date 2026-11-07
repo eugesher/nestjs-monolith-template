@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
 import { AppE2EContext } from '../context/app-e2e.context';
-import { HealthE2E, AuthE2E, CatalogE2E, OrderE2E } from '../features';
+import { AuthE2E, CatalogE2E, HealthE2E, OrderE2E } from '../features';
 
 describe('App', () => {
   jest.setTimeout(90000);

@@ -15,7 +15,8 @@ describe('LedgerAppendHelper', () => {
 
     it('rejects a local time without a zone, which would be read in the server zone', () => {
       expect(() => LedgerAppendHelper.parseInstant('2026-01-01T00:00:00', 'occurredAt')).toThrow(
-        'occurredAt must be an ISO-8601 instant with an explicit timezone offset, got 2026-01-01T00:00:00',
+        'occurredAt must be an ISO-8601 instant with an ' +
+          'explicit timezone offset, got 2026-01-01T00:00:00',
       );
     });
 

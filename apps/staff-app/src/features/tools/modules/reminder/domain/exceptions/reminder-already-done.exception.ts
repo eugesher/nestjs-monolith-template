@@ -1,5 +1,4 @@
 import { ReminderExceptionCodeEnum } from '../enums/reminder-exception-code.enum';
-
 import { ReminderBaseException } from './base/reminder-base.exception';
 
 export class ReminderAlreadyDoneException extends ReminderBaseException {

@@ -3,9 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
+import { AppNameEnum } from '@acme-libs/kernel';
 import { CACHE_PORT } from '@acme-libs/contracts/cache';
 import { HEALTH_LIB_PORT, IHealthLibPort } from '@acme-libs/contracts/health';
-import { AppNameEnum } from '@acme-libs/kernel';
 
 import { HealthLibModule } from '../health-lib.module';
 
@@ -57,9 +57,10 @@ describe('HealthLibModule', () => {
 
     expect(view).toEqual({
       status: 'not-ready',
+      app: 'staff-app',
       dependencies: {
         database: { status: 'ok', latencyMs: expect.any(Number) as number },
-        cache: { status: 'error' },
+        cache: { status: 'error', latencyMs: null },
       },
     });
   });

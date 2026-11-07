@@ -6,7 +6,7 @@ import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,
   type IAuthGlobalValidateSubjectRepositoryPort,
 } from '../../outbound';
-import { IAuthGlobalValidateSubjectView, IAuthGlobalValidateSubjectCommand } from '../interfaces';
+import { IAuthGlobalValidateSubjectCommand, IAuthGlobalValidateSubjectView } from '../interfaces';
 
 @Injectable()
 export class AuthGlobalValidateSubjectUseCase {

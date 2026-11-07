@@ -43,7 +43,9 @@ describe('libs', () => {
   it('a lib may NOT reach apps', async () => {
     await expect({
       file: 'libs/observability/src/__fixture__.ts',
-      code: 'import { x } from "../../../apps/__libs-fixture__/src/features/product/product.module";',
+      code:
+        'import { x } from ' +
+        '"../../../apps/__libs-fixture__/src/features/product/product.module";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -129,12 +131,16 @@ describe('libs', () => {
     }
   });
 
-  it('the contracts of database MAY import typeorm — the repository host port returns its Repository', async () => {
-    await expect({
-      file: 'libs/contracts/src/database/__fixture__.ts',
-      code: 'import type { Repository } from "typeorm";',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'the contracts of database MAY import typeorm — ' +
+      'the repository host port returns its Repository',
+    async () => {
+      await expect({
+        file: 'libs/contracts/src/database/__fixture__.ts',
+        code: 'import type { Repository } from "typeorm";',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it.each(['auth', 'cache', 'credentials', 'health'])(
     'the contracts of %s may NOT import typeorm',
@@ -213,7 +219,9 @@ describe('libs', () => {
   it('the config lib MAY import the Nest config packages it wraps', async () => {
     await expect({
       file: 'libs/config/src/provider/__fixture__.ts',
-      code: 'import { Provider } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";',
+      code:
+        'import { Provider } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";',
     }).toPassArchitectureLint();
   });
 
@@ -238,16 +246,19 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('the observability lib MAY import the logging, tracing and async context packages', async () => {
-    await expect({
-      file: 'libs/observability/src/correlation/__fixture__.ts',
-      code:
-        'import { trace } from "@opentelemetry/api";\n' +
-        'import { NodeSDK } from "@opentelemetry/sdk-node";\n' +
-        'import { ClsServiceManager } from "nestjs-cls";\n' +
-        'import { PinoLogger } from "nestjs-pino";',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'the observability lib MAY import the logging, ' + 'tracing and async context packages',
+    async () => {
+      await expect({
+        file: 'libs/observability/src/correlation/__fixture__.ts',
+        code:
+          'import { trace } from "@opentelemetry/api";\n' +
+          'import { NodeSDK } from "@opentelemetry/sdk-node";\n' +
+          'import { ClsServiceManager } from "nestjs-cls";\n' +
+          'import { PinoLogger } from "nestjs-pino";',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
     'the observability lib may NOT import %s — the database lib owns transactions',
@@ -259,15 +270,18 @@ describe('libs', () => {
     },
   );
 
-  it('the database lib MAY import the transaction, async context and logging packages', async () => {
-    await expect({
-      file: 'libs/database/src/__fixture__.ts',
-      code:
-        'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
-        'import { ClsService } from "nestjs-cls";\n' +
-        'import { PinoLogger } from "nestjs-pino";',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'the database lib MAY import the transaction, ' + 'async context and logging packages',
+    async () => {
+      await expect({
+        file: 'libs/database/src/__fixture__.ts',
+        code:
+          'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
+          'import { ClsService } from "nestjs-cls";\n' +
+          'import { PinoLogger } from "nestjs-pino";',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it('the health lib MAY import the packages its probes and use cases need', async () => {
     await expect({

@@ -32,10 +32,16 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       builder.forList();
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, `StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, `StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, `StaffPermission`.`id` AS `StaffPermission_id`, `StaffPermission`.`code` AS `StaffPermission_code` ' +
+        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
+          '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
+          '`StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, ' +
+          '`StaffPermission`.`id` AS `StaffPermission_id`, ' +
+          '`StaffPermission`.`code` AS `StaffPermission_code` ' +
           'FROM `staff_role` `StaffRole` ' +
-          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON `StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'LEFT JOIN `staff_permission` `StaffPermission` ON `StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
+          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
+          '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
+          'LEFT JOIN `staff_permission` `StaffPermission` ON ' +
+          '`StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
           'ORDER BY `StaffRole_id` ASC',
         [],
       ]);
@@ -56,10 +62,16 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       builder.forRole(RoleEnum.EDITOR);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, `StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, `StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, `StaffPermission`.`id` AS `StaffPermission_id`, `StaffPermission`.`code` AS `StaffPermission_code` ' +
+        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
+          '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
+          '`StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, ' +
+          '`StaffPermission`.`id` AS `StaffPermission_id`, ' +
+          '`StaffPermission`.`code` AS `StaffPermission_code` ' +
           'FROM `staff_role` `StaffRole` ' +
-          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON `StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'LEFT JOIN `staff_permission` `StaffPermission` ON `StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
+          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
+          '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
+          'LEFT JOIN `staff_permission` `StaffPermission` ON ' +
+          '`StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
           'WHERE `StaffRole`.`name` = ?',
         ['editor'],
       ]);

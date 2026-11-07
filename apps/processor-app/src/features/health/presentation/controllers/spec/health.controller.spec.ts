@@ -28,14 +28,22 @@ describe('HealthController', () => {
   it('answers 200 with the dependencies when ready', async () => {
     readiness.mockResolvedValue({
       status: 'ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 } },
+      app: 'processor-app',
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'ok', latencyMs: 1 },
+      },
     });
 
     const body = await controller.ready(response);
 
     expect(body).toEqual({
       status: 'ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 } },
+      app: 'processor-app',
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'ok', latencyMs: 1 },
+      },
     });
     expect(response.status).toHaveBeenCalledWith(200);
   });
@@ -43,14 +51,22 @@ describe('HealthController', () => {
   it('answers 503 with the dependencies when not ready', async () => {
     readiness.mockResolvedValue({
       status: 'not-ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 }, cache: { status: 'error' } },
+      app: 'processor-app',
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'error', latencyMs: null },
+      },
     });
 
     const body = await controller.ready(response);
 
     expect(body).toEqual({
       status: 'not-ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 }, cache: { status: 'error' } },
+      app: 'processor-app',
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'error', latencyMs: null },
+      },
     });
     expect(response.status).toHaveBeenCalledWith(503);
   });

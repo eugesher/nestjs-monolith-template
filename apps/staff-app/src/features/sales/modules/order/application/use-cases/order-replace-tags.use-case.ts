@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import { OrderNotFoundException, OrderTagNotFoundException } from '../../domain';
 import {
-  type IOrderReplaceTagsRepositoryPort,
-  type IOrderTagPort,
   ORDER_REPLACE_TAGS_REPOSITORY_PORT,
   ORDER_TAG_PORT,
+  OrderTagReplaceOutcomeEnum,
+  type IOrderReplaceTagsRepositoryPort,
+  type IOrderTagPort,
 } from '../../outbound';
 import { IOrderReplaceTagsCommand, IOrderTagsView } from '../interfaces';
 
@@ -34,7 +35,7 @@ export class OrderReplaceTagsUseCase {
       const replaced = await this.tag.replace({ orderId, tagIds });
       const { outcome, tags, missingTagIds } = replaced;
 
-      if (outcome === 'tag-not-found') {
+      if (outcome === OrderTagReplaceOutcomeEnum.TAG_NOT_FOUND) {
         throw new OrderTagNotFoundException(missingTagIds);
       }
 

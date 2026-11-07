@@ -57,16 +57,20 @@ describe('ProductReplaceTagsUseCase', () => {
       expect(replace).not.toHaveBeenCalled();
     });
 
-    it('throws ProductTagNotFoundException with the missing tags, so the transaction rolls back', async () => {
-      replace.mockResolvedValue({ outcome: 'tag-not-found', tags: [], missingTagIds: ['999'] });
+    it(
+      'throws ProductTagNotFoundException with the missing tags, ' +
+        'so the transaction rolls back',
+      async () => {
+        replace.mockResolvedValue({ outcome: 'tag-not-found', tags: [], missingTagIds: ['999'] });
 
-      const error: unknown = await useCase
-        .execute({ productId: '100', tagIds: ['300', '999'] })
-        .catch((caught: unknown) => caught);
+        const error: unknown = await useCase
+          .execute({ productId: '100', tagIds: ['300', '999'] })
+          .catch((caught: unknown) => caught);
 
-      expect(error).toBeInstanceOf(ProductTagNotFoundException);
-      expect(error).toMatchObject({ details: { missingTagIds: ['999'] } });
-      expect(outcomes).not.toContain('commit');
-    });
+        expect(error).toBeInstanceOf(ProductTagNotFoundException);
+        expect(error).toMatchObject({ details: { missingTagIds: ['999'] } });
+        expect(outcomes).not.toContain('commit');
+      },
+    );
   });
 });

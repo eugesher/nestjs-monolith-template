@@ -1,4 +1,4 @@
-import { IProductCreateRecord, IProductCreateInsertQuery } from '../interfaces';
+import { IProductCreateInsertQuery, IProductCreateRecord } from '../interfaces';
 
 export interface IProductCreateRepositoryPort {
   existsBySku(sku: string): Promise<boolean>;

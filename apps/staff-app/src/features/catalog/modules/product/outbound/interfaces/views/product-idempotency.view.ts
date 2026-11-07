@@ -1,8 +1,10 @@
+import { ProductIdempotencyOutcomeEnum } from '../../enums/product-idempotency-outcome.enum';
+
 export interface IProductIdempotencyOutcomeView {
-  outcome: 'claimed' | 'in-flight' | 'mismatch';
+  outcome: Exclude<ProductIdempotencyOutcomeEnum, ProductIdempotencyOutcomeEnum.REPLAY>;
 }
 
 export interface IProductIdempotencyReplayView<T> {
-  outcome: 'replay';
+  outcome: ProductIdempotencyOutcomeEnum.REPLAY;
   storedResponse: T;
 }

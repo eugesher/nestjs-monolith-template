@@ -1,12 +1,12 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
-  ICatalogProductListRepositoryPort,
+  CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
   ICatalogProductListQuery,
   ICatalogProductListRecord,
-  CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
+  ICatalogProductListRepositoryPort,
 } from '../../../outbound';
 import { CatalogPersistenceHost } from '../host/catalog-persistence.host';
 

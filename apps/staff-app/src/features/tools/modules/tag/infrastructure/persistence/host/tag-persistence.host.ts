@@ -1,5 +1,6 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Tag } from '@acme-staff/common/entities';
+
 import { TagPersistenceBuilder } from '../builders/tag-persistence.builder';
 
 export abstract class TagPersistenceHost {

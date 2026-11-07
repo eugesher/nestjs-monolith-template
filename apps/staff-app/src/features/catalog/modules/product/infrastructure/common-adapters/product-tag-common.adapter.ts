@@ -1,10 +1,10 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
-  type ITagCommonPort,
   TAG_COMMON_PORT,
   TagCommonReplaceOutcomeEnum,
   TagCommonSubjectTypeEnum,
+  type ITagCommonPort,
 } from '@acme-staff/contracts/tag';
 
 import {
@@ -15,6 +15,7 @@ import {
   IProductTagReplaceCommand,
   IProductTagReplaceView,
   PRODUCT_TAG_PORT,
+  ProductTagReplaceOutcomeEnum,
 } from '../../outbound';
 
 @Injectable()
@@ -28,8 +29,8 @@ export class ProductTagCommonAdapter implements IProductTagPort {
     TagCommonReplaceOutcomeEnum,
     IProductTagReplaceView['outcome']
   > = {
-    [TagCommonReplaceOutcomeEnum.REPLACED]: 'replaced',
-    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: 'tag-not-found',
+    [TagCommonReplaceOutcomeEnum.REPLACED]: ProductTagReplaceOutcomeEnum.REPLACED,
+    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: ProductTagReplaceOutcomeEnum.TAG_NOT_FOUND,
   };
 
   constructor(

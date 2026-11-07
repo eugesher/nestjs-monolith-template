@@ -1,12 +1,12 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
+  AUTH_LOGIN_REPOSITORY_PORT,
   IAuthLoginCustomerRecord,
   IAuthLoginRepositoryPort,
-  AUTH_LOGIN_REPOSITORY_PORT,
 } from '../../../outbound';
 import { AuthPersistenceHost } from '../host/auth-persistence.host';
 

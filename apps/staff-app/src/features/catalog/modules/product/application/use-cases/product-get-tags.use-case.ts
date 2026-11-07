@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type IProductTagPort, PRODUCT_TAG_PORT } from '../../outbound';
+import { PRODUCT_TAG_PORT, type IProductTagPort } from '../../outbound';
 import { IProductGetTagsCommand, IProductTagsView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';
 

@@ -1,4 +1,4 @@
-import { IReminderGetManyRecord, IReminderGetManyListQuery } from '../interfaces';
+import { IReminderGetManyListQuery, IReminderGetManyRecord } from '../interfaces';
 
 export interface IReminderGetManyRepositoryPort {
   list(query: IReminderGetManyListQuery): Promise<IReminderGetManyRecord>;

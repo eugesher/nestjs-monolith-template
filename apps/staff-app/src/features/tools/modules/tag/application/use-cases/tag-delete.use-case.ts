@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITagDeleteRepositoryPort, TAG_DELETE_REPOSITORY_PORT } from '../../outbound';
+import { TAG_DELETE_REPOSITORY_PORT, type ITagDeleteRepositoryPort } from '../../outbound';
 import { ITagDeleteCommand } from '../interfaces';
 import { TagAccessService } from '../services/tag-access.service';
 

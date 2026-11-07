@@ -10,9 +10,9 @@ import {
   ProductVersionMismatchException,
 } from '../../domain';
 import {
-  type IProductWriteRepositoryPort,
   PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_WRITE_REPOSITORY_PORT,
+  type IProductWriteRepositoryPort,
 } from '../../outbound';
 import { ProductWriteConflictError } from '../errors/product-write-conflict.error';
 import { IProductWriteCommand, IProductWriteView } from '../interfaces';

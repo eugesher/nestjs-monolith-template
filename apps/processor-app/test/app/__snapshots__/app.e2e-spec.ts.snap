@@ -84,6 +84,7 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 {
   "response": {
     "body": {
+      "app": "processor-app",
       "dependencies": {
         "cache": {
           "latencyMs": Any<Number>,

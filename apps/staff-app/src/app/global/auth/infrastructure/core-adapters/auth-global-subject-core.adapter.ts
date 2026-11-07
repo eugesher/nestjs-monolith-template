@@ -1,13 +1,13 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { type IStaffAuthCorePort, STAFF_AUTH_CORE_PORT } from '@acme-core/contracts/staff-auth';
+import { STAFF_AUTH_CORE_PORT, type IStaffAuthCorePort } from '@acme-core/contracts/staff-auth';
 
 import {
+  AUTH_GLOBAL_SUBJECT_PORT,
   IAuthGlobalSubjectFindSubjectCommand,
   IAuthGlobalSubjectPort,
   IAuthGlobalSubjectView,
-  AUTH_GLOBAL_SUBJECT_PORT,
 } from '../../outbound';
 
 @Injectable()

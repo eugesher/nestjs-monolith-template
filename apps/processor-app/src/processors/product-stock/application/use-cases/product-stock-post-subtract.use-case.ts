@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import {
-  type IProductStockArchivePort,
-  type IProductStockPostSubtractRepositoryPort,
-  type IProductStockOnHandPort,
   PRODUCT_STOCK_ARCHIVE_PORT,
-  PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
   PRODUCT_STOCK_ON_HAND_PORT,
+  PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
+  type IProductStockArchivePort,
+  type IProductStockOnHandPort,
+  type IProductStockPostSubtractRepositoryPort,
 } from '../../outbound';
 import { IProductStockPostSubtractCommand } from '../interfaces';
 

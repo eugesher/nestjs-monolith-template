@@ -31,7 +31,8 @@ describe('CatalogPersistenceProductBuilder', () => {
       builder.forList({ page: 3, limit: 20, offset: 40 });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`status` = ? ) AND ( `Product`.`deletedAt` IS NULL ) ' +
           'ORDER BY `Product_id` ASC ' +

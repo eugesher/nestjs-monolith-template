@@ -65,5 +65,6 @@ export const commonModules = [
     to('acme-core:modules:index'),
     baseLibs(),
   ]),
-  from('acme-app:common:modules:index', [layer('shell')]),
+  from('acme-app:common:modules:index', [to('acme-app:common:modules:module:index', own('app'))]),
+  from('acme-app:common:modules:module:index', [layer('shell')]),
 ];

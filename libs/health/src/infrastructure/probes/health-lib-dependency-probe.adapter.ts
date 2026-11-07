@@ -1,10 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
+import { HealthDependencyStatusEnum } from '@acme-libs/kernel';
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
-import { IHealthLibDependencyView } from '@acme-libs/contracts/health';
+import { IHealthLibDependenciesView, IHealthLibDependencyView } from '@acme-libs/contracts/health';
 
-import { IHealthLibDependencyProbePort, HEALTH_LIB_DEPENDENCY_PROBE_PORT } from '../../outbound';
+import { HEALTH_LIB_DEPENDENCY_PROBE_PORT, IHealthLibDependencyProbePort } from '../../outbound';
 
 @Injectable()
 export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProbePort {
@@ -21,7 +22,7 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
     private readonly dataSource: DataSource,
   ) {}
 
-  public async probeAll(): Promise<Record<string, IHealthLibDependencyView>> {
+  public async probeAll(): Promise<IHealthLibDependenciesView> {
     const [database, cache] = await Promise.all([
       this.timed(() => this.dataSource.query('SELECT 1')),
       this.timed(() => this.cache.get(CACHE_KEYS.healthProbe())),
@@ -44,9 +45,9 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
     try {
       await Promise.race([probe(), timeout]);
 
-      return { status: 'ok', latencyMs: Date.now() - startedAt };
+      return { status: HealthDependencyStatusEnum.OK, latencyMs: Date.now() - startedAt };
     } catch {
-      return { status: 'error' };
+      return { status: HealthDependencyStatusEnum.ERROR, latencyMs: null };
     } finally {
       clearTimeout(timer);
     }

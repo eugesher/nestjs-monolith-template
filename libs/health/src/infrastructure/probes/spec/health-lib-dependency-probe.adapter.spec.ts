@@ -65,7 +65,7 @@ describe('HealthLibDependencyProbeAdapter', () => {
 
     expect(dependencies).toEqual({
       database: { status: 'ok', latencyMs: expect.any(Number) as number },
-      cache: { status: 'error' },
+      cache: { status: 'error', latencyMs: null },
     });
   });
 
@@ -96,7 +96,7 @@ describe('HealthLibDependencyProbeAdapter', () => {
 
     expect(dependencies).toEqual({
       database: { status: 'ok', latencyMs: expect.any(Number) as number },
-      cache: { status: 'error' },
+      cache: { status: 'error', latencyMs: null },
     });
   });
 
@@ -114,7 +114,10 @@ describe('HealthLibDependencyProbeAdapter', () => {
 
     const dependencies = await result;
 
-    expect(dependencies).toEqual({ database: { status: 'error' }, cache: { status: 'error' } });
+    expect(dependencies).toEqual({
+      database: { status: 'error', latencyMs: null },
+      cache: { status: 'error', latencyMs: null },
+    });
   });
 
   it('leaves no timer behind once the probes answer', async () => {

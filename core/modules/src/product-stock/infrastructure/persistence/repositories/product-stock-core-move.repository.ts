@@ -1,11 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
-  IProductStockCoreMoveRepositoryPort,
-  IProductStockCoreMoveInsertRecord,
   IProductStockCoreMoveInsertQuery,
+  IProductStockCoreMoveInsertRecord,
+  IProductStockCoreMoveRepositoryPort,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
 } from '../../../outbound';
 import { ProductStockCoreBaseRepository } from './base/product-stock-core-base.repository';

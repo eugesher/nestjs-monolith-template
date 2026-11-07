@@ -5,7 +5,7 @@ import {
   QueueJobNotFoundException,
   QueueNotFoundException,
 } from '../../domain';
-import { type IQueueRegistryPort, QUEUE_REGISTRY_PORT } from '../../outbound';
+import { QUEUE_REGISTRY_PORT, type IQueueRegistryPort } from '../../outbound';
 import { IQueueFailedJobEnsureCommand } from '../interfaces';
 
 @Injectable()

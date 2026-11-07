@@ -1,6 +1,6 @@
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreClaimRecord, IIdempotencyCoreClaimInsertQuery } from '../interfaces';
+import { IIdempotencyCoreClaimInsertQuery, IIdempotencyCoreClaimRecord } from '../interfaces';
 
 export interface IIdempotencyCoreClaimRepositoryPort {
   insert(query: IIdempotencyCoreClaimInsertQuery): Promise<void>;

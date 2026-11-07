@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { AppNameEnum, HealthLivenessStatusEnum } from '@acme-libs/kernel';
 import { IHealthLibLivenessView } from '@acme-libs/contracts/health';
-import { AppNameEnum } from '@acme-libs/kernel';
 
 import {
   HEALTH_LIB_APP_NAME_TOKEN,
@@ -21,6 +21,10 @@ export class HealthLibCheckLivenessUseCase {
   public execute(): IHealthLibLivenessView {
     const seconds = this.uptime.seconds();
 
-    return { status: 'ok', app: this.appName, uptimeSeconds: Math.floor(seconds) };
+    return {
+      status: HealthLivenessStatusEnum.OK,
+      app: this.appName,
+      uptimeSeconds: Math.floor(seconds),
+    };
   }
 }

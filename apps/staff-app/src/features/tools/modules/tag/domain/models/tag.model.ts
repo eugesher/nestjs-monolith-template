@@ -9,6 +9,10 @@ import { ITagSnapshot } from '../interfaces/tag-snapshot.interface';
 export class TagModel extends AggregateRoot<string> {
   private static readonly NAME_MAX_LENGTH = 64;
 
+  public get name(): string {
+    return this.currentName;
+  }
+
   private constructor(
     id: string,
     private currentName: string,
@@ -40,10 +44,6 @@ export class TagModel extends AggregateRoot<string> {
     }
 
     return trimmed;
-  }
-
-  public get name(): string {
-    return this.currentName;
   }
 
   public rename(name: string): void {

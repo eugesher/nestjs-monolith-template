@@ -5,7 +5,11 @@ import {
   ProductNotFoundException,
   ProductVersionMismatchException,
 } from '../../domain';
-import { type IProductStatusPort, PRODUCT_STATUS_PORT } from '../../outbound';
+import {
+  PRODUCT_STATUS_PORT,
+  ProductStatusArchiveOutcomeEnum,
+  type IProductStatusPort,
+} from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';
 
@@ -22,11 +26,11 @@ export class ProductArchiveUseCase {
     const archived = await this.status.archive({ productId, expectedVersion });
     const { outcome, currentVersion } = archived;
 
-    if (outcome === 'not-found') {
+    if (outcome === ProductStatusArchiveOutcomeEnum.NOT_FOUND) {
       throw new ProductNotFoundException(productId);
     }
 
-    if (outcome === 'version-mismatch') {
+    if (outcome === ProductStatusArchiveOutcomeEnum.VERSION_MISMATCH) {
       throw new ProductVersionMismatchException(
         productId,
         currentVersion,
@@ -34,7 +38,7 @@ export class ProductArchiveUseCase {
       );
     }
 
-    if (outcome === 'already-archived') {
+    if (outcome === ProductStatusArchiveOutcomeEnum.ALREADY_ARCHIVED) {
       throw new ProductAlreadyArchivedException(productId);
     }
 

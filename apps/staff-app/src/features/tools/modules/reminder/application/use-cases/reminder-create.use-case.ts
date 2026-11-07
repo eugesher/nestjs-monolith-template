@@ -3,10 +3,10 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { ReminderModel } from '../../domain';
 import {
-  type IReminderCreateRepositoryPort,
-  type IReminderSummaryPort,
   REMINDER_CREATE_REPOSITORY_PORT,
   REMINDER_SUMMARY_PORT,
+  type IReminderCreateRepositoryPort,
+  type IReminderSummaryPort,
 } from '../../outbound';
 import { IReminderCreateCommand, IReminderView } from '../interfaces';
 

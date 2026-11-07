@@ -44,14 +44,14 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff/app/app.module',
-    '@acme-staff/common/shared/concurrency',
-    '@acme-staff/common/shared/ledger-record',
+    '@acme-staff/common/modules',
+    '@acme-staff/common/shared',
     '@acme-staff/features',
     '@acme-customer/app/app.module',
-    '@acme-customer/common/shared/ledger-record',
+    '@acme-customer/common/shared',
     '@acme-customer/features',
     '@acme-processor/app/app.module',
-    '@acme-processor/common/shared/ledger-record',
+    '@acme-processor/common/shared',
     '@acme-processor/features',
     '@acme-processor/processors',
   ])('%s resolves', (source) => {
@@ -70,17 +70,19 @@ describe('app entry points', () => {
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/app/setup/config/config-setup.module',
     ],
+    ['apps/staff-app/src/features/product/__fixture__.ts', '@acme-staff/common/shared/concurrency'],
+    ['apps/staff-app/src/features/product/__fixture__.ts', '@acme-staff/common/modules/tag'],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/common/shared/concurrency/decorators/if-match.decorator',
     ],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
-      '@acme-staff/common/shared/ledger-record/queues/ledger-record-queue.module',
+      '@acme-staff/common/shared/ledger/ledger-queue-setup.module',
     ],
     [
       'apps/customer-app/src/features/order/__fixture__.ts',
-      '@acme-customer/common/shared/ledger-record/queues/ledger-record-queue.module',
+      '@acme-customer/common/shared/ledger/ledger-queue-setup.module',
     ],
   ])('%s may NOT reach a deep path through an alias: %s', async (file, source) => {
     await expect({
@@ -139,12 +141,15 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it('the app setup may NOT import @nestjs/core, only the AppModule registers global providers', async () => {
-    await expect({
-      file: 'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-      code: 'import { APP_PIPE } from "@nestjs/core";',
-    }).toBreakRule('boundaries/dependencies');
-  });
+  it(
+    'the app setup may NOT import @nestjs/core, ' + 'only the AppModule registers global providers',
+    async () => {
+      await expect({
+        file: 'apps/staff-app/src/app/setup/orm/__fixture__.ts',
+        code: 'import { APP_PIPE } from "@nestjs/core";',
+      }).toBreakRule('boundaries/dependencies');
+    },
+  );
 
   it('main may NOT reach past the AppModule into the app setup', async () => {
     await expect({
@@ -182,12 +187,16 @@ describe('app entry points', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('apps/processor-app/src/app/app.module.ts MAY import the processors of its own app by @acme-processor/processors', async () => {
-    await expect({
-      file: 'apps/processor-app/src/app/app.module.ts',
-      code: 'import { LedgerModule } from "@acme-processor/processors";',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'apps/processor-app/src/app/app.module.ts MAY import the ' +
+      'processors of its own app by @acme-processor/processors',
+    async () => {
+      await expect({
+        file: 'apps/processor-app/src/app/app.module.ts',
+        code: 'import { LedgerModule } from "@acme-processor/processors";',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it.each([
     'apps/staff-app/src/app/app.module.ts',
@@ -250,22 +259,26 @@ describe('app entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it('a staff-app feature presentation MAY import the shared decorators by their aliases', async () => {
-    await expect({
-      file: 'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
-      code:
-        'import { IfMatch } from "@acme-staff/common/shared/concurrency";\n' +
-        'import { IdempotencyKey } from "@acme-libs/http";',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'a staff-app feature presentation MAY import ' + 'the shared decorators by their aliases',
+    async () => {
+      await expect({
+        file: 'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
+        code:
+          'import { IfMatch } from "@acme-staff/common/shared";\n' +
+          'import { IdempotencyKey } from "@acme-libs/http";',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it.each([
     'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
-    'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
-    'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/staff-app/src/features/product/infrastructure/queue/' +
+      'product-ledger-record-queue.adapter.ts',
+    'apps/staff-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
     'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
-    'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/customer-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
   ])('%s MAY import the ledger record contract of the core ledger', async (file) => {
     await expect({
@@ -276,31 +289,25 @@ describe('app entry points', () => {
 
   it.each([
     'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
-    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/product-stock-post-subtract-queue.module.ts',
+    'apps/processor-app/src/common/shared/product-stock-post-subtract/queues/' +
+      'product-stock-post-subtract-queue.module.ts',
   ])('%s MAY import the queue contract of the core product stock', async (file) => {
     await expect({
       file,
-      code: 'import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from "@acme-core/contracts/product-stock";',
+      code:
+        'import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE ' +
+        '} from "@acme-core/contracts/product-stock";',
     }).toPassArchitectureLint();
   });
 
   it.each([
-    [
-      'apps/processor-app/src/processors/ledger/ledger.module.ts',
-      '@acme-processor/common/shared/ledger-record',
-    ],
-    [
-      'apps/staff-app/src/features/product/product.module.ts',
-      '@acme-staff/common/shared/ledger-record',
-    ],
-    [
-      'apps/customer-app/src/features/auth/auth.module.ts',
-      '@acme-customer/common/shared/ledger-record',
-    ],
+    ['apps/processor-app/src/processors/ledger/ledger.module.ts', '@acme-processor/common/shared'],
+    ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/auth/auth.module.ts', '@acme-customer/common/shared'],
   ])('%s MAY register the ledger record queue by %s', async (file, source) => {
     await expect({
       file,
-      code: `import { LedgerRecordQueueModule } from "${source}";`,
+      code: `import { LedgerQueueSetupModule } from "${source}";`,
     }).toPassArchitectureLint();
   });
 
@@ -326,7 +333,7 @@ describe('app entry points', () => {
     ],
     [
       'apps/staff-app/src/features/product/infrastructure/queue/__fixture__.ts',
-      '@acme-staff/common/shared/ledger-record',
+      '@acme-staff/common/shared',
     ],
   ])('%s may NOT import %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
@@ -335,19 +342,14 @@ describe('app entry points', () => {
   });
 
   it.each([
-    [
-      'apps/customer-app/src/features/health/health.module.ts',
-      '@acme-staff/common/shared/concurrency',
-    ],
+    ['apps/customer-app/src/features/health/health.module.ts', '@acme-staff/common/shared'],
     [
       'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',
-      '@acme-staff/common/shared/concurrency',
+      '@acme-staff/common/shared',
     ],
-    ['apps/customer-app/src/app/app.module.ts', '@acme-staff/common/shared/ledger-record'],
-    [
-      'apps/customer-app/src/features/auth/auth.module.ts',
-      '@acme-staff/common/shared/ledger-record',
-    ],
+    ['apps/customer-app/src/app/app.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/auth/auth.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/order/order.module.ts', '@acme-staff/common/modules'],
   ])('customer-app (%s) may NOT reach the staff-app %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
       'boundaries/dependencies',

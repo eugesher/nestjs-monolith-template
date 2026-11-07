@@ -47,18 +47,19 @@ describe('QueueRegistryQueueAdapter', () => {
         failed: 0,
         delayed: 0,
         waiting: 0,
-      });
+        paused: 3,
+      } as never);
 
       const queues = await adapter.listJobCounts();
 
       expect(queues).toEqual([
         {
           name: 'ledger-record',
-          jobCounts: { active: 0, completed: 0, failed: 2, delayed: 0, waiting: 1 },
+          jobCounts: { active: 0, completed: 0, failed: 2, delayed: 0, waiting: 1, paused: null },
         },
         {
           name: 'product-stock-post-subtract',
-          jobCounts: { active: 1, completed: 0, failed: 0, delayed: 0, waiting: 0 },
+          jobCounts: { active: 1, completed: 0, failed: 0, delayed: 0, waiting: 0, paused: 3 },
         },
       ]);
     });
@@ -68,6 +69,7 @@ describe('QueueRegistryQueueAdapter', () => {
     it('answers the JSON of the failed jobs in the window and their total', async () => {
       ledgerQueue.getFailed.mockResolvedValue([
         { toJSON: () => ({ id: '7', name: '__default__' }) },
+        { toJSON: () => ({ id: '8', name: '__default__', debounceId: 'd-8' }) },
       ] as never);
       ledgerQueue.getFailedCount.mockResolvedValue(21);
 
@@ -77,7 +79,13 @@ describe('QueueRegistryQueueAdapter', () => {
         limit: 20,
       });
 
-      expect(failed).toEqual([[{ id: '7', name: '__default__' }], 21]);
+      expect(failed).toEqual([
+        [
+          { id: '7', name: '__default__', debounceId: null },
+          { id: '8', name: '__default__', debounceId: 'd-8' },
+        ],
+        21,
+      ]);
       expect(ledgerQueue.getFailed).toHaveBeenCalledWith(20, 39);
     });
 

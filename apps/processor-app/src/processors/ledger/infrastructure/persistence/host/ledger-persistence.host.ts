@@ -1,5 +1,6 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { LedgerEntry } from '@acme-core/entities';
+
 import { LedgerPersistenceLedgerEntryBuilder } from '../builders/ledger-persistence-ledger-entry.builder';
 
 export abstract class LedgerPersistenceHost {
