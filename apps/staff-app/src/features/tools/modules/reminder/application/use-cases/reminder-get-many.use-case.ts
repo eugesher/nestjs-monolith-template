@@ -4,8 +4,8 @@ import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { ReminderModel } from '../../domain';
 import {
-  type IReminderGetManyRepositoryPort,
   REMINDER_GET_MANY_REPOSITORY_PORT,
+  type IReminderGetManyRepositoryPort,
 } from '../../outbound';
 import { IReminderGetManyCommand, IReminderView } from '../interfaces';
 

@@ -2,9 +2,9 @@ import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IRoleUpdatePermissionsRoleRecord,
   IRoleUpdatePermissionsPermissionRecord,
   IRoleUpdatePermissionsRolePermissionInsertQuery,
+  IRoleUpdatePermissionsRoleRecord,
 } from '../interfaces';
 
 export interface IRoleUpdatePermissionsRepositoryPort {

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { Nullable } from '@acme-libs/toolkit';
 import {
   IAuthCurrentUserView,
   IAuthJwtPayloadCommand,
   IAuthUserValidatorPort,
 } from '@acme-libs/contracts/auth';
-import { Nullable } from '@acme-libs/toolkit';
 
 import { AuthGlobalValidateSubjectUseCase } from '../application';
 

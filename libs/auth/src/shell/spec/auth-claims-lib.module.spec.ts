@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
 import { AuthClaimsLibModule } from '../auth-claims-lib.module';

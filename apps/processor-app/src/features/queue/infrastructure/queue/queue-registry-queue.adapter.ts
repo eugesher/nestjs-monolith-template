@@ -1,5 +1,5 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
+import { ClassProvider, Injectable } from '@nestjs/common';
 import { type Queue } from 'bull';
 
 import { Nullable } from '@acme-libs/toolkit';

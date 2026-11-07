@@ -1,7 +1,8 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { StaffRole, StaffUser, StaffUserRole } from '@acme-core/entities';
-import { UserPersistenceStaffUserBuilder } from '../builders/user-persistence-staff-user.builder';
+
 import { UserPersistenceStaffRoleBuilder } from '../builders/user-persistence-staff-role.builder';
+import { UserPersistenceStaffUserBuilder } from '../builders/user-persistence-staff-user.builder';
 
 export abstract class UserPersistenceHost {
   protected abstract readonly repositoryHost: IRepositoryHostPort;

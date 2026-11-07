@@ -4,8 +4,8 @@ import { PaginationHelper } from '@acme-libs/toolkit';
 
 import { NoteRevisionModel } from '../../domain';
 import {
-  type INoteGetRevisionsRepositoryPort,
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
+  type INoteGetRevisionsRepositoryPort,
 } from '../../outbound';
 import { INoteGetRevisionsCommand, INoteGetRevisionsView } from '../interfaces';
 import { NoteAccessService } from '../services/note-access.service';

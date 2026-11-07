@@ -1,4 +1,4 @@
-import { ILedgerAppendEntryRecord, ILedgerAppendEntryInsertQuery } from '../interfaces';
+import { ILedgerAppendEntryInsertQuery, ILedgerAppendEntryRecord } from '../interfaces';
 
 export interface ILedgerAppendRepositoryPort {
   insert(record: ILedgerAppendEntryInsertQuery): Promise<string>;

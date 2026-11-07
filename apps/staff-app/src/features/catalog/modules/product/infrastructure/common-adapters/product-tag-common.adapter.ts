@@ -1,10 +1,10 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import {
-  type ITagCommonPort,
   TAG_COMMON_PORT,
   TagCommonReplaceOutcomeEnum,
   TagCommonSubjectTypeEnum,
+  type ITagCommonPort,
 } from '@acme-staff/contracts/tag';
 
 import {

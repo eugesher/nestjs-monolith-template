@@ -8,8 +8,8 @@ import {
 
 import { StaffAuthCoreSubjectModel } from '../../domain';
 import {
-  type IStaffAuthCoreFindSubjectRepositoryPort,
   STAFF_AUTH_CORE_FIND_SUBJECT_REPOSITORY_PORT,
+  type IStaffAuthCoreFindSubjectRepositoryPort,
 } from '../../outbound';
 
 @Injectable()

@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import {
+  IProductDraft,
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
-  IProductDraft,
   ProductModel,
   ProductSkuTakenException,
 } from '../../domain';
 import {
-  type IProductCreateRepositoryPort,
-  type IProductIdempotencyPort,
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
   ProductIdempotencyOutcomeEnum,
+  type IProductCreateRepositoryPort,
+  type IProductIdempotencyPort,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
 import { ProductLedgerService } from '../services/product-ledger.service';

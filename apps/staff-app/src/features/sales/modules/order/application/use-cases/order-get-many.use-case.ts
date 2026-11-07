@@ -3,10 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Maybe, PaginationHelper } from '@acme-libs/toolkit';
 
 import {
-  type IOrderGetManyRepositoryPort,
-  type IOrderTagPort,
   ORDER_GET_MANY_REPOSITORY_PORT,
   ORDER_TAG_PORT,
+  type IOrderGetManyRepositoryPort,
+  type IOrderTagPort,
 } from '../../outbound';
 import { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
 import { OrderViewMapper } from '../mappers/order-view.mapper';

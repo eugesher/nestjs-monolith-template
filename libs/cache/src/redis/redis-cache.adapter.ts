@@ -3,8 +3,8 @@ import { Attributes, trace } from '@opentelemetry/api';
 import { Redis } from 'ioredis';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { ICachePort } from '@acme-libs/contracts/cache';
 import { Maybe } from '@acme-libs/toolkit';
+import { ICachePort } from '@acme-libs/contracts/cache';
 
 import { REDIS_CLIENT_TOKEN } from './redis-client.token';
 

@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
 import {
-  type IUserCredentialsPort,
-  type IUserRegisterRepositoryPort,
   USER_CREDENTIALS_PORT,
   USER_REGISTER_REPOSITORY_PORT,
+  type IUserCredentialsPort,
+  type IUserRegisterRepositoryPort,
 } from '../../outbound';
 import { IUserRegisterCommand, IUserRegisterView } from '../interfaces';
 

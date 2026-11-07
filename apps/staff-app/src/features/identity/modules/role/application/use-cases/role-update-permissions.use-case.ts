@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import { AuthRoleNotFoundException, RoleModel, RolePermissionModel } from '../../domain';
 import {
   ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
   type IRoleUpdatePermissionsRepositoryPort,
 } from '../../outbound';
-import { IRoleView, IRoleUpdatePermissionsCommand } from '../interfaces';
+import { IRoleUpdatePermissionsCommand, IRoleView } from '../interfaces';
 
 @Injectable()
 export class RoleUpdatePermissionsUseCase {

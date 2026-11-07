@@ -4,7 +4,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { TagModel, TagNameTakenException } from '../../domain';
-import { type ITagRenameRepositoryPort, TAG_RENAME_REPOSITORY_PORT } from '../../outbound';
+import { TAG_RENAME_REPOSITORY_PORT, type ITagRenameRepositoryPort } from '../../outbound';
 import { ITagRenameCommand, ITagView } from '../interfaces';
 import { TagAccessService } from '../services/tag-access.service';
 

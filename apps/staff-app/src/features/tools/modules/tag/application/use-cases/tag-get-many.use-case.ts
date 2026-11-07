@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IPage, PaginationHelper } from '@acme-libs/toolkit';
 
 import { TagModel } from '../../domain';
-import { type ITagGetManyRepositoryPort, TAG_GET_MANY_REPOSITORY_PORT } from '../../outbound';
+import { TAG_GET_MANY_REPOSITORY_PORT, type ITagGetManyRepositoryPort } from '../../outbound';
 import { ITagGetManyCommand, ITagView } from '../interfaces';
 
 @Injectable()

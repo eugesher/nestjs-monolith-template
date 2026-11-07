@@ -9,9 +9,9 @@ import {
   ReminderVersionMismatchException,
 } from '../../domain';
 import {
-  type IReminderWriteRepositoryPort,
   REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   REMINDER_WRITE_REPOSITORY_PORT,
+  type IReminderWriteRepositoryPort,
 } from '../../outbound';
 import { ReminderWriteConflictError } from '../errors/reminder-write-conflict.error';
 import { IReminderWriteCommand } from '../interfaces';

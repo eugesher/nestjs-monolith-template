@@ -5,8 +5,8 @@ import { hash, verify } from 'argon2';
 import { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
 
 import {
-  ICredentialsLibPasswordHasherPort,
   CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
+  ICredentialsLibPasswordHasherPort,
 } from '../../outbound';
 import { CredentialsLibPasswordHasherOptions } from './credentials-lib-password-hasher.options';
 

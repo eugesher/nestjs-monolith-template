@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ReminderModel, ReminderNotFoundException } from '../../domain';
 import {
-  type IReminderAccessRepositoryPort,
   REMINDER_ACCESS_REPOSITORY_PORT,
+  type IReminderAccessRepositoryPort,
 } from '../../outbound';
 import { IReminderAccessLoadOwnedCommand } from '../interfaces';
 

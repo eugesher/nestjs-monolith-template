@@ -3,7 +3,7 @@ import { Job } from 'bull';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
-import { LedgerAppendUseCase, LedgerAppendReportFailureUseCase } from '../../application';
+import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../application';
 import { LedgerAppendProcessor } from '../ledger-append.processor';
 
 describe('LedgerAppendProcessor', () => {

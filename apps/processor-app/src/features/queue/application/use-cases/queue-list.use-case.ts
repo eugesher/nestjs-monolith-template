@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type IQueueRegistryPort, QUEUE_REGISTRY_PORT } from '../../outbound';
+import { QUEUE_REGISTRY_PORT, type IQueueRegistryPort } from '../../outbound';
 import { IQueueListView } from '../interfaces';
 
 @Injectable()

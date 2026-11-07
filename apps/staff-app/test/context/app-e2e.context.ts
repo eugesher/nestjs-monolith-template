@@ -10,7 +10,7 @@ import { DataSource } from 'typeorm';
 
 import { REDIS_CLIENT_TOKEN } from '@acme-libs/cache/testing';
 import { Maybe } from '@acme-libs/toolkit';
-import { LEDGER_RECORD_QUEUE, ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
+import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import { AppModule } from '@acme-staff/app/app.module';
 
 interface IAppE2EState {

@@ -1,8 +1,8 @@
 import {
   IOrderPlaceInsertQuery,
-  IOrderPlaceRecord,
-  IOrderPlaceProductRecord,
   IOrderPlaceOrderProductInsertQuery,
+  IOrderPlaceProductRecord,
+  IOrderPlaceRecord,
 } from '../interfaces';
 
 export interface IOrderPlaceRepositoryPort {

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 import {
   IProductCoreArchiveCommand,
   IProductCoreArchiveView,
@@ -10,10 +10,10 @@ import {
 
 import { ProductCoreModel } from '../../domain';
 import {
-  type IProductCoreArchiveRepositoryPort,
-  type IProductCoreCatalogCachePort,
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
   PRODUCT_CORE_CATALOG_CACHE_PORT,
+  type IProductCoreArchiveRepositoryPort,
+  type IProductCoreCatalogCachePort,
 } from '../../outbound';
 import { ProductCoreLedgerService } from '../services/product-core-ledger.service';
 

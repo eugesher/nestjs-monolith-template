@@ -1,7 +1,7 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import { Reminder } from '@acme-staff/common/entities';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
+import { Reminder } from '@acme-staff/common/entities';
 
 import { ReminderPersistenceBuilder } from '../reminder-persistence.builder';
 

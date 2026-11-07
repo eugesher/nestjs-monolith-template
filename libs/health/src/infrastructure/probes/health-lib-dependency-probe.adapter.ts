@@ -1,11 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
+import { HealthDependencyStatusEnum } from '@acme-libs/kernel';
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 import { IHealthLibDependenciesView, IHealthLibDependencyView } from '@acme-libs/contracts/health';
-import { HealthDependencyStatusEnum } from '@acme-libs/kernel';
 
-import { IHealthLibDependencyProbePort, HEALTH_LIB_DEPENDENCY_PROBE_PORT } from '../../outbound';
+import { HEALTH_LIB_DEPENDENCY_PROBE_PORT, IHealthLibDependencyProbePort } from '../../outbound';
 
 @Injectable()
 export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProbePort {

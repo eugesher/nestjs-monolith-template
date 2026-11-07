@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 import { LedgerQueueSetupModule } from '@acme-customer/common/shared';
-import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
   OrderGetManyUseCase,

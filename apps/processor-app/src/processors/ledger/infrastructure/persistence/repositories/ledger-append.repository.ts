@@ -1,13 +1,13 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm';
 
-import { type IRepositoryHostPort, REPOSITORY_HOST_PORT } from '@acme-libs/contracts/database';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
-  ILedgerAppendRepositoryPort,
-  ILedgerAppendEntryRecord,
   ILedgerAppendEntryInsertQuery,
+  ILedgerAppendEntryRecord,
+  ILedgerAppendRepositoryPort,
   LEDGER_APPEND_REPOSITORY_PORT,
 } from '../../../outbound';
 import { LedgerPersistenceHost } from '../host/ledger-persistence.host';

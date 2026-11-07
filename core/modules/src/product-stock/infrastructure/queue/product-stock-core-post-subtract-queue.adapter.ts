@@ -1,5 +1,5 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
+import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import type { Queue } from 'bull';
 
 import {
@@ -10,8 +10,8 @@ import {
 import {
   IProductStockCorePostSubtractEnqueueCommand,
   IProductStockCorePostSubtractPort,
-  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
+  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
 @Injectable()

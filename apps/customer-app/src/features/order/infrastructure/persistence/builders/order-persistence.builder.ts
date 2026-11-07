@@ -1,6 +1,7 @@
 import { SelectQueryBuilder } from 'typeorm';
 
 import { Order, OrderProduct, Product } from '@acme-core/entities';
+
 import { IOrderGetManyQuery, IOrderGetOneQuery } from '../../../outbound';
 
 export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {

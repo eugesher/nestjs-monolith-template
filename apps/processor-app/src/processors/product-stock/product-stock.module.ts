@@ -6,8 +6,8 @@ import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 import { ProductStockPostSubtractUseCase } from './application';
 import {
   ProductStockArchiveCoreAdapter,
-  ProductStockPostSubtractRepository,
   ProductStockOnHandCoreAdapter,
+  ProductStockPostSubtractRepository,
 } from './infrastructure';
 import { ProductStockPostSubtractProcessor } from './presentation/product-stock-post-subtract.processor';
 

@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
-  type IReminderDeleteRepositoryPort,
-  type IReminderSummaryPort,
   REMINDER_DELETE_REPOSITORY_PORT,
   REMINDER_SUMMARY_PORT,
+  type IReminderDeleteRepositoryPort,
+  type IReminderSummaryPort,
 } from '../../outbound';
 import { IReminderDeleteCommand } from '../interfaces';
 import { ReminderAccessService } from '../services/reminder-access.service';

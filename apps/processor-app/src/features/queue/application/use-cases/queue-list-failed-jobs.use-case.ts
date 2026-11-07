@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PaginationHelper } from '@acme-libs/toolkit';
 
 import { QueueNotFoundException } from '../../domain';
-import { type IQueueRegistryPort, QUEUE_REGISTRY_PORT } from '../../outbound';
+import { QUEUE_REGISTRY_PORT, type IQueueRegistryPort } from '../../outbound';
 import { IQueueListFailedJobsCommand, IQueueListFailedJobsView } from '../interfaces';
 
 @Injectable()

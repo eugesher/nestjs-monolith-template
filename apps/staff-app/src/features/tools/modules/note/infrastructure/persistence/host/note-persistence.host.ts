@@ -1,7 +1,8 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Note, NoteRevision } from '@acme-staff/common/entities';
-import { NotePersistenceBuilder } from '../builders/note-persistence.builder';
+
 import { NotePersistenceNoteRevisionBuilder } from '../builders/note-persistence-note-revision.builder';
+import { NotePersistenceBuilder } from '../builders/note-persistence.builder';
 
 export abstract class NotePersistenceHost {
   protected abstract readonly repositoryHost: IRepositoryHostPort;

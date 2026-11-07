@@ -1,5 +1,4 @@
 import { NoteExceptionCodeEnum } from '../enums/note-exception-code.enum';
-
 import { NoteBaseException } from './base/note-base.exception';
 
 export class NoteNotFoundException extends NoteBaseException {

@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { OrderNotFoundException } from '../../domain';
 import {
-  type IOrderGetTagsRepositoryPort,
-  type IOrderTagPort,
   ORDER_GET_TAGS_REPOSITORY_PORT,
   ORDER_TAG_PORT,
+  type IOrderGetTagsRepositoryPort,
+  type IOrderTagPort,
 } from '../../outbound';
 import { IOrderGetTagsCommand, IOrderTagsView } from '../interfaces';
 

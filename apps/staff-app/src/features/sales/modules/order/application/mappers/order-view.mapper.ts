@@ -1,4 +1,4 @@
-import { IOrderGetOneRecord, IOrderGetManyRecordItem } from '../../outbound';
+import { IOrderGetManyRecordItem, IOrderGetOneRecord } from '../../outbound';
 import { IOrderGetManyView, IOrderGetOneView } from '../interfaces';
 
 export class OrderViewMapper {

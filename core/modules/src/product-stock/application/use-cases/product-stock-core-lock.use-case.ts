@@ -6,8 +6,8 @@ import {
 } from '@acme-core/contracts/product-stock';
 
 import {
-  type IProductStockCoreLockRepositoryPort,
   PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
+  type IProductStockCoreLockRepositoryPort,
 } from '../../outbound';
 import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 

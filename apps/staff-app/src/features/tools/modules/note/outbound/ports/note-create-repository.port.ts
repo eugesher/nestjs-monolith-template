@@ -1,4 +1,4 @@
-import { INoteCreateRecord, INoteCreateInsertQuery } from '../interfaces';
+import { INoteCreateInsertQuery, INoteCreateRecord } from '../interfaces';
 
 export interface INoteCreateRepositoryPort {
   insert(query: INoteCreateInsertQuery): Promise<string>;

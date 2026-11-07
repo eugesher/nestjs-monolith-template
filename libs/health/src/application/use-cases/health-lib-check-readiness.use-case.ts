@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IHealthLibDependenciesView, IHealthLibReadinessView } from '@acme-libs/contracts/health';
 import {
   AppNameEnum,
   HealthDependencyStatusEnum,
   HealthReadinessStatusEnum,
 } from '@acme-libs/kernel';
+import { IHealthLibDependenciesView, IHealthLibReadinessView } from '@acme-libs/contracts/health';
 
 import {
   HEALTH_LIB_APP_NAME_TOKEN,

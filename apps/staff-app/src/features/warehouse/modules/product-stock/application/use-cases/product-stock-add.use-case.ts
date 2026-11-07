@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import {
   ProductIdempotencyKeyReusedException,
@@ -10,18 +10,18 @@ import {
   ProductStockModel,
 } from '../../domain';
 import {
-  type IProductStockAddRepositoryPort,
-  type IProductStockIdempotencyPort,
-  type IProductStockMovementPort,
   PRODUCT_STOCK_ADD_REPOSITORY_PORT,
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
   PRODUCT_STOCK_MOVEMENT_PORT,
   ProductStockIdempotencyOutcomeEnum,
+  type IProductStockAddRepositoryPort,
+  type IProductStockIdempotencyPort,
+  type IProductStockMovementPort,
 } from '../../outbound';
 import {
   IProductStockAddCommand,
-  IProductStockAddWriteView,
   IProductStockAddView,
+  IProductStockAddWriteView,
 } from '../interfaces';
 import { ProductStockLedgerService } from '../services/product-stock-ledger.service';
 

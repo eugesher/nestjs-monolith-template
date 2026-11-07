@@ -6,9 +6,9 @@ import {
   ProductVersionMismatchException,
 } from '../../domain';
 import {
-  type IProductStatusPort,
   PRODUCT_STATUS_PORT,
   ProductStatusArchiveOutcomeEnum,
+  type IProductStatusPort,
 } from '../../outbound';
 import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';

@@ -1,7 +1,7 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Nullable } from '@acme-libs/toolkit';
+import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
 
 import {
   AUTH_GLOBAL_VALIDATE_SUBJECT_REPOSITORY_PORT,

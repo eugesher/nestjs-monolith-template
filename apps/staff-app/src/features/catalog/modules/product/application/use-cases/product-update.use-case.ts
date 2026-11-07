@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
+import { PRODUCT_CATALOG_CACHE_PORT, type IProductCatalogCachePort } from '../../outbound';
 import { IProductUpdateCommand, IProductView } from '../interfaces';
 import { ProductWriteService } from '../services/product-write.service';
 

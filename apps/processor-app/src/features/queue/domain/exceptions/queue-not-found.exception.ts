@@ -1,5 +1,4 @@
 import { QueueExceptionCodeEnum } from '../enums/queue-exception-code.enum';
-
 import { QueueBaseException } from './base/queue-base.exception';
 
 export class QueueNotFoundException extends QueueBaseException {

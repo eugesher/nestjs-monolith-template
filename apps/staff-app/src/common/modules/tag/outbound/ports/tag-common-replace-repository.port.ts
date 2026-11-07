@@ -1,6 +1,6 @@
 import {
-  ITagCommonReplaceLinkQuery,
   ITagCommonReplaceFindLinkedQuery,
+  ITagCommonReplaceLinkQuery,
   ITagCommonReplaceSubjectTagRecord,
   ITagCommonReplaceTagRecord,
   ITagCommonReplaceUnlinkQuery,

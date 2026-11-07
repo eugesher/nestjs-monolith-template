@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import { ProductNotFoundException, ProductTagNotFoundException } from '../../domain';
 import {
-  type IProductReplaceTagsRepositoryPort,
-  type IProductTagPort,
   PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
   PRODUCT_TAG_PORT,
   ProductTagReplaceOutcomeEnum,
+  type IProductReplaceTagsRepositoryPort,
+  type IProductTagPort,
 } from '../../outbound';
 import { IProductReplaceTagsCommand, IProductTagsView } from '../interfaces';
 

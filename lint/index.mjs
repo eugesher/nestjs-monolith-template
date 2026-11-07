@@ -1,5 +1,6 @@
 export { boundaries } from './boundaries/index.mjs';
 export { e2e } from './configs/e2e.mjs';
+export { imports } from './configs/imports.mjs';
 export { libsDeepImports } from './configs/libs-deep-imports.mjs';
 export { plainNode } from './configs/plain-node.mjs';
 export { specs } from './configs/specs.mjs';
