@@ -1,15 +1,11 @@
-import { ApiExtraModels, ApiProperty, ApiResponseProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { HealthDependencyResponseDto } from './health-dependency.response.dto';
+import { HealthDependenciesResponseDto } from './health-dependencies.response.dto';
 
-@ApiExtraModels(HealthDependencyResponseDto)
 export class HealthReadinessResponseDto {
   @ApiResponseProperty({ example: 'ready' })
   public status: 'ready' | 'not-ready';
 
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: { $ref: getSchemaPath(HealthDependencyResponseDto) },
-  })
-  public dependencies: Record<string, HealthDependencyResponseDto>;
+  @ApiResponseProperty({ type: HealthDependenciesResponseDto })
+  public dependencies: HealthDependenciesResponseDto;
 }

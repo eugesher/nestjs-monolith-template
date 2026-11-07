@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IHealthLibReadinessView } from '@acme-libs/contracts/health';
+import { IHealthLibDependenciesView, IHealthLibReadinessView } from '@acme-libs/contracts/health';
 
 import {
   HEALTH_LIB_DEPENDENCY_PROBE_PORT,
@@ -19,7 +19,8 @@ export class HealthLibCheckReadinessUseCase {
 
   public async execute(): Promise<IHealthLibReadinessView> {
     const dependencies = await this.probes.probeAll();
-    const failed = Object.keys(dependencies).filter((name) => dependencies[name].status !== 'ok');
+    const names = Object.keys(dependencies) as (keyof IHealthLibDependenciesView)[];
+    const failed = names.filter((name) => dependencies[name].status !== 'ok');
 
     if (failed.length > 0) {
       this.logger.warn({ failed }, 'Readiness check failed');

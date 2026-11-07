@@ -28,14 +28,20 @@ describe('HealthController', () => {
   it('answers 200 with the dependencies when ready', async () => {
     readiness.mockResolvedValue({
       status: 'ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'ok', latencyMs: 1 },
+      },
     });
 
     const body = await controller.ready(response);
 
     expect(body).toEqual({
       status: 'ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'ok', latencyMs: 1 },
+      },
     });
     expect(response.status).toHaveBeenCalledWith(200);
   });

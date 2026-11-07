@@ -13,7 +13,13 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
   it('is ready when every dependency is ok, and logs nothing', async () => {
     const useCase = new HealthLibCheckReadinessUseCase(
-      { probeAll: () => Promise.resolve({ database: { status: 'ok', latencyMs: 2 } }) },
+      {
+        probeAll: () =>
+          Promise.resolve({
+            database: { status: 'ok', latencyMs: 2 },
+            cache: { status: 'ok', latencyMs: 1 },
+          }),
+      },
       logger as unknown as PinoLogger,
     );
 
@@ -21,7 +27,10 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
     expect(view).toEqual({
       status: 'ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'ok', latencyMs: 1 },
+      },
     });
     expect(logger.warn).not.toHaveBeenCalled();
   });
@@ -48,16 +57,5 @@ describe('HealthLibCheckReadinessUseCase', () => {
       },
     });
     expect(logger.warn).toHaveBeenCalledWith({ failed: ['cache'] }, 'Readiness check failed');
-  });
-
-  it('is ready when there is nothing to probe', async () => {
-    const useCase = new HealthLibCheckReadinessUseCase(
-      { probeAll: () => Promise.resolve({}) },
-      logger as unknown as PinoLogger,
-    );
-
-    const view = await useCase.execute();
-
-    expect(view).toEqual({ status: 'ready', dependencies: {} });
   });
 });
