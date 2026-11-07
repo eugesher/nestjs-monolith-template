@@ -8,5 +8,5 @@ export * from './ports/reminder-get-summary-repository.port';
 export * from './ports/reminder-summary.port';
 export * from './ports/reminder-write-repository.port';
 
-export * from './tokens/reminder-occ-retry-attempts.token';
 export * from './tokens/reminder-cache-ttl-ms-default.token';
+export * from './tokens/reminder-occ-retry-attempts.token';

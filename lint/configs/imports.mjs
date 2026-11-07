@@ -83,5 +83,13 @@ export const imports = {
         newlinesBetween: 0,
       },
     ],
+    'perfectionist/sort-exports': [
+      'error',
+      {
+        type: 'alphabetical',
+        ignoreCase: true,
+        partitionByNewLine: true,
+      },
+    ],
   },
 };
