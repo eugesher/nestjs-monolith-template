@@ -9,7 +9,8 @@ import {
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
+import { ClsSetupModule, ClsTransactionalModule } from '@acme-libs/local-storage';
+import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import {
   CatalogModule,
@@ -29,8 +30,9 @@ import { ConfigSetupModule } from './setup';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.STAFF_APP),
-    CorrelationSetupModule.forRoot(),
+    ClsSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(entities),
+    ClsTransactionalModule.forRoot(),
     BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,

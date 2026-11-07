@@ -18,6 +18,7 @@ describe('lib entry points', () => {
       'http',
       'kernel',
       'ledger',
+      'local-storage',
       'observability',
       'openapi',
       'queue',
@@ -55,6 +56,8 @@ describe('lib entry points', () => {
       '@acme-libs/kernel/*',
       '@acme-libs/ledger',
       '@acme-libs/ledger/*',
+      '@acme-libs/local-storage',
+      '@acme-libs/local-storage/*',
       '@acme-libs/observability',
       '@acme-libs/observability/*',
       '@acme-libs/openapi',
@@ -82,6 +85,7 @@ describe('lib entry points', () => {
     '@acme-libs/http',
     '@acme-libs/kernel',
     '@acme-libs/ledger',
+    '@acme-libs/local-storage',
     '@acme-libs/observability',
     '@acme-libs/observability/testing',
     '@acme-libs/observability/tracer',
@@ -103,7 +107,7 @@ describe('lib entry points', () => {
     '@acme-libs/kernel/app/app-name.enum',
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
-    '@acme-libs/database/transaction/transaction.adapter',
+    '@acme-libs/local-storage/cls/cls-transaction.adapter',
     '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
@@ -111,7 +115,7 @@ describe('lib entry points', () => {
     '@acme-libs/health/shell/health-lib.module',
     '@acme-libs/auth/shell/auth-lib.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
-    '@acme-libs/observability/correlation/correlation-setup.module',
+    '@acme-libs/local-storage/cls/cls-setup.module',
     '@acme-libs/contracts/database/ports/transaction.port',
     '@acme-libs/contracts/database/ports/repository-host.port',
     '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',
@@ -226,11 +230,11 @@ describe('lib entry points', () => {
   });
 
   it(
-    'application may NOT import the database lib root, ' + 'it takes the transaction port',
+    'application may NOT import the local-storage lib root, ' + 'it takes the transaction port',
     async () => {
       await expect({
         file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { TransactionAdapter } from "@acme-libs/database";',
+        code: 'import { ClsTransactionalModule } from "@acme-libs/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );

@@ -7,13 +7,13 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ITransactionPort } from '@acme-libs/contracts/database';
 
 @Injectable()
-export class TransactionAdapter implements ITransactionPort {
-  private static readonly AFTER_COMMIT_HOOKS = Symbol('TRANSACTION_AFTER_COMMIT_HOOKS');
+export class ClsTransactionAdapter implements ITransactionPort {
+  private static readonly AFTER_COMMIT_HOOKS = Symbol('CLS_TRANSACTION_AFTER_COMMIT_HOOKS');
 
   constructor(
     private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>,
     private readonly cls: ClsService,
-    @InjectPinoLogger(TransactionAdapter.name)
+    @InjectPinoLogger(ClsTransactionAdapter.name)
     private readonly logger: PinoLogger,
   ) {}
 
@@ -27,7 +27,7 @@ export class TransactionAdapter implements ITransactionPort {
 
   public afterCommit(hook: () => Promise<void>): void {
     const hooks = this.cls.isActive()
-      ? this.cls.get<(() => Promise<void>)[]>(TransactionAdapter.AFTER_COMMIT_HOOKS)
+      ? this.cls.get<(() => Promise<void>)[]>(ClsTransactionAdapter.AFTER_COMMIT_HOOKS)
       : undefined;
 
     if (!this.transactionHost.isTransactionActive() || !hooks) {
@@ -40,7 +40,7 @@ export class TransactionAdapter implements ITransactionPort {
   private async runOutermost<T>(work: () => Promise<T>): Promise<T> {
     const hooks: (() => Promise<void>)[] = [];
 
-    this.cls.set(TransactionAdapter.AFTER_COMMIT_HOOKS, hooks);
+    this.cls.set(ClsTransactionAdapter.AFTER_COMMIT_HOOKS, hooks);
 
     const result = await this.transactionHost.withTransaction(work);
 

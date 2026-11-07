@@ -1,11 +1,12 @@
 import { ClsServiceManager } from 'nestjs-cls';
 
-import { CorrelationContextHelper } from '../correlation-context.helper';
-import { CorrelationSetupConfig } from '../correlation-setup.config';
+import { CorrelationContextHelper } from '@acme-libs/observability';
 
-describe('CorrelationSetupConfig', () => {
+import { ClsSetupConfig } from '../cls-setup.config';
+
+describe('ClsSetupConfig', () => {
   it('mounts a global context middleware on every route', () => {
-    const config = new CorrelationSetupConfig();
+    const config = new ClsSetupConfig();
 
     expect(config).toMatchObject({ global: true, middleware: { mount: true } });
   });
@@ -14,7 +15,7 @@ describe('CorrelationSetupConfig', () => {
     'opens the request context under the inbound ' +
       'correlation id and returns it in the response',
     async () => {
-      const config = new CorrelationSetupConfig();
+      const config = new ClsSetupConfig();
       const cls = ClsServiceManager.getClsService();
       const req = { headers: { 'x-correlation-id': 'inbound-id' } };
       const res = { headersSent: false, setHeader: jest.fn() };
@@ -31,7 +32,7 @@ describe('CorrelationSetupConfig', () => {
   );
 
   it('mints a correlation id for a request without one and puts it on the request', async () => {
-    const config = new CorrelationSetupConfig();
+    const config = new ClsSetupConfig();
     const cls = ClsServiceManager.getClsService();
     const req: { headers: Record<string, string> } = { headers: {} };
     const res = { headersSent: false, setHeader: jest.fn() };

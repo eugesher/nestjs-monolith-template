@@ -29,7 +29,7 @@ export const acmeApp = [
   from('acme-app:app:module', [
     to('acme-app:app', own('app')),
     ...appIndexes,
-    baseLibs('cache', 'database', 'http', 'observability', 'queue'),
+    baseLibs('cache', 'database', 'http', 'local-storage', 'observability', 'queue'),
     packages('@nestjs/common', '@nestjs/core'),
   ]),
   from('acme-app:app', [

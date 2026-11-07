@@ -67,19 +67,19 @@ describe('unused edges', () => {
         '../../../../../../libs/database/src',
       ],
       [
-        'the app module may NOT reach the database contracts: the ORM setup module wires them',
+        'the app module may NOT reach the database contracts: the database and local-storage libs bind them',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '../../../../libs/contracts/src/database',
       ],
       [
         'the app module may NOT import @nestjs-cls/transactional: ' +
-          'a setup module in app/setup configures it',
+          'the local-storage lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '@nestjs-cls/transactional',
       ],
       [
         'the app module may NOT import @nestjs-cls/transactional-adapter-typeorm: ' +
-          'a setup module in app/setup configures it',
+          'the local-storage lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '@nestjs-cls/transactional-adapter-typeorm',
       ],
@@ -89,7 +89,7 @@ describe('unused edges', () => {
         '@nestjs/config',
       ],
       [
-        'the app module may NOT import @nestjs/typeorm: a setup module in app/setup configures it',
+        'the app module may NOT import @nestjs/typeorm: the database lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '@nestjs/typeorm',
       ],
@@ -99,7 +99,7 @@ describe('unused edges', () => {
         'joi',
       ],
       [
-        'the app module may NOT import nestjs-cls: a setup module in app/setup configures it',
+        'the app module may NOT import nestjs-cls: the local-storage lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         'nestjs-cls',
       ],

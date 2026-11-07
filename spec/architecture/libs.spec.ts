@@ -16,6 +16,7 @@ describe('libs', () => {
       'libs/http/src/exceptions/unauthorized-http.exception.ts',
       'libs/kernel/src/index.ts',
       'libs/ledger/src/index.ts',
+      'libs/local-storage/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
       'libs/queue/src/index.ts',
@@ -68,6 +69,7 @@ describe('libs', () => {
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'observability']],
     ['ledger', ['kernel', 'toolkit']],
+    ['local-storage', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
     ['queue', ['kernel', 'toolkit']],
@@ -82,6 +84,7 @@ describe('libs', () => {
       'http',
       'kernel',
       'ledger',
+      'local-storage',
       'observability',
       'openapi',
       'queue',
@@ -113,6 +116,7 @@ describe('libs', () => {
     ['http', []],
     ['kernel', []],
     ['ledger', []],
+    ['local-storage', ['database']],
     ['observability', []],
     ['openapi', []],
     ['queue', []],
@@ -265,7 +269,7 @@ describe('libs', () => {
   );
 
   it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-    'the observability lib may NOT import %s — the database lib owns transactions',
+    'the observability lib may NOT import %s — the local-storage lib owns transactions',
     async (source) => {
       await expect({
         file: 'libs/observability/src/correlation/__fixture__.ts',
@@ -275,15 +279,25 @@ describe('libs', () => {
   );
 
   it(
-    'the database lib MAY import the transaction, ' + 'async context and logging packages',
+    'the local-storage lib MAY import the transaction, ' + 'async context and logging packages',
     async () => {
       await expect({
-        file: 'libs/database/src/__fixture__.ts',
+        file: 'libs/local-storage/src/cls/__fixture__.ts',
         code:
           'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
           'import { ClsService } from "nestjs-cls";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
+    },
+  );
+
+  it.each(['nestjs-cls', 'nestjs-pino'])(
+    'the database lib may NOT import %s — the local-storage lib owns the async context',
+    async (source) => {
+      await expect({
+        file: 'libs/database/src/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
     },
   );
 

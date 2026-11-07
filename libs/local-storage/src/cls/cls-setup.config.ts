@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { CLS_ID, ClsMiddlewareOptions, ClsModuleOptions, ClsService } from 'nestjs-cls';
 
-import { CorrelationIdHelper } from './correlation-id.helper';
+import { CorrelationIdHelper } from '@acme-libs/observability';
 
-export class CorrelationSetupConfig implements ClsModuleOptions {
+export class ClsSetupConfig implements ClsModuleOptions {
   public readonly global = true;
   public readonly middleware: ClsMiddlewareOptions;
 

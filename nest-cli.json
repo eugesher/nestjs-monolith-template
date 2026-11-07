@@ -235,6 +235,15 @@
         "tsConfigPath": "libs/ledger/tsconfig.lib.json"
       }
     },
+    "local-storage": {
+      "type": "library",
+      "root": "libs/local-storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/local-storage/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/local-storage/tsconfig.lib.json"
+      }
+    },
     "observability": {
       "type": "library",
       "root": "libs/observability",

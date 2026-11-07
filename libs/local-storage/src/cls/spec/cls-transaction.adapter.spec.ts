@@ -6,13 +6,13 @@ import { ClsModule } from 'nestjs-cls';
 import { getLoggerToken } from 'nestjs-pino';
 import { DataSource, EntityManager } from 'typeorm';
 
-import { TransactionAdapter } from '../transaction.adapter';
+import { ClsTransactionAdapter } from '../cls-transaction.adapter';
 
-describe('TransactionAdapter', () => {
+describe('ClsTransactionAdapter', () => {
   let outcomes: string[];
   let dataSource: { manager: EntityManager; transaction: jest.Mock };
   let context: INestApplicationContext;
-  let adapter: TransactionAdapter;
+  let adapter: ClsTransactionAdapter;
   let transactionHost: TransactionHost<TransactionalAdapterTypeOrm>;
   let logger: { error: jest.Mock };
 
@@ -57,14 +57,14 @@ describe('TransactionAdapter', () => {
         }),
       ],
       providers: [
-        TransactionAdapter,
-        { provide: getLoggerToken(TransactionAdapter.name), useValue: logger },
+        ClsTransactionAdapter,
+        { provide: getLoggerToken(ClsTransactionAdapter.name), useValue: logger },
       ],
     })
     class TestModule {}
 
     context = await NestFactory.createApplicationContext(TestModule, { logger: false });
-    adapter = context.get(TransactionAdapter);
+    adapter = context.get(ClsTransactionAdapter);
     transactionHost = context.get(TransactionHost);
   });
 

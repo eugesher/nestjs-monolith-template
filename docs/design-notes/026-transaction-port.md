@@ -10,8 +10,8 @@ interface ITransactionPort {
 }
 ```
 
-`TransactionAdapter` of `libs/database` implements it, and `TypeOrmSetupModule` of the same lib
-binds it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
+`ClsTransactionAdapter` of `libs/local-storage` implements it, and `ClsTransactionalModule` of the
+same lib binds it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 
 ## `run`
 
@@ -20,8 +20,8 @@ binds it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 `libs/database` implements by taking the repository from the current transaction on every call, so
 every query inside `work` joins the transaction without being handed anything. The port exposes
 only `getRepository`, so a
-repository cannot open a transaction of its own, and only `libs/database` and `app/setup` import
-`@nestjs-cls/transactional`. The CLS context itself is opened by `CorrelationSetupModule` for a
+repository cannot open a transaction of its own, and only `libs/database` and `libs/local-storage` import
+`@nestjs-cls/transactional`. The CLS context itself is opened by `ClsSetupModule` for a
 request and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests
 in it with `ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
 outermost `run`.
