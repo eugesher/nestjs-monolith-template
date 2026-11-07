@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { type ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
 
 import {
   OrderIdempotencyKeyReusedException,
@@ -9,13 +9,13 @@ import {
   OrderModel,
 } from '../../domain';
 import {
-  type IOrderIdempotencyPort,
-  type IOrderPlaceRepositoryPort,
-  type IOrderProductStockPort,
   ORDER_IDEMPOTENCY_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
   OrderIdempotencyOutcomeEnum,
+  type IOrderIdempotencyPort,
+  type IOrderPlaceRepositoryPort,
+  type IOrderProductStockPort,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
 import { OrderLedgerService } from '../services/order-ledger.service';

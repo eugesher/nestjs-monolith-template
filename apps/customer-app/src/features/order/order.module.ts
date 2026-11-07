@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 import { LedgerQueueSetupModule } from '@acme-customer/common/shared';
+import { HttpExceptionFilter } from '@acme-libs/http';
 
 import {
   OrderGetManyUseCase,
@@ -27,19 +27,19 @@ import { OrderController } from './presentation';
   imports: [LedgerQueueSetupModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
-    HttpExceptionFilter,
-    OrderPlaceUseCase,
     OrderGetManyUseCase,
     OrderGetOneUseCase,
+    OrderPlaceUseCase,
     OrderLedgerService,
     OrderGetManyRepository.provider,
     OrderGetOneRepository.provider,
     OrderPlaceRepository.provider,
-    OrderProductStockCoreAdapter.provider,
     OrderIdempotencyCoreAdapter.provider,
     OrderLedgerQueueAdapter.provider,
+    OrderProductStockCoreAdapter.provider,
     OrderConfigRedisCommandTimeoutMsProvider,
     OrderConfigLedgerRetryAttemptsProvider,
+    HttpExceptionFilter,
   ],
 })
 export class OrderModule {}

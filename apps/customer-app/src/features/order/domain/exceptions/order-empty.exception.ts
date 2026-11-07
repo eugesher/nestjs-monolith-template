@@ -1,5 +1,4 @@
 import { OrderExceptionCodeEnum } from '../enums/order-exception-code.enum';
-
 import { OrderBaseException } from './base/order-base.exception';
 
 export class OrderEmptyException extends OrderBaseException {

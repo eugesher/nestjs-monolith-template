@@ -19,7 +19,6 @@ import { AuthController } from './presentation';
   imports: [CredentialsLibModule, LedgerQueueSetupModule],
   controllers: [AuthController],
   providers: [
-    HttpExceptionFilter,
     AuthLoginUseCase,
     AuthRegisterUseCase,
     AuthLedgerService,
@@ -29,6 +28,7 @@ import { AuthController } from './presentation';
     AuthCredentialsLibAdapter.provider,
     AuthConfigRedisCommandTimeoutMsProvider,
     AuthConfigLedgerRetryAttemptsProvider,
+    HttpExceptionFilter,
   ],
 })
 export class AuthModule {}
