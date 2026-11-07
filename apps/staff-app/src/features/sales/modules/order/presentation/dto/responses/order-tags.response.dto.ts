@@ -1,8 +1,14 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { OrderTagResponseDto } from './order-tag.response.dto';
+class OrderTagsResponseItemDto {
+  @ApiResponseProperty({ example: '302' })
+  public id: string;
+
+  @ApiResponseProperty({ example: 'vip' })
+  public name: string;
+}
 
 export class OrderTagsResponseDto {
-  @ApiResponseProperty({ type: [OrderTagResponseDto] })
-  public tags: OrderTagResponseDto[];
+  @ApiResponseProperty({ type: [OrderTagsResponseItemDto] })
+  public tags: OrderTagsResponseItemDto[];
 }

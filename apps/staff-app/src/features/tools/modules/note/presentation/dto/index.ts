@@ -5,5 +5,4 @@ export * from './requests/note-create.request.dto';
 export * from './requests/note-edit.request.dto';
 export * from './responses/note-page.response.dto';
 export * from './responses/note-revision-page.response.dto';
-export * from './responses/note-revision.response.dto';
 export * from './responses/note.response.dto';
