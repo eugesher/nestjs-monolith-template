@@ -1,8 +1,4 @@
-import { BullModule } from '@nestjs/bull';
+import { BullSetupModule } from '@acme-libs/queue';
+import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 
-import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
-
-export const LedgerQueueSetupModule = BullModule.registerQueue({
-  name: LEDGER_RECORD_QUEUE,
-  defaultJobOptions: LEDGER_RECORD_JOB_OPTIONS,
-});
+export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);

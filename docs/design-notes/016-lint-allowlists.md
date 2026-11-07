@@ -83,7 +83,8 @@ edges exist for it:
 - **`infrastructure/queue`**, a category of its own, holds the queue adapters. It takes
   `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`), its own contracts and
   the contracts of `ledger`, whose queue every module that writes ledger records shares.
-- **The module root registers the queues it writes to** with `BullModule` and nothing else of Bull.
+- **The module root registers the queues it writes to** with `BullSetupModule.registerQueue` of
+  `libs/queue` and takes nothing of Bull itself.
   A core module is mounted by features of several apps, so the queue comes with it rather than with
   the `common/shared` of each app.
 - **Core infrastructure may take `@acme-libs/contracts/cache`**, to drop the keys a write makes

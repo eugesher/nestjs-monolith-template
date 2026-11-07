@@ -61,7 +61,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `CorrelationSetupModule.forRoot()` | `libs/observability`                                 | the CLS context of every request under its correlation id                                   |
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
-| `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
+| `BullSetupModule.forRoot()`        | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                          |
 | `CacheLibModule`                   | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                     |
 | `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
 | features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                               |

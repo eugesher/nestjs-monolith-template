@@ -332,21 +332,27 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('the module root MAY register the queues it writes to', async () => {
+    it('the module root MAY register the queues it writes to with the queue lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
         code:
-          'import { BullModule } from "@nestjs/bull";\n' +
+          'import { BullSetupModule } from "@acme-libs/queue";\n' +
           'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
-    it('the module root may NOT process a queue', async () => {
-      await expect({
-        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-        code: 'import { Processor } from "@nestjs/bull";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it.each([
+      'import { BullModule } from "@nestjs/bull";',
+      'import { Processor } from "@nestjs/bull";',
+    ])(
+      'the module root may NOT take Bull itself (%s) — it registers queues with the queue lib',
+      async (code) => {
+        await expect({
+          file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it.each(['application', 'outbound', 'domain'])(
       '%s may NOT import Bull, only the queue adapter writes to a queue',

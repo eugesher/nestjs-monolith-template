@@ -29,7 +29,7 @@ export const acmeApp = [
   from('acme-app:app:module', [
     to('acme-app:app', own('app')),
     ...appIndexes,
-    baseLibs('cache', 'http', 'observability'),
+    baseLibs('cache', 'http', 'observability', 'queue'),
     packages('@nestjs/common', '@nestjs/core'),
   ]),
   from('acme-app:app', [
@@ -42,7 +42,6 @@ export const acmeApp = [
     packages(
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
-      '@nestjs/bull',
       '@nestjs/common',
       '@nestjs/config',
       '@nestjs/schedule',
@@ -56,9 +55,9 @@ export const acmeApp = [
     to('acme-app:common:shared', own('app')),
     appContracts,
     to('acme-core:contracts'),
-    baseLibs('http', 'observability'),
+    baseLibs('http', 'observability', 'queue'),
     libContracts('cache'),
-    packages('@nestjs/bull', '@nestjs/common', 'nestjs-pino'),
+    packages('@nestjs/common', 'nestjs-pino'),
   ]),
   from('acme-app:common:shared:index', [
     to('acme-app:common:shared:module:index', own('app')),

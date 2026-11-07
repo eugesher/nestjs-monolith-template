@@ -51,6 +51,10 @@ services:
       API_USE_API_REFERENCE: 'true'
       DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
       REDIS_URL: redis://redis:6379
+      BULL_JOB_ATTEMPTS: 3
+      BULL_JOB_BACKOFF_TYPE: exponential
+      BULL_JOB_BACKOFF_DELAY: 1000
+      BULL_AUTO_SWEEP: 'true'
       OCC_RETRY_ATTEMPTS: 5
       LEDGER_RETRY_ATTEMPTS: 3
       QUEUE_RETRY_ATTEMPTS: 3
@@ -79,6 +83,10 @@ services:
       API_USE_API_REFERENCE: 'true'
       DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
       REDIS_URL: redis://redis:6379
+      BULL_JOB_ATTEMPTS: 3
+      BULL_JOB_BACKOFF_TYPE: exponential
+      BULL_JOB_BACKOFF_DELAY: 1000
+      BULL_AUTO_SWEEP: 'true'
       OCC_RETRY_ATTEMPTS: 5
       LEDGER_RETRY_ATTEMPTS: 3
       QUEUE_RETRY_ATTEMPTS: 3
@@ -107,6 +115,10 @@ services:
       API_USE_API_REFERENCE: 'true'
       DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
       REDIS_URL: redis://redis:6379
+      BULL_JOB_ATTEMPTS: 3
+      BULL_JOB_BACKOFF_TYPE: exponential
+      BULL_JOB_BACKOFF_DELAY: 1000
+      BULL_AUTO_SWEEP: 'true'
       IDEMPOTENCY_KEY_TTL_HOURS: 24
       LEDGER_RETRY_ATTEMPTS: 3
       QUEUE_RETRY_ATTEMPTS: 3

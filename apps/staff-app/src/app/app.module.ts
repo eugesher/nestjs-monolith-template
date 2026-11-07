@@ -9,6 +9,7 @@ import {
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
+import { BullSetupModule } from '@acme-libs/queue';
 import {
   CatalogModule,
   HealthModule,
@@ -20,7 +21,7 @@ import {
 } from '@acme-staff/features';
 
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup';
+import { ConfigSetupModule, TypeOrmSetupModule } from './setup';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup
     LoggerSetupModule.forRoot(AppNameEnum.STAFF_APP),
     CorrelationSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(),
-    QueueSetupModule,
+    BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,
     HealthModule,

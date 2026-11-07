@@ -5,16 +5,12 @@ import { CacheLibModule } from '@acme-libs/cache';
 import { HttpExceptionFilter, StrictValidationPipe } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
+import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, HealthModule, QueueModule } from '@acme-processor/features';
 import { IdempotencyModule, LedgerModule, ProductStockModule } from '@acme-processor/processors';
 
 import { AuthGlobalModule } from './global';
-import {
-  ConfigSetupModule,
-  QueueSetupModule,
-  ScheduleSetupModule,
-  TypeOrmSetupModule,
-} from './setup';
+import { ConfigSetupModule, ScheduleSetupModule, TypeOrmSetupModule } from './setup';
 
 @Module({
   imports: [
@@ -23,7 +19,7 @@ import {
     CorrelationSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(),
     ScheduleSetupModule,
-    QueueSetupModule,
+    BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,
     AuthModule,

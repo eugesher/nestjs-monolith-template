@@ -253,6 +253,15 @@
         "tsConfigPath": "libs/openapi/tsconfig.lib.json"
       }
     },
+    "queue": {
+      "type": "library",
+      "root": "libs/queue",
+      "entryFile": "index",
+      "sourceRoot": "libs/queue/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/queue/tsconfig.lib.json"
+      }
+    },
     "toolkit": {
       "type": "library",
       "root": "libs/toolkit",

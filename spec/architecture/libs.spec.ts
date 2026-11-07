@@ -18,6 +18,7 @@ describe('libs', () => {
       'libs/ledger/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
+      'libs/queue/src/index.ts',
       'libs/toolkit/src/index.ts',
       'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
@@ -69,6 +70,7 @@ describe('libs', () => {
     ['ledger', ['kernel', 'toolkit']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
+    ['queue', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {
     const libs = [
       'auth',
@@ -82,6 +84,7 @@ describe('libs', () => {
       'ledger',
       'observability',
       'openapi',
+      'queue',
       'toolkit',
     ];
 
@@ -112,6 +115,7 @@ describe('libs', () => {
     ['ledger', []],
     ['observability', []],
     ['openapi', []],
+    ['queue', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
     const contracts = ['auth', 'cache', 'credentials', 'database', 'health'];
@@ -323,6 +327,23 @@ describe('libs', () => {
       }).toBreakRule('boundaries/dependencies');
     },
   );
+
+  it('the queue lib MAY import the packages Bull setup needs', async () => {
+    await expect({
+      file: 'libs/queue/src/bull/__fixture__.ts',
+      code:
+        'import { BullModule } from "@nestjs/bull";\n' +
+        'import { DynamicModule } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['bull', 'ioredis', 'nestjs-pino'])('the queue lib may NOT import %s', async (source) => {
+    await expect({
+      file: 'libs/queue/src/bull/__fixture__.ts',
+      code: `import { x } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
 
   it('the credentials lib MAY import the packages hashing and signing need', async () => {
     await expect({

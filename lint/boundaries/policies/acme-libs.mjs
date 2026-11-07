@@ -26,6 +26,7 @@ export const acmeLibs = [
       'ledger',
       'observability',
       'openapi',
+      'queue',
     ],
     [baseLibs()],
   ),
@@ -60,6 +61,7 @@ export const acmeLibs = [
       'typeorm',
     ),
   ]),
+  fromLib('queue', [packages('@nestjs/bull', '@nestjs/common', '@nestjs/config')]),
   fromLib('openapi', [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/swagger', '@scalar/nestjs-api-reference'),
   ]),

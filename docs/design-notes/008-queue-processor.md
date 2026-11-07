@@ -19,25 +19,28 @@ The job type `ILedgerRecordProcessorPayload` carries the whole record, and the p
 as it is, so a new producer needs no change here. The producers do not process the queue:
 processor-app does (see `023-processor-app.md`), and the apps reach the queue through one Redis.
 
-The queue name, the job type and the job options live in `@acme-core/contracts/ledger`, because an
-app may not import another. Each app registers the queue in its `common/shared/ledger`, and
-the core product module registers it once more for the archives it records, every time with
-`LEDGER_RECORD_JOB_OPTIONS`. Bull applies the job options of the producer, so every producer
-enqueues with the same `attempts` and `backoff` only because every registration reads the one
-constant.
+The queue name and the job type live in `@acme-core/contracts/ledger`, because an app may not
+import another. Each app registers the queue in its `common/shared/ledger`, and the core product
+module registers it once more for the archives it records, every time with
+`BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE)`. Bull applies the job options of the producer, so
+every producer enqueues with the same `attempts` and `backoff` because `registerQueue` takes the name
+alone and every queue gets the job options of `BullSetupModule.forRoot()`.
 
 ## Job options
 
-| Option             | Value            | Why                                                 |
-| ------------------ | ---------------- | --------------------------------------------------- |
-| `attempts`         | 3                | a failed append is retried by Bull, not by the code |
-| `backoff`          | exponential, 1 s | the retries wait 1 s and 2 s                        |
-| `removeOnComplete` | true             | a recorded job leaves Redis                         |
+| Option             | Variable                                          | Default          | Why                                                 |
+| ------------------ | ------------------------------------------------- | ---------------- | --------------------------------------------------- |
+| `attempts`         | `BULL_JOB_ATTEMPTS`                               | 3                | a failed append is retried by Bull, not by the code |
+| `backoff`          | `BULL_JOB_BACKOFF_TYPE`, `BULL_JOB_BACKOFF_DELAY` | exponential, 1 s | the retries wait 1 s and 3 s                        |
+| `removeOnComplete` | `BULL_AUTO_SWEEP`                                 | true             | a recorded job leaves Redis                         |
 
-**The queue repeats `removeOnComplete`.** `QueueSetupModule` sets `removeOnComplete: true` for every
-queue, but `@nestjs/bull` merges the root options and the queue options shallowly: the
-`defaultJobOptions` of a queue replace those of the root as a whole, so a queue with options of its
-own states it again.
+The Joi schema of each app validates the variables and holds the defaults; `BULL_JOB_BACKOFF_TYPE`
+is `fixed` or `exponential`.
+
+**Every queue shares these options.** `BullSetupModule.forRoot()` of `libs/queue` sets them for the
+whole app, and `registerQueue` takes no options: `@nestjs/bull` merges the root options and the queue
+options shallowly, so a queue with `defaultJobOptions` of its own would replace these as a whole
+and could drift from the other producers of the same queue.
 
 ## Correlation
 

@@ -27,6 +27,11 @@ export class ConfigSetupModule {
 
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).default(24),
 
+        BULL_JOB_ATTEMPTS: Joi.number().integer().min(1).default(3),
+        BULL_JOB_BACKOFF_TYPE: Joi.string().valid('fixed', 'exponential').default('exponential'),
+        BULL_JOB_BACKOFF_DELAY: Joi.number().integer().min(0).default(1000),
+        BULL_AUTO_SWEEP: Joi.boolean().default(true),
+
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
         QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
 

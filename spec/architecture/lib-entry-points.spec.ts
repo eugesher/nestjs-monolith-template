@@ -20,6 +20,7 @@ describe('lib entry points', () => {
       'ledger',
       'observability',
       'openapi',
+      'queue',
       'toolkit',
     ]);
   });
@@ -58,6 +59,8 @@ describe('lib entry points', () => {
       '@acme-libs/observability/*',
       '@acme-libs/openapi',
       '@acme-libs/openapi/*',
+      '@acme-libs/queue',
+      '@acme-libs/queue/*',
       '@acme-libs/toolkit',
       '@acme-libs/toolkit/*',
     ]);
@@ -83,6 +86,7 @@ describe('lib entry points', () => {
     '@acme-libs/observability/testing',
     '@acme-libs/observability/tracer',
     '@acme-libs/openapi',
+    '@acme-libs/queue',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -103,6 +107,7 @@ describe('lib entry points', () => {
     '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
+    '@acme-libs/queue/bull/bull-setup.module',
     '@acme-libs/health/shell/health-lib.module',
     '@acme-libs/auth/shell/auth-lib.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
