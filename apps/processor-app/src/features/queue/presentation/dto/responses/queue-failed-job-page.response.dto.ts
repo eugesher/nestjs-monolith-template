@@ -1,4 +1,4 @@
-import { ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 
 class QueueFailedJobPageResponseItemDto {
   @ApiResponseProperty({ example: '42' })
@@ -28,19 +28,19 @@ class QueueFailedJobPageResponseItemDto {
   @ApiResponseProperty({ example: 'Data too long for column' })
   public failedReason: unknown;
 
-  @ApiResponseProperty({ example: ['Error: Data too long for column'] })
+  @ApiProperty({ readOnly: true, nullable: true, example: ['Error: Data too long for column'] })
   public stacktrace: string[] | null;
 
   @ApiResponseProperty({ example: null })
   public returnvalue: unknown;
 
-  @ApiResponseProperty({ example: null })
+  @ApiProperty({ readOnly: true, nullable: true, example: null })
   public debounceId: string | null;
 
-  @ApiResponseProperty({ example: 1767225601000 })
+  @ApiProperty({ readOnly: true, nullable: true, example: 1767225601000 })
   public finishedOn: number | null;
 
-  @ApiResponseProperty({ example: 1767225600500 })
+  @ApiProperty({ readOnly: true, nullable: true, example: 1767225600500 })
   public processedOn: number | null;
 }
 

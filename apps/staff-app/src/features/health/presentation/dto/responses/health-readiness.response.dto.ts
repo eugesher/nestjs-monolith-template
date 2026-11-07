@@ -1,4 +1,4 @@
-import { ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 
 import { HealthDependencyStatusEnum, HealthReadinessStatusEnum } from '@acme-libs/kernel';
 
@@ -9,7 +9,7 @@ class HealthDependenciesResponseDependenciesItemDto {
   })
   public status: HealthDependencyStatusEnum;
 
-  @ApiResponseProperty({ example: 3 })
+  @ApiProperty({ readOnly: true, nullable: true, example: 3 })
   public latencyMs: number | null;
 }
 
