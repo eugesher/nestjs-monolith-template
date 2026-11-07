@@ -16,6 +16,18 @@ export class ProductModel extends AggregateRoot<string> {
   private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
   private static readonly NAME_MAX_LENGTH = 255;
 
+  public get name(): string {
+    return this.currentName;
+  }
+
+  public get status(): ProductStatusEnum {
+    return this.currentStatus;
+  }
+
+  public get version(): number {
+    return this.currentVersion;
+  }
+
   private constructor(
     id: string,
     public readonly sku: string,
@@ -69,18 +81,6 @@ export class ProductModel extends AggregateRoot<string> {
     }
 
     return version;
-  }
-
-  public get name(): string {
-    return this.currentName;
-  }
-
-  public get status(): ProductStatusEnum {
-    return this.currentStatus;
-  }
-
-  public get version(): number {
-    return this.currentVersion;
   }
 
   public update(changes: IProductChanges): void {

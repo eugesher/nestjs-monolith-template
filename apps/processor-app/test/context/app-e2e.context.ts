@@ -31,8 +31,6 @@ export class AppE2EContext {
   private static readonly POLL_INTERVAL_MS = 100;
   private static readonly POLL_ATTEMPTS = 100;
 
-  private state: Maybe<IAppE2EState>;
-
   public get app(): INestApplication {
     return this.started.app;
   }
@@ -59,6 +57,16 @@ export class AppE2EContext {
 
   public get viewerToken(): string {
     return this.started.viewerToken;
+  }
+
+  private state: Maybe<IAppE2EState>;
+
+  private get started(): IAppE2EState {
+    if (!this.state) {
+      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
+    }
+
+    return this.state;
   }
 
   public async init(): Promise<void> {
@@ -143,13 +151,5 @@ export class AppE2EContext {
     this.started.rootLoggerWarn.mockClear();
 
     return warnings;
-  }
-
-  private get started(): IAppE2EState {
-    if (!this.state) {
-      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
-    }
-
-    return this.state;
   }
 }

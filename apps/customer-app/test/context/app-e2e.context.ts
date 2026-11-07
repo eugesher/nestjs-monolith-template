@@ -30,8 +30,6 @@ interface IAppE2EState {
 }
 
 export class AppE2EContext {
-  private state: Maybe<IAppE2EState>;
-
   public get app(): INestApplication {
     return this.started.app;
   }
@@ -62,6 +60,16 @@ export class AppE2EContext {
 
   public get carolToken(): string {
     return this.started.carolToken;
+  }
+
+  private state: Maybe<IAppE2EState>;
+
+  private get started(): IAppE2EState {
+    if (!this.state) {
+      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
+    }
+
+    return this.state;
   }
 
   public async init(): Promise<void> {
@@ -131,13 +139,5 @@ export class AppE2EContext {
     this.started.rootLoggerWarn.mockClear();
 
     return warnings;
-  }
-
-  private get started(): IAppE2EState {
-    if (!this.state) {
-      throw new Error('AppE2EContext is read before init(): use it inside it() and hooks');
-    }
-
-    return this.state;
   }
 }

@@ -16,6 +16,18 @@ export class ReminderModel extends AggregateRoot<string> {
   private static readonly BODY_MAX_LENGTH = 2000;
   private static readonly DUE_ON_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+  public get dueOn(): string {
+    return this.currentDueOn;
+  }
+
+  public get status(): ReminderStatusEnum {
+    return this.currentStatus;
+  }
+
+  public get version(): number {
+    return this.currentVersion;
+  }
+
   private constructor(
     id: string,
     public readonly ownerId: string,
@@ -109,18 +121,6 @@ export class ReminderModel extends AggregateRoot<string> {
     }
 
     return version;
-  }
-
-  public get dueOn(): string {
-    return this.currentDueOn;
-  }
-
-  public get status(): ReminderStatusEnum {
-    return this.currentStatus;
-  }
-
-  public get version(): number {
-    return this.currentVersion;
   }
 
   public complete(): void {
