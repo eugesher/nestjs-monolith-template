@@ -1,30 +1,32 @@
 # 026 — Transaction port
 
-The application layer opens a transaction through `TRANSACTION_PORT` of
-`@acme-libs/contracts/database`, never through TypeORM or `@nestjs-cls/transactional`:
+The application layer opens a transaction through `LOCAL_STORAGE_TRANSACTION` of
+`@acme-libs/contracts/local-storage`, never through TypeORM or `@nestjs-cls/transactional`:
 
 ```ts
-interface ITransactionPort {
+interface ILocalStorageTransaction {
   run<T>(work: () => Promise<T>): Promise<T>;
   afterCommit(hook: () => Promise<void>): void;
 }
 ```
 
-`TransactionAdapter` of `libs/database` implements it, and `TypeOrmSetupModule` of each app binds
-it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
+`LocalStorageTransactionFacade` of `libs/local-storage` implements it, and
+`LocalStorageTransactionModule` of the same lib binds it next to `ClsPluginTransactional` (see
+`012-app-bootstrap.md`). The facade hands `run` and `afterCommit` to two use cases, which reach
+`TransactionHost` and `ClsService` through the ports of the lib's own `outbound`
+(`LocalStorageTransactionHostAdapter`, `LocalStorageTransactionContextAdapter`).
 
 ## `run`
 
 `run` wraps `TransactionHost.withTransaction`. A repository reads its tables through
 `REPOSITORY_HOST_PORT` (`repositoryHost.getRepository(<Entity>)`), which `RepositoryHostAdapter` of
 `libs/database` implements by taking the repository from the current transaction on every call, so
-every query inside `work` joins the transaction without being handed anything. The port exposes
-only `getRepository`, so a
-repository cannot open a transaction of its own, and only `libs/database` and `app/setup` import
-`@nestjs-cls/transactional`. The CLS context itself is opened by `CorrelationSetupModule` for a
-request and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests
-in it with `ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one commit, at the end of the
-outermost `run`.
+every query inside `work` joins the transaction without being handed anything. The port exposes only
+`getRepository`, so a repository cannot open a transaction of its own, and only `libs/database` and
+`libs/local-storage` import `@nestjs-cls/transactional`. The CLS context itself is opened by
+`LocalStorageSetupModule` for a request and by `CorrelationContextHelper.run` for a job (see
+`012-app-bootstrap.md`); `run` nests in it with `ifNested: 'inherit'`. A `run` inside a `run` joins
+the open transaction: there is one commit, at the end of the outermost `run`.
 
 ## `afterCommit`
 
@@ -52,8 +54,8 @@ a cache whose entries expire anyway; a fact that must not be lost goes into the 
 or onto a queue with retries.
 
 **A hook needs a transaction.** `afterCommit` outside `run`, or inside a transaction that
-`TRANSACTION_PORT` did not open, throws: a hook that ran at once instead would change the order of
-effects without a trace.
+`LOCAL_STORAGE_TRANSACTION` did not open, throws: a hook that ran at once instead would change the
+order of effects without a trace.
 
 **A crash between the commit and a hook loses the hook.** The list lives in memory. The template
 uses no outbox, so effects that must survive a crash are retried by their own mechanism, as the

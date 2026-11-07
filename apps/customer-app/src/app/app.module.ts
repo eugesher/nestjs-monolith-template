@@ -1,27 +1,32 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { CacheModule } from '@acme-libs/cache';
+import { CacheLibModule } from '@acme-libs/cache';
+import { TypeOrmSetupModule } from '@acme-libs/database';
 import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
+import { LocalStorageSetupModule, LocalStorageTransactionModule } from '@acme-libs/local-storage';
+import { LoggerSetupModule } from '@acme-libs/observability';
+import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, CatalogModule, HealthModule, OrderModule } from '@acme-customer/features';
 
+import { entities } from './entities';
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup';
+import { ConfigSetupModule } from './setup';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
-    CorrelationSetupModule.forRoot(),
-    TypeOrmSetupModule.forRoot(),
-    QueueSetupModule,
-    CacheModule,
+    LocalStorageSetupModule.forRoot(),
+    TypeOrmSetupModule.forRoot(entities),
+    LocalStorageTransactionModule.forRoot(),
+    BullSetupModule.forRoot(),
+    CacheLibModule,
     AuthGlobalModule,
     HealthModule,
     AuthModule,

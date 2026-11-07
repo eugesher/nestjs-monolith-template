@@ -83,7 +83,8 @@ edges exist for it:
 - **`infrastructure/queue`**, a category of its own, holds the queue adapters. It takes
   `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`), its own contracts and
   the contracts of `ledger`, whose queue every module that writes ledger records shares.
-- **The module root registers the queues it writes to** with `BullModule` and nothing else of Bull.
+- **The module root registers the queues it writes to** with `BullSetupModule.registerQueue` of
+  `libs/queue` and takes nothing of Bull itself.
   A core module is mounted by features of several apps, so the queue comes with it rather than with
   the `common/shared` of each app.
 - **Core infrastructure may take `@acme-libs/contracts/cache`**, to drop the keys a write makes
@@ -100,8 +101,8 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
   `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
-  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth` stay
-  direct.
+  presentation may not. `LOCAL_STORAGE_TRANSACTION` and the types of `@acme-libs/contracts/auth`
+  stay direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
   ledger service extends `SubjectLedgerService`, the queue adapter extends
@@ -112,7 +113,8 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
   `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
   not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
-  `app/setup` do.
+  `libs/local-storage` do. The application takes `LOCAL_STORAGE_TRANSACTION` from
+  `@acme-libs/contracts/local-storage`.
 - **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
   `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of
   `libs/database` are bound in `app/setup`, so infrastructure cannot inject `RepositoryHostAdapter`
@@ -123,9 +125,9 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **The database contracts name TypeORM.** The repository host port returns a TypeORM
   `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
   the base libs.
-- **No module registers entities.** The entities of an app are listed once in
-  `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
-  would add repository tokens that nothing injects.
+- **No module registers entities.** The entities of an app are listed once in `app/entities` and
+  handed to `TypeOrmSetupModule.forRoot` of `libs/database`, so only that lib may import
+  `@nestjs/typeorm`; `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
 - **A module root binds no token.** An adapter carries its binding in a static `provider` (see
   `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see
   `030-config-values.md`), so the module root of a feature, a processor, a core, common or global

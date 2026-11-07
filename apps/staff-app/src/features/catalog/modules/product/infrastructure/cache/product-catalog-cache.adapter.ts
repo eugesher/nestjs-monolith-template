@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
+import { CACHE_KEYS, CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import { IProductCatalogCachePort, PRODUCT_CATALOG_CACHE_PORT } from '../../outbound';
 
@@ -12,13 +12,13 @@ export class ProductCatalogCacheAdapter implements IProductCatalogCachePort {
   };
 
   constructor(
-    @Inject(CACHE_PORT)
-    private readonly cache: ICachePort,
+    @Inject(CACHE_LIB_PORT)
+    private readonly cache: ICacheLibPort,
   ) {}
 
   public async invalidate(): Promise<void> {
     const prefix = CACHE_KEYS.catalogPrefix();
 
-    await this.cache.delByPrefix(prefix);
+    await this.cache.handleDelByPrefix(prefix);
   }
 }

@@ -17,8 +17,8 @@ line. The enum lives in the contract, and a core-adapter maps it into the plain 
 feature port with a `Record` over every value, so a new value fails the typecheck of every caller.
 
 **The use case opens or joins a transaction.** `ProductCoreArchiveUseCase` runs in
-`TRANSACTION_PORT.run`, so it joins the transaction of a caller that has one and opens its own
-otherwise. It locks the row before it reads it (see `021-pessimistic-locking.md`), compares
+`LOCAL_STORAGE_TRANSACTION.run`, so it joins the transaction of a caller that has one and opens its
+own otherwise. It locks the row before it reads it (see `021-pessimistic-locking.md`), compares
 `expectedVersion` for the `If-Match` of a caller, writes, and announces the write in `afterCommit`:
 it drops a cache (see `020-cross-app-cache-invalidation.md`) and enqueues a ledger record (see
 `022-enqueue-after-commit.md`).
@@ -30,4 +30,4 @@ it drops a cache (see `020-cross-app-cache-invalidation.md`) and enqueues a ledg
 `core/modules/src/product/shell/product-core.module.ts` binds the repository, the queue adapter and
 the cache adapter, registers `Product` and the `ledger-record` queue, and mounts the providers of
 `infrastructure/config` that bind `REDIS_COMMAND_TIMEOUT_MS` and `LEDGER_RETRY_ATTEMPTS`.
-`CACHE_PORT` comes from the global `CacheModule` of each app.
+`CACHE_LIB_PORT` comes from the global `CacheLibModule` of each app.

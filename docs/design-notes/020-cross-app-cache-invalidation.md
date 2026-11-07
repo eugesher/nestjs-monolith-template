@@ -19,11 +19,11 @@ as the queues already require.
 window, so windows that clamp to the same value share one entry.
 
 **A drop deletes every page by prefix.** One write may move rows across many pages and change the
-total of all of them, so the adapters call `delByPrefix(CACHE_KEYS.catalogPrefix())` rather than
+total of all of them, so the adapters call `handleDelByPrefix(CACHE_KEYS.catalogPrefix())` rather than
 working out which pages changed.
 
 **Each dropper has a port of its own module**, `PRODUCT_CATALOG_CACHE_PORT` or
-`PRODUCT_CORE_CATALOG_CACHE_PORT`, so the application never sees `CACHE_PORT`. A feature drops after
+`PRODUCT_CORE_CATALOG_CACHE_PORT`, so the application never sees `CACHE_LIB_PORT`. A feature drops after
 its write has returned; a core module drops in `afterCommit` (see `026-transaction-port.md`).
 
 **A stale page lives until its TTL at most.** A page read just before a write may be cached again

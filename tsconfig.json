@@ -70,10 +70,14 @@
       "@acme-libs/kernel/*": ["./libs/kernel/src/*"],
       "@acme-libs/ledger": ["./libs/ledger/src"],
       "@acme-libs/ledger/*": ["./libs/ledger/src/*"],
+      "@acme-libs/local-storage": ["./libs/local-storage/src"],
+      "@acme-libs/local-storage/*": ["./libs/local-storage/src/*"],
       "@acme-libs/observability": ["./libs/observability/src"],
       "@acme-libs/observability/*": ["./libs/observability/src/*"],
       "@acme-libs/openapi": ["./libs/openapi/src"],
       "@acme-libs/openapi/*": ["./libs/openapi/src/*"],
+      "@acme-libs/queue": ["./libs/queue/src"],
+      "@acme-libs/queue/*": ["./libs/queue/src/*"],
       "@acme-libs/toolkit": ["./libs/toolkit/src"],
       "@acme-libs/toolkit/*": ["./libs/toolkit/src/*"]
     }

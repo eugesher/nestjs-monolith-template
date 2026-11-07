@@ -30,7 +30,7 @@ export const acmeCore = [
     layer('application'),
     ownContracts,
     baseLibs('ledger', 'observability'),
-    libContracts('database'),
+    libContracts('local-storage'),
     packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [
@@ -64,8 +64,7 @@ export const acmeCore = [
     layer('shell'),
     ownContracts,
     to('acme-core:contracts', { module: 'ledger' }),
-    baseLibs(),
-    packages('@nestjs/bull'),
+    baseLibs('queue'),
   ]),
   from('acme-core:modules:index', [layer('shell')]),
   from('acme-core:contracts', [ownContracts, baseLibs()]),

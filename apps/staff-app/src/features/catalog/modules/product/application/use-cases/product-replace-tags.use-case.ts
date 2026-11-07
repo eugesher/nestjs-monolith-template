@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import {
+  LOCAL_STORAGE_TRANSACTION,
+  type ILocalStorageTransaction,
+} from '@acme-libs/contracts/local-storage';
 
 import { ProductNotFoundException, ProductTagNotFoundException } from '../../domain';
 import {
@@ -19,8 +22,8 @@ export class ProductReplaceTagsUseCase {
     private readonly repository: IProductReplaceTagsRepositoryPort,
     @Inject(PRODUCT_TAG_PORT)
     private readonly tag: IProductTagPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION)
+    private readonly transaction: ILocalStorageTransaction,
   ) {}
 
   public async execute(command: IProductReplaceTagsCommand): Promise<IProductTagsView> {

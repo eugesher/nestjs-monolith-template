@@ -1,30 +1,30 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { CacheModule } from '@acme-libs/cache';
+import { CacheLibModule } from '@acme-libs/cache';
+import { TypeOrmSetupModule } from '@acme-libs/database';
 import { HttpExceptionFilter, StrictValidationPipe } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observability';
+import { LocalStorageSetupModule, LocalStorageTransactionModule } from '@acme-libs/local-storage';
+import { LoggerSetupModule } from '@acme-libs/observability';
+import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, HealthModule, QueueModule } from '@acme-processor/features';
 import { IdempotencyModule, LedgerModule, ProductStockModule } from '@acme-processor/processors';
 
+import { entities } from './entities';
 import { AuthGlobalModule } from './global';
-import {
-  ConfigSetupModule,
-  QueueSetupModule,
-  ScheduleSetupModule,
-  TypeOrmSetupModule,
-} from './setup';
+import { ConfigSetupModule, ScheduleSetupModule } from './setup';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.PROCESSOR_APP),
-    CorrelationSetupModule.forRoot(),
-    TypeOrmSetupModule.forRoot(),
+    LocalStorageSetupModule.forRoot(),
+    TypeOrmSetupModule.forRoot(entities),
+    LocalStorageTransactionModule.forRoot(),
     ScheduleSetupModule,
-    QueueSetupModule,
-    CacheModule,
+    BullSetupModule.forRoot(),
+    CacheLibModule,
     AuthGlobalModule,
     AuthModule,
     HealthModule,

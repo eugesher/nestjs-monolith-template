@@ -20,6 +20,7 @@ describe('libs by layer', () => {
       'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
       'libs/contracts/src/database/index.ts',
+      'libs/contracts/src/local-storage/index.ts',
     ]);
   });
 
@@ -255,9 +256,9 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    ['apps/__layers-fixture__/src/app/setup/orm/__fixture__.ts', '../../../../../../libs'],
+    ['apps/__layers-fixture__/src/app/app.module.ts', '../../../../libs'],
     ['apps/__layers-fixture__/src/main.ts', '../../../libs'],
-  ])('the ORM setup and bootstrap MAY reach the database lib: %s', async (file, libs) => {
+  ])('the AppModule and bootstrap MAY reach the database lib: %s', async (file, libs) => {
     await expect({
       file,
       code: `import { x } from "${libs}/database/src";`,
@@ -321,10 +322,10 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     ['core/modules/src/__ledger-fixture__/application/__fixture__.ts', '../../../../../libs'],
-  ])('%s MAY reach the transaction port in the database contracts', async (file, libs) => {
+  ])('%s MAY reach the transaction port in the local-storage contracts', async (file, libs) => {
     await expect({
       file,
-      code: `import { x } from "${libs}/contracts/src/database";`,
+      code: `import { x } from "${libs}/contracts/src/local-storage";`,
     }).toPassArchitectureLint();
   });
 
@@ -343,11 +344,11 @@ describe('libs by layer', () => {
     ],
     ['core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts', '../../../../../libs'],
   ])(
-    '%s may NOT reach the database contracts, transactions are run by the application',
+    '%s may NOT reach the local-storage contracts, transactions are run by the application',
     async (file, libs) => {
       await expect({
         file,
-        code: `import { x } from "${libs}/contracts/src/database";`,
+        code: `import { x } from "${libs}/contracts/src/local-storage";`,
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -394,8 +395,15 @@ describe('libs by layer', () => {
     },
   );
 
+  it('the app outside the AppModule may NOT reach the cache lib, the AppModule mounts it', async () => {
+    await expect({
+      file: 'apps/__layers-fixture__/src/app/setup/config/__fixture__.ts',
+      code: 'import { x } from "../../../../../../libs/cache/src";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
   it.each([
-    ['apps/__layers-fixture__/src/app/__fixture__.ts', '../../../../libs', 'cache'],
+    ['apps/__layers-fixture__/src/app/app.module.ts', '../../../../libs', 'cache'],
     ['apps/__layers-fixture__/src/features/product/__fixture__.ts', '../../../../../libs', 'auth'],
     [
       'apps/__layers-fixture__/src/features/product/__fixture__.ts',

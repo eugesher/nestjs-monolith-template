@@ -1,7 +1,7 @@
-import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import { LEDGER_RECORD_JOB_OPTIONS, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import { BullSetupModule } from '@acme-libs/queue';
+import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 import { PRODUCT_CORE_PORT } from '@acme-core/contracts/product';
 
 import { ProductCoreArchiveUseCase, ProductCoreLedgerService } from '../application';
@@ -15,12 +15,7 @@ import {
 import { ProductCoreFacade } from './product-core.facade';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: LEDGER_RECORD_QUEUE,
-      defaultJobOptions: LEDGER_RECORD_JOB_OPTIONS,
-    }),
-  ],
+  imports: [BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE)],
   exports: [PRODUCT_CORE_PORT],
   providers: [
     { provide: PRODUCT_CORE_PORT, useClass: ProductCoreFacade },

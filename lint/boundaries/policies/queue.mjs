@@ -18,7 +18,6 @@ export const queue = [
       file: {
         categories: [
           'acme-app:features:infrastructure:queue',
-          'acme-app:processors:infrastructure:queue',
           'acme-core:modules:infrastructure:queue',
         ],
       },
@@ -29,27 +28,5 @@ export const queue = [
     ],
     message:
       'a queue adapter only takes InjectQueue from @nestjs/bull and the Queue type from bull; queues are registered in common/shared',
-  },
-  {
-    from: { file: { categories: 'acme-app:common:shared' } },
-    disallow: [{ ...packages('@nestjs/bull'), dependency: { specifiers: ['!BullModule'] } }],
-    message: 'common/shared only registers queues with BullModule from @nestjs/bull',
-  },
-  {
-    from: { file: { categories: 'acme-core:modules:shell' } },
-    disallow: [{ ...packages('@nestjs/bull'), dependency: { specifiers: ['!BullModule'] } }],
-    message:
-      'a core module only registers the queues it writes to with BullModule from @nestjs/bull',
-  },
-  {
-    from: { file: { categories: ['acme-app:app:module', 'acme-app:app'] } },
-    disallow: [
-      {
-        ...packages('@nestjs/bull'),
-        dependency: { specifiers: ['!{BullModule,BullRootModuleOptions}'] },
-      },
-    ],
-    message:
-      'the app only connects Bull to Redis with BullModule from @nestjs/bull; queues are registered in common/shared',
   },
 ];

@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import {
+  LOCAL_STORAGE_TRANSACTION,
+  type ILocalStorageTransaction,
+} from '@acme-libs/contracts/local-storage';
 
 import {
   IProductDraft,
@@ -29,8 +32,8 @@ export class ProductCreateUseCase {
     private readonly repository: IProductCreateRepositoryPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION)
+    private readonly transaction: ILocalStorageTransaction,
     @InjectPinoLogger(ProductCreateUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

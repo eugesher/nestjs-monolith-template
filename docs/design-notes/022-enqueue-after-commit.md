@@ -15,9 +15,9 @@ deadline and retries.
 ## After the commit
 
 **A module inside someone else's transaction uses `afterCommit`.** `ProductStockCoreMoveUseCase`
-runs in the caller's `TRANSACTION_PORT.run` and registers a hook with `TRANSACTION_PORT.afterCommit`
-(see `026-transaction-port.md`). A rollback drops the hook, so no job names a write that did not
-happen, and a call outside `run` throws.
+runs in the caller's `LOCAL_STORAGE_TRANSACTION.run` and registers a hook with
+`LOCAL_STORAGE_TRANSACTION.afterCommit` (see `026-transaction-port.md`). A rollback drops the hook,
+so no job names a write that did not happen, and a call outside `run` throws.
 
 **A use case that owns the transaction enqueues on the next line.** The line after
 `await transaction.run(...)` already runs after the commit, so the features call their ledger
@@ -40,12 +40,12 @@ still reach Redis once it is back, so a processor must tolerate a duplicate job.
 
 ## Where the queue is declared
 
-**A queue written by several apps keeps its contract in core**: the name, the job options and the
-payload type. A core module that writes to a queue registers it itself with
-`BullModule.registerQueue`, so every feature that mounts the module brings the queue with it. A
+**A queue written by several apps keeps its contract in core**: the name and the payload type. A core module that writes to a queue registers it itself with
+`BullSetupModule.registerQueue` of `libs/queue`, so every feature that mounts the module brings the queue with it. A
 feature registers its queues in the `common/shared` of its app
 (`apps/staff-app/src/common/shared/ledger`). Bull applies the job options of the producer, so
-every registration reads the one constant of the contract.
+`registerQueue` takes the name alone and every registration gets the job options of
+`BullSetupModule.forRoot()`.
 
 The lint edges for a core queue adapter are in `lint/boundaries/policies/acme-core.mjs` and
 `queue.mjs` (see `016-lint-allowlists.md`).

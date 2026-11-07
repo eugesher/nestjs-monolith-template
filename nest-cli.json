@@ -109,6 +109,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "contracts-local-storage": {
+      "type": "library",
+      "root": "libs/contracts/src/local-storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/local-storage",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
     "core-contracts-idempotency": {
       "type": "library",
       "root": "core/contracts/src/idempotency",
@@ -235,6 +244,15 @@
         "tsConfigPath": "libs/ledger/tsconfig.lib.json"
       }
     },
+    "local-storage": {
+      "type": "library",
+      "root": "libs/local-storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/local-storage/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/local-storage/tsconfig.lib.json"
+      }
+    },
     "observability": {
       "type": "library",
       "root": "libs/observability",
@@ -251,6 +269,15 @@
       "sourceRoot": "libs/openapi/src",
       "compilerOptions": {
         "tsConfigPath": "libs/openapi/tsconfig.lib.json"
+      }
+    },
+    "queue": {
+      "type": "library",
+      "root": "libs/queue",
+      "entryFile": "index",
+      "sourceRoot": "libs/queue/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/queue/tsconfig.lib.json"
       }
     },
     "toolkit": {

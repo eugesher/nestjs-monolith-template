@@ -41,7 +41,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('application'),
       ...sharedFacing.application,
       baseLibs('observability'),
-      libContracts('database'),
+      libContracts('local-storage'),
       packages('nestjs-pino'),
     ]),
     from(`${prefix}:infrastructure`, [
@@ -129,7 +129,7 @@ export const moduleAreas = [
     infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [],
     libAdapters: [],
-    queue: [packages('@nestjs/bull', '@nestjs/common', 'bull')],
+    queue: [],
     presentation: [
       to('acme-app:contracts', own('app')),
       to('acme-core:contracts'),

@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
+import { CACHE_KEYS, CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import {
   CATALOG_CACHE_PORT,
@@ -20,8 +20,8 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
   constructor(
     @Inject(CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN)
     private readonly ttlMs: number,
-    @Inject(CACHE_PORT)
-    private readonly cache: ICachePort,
+    @Inject(CACHE_LIB_PORT)
+    private readonly cache: ICacheLibPort,
   ) {}
 
   public async read(
@@ -30,6 +30,6 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
     const { page, limit, compute } = command;
     const key = CACHE_KEYS.catalogPage(page, limit);
 
-    return await this.cache.wrap(key, this.ttlMs, compute);
+    return await this.cache.handleWrap({ key, ttlMs: this.ttlMs, compute });
   }
 }

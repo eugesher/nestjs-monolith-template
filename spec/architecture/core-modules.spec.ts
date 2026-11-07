@@ -293,7 +293,7 @@ describe('core modules', () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
-          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
+          'import { ILocalStorageTransaction, LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
     });
@@ -301,14 +301,14 @@ describe('core modules', () => {
     it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
-        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure MAY take the cache port to drop the keys a write makes stale', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/cache/__fixture__.ts',
-        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
       }).toPassArchitectureLint();
     });
 
@@ -332,21 +332,27 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('the module root MAY register the queues it writes to', async () => {
+    it('the module root MAY register the queues it writes to with the queue lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
         code:
-          'import { BullModule } from "@nestjs/bull";\n' +
+          'import { BullSetupModule } from "@acme-libs/queue";\n' +
           'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
       }).toPassArchitectureLint();
     });
 
-    it('the module root may NOT process a queue', async () => {
-      await expect({
-        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-        code: 'import { Processor } from "@nestjs/bull";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it.each([
+      'import { BullModule } from "@nestjs/bull";',
+      'import { Processor } from "@nestjs/bull";',
+    ])(
+      'the module root may NOT take Bull itself (%s) — it registers queues with the queue lib',
+      async (code) => {
+        await expect({
+          file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+          code,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it.each(['application', 'outbound', 'domain'])(
       '%s may NOT import Bull, only the queue adapter writes to a queue',

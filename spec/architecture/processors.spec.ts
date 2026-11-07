@@ -354,26 +354,14 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('a processor infrastructure/queue MAY inject a Bull queue to manage its jobs', async () => {
-      await expect({
-        file:
-          'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/queue/' +
-          '__fixture__.ts',
-        code: [
-          'import { InjectQueue } from "@nestjs/bull";',
-          'import { Injectable } from "@nestjs/common";',
-          'import type { Queue } from "bull";',
-          'import { x } from "../../../../contracts/ledger-record";',
-        ].join('\n'),
-      }).toPassArchitectureLint();
-    });
-
     it.each([
+      'import { InjectQueue } from "@nestjs/bull";',
       'import { BullModule } from "@nestjs/bull";',
       'import { Processor } from "@nestjs/bull";',
+      'import type { Queue } from "bull";',
       'import type { Job } from "bull";',
     ])(
-      'a processor infrastructure/queue may NOT take more than InjectQueue and the Queue type (%s)',
+      'a processor infrastructure/queue may NOT take Bull (%s) — processors do not enqueue',
       async (code) => {
         await expect({
           file:
@@ -384,41 +372,44 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       },
     );
 
-    it('common/shared MAY register a queue with BullModule', async () => {
+    it('common/shared MAY register a queue with the queue lib', async () => {
       await expect({
         file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
         code:
-          'import { BullModule } from "@nestjs/bull";\n' +
+          'import { BullSetupModule } from "@acme-libs/queue";\n' +
           'import { x } from "../../../../contracts/ledger-record";',
       }).toPassArchitectureLint();
     });
 
-    it(
-      'common/shared may NOT inject a queue — ' + 'producers inject it in infrastructure/queue',
-      async () => {
+    it.each([
+      'import { BullModule } from "@nestjs/bull";',
+      'import { InjectQueue } from "@nestjs/bull";',
+    ])(
+      'common/shared may NOT take Bull itself (%s) — it registers queues with the queue lib',
+      async (code) => {
         await expect({
           file: 'apps/__processors-fixture__/src/common/shared/ledger-record/queues/__fixture__.ts',
-          code: 'import { InjectQueue } from "@nestjs/bull";',
+          code,
         }).toBreakRule('boundaries/dependencies');
       },
     );
 
-    it('the app MAY connect Bull to Redis', async () => {
+    it('the app module MAY connect Bull to Redis with the queue lib', async () => {
       await expect({
-        file: 'apps/__processors-fixture__/src/app/setup/queue/__fixture__.ts',
-        code: 'import { BullModule, BullRootModuleOptions } from "@nestjs/bull";',
+        file: 'apps/__processors-fixture__/src/app/app.module.ts',
+        code: 'import { BullSetupModule } from "@acme-libs/queue";',
       }).toPassArchitectureLint();
     });
 
-    it(
-      'the app may NOT register a queue of its own — ' + 'queues are registered in common/shared',
-      async () => {
-        await expect({
-          file: 'apps/__processors-fixture__/src/app/setup/queue/__fixture__.ts',
-          code: 'import { BullModule, InjectQueue } from "@nestjs/bull";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it.each([
+      'apps/__processors-fixture__/src/app/app.module.ts',
+      'apps/__processors-fixture__/src/app/setup/queue/__fixture__.ts',
+    ])('%s may NOT take Bull itself — the queue lib connects it to Redis', async (file) => {
+      await expect({
+        file,
+        code: 'import { BullModule } from "@nestjs/bull";',
+      }).toBreakRule('boundaries/dependencies');
+    });
 
     it('a processor MAY schedule with Cron and CronExpression', async () => {
       await expect({

@@ -3,7 +3,10 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import {
+  LOCAL_STORAGE_TRANSACTION,
+  type ILocalStorageTransaction,
+} from '@acme-libs/contracts/local-storage';
 import {
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,
@@ -32,8 +35,8 @@ export class ProductStockCoreMoveUseCase {
     private readonly repository: IProductStockCoreMoveRepositoryPort,
     @Inject(PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT)
     private readonly postSubtract: IProductStockCorePostSubtractPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION)
+    private readonly transaction: ILocalStorageTransaction,
     @Inject(PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN)
     private readonly postSubtractRetryAttempts: number,
     @InjectPinoLogger(ProductStockCoreMoveUseCase.name)

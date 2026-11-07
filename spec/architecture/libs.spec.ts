@@ -16,14 +16,17 @@ describe('libs', () => {
       'libs/http/src/exceptions/unauthorized-http.exception.ts',
       'libs/kernel/src/index.ts',
       'libs/ledger/src/index.ts',
+      'libs/local-storage/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
+      'libs/queue/src/index.ts',
       'libs/toolkit/src/index.ts',
       'libs/contracts/src/auth/index.ts',
       'libs/contracts/src/cache/index.ts',
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
+      'libs/contracts/src/local-storage/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
     ]);
@@ -67,8 +70,10 @@ describe('libs', () => {
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'observability']],
     ['ledger', ['kernel', 'toolkit']],
+    ['local-storage', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
+    ['queue', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {
     const libs = [
       'auth',
@@ -80,8 +85,10 @@ describe('libs', () => {
       'http',
       'kernel',
       'ledger',
+      'local-storage',
       'observability',
       'openapi',
+      'queue',
       'toolkit',
     ];
 
@@ -110,11 +117,13 @@ describe('libs', () => {
     ['http', []],
     ['kernel', []],
     ['ledger', []],
+    ['local-storage', ['local-storage']],
     ['observability', []],
     ['openapi', []],
+    ['queue', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'credentials', 'database', 'health'];
+    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {
@@ -152,7 +161,7 @@ describe('libs', () => {
     },
   );
 
-  it.each(['auth', 'cache', 'credentials', 'database', 'health'])(
+  it.each(['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {
       await expect({
@@ -261,7 +270,7 @@ describe('libs', () => {
   );
 
   it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
-    'the observability lib may NOT import %s — the database lib owns transactions',
+    'the observability lib may NOT import %s — the local-storage lib owns transactions',
     async (source) => {
       await expect({
         file: 'libs/observability/src/correlation/__fixture__.ts',
@@ -271,15 +280,25 @@ describe('libs', () => {
   );
 
   it(
-    'the database lib MAY import the transaction, ' + 'async context and logging packages',
+    'the local-storage lib MAY import the transaction, ' + 'async context and logging packages',
     async () => {
       await expect({
-        file: 'libs/database/src/__fixture__.ts',
+        file: 'libs/local-storage/src/cls/__fixture__.ts',
         code:
           'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
           'import { ClsService } from "nestjs-cls";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
+    },
+  );
+
+  it.each(['nestjs-cls', 'nestjs-pino'])(
+    'the database lib may NOT import %s — the local-storage lib owns the async context',
+    async (source) => {
+      await expect({
+        file: 'libs/database/src/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toBreakRule('boundaries/dependencies');
     },
   );
 
@@ -323,6 +342,23 @@ describe('libs', () => {
       }).toBreakRule('boundaries/dependencies');
     },
   );
+
+  it('the queue lib MAY import the packages Bull setup needs', async () => {
+    await expect({
+      file: 'libs/queue/src/bull/__fixture__.ts',
+      code:
+        'import { BullModule } from "@nestjs/bull";\n' +
+        'import { DynamicModule } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each(['bull', 'ioredis', 'nestjs-pino'])('the queue lib may NOT import %s', async (source) => {
+    await expect({
+      file: 'libs/queue/src/bull/__fixture__.ts',
+      code: `import { x } from "${source}";`,
+    }).toBreakRule('boundaries/dependencies');
+  });
 
   it('the credentials lib MAY import the packages hashing and signing need', async () => {
     await expect({

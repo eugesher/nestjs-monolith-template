@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import {
+  LOCAL_STORAGE_TRANSACTION,
+  type ILocalStorageTransaction,
+} from '@acme-libs/contracts/local-storage';
 import {
   ITagCommonReplaceCommand,
   ITagCommonReplaceView,
@@ -19,8 +22,8 @@ export class TagCommonReplaceUseCase {
   constructor(
     @Inject(TAG_COMMON_REPLACE_REPOSITORY_PORT)
     private readonly repository: ITagCommonReplaceRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION)
+    private readonly transaction: ILocalStorageTransaction,
     @InjectPinoLogger(TagCommonReplaceUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

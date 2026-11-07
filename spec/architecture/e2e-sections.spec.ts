@@ -43,7 +43,7 @@ describe('e2e sections', () => {
   it('the e2e context MAY use the test entry points of libs', async () => {
     await expect({
       file: 'apps/customer-app/test/context/__fixture__.ts',
-      code: 'import { REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
     }).toPassArchitectureLint();
   });
 

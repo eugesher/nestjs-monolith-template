@@ -18,8 +18,10 @@ describe('lib entry points', () => {
       'http',
       'kernel',
       'ledger',
+      'local-storage',
       'observability',
       'openapi',
+      'queue',
       'toolkit',
     ]);
   });
@@ -54,10 +56,14 @@ describe('lib entry points', () => {
       '@acme-libs/kernel/*',
       '@acme-libs/ledger',
       '@acme-libs/ledger/*',
+      '@acme-libs/local-storage',
+      '@acme-libs/local-storage/*',
       '@acme-libs/observability',
       '@acme-libs/observability/*',
       '@acme-libs/openapi',
       '@acme-libs/openapi/*',
+      '@acme-libs/queue',
+      '@acme-libs/queue/*',
       '@acme-libs/toolkit',
       '@acme-libs/toolkit/*',
     ]);
@@ -73,16 +79,19 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/credentials',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
+    '@acme-libs/contracts/local-storage',
     '@acme-libs/credentials',
     '@acme-libs/database',
     '@acme-libs/health',
     '@acme-libs/http',
     '@acme-libs/kernel',
     '@acme-libs/ledger',
+    '@acme-libs/local-storage',
     '@acme-libs/observability',
     '@acme-libs/observability/testing',
     '@acme-libs/observability/tracer',
     '@acme-libs/openapi',
+    '@acme-libs/queue',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -99,18 +108,19 @@ describe('lib entry points', () => {
     '@acme-libs/kernel/app/app-name.enum',
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
-    '@acme-libs/database/transaction/transaction.adapter',
+    '@acme-libs/local-storage/transaction/shell/local-storage-transaction.module',
     '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
+    '@acme-libs/queue/bull/bull-setup.module',
     '@acme-libs/health/shell/health-lib.module',
     '@acme-libs/auth/shell/auth-lib.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
-    '@acme-libs/observability/correlation/correlation-setup.module',
-    '@acme-libs/contracts/database/ports/transaction.port',
+    '@acme-libs/local-storage/setup/local-storage-setup.module',
+    '@acme-libs/contracts/local-storage/ports/local-storage-transaction.port',
     '@acme-libs/contracts/database/ports/repository-host.port',
-    '@acme-libs/cache/redis/redis-cache.adapter',
-    '@acme-libs/contracts/cache/ports/cache.port',
+    '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',
+    '@acme-libs/contracts/cache/ports/cache-lib.port',
     '@acme-libs/contracts/health/ports/health-lib.port',
     '@acme-libs/contracts/auth/ports/auth-user-validator.port',
     '@acme-libs/contracts/credentials/ports/credentials-lib.port',
@@ -187,7 +197,6 @@ describe('lib entry points', () => {
   );
 
   it.each([
-    'apps/staff-app/src/app/setup/orm/__fixture__.ts',
     'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
     'apps/processor-app/src/processors/purge/application/services/__fixture__.ts',
     'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
@@ -195,7 +204,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
-      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+      code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
     }).toPassArchitectureLint();
   });
 
@@ -203,29 +212,30 @@ describe('lib entry points', () => {
     'apps/staff-app/src/features/product/domain/__fixture__.ts',
     'apps/staff-app/src/features/product/outbound/__fixture__.ts',
     'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
+    'apps/staff-app/src/app/setup/config/__fixture__.ts',
   ])(
     '%s may NOT import the transaction port by its alias, transactions are run by the application',
     async (file) => {
       await expect({
         file,
-        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+        code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
 
-  it('the app root MAY import the database lib by its alias', async () => {
+  it('the AppModule MAY import the database lib by its alias', async () => {
     await expect({
-      file: 'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-      code: 'import { SnakeNamingStrategy } from "@acme-libs/database";',
+      file: 'apps/staff-app/src/app/app.module.ts',
+      code: 'import { TypeOrmSetupModule } from "@acme-libs/database";',
     }).toPassArchitectureLint();
   });
 
   it(
-    'application may NOT import the database lib root, ' + 'it takes the transaction port',
+    'application may NOT import the local-storage lib root, ' + 'it takes the transaction port',
     async () => {
       await expect({
         file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { TransactionAdapter } from "@acme-libs/database";',
+        code: 'import { LocalStorageTransactionModule } from "@acme-libs/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -236,7 +246,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the cache contracts by their alias', async (file) => {
     await expect({
       file,
-      code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
+      code: 'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
     }).toPassArchitectureLint();
   });
 
@@ -249,14 +259,14 @@ describe('lib entry points', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
   it('the app root MAY import the cache lib by its alias', async () => {
     await expect({
       file: 'apps/staff-app/src/app/app.module.ts',
-      code: 'import { CacheModule } from "@acme-libs/cache";',
+      code: 'import { CacheLibModule } from "@acme-libs/cache";',
     }).toPassArchitectureLint();
   });
 
@@ -266,21 +276,21 @@ describe('lib entry points', () => {
   ])('%s may NOT import the cache lib root, only the app root wires it', async (file) => {
     await expect({
       file,
-      code: 'import { CacheModule } from "@acme-libs/cache";',
+      code: 'import { CacheLibModule } from "@acme-libs/cache";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it('the Redis client token may NOT be imported outside specs', async () => {
     await expect({
       file: 'apps/staff-app/src/app/__fixture__.ts',
-      code: 'import { REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
     }).toBreakRule('no-restricted-imports');
   });
 
   it('an e2e spec MAY take the Redis client token', async () => {
     await expect({
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
-      code: 'import { REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
     }).toPassArchitectureLint();
   });
 
@@ -291,7 +301,7 @@ describe('lib entry points', () => {
       await expect({
         file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
         code:
-          'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";\n' +
+          'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";\n' +
           'import { IHealthLibDependencyView } from "@acme-libs/contracts/health";',
       }).toPassArchitectureLint();
     },
@@ -302,7 +312,7 @@ describe('lib entry points', () => {
     async () => {
       await expect({
         file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
-        code: 'import { CacheModule } from "@acme-libs/cache";',
+        code: 'import { CacheLibModule } from "@acme-libs/cache";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
