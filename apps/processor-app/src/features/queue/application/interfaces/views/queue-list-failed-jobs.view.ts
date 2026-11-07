@@ -12,7 +12,7 @@ export type IQueueListFailedJobsView = IPage<{
   failedReason: unknown;
   stacktrace: Nullable<string[]>;
   returnvalue: unknown;
-  debounceId?: Nullable<string>;
+  debounceId: Nullable<string>;
   finishedOn: Nullable<number>;
   processedOn: Nullable<number>;
 }>;

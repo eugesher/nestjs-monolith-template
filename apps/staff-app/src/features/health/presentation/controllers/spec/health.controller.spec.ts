@@ -43,14 +43,20 @@ describe('HealthController', () => {
   it('answers 503 with the dependencies when not ready', async () => {
     readiness.mockResolvedValue({
       status: 'not-ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 }, cache: { status: 'error' } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'error', latencyMs: null },
+      },
     });
 
     const body = await controller.ready(response);
 
     expect(body).toEqual({
       status: 'not-ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 }, cache: { status: 'error' } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'error', latencyMs: null },
+      },
     });
     expect(response.status).toHaveBeenCalledWith(503);
   });

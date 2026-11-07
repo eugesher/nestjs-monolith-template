@@ -8,7 +8,7 @@ export interface IQueueRegistryJobCountsView {
     failed: number;
     delayed: number;
     waiting: number;
-    paused?: number;
+    paused: Nullable<number>;
   };
 }
 
@@ -25,7 +25,7 @@ export type IQueueRegistryFailedJobsView = [
     failedReason: unknown;
     stacktrace: Nullable<string[]>;
     returnvalue: unknown;
-    debounceId?: Nullable<string>;
+    debounceId: Nullable<string>;
     finishedOn: Nullable<number>;
     processedOn: Nullable<number>;
   }[],

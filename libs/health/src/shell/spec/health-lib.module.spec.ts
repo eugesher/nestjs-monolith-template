@@ -59,7 +59,7 @@ describe('HealthLibModule', () => {
       status: 'not-ready',
       dependencies: {
         database: { status: 'ok', latencyMs: expect.any(Number) as number },
-        cache: { status: 'error' },
+        cache: { status: 'error', latencyMs: null },
       },
     });
   });

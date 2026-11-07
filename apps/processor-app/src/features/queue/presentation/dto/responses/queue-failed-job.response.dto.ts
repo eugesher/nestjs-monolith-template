@@ -35,7 +35,7 @@ export class QueueFailedJobResponseDto {
   public returnvalue: unknown;
 
   @ApiResponseProperty({ example: null })
-  public debounceId?: string | null;
+  public debounceId: string | null;
 
   @ApiResponseProperty({ example: 1767225601000 })
   public finishedOn: number | null;

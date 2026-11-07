@@ -1,3 +1,5 @@
+import { Nullable } from '@acme-libs/toolkit';
+
 type HealthLibDependencyStatus = 'ok' | 'error';
 
 export interface IHealthLibLivenessView {
@@ -8,7 +10,7 @@ export interface IHealthLibLivenessView {
 
 export interface IHealthLibDependencyView {
   status: HealthLibDependencyStatus;
-  latencyMs?: number;
+  latencyMs: Nullable<number>;
 }
 
 export interface IHealthLibReadinessView {

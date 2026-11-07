@@ -46,7 +46,7 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
 
       return { status: 'ok', latencyMs: Date.now() - startedAt };
     } catch {
-      return { status: 'error' };
+      return { status: 'error', latencyMs: null };
     } finally {
       clearTimeout(timer);
     }

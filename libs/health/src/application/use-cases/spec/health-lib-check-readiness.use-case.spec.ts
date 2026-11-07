@@ -32,7 +32,7 @@ describe('HealthLibCheckReadinessUseCase', () => {
         probeAll: () =>
           Promise.resolve({
             database: { status: 'ok', latencyMs: 2 },
-            cache: { status: 'error' },
+            cache: { status: 'error', latencyMs: null },
           }),
       },
       logger as unknown as PinoLogger,
@@ -42,7 +42,10 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
     expect(view).toEqual({
       status: 'not-ready',
-      dependencies: { database: { status: 'ok', latencyMs: 2 }, cache: { status: 'error' } },
+      dependencies: {
+        database: { status: 'ok', latencyMs: 2 },
+        cache: { status: 'error', latencyMs: null },
+      },
     });
     expect(logger.warn).toHaveBeenCalledWith({ failed: ['cache'] }, 'Readiness check failed');
   });

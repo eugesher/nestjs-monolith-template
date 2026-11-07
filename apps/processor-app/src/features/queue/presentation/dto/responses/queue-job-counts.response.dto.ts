@@ -17,5 +17,5 @@ export class QueueJobCountsResponseDto {
   public waiting: number;
 
   @ApiResponseProperty({ example: 0 })
-  public paused?: number;
+  public paused: number | null;
 }
