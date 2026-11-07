@@ -3,11 +3,11 @@ import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
 
 import {
+  CATALOG_CACHE_PORT,
   CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN,
   ICatalogCachePort,
   ICatalogCacheProductListReadCommand,
   ICatalogCacheProductListView,
-  CATALOG_CACHE_PORT,
 } from '../../outbound';
 
 @Injectable()
