@@ -124,9 +124,9 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **The database contracts name TypeORM.** The repository host port returns a TypeORM
   `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
   the base libs.
-- **No module registers entities.** The entities of an app are listed once in
-  `app/setup/orm/entities`, so only the app may import `@nestjs/typeorm`; `TypeOrmModule.forFeature`
-  would add repository tokens that nothing injects.
+- **No module registers entities.** The entities of an app are listed once in `app/entities` and
+  handed to `TypeOrmSetupModule.forRoot` of `libs/database`, so only that lib may import
+  `@nestjs/typeorm`; `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
 - **A module root binds no token.** An adapter carries its binding in a static `provider` (see
   `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see
   `030-config-values.md`), so the module root of a feature, a processor, a core, common or global

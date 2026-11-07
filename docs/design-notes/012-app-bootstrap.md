@@ -54,19 +54,19 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 
 ## AppModule
 
-| Piece                              | Where                                                | What it does                                                                                |
-| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                                               |
-| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                                                     |
-| `CorrelationSetupModule.forRoot()` | `libs/observability`                                 | the CLS context of every request under its correlation id                                   |
-| `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
-| `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
-| `BullSetupModule.forRoot()`        | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                          |
-| `CacheLibModule`                   | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                     |
-| `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
-| features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                               |
-| `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
-| `APP_FILTER`                       | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
+| Piece                                  | Where                                                | What it does                                                                                |
+| -------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `ConfigSetupModule.forRoot()`          | `app/setup/config`                                   | validates the environment of the app with Joi                                               |
+| `LoggerSetupModule.forRoot(<app>)`     | `libs/observability`                                 | pino, HTTP request logs                                                                     |
+| `CorrelationSetupModule.forRoot()`     | `libs/observability`                                 | the CLS context of every request under its correlation id                                   |
+| `TypeOrmSetupModule.forRoot(entities)` | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
+| `ScheduleSetupModule`                  | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
+| `BullSetupModule.forRoot()`            | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                          |
+| `CacheLibModule`                       | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                     |
+| `AuthGlobalModule`                     | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
+| features, processors                   | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                               |
+| `APP_PIPE`                             | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |
+| `APP_FILTER`                           | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                |
 
 Every module in `app/setup/` is named `*SetupModule`.
 

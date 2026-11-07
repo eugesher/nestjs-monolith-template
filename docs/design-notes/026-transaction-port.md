@@ -10,8 +10,8 @@ interface ITransactionPort {
 }
 ```
 
-`TransactionAdapter` of `libs/database` implements it, and `TypeOrmSetupModule` of each app binds
-it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
+`TransactionAdapter` of `libs/database` implements it, and `TypeOrmSetupModule` of the same lib
+binds it next to `ClsPluginTransactional` (see `012-app-bootstrap.md`).
 
 ## `run`
 

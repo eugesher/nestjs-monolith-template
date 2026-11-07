@@ -48,9 +48,9 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
 
 - **Facades** in `shell/` stay `{ provide: <MODULE>_<LAYER>_PORT, useClass: <Facade> }`. A facade is
   the public entry of a module, not an implementation of one of its outbound ports.
-- **The adapters of `libs/database`** (`TransactionAdapter`, `RepositoryHostAdapter`) are bound in
-  `app/setup`. The app decides which implementation stands behind a port of `@acme-libs/contracts`, so the binding
-  stays with the app.
+- **The adapters of `libs/database`** (`TransactionAdapter`, `RepositoryHostAdapter`) are bound by
+  `TypeOrmSetupModule` of the same lib, next to the TypeORM connection and the transactional plugin
+  they need. The app picks the implementation by mounting the module and hands it only its entities.
 - **Global enhancers** (`APP_PIPE`, `APP_FILTER`, `APP_GUARD`) are bound by the app module and the
   auth lib, under tokens of Nest.
 

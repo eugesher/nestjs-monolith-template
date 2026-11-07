@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { CacheLibModule } from '@acme-libs/cache';
+import { TypeOrmSetupModule } from '@acme-libs/database';
 import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
@@ -12,15 +13,16 @@ import { CorrelationSetupModule, LoggerSetupModule } from '@acme-libs/observabil
 import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, CatalogModule, HealthModule, OrderModule } from '@acme-customer/features';
 
+import { entities } from './entities';
 import { AuthGlobalModule } from './global';
-import { ConfigSetupModule, TypeOrmSetupModule } from './setup';
+import { ConfigSetupModule } from './setup';
 
 @Module({
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
     CorrelationSetupModule.forRoot(),
-    TypeOrmSetupModule.forRoot(),
+    TypeOrmSetupModule.forRoot(entities),
     BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,

@@ -67,8 +67,8 @@ the case where dropping every page is cheap.
 ## `date` columns stay strings
 
 With `timezone: 'Z'`, mysql2 reads a `date` as midnight UTC, and TypeORM turns it back into a string
-with the local getters of the process, which shifts the day west of UTC. Every app sets
-`dateStrings: ['DATE']` in `app/setup/orm/type-orm-setup.module.ts`, so the driver hands over
+with the local getters of the process, which shifts the day west of UTC. `TypeOrmSetupModule`
+of `libs/database` sets `dateStrings: ['DATE']` for every app, so the driver hands over
 `YYYY-MM-DD` as it is. Example column: `apps/staff-app/src/common/entities/reminder/reminder.entity.ts`.
 
 ## Soft delete

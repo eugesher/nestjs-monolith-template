@@ -192,7 +192,6 @@ describe('lib entry points', () => {
   );
 
   it.each([
-    'apps/staff-app/src/app/setup/orm/__fixture__.ts',
     'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
     'apps/processor-app/src/processors/purge/application/services/__fixture__.ts',
     'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
@@ -208,6 +207,7 @@ describe('lib entry points', () => {
     'apps/staff-app/src/features/product/domain/__fixture__.ts',
     'apps/staff-app/src/features/product/outbound/__fixture__.ts',
     'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
+    'apps/staff-app/src/app/setup/config/__fixture__.ts',
   ])(
     '%s may NOT import the transaction port by its alias, transactions are run by the application',
     async (file) => {
@@ -218,10 +218,10 @@ describe('lib entry points', () => {
     },
   );
 
-  it('the app root MAY import the database lib by its alias', async () => {
+  it('the AppModule MAY import the database lib by its alias', async () => {
     await expect({
-      file: 'apps/staff-app/src/app/setup/orm/__fixture__.ts',
-      code: 'import { SnakeNamingStrategy } from "@acme-libs/database";',
+      file: 'apps/staff-app/src/app/app.module.ts',
+      code: 'import { TypeOrmSetupModule } from "@acme-libs/database";',
     }).toPassArchitectureLint();
   });
 

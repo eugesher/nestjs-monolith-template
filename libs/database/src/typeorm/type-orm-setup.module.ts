@@ -6,30 +6,18 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
 
-import {
-  RepositoryHostAdapter,
-  SnakeNamingStrategy,
-  TransactionAdapter,
-} from '@acme-libs/database';
 import { REPOSITORY_HOST_PORT, TRANSACTION_PORT } from '@acme-libs/contracts/database';
 
-import { entities } from './entities';
+import { SnakeNamingStrategy } from '../naming/snake-naming.strategy';
+import { RepositoryHostAdapter } from '../repository/repository-host.adapter';
+import { TransactionAdapter } from '../transaction/transaction.adapter';
 
 export class TypeOrmSetupModule {
-  public static forRoot(): DynamicModule {
+  public static forRoot(entities: TypeOrmModuleOptions['entities']): DynamicModule {
     const typeOrm = TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService): TypeOrmModuleOptions => ({
-        entities,
-        type: 'mysql',
-        url: config.getOrThrow<string>('DATABASE_URL'),
-        logging: config.getOrThrow<boolean>('DATABASE_LOGGING'),
-        synchronize: false,
-        timezone: 'Z',
-        dateStrings: ['DATE'],
-        charset: 'utf8mb4',
-        namingStrategy: new SnakeNamingStrategy(),
-      }),
+      useFactory: (config: ConfigService): TypeOrmModuleOptions =>
+        TypeOrmSetupModule.options(config, entities),
     });
     const transactional = new ClsPluginTransactional({
       imports: [typeOrm],
@@ -45,6 +33,27 @@ export class TypeOrmSetupModule {
         { provide: REPOSITORY_HOST_PORT, useClass: RepositoryHostAdapter },
       ],
       exports: [TRANSACTION_PORT, REPOSITORY_HOST_PORT],
+    };
+  }
+
+  private static options(
+    config: ConfigService,
+    entities: TypeOrmModuleOptions['entities'],
+  ): TypeOrmModuleOptions {
+    const url = config.getOrThrow<string>('DATABASE_URL');
+    const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
+    const namingStrategy = new SnakeNamingStrategy();
+
+    return {
+      entities,
+      type: 'mysql',
+      url,
+      logging,
+      synchronize: false,
+      timezone: 'Z',
+      dateStrings: ['DATE'],
+      charset: 'utf8mb4',
+      namingStrategy,
     };
   }
 }

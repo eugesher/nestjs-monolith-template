@@ -15,7 +15,7 @@ describe('app entities (@acme-<app>/common/entities)', () => {
   });
 
   it.each([
-    'apps/staff-app/src/app/setup/orm/entities/index.ts',
+    'apps/staff-app/src/app/entities/index.ts',
     'apps/staff-app/src/app/global/auth/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/' +
