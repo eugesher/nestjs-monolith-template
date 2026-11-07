@@ -1,17 +1,17 @@
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
-import { LocalStorageTransactionalHostAdapter } from '../local-storage-transactional-host.adapter';
+import { LocalStorageTransactionHostAdapter } from '../local-storage-transaction-host.adapter';
 
-describe('LocalStorageTransactionalHostAdapter', () => {
+describe('LocalStorageTransactionHostAdapter', () => {
   let isTransactionActive: jest.Mock;
   let withTransaction: jest.Mock;
-  let adapter: LocalStorageTransactionalHostAdapter;
+  let adapter: LocalStorageTransactionHostAdapter;
 
   beforeEach(() => {
     isTransactionActive = jest.fn().mockReturnValue(true);
     withTransaction = jest.fn((work: () => Promise<unknown>) => work());
-    adapter = new LocalStorageTransactionalHostAdapter({
+    adapter = new LocalStorageTransactionHostAdapter({
       isTransactionActive,
       withTransaction,
     } as unknown as TransactionHost<TransactionalAdapterTypeOrm>);

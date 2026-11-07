@@ -16,6 +16,7 @@ describe('HealthLibModule', () => {
   beforeEach(async () => {
     @Global()
     @Module({
+      exports: [DataSource, CACHE_LIB_PORT],
       providers: [
         { provide: DataSource, useValue: { query: () => Promise.resolve([{ 1: '1' }]) } },
         {
@@ -23,7 +24,6 @@ describe('HealthLibModule', () => {
           useValue: { handleGet: () => Promise.reject(new Error('down')) },
         },
       ],
-      exports: [DataSource, CACHE_LIB_PORT],
     })
     class DependenciesModule {}
 

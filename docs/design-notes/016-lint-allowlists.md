@@ -101,8 +101,8 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
   `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
-  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth` stay
-  direct.
+  presentation may not. `LOCAL_STORAGE_TRANSACTION` and the types of `@acme-libs/contracts/auth`
+  stay direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
   ledger service extends `SubjectLedgerService`, the queue adapter extends
@@ -113,7 +113,7 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
   `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
   not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
-  `libs/local-storage` do. The application takes `TRANSACTION_PORT` from
+  `libs/local-storage` do. The application takes `LOCAL_STORAGE_TRANSACTION` from
   `@acme-libs/contracts/local-storage`.
 - **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
   `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of

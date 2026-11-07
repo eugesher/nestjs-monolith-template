@@ -15,9 +15,9 @@ deadline and retries.
 ## After the commit
 
 **A module inside someone else's transaction uses `afterCommit`.** `ProductStockCoreMoveUseCase`
-runs in the caller's `TRANSACTION_PORT.run` and registers a hook with `TRANSACTION_PORT.afterCommit`
-(see `026-transaction-port.md`). A rollback drops the hook, so no job names a write that did not
-happen, and a call outside `run` throws.
+runs in the caller's `LOCAL_STORAGE_TRANSACTION.run` and registers a hook with
+`LOCAL_STORAGE_TRANSACTION.afterCommit` (see `026-transaction-port.md`). A rollback drops the hook,
+so no job names a write that did not happen, and a call outside `run` throws.
 
 **A use case that owns the transaction enqueues on the next line.** The line after
 `await transaction.run(...)` already runs after the commit, so the features call their ledger

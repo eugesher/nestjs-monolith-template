@@ -4,19 +4,19 @@ import { ClsService } from 'nestjs-cls';
 import { Maybe } from '@acme-libs/toolkit';
 
 import {
-  ILocalStorageTransactionalContextPort,
-  LOCAL_STORAGE_TRANSACTIONAL_CONTEXT_PORT,
+  ILocalStorageTransactionContextPort,
+  LOCAL_STORAGE_TRANSACTION_CONTEXT_PORT,
 } from '../../outbound';
 
 @Injectable()
-export class LocalStorageTransactionalContextAdapter implements ILocalStorageTransactionalContextPort {
-  public static readonly provider: ClassProvider<ILocalStorageTransactionalContextPort> = {
-    provide: LOCAL_STORAGE_TRANSACTIONAL_CONTEXT_PORT,
-    useClass: LocalStorageTransactionalContextAdapter,
+export class LocalStorageTransactionContextAdapter implements ILocalStorageTransactionContextPort {
+  public static readonly provider: ClassProvider<ILocalStorageTransactionContextPort> = {
+    provide: LOCAL_STORAGE_TRANSACTION_CONTEXT_PORT,
+    useClass: LocalStorageTransactionContextAdapter,
   };
 
   private static readonly AFTER_COMMIT_HOOKS = Symbol(
-    'LOCAL_STORAGE_TRANSACTIONAL_AFTER_COMMIT_HOOKS',
+    'LOCAL_STORAGE_TRANSACTION_AFTER_COMMIT_HOOKS',
   );
 
   constructor(private readonly cls: ClsService) {}
@@ -26,7 +26,7 @@ export class LocalStorageTransactionalContextAdapter implements ILocalStorageTra
   }
 
   public setHooks(hooks: (() => Promise<void>)[]): void {
-    this.cls.set(LocalStorageTransactionalContextAdapter.AFTER_COMMIT_HOOKS, hooks);
+    this.cls.set(LocalStorageTransactionContextAdapter.AFTER_COMMIT_HOOKS, hooks);
   }
 
   public getHooks(): Maybe<(() => Promise<void>)[]> {
@@ -35,7 +35,7 @@ export class LocalStorageTransactionalContextAdapter implements ILocalStorageTra
     }
 
     return this.cls.get<Maybe<(() => Promise<void>)[]>>(
-      LocalStorageTransactionalContextAdapter.AFTER_COMMIT_HOOKS,
+      LocalStorageTransactionContextAdapter.AFTER_COMMIT_HOOKS,
     );
   }
 }

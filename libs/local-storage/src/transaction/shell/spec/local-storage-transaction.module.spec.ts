@@ -6,16 +6,19 @@ import { ClsModule } from 'nestjs-cls';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource, EntityManager } from 'typeorm';
 
-import { ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
+import {
+  ILocalStorageTransaction,
+  LOCAL_STORAGE_TRANSACTION,
+} from '@acme-libs/contracts/local-storage';
 
-import { LocalStorageTransactionalModule } from '../local-storage-transactional.module';
+import { LocalStorageTransactionModule } from '../local-storage-transaction.module';
 
-describe('LocalStorageTransactionalModule', () => {
+describe('LocalStorageTransactionModule', () => {
   let outcomes: string[];
   let dataSource: { manager: EntityManager; transaction: jest.Mock };
   let error: jest.SpyInstance;
   let context: INestApplicationContext;
-  let port: ITransactionPort;
+  let port: ILocalStorageTransaction;
   let transactionHost: TransactionHost<TransactionalAdapterTypeOrm>;
 
   beforeEach(async () => {
@@ -42,8 +45,8 @@ describe('LocalStorageTransactionalModule', () => {
 
     @Global()
     @Module({
-      providers: [{ provide: DataSource, useValue: dataSource }],
       exports: [DataSource],
+      providers: [{ provide: DataSource, useValue: dataSource }],
     })
     class DataSourceModule {}
 
@@ -52,13 +55,13 @@ describe('LocalStorageTransactionalModule', () => {
         LoggerModule.forRoot({ pinoHttp: { level: 'silent' } }),
         ClsModule.forRoot({ global: true }),
         DataSourceModule,
-        LocalStorageTransactionalModule.forRoot(),
+        LocalStorageTransactionModule.forRoot(),
       ],
     })
     class TestModule {}
 
     context = await NestFactory.createApplicationContext(TestModule, { logger: false });
-    port = context.get(TRANSACTION_PORT);
+    port = context.get(LOCAL_STORAGE_TRANSACTION);
     transactionHost = context.get(TransactionHost);
   });
 
@@ -165,7 +168,7 @@ describe('LocalStorageTransactionalModule', () => {
 
     it('refuses a hook outside a run', () => {
       expect(() => port.afterCommit(() => Promise.resolve())).toThrow(
-        'afterCommit must be called inside TRANSACTION_PORT.run',
+        'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
       );
     });
   });

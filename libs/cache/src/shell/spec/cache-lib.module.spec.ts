@@ -29,6 +29,7 @@ describe('CacheLibModule', () => {
 
     @Global()
     @Module({
+      exports: [ConfigService],
       providers: [
         {
           provide: ConfigService,
@@ -38,7 +39,6 @@ describe('CacheLibModule', () => {
           },
         },
       ],
-      exports: [ConfigService],
     })
     class ConfigStubModule {}
 

@@ -2,20 +2,20 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
-  LOCAL_STORAGE_TRANSACTIONAL_CONTEXT_PORT,
-  LOCAL_STORAGE_TRANSACTIONAL_HOST_PORT,
-  type ILocalStorageTransactionalContextPort,
-  type ILocalStorageTransactionalHostPort,
+  LOCAL_STORAGE_TRANSACTION_CONTEXT_PORT,
+  LOCAL_STORAGE_TRANSACTION_HOST_PORT,
+  type ILocalStorageTransactionContextPort,
+  type ILocalStorageTransactionHostPort,
 } from '../../outbound';
 
 @Injectable()
-export class LocalStorageTransactionalRunUseCase {
+export class LocalStorageTransactionRunUseCase {
   constructor(
-    @Inject(LOCAL_STORAGE_TRANSACTIONAL_HOST_PORT)
-    private readonly host: ILocalStorageTransactionalHostPort,
-    @Inject(LOCAL_STORAGE_TRANSACTIONAL_CONTEXT_PORT)
-    private readonly context: ILocalStorageTransactionalContextPort,
-    @InjectPinoLogger(LocalStorageTransactionalRunUseCase.name)
+    @Inject(LOCAL_STORAGE_TRANSACTION_HOST_PORT)
+    private readonly host: ILocalStorageTransactionHostPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION_CONTEXT_PORT)
+    private readonly context: ILocalStorageTransactionContextPort,
+    @InjectPinoLogger(LocalStorageTransactionRunUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
 

@@ -108,7 +108,7 @@ describe('lib entry points', () => {
     '@acme-libs/kernel/app/app-name.enum',
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
-    '@acme-libs/local-storage/transactional/shell/local-storage-transactional.module',
+    '@acme-libs/local-storage/transaction/shell/local-storage-transaction.module',
     '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
@@ -117,7 +117,7 @@ describe('lib entry points', () => {
     '@acme-libs/auth/shell/auth-lib.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
     '@acme-libs/local-storage/setup/local-storage-setup.module',
-    '@acme-libs/contracts/local-storage/ports/transaction.port',
+    '@acme-libs/contracts/local-storage/ports/local-storage-transaction.port',
     '@acme-libs/contracts/database/ports/repository-host.port',
     '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',
     '@acme-libs/contracts/cache/ports/cache-lib.port',
@@ -204,7 +204,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
-      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
+      code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
     }).toPassArchitectureLint();
   });
 
@@ -218,7 +218,7 @@ describe('lib entry points', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
+        code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -235,7 +235,7 @@ describe('lib entry points', () => {
     async () => {
       await expect({
         file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { LocalStorageTransactionalModule } from "@acme-libs/local-storage";',
+        code: 'import { LocalStorageTransactionModule } from "@acme-libs/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );

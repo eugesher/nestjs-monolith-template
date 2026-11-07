@@ -1,14 +1,14 @@
-import { LocalStorageTransactionalAfterCommitUseCase } from '../local-storage-transactional-after-commit.use-case';
+import { LocalStorageTransactionAfterCommitUseCase } from '../local-storage-transaction-after-commit.use-case';
 
-describe('LocalStorageTransactionalAfterCommitUseCase', () => {
+describe('LocalStorageTransactionAfterCommitUseCase', () => {
   let isActive: jest.Mock;
   let getHooks: jest.Mock;
-  let useCase: LocalStorageTransactionalAfterCommitUseCase;
+  let useCase: LocalStorageTransactionAfterCommitUseCase;
 
   beforeEach(() => {
     isActive = jest.fn().mockReturnValue(true);
     getHooks = jest.fn().mockReturnValue([]);
-    useCase = new LocalStorageTransactionalAfterCommitUseCase(
+    useCase = new LocalStorageTransactionAfterCommitUseCase(
       { isActive, withTransaction: jest.fn() },
       { run: jest.fn(), setHooks: jest.fn(), getHooks },
     );
@@ -28,7 +28,7 @@ describe('LocalStorageTransactionalAfterCommitUseCase', () => {
     isActive.mockReturnValue(false);
 
     expect(() => useCase.execute(() => Promise.resolve())).toThrow(
-      'afterCommit must be called inside TRANSACTION_PORT.run',
+      'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
     );
   });
 
@@ -36,7 +36,7 @@ describe('LocalStorageTransactionalAfterCommitUseCase', () => {
     getHooks.mockReturnValue(undefined);
 
     expect(() => useCase.execute(() => Promise.resolve())).toThrow(
-      'afterCommit must be called inside TRANSACTION_PORT.run',
+      'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
     );
   });
 });

@@ -3,15 +3,15 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
 import {
-  ILocalStorageTransactionalHostPort,
-  LOCAL_STORAGE_TRANSACTIONAL_HOST_PORT,
+  ILocalStorageTransactionHostPort,
+  LOCAL_STORAGE_TRANSACTION_HOST_PORT,
 } from '../../outbound';
 
 @Injectable()
-export class LocalStorageTransactionalHostAdapter implements ILocalStorageTransactionalHostPort {
-  public static readonly provider: ClassProvider<ILocalStorageTransactionalHostPort> = {
-    provide: LOCAL_STORAGE_TRANSACTIONAL_HOST_PORT,
-    useClass: LocalStorageTransactionalHostAdapter,
+export class LocalStorageTransactionHostAdapter implements ILocalStorageTransactionHostPort {
+  public static readonly provider: ClassProvider<ILocalStorageTransactionHostPort> = {
+    provide: LOCAL_STORAGE_TRANSACTION_HOST_PORT,
+    useClass: LocalStorageTransactionHostAdapter,
   };
 
   constructor(private readonly transactionHost: TransactionHost<TransactionalAdapterTypeOrm>) {}

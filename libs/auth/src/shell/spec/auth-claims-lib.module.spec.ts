@@ -38,6 +38,7 @@ describe('AuthClaimsLibModule', () => {
           load: [() => ({ JWT_SECRET: 'access-secret-of-at-least-thirty-two-chars' })],
         }),
       ],
+      exports: [AUTH_USER_VALIDATOR_PORT],
       providers: [
         {
           provide: AUTH_USER_VALIDATOR_PORT,
@@ -61,7 +62,6 @@ describe('AuthClaimsLibModule', () => {
           },
         },
       ],
-      exports: [AUTH_USER_VALIDATOR_PORT],
     })
     class ValidatorModule {}
 

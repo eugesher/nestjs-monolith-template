@@ -1,12 +1,12 @@
 import { ClsServiceManager } from 'nestjs-cls';
 
-import { LocalStorageTransactionalContextAdapter } from '../local-storage-transactional-context.adapter';
+import { LocalStorageTransactionContextAdapter } from '../local-storage-transaction-context.adapter';
 
-describe('LocalStorageTransactionalContextAdapter', () => {
-  let adapter: LocalStorageTransactionalContextAdapter;
+describe('LocalStorageTransactionContextAdapter', () => {
+  let adapter: LocalStorageTransactionContextAdapter;
 
   beforeEach(() => {
-    adapter = new LocalStorageTransactionalContextAdapter(ClsServiceManager.getClsService());
+    adapter = new LocalStorageTransactionContextAdapter(ClsServiceManager.getClsService());
   });
 
   it('answers no hooks outside a context', () => {

@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
+import {
+  LOCAL_STORAGE_TRANSACTION,
+  type ILocalStorageTransaction,
+} from '@acme-libs/contracts/local-storage';
 
 import { OrderNotFoundException, OrderTagNotFoundException } from '../../domain';
 import {
@@ -19,8 +22,8 @@ export class OrderReplaceTagsUseCase {
     private readonly repository: IOrderReplaceTagsRepositoryPort,
     @Inject(ORDER_TAG_PORT)
     private readonly tag: IOrderTagPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(LOCAL_STORAGE_TRANSACTION)
+    private readonly transaction: ILocalStorageTransaction,
   ) {}
 
   public async execute(command: IOrderReplaceTagsCommand): Promise<IOrderTagsView> {

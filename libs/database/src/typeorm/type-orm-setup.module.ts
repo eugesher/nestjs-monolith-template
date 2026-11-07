@@ -19,8 +19,8 @@ export class TypeOrmSetupModule {
       module: TypeOrmSetupModule,
       global: true,
       imports: [typeOrm],
-      providers: [{ provide: REPOSITORY_HOST_PORT, useClass: RepositoryHostAdapter }],
       exports: [REPOSITORY_HOST_PORT],
+      providers: [{ provide: REPOSITORY_HOST_PORT, useClass: RepositoryHostAdapter }],
     };
   }
 

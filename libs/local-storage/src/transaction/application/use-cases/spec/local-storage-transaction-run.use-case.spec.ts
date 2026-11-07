@@ -2,15 +2,15 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { LocalStorageTransactionalRunUseCase } from '../local-storage-transactional-run.use-case';
+import { LocalStorageTransactionRunUseCase } from '../local-storage-transaction-run.use-case';
 
-describe('LocalStorageTransactionalRunUseCase', () => {
+describe('LocalStorageTransactionRunUseCase', () => {
   let isActive: jest.Mock;
   let withTransaction: jest.Mock;
   let run: jest.Mock;
   let setHooks: jest.Mock;
   let logger: PinoLoggerMock;
-  let useCase: LocalStorageTransactionalRunUseCase;
+  let useCase: LocalStorageTransactionRunUseCase;
 
   beforeEach(() => {
     isActive = jest.fn().mockReturnValue(false);
@@ -18,7 +18,7 @@ describe('LocalStorageTransactionalRunUseCase', () => {
     run = jest.fn((work: () => Promise<unknown>) => work());
     setHooks = jest.fn();
     logger = makePinoLoggerMock();
-    useCase = new LocalStorageTransactionalRunUseCase(
+    useCase = new LocalStorageTransactionRunUseCase(
       { isActive, withTransaction },
       { run, setHooks, getHooks: jest.fn() },
       logger as unknown as PinoLogger,

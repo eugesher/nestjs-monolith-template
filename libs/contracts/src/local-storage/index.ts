@@ -1,1 +1,1 @@
-export * from './ports/transaction.port';
+export * from './ports/local-storage-transaction.port';
