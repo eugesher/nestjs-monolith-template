@@ -28,6 +28,7 @@ describe('HealthController', () => {
   it('answers 200 with the dependencies when ready', async () => {
     readiness.mockResolvedValue({
       status: 'ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'ok', latencyMs: 1 },
@@ -38,6 +39,7 @@ describe('HealthController', () => {
 
     expect(body).toEqual({
       status: 'ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'ok', latencyMs: 1 },
@@ -49,6 +51,7 @@ describe('HealthController', () => {
   it('answers 503 with the dependencies when not ready', async () => {
     readiness.mockResolvedValue({
       status: 'not-ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'error', latencyMs: null },
@@ -59,6 +62,7 @@ describe('HealthController', () => {
 
     expect(body).toEqual({
       status: 'not-ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'error', latencyMs: null },

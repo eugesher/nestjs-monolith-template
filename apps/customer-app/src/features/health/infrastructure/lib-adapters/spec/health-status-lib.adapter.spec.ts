@@ -25,6 +25,7 @@ describe('HealthStatusLibAdapter', () => {
     it('answers the readiness of the health lib', async () => {
       handleReadiness.mockResolvedValue({
         status: 'ready',
+        app: 'customer-app',
         dependencies: {
           database: { status: 'ok', latencyMs: 2 },
           cache: { status: 'ok', latencyMs: 1 },
@@ -35,6 +36,7 @@ describe('HealthStatusLibAdapter', () => {
 
       expect(view).toEqual({
         status: 'ready',
+        app: 'customer-app',
         dependencies: {
           database: { status: 'ok', latencyMs: 2 },
           cache: { status: 'ok', latencyMs: 1 },

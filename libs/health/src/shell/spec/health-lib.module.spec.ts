@@ -57,6 +57,7 @@ describe('HealthLibModule', () => {
 
     expect(view).toEqual({
       status: 'not-ready',
+      app: 'staff-app',
       dependencies: {
         database: { status: 'ok', latencyMs: expect.any(Number) as number },
         cache: { status: 'error', latencyMs: null },

@@ -12,6 +12,7 @@ describe('HealthReadinessUseCase', () => {
   it('answers the readiness of the dependencies', async () => {
     readiness.mockResolvedValue({
       status: 'not-ready',
+      app: 'processor-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'error', latencyMs: null },
@@ -22,6 +23,7 @@ describe('HealthReadinessUseCase', () => {
 
     expect(view).toEqual({
       status: 'not-ready',
+      app: 'processor-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'error', latencyMs: null },

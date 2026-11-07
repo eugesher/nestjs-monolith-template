@@ -1,17 +1,18 @@
+import {
+  HealthDependencyStatusEnum,
+  HealthLivenessStatusEnum,
+  HealthReadinessStatusEnum,
+} from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
-import { HealthLibDependencyStatusEnum } from '../../enums/health-lib-dependency-status.enum';
-import { HealthLibLivenessStatusEnum } from '../../enums/health-lib-liveness-status.enum';
-import { HealthLibReadinessStatusEnum } from '../../enums/health-lib-readiness-status.enum';
-
 export interface IHealthLibLivenessView {
-  status: HealthLibLivenessStatusEnum;
+  status: HealthLivenessStatusEnum;
   app: string;
   uptimeSeconds: number;
 }
 
 export interface IHealthLibDependencyView {
-  status: HealthLibDependencyStatusEnum;
+  status: HealthDependencyStatusEnum;
   latencyMs: Nullable<number>;
 }
 
@@ -21,6 +22,7 @@ export interface IHealthLibDependenciesView {
 }
 
 export interface IHealthLibReadinessView {
-  status: HealthLibReadinessStatusEnum;
+  status: HealthReadinessStatusEnum;
+  app: string;
   dependencies: IHealthLibDependenciesView;
 }

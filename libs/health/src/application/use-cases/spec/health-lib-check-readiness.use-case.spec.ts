@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { HealthLibDependencyStatusEnum } from '@acme-libs/contracts/health';
+import { AppNameEnum, HealthDependencyStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { HealthLibCheckReadinessUseCase } from '../health-lib-check-readiness.use-case';
@@ -14,11 +14,12 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
   it('is ready when every dependency is ok, and logs nothing', async () => {
     const useCase = new HealthLibCheckReadinessUseCase(
+      AppNameEnum.CUSTOMER_APP,
       {
         probeAll: () =>
           Promise.resolve({
-            database: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 2 },
-            cache: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 1 },
+            database: { status: HealthDependencyStatusEnum.OK, latencyMs: 2 },
+            cache: { status: HealthDependencyStatusEnum.OK, latencyMs: 1 },
           }),
       },
       logger as unknown as PinoLogger,
@@ -28,6 +29,7 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
     expect(view).toEqual({
       status: 'ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'ok', latencyMs: 1 },
@@ -38,11 +40,12 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
   it('is not ready when ANY dependency fails, and names the failures in the log', async () => {
     const useCase = new HealthLibCheckReadinessUseCase(
+      AppNameEnum.CUSTOMER_APP,
       {
         probeAll: () =>
           Promise.resolve({
-            database: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 2 },
-            cache: { status: HealthLibDependencyStatusEnum.ERROR, latencyMs: null },
+            database: { status: HealthDependencyStatusEnum.OK, latencyMs: 2 },
+            cache: { status: HealthDependencyStatusEnum.ERROR, latencyMs: null },
           }),
       },
       logger as unknown as PinoLogger,
@@ -52,6 +55,7 @@ describe('HealthLibCheckReadinessUseCase', () => {
 
     expect(view).toEqual({
       status: 'not-ready',
+      app: 'customer-app',
       dependencies: {
         database: { status: 'ok', latencyMs: 2 },
         cache: { status: 'error', latencyMs: null },
