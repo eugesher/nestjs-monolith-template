@@ -23,7 +23,9 @@ describe('app → core', () => {
   describe('features', () => {
     it('infrastructure/core-adapters MAY reach core contracts', async () => {
       await expect({
-        file: 'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/__fixture__.ts',
+        file:
+          'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/contracts/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
     });
@@ -39,16 +41,24 @@ describe('app → core', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('infrastructure/core-adapters may NOT reach entities — it talks to the core module, not its tables', async () => {
-      await expect({
-        file: 'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/__fixture__.ts',
-        code: 'import { x } from "../../../../../../../core/entities/src";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'infrastructure/core-adapters may NOT reach entities — ' +
+        'it talks to the core module, not its tables',
+      async () => {
+        await expect({
+          file:
+            'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/' +
+            '__fixture__.ts',
+          code: 'import { x } from "../../../../../../../core/entities/src";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it('presentation may NOT reach the health lib contracts — a lib adapter does', async () => {
       await expect({
-        file: 'apps/__core-link-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
+        file:
+          'apps/__core-link-fixture__/src/features/product/presentation/controllers/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../../../../libs/contracts/src/health";',
       }).toBreakRule('boundaries/dependencies');
     });
@@ -62,14 +72,18 @@ describe('app → core', () => {
 
     it('infrastructure/core-adapters may NOT mount a core module', async () => {
       await expect({
-        file: 'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/__fixture__.ts',
+        file:
+          'apps/__core-link-fixture__/src/features/product/infrastructure/core-adapters/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/modules/src/__ledger-fixture__";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure MAY reach entities', async () => {
       await expect({
-        file: 'apps/__core-link-fixture__/src/features/product/infrastructure/persistence/__fixture__.ts',
+        file:
+          'apps/__core-link-fixture__/src/features/product/infrastructure/persistence/' +
+          '__fixture__.ts',
         code: 'import { x } from "../../../../../../../core/entities/src";',
       }).toPassArchitectureLint();
     });

@@ -24,25 +24,29 @@ describe('ProductStockLedgerService', () => {
   });
 
   describe('recordEvents', () => {
-    it('enqueues an addition under the id of its stock row with the correlation id of the request', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordEvents({
-          productId: '12',
-          productStockId: '700',
-          events: [new ProductStockAddedEvent('12', 'SKU-0001', 5)],
-        }),
-      );
+    it(
+      'enqueues an addition under the id of its stock ' +
+        'row with the correlation id of the request',
+      async () => {
+        await CorrelationContextHelper.run('corr-1', () =>
+          service.recordEvents({
+            productId: '12',
+            productStockId: '700',
+            events: [new ProductStockAddedEvent('12', 'SKU-0001', 5)],
+          }),
+        );
 
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-restocked:700',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductRestocked',
-        payload: { sku: 'SKU-0001', quantity: 5 },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
-      });
-    });
+        expect(enqueue).toHaveBeenCalledWith({
+          operationKey: 'product-restocked:700',
+          subjectType: 'product',
+          subjectId: '12',
+          action: 'ProductRestocked',
+          payload: { sku: 'SKU-0001', quantity: 5 },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        });
+      },
+    );
 
     it('enqueues nothing without an addition', async () => {
       await CorrelationContextHelper.run('corr-1', () =>

@@ -1,15 +1,18 @@
 import '../support/lint';
 
 describe('e2e sections', () => {
-  it('an e2e section follows the spec rules and MAY pass an awaited call to another call', async () => {
-    await expect({
-      file: 'apps/staff-app/test/features/__fixture__.e2e.ts',
-      code:
-        'declare const find: () => Promise<number>;' +
-        'declare const save: (value: number) => void;' +
-        'export const run = async () => save(await find());',
-    }).toPassArchitectureLint();
-  });
+  it(
+    'an e2e section follows the spec rules and ' + 'MAY pass an awaited call to another call',
+    async () => {
+      await expect({
+        file: 'apps/staff-app/test/features/__fixture__.e2e.ts',
+        code:
+          'declare const find: () => Promise<number>;' +
+          'declare const save: (value: number) => void;' +
+          'export const run = async () => save(await find());',
+      }).toPassArchitectureLint();
+    },
+  );
 
   it.each([
     '@nestjs/common',

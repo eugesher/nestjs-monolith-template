@@ -36,12 +36,16 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it('a seed script may NOT import dotenv — the database comes from the environment of the process', async () => {
-      await expect({
-        file: 'test/infra/seed/__fixture__.ts',
-        code: 'import dotenv from "dotenv";',
-      }).toBreakRule('boundaries/dependencies');
-    });
+    it(
+      'a seed script may NOT import dotenv — ' +
+        'the database comes from the environment of the process',
+      async () => {
+        await expect({
+          file: 'test/infra/seed/__fixture__.ts',
+          code: 'import dotenv from "dotenv";',
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it.each(['../../../libs/toolkit/src', '../../../core/entities/src'])(
       'a seed script may NOT import project code (%s) — it runs under plain node',
@@ -141,7 +145,8 @@ describe('repo', () => {
     });
 
     it.each(['joi', 'dotenv', 'typeorm'])(
-      'a namespace import of the CommonJS package %s is forbidden — it has no callable members under ESM',
+      'a namespace import of the CommonJS package %s is forbidden — ' +
+        'it has no callable members under ESM',
       async (source) => {
         await expect({
           file: 'migrations/config/__fixture__.ts',
@@ -173,7 +178,8 @@ describe('repo', () => {
       ['migrations', 'config/data-source.ts'],
       ['apps/staff-app', 'src/main.ts'],
     ])(
-      'linting from %s, as an editor does from the nearest package, classifies %s from the repo root',
+      'linting from %s, as an editor does from the nearest package, ' +
+        'classifies %s from the repo root',
       (cwd, file) => {
         const root = path.resolve(__dirname, '../..');
         const eslint = path.join(root, 'node_modules/eslint/bin/eslint.js');

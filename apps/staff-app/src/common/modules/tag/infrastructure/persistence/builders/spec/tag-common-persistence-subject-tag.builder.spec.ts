@@ -31,7 +31,8 @@ describe('TagCommonPersistenceSubjectTagBuilder', () => {
       builder.forList({ subjectType: 'product', tagId: '300' });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, `SubjectTag`.`subjectId` AS `SubjectTag_subjectId` ' +
+        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, ' +
+          '`SubjectTag`.`subjectId` AS `SubjectTag_subjectId` ' +
           'FROM `subject_tag` `SubjectTag` ' +
           'WHERE `SubjectTag`.`tagId` = ? AND `SubjectTag`.`subjectType` = ?',
         ['300', 'product'],

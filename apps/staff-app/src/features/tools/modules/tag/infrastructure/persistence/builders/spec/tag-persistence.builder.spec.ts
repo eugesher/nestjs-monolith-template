@@ -31,7 +31,8 @@ describe('TagPersistenceBuilder', () => {
       builder.forById('300');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, `Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
+        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, ' +
+          '`Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
           'FROM `tag` `Tag` ' +
           'WHERE `Tag`.`id` = ?',
         ['300'],
@@ -53,7 +54,8 @@ describe('TagPersistenceBuilder', () => {
       builder.forInserted('300');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, `Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
+        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, ' +
+          '`Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
           'FROM `tag` `Tag` ' +
           'WHERE `Tag`.`id` = ?',
         ['300'],
@@ -75,7 +77,8 @@ describe('TagPersistenceBuilder', () => {
       builder.forList({ page: 3, limit: 20, offset: 40 });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, `Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
+        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name`, ' +
+          '`Tag`.`createdAt` AS `Tag_createdAt`, `Tag`.`updatedAt` AS `Tag_updatedAt` ' +
           'FROM `tag` `Tag` ' +
           'ORDER BY `Tag_name` ASC, `Tag_id` ASC ' +
           'LIMIT 20 OFFSET 40',

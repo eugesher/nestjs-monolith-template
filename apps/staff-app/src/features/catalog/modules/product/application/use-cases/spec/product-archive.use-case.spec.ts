@@ -55,15 +55,20 @@ describe('ProductArchiveUseCase', () => {
       expect(load).not.toHaveBeenCalled();
     });
 
-    it('refuses a stale If-Match with PRODUCT_VERSION_MISMATCH and the current version', async () => {
-      archive.mockResolvedValue({ outcome: 'version-mismatch', currentVersion: 3 });
+    it(
+      'refuses a stale If-Match with ' + 'PRODUCT_VERSION_MISMATCH and the current version',
+      async () => {
+        archive.mockResolvedValue({ outcome: 'version-mismatch', currentVersion: 3 });
 
-      await expect(useCase.execute({ productId: '12', expectedVersion: 2 })).rejects.toMatchObject({
-        code: 'VERSION_MISMATCH',
-        message: 'Product 12: If-Match version 2 does not match the current version 3',
-        details: { currentVersion: 3 },
-      });
-    });
+        await expect(
+          useCase.execute({ productId: '12', expectedVersion: 2 }),
+        ).rejects.toMatchObject({
+          code: 'VERSION_MISMATCH',
+          message: 'Product 12: If-Match version 2 does not match the current version 3',
+          details: { currentVersion: 3 },
+        });
+      },
+    );
 
     it('refuses an archived product with PRODUCT_ALREADY_ARCHIVED', async () => {
       archive.mockResolvedValue({ outcome: 'already-archived', currentVersion: 5 });

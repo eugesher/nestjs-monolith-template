@@ -31,7 +31,8 @@ describe('ProductStockCorePersistenceBuilder', () => {
       builder.forSumStock(['100', '101']);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `ProductStock`.`productId` AS `productId`, SUM(`ProductStock`.`quantity`) AS `quantity` ' +
+        'SELECT `ProductStock`.`productId` AS `productId`, ' +
+          'SUM(`ProductStock`.`quantity`) AS `quantity` ' +
           'FROM `product_stock` `ProductStock` ' +
           'WHERE `ProductStock`.`productId` IN (?, ?) ' +
           'GROUP BY `ProductStock`.`productId` ' +

@@ -24,21 +24,24 @@ describe('ProductLedgerService', () => {
   });
 
   describe('recordCreated', () => {
-    it('enqueues a creation under the stored id with the correlation id of the request', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordCreated({ productId: '12', sku: 'SKU-0001', name: 'Lamp' }),
-      );
+    it(
+      'enqueues a creation under the stored id ' + 'with the correlation id of the request',
+      async () => {
+        await CorrelationContextHelper.run('corr-1', () =>
+          service.recordCreated({ productId: '12', sku: 'SKU-0001', name: 'Lamp' }),
+        );
 
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-created:12',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductCreated',
-        payload: { sku: 'SKU-0001', name: 'Lamp' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
-      });
-    });
+        expect(enqueue).toHaveBeenCalledWith({
+          operationKey: 'product-created:12',
+          subjectType: 'product',
+          subjectId: '12',
+          action: 'ProductCreated',
+          payload: { sku: 'SKU-0001', name: 'Lamp' },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        });
+      },
+    );
   });
 
   describe('recordEvents', () => {

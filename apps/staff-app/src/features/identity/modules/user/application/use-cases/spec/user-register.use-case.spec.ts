@@ -93,23 +93,26 @@ describe('UserRegisterUseCase', () => {
     expect(transaction.run).not.toHaveBeenCalled();
   });
 
-  it('refuses a duplicate email of the repository as taken and rolls the transaction back', async () => {
-    repository.insertUser.mockRejectedValue(new Error('Duplicate entry'));
-    jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+  it(
+    'refuses a duplicate email of the repository ' + 'as taken and rolls the transaction back',
+    async () => {
+      repository.insertUser.mockRejectedValue(new Error('Duplicate entry'));
+      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
 
-    const register = useCase.execute({
-      email: 'editor@example.com',
-      password: 'correct-horse-battery',
-      roles: [],
-    });
+      const register = useCase.execute({
+        email: 'editor@example.com',
+        password: 'correct-horse-battery',
+        roles: [],
+      });
 
-    await expect(register).rejects.toMatchObject({
-      code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
-      message: 'Email editor@example.com is already registered',
-    });
-    expect(outcomes).toEqual(['begin']);
-    expect(logger.info).not.toHaveBeenCalled();
-  });
+      await expect(register).rejects.toMatchObject({
+        code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
+        message: 'Email editor@example.com is already registered',
+      });
+      expect(outcomes).toEqual(['begin']);
+      expect(logger.info).not.toHaveBeenCalled();
+    },
+  );
 
   it('passes a failing insert through as is and rolls the transaction back', async () => {
     repository.insertUser.mockRejectedValue(new Error('deadlock'));

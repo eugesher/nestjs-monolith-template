@@ -67,17 +67,20 @@ describe('ProductCoreArchiveUseCase', () => {
       expect(logger.info).toHaveBeenCalledWith({ productId: '12', version: 4 }, 'Product archived');
     });
 
-    it('drops the cached catalog and records the archive in the ledger only after the commit', async () => {
-      await useCase.execute({ productId: '12', expectedVersion: undefined });
+    it(
+      'drops the cached catalog and records the ' + 'archive in the ledger only after the commit',
+      async () => {
+        await useCase.execute({ productId: '12', expectedVersion: undefined });
 
-      expect(outcomes).toEqual(['update', 'commit', 'invalidate', 'record']);
-      expect(recordArchived).toHaveBeenCalledWith({
-        productId: '12',
-        sku: 'SKU-0001',
-        version: 4,
-        previousStatus: 'active',
-      });
-    });
+        expect(outcomes).toEqual(['update', 'commit', 'invalidate', 'record']);
+        expect(recordArchived).toHaveBeenCalledWith({
+          productId: '12',
+          sku: 'SKU-0001',
+          version: 4,
+          previousStatus: 'active',
+        });
+      },
+    );
 
     it('answers not-found for an unknown product and writes nothing', async () => {
       lockById.mockResolvedValue(null);
@@ -89,13 +92,16 @@ describe('ProductCoreArchiveUseCase', () => {
       expect(afterCommit).not.toHaveBeenCalled();
     });
 
-    it('answers version-mismatch with the current version for a stale expected version', async () => {
-      const view = await useCase.execute({ productId: '12', expectedVersion: 2 });
+    it(
+      'answers version-mismatch with the current ' + 'version for a stale expected version',
+      async () => {
+        const view = await useCase.execute({ productId: '12', expectedVersion: 2 });
 
-      expect(view).toEqual({ outcome: 'version-mismatch', currentVersion: 3 });
-      expect(update).not.toHaveBeenCalled();
-      expect(afterCommit).not.toHaveBeenCalled();
-    });
+        expect(view).toEqual({ outcome: 'version-mismatch', currentVersion: 3 });
+        expect(update).not.toHaveBeenCalled();
+        expect(afterCommit).not.toHaveBeenCalled();
+      },
+    );
 
     it('answers already-archived for an archived product and announces nothing', async () => {
       lockById.mockResolvedValue({

@@ -23,26 +23,30 @@ describe('ProductCoreLedgerService', () => {
   });
 
   describe('recordArchived', () => {
-    it('enqueues the archive under the product and the version it produced with the correlation id of the request', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
-        service.recordArchived({
-          productId: '12',
-          sku: 'SKU-0001',
-          version: 4,
-          previousStatus: ProductStatusEnum.ACTIVE,
-        }),
-      );
+    it(
+      'enqueues the archive under the product and the version ' +
+        'it produced with the correlation id of the request',
+      async () => {
+        await CorrelationContextHelper.run('corr-1', () =>
+          service.recordArchived({
+            productId: '12',
+            sku: 'SKU-0001',
+            version: 4,
+            previousStatus: ProductStatusEnum.ACTIVE,
+          }),
+        );
 
-      expect(enqueue).toHaveBeenCalledTimes(1);
-      expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-archived:12:4',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductArchived',
-        payload: { sku: 'SKU-0001', previousStatus: 'active' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
-      });
-    });
+        expect(enqueue).toHaveBeenCalledTimes(1);
+        expect(enqueue).toHaveBeenCalledWith({
+          operationKey: 'product-archived:12:4',
+          subjectType: 'product',
+          subjectId: '12',
+          action: 'ProductArchived',
+          payload: { sku: 'SKU-0001', previousStatus: 'active' },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        });
+      },
+    );
   });
 });

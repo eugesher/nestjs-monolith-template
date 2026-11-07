@@ -113,7 +113,8 @@ describe('libs by layer', () => {
   it.each([
     'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
     'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/repositories/' +
+      '__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/application/use-cases/__fixture__.ts',
     'apps/__layers-fixture__/src/contracts/audit/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
@@ -234,7 +235,8 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
+        '__fixture__.ts',
       '../../../../../../../../libs',
     ],
     [
@@ -286,7 +288,8 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
+        '__fixture__.ts',
       '../../../../../../../../libs',
     ],
     [
@@ -381,7 +384,8 @@ describe('libs by layer', () => {
       'observability',
     ],
   ])(
-    '%s may NOT reach the %s lib root — adapters take the lib contracts, Nest modules are wired at the root',
+    '%s may NOT reach the %s lib root — adapters take ' +
+      'the lib contracts, Nest modules are wired at the root',
     async (file, lib) => {
       await expect({
         file,

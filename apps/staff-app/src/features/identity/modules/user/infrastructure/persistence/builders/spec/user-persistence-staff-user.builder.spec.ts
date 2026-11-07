@@ -37,9 +37,13 @@ describe('UserPersistenceStaffUserBuilder', () => {
       builder.forById('1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffUser`.`id` AS `StaffUser_id`, `StaffUserRole`.`userId` AS `StaffUserRole_userId`, `StaffUserRole`.`roleId` AS `StaffUserRole_roleId`, `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name` ' +
+        'SELECT `StaffUser`.`id` AS `StaffUser_id`, ' +
+          '`StaffUserRole`.`userId` AS `StaffUserRole_userId`, ' +
+          '`StaffUserRole`.`roleId` AS `StaffUserRole_roleId`, ' +
+          '`StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name` ' +
           'FROM `staff_user` `StaffUser` ' +
-          'LEFT JOIN `staff_user_roles` `StaffUserRole` ON `StaffUserRole`.`user_id`=`StaffUser`.`id` ' +
+          'LEFT JOIN `staff_user_roles` `StaffUserRole` ON ' +
+          '`StaffUserRole`.`user_id`=`StaffUser`.`id` ' +
           'LEFT JOIN `staff_role` `StaffRole` ON `StaffRole`.`id`=`StaffUserRole`.`role_id` ' +
           'WHERE `StaffUser`.`id` = ?',
         ['1'],

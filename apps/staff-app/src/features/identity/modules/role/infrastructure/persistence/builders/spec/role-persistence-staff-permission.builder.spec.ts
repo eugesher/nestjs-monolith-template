@@ -34,7 +34,8 @@ describe('RolePersistenceStaffPermissionBuilder', () => {
       builder.forPermissions([PermissionCodeEnum.TAG_READ, PermissionCodeEnum.TAG_WRITE]);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffPermission`.`id` AS `StaffPermission_id`, `StaffPermission`.`code` AS `StaffPermission_code` ' +
+        'SELECT `StaffPermission`.`id` AS `StaffPermission_id`, ' +
+          '`StaffPermission`.`code` AS `StaffPermission_code` ' +
           'FROM `staff_permission` `StaffPermission` ' +
           'WHERE `StaffPermission`.`code` IN (?, ?)',
         ['tag:read', 'tag:write'],

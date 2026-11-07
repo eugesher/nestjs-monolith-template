@@ -48,25 +48,29 @@ describe('ProductWriteService', () => {
   });
 
   describe('write', () => {
-    it('saves the change against the version as read and answers the stored product with the events', async () => {
-      const written = await service.write(
-        { productId: '12', expectedVersion: undefined },
-        (product) => product.update({ name: 'Desk lamp' }),
-      );
-      expect(load).toHaveBeenCalledWith({ productId: '12' });
-      expect(update).toHaveBeenCalledWith({
-        id: '12',
-        versionAsRead: 3,
-        name: 'Desk lamp',
-        status: 'active',
-        version: 4,
-      });
-      expect(findById).toHaveBeenCalledWith('12');
-      expect(written.product.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
-      expect(written.events).toHaveLength(1);
-      expect(written.events[0]).toBeInstanceOf(ProductUpdatedEvent);
-      expect(logger.info).not.toHaveBeenCalled();
-    });
+    it(
+      'saves the change against the version as read ' +
+        'and answers the stored product with the events',
+      async () => {
+        const written = await service.write(
+          { productId: '12', expectedVersion: undefined },
+          (product) => product.update({ name: 'Desk lamp' }),
+        );
+        expect(load).toHaveBeenCalledWith({ productId: '12' });
+        expect(update).toHaveBeenCalledWith({
+          id: '12',
+          versionAsRead: 3,
+          name: 'Desk lamp',
+          status: 'active',
+          version: 4,
+        });
+        expect(findById).toHaveBeenCalledWith('12');
+        expect(written.product.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
+        expect(written.events).toHaveLength(1);
+        expect(written.events[0]).toBeInstanceOf(ProductUpdatedEvent);
+        expect(logger.info).not.toHaveBeenCalled();
+      },
+    );
 
     it('writes nothing when the change leaves the version as read', async () => {
       const written = await service.write({ productId: '12', expectedVersion: 3 }, (product) =>
@@ -129,15 +133,18 @@ describe('ProductWriteService', () => {
       expect(update).toHaveBeenCalledTimes(1);
     });
 
-    it('refuses a pinned version that is not the current one before changing anything', async () => {
-      const mutate = jest.fn();
+    it(
+      'refuses a pinned version that is not ' + 'the current one before changing anything',
+      async () => {
+        const mutate = jest.fn();
 
-      await expect(
-        service.write({ productId: '12', expectedVersion: 2 }, mutate),
-      ).rejects.toMatchObject({ code: 'VERSION_MISMATCH', details: { currentVersion: 3 } });
-      expect(mutate).not.toHaveBeenCalled();
-      expect(update).not.toHaveBeenCalled();
-    });
+        await expect(
+          service.write({ productId: '12', expectedVersion: 2 }, mutate),
+        ).rejects.toMatchObject({ code: 'VERSION_MISMATCH', details: { currentVersion: 3 } });
+        expect(mutate).not.toHaveBeenCalled();
+        expect(update).not.toHaveBeenCalled();
+      },
+    );
 
     it('does not retry a domain refusal', async () => {
       await expect(

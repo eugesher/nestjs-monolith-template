@@ -55,49 +55,53 @@ describe('OrderPlaceUseCase', () => {
   });
 
   describe('execute', () => {
-    it('claims the key, locks the distinct products, places the order, withdraws the stock and completes the key in one transaction', async () => {
-      const view = await useCase.execute({
-        customerId: 'customer-1',
-        productIds: ['100', '103', '100'],
-        idempotencyKey: 'key-1',
-      });
+    it(
+      'claims the key, locks the distinct products, places the order, ' +
+        'withdraws the stock and completes the key in one transaction',
+      async () => {
+        const view = await useCase.execute({
+          customerId: 'customer-1',
+          productIds: ['100', '103', '100'],
+          idempotencyKey: 'key-1',
+        });
 
-      expect(claim).toHaveBeenCalledWith({
-        key: 'key-1',
-        body: { customerId: 'customer-1', productIds: ['100', '103', '100'] },
-      });
-      expect(lock).toHaveBeenCalledWith({ productIds: ['100', '103'] });
-      expect(findActiveProducts).toHaveBeenCalledWith(['100', '103']);
-      expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
-        findActiveProducts.mock.invocationCallOrder[0],
-      );
-      expect(insertOrder).toHaveBeenCalledWith({ customerId: 'customer-1' });
-      expect(insertOrderProducts).toHaveBeenCalledWith([
-        { orderId: '610', productId: '100' },
-        { orderId: '610', productId: '103' },
-        { orderId: '610', productId: '100' },
-      ]);
-      expect(findPlaced).toHaveBeenCalledWith('610');
-      expect(view).toEqual({
-        id: '610',
-        createdAt: '2026-01-05T08:00:00.000Z',
-        products: [
-          { id: '620', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-          { id: '621', productId: '103', sku: 'SKU-0004', name: 'Chair' },
-          { id: '622', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
-        ],
-      });
-      expect(withdraw).toHaveBeenCalledWith({
-        movements: [
-          { productId: '100', orderProductId: '620' },
-          { productId: '103', orderProductId: '621' },
-          { productId: '100', orderProductId: '622' },
-        ],
-      });
-      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
-      expect(run).toHaveBeenCalledTimes(1);
-      expect(release).not.toHaveBeenCalled();
-    });
+        expect(claim).toHaveBeenCalledWith({
+          key: 'key-1',
+          body: { customerId: 'customer-1', productIds: ['100', '103', '100'] },
+        });
+        expect(lock).toHaveBeenCalledWith({ productIds: ['100', '103'] });
+        expect(findActiveProducts).toHaveBeenCalledWith(['100', '103']);
+        expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
+          findActiveProducts.mock.invocationCallOrder[0],
+        );
+        expect(insertOrder).toHaveBeenCalledWith({ customerId: 'customer-1' });
+        expect(insertOrderProducts).toHaveBeenCalledWith([
+          { orderId: '610', productId: '100' },
+          { orderId: '610', productId: '103' },
+          { orderId: '610', productId: '100' },
+        ]);
+        expect(findPlaced).toHaveBeenCalledWith('610');
+        expect(view).toEqual({
+          id: '610',
+          createdAt: '2026-01-05T08:00:00.000Z',
+          products: [
+            { id: '620', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+            { id: '621', productId: '103', sku: 'SKU-0004', name: 'Chair' },
+            { id: '622', productId: '100', sku: 'SKU-0001', name: 'Lamp' },
+          ],
+        });
+        expect(withdraw).toHaveBeenCalledWith({
+          movements: [
+            { productId: '100', orderProductId: '620' },
+            { productId: '103', orderProductId: '621' },
+            { productId: '100', orderProductId: '622' },
+          ],
+        });
+        expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+        expect(run).toHaveBeenCalledTimes(1);
+        expect(release).not.toHaveBeenCalled();
+      },
+    );
 
     it('records the placed order in the ledger after the commit and logs it', async () => {
       await useCase.execute({
@@ -164,24 +168,28 @@ describe('OrderPlaceUseCase', () => {
       expect(release).not.toHaveBeenCalled();
     });
 
-    it('refuses more units than in stock inside the transaction, writes nothing and releases the key', async () => {
-      await expect(
-        useCase.execute({
-          customerId: 'customer-1',
-          productIds: ['103', '103', '103', '103'],
-          idempotencyKey: 'key-1',
-        }),
-      ).rejects.toMatchObject({
-        code: 'ORDER_STOCK_INSUFFICIENT',
-        message: 'Product 103 has 3 in stock, 4 requested',
-      });
-      expect(run).toHaveBeenCalledTimes(1);
-      expect(insertOrder).not.toHaveBeenCalled();
-      expect(withdraw).not.toHaveBeenCalled();
-      expect(complete).not.toHaveBeenCalled();
-      expect(recordPlaced).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
-    });
+    it(
+      'refuses more units than in stock inside the transaction, ' +
+        'writes nothing and releases the key',
+      async () => {
+        await expect(
+          useCase.execute({
+            customerId: 'customer-1',
+            productIds: ['103', '103', '103', '103'],
+            idempotencyKey: 'key-1',
+          }),
+        ).rejects.toMatchObject({
+          code: 'ORDER_STOCK_INSUFFICIENT',
+          message: 'Product 103 has 3 in stock, 4 requested',
+        });
+        expect(run).toHaveBeenCalledTimes(1);
+        expect(insertOrder).not.toHaveBeenCalled();
+        expect(withdraw).not.toHaveBeenCalled();
+        expect(complete).not.toHaveBeenCalled();
+        expect(recordPlaced).not.toHaveBeenCalled();
+        expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      },
+    );
 
     it('releases the key when the transaction fails and rethrows', async () => {
       complete.mockRejectedValue(new Error('lock wait timeout'));

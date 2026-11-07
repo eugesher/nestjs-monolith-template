@@ -174,19 +174,26 @@ describe('RedisCacheAdapter', () => {
       expect(compute).toHaveBeenCalledTimes(2);
     });
 
-    it('computes without writing when the cache cannot be read, so a stalled Redis costs one timeout', async () => {
-      redis.get.mockRejectedValue(new Error('read failed'));
+    it(
+      'computes without writing when the cache cannot be read, ' +
+        'so a stalled Redis costs one timeout',
+      async () => {
+        redis.get.mockRejectedValue(new Error('read failed'));
 
-      const value = await cache.wrap('k', 600_000, () => Promise.resolve('v'));
+        const value = await cache.wrap('k', 600_000, () => Promise.resolve('v'));
 
-      expect(value).toBe('v');
-      expect(redis.set).not.toHaveBeenCalled();
-      expect(logger.warn).toHaveBeenCalledWith(
-        { err: new Error('read failed'), key: 'k' },
-        'Cache read failed, computing the value without caching it',
-      );
-      expect(spans[0].setAttributes).toHaveBeenCalledWith({ 'cache.key': 'k', 'cache.hit': false });
-    });
+        expect(value).toBe('v');
+        expect(redis.set).not.toHaveBeenCalled();
+        expect(logger.warn).toHaveBeenCalledWith(
+          { err: new Error('read failed'), key: 'k' },
+          'Cache read failed, computing the value without caching it',
+        );
+        expect(spans[0].setAttributes).toHaveBeenCalledWith({
+          'cache.key': 'k',
+          'cache.hit': false,
+        });
+      },
+    );
 
     it('returns the computed value when the cache cannot be written', async () => {
       redis.set.mockRejectedValue(new Error('write failed'));

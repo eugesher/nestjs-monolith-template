@@ -24,22 +24,25 @@ describe('OrderProductStockCoreAdapter', () => {
   });
 
   describe('withdraw', () => {
-    it('subtracts one unit per order line through the core module and answers nothing', async () => {
-      const result = await adapter.withdraw({
-        movements: [
-          { productId: '100', orderProductId: '620' },
-          { productId: '100', orderProductId: '621' },
-        ],
-      });
+    it(
+      'subtracts one unit per order line through ' + 'the core module and answers nothing',
+      async () => {
+        const result = await adapter.withdraw({
+          movements: [
+            { productId: '100', orderProductId: '620' },
+            { productId: '100', orderProductId: '621' },
+          ],
+        });
 
-      expect(handleMove).toHaveBeenCalledWith({
-        kind: 'subtract',
-        movements: [
-          { productId: '100', quantity: 1, orderProductId: '620' },
-          { productId: '100', quantity: 1, orderProductId: '621' },
-        ],
-      });
-      expect(result).toBeUndefined();
-    });
+        expect(handleMove).toHaveBeenCalledWith({
+          kind: 'subtract',
+          movements: [
+            { productId: '100', quantity: 1, orderProductId: '620' },
+            { productId: '100', quantity: 1, orderProductId: '621' },
+          ],
+        });
+        expect(result).toBeUndefined();
+      },
+    );
   });
 });

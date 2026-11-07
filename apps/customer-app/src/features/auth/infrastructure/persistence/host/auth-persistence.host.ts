@@ -1,5 +1,6 @@
 import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
 import { Customer } from '@acme-core/entities';
+
 import { AuthPersistenceCustomerBuilder } from '../builders/auth-persistence-customer.builder';
 
 export abstract class AuthPersistenceHost {

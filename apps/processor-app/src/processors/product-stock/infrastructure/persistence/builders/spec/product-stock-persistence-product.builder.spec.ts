@@ -33,7 +33,8 @@ describe('ProductStockPersistenceProductBuilder', () => {
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Product`.`id` AS `Product_id` ' +
           'FROM `product` `Product` ' +
-          'WHERE ( `Product`.`id` IN (?, ?) AND `Product`.`status` = ? ) AND ( `Product`.`deletedAt` IS NULL ) ' +
+          'WHERE ( `Product`.`id` IN (?, ?) AND `Product`.`status` = ? ) ' +
+          'AND ( `Product`.`deletedAt` IS NULL ) ' +
           'ORDER BY `Product_id` ASC',
         ['100', '101', 'active'],
       ]);

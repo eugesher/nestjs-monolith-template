@@ -31,7 +31,8 @@ describe('ProductCorePersistenceBuilder', () => {
       builder.forLockById('100');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`id` = ? ) AND ( `Product`.`deletedAt` IS NULL ) ' +
           'FOR UPDATE',

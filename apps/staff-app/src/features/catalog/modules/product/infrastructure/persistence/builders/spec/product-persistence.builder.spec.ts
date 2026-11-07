@@ -31,7 +31,11 @@ describe('ProductPersistenceBuilder', () => {
       builder.forById('100');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, ' +
+          '`Product`.`version` AS `Product_version`, ' +
+          '`Product`.`createdAt` AS `Product_createdAt`, ' +
+          '`Product`.`updatedAt` AS `Product_updatedAt` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`id` = ? ) AND ( `Product`.`deletedAt` IS NULL )',
         ['100'],
@@ -53,7 +57,12 @@ describe('ProductPersistenceBuilder', () => {
       builder.forExistsBySku('SKU-0001');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt`, `Product`.`deletedAt` AS `Product_deletedAt` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, ' +
+          '`Product`.`version` AS `Product_version`, ' +
+          '`Product`.`createdAt` AS `Product_createdAt`, ' +
+          '`Product`.`updatedAt` AS `Product_updatedAt`, ' +
+          '`Product`.`deletedAt` AS `Product_deletedAt` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`sku` = ? ) AND ( `Product`.`deletedAt` IS NULL )',
         ['SKU-0001'],
@@ -75,7 +84,11 @@ describe('ProductPersistenceBuilder', () => {
       builder.forInserted('100');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, ' +
+          '`Product`.`version` AS `Product_version`, ' +
+          '`Product`.`createdAt` AS `Product_createdAt`, ' +
+          '`Product`.`updatedAt` AS `Product_updatedAt` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`id` = ? ) AND ( `Product`.`deletedAt` IS NULL )',
         ['100'],
@@ -97,7 +110,11 @@ describe('ProductPersistenceBuilder', () => {
       builder.forList({ page: 3, limit: 20, offset: 40, productIds: undefined });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, ' +
+          '`Product`.`version` AS `Product_version`, ' +
+          '`Product`.`createdAt` AS `Product_createdAt`, ' +
+          '`Product`.`updatedAt` AS `Product_updatedAt` ' +
           'FROM `product` `Product` ' +
           'WHERE `Product`.`deletedAt` IS NULL ' +
           'ORDER BY `Product_id` DESC ' +
@@ -112,7 +129,11 @@ describe('ProductPersistenceBuilder', () => {
       builder.forList({ page: 1, limit: 20, offset: 0, productIds: ['100', '101'] });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` ' +
+        'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, ' +
+          '`Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, ' +
+          '`Product`.`version` AS `Product_version`, ' +
+          '`Product`.`createdAt` AS `Product_createdAt`, ' +
+          '`Product`.`updatedAt` AS `Product_updatedAt` ' +
           'FROM `product` `Product` ' +
           'WHERE ( `Product`.`id` IN (?, ?) ) AND ( `Product`.`deletedAt` IS NULL ) ' +
           'ORDER BY `Product_id` DESC ' +

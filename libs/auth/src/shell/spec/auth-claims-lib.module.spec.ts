@@ -80,11 +80,15 @@ describe('AuthClaimsLibModule', () => {
     await app.close();
   });
 
-  it('answers 401 without a token on a gated route, the JWT guard runs before the permissions guard', async () => {
-    const response = await fetch(`${url}/note`);
+  it(
+    'answers 401 without a token on a gated route, ' +
+      'the JWT guard runs before the permissions guard',
+    async () => {
+      const response = await fetch(`${url}/note`);
 
-    expect(response.status).toBe(401);
-  });
+      expect(response.status).toBe(401);
+    },
+  );
 
   it('admits a user holding a required permission', async () => {
     const token = await new JwtService({
