@@ -14,6 +14,7 @@ import {
   IProductStockIdempotencyReleaseCommand,
   IProductStockIdempotencyReplayView,
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
+  ProductStockIdempotencyOutcomeEnum,
 } from '../../outbound';
 
 @Injectable()
@@ -27,9 +28,9 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
     Exclude<IdempotencyCoreClaimOutcomeEnum, IdempotencyCoreClaimOutcomeEnum.REPLAY>,
     IProductStockIdempotencyOutcomeView['outcome']
   > = {
-    [IdempotencyCoreClaimOutcomeEnum.CLAIMED]: 'claimed',
-    [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT]: 'in-flight',
-    [IdempotencyCoreClaimOutcomeEnum.MISMATCH]: 'mismatch',
+    [IdempotencyCoreClaimOutcomeEnum.CLAIMED]: ProductStockIdempotencyOutcomeEnum.CLAIMED,
+    [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT]: ProductStockIdempotencyOutcomeEnum.IN_FLIGHT,
+    [IdempotencyCoreClaimOutcomeEnum.MISMATCH]: ProductStockIdempotencyOutcomeEnum.MISMATCH,
   };
 
   constructor(
@@ -45,7 +46,10 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
     const { outcome, storedResponse } = claim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
-      return { outcome: 'replay', storedResponse: storedResponse as T };
+      return {
+        outcome: ProductStockIdempotencyOutcomeEnum.REPLAY,
+        storedResponse: storedResponse as T,
+      };
     }
 
     return { outcome: ProductStockIdempotencyCoreAdapter.OUTCOMES[outcome] };

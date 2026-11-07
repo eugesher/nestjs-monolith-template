@@ -1,10 +1,12 @@
+import { ProductTagReplaceOutcomeEnum } from '../../enums/product-tag-replace-outcome.enum';
+
 export interface IProductTagFindView {
   id: string;
   name: string;
 }
 
 export interface IProductTagReplaceView {
-  outcome: 'replaced' | 'tag-not-found';
+  outcome: ProductTagReplaceOutcomeEnum;
   tags: IProductTagFindView[];
   missingTagIds: string[];
 }

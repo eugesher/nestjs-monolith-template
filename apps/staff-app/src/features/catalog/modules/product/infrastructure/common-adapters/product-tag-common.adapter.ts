@@ -15,6 +15,7 @@ import {
   IProductTagReplaceCommand,
   IProductTagReplaceView,
   PRODUCT_TAG_PORT,
+  ProductTagReplaceOutcomeEnum,
 } from '../../outbound';
 
 @Injectable()
@@ -28,8 +29,8 @@ export class ProductTagCommonAdapter implements IProductTagPort {
     TagCommonReplaceOutcomeEnum,
     IProductTagReplaceView['outcome']
   > = {
-    [TagCommonReplaceOutcomeEnum.REPLACED]: 'replaced',
-    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: 'tag-not-found',
+    [TagCommonReplaceOutcomeEnum.REPLACED]: ProductTagReplaceOutcomeEnum.REPLACED,
+    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: ProductTagReplaceOutcomeEnum.TAG_NOT_FOUND,
   };
 
   constructor(

@@ -15,6 +15,7 @@ import {
   ORDER_IDEMPOTENCY_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
+  OrderIdempotencyOutcomeEnum,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
 import { OrderLedgerService } from '../services/order-ledger.service';
@@ -42,17 +43,17 @@ export class OrderPlaceUseCase {
       body: { customerId, productIds },
     });
 
-    if (claim.outcome === 'replay') {
+    if (claim.outcome === OrderIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Order placement replayed from the idempotency store');
 
       return claim.storedResponse;
     }
 
-    if (claim.outcome === 'in-flight') {
+    if (claim.outcome === OrderIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new OrderIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === 'mismatch') {
+    if (claim.outcome === OrderIdempotencyOutcomeEnum.MISMATCH) {
       throw new OrderIdempotencyKeyReusedException(idempotencyKey);
     }
 

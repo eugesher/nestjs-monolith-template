@@ -1,3 +1,7 @@
+export * from './enums/product-idempotency-outcome.enum';
+export * from './enums/product-status-archive-outcome.enum';
+export * from './enums/product-tag-replace-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/product-access-repository.port';

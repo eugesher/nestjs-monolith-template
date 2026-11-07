@@ -1,3 +1,5 @@
+export * from './enums/order-idempotency-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/order-get-many-repository.port';

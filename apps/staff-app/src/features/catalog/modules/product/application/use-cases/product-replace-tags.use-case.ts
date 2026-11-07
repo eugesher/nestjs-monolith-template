@@ -8,6 +8,7 @@ import {
   type IProductTagPort,
   PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
   PRODUCT_TAG_PORT,
+  ProductTagReplaceOutcomeEnum,
 } from '../../outbound';
 import { IProductReplaceTagsCommand, IProductTagsView } from '../interfaces';
 
@@ -34,7 +35,7 @@ export class ProductReplaceTagsUseCase {
       const replaced = await this.tag.replace({ productId, tagIds });
       const { outcome, tags, missingTagIds } = replaced;
 
-      if (outcome === 'tag-not-found') {
+      if (outcome === ProductTagReplaceOutcomeEnum.TAG_NOT_FOUND) {
         throw new ProductTagNotFoundException(missingTagIds);
       }
 

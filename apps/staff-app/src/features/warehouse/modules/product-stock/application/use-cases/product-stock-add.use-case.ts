@@ -16,6 +16,7 @@ import {
   PRODUCT_STOCK_ADD_REPOSITORY_PORT,
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
   PRODUCT_STOCK_MOVEMENT_PORT,
+  ProductStockIdempotencyOutcomeEnum,
 } from '../../outbound';
 import {
   IProductStockAddCommand,
@@ -47,17 +48,17 @@ export class ProductStockAddUseCase {
       body: { productId, quantity },
     });
 
-    if (claim.outcome === 'replay') {
+    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Product restock replayed from the idempotency store');
 
       return claim.storedResponse;
     }
 
-    if (claim.outcome === 'in-flight') {
+    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === 'mismatch') {
+    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.MISMATCH) {
       throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 

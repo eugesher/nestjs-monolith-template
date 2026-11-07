@@ -2,7 +2,11 @@ import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
-import { IHealthLibDependenciesView, IHealthLibDependencyView } from '@acme-libs/contracts/health';
+import {
+  HealthLibDependencyStatusEnum,
+  IHealthLibDependenciesView,
+  IHealthLibDependencyView,
+} from '@acme-libs/contracts/health';
 
 import { IHealthLibDependencyProbePort, HEALTH_LIB_DEPENDENCY_PROBE_PORT } from '../../outbound';
 
@@ -44,9 +48,9 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
     try {
       await Promise.race([probe(), timeout]);
 
-      return { status: 'ok', latencyMs: Date.now() - startedAt };
+      return { status: HealthLibDependencyStatusEnum.OK, latencyMs: Date.now() - startedAt };
     } catch {
-      return { status: 'error', latencyMs: null };
+      return { status: HealthLibDependencyStatusEnum.ERROR, latencyMs: null };
     } finally {
       clearTimeout(timer);
     }

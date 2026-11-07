@@ -8,6 +8,7 @@ import {
   type IOrderTagPort,
   ORDER_REPLACE_TAGS_REPOSITORY_PORT,
   ORDER_TAG_PORT,
+  OrderTagReplaceOutcomeEnum,
 } from '../../outbound';
 import { IOrderReplaceTagsCommand, IOrderTagsView } from '../interfaces';
 
@@ -34,7 +35,7 @@ export class OrderReplaceTagsUseCase {
       const replaced = await this.tag.replace({ orderId, tagIds });
       const { outcome, tags, missingTagIds } = replaced;
 
-      if (outcome === 'tag-not-found') {
+      if (outcome === OrderTagReplaceOutcomeEnum.TAG_NOT_FOUND) {
         throw new OrderTagNotFoundException(missingTagIds);
       }
 

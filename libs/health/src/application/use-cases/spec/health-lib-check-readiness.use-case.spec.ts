@@ -1,5 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
+import { HealthLibDependencyStatusEnum } from '@acme-libs/contracts/health';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { HealthLibCheckReadinessUseCase } from '../health-lib-check-readiness.use-case';
@@ -16,8 +17,8 @@ describe('HealthLibCheckReadinessUseCase', () => {
       {
         probeAll: () =>
           Promise.resolve({
-            database: { status: 'ok', latencyMs: 2 },
-            cache: { status: 'ok', latencyMs: 1 },
+            database: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 2 },
+            cache: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 1 },
           }),
       },
       logger as unknown as PinoLogger,
@@ -40,8 +41,8 @@ describe('HealthLibCheckReadinessUseCase', () => {
       {
         probeAll: () =>
           Promise.resolve({
-            database: { status: 'ok', latencyMs: 2 },
-            cache: { status: 'error', latencyMs: null },
+            database: { status: HealthLibDependencyStatusEnum.OK, latencyMs: 2 },
+            cache: { status: HealthLibDependencyStatusEnum.ERROR, latencyMs: null },
           }),
       },
       logger as unknown as PinoLogger,

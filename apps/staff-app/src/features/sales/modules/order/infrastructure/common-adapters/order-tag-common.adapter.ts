@@ -15,6 +15,7 @@ import {
   IOrderTagReplaceCommand,
   IOrderTagReplaceView,
   ORDER_TAG_PORT,
+  OrderTagReplaceOutcomeEnum,
 } from '../../outbound';
 
 @Injectable()
@@ -28,8 +29,8 @@ export class OrderTagCommonAdapter implements IOrderTagPort {
     TagCommonReplaceOutcomeEnum,
     IOrderTagReplaceView['outcome']
   > = {
-    [TagCommonReplaceOutcomeEnum.REPLACED]: 'replaced',
-    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: 'tag-not-found',
+    [TagCommonReplaceOutcomeEnum.REPLACED]: OrderTagReplaceOutcomeEnum.REPLACED,
+    [TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND]: OrderTagReplaceOutcomeEnum.TAG_NOT_FOUND,
   };
 
   constructor(

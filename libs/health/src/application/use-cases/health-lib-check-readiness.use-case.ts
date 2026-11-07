@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { IHealthLibDependenciesView, IHealthLibReadinessView } from '@acme-libs/contracts/health';
+import {
+  HealthLibDependencyStatusEnum,
+  HealthLibReadinessStatusEnum,
+  IHealthLibDependenciesView,
+  IHealthLibReadinessView,
+} from '@acme-libs/contracts/health';
 
 import {
   HEALTH_LIB_DEPENDENCY_PROBE_PORT,
@@ -20,14 +25,16 @@ export class HealthLibCheckReadinessUseCase {
   public async execute(): Promise<IHealthLibReadinessView> {
     const dependencies = await this.probes.probeAll();
     const names = Object.keys(dependencies) as (keyof IHealthLibDependenciesView)[];
-    const failed = names.filter((name) => dependencies[name].status !== 'ok');
+    const failed = names.filter(
+      (name) => dependencies[name].status !== HealthLibDependencyStatusEnum.OK,
+    );
 
     if (failed.length > 0) {
       this.logger.warn({ failed }, 'Readiness check failed');
 
-      return { status: 'not-ready', dependencies };
+      return { status: HealthLibReadinessStatusEnum.NOT_READY, dependencies };
     }
 
-    return { status: 'ready', dependencies };
+    return { status: HealthLibReadinessStatusEnum.READY, dependencies };
   }
 }

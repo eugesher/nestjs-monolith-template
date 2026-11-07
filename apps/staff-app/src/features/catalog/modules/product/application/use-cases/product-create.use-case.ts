@@ -16,6 +16,7 @@ import {
   type IProductIdempotencyPort,
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
+  ProductIdempotencyOutcomeEnum,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
 import { ProductLedgerService } from '../services/product-ledger.service';
@@ -41,17 +42,17 @@ export class ProductCreateUseCase {
       body: { sku, name },
     });
 
-    if (claim.outcome === 'replay') {
+    if (claim.outcome === ProductIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Product creation replayed from the idempotency store');
 
       return claim.storedResponse;
     }
 
-    if (claim.outcome === 'in-flight') {
+    if (claim.outcome === ProductIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === 'mismatch') {
+    if (claim.outcome === ProductIdempotencyOutcomeEnum.MISMATCH) {
       throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 

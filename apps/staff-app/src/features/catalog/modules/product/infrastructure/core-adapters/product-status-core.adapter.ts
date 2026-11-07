@@ -11,6 +11,7 @@ import {
   IProductStatusArchiveView,
   IProductStatusPort,
   PRODUCT_STATUS_PORT,
+  ProductStatusArchiveOutcomeEnum,
 } from '../../outbound';
 
 @Injectable()
@@ -24,10 +25,12 @@ export class ProductStatusCoreAdapter implements IProductStatusPort {
     ProductCoreArchiveOutcomeEnum,
     IProductStatusArchiveView['outcome']
   > = {
-    [ProductCoreArchiveOutcomeEnum.ARCHIVED]: 'archived',
-    [ProductCoreArchiveOutcomeEnum.ALREADY_ARCHIVED]: 'already-archived',
-    [ProductCoreArchiveOutcomeEnum.NOT_FOUND]: 'not-found',
-    [ProductCoreArchiveOutcomeEnum.VERSION_MISMATCH]: 'version-mismatch',
+    [ProductCoreArchiveOutcomeEnum.ARCHIVED]: ProductStatusArchiveOutcomeEnum.ARCHIVED,
+    [ProductCoreArchiveOutcomeEnum.ALREADY_ARCHIVED]:
+      ProductStatusArchiveOutcomeEnum.ALREADY_ARCHIVED,
+    [ProductCoreArchiveOutcomeEnum.NOT_FOUND]: ProductStatusArchiveOutcomeEnum.NOT_FOUND,
+    [ProductCoreArchiveOutcomeEnum.VERSION_MISMATCH]:
+      ProductStatusArchiveOutcomeEnum.VERSION_MISMATCH,
   };
 
   constructor(
