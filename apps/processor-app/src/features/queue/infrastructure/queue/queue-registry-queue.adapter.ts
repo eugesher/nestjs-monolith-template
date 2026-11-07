@@ -1,6 +1,6 @@
 import { ClassProvider, Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
-import type { Queue } from 'bull';
+import { type Queue } from 'bull';
 
 import { Nullable } from '@acme-libs/toolkit';
 import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';

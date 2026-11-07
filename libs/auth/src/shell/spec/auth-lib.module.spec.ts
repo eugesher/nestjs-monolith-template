@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
 import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
-import type { Maybe } from '@acme-libs/toolkit';
+import { type Maybe } from '@acme-libs/toolkit';
 
 import { CurrentUser } from '../../decorators/auth-current-user.decorator';
 import { Public } from '../../decorators/auth-public.decorator';
