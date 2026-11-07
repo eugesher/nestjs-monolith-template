@@ -9,7 +9,7 @@ import {
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { ClsSetupModule, ClsTransactionalModule } from '@acme-libs/local-storage';
+import { LocalStorageSetupModule, LocalStorageTransactionalModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, CatalogModule, HealthModule, OrderModule } from '@acme-customer/features';
@@ -22,9 +22,9 @@ import { ConfigSetupModule } from './setup';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
-    ClsSetupModule.forRoot(),
+    LocalStorageSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(entities),
-    ClsTransactionalModule.forRoot(),
+    LocalStorageTransactionalModule.forRoot(),
     BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,

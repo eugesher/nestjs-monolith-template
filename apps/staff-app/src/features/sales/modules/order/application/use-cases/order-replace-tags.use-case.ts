@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { OrderNotFoundException, OrderTagNotFoundException } from '../../domain';
 import {

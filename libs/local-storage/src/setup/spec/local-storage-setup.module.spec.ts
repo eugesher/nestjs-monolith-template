@@ -1,27 +1,39 @@
-import { ClsServiceManager } from 'nestjs-cls';
+import { ClsModule, ClsModuleOptions, ClsServiceManager } from 'nestjs-cls';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { ClsSetupConfig } from '../cls-setup.config';
+import { LocalStorageSetupModule } from '../local-storage-setup.module';
 
-describe('ClsSetupConfig', () => {
+describe('LocalStorageSetupModule', () => {
+  let forRoot: jest.SpyInstance;
+
+  beforeEach(() => {
+    forRoot = jest.spyOn(ClsModule, 'forRoot');
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('mounts a global context middleware on every route', () => {
-    const config = new ClsSetupConfig();
+    LocalStorageSetupModule.forRoot();
+    const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
 
-    expect(config).toMatchObject({ global: true, middleware: { mount: true } });
+    expect(options).toMatchObject({ global: true, middleware: { mount: true } });
   });
 
   it(
     'opens the request context under the inbound ' +
       'correlation id and returns it in the response',
     async () => {
-      const config = new ClsSetupConfig();
+      LocalStorageSetupModule.forRoot();
+      const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
       const cls = ClsServiceManager.getClsService();
       const req = { headers: { 'x-correlation-id': 'inbound-id' } };
       const res = { headersSent: false, setHeader: jest.fn() };
 
       const current = await cls.run(async () => {
-        await config.middleware.setup?.(cls, req, res);
+        await options.middleware?.setup?.(cls, req, res);
 
         return CorrelationContextHelper.current('ItemController');
       });
@@ -32,13 +44,14 @@ describe('ClsSetupConfig', () => {
   );
 
   it('mints a correlation id for a request without one and puts it on the request', async () => {
-    const config = new ClsSetupConfig();
+    LocalStorageSetupModule.forRoot();
+    const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
     const cls = ClsServiceManager.getClsService();
     const req: { headers: Record<string, string> } = { headers: {} };
     const res = { headersSent: false, setHeader: jest.fn() };
 
     const current = await cls.run(async () => {
-      await config.middleware.setup?.(cls, req, res);
+      await options.middleware?.setup?.(cls, req, res);
 
       return CorrelationContextHelper.current('ItemController');
     });

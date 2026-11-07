@@ -80,7 +80,6 @@ export const acmeLibs = [
   ]),
   fromLib('local-storage', [
     libs('observability'),
-    libContracts('database'),
     packages(
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',

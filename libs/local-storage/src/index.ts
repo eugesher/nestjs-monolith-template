@@ -1,2 +1,2 @@
-export * from './cls/cls-setup.module';
-export * from './cls/cls-transactional.module';
+export * from './setup/local-storage-setup.module';
+export * from './transactional';

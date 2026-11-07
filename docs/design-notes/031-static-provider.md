@@ -48,10 +48,11 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
 
 - **Facades** in `shell/` stay `{ provide: <MODULE>_<LAYER>_PORT, useClass: <Facade> }`. A facade is
   the public entry of a module, not an implementation of one of its outbound ports.
-- **The adapters of `libs/database` and `libs/local-storage`** (`RepositoryHostAdapter`,
-  `ClsTransactionAdapter`) are bound by `TypeOrmSetupModule` and `ClsTransactionalModule` of their
-  libs, next to the TypeORM connection and the transactional plugin they need. The app picks the
-  implementation by mounting the modules and hands `TypeOrmSetupModule` only its entities.
+- **The adapter of `libs/database` and the facade of `libs/local-storage`**
+  (`RepositoryHostAdapter`, `LocalStorageTransactionalFacade`) are bound by `TypeOrmSetupModule` and
+  `LocalStorageTransactionalModule` of their libs, next to the TypeORM connection and the
+  transactional plugin they need. The app picks the implementation by mounting the modules and hands
+  `TypeOrmSetupModule` only its entities.
 - **Global enhancers** (`APP_PIPE`, `APP_FILTER`, `APP_GUARD`) are bound by the app module and the
   auth lib, under tokens of Nest.
 

@@ -113,7 +113,8 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
   `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
   not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
-  `app/setup` do.
+  `libs/local-storage` do. The application takes `TRANSACTION_PORT` from
+  `@acme-libs/contracts/local-storage`.
 - **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
   `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of
   `libs/database` are bound in `app/setup`, so infrastructure cannot inject `RepositoryHostAdapter`

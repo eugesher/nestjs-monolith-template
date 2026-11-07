@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { NoteRevisionModel } from '../../domain';
 import { NOTE_EDIT_REPOSITORY_PORT, type INoteEditRepositoryPort } from '../../outbound';

@@ -26,6 +26,7 @@ describe('libs', () => {
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
+      'libs/contracts/src/local-storage/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
     ]);
@@ -116,13 +117,13 @@ describe('libs', () => {
     ['http', []],
     ['kernel', []],
     ['ledger', []],
-    ['local-storage', ['database']],
+    ['local-storage', ['local-storage']],
     ['observability', []],
     ['openapi', []],
     ['queue', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'credentials', 'database', 'health'];
+    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {
@@ -160,7 +161,7 @@ describe('libs', () => {
     },
   );
 
-  it.each(['auth', 'cache', 'credentials', 'database', 'health'])(
+  it.each(['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'])(
     'the contracts of %s MAY import the framework-free libs',
     async (lib) => {
       await expect({

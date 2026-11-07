@@ -79,6 +79,7 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/credentials',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
+    '@acme-libs/contracts/local-storage',
     '@acme-libs/credentials',
     '@acme-libs/database',
     '@acme-libs/health',
@@ -107,7 +108,7 @@ describe('lib entry points', () => {
     '@acme-libs/kernel/app/app-name.enum',
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
-    '@acme-libs/local-storage/cls/cls-transaction.adapter',
+    '@acme-libs/local-storage/transactional/shell/local-storage-transactional.module',
     '@acme-libs/database/repository/repository-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
@@ -115,8 +116,8 @@ describe('lib entry points', () => {
     '@acme-libs/health/shell/health-lib.module',
     '@acme-libs/auth/shell/auth-lib.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
-    '@acme-libs/local-storage/cls/cls-setup.module',
-    '@acme-libs/contracts/database/ports/transaction.port',
+    '@acme-libs/local-storage/setup/local-storage-setup.module',
+    '@acme-libs/contracts/local-storage/ports/transaction.port',
     '@acme-libs/contracts/database/ports/repository-host.port',
     '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',
     '@acme-libs/contracts/cache/ports/cache-lib.port',
@@ -203,7 +204,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
-      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
     }).toPassArchitectureLint();
   });
 
@@ -217,7 +218,7 @@ describe('lib entry points', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/database";',
+        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -234,7 +235,7 @@ describe('lib entry points', () => {
     async () => {
       await expect({
         file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { ClsTransactionalModule } from "@acme-libs/local-storage";',
+        code: 'import { LocalStorageTransactionalModule } from "@acme-libs/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );

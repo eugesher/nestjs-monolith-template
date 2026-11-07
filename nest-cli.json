@@ -109,6 +109,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "contracts-local-storage": {
+      "type": "library",
+      "root": "libs/contracts/src/local-storage",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/local-storage",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
     "core-contracts-idempotency": {
       "type": "library",
       "root": "core/contracts/src/idempotency",

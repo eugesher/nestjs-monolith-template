@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/database';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 import {
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,

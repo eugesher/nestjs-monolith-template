@@ -30,7 +30,7 @@ export const acmeCore = [
     layer('application'),
     ownContracts,
     baseLibs('ledger', 'observability'),
-    libContracts('database'),
+    libContracts('local-storage'),
     packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [

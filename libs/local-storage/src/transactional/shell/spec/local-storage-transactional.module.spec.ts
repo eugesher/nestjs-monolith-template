@@ -1,24 +1,26 @@
-import { INestApplicationContext, Module } from '@nestjs/common';
+import { Global, INestApplicationContext, Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ClsPluginTransactional, TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { ClsModule } from 'nestjs-cls';
-import { getLoggerToken } from 'nestjs-pino';
+import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource, EntityManager } from 'typeorm';
 
-import { ClsTransactionAdapter } from '../cls-transaction.adapter';
+import { ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
 
-describe('ClsTransactionAdapter', () => {
+import { LocalStorageTransactionalModule } from '../local-storage-transactional.module';
+
+describe('LocalStorageTransactionalModule', () => {
   let outcomes: string[];
   let dataSource: { manager: EntityManager; transaction: jest.Mock };
+  let error: jest.SpyInstance;
   let context: INestApplicationContext;
-  let adapter: ClsTransactionAdapter;
+  let port: ITransactionPort;
   let transactionHost: TransactionHost<TransactionalAdapterTypeOrm>;
-  let logger: { error: jest.Mock };
 
   beforeEach(async () => {
     outcomes = [];
-    logger = { error: jest.fn() };
+    error = jest.spyOn(PinoLogger.prototype, 'error');
     dataSource = {
       manager: { name: 'default' } as unknown as EntityManager,
       transaction: jest.fn(
@@ -29,15 +31,16 @@ describe('ClsTransactionAdapter', () => {
             outcomes.push('commit');
 
             return result;
-          } catch (error) {
+          } catch (failure) {
             outcomes.push('rollback');
 
-            throw error;
+            throw failure;
           }
         },
       ),
     };
 
+    @Global()
     @Module({
       providers: [{ provide: DataSource, useValue: dataSource }],
       exports: [DataSource],
@@ -46,50 +49,43 @@ describe('ClsTransactionAdapter', () => {
 
     @Module({
       imports: [
-        ClsModule.forRoot({
-          global: true,
-          plugins: [
-            new ClsPluginTransactional({
-              imports: [DataSourceModule],
-              adapter: new TransactionalAdapterTypeOrm({ dataSourceToken: DataSource }),
-            }),
-          ],
-        }),
-      ],
-      providers: [
-        ClsTransactionAdapter,
-        { provide: getLoggerToken(ClsTransactionAdapter.name), useValue: logger },
+        LoggerModule.forRoot({ pinoHttp: { level: 'silent' } }),
+        ClsModule.forRoot({ global: true }),
+        DataSourceModule,
+        LocalStorageTransactionalModule.forRoot(),
       ],
     })
     class TestModule {}
 
     context = await NestFactory.createApplicationContext(TestModule, { logger: false });
-    adapter = context.get(ClsTransactionAdapter);
+    port = context.get(TRANSACTION_PORT);
     transactionHost = context.get(TransactionHost);
   });
 
   afterEach(async () => {
     await context.close();
+    jest.restoreAllMocks();
+    Object.assign(PinoLogger, { root: undefined });
   });
 
   it('runs the work on the transaction manager, commits and returns its result', async () => {
-    const result = await adapter.run(() => Promise.resolve(transactionHost.tx));
+    const result = await port.run(() => Promise.resolve(transactionHost.tx));
 
     expect(result).toEqual({ name: 'transaction' });
     expect(outcomes).toEqual(['commit']);
   });
 
   it('rolls back and rethrows when the work fails', async () => {
-    const run = adapter.run(() => Promise.reject(new Error('work failed')));
+    const run = port.run(() => Promise.reject(new Error('work failed')));
 
     await expect(run).rejects.toThrow('work failed');
     expect(outcomes).toEqual(['rollback']);
   });
 
   it('reuses the open transaction for a nested run', async () => {
-    const managers = await adapter.run(async () => {
+    const managers = await port.run(async () => {
       const outer = transactionHost.tx;
-      const inner = await adapter.run(() => Promise.resolve(transactionHost.tx));
+      const inner = await port.run(() => Promise.resolve(transactionHost.tx));
 
       return [outer, inner];
     });
@@ -105,9 +101,9 @@ describe('ClsTransactionAdapter', () => {
 
   describe('afterCommit', () => {
     it('runs the hooks after the commit, in the order they were added', async () => {
-      await adapter.run(() => {
-        adapter.afterCommit(() => Promise.resolve(void outcomes.push('hook 1')));
-        adapter.afterCommit(() => Promise.resolve(void outcomes.push('hook 2')));
+      await port.run(() => {
+        port.afterCommit(() => Promise.resolve(void outcomes.push('hook 1')));
+        port.afterCommit(() => Promise.resolve(void outcomes.push('hook 2')));
 
         return Promise.resolve();
       });
@@ -116,8 +112,8 @@ describe('ClsTransactionAdapter', () => {
     });
 
     it('drops the hooks of a transaction that rolls back', async () => {
-      const run = adapter.run(() => {
-        adapter.afterCommit(() => Promise.resolve(void outcomes.push('hook')));
+      const run = port.run(() => {
+        port.afterCommit(() => Promise.resolve(void outcomes.push('hook')));
 
         return Promise.reject(new Error('work failed'));
       });
@@ -127,9 +123,9 @@ describe('ClsTransactionAdapter', () => {
     });
 
     it('runs the hooks of a nested run once, after the commit of the outer one', async () => {
-      await adapter.run(async () => {
-        await adapter.run(() => {
-          adapter.afterCommit(() => Promise.resolve(void outcomes.push('inner hook')));
+      await port.run(async () => {
+        await port.run(() => {
+          port.afterCommit(() => Promise.resolve(void outcomes.push('inner hook')));
 
           return Promise.resolve();
         });
@@ -141,34 +137,34 @@ describe('ClsTransactionAdapter', () => {
     });
 
     it('keeps the hooks of one run out of the next one', async () => {
-      await adapter.run(() => {
-        adapter.afterCommit(() => Promise.resolve(void outcomes.push('first hook')));
+      await port.run(() => {
+        port.afterCommit(() => Promise.resolve(void outcomes.push('first hook')));
 
         return Promise.resolve();
       });
-      await adapter.run(() => Promise.resolve());
+      await port.run(() => Promise.resolve());
 
       expect(outcomes).toEqual(['commit', 'first hook', 'commit']);
     });
 
     it('logs a failed hook, runs the rest and answers the result of the work', async () => {
-      const result = await adapter.run(() => {
-        adapter.afterCommit(() => Promise.reject(new Error('cache is down')));
-        adapter.afterCommit(() => Promise.resolve(void outcomes.push('hook 2')));
+      const result = await port.run(() => {
+        port.afterCommit(() => Promise.reject(new Error('cache is down')));
+        port.afterCommit(() => Promise.resolve(void outcomes.push('hook 2')));
 
         return Promise.resolve('done');
       });
 
       expect(result).toBe('done');
       expect(outcomes).toEqual(['commit', 'hook 2']);
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(error).toHaveBeenCalledWith(
         { err: new Error('cache is down') },
         'After-commit hook failed',
       );
     });
 
     it('refuses a hook outside a run', () => {
-      expect(() => adapter.afterCommit(() => Promise.resolve())).toThrow(
+      expect(() => port.afterCommit(() => Promise.resolve())).toThrow(
         'afterCommit must be called inside TRANSACTION_PORT.run',
       );
     });

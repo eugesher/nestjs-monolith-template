@@ -41,7 +41,7 @@ const areaPolicies = (area, sharedFacing) => {
       layer('application'),
       ...sharedFacing.application,
       baseLibs('observability'),
-      libContracts('database'),
+      libContracts('local-storage'),
       packages('nestjs-pino'),
     ]),
     from(`${prefix}:infrastructure`, [

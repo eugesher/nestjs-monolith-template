@@ -293,7 +293,7 @@ describe('core modules', () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
-          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/database";\n' +
+          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
     });
