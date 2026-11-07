@@ -2,7 +2,7 @@ import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { HealthDependencyStatusEnum } from '@acme-libs/kernel';
-import { CACHE_KEYS, CACHE_PORT, type ICachePort } from '@acme-libs/contracts/cache';
+import { CACHE_KEYS, CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contracts/cache';
 import { IHealthLibDependenciesView, IHealthLibDependencyView } from '@acme-libs/contracts/health';
 
 import { HEALTH_LIB_DEPENDENCY_PROBE_PORT, IHealthLibDependencyProbePort } from '../../outbound';
@@ -17,15 +17,15 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
   private static readonly TIMEOUT_MS = 1000;
 
   constructor(
-    @Inject(CACHE_PORT)
-    private readonly cache: ICachePort,
+    @Inject(CACHE_LIB_PORT)
+    private readonly cache: ICacheLibPort,
     private readonly dataSource: DataSource,
   ) {}
 
   public async probeAll(): Promise<IHealthLibDependenciesView> {
     const [database, cache] = await Promise.all([
       this.timed(() => this.dataSource.query('SELECT 1')),
-      this.timed(() => this.cache.get(CACHE_KEYS.healthProbe())),
+      this.timed(() => this.cache.handleGet(CACHE_KEYS.healthProbe())),
     ]);
 
     return { database, cache };

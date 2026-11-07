@@ -1,1 +1,1 @@
-export * from './shell/cache.module';
+export * from './shell/cache-lib.module';

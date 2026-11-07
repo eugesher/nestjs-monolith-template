@@ -62,7 +62,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `TypeOrmSetupModule.forRoot()`     | `app/setup/orm`                                      | the connection, the entities of the app, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                      |
 | `QueueSetupModule`                 | `app/setup/queue`                                    | the Bull connection to `REDIS_URL`, `removeOnComplete`                                      |
-| `CacheModule`                      | `libs/cache`                                         | global `CACHE_PORT`                                                                         |
+| `CacheLibModule`                   | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                     |
 | `AuthGlobalModule`                 | `app/global/auth`, not in processor-app              | the three global guards                                                                     |
 | features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                               |
 | `APP_PIPE`                         | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                             |

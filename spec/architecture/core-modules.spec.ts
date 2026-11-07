@@ -301,14 +301,14 @@ describe('core modules', () => {
     it('application may NOT take the cache port, caching is an adapter behind a port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
-        code: 'import { CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('infrastructure MAY take the cache port to drop the keys a write makes stale', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/cache/__fixture__.ts',
-        code: 'import { CACHE_KEYS, CACHE_PORT } from "@acme-libs/contracts/cache";',
+        code: 'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";',
       }).toPassArchitectureLint();
     });
 

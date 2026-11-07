@@ -24,8 +24,8 @@ providers: [OrderGetManyRepository.provider, OrderIdempotencyCoreAdapter.provide
 ```
 
 **Every class of `infrastructure/` that implements a port carries the field**: repositories,
-core, common and lib adapters, queue and cache adapters, and the adapters of `libs/credentials`
-and `libs/health`. It is `public static readonly`, so no code can rebind the class for the whole
+core, common and lib adapters, queue and cache adapters, and the adapters of `libs/cache`,
+`libs/credentials` and `libs/health`. It is `public static readonly`, so no code can rebind the class for the whole
 process, and it comes first in the class, before the private constants and the constructor.
 
 **The type argument checks the binding.** `ClassProvider<IOrderIdempotencyPort>` makes the compiler
@@ -48,9 +48,8 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
 
 - **Facades** in `shell/` stay `{ provide: <MODULE>_<LAYER>_PORT, useClass: <Facade> }`. A facade is
   the public entry of a module, not an implementation of one of its outbound ports.
-- **The adapters of `libs/database` and `libs/cache`** (`TransactionAdapter`,
-  `RepositoryHostAdapter`, `RedisCacheAdapter`) are bound in `app/setup` and in `CacheModule`. The
-  app decides which implementation stands behind a port of `@acme-libs/contracts`, so the binding
+- **The adapters of `libs/database`** (`TransactionAdapter`, `RepositoryHostAdapter`) are bound in
+  `app/setup`. The app decides which implementation stands behind a port of `@acme-libs/contracts`, so the binding
   stays with the app.
 - **Global enhancers** (`APP_PIPE`, `APP_FILTER`, `APP_GUARD`) are bound by the app module and the
   auth lib, under tokens of Nest.

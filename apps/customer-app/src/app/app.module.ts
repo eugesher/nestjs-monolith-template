@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
-import { CacheModule } from '@acme-libs/cache';
+import { CacheLibModule } from '@acme-libs/cache';
 import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
@@ -21,7 +21,7 @@ import { ConfigSetupModule, QueueSetupModule, TypeOrmSetupModule } from './setup
     CorrelationSetupModule.forRoot(),
     TypeOrmSetupModule.forRoot(),
     QueueSetupModule,
-    CacheModule,
+    CacheLibModule,
     AuthGlobalModule,
     HealthModule,
     AuthModule,

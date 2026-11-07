@@ -1,23 +1,23 @@
-import { ICachePort } from '@acme-libs/contracts/cache';
+import { ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import { ProductCatalogCacheAdapter } from '../product-catalog-cache.adapter';
 
 describe('ProductCatalogCacheAdapter', () => {
-  let delByPrefix: jest.Mock;
+  let handleDelByPrefix: jest.Mock;
   let adapter: ProductCatalogCacheAdapter;
 
   beforeEach(() => {
-    delByPrefix = jest.fn();
-    adapter = new ProductCatalogCacheAdapter({ delByPrefix } as unknown as ICachePort);
+    handleDelByPrefix = jest.fn();
+    adapter = new ProductCatalogCacheAdapter({ handleDelByPrefix } as unknown as ICacheLibPort);
   });
 
   describe('invalidate', () => {
     it('deletes every page of the customer catalog by its prefix', async () => {
-      delByPrefix.mockResolvedValue(2);
+      handleDelByPrefix.mockResolvedValue(2);
 
       await adapter.invalidate();
 
-      expect(delByPrefix).toHaveBeenCalledWith('acme:catalog:v1:');
+      expect(handleDelByPrefix).toHaveBeenCalledWith('acme:catalog:v1:');
     });
   });
 });

@@ -4,7 +4,7 @@ import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppNameEnum } from '@acme-libs/kernel';
-import { CACHE_PORT } from '@acme-libs/contracts/cache';
+import { CACHE_LIB_PORT } from '@acme-libs/contracts/cache';
 import { HEALTH_LIB_PORT, IHealthLibPort } from '@acme-libs/contracts/health';
 
 import { HealthLibModule } from '../health-lib.module';
@@ -18,9 +18,12 @@ describe('HealthLibModule', () => {
     @Module({
       providers: [
         { provide: DataSource, useValue: { query: () => Promise.resolve([{ 1: '1' }]) } },
-        { provide: CACHE_PORT, useValue: { get: () => Promise.reject(new Error('down')) } },
+        {
+          provide: CACHE_LIB_PORT,
+          useValue: { handleGet: () => Promise.reject(new Error('down')) },
+        },
       ],
-      exports: [DataSource, CACHE_PORT],
+      exports: [DataSource, CACHE_LIB_PORT],
     })
     class DependenciesModule {}
 
