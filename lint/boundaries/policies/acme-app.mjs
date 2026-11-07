@@ -60,7 +60,11 @@ export const acmeApp = [
     libContracts('cache'),
     packages('@nestjs/bull', '@nestjs/common', 'nestjs-pino'),
   ]),
-  from('acme-app:common:shared:index', [to('acme-app:common:shared', own('app'))]),
+  from('acme-app:common:shared:index', [
+    to('acme-app:common:shared:module:index', own('app')),
+    to('acme-app:common:shared', own('app')),
+  ]),
+  from('acme-app:common:shared:module:index', [to('acme-app:common:shared', own('app'))]),
   from('acme-app:app:global:index', [
     to('acme-app:app:global:shell', { ...own('app'), module: '*' }),
   ]),

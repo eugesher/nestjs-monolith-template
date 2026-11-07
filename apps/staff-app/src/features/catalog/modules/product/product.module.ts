@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductCoreModule } from '@acme-core/modules/product';
-import { TagCommonModule } from '@acme-staff/common/modules/tag';
-import { LedgerRecordQueueModule } from '@acme-staff/common/shared/ledger-record';
+import { TagCommonModule } from '@acme-staff/common/modules';
+import { LedgerQueueSetupModule } from '@acme-staff/common/shared';
 
 import {
   ProductAccessService,
@@ -37,7 +37,7 @@ import {
 import { ProductController } from './presentation';
 
 @Module({
-  imports: [LedgerRecordQueueModule, TagCommonModule, IdempotencyCoreModule, ProductCoreModule],
+  imports: [LedgerQueueSetupModule, TagCommonModule, IdempotencyCoreModule, ProductCoreModule],
   controllers: [ProductController],
   providers: [
     HttpExceptionFilter,

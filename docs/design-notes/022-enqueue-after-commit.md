@@ -44,7 +44,7 @@ still reach Redis once it is back, so a processor must tolerate a duplicate job.
 payload type. A core module that writes to a queue registers it itself with
 `BullModule.registerQueue`, so every feature that mounts the module brings the queue with it. A
 feature registers its queues in the `common/shared` of its app
-(`apps/staff-app/src/common/shared/ledger-record`). Bull applies the job options of the producer, so
+(`apps/staff-app/src/common/shared/ledger`). Bull applies the job options of the producer, so
 every registration reads the one constant of the contract.
 
 The lint edges for a core queue adapter are in `lint/boundaries/policies/acme-core.mjs` and

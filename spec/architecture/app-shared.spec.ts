@@ -6,6 +6,7 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
+      'apps/__shared-fixture__/src/common/shared/index.ts',
       'apps/__shared-fixture__/src/common/shared/auth/index.ts',
       'apps/__shared-fixture__/src/common/shared/auth/guards/auth-jwt.guard.ts',
       'apps/__shared-fixture__/src/contracts/auth/index.ts',
@@ -23,8 +24,15 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
   it('a feature MAY reach common through its barrel', async () => {
     await expect({
       file: 'apps/__shared-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
-      code: 'import { x } from "../../../../common/shared/auth";',
+      code: 'import { x } from "../../../../common/shared";',
     }).toPassArchitectureLint();
+  });
+
+  it('a feature may NOT reach the barrel of a common/shared folder', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
+      code: 'import { x } from "../../../../common/shared/auth";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('a feature may NOT take a deep path into common', async () => {
@@ -44,7 +52,7 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
   it('main may NOT reach common even through its barrel — request behaviour is registered in DI', async () => {
     await expect({
       file: 'apps/__shared-fixture__/src/main.ts',
-      code: 'import { x } from "./common/shared/auth";',
+      code: 'import { x } from "./common/shared";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -67,6 +75,20 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
       file: 'apps/__shared-fixture__/src/common/shared/auth/guards/__fixture__.ts',
       code: 'import { ApiHeader } from "@nestjs/swagger";',
     }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('the common/shared barrel MAY export the barrel of a folder', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/common/shared/index.ts',
+      code: 'export * from "./auth";',
+    }).toPassArchitectureLint();
+  });
+
+  it('the common/shared barrel MAY export a file of a folder', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/common/shared/index.ts',
+      code: 'export * from "./auth/guards/auth-jwt.guard";',
+    }).toPassArchitectureLint();
   });
 
   it('a common barrel may NOT re-export contracts', async () => {
@@ -124,7 +146,7 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
   it('another app may NOT reach this app common', async () => {
     await expect({
       file: 'apps/__shared-other-fixture__/src/features/health/presentation/controllers/__fixture__.ts',
-      code: 'import { x } from "../../../../../../__shared-fixture__/src/common/shared/auth";',
+      code: 'import { x } from "../../../../../../__shared-fixture__/src/common/shared";',
     }).toBreakRule('boundaries/dependencies');
   });
 });

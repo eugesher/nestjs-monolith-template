@@ -6,6 +6,7 @@ describe('common modules (common/modules/<module>)', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
+      'apps/__common-fixture__/src/common/modules/index.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/index.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/shell/idempotency.module.ts',
       'apps/__common-fixture__/src/common/modules/idempotency/application/index.ts',
@@ -261,19 +262,33 @@ describe('common modules (common/modules/<module>)', () => {
     it('common/shared may NOT reach a common module', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/common/shared/concurrency/__fixture__.ts',
-        code: 'import { x } from "../../modules/idempotency";',
+        code: 'import { x } from "../../modules";',
       }).toBreakRule('boundaries/dependencies');
     });
 
     it('app contracts may NOT reach common modules', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/contracts/idempotency/__fixture__.ts',
-        code: 'import { x } from "../../common/modules/idempotency";',
+        code: 'import { x } from "../../common/modules";',
       }).toBreakRule('boundaries/dependencies');
     });
   });
 
   describe('the module barrel and shell/', () => {
+    it('the common/modules barrel MAY export the barrel of a module', async () => {
+      await expect({
+        file: 'apps/__common-fixture__/src/common/modules/index.ts',
+        code: 'export * from "./idempotency";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the common/modules barrel may NOT take a deep path into a module', async () => {
+      await expect({
+        file: 'apps/__common-fixture__/src/common/modules/index.ts',
+        code: 'export * from "./idempotency/shell/idempotency.module";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it('the common module barrel MAY export the nest module', async () => {
       await expect({
         file: 'apps/__common-fixture__/src/common/modules/idempotency/index.ts',

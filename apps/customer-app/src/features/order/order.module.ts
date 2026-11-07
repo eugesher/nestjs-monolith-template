@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
-import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-record';
+import { LedgerQueueSetupModule } from '@acme-customer/common/shared';
 
 import {
   OrderGetManyUseCase,
@@ -24,7 +24,7 @@ import {
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [LedgerRecordQueueModule, IdempotencyCoreModule, ProductStockCoreModule],
+  imports: [LedgerQueueSetupModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
     HttpExceptionFilter,

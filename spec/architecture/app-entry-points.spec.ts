@@ -44,14 +44,14 @@ describe('app entry points', () => {
 
   it.each([
     '@acme-staff/app/app.module',
-    '@acme-staff/common/shared/concurrency',
-    '@acme-staff/common/shared/ledger-record',
+    '@acme-staff/common/modules',
+    '@acme-staff/common/shared',
     '@acme-staff/features',
     '@acme-customer/app/app.module',
-    '@acme-customer/common/shared/ledger-record',
+    '@acme-customer/common/shared',
     '@acme-customer/features',
     '@acme-processor/app/app.module',
-    '@acme-processor/common/shared/ledger-record',
+    '@acme-processor/common/shared',
     '@acme-processor/features',
     '@acme-processor/processors',
   ])('%s resolves', (source) => {
@@ -70,17 +70,19 @@ describe('app entry points', () => {
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/app/setup/config/config-setup.module',
     ],
+    ['apps/staff-app/src/features/product/__fixture__.ts', '@acme-staff/common/shared/concurrency'],
+    ['apps/staff-app/src/features/product/__fixture__.ts', '@acme-staff/common/modules/tag'],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
       '@acme-staff/common/shared/concurrency/decorators/if-match.decorator',
     ],
     [
       'apps/staff-app/src/features/product/__fixture__.ts',
-      '@acme-staff/common/shared/ledger-record/queues/ledger-record-queue.module',
+      '@acme-staff/common/shared/ledger/ledger-queue-setup.module',
     ],
     [
       'apps/customer-app/src/features/order/__fixture__.ts',
-      '@acme-customer/common/shared/ledger-record/queues/ledger-record-queue.module',
+      '@acme-customer/common/shared/ledger/ledger-queue-setup.module',
     ],
   ])('%s may NOT reach a deep path through an alias: %s', async (file, source) => {
     await expect({
@@ -254,7 +256,7 @@ describe('app entry points', () => {
     await expect({
       file: 'apps/staff-app/src/features/health/presentation/controllers/__fixture__.ts',
       code:
-        'import { IfMatch } from "@acme-staff/common/shared/concurrency";\n' +
+        'import { IfMatch } from "@acme-staff/common/shared";\n' +
         'import { IdempotencyKey } from "@acme-libs/http";',
     }).toPassArchitectureLint();
   });
@@ -262,10 +264,10 @@ describe('app entry points', () => {
   it.each([
     'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
     'apps/staff-app/src/features/product/infrastructure/queue/product-ledger-record-queue.adapter.ts',
-    'apps/staff-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/staff-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
     'apps/customer-app/src/features/auth/infrastructure/queue/auth-ledger-record-queue.adapter.ts',
-    'apps/customer-app/src/common/shared/ledger-record/queues/ledger-record-queue.module.ts',
+    'apps/customer-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
   ])('%s MAY import the ledger record contract of the core ledger', async (file) => {
     await expect({
@@ -285,22 +287,13 @@ describe('app entry points', () => {
   });
 
   it.each([
-    [
-      'apps/processor-app/src/processors/ledger/ledger.module.ts',
-      '@acme-processor/common/shared/ledger-record',
-    ],
-    [
-      'apps/staff-app/src/features/product/product.module.ts',
-      '@acme-staff/common/shared/ledger-record',
-    ],
-    [
-      'apps/customer-app/src/features/auth/auth.module.ts',
-      '@acme-customer/common/shared/ledger-record',
-    ],
+    ['apps/processor-app/src/processors/ledger/ledger.module.ts', '@acme-processor/common/shared'],
+    ['apps/staff-app/src/features/product/product.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/auth/auth.module.ts', '@acme-customer/common/shared'],
   ])('%s MAY register the ledger record queue by %s', async (file, source) => {
     await expect({
       file,
-      code: `import { LedgerRecordQueueModule } from "${source}";`,
+      code: `import { LedgerQueueSetupModule } from "${source}";`,
     }).toPassArchitectureLint();
   });
 
@@ -326,7 +319,7 @@ describe('app entry points', () => {
     ],
     [
       'apps/staff-app/src/features/product/infrastructure/queue/__fixture__.ts',
-      '@acme-staff/common/shared/ledger-record',
+      '@acme-staff/common/shared',
     ],
   ])('%s may NOT import %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
@@ -335,19 +328,14 @@ describe('app entry points', () => {
   });
 
   it.each([
-    [
-      'apps/customer-app/src/features/health/health.module.ts',
-      '@acme-staff/common/shared/concurrency',
-    ],
+    ['apps/customer-app/src/features/health/health.module.ts', '@acme-staff/common/shared'],
     [
       'apps/customer-app/src/features/health/presentation/controllers/__fixture__.ts',
-      '@acme-staff/common/shared/concurrency',
+      '@acme-staff/common/shared',
     ],
-    ['apps/customer-app/src/app/app.module.ts', '@acme-staff/common/shared/ledger-record'],
-    [
-      'apps/customer-app/src/features/auth/auth.module.ts',
-      '@acme-staff/common/shared/ledger-record',
-    ],
+    ['apps/customer-app/src/app/app.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/auth/auth.module.ts', '@acme-staff/common/shared'],
+    ['apps/customer-app/src/features/order/order.module.ts', '@acme-staff/common/modules'],
   ])('customer-app (%s) may NOT reach the staff-app %s', async (file, source) => {
     await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
       'boundaries/dependencies',

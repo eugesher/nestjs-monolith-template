@@ -27,6 +27,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       'apps/__processors-fixture__/src/contracts/ledger-record/index.ts',
       'apps/__processors-fixture__/src/common/shared/ledger-record/index.ts',
       'apps/__processors-fixture__/src/contracts/idempotency/index.ts',
+      'apps/__processors-fixture__/src/common/modules/index.ts',
       'apps/__processors-fixture__/src/common/modules/idempotency/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'core/contracts/src/__ledger-fixture__/index.ts',
@@ -85,7 +86,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
           'import { x } from "./application";\n' +
           'import { y } from "./presentation";\n' +
           'import { z } from "../../../../../core/modules/src/__ledger-fixture__";\n' +
-          'import { w } from "../../common/modules/idempotency";',
+          'import { w } from "../../common/modules";',
       }).toPassArchitectureLint();
     });
 

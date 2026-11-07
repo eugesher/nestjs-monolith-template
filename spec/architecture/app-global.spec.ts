@@ -12,6 +12,7 @@ describe('global modules (app/global) — modules without controllers', () => {
       'apps/__global-fixture__/src/app/global/auth/infrastructure/common-adapters/index.ts',
       'apps/__global-fixture__/src/app/global/auth/application/index.ts',
       'apps/__global-fixture__/src/app/global/auth/outbound/index.ts',
+      'apps/__global-fixture__/src/common/modules/index.ts',
       'apps/__global-fixture__/src/common/modules/identity/index.ts',
       'apps/__global-fixture__/src/contracts/auth/index.ts',
       'apps/__global-fixture__/src/contracts/audit/index.ts',
@@ -58,7 +59,7 @@ describe('global modules (app/global) — modules without controllers', () => {
   it('the module root MAY mount a common module', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/shell/__fixture__.ts',
-      code: 'import { x } from "../../../../common/modules/identity";',
+      code: 'import { x } from "../../../../common/modules";',
     }).toPassArchitectureLint();
   });
 
@@ -167,7 +168,7 @@ describe('global modules (app/global) — modules without controllers', () => {
   it('infrastructure/common-adapters may NOT mount a common module', async () => {
     await expect({
       file: 'apps/__global-fixture__/src/app/global/auth/infrastructure/common-adapters/__fixture__.ts',
-      code: 'import { x } from "../../../../../common/modules/identity";',
+      code: 'import { x } from "../../../../../common/modules";',
     }).toBreakRule('boundaries/dependencies');
   });
 

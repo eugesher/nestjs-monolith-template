@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { LedgerRecordQueueModule } from '@acme-customer/common/shared/ledger-record';
+import { LedgerQueueSetupModule } from '@acme-customer/common/shared';
 
 import { AuthLedgerService, AuthLoginUseCase, AuthRegisterUseCase } from './application';
 import {
@@ -16,7 +16,7 @@ import {
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [CredentialsLibModule, LedgerRecordQueueModule],
+  imports: [CredentialsLibModule, LedgerQueueSetupModule],
   controllers: [AuthController],
   providers: [
     HttpExceptionFilter,
