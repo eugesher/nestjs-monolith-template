@@ -1,14 +1,16 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule } from '@nestjs/common';
 
 import { HEALTH_LIB_PORT } from '@acme-libs/contracts/health';
 import { AppNameEnum } from '@acme-libs/kernel';
 
 import { HealthLibCheckLivenessUseCase, HealthLibCheckReadinessUseCase } from '../application';
-import { HealthLibDependencyProbeAdapter, HealthLibUptimeAdapter } from '../infrastructure';
-import { HEALTH_LIB_APP_NAME_TOKEN } from '../outbound';
+import {
+  HealthLibAppNameProvider,
+  HealthLibDependencyProbeAdapter,
+  HealthLibUptimeAdapter,
+} from '../infrastructure';
 import { HealthLibFacade } from './health-lib.facade';
 
-@Module({})
 export class HealthLibModule {
   public static forRoot(appName: AppNameEnum): DynamicModule {
     return {
@@ -19,7 +21,7 @@ export class HealthLibModule {
         HealthLibCheckLivenessUseCase,
         HealthLibCheckReadinessUseCase,
         HealthLibDependencyProbeAdapter.provider,
-        { provide: HEALTH_LIB_APP_NAME_TOKEN, useValue: appName },
+        HealthLibAppNameProvider.provide(appName),
         HealthLibUptimeAdapter.provider,
       ],
     };
