@@ -42,9 +42,9 @@ core call it, and the names say what they do there.
 
 ## What stays in `libs/database`
 
-`libs/database` holds the connection and `ORM_PORT`. `OrmHostAdapter` takes `TransactionHost` from
-the global module of the CLS plugins, so a repository joins the transaction that
-`TRANSACTION_PORT.run` opened without importing this lib. Only the two libs import
+`libs/database` holds the connection and `ORM_PORT` (see `034-orm-lib.md`). `OrmHostAdapter` takes
+`TransactionHost` from the global module of the CLS plugins, so a repository joins the transaction
+that `TRANSACTION_PORT.run` opened without importing this lib. Only the two libs import
 `@nestjs-cls/transactional`.
 
 **`OrmModule` mounts the transactions.** `OrmHostAdapter` needs `TransactionHost`, which only the

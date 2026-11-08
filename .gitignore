@@ -34,3 +34,4 @@ __pycache__/
 
 # Scaffolds of the architecture specs
 __*-fixture__/
+.scaffold-manifest

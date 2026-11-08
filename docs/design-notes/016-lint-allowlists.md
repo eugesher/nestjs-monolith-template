@@ -139,3 +139,12 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **A global common-adapter reaches any contract of its app and its own outbound.** It implements
   a port of its module's outbound with the port of a common module, which is named after that
   module, not after the global module, so the namesake rule of `appContracts` would refuse it.
+
+### Policies that name exports
+
+A policy that refuses or allows a name of a lib, such as `customer-claims.mjs` with
+`AuthPermissionModule` and `RequiresPermission`, matches the specifier of the import, not the file
+behind it. A renamed export would leave the policy guarding a name nobody imports, and its negative
+case would stay green as long as its fixture used the old name too.
+`spec/architecture/policy-specifiers.spec.ts` reads the resolved policies of the boundaries rule and
+checks that every specifier named for a lib is an export of that lib.
