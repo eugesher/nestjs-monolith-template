@@ -3,7 +3,7 @@ import { ArrayNotEmpty, IsArray, IsEnum } from 'class-validator';
 
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-export class RoleUpdatePermissionsRequestDto {
+export class RolePermissionsReassignRequestDto {
   @ApiProperty({ enum: PermissionCodeEnum, isArray: true })
   @IsArray()
   @ArrayNotEmpty()

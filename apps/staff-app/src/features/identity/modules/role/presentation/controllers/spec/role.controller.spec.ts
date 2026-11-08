@@ -1,20 +1,20 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../../application';
+import { RoleListUseCase, RoleReassignPermissionsUseCase } from '../../../application';
 import { RoleController } from '../role.controller';
 
 describe('RoleController', () => {
   let list: jest.Mock;
-  let updatePermissions: jest.Mock;
+  let reassignPermissions: jest.Mock;
   let controller: RoleController;
 
   beforeEach(() => {
     list = jest.fn();
-    updatePermissions = jest.fn();
+    reassignPermissions = jest.fn();
 
     controller = new RoleController(
       { execute: list } as unknown as RoleListUseCase,
-      { execute: updatePermissions } as unknown as RoleUpdatePermissionsUseCase,
+      { execute: reassignPermissions } as unknown as RoleReassignPermissionsUseCase,
     );
   });
 
@@ -28,15 +28,15 @@ describe('RoleController', () => {
     });
   });
 
-  describe('handleUpdatePermissions', () => {
-    it('replaces the permissions of the role of the path with the codes of the body', async () => {
-      updatePermissions.mockResolvedValue({
+  describe('handleReassignPermissions', () => {
+    it('reassigns the permissions of the role of the path with the codes of the body', async () => {
+      reassignPermissions.mockResolvedValue({
         id: '3',
         name: 'viewer',
         permissionCodes: [PermissionCodeEnum.IDENTITY_ROLE_ASSIGN],
       });
 
-      const response = await controller.handleUpdatePermissions(
+      const response = await controller.handleReassignPermissions(
         { roleId: '3' },
         {
           permissionCodes: [PermissionCodeEnum.IDENTITY_ROLE_ASSIGN],
@@ -48,7 +48,7 @@ describe('RoleController', () => {
         name: 'viewer',
         permissionCodes: ['identity:role:assign'],
       });
-      expect(updatePermissions).toHaveBeenCalledWith({
+      expect(reassignPermissions).toHaveBeenCalledWith({
         roleId: '3',
         permissionCodes: ['identity:role:assign'],
       });

@@ -23,9 +23,9 @@ describe('RoleModel', () => {
     });
   });
 
-  describe('replacePermissions', () => {
-    it('replaces the codes, without duplicates', () => {
-      role.replacePermissions([
+  describe('reassignPermissions', () => {
+    it('reassigns the codes, without duplicates', () => {
+      role.reassignPermissions([
         PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
         PermissionCodeEnum.PRODUCT_READ,
         PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
@@ -35,7 +35,7 @@ describe('RoleModel', () => {
     });
 
     it('clears the codes with an empty list', () => {
-      role.replacePermissions([]);
+      role.reassignPermissions([]);
 
       expect(role.permissionCodes).toEqual([]);
     });

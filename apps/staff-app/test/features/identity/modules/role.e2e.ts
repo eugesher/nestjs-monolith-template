@@ -32,9 +32,9 @@ export class RoleE2E {
     });
   }
 
-  public handleUpdatePermissions(): void {
+  public handleReassignPermissions(): void {
     describe('PUT /api/identity/roles/:roleId/permissions', () => {
-      it('should replace the permissions and refuse the same token at once', async () => {
+      it('should reassign the permissions and refuse the same token at once', async () => {
         try {
           const before = await request(this.ctx.app.getHttpServer())
             .get('/api/ledger')

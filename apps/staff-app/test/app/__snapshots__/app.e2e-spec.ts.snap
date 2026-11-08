@@ -1117,7 +1117,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should replace the permissions and refuse the same token at once 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should reassign the permissions and refuse the same token at once 1`] = `
 {
   "before": {
     "status": 200,

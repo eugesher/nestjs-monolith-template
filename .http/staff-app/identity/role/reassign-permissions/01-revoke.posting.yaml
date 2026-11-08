@@ -1,6 +1,6 @@
 name: 01-revoke
 description: |-
-  e2e: Identity › Role › PUT /api/identity/roles/:roleId/permissions › should replace the permissions and refuse the same token at once
+  e2e: Identity › Role › PUT /api/identity/roles/:roleId/permissions › should reassign the permissions and refuse the same token at once
 
   Expect: 200 OK, viewer holds product:write instead of ledger:read; the same viewer token gets 200 from GET /ledger before and 403 after
   User: admin@example.com (token signed by scripts.py)

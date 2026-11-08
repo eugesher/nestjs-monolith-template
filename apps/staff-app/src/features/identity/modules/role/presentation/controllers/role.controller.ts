@@ -4,8 +4,8 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../application';
-import { RoleIdParamDto, RoleResponseDto, RoleUpdatePermissionsRequestDto } from '../dto';
+import { RoleListUseCase, RoleReassignPermissionsUseCase } from '../../application';
+import { RoleIdParamDto, RolePermissionsReassignRequestDto, RoleResponseDto } from '../dto';
 import { RoleHttpExceptionFilter } from '../filters/role-http-exception.filter';
 
 @ApiTags('Identity/Role')
@@ -14,7 +14,7 @@ import { RoleHttpExceptionFilter } from '../filters/role-http-exception.filter';
 export class RoleController {
   constructor(
     private readonly list: RoleListUseCase,
-    private readonly updatePermissions: RoleUpdatePermissionsUseCase,
+    private readonly reassignPermissions: RoleReassignPermissionsUseCase,
   ) {}
 
   @Get()
@@ -27,15 +27,15 @@ export class RoleController {
 
   @Put(':roleId/permissions')
   @RequiresPermission(PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN)
-  @ApiOperation({ summary: 'Replace the permission set of a role' })
+  @ApiOperation({ summary: 'Reassign the permission set of a role' })
   @ApiOkResponse({ type: RoleResponseDto })
-  public async handleUpdatePermissions(
+  public async handleReassignPermissions(
     @Param() params: RoleIdParamDto,
-    @Body() body: RoleUpdatePermissionsRequestDto,
+    @Body() body: RolePermissionsReassignRequestDto,
   ): Promise<RoleResponseDto> {
     const { roleId } = params;
     const { permissionCodes } = body;
 
-    return await this.updatePermissions.execute({ roleId, permissionCodes });
+    return await this.reassignPermissions.execute({ roleId, permissionCodes });
   }
 }

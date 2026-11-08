@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { RoleListUseCase, RoleUpdatePermissionsUseCase } from './application';
-import { RoleListRepository, RoleUpdatePermissionsRepository } from './infrastructure';
+import { RoleListUseCase, RoleReassignPermissionsUseCase } from './application';
+import { RoleListRepository, RoleReassignPermissionsRepository } from './infrastructure';
 import { RoleController } from './presentation';
 
 @Module({
@@ -11,9 +11,9 @@ import { RoleController } from './presentation';
   providers: [
     HttpExceptionFilter,
     RoleListUseCase,
-    RoleUpdatePermissionsUseCase,
+    RoleReassignPermissionsUseCase,
     RoleListRepository.provider,
-    RoleUpdatePermissionsRepository.provider,
+    RoleReassignPermissionsRepository.provider,
   ],
 })
 export class RoleModule {}

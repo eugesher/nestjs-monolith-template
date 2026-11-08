@@ -5,34 +5,34 @@ import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/lo
 
 import { AuthRoleNotFoundException, RoleModel } from '../../domain';
 import {
-  ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
-  type IRoleUpdatePermissionsRepositoryPort,
+  ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT,
+  type IRoleReassignPermissionsRepositoryPort,
 } from '../../outbound';
-import { IRoleUpdatePermissionsCommand, IRoleView } from '../interfaces';
+import { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
 
 @Injectable()
-export class RoleUpdatePermissionsUseCase {
+export class RoleReassignPermissionsUseCase {
   constructor(
-    @Inject(ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT)
-    private readonly repository: IRoleUpdatePermissionsRepositoryPort,
+    @Inject(ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT)
+    private readonly repository: IRoleReassignPermissionsRepositoryPort,
     @Inject(TRANSACTION_PORT)
     private readonly transaction: ITransactionPort,
-    @InjectPinoLogger(RoleUpdatePermissionsUseCase.name)
+    @InjectPinoLogger(RoleReassignPermissionsUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
 
-  public async execute(command: IRoleUpdatePermissionsCommand): Promise<IRoleView> {
-    const role = await this.transaction.run(() => this.replace(command));
+  public async execute(command: IRoleReassignPermissionsCommand): Promise<IRoleView> {
+    const role = await this.transaction.run(() => this.reassign(command));
 
     this.logger.info(
       { role: role.name, permissionCodes: role.permissionCodes },
-      'Role permissions replaced',
+      'Role permissions reassigned',
     );
 
     return role.toSnapshot();
   }
 
-  private async replace(command: IRoleUpdatePermissionsCommand): Promise<RoleModel> {
+  private async reassign(command: IRoleReassignPermissionsCommand): Promise<RoleModel> {
     const { roleId, permissionCodes } = command;
     const record = await this.repository.findRole(roleId);
 
@@ -42,7 +42,7 @@ export class RoleUpdatePermissionsUseCase {
 
     const role = RoleModel.reconstitute(record);
 
-    role.replacePermissions(permissionCodes);
+    role.reassignPermissions(permissionCodes);
 
     const rolePermissions = role.permissionCodes.map((code) => ({ roleId: role.id, code }));
 

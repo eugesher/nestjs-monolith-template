@@ -1,11 +1,11 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-import { RoleUpdatePermissionsRequestDto } from '../role-update-permissions.request.dto';
+import { RolePermissionsReassignRequestDto } from '../role-permissions-reassign.request.dto';
 
-describe('RoleUpdatePermissionsRequestDto', () => {
+describe('RolePermissionsReassignRequestDto', () => {
   it('accepts known permission codes', () => {
-    const dto = plainToInstance(RoleUpdatePermissionsRequestDto, {
+    const dto = plainToInstance(RolePermissionsReassignRequestDto, {
       permissionCodes: ['identity:role:assign', 'ledger:read'],
     });
 
@@ -19,7 +19,7 @@ describe('RoleUpdatePermissionsRequestDto', () => {
     ['an unknown code', { permissionCodes: ['identity:role:assign', 'does-not:exist'] }, 'isEnum'],
     ['codes that are not a list', { permissionCodes: 'identity:role:assign' }, 'isArray'],
   ])('rejects %s', (_case, body, constraint) => {
-    const dto = plainToInstance(RoleUpdatePermissionsRequestDto, body);
+    const dto = plainToInstance(RolePermissionsReassignRequestDto, body);
 
     const errors = validateSync(dto);
 

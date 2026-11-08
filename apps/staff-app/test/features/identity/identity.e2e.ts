@@ -33,7 +33,7 @@ export class IdentityE2E {
 
     describe('Role', () => {
       this.roleE2E.handleList();
-      this.roleE2E.handleUpdatePermissions();
+      this.roleE2E.handleReassignPermissions();
     });
 
     describe('User', () => {

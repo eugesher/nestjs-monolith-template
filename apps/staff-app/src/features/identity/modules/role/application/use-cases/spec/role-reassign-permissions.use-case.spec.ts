@@ -3,9 +3,9 @@ import { PinoLogger } from 'nestjs-pino';
 import { IdentityExceptionCodeEnum, PermissionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { RoleUpdatePermissionsUseCase } from '../role-update-permissions.use-case';
+import { RoleReassignPermissionsUseCase } from '../role-reassign-permissions.use-case';
 
-describe('RoleUpdatePermissionsUseCase', () => {
+describe('RoleReassignPermissionsUseCase', () => {
   let outcomes: string[];
   let repository: {
     findRole: jest.Mock;
@@ -14,7 +14,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
   };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
   let logger: PinoLoggerMock;
-  let useCase: RoleUpdatePermissionsUseCase;
+  let useCase: RoleReassignPermissionsUseCase;
 
   beforeEach(() => {
     outcomes = [];
@@ -40,14 +40,14 @@ describe('RoleUpdatePermissionsUseCase', () => {
       }),
     };
     logger = makePinoLoggerMock();
-    useCase = new RoleUpdatePermissionsUseCase(
+    useCase = new RoleReassignPermissionsUseCase(
       repository,
       transaction,
       logger as unknown as PinoLogger,
     );
   });
 
-  it('replaces the permissions of the role in one transaction', async () => {
+  it('reassigns the permissions of the role in one transaction', async () => {
     const view = await useCase.execute({
       roleId: '2',
       permissionCodes: [
@@ -69,16 +69,16 @@ describe('RoleUpdatePermissionsUseCase', () => {
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
       { roleId: '2', permissionCodes: ['identity:permission:assign', 'product:read'] },
-      'Role permissions replaced',
+      'Role permissions reassigned',
     );
   });
 
   it('rejects an unknown role', async () => {
     repository.findRole.mockResolvedValue(null);
 
-    const update = useCase.execute({ roleId: '1', permissionCodes: [] });
+    const reassign = useCase.execute({ roleId: '1', permissionCodes: [] });
 
-    await expect(update).rejects.toMatchObject({
+    await expect(reassign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
       message: 'Role admin was not found',
     });

@@ -20,7 +20,7 @@ export class RoleModel {
     return new RoleModel(id, name, permissionCodes);
   }
 
-  public replacePermissions(requested: PermissionCodeEnum[]): void {
+  public reassignPermissions(requested: PermissionCodeEnum[]): void {
     this.codes = [...new Set(requested)];
   }
 

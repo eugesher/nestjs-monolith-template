@@ -4,21 +4,21 @@ import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IRoleUpdatePermissionsRepositoryPort,
-  IRoleUpdatePermissionsRolePermissionInsertQuery,
-  IRoleUpdatePermissionsRoleRecord,
-  ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
+  IRoleReassignPermissionsRepositoryPort,
+  IRoleReassignPermissionsRolePermissionInsertQuery,
+  IRoleReassignPermissionsRoleRecord,
+  ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 
 @Injectable()
-export class RoleUpdatePermissionsRepository
+export class RoleReassignPermissionsRepository
   extends RolePersistenceHost
-  implements IRoleUpdatePermissionsRepositoryPort
+  implements IRoleReassignPermissionsRepositoryPort
 {
-  public static readonly provider: ClassProvider<IRoleUpdatePermissionsRepositoryPort> = {
-    provide: ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
-    useClass: RoleUpdatePermissionsRepository,
+  public static readonly provider: ClassProvider<IRoleReassignPermissionsRepositoryPort> = {
+    provide: ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT,
+    useClass: RoleReassignPermissionsRepository,
   };
 
   constructor(
@@ -28,7 +28,7 @@ export class RoleUpdatePermissionsRepository
     super();
   }
 
-  public async findRole(id: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
+  public async findRole(id: string): Promise<Nullable<IRoleReassignPermissionsRoleRecord>> {
     return await this.createStaffRoleBuilder().forById(id).getOne();
   }
 
@@ -37,7 +37,7 @@ export class RoleUpdatePermissionsRepository
   }
 
   public async insertRolePermissions(
-    queries: IRoleUpdatePermissionsRolePermissionInsertQuery[],
+    queries: IRoleReassignPermissionsRolePermissionInsertQuery[],
   ): Promise<void> {
     if (queries.length === 0) {
       return;
