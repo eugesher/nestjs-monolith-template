@@ -29,7 +29,7 @@ export class RoleUpdatePermissionsUseCase {
       'Role permissions replaced',
     );
 
-    return role.toView();
+    return role.toSnapshot();
   }
 
   private async replace(command: IRoleUpdatePermissionsCommand): Promise<RoleModel> {

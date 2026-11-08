@@ -19,12 +19,12 @@ app signs with its own secret.
 **The signer signs the subject alone.** `signAccessToken({ sub })` passes only `sub` to the JWT
 library, so a caller that hands it a wider object cannot widen the token.
 
-**Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`;
-the feature declares ports of its own (`AUTH_ACCESS_TOKEN_PORT`, `AUTH_PASSWORD_HASHER_PORT`) and
+**Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`; the
+feature declares ports of its own (`AUTH_ACCESS_TOKEN_PORT`, `AUTH_PASSWORD_HASHER_PORT`) and
 implements them in `infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature
 imports `argon2` or `@nestjs/jwt` and the application never sees the lib. Example:
-`apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-password-hasher-lib.adapter.ts`. Verifying a
-token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
+`apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-password-hasher-lib.adapter.ts`.
+Verifying a token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
 
 ## One model per module over one table
 
@@ -39,9 +39,10 @@ Modules that read the same table keep models of their own, narrowed to what each
 staff-app and processor-app both sign the staff in and check the subject of every request, so the
 reads live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
 (`core/contracts/src/staff-auth`): `handleFindSubject` for the guard and `GET /identity/auth/me`,
-`handleFindByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its `auth`
-feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the token
-stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the credentials.
+`handleFindByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its
+`auth` feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the
+token stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the
+credentials.
 
 ## Table naming
 

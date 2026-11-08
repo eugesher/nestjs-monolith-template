@@ -5,12 +5,12 @@ import {
   ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
-export const OrderConfigRedisCommandTimeoutMsProvider = ConfigValueProvider.provide<number>({
+export const OrderConfigRedisCommandTimeoutMsProvider = ConfigValueProvider.provide({
   injectionToken: ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   configProperty: 'REDIS_COMMAND_TIMEOUT_MS',
 });
 
-export const OrderConfigLedgerRetryAttemptsProvider = ConfigValueProvider.provide<number>({
+export const OrderConfigLedgerRetryAttemptsProvider = ConfigValueProvider.provide({
   injectionToken: ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
   configProperty: 'LEDGER_RETRY_ATTEMPTS',
 });

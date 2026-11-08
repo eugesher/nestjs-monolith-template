@@ -1,4 +1,4 @@
-import { ILedgerAppendEntryDraft } from '../../interfaces/ledger-append-entry-draft.interface';
+import { ILedgerAppendEntryDraftOutput } from '../../interfaces/outputs/ledger-append-entry-draft.output';
 import { LedgerAppendEntryModel } from '../ledger-append-entry.model';
 
 describe('LedgerAppendEntryModel', () => {
@@ -48,7 +48,7 @@ describe('LedgerAppendEntryModel', () => {
         'LedgerEntry.occurredAt must be a valid instant',
       ],
     ])('rejects %s', (_case, operationKey, action, occurredAt, message) => {
-      const createDraft = (): ILedgerAppendEntryDraft =>
+      const createDraft = (): ILedgerAppendEntryDraftOutput =>
         LedgerAppendEntryModel.createDraft({
           operationKey,
           subjectType: 'product',

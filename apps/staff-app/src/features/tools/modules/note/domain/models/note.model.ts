@@ -4,10 +4,10 @@ import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.except
 import { NoteResolvedException } from '../exceptions/note-resolved.exception';
 import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.exception';
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import { INoteCandidate } from '../interfaces/note-candidate.interface';
-import { INoteDraft } from '../interfaces/note-draft.interface';
-import { INoteRecord } from '../interfaces/note-record.interface';
-import { INoteSnapshot } from '../interfaces/note-snapshot.interface';
+import { INoteCandidateInput } from '../interfaces/inputs/note-candidate.input';
+import { INoteRecordInput } from '../interfaces/inputs/note-record.input';
+import { INoteDraftOutput } from '../interfaces/outputs/note-draft.output';
+import { INoteSnapshotOutput } from '../interfaces/outputs/note-snapshot.output';
 
 export class NoteModel extends AggregateRoot<string> {
   public get body(): string {
@@ -40,7 +40,7 @@ export class NoteModel extends AggregateRoot<string> {
     super(id);
   }
 
-  public static reconstitute(record: INoteRecord): NoteModel {
+  public static reconstitute(record: INoteRecordInput): NoteModel {
     const { id, subjectType, subjectId, body, authorId, resolved, version, createdAt, updatedAt } =
       record;
     const validSubjectType = NoteModel.validSubjectType(subjectType);
@@ -61,7 +61,7 @@ export class NoteModel extends AggregateRoot<string> {
     );
   }
 
-  public static createDraft(candidate: INoteCandidate): INoteDraft {
+  public static createDraft(candidate: INoteCandidateInput): INoteDraftOutput {
     const { subjectType, subjectId, body, authorId } = candidate;
     const validSubjectType = NoteModel.validSubjectType(subjectType);
     const validSubjectId = NoteModel.validSubjectId(subjectId);
@@ -97,7 +97,7 @@ export class NoteModel extends AggregateRoot<string> {
     this.currentVersion += 1;
   }
 
-  public toView(): INoteSnapshot {
+  public toSnapshot(): INoteSnapshotOutput {
     return {
       id: this.id,
       subjectType: this.subjectType,

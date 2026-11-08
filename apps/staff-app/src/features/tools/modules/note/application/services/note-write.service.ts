@@ -6,7 +6,7 @@ import { OccRetryHelper } from '@acme-libs/toolkit';
 import { NoteModel, NoteVersionMismatchException } from '../../domain';
 import { NOTE_OCC_RETRY_ATTEMPTS_TOKEN } from '../../outbound';
 import { NoteWriteConflictError } from '../errors/note-write-conflict.error';
-import { INoteWriteCommand, INoteWriteReloadCommand } from '../interfaces';
+import { INoteWriteReloadCommand, INoteWriteRunCommand } from '../interfaces';
 import { NoteAccessService } from './note-access.service';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class NoteWriteService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public async run<T>(command: INoteWriteCommand, attempt: () => Promise<T>): Promise<T> {
+  public async run<T>(command: INoteWriteRunCommand, attempt: () => Promise<T>): Promise<T> {
     const { noteId } = command;
 
     return await OccRetryHelper.run(attempt, {

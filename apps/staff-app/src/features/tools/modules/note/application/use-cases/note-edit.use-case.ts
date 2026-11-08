@@ -31,7 +31,7 @@ export class NoteEditUseCase {
   public async execute(command: INoteEditCommand): Promise<INoteView> {
     const { noteId, editorId } = command;
     const outcome = await this.writeService.run({ noteId }, () => this.attempt(command));
-    const view = outcome.note.toView();
+    const view = outcome.note.toSnapshot();
     const message = outcome.edited ? 'Note edited' : 'Note edit was a no-op';
 
     this.logger.info({ noteId, editorId, version: view.version, edited: outcome.edited }, message);

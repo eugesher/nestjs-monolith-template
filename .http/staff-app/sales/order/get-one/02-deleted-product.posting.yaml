@@ -1,0 +1,13 @@
+name: 02-deleted-product
+description: |-
+  e2e: Sales › Order › GET /api/sales/orders/:orderId › should read an order with a product deleted after the order
+
+  Expect: 200 OK, order 602 of customer ...0102 with the soft-deleted product 107
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/sales/orders/602
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

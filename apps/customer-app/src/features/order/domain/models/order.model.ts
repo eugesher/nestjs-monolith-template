@@ -3,25 +3,25 @@ import { AggregateRoot } from '@acme-libs/toolkit';
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
 import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
-import { IOrderActiveProduct } from '../interfaces/order-active-product.interface';
-import { IOrderCandidate } from '../interfaces/order-candidate.interface';
-import { IOrderDraft } from '../interfaces/order-draft.interface';
-import { IOrderMovement } from '../interfaces/order-movement.interface';
-import { IOrderProduct } from '../interfaces/order-product.interface';
-import { IOrderRecord } from '../interfaces/order-record.interface';
-import { IOrderSnapshot } from '../interfaces/order-snapshot.interface';
-import { IOrderStock } from '../interfaces/order-stock.interface';
+import { IOrderActiveProductInput } from '../interfaces/inputs/order-active-product.input';
+import { IOrderCandidateInput } from '../interfaces/inputs/order-candidate.input';
+import { IOrderRecordInput } from '../interfaces/inputs/order-record.input';
+import { IOrderStockInput } from '../interfaces/inputs/order-stock.input';
+import { IOrderDraftOutput } from '../interfaces/outputs/order-draft.output';
+import { IOrderMovementOutput } from '../interfaces/outputs/order-movement.output';
+import { IOrderProductOutput } from '../interfaces/outputs/order-product.output';
+import { IOrderSnapshotOutput } from '../interfaces/outputs/order-snapshot.output';
 
 export class OrderModel extends AggregateRoot<string> {
   private constructor(
     id: string,
-    public readonly products: readonly IOrderProduct[],
+    public readonly products: readonly IOrderProductOutput[],
     public readonly createdAt: Date,
   ) {
     super(id);
   }
 
-  public static reconstitute(record: IOrderRecord): OrderModel {
+  public static reconstitute(record: IOrderRecordInput): OrderModel {
     const { id, createdAt, orderProducts } = record;
     const products = orderProducts.map((orderProduct) => ({
       id: orderProduct.id,
@@ -33,7 +33,7 @@ export class OrderModel extends AggregateRoot<string> {
     return new OrderModel(id, products, createdAt);
   }
 
-  public static createDraft(candidate: IOrderCandidate): IOrderDraft {
+  public static createDraft(candidate: IOrderCandidateInput): IOrderDraftOutput {
     const { customerId, productIds, products, stock } = candidate;
 
     if (productIds.length === 0) {
@@ -46,14 +46,14 @@ export class OrderModel extends AggregateRoot<string> {
     return { customerId, productIds: [...productIds] };
   }
 
-  public getMovements(): IOrderMovement[] {
+  public getMovements(): IOrderMovementOutput[] {
     return this.products.map((product) => ({
       productId: product.productId,
       orderProductId: product.id,
     }));
   }
 
-  public toView(): IOrderSnapshot {
+  public toSnapshot(): IOrderSnapshotOutput {
     const products = this.products.map((product) => ({
       id: product.id,
       productId: product.productId,
@@ -68,7 +68,7 @@ export class OrderModel extends AggregateRoot<string> {
     };
   }
 
-  private static assertFound(productIds: string[], products: IOrderActiveProduct[]): void {
+  private static assertFound(productIds: string[], products: IOrderActiveProductInput[]): void {
     for (const productId of productIds) {
       const found = products.some((product) => product.id === productId);
 
@@ -78,7 +78,7 @@ export class OrderModel extends AggregateRoot<string> {
     }
   }
 
-  private static assertInStock(productIds: string[], stock: IOrderStock[]): void {
+  private static assertInStock(productIds: string[], stock: IOrderStockInput[]): void {
     const distinctIds = new Set(productIds);
 
     for (const productId of distinctIds) {

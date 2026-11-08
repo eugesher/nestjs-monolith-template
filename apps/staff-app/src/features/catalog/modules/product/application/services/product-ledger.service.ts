@@ -11,7 +11,10 @@ import {
   PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
   type IProductLedgerRecordPort,
 } from '../../outbound';
-import { IProductLedgerRecordCommand, IProductLedgerRecordCreatedCommand } from '../interfaces';
+import {
+  IProductLedgerRecordCreatedCommand,
+  IProductLedgerRecordEventsCommand,
+} from '../interfaces';
 
 @Injectable()
 export class ProductLedgerService extends SubjectLedgerService {
@@ -42,7 +45,7 @@ export class ProductLedgerService extends SubjectLedgerService {
     });
   }
 
-  public async recordEvents(command: IProductLedgerRecordCommand): Promise<void> {
+  public async recordEvents(command: IProductLedgerRecordEventsCommand): Promise<void> {
     const { productId, events } = command;
     const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
 

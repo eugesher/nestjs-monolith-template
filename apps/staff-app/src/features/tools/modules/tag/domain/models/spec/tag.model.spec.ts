@@ -33,7 +33,7 @@ describe('TagModel', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       });
 
-      expect(tag.toView()).toEqual({
+      expect(tag.toSnapshot()).toEqual({
         id: '300',
         name: 'fragile',
         createdAt: '2026-01-01T00:00:00.000Z',

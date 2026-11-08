@@ -344,6 +344,15 @@ export class OrderE2E {
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
+      it('should read an order of the caller with a product deleted after the order', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/orders/602')
+          .auth(this.ctx.bobToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
       it.each([
         ['the order of another customer', '600'],
         ['an unknown order', '999'],

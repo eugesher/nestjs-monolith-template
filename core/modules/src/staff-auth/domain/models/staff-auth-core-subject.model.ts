@@ -1,6 +1,6 @@
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
-import { IStaffAuthCoreSubjectRecord } from '../interfaces/staff-auth-core-subject-record.interface';
+import { IStaffAuthCoreSubjectRecordInput } from '../interfaces/inputs/staff-auth-core-subject-record.input';
 
 export class StaffAuthCoreSubjectModel {
   private constructor(
@@ -10,7 +10,7 @@ export class StaffAuthCoreSubjectModel {
     public readonly permissionCodes: readonly PermissionCodeEnum[],
   ) {}
 
-  public static reconstitute(record: IStaffAuthCoreSubjectRecord): StaffAuthCoreSubjectModel {
+  public static reconstitute(record: IStaffAuthCoreSubjectRecordInput): StaffAuthCoreSubjectModel {
     const { id, email, userRoles } = record;
     const roles = userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
     const codes = userRoles.flatMap((userRole) =>

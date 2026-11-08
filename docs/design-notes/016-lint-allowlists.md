@@ -3,10 +3,17 @@
 Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
 
-**A removed edge is pinned by a spec.** `spec/architecture/unused-edges.spec.ts` holds one
-negative case per edge that was allowed and had no use, with the reason in its name: for example,
-the app module may NOT import `typeorm`, because a setup module in `app/setup` configures it. The
-cases fail against the policies that still allowed those edges.
+**A removed edge is pinned by a spec.** Every edge that was allowed and had no use keeps one
+negative case, with the reason in its name, and the case fails against the policy that still allowed
+the edge. The case lives with the rule that took the edge's place:
+
+- **in the spec of the layer** when the layer still has a positive case for where the code went:
+  `features.spec.ts` says the module root may NOT reach its own outbound, because infrastructure
+  binds the tokens, and that a use case may NOT take the config lib, next to the case where
+  `infrastructure/config` may; `app-global.spec.ts` and `libs-by-layer.spec.ts` do the same for
+  global modules and for the libs of each layer;
+- **in `spec/architecture/unused-edges.spec.ts`** when no layer spec covers the importer: the app
+  module may NOT import `typeorm`, because the database lib configures it.
 
 **An edge used only by specs counts as used.** A lib module spec imports `@nestjs/core`, and a
 common-module spec imports the kernel; both are code the lint checks.
@@ -17,8 +24,8 @@ common-module spec imports the kernel; both are code the lint checks.
 
 `baseLibs(...names)` is `libs('kernel', 'toolkit', ...names)`. The kernel is the vocabulary and the
 toolkit is the technique of every layer, so each layer gets both whether or not one of its files
-imports them today. The names after them are what the layer adds: `baseLibs('observability')` for
-an application layer, `baseLibs('ledger', 'observability')` for the application of a core module.
+imports them today. The names after them are what the layer adds: `baseLibs('observability')` for an
+application layer, `baseLibs('ledger', 'observability')` for the application of a core module.
 
 `main.ts` and the core entities are the exceptions: they list their libs one by one.
 
@@ -41,16 +48,16 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
   and the test helpers of the observability lib;
-- a feature queue adapter and a processor that reach app contracts: a queue between the
-  modules of one app keeps its contract in the app, while a queue written by more than one app
-  keeps it in core, `ledger-record` in `@acme-core/contracts/ledger` and
-  `product-stock-post-subtract` in `@acme-core/contracts/product-stock`;
-- the core-adapters and common-adapters of a common module, and a common module root that mounts
-  a core module, another common module or a shared barrel;
+- a feature queue adapter and a processor that reach app contracts: a queue between the modules of
+  one app keeps its contract in the app, while a queue written by more than one app keeps it in
+  core, `ledger-record` in `@acme-core/contracts/ledger` and `product-stock-post-subtract` in
+  `@acme-core/contracts/product-stock`;
+- the core-adapters and common-adapters of a common module, and a common module root that mounts a
+  core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
   database contracts and the entities;
-- the libs a layer is meant to reach: the cache lib from the app root, the auth
-  lib from a feature root, the database contracts from the application of a common module;
+- the libs a layer is meant to reach: the cache lib from the app root, the auth lib from a feature
+  root, the database contracts from the application of a common module;
 - a script, a migration or a seed script that imports its own support files.
 
 Removing one of them turns its spec red.
@@ -58,13 +65,13 @@ Removing one of them turns its spec red.
 ### `module-areas.mjs` — processors share the layer model of features
 
 Features and processors are built by one function, `areaPolicies`, over the same list of layers
-(`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency` has a domain
-helper and a repository, `ledger` neither. The entries stay, so a processor that grows a layer
-follows the same rules
-a feature does.
+(`categories/module-layers.mjs`). A processor uses fewer of them: `idempotency` has a domain helper
+and a repository, `ledger` neither. The entries stay, so a processor that grows a layer follows the
+same rules a feature does.
 
-`infrastructure/queue` of a processor may inject a queue to manage its jobs. It takes `InjectQueue` and the `Queue` type and nothing else of
-Bull, under the same rule as a feature queue adapter in `queue.mjs`.
+`infrastructure/queue` of a processor may inject a queue to manage its jobs. It takes `InjectQueue`
+and the `Queue` type and nothing else of Bull, under the same rule as a feature queue adapter in
+`queue.mjs`.
 
 The module root of a feature or a processor may reach a shared barrel, as the module root of a
 common module may (a positive case of the common modules spec).
@@ -84,9 +91,8 @@ edges exist for it:
   `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`), its own contracts and
   the contracts of `ledger`, whose queue every module that writes ledger records shares.
 - **The module root registers the queues it writes to** with `BullSetupModule.registerQueue` of
-  `libs/queue` and takes nothing of Bull itself.
-  A core module is mounted by features of several apps, so the queue comes with it rather than with
-  the `common/shared` of each app.
+  `libs/queue` and takes nothing of Bull itself. A core module is mounted by features of several
+  apps, so the queue comes with it rather than with the `common/shared` of each app.
 - **Core infrastructure may take `@acme-libs/contracts/cache`**, to drop the keys a write makes
   stale; the application still may not, so caching stays an adapter behind a port.
 
@@ -101,8 +107,7 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
   `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
-  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth`
-  stay direct.
+  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth` stay direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
   ledger service extends `SubjectLedgerService`, the queue adapter extends
@@ -122,12 +127,11 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **`toolkit/src/database` may import `typeorm`.** `MysqlErrorHelper` checks for a TypeORM
   `QueryFailedError`. The edge is scoped to that folder by the `file` capture of the lib category,
   so the rest of the toolkit sees only `crypto` and the kernel sees no package.
-- **The database contracts name TypeORM.** The ORM port returns a TypeORM
-  `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
-  the base libs.
+- **The database contracts name TypeORM.** The ORM port returns a TypeORM `Repository`, so the
+  contracts of `database` may import `typeorm`; the other contracts see only the base libs.
 - **No module registers entities.** The entities of an app are listed once in `app/entities` and
-  handed to `OrmModule.forRoot` of `libs/database`, so only that lib may import
-  `@nestjs/typeorm`; `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
+  handed to `OrmModule.forRoot` of `libs/database`, so only that lib may import `@nestjs/typeorm`;
+  `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
 - **A module root binds no token.** An adapter carries its binding in a static `provider` (see
   `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see
   `030-config-values.md`), so the module root of a feature, a processor, a core, common or global
@@ -136,15 +140,36 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **A global module has the layers of a feature.** `application/` sees its own outbound, the base
   libs and `@nestjs/common`; `outbound/` sees itself and the base libs; the module root sees the
   application.
-- **A global common-adapter reaches any contract of its app and its own outbound.** It implements
-  a port of its module's outbound with the port of a common module, which is named after that
-  module, not after the global module, so the namesake rule of `appContracts` would refuse it.
+- **A global common-adapter reaches any contract of its app and its own outbound.** It implements a
+  port of its module's outbound with the port of a common module, which is named after that module,
+  not after the global module, so the namesake rule of `appContracts` would refuse it.
 
 ### Policies that name exports
 
-A policy that refuses or allows a name of a lib, such as `customer-claims.mjs` with
-`AuthPermissionModule` and `RequiresPermission`, matches the specifier of the import, not the file
-behind it. A renamed export would leave the policy guarding a name nobody imports, and its negative
-case would stay green as long as its fixture used the old name too.
-`spec/architecture/policy-specifiers.spec.ts` reads the resolved policies of the boundaries rule and
-checks that every specifier named for a lib is an export of that lib.
+A policy that refuses or allows a name of a lib or a package, such as `customer-claims.mjs` with
+`AuthPermissionModule` and `RequiresPermission` or `http-surface.mjs` with the DI names of
+`@nestjs/common`, matches the specifier of the import, not the file behind it. A renamed export
+would leave the policy guarding a name nobody imports, and its negative case would stay green as
+long as its fixture used the old name too. `spec/architecture/policy-specifiers.spec.ts` reads the
+resolved policies of the boundaries rule and checks with the TypeScript checker that every specifier
+named for a lib or a package is an export of it. The checker reads the declarations, so a type such
+as `ClassProvider` counts as an export, as it does for the import it guards.
+
+### The layers of a lib
+
+A lib with a port has the layers of a core module: `shell`, `application`, `outbound` and
+`infrastructure`, in `src/` (`libs/cache`, `libs/credentials`, `libs/health`) or in a part of the
+lib (`libs/database/src/orm`, `libs/local-storage/src/transaction`). Every file of a lib is one
+category, `acme-libs`, so its edges to other libs and packages stay per lib.
+`policies/lib-layers.mjs` adds the layers on top of it from the `file` capture, as disallow rules
+within the lib:
+
+| Layer            | May NOT reach                            |
+| ---------------- | ---------------------------------------- |
+| `shell`          | `outbound`                               |
+| `application`    | `shell`, `infrastructure`                |
+| `infrastructure` | `shell`, `application`                   |
+| `outbound`       | `shell`, `application`, `infrastructure` |
+
+The shell rule takes only the files directly in `shell/`, so a module spec may still read the tokens
+of `outbound` it overrides. `spec/architecture/lib-layers.spec.ts` holds a case per edge.

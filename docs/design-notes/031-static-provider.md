@@ -23,23 +23,24 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
 providers: [OrderGetManyRepository.provider, OrderIdempotencyCoreAdapter.provider],
 ```
 
-**Every class of `infrastructure/` that implements a port carries the field**: repositories,
-core, common and lib adapters, queue and cache adapters, and the adapters of `libs/cache`,
-`libs/credentials` and `libs/health`. It is `public static readonly`, so no code can rebind the class for the whole
-process, and it comes first in the class, before the private constants and the constructor.
+**Every class of `infrastructure/` that implements a port carries the field**: repositories, core,
+common and lib adapters, queue and cache adapters, and the adapters of `libs/cache`,
+`libs/credentials` and `libs/health`. It is `public static readonly`, so no code can rebind the
+class for the whole process, and it comes first in the class, before the private constants and the
+constructor.
 
 **The type argument checks the binding.** `ClassProvider<IOrderIdempotencyPort>` makes the compiler
 check that `useClass` implements the port. A bare `{ provide, useClass }` in the module is a
 `ClassProvider<any>`, so a token bound to the wrong class failed only when Nest resolved it.
 
-**The binding lives with the implementation.** The class imports the token from the same
-`outbound` barrel as its port, so the module root lists `X.provider` and does not import the token.
-Together with the config values of `infrastructure/config` (see `030-config-values.md`), this leaves
-the module root with no use of `outbound`, and lint no longer allows it.
+**The binding lives with the implementation.** The class imports the token from the same `outbound`
+barrel as its port, so the module root lists `X.provider` and does not import the token. Together
+with the config values of `infrastructure/config` (see `030-config-values.md`), this leaves the
+module root with no use of `outbound`, and lint no longer allows it.
 
 **A decorated class may name itself in a static initializer.** TypeScript aliases a decorated class
-and sets the alias in a static block that runs before the other static fields, so `useClass` is
-the class and not `undefined`. The SWC build of rspack defines `provider` right after the class and
+and sets the alias in a static block that runs before the other static fields, so `useClass` is the
+class and not `undefined`. The SWC build of rspack defines `provider` right after the class and
 before the decorators run. `@Injectable()` returns the class it decorates, so the metadata of DI
 lands on the object that `useClass` holds. A subclass, such as a queue adapter that extends
 `SubjectLedgerQueueAdapter`, declares a field of its own; the base classes have none.
@@ -47,7 +48,9 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
 ## Where the scheme stops
 
 - **Facades** in `shell/` stay `{ provide: <MODULE>_<LAYER>_PORT, useClass: <Facade> }`. A facade is
-  the public entry of a module, not an implementation of one of its outbound ports.
+  the public entry of a module, not an implementation of one of its outbound ports, and the module
+  exports the port it binds: the literal next to `exports` shows at a glance which class answers the
+  exported port. The binding is typed by the facade alone, which `implements` the port.
 - **The facades of `libs/database` and `libs/local-storage`** (`OrmFacade`,
   `LocalStorageTransactionFacade`) are bound under the contract tokens `ORM_PORT` and
   `TRANSACTION_PORT` by `OrmModule` and `LocalStorageTransactionModule` of their libs, next to the

@@ -28,7 +28,7 @@ export class NoteGetRevisionsUseCase {
     const data = records.map((record) => {
       const revision = NoteRevisionModel.reconstitute(record);
 
-      return revision.toView();
+      return revision.toSnapshot();
     });
 
     return PaginationHelper.toPage(data, total, pageWindow);

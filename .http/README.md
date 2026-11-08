@@ -15,25 +15,25 @@ Script paths in the requests are relative to the collection root, so the root mu
 
 ## What is inside
 
-One request per e2e case of the app. The folder is the endpoint, the number in the file name is
-the order of the case in the e2e. The first line of a description is the full name of the e2e
-test, so the test can be found in `apps/<app>/test`.
+One request per e2e case of the app. The folder is the endpoint, the number in the file name is the
+order of the case in the e2e. The first line of a description is the full name of the e2e test, so
+the test can be found in `apps/<app>/test`.
 
 `app` holds the cases that check a route of the other app is not mounted.
 
 Nine e2e cases are not one request:
 
-- the schema check of staff-app compares the migrated database with the entities and has no
-  request;
-- the concurrent renames of a product send six requests at once, `catalog/product/update/06-concurrent` sends
-  one;
+- the schema check of staff-app compares the migrated database with the entities and has no request;
+- the concurrent renames of a product send six requests at once,
+  `catalog/product/update/06-concurrent` sends one;
 - the replays of a product create, a restock and an order send the same request twice, as
-  `staff-app/catalog/product/create/02-replay`, `staff-app/warehouse/product-stock/add/03-replay` and
-  `customer-app/order/place/02-replay` say;
+  `staff-app/catalog/product/create/02-replay`, `staff-app/warehouse/product-stock/add/03-replay`
+  and `customer-app/order/place/02-replay` say;
 - two simultaneous orders for the last units of a product send the same request twice at once with
   two keys, as `customer-app/order/place/13-simultaneous` says;
 - two simultaneous registrations with one email send the same request twice at once, in
-  `customer-app/auth/register/03-simultaneous` and `staff-app/identity/user/register/02-simultaneous`;
+  `customer-app/auth/register/03-simultaneous` and
+  `staff-app/identity/user/register/02-simultaneous`;
 - the sign-up of a customer goes on to log in and read `me` with the new credentials, as
   `auth/register/01-register` says.
 
@@ -65,16 +65,16 @@ The expected result in a description holds for fresh seeds and the first run. Wr
 the fixtures, and a second run gets another answer: for example, a second create of the same user
 hits the taken email. Run `yarn test:e2e:infra:reseed` to start over.
 
-The e2e deletes the `acme:*` keys of Redis before every reminder case and leaves the keys of the Bull
-queue alone. When a description checks cache keys, delete the `acme:*` keys first.
+The e2e deletes the `acme:*` keys of Redis before every reminder case and leaves the keys of the
+Bull queue alone. When a description checks cache keys, delete the `acme:*` keys first.
 
 ## Tokens
 
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
-(`as_admin`, `as_editor` and `as_viewer` for staff, `as_bob` and `as_dora` for customers,
-and so on). The function signs an HS256 token of a seeded user (`sub`, `iat`) with `JWT_SECRET` from
-`env/apps/<app>/.env.local` and puts it into the variable `token`, as `ctx.jwt.sign` does in the e2e.
-This also covers tokens that no login issues:
+(`as_admin`, `as_editor` and `as_viewer` for staff, `as_bob` and `as_dora` for customers, and so
+on). The function signs an HS256 token of a seeded user (`sub`, `iat`) with `JWT_SECRET` from
+`env/apps/<app>/.env.local` and puts it into the variable `token`, as `ctx.jwt.sign` does in the
+e2e. This also covers tokens that no login issues:
 
 - the token of a disabled user (`as_disabled`, `as_dora`);
 - a token with forged role claims (`as_viewer_forged_claims`);
@@ -82,8 +82,8 @@ This also covers tokens that no login issues:
 - a token signed with the `JWT_SECRET` of the other app (`as_editor_with_customer_secret`,
   `as_ann_with_staff_secret`), which needs `.env.local` of both apps.
 
-`auth/login/01-editor` of staff-app and `auth/login/01-customer` of customer-app save the token
-they get into the variable `access_token`. The requests that send it say so in `Note:` or `User:`.
+`auth/login/01-editor` of staff-app and `auth/login/01-customer` of customer-app save the token they
+get into the variable `access_token`. The requests that send it say so in `Note:` or `User:`.
 
 ## Setup and cleanup
 

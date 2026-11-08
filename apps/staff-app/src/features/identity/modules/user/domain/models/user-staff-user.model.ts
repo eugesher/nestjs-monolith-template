@@ -2,9 +2,9 @@ import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
-import { IUserStaffUserCandidate } from '../interfaces/user-staff-user-candidate.interface';
-import { IUserStaffUserDraft } from '../interfaces/user-staff-user-draft.interface';
-import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';
+import { IUserStaffUserCandidateInput } from '../interfaces/inputs/user-staff-user-candidate.input';
+import { IUserStaffUserRecordInput } from '../interfaces/inputs/user-staff-user-record.input';
+import { IUserStaffUserDraftOutput } from '../interfaces/outputs/user-staff-user-draft.output';
 
 export class UserStaffUserModel {
   public get roles(): readonly RoleEnum[] {
@@ -19,14 +19,14 @@ export class UserStaffUserModel {
     private assignedRoles: RoleEnum[],
   ) {}
 
-  public static reconstitute(record: IUserStaffUserRecord): UserStaffUserModel {
+  public static reconstitute(record: IUserStaffUserRecordInput): UserStaffUserModel {
     const { id, userRoles } = record;
     const roles = userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
 
     return new UserStaffUserModel(id, roles);
   }
 
-  public static createDraft(candidate: IUserStaffUserCandidate): IUserStaffUserDraft {
+  public static createDraft(candidate: IUserStaffUserCandidateInput): IUserStaffUserDraftOutput {
     const { email, passwordHash, roles } = candidate;
     const normalized = UserStaffUserModel.normalizeEmail(email);
 

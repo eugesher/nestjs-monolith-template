@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraft } from '../../domain';
+import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraftOutput } from '../../domain';
 import {
   AUTH_CREDENTIALS_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
@@ -41,7 +41,7 @@ export class AuthRegisterUseCase {
     return { id, email: draft.email };
   }
 
-  private async insert(draft: IAuthCustomerDraft): Promise<string> {
+  private async insert(draft: IAuthCustomerDraftOutput): Promise<string> {
     try {
       return await this.repository.insert(draft);
     } catch (error) {

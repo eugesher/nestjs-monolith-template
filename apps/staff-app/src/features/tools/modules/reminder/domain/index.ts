@@ -9,9 +9,9 @@ export * from './exceptions/reminder-title-invalid.exception';
 export * from './exceptions/reminder-version-invalid.exception';
 export * from './exceptions/reminder-version-mismatch.exception';
 
-export * from './interfaces/reminder-candidate.interface';
-export * from './interfaces/reminder-draft.interface';
-export * from './interfaces/reminder-record.interface';
-export * from './interfaces/reminder-snapshot.interface';
+export * from './interfaces/inputs/reminder-candidate.input';
+export * from './interfaces/inputs/reminder-record.input';
+export * from './interfaces/outputs/reminder-draft.output';
+export * from './interfaces/outputs/reminder-snapshot.output';
 
 export * from './models/reminder.model';

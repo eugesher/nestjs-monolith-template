@@ -20,7 +20,7 @@ export class TagGetManyUseCase {
     const data = records.map((record) => {
       const tag = TagModel.reconstitute(record);
 
-      return tag.toView();
+      return tag.toSnapshot();
     });
 
     return PaginationHelper.toPage(data, total, pageWindow);

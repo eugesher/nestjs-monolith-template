@@ -75,7 +75,7 @@ describe('RoleModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('copies the name and the permission codes of the role', () => {
       const role = RoleModel.reconstitute({
         id: '1',
@@ -86,7 +86,7 @@ describe('RoleModel', () => {
         ],
       });
 
-      const view = role.toView();
+      const view = role.toSnapshot();
 
       expect(view).toEqual({ name: 'admin', permissionCodes: ['iam:assign', 'ledger:read'] });
     });

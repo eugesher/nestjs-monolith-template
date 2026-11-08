@@ -23,12 +23,12 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   public forOwned(query: IOrderGetOneQuery): this {
     const { orderId, customerId } = query;
 
-    this.selectOrder()
+    this.withDeleted()
+      .selectOrder()
       .joinOrderProducts()
       .joinProducts()
       .whereId(orderId)
-      .whereCustomer(customerId)
-      .withDeleted();
+      .whereCustomer(customerId);
 
     return this;
   }

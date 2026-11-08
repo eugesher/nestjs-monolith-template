@@ -1,7 +1,8 @@
 # 023 — Processor app
 
 `apps/processor-app` runs the background work of the template: the queue processors and the
-schedules, and serves the staff the failed jobs of its queues. staff-app and customer-app only enqueue. All three apps share one database and one Redis.
+schedules, and serves the staff the failed jobs of its queues. staff-app and customer-app only
+enqueue. All three apps share one database and one Redis.
 
 | Processor       | Entered by                                       | What it does                                                            |
 | --------------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
@@ -37,8 +38,8 @@ The app has the folders of an HTTP app and uses fewer of them:
 **HTTP serves the probes, the login and the queues.** `AuthGlobalModule` and the login reach the
 staff through the core module `staff-auth` (see `017-credentials-lib.md`). processor-app shares
 `JWT_SECRET` with staff-app, so a token of either app works in both, and lists the staff identity
-entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` and `APP_FILTER` are the
-ones of staff-app.
+entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` and
+`APP_FILTER` are the ones of staff-app.
 
 | Route                                          | Permission     | What it does                                              |
 | ---------------------------------------------- | -------------- | --------------------------------------------------------- |
@@ -67,7 +68,8 @@ guards read.
 its commits (see `022-enqueue-after-commit.md`). `ProductStockPostSubtractProcessor` opens the
 correlation context of the job and runs one use case in one transaction:
 
-1. `PRODUCT_STOCK_ON_HAND_PORT.lock` locks the rows and sums through `core/modules/src/product-stock`;
+1. `PRODUCT_STOCK_ON_HAND_PORT.lock` locks the rows and sums through
+   `core/modules/src/product-stock`;
 2. the processor's own repository reads what it needs of the same rows under that lock;
 3. `PRODUCT_STOCK_ARCHIVE_PORT` writes through `core/modules/src/product` (see
    `027-core-module-outcomes.md`), which announces its write after the commit.

@@ -24,7 +24,7 @@ export class ProductUpdateUseCase {
 
     await this.catalogCache.invalidate();
 
-    const view = product.toView();
+    const view = product.toSnapshot();
 
     this.logger.info({ productId, version: view.version }, 'Product updated');
 

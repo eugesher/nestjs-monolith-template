@@ -1,10 +1,10 @@
-import { ITagCommonSubjectTagsChanges } from '../interfaces/tag-common-subject-tags-changes.interface';
-import { ITagCommonSubjectTagsRecord } from '../interfaces/tag-common-subject-tags-record.interface';
+import { ITagCommonSubjectTagsRecordInput } from '../interfaces/inputs/tag-common-subject-tags-record.input';
+import { ITagCommonSubjectTagsChangesOutput } from '../interfaces/outputs/tag-common-subject-tags-changes.output';
 
 export class TagCommonSubjectTagsModel {
   private constructor(private readonly tagIds: ReadonlySet<string>) {}
 
-  public static reconstitute(record: ITagCommonSubjectTagsRecord): TagCommonSubjectTagsModel {
+  public static reconstitute(record: ITagCommonSubjectTagsRecordInput): TagCommonSubjectTagsModel {
     const { tagIds } = record;
 
     return new TagCommonSubjectTagsModel(new Set(tagIds));
@@ -17,7 +17,7 @@ export class TagCommonSubjectTagsModel {
     return [...distinct].filter((tagId) => !known.has(tagId));
   }
 
-  public replace(tagIds: readonly string[]): ITagCommonSubjectTagsChanges {
+  public replace(tagIds: readonly string[]): ITagCommonSubjectTagsChangesOutput {
     const next = new Set(tagIds);
     const linkTagIds = [...next].filter((tagId) => !this.tagIds.has(tagId));
     const unlinkTagIds = [...this.tagIds].filter((tagId) => !next.has(tagId));

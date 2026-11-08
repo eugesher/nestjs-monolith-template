@@ -10,7 +10,7 @@ import {
   PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS_TOKEN,
   type IProductStockLedgerRecordPort,
 } from '../../outbound';
-import { IProductStockLedgerRecordCommand } from '../interfaces';
+import { IProductStockLedgerRecordEventsCommand } from '../interfaces';
 
 @Injectable()
 export class ProductStockLedgerService extends SubjectLedgerService {
@@ -25,7 +25,7 @@ export class ProductStockLedgerService extends SubjectLedgerService {
     super();
   }
 
-  public async recordEvents(command: IProductStockLedgerRecordCommand): Promise<void> {
+  public async recordEvents(command: IProductStockLedgerRecordEventsCommand): Promise<void> {
     const { productId, productStockId, events } = command;
     const correlationId = CorrelationContextHelper.current(ProductStockLedgerService.name);
     const added = events.filter((event) => event instanceof ProductStockAddedEvent);

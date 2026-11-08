@@ -4,7 +4,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { ILedgerAppendEntryDraft } from '../../../domain';
+import { ILedgerAppendEntryDraftOutput } from '../../../domain';
 import { LedgerAppendUseCase } from '../ledger-append.use-case';
 
 describe('LedgerAppendUseCase', () => {
@@ -43,7 +43,7 @@ describe('LedgerAppendUseCase', () => {
           }),
         );
 
-        const [draft] = insert.mock.calls[0] as [ILedgerAppendEntryDraft];
+        const [draft] = insert.mock.calls[0] as [ILedgerAppendEntryDraftOutput];
 
         expect(draft).toEqual({
           operationKey: 'product-archived:12:2',

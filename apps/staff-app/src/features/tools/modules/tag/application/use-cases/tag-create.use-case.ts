@@ -22,7 +22,7 @@ export class TagCreateUseCase {
     const tagId = await this.insert(draft.name);
     const record = await this.repository.findInserted(tagId);
     const created = TagModel.reconstitute(record);
-    const view = created.toView();
+    const view = created.toSnapshot();
 
     this.logger.info({ tagId: view.id, name: view.name }, 'Tag created');
 

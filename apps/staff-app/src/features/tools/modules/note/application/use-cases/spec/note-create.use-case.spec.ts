@@ -2,7 +2,7 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { INoteDraft } from '../../../domain';
+import { INoteDraftOutput } from '../../../domain';
 import { NoteCreateUseCase } from '../note-create.use-case';
 
 describe('NoteCreateUseCase', () => {
@@ -36,7 +36,7 @@ describe('NoteCreateUseCase', () => {
         body: ' Check the supplier ',
         authorId: 'admin-1',
       });
-      const [note] = insert.mock.calls[0] as [INoteDraft];
+      const [note] = insert.mock.calls[0] as [INoteDraftOutput];
 
       expect(note.subjectId).toBe('42');
       expect(note.body).toBe('Check the supplier');

@@ -31,7 +31,7 @@ export class NoteGetManyUseCase {
     const data = records.map((record) => {
       const note = NoteModel.reconstitute(record);
 
-      return note.toView();
+      return note.toSnapshot();
     });
 
     return PaginationHelper.toPage(data, total, pageWindow);

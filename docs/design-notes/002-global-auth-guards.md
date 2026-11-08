@@ -51,19 +51,19 @@ by permissions only, and a role is a named set of them.
 
 **Two static modules, not a flag.** `AuthJwtModule.forRoot({ claims: true })` would hide the choice
 in an argument that no lint can read. An import of `AuthPermissionModule` is visible, and the lint
-policy `customer-claims.mjs` refuses it in customer-app, together with
-`@RequiresPermission`, `RoleEnum` and `PermissionCodeEnum`. Without the permission
-module the decorators would be silently ignored, so a route of customer-app cannot even name them.
+policy `customer-claims.mjs` refuses it in customer-app, together with `@RequiresPermission`,
+`RoleEnum` and `PermissionCodeEnum`. Without the permission module the decorators would be silently
+ignored, so a route of customer-app cannot even name them.
 
 ## Order
 
 Each guard is one `APP_GUARD` provider, and Nest runs global guards in registration order:
 
 1. `AuthJwtGuard` — lets a `@Public()` route through, otherwise needs a valid
-   `Authorization: Bearer` token and a subject the validator still accepts. Anything else is 401.
-   It puts the user on `request.user`.
-2. `AuthPermissionGuard` — `@RequiresPermission(<code>)`: 403 unless
-   `request.user.permissionCodes` holds the code. The decorator takes one code.
+   `Authorization: Bearer` token and a subject the validator still accepts. Anything else is 401. It
+   puts the user on `request.user`.
+2. `AuthPermissionGuard` — `@RequiresPermission(<code>)`: 403 unless `request.user.permissionCodes`
+   holds the code. The decorator takes one code.
 
 **Authentication must come first.** The permissions guard reads `request.user`. Ahead of the JWT
 guard they would see an anonymous request on every gated route and answer 403 where 401 is meant.
@@ -76,9 +76,9 @@ credentials.
 
 ## The user is re-derived
 
-**The token names the subject and nothing else.** The `auth` feature of the app signs `{ sub }`,
-and the verified payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the
-token, so there is no stale copy of them to trust or to refresh.
+**The token names the subject and nothing else.** The `auth` feature of the app signs `{ sub }`, and
+the verified payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the token,
+so there is no stale copy of them to trust or to refresh.
 
 **Claims in the token are not trusted.** The guard reads only `sub` from the verified payload and
 asks the validator for the user: id, email and, in a staff app, permission codes. The user comes
@@ -86,12 +86,12 @@ from the database on every request, so a disabled account or a revoked permissio
 the next call, not at token expiry. The cost is one read per request.
 
 **One read per request, gated or not.** The staff validator reads the user with its permission codes
-in one query, so the permissions guard reads nothing. An ungated request pays for the codes too;
-the price is a join, and a gated request saves its second read.
+in one query, so the permissions guard reads nothing. An ungated request pays for the codes too; the
+price is a join, and a gated request saves its second read.
 
 **One secret per audience.** The guard verifies with `JWT_SECRET` of the app, the secret its `auth`
 feature signs the access token with. staff-app and processor-app serve the same staff and share the
 secret, so a staff token works in both and either app signs one in. customer-app has its own secret,
-so its tokens fail the signature check in the staff apps. Even with a shared secret it would fail: the subject of a
-customer is not a row of `staff_user`, and the other way round. The auth e2e of each app sends
-both kinds of foreign token and expects 401.
+so its tokens fail the signature check in the staff apps. Even with a shared secret it would fail:
+the subject of a customer is not a row of `staff_user`, and the other way round. The auth e2e of
+each app sends both kinds of foreign token and expects 401.

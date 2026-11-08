@@ -32,8 +32,8 @@ The part has the shape of `libs/cache` (see `010-cache-aside.md`):
 
 `forRoot()` returns a global module that registers `ClsPluginTransactional` with the TypeORM adapter
 through `ClsModule.registerPlugins` and exports `TRANSACTION_PORT`. It passes the plugin no
-`imports`: the `DataSource` comes from the global `TypeOrmCoreModule` of `OrmModule`. What
-`run` and `afterCommit` promise is in `026-transaction-port.md`.
+`imports`: the `DataSource` comes from the global `TypeOrmCoreModule` of `OrmModule`. What `run` and
+`afterCommit` promise is in `026-transaction-port.md`.
 
 **The contract keeps its names.** The port is `ITransactionPort` / `TRANSACTION_PORT` of
 `@acme-libs/contracts/local-storage`, with `run` and `afterCommit`, not `<LIB>_LIB_PORT` with

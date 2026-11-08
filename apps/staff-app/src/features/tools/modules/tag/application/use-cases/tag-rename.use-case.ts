@@ -26,7 +26,7 @@ export class TagRenameUseCase {
     tag.rename(name);
 
     if (tag.name === nameAsRead) {
-      return tag.toView();
+      return tag.toSnapshot();
     }
 
     await this.update(tag);
@@ -35,7 +35,7 @@ export class TagRenameUseCase {
 
     this.logger.info({ tagId, nameAsRead, name: renamed.name }, 'Tag renamed');
 
-    return renamed.toView();
+    return renamed.toSnapshot();
   }
 
   private async update(tag: TagModel): Promise<void> {

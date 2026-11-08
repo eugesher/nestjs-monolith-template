@@ -130,7 +130,7 @@ describe('OrderModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('maps a stored order with its products', () => {
       const order = OrderModel.reconstitute({
         id: '600',
@@ -140,7 +140,7 @@ describe('OrderModel', () => {
         ],
       });
 
-      expect(order.toView()).toEqual({
+      expect(order.toSnapshot()).toEqual({
         id: '600',
         createdAt: '2026-01-03T00:00:00.000Z',
         products: [{ id: '601', productId: '100', sku: 'SKU-0001', name: 'Lamp' }],

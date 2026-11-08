@@ -2,7 +2,7 @@ import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 
 import { HealthDependencyStatusEnum, HealthReadinessStatusEnum } from '@acme-libs/kernel';
 
-class HealthDependenciesResponseDependenciesItemDto {
+class HealthReadinessResponseDependencyDto {
   @ApiResponseProperty({
     enum: HealthDependencyStatusEnum,
     example: HealthDependencyStatusEnum.OK,
@@ -13,12 +13,12 @@ class HealthDependenciesResponseDependenciesItemDto {
   public latencyMs: number | null;
 }
 
-class HealthDependenciesResponseDependenciesDto {
-  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesItemDto })
-  public database: HealthDependenciesResponseDependenciesItemDto;
+class HealthReadinessResponseDependenciesDto {
+  @ApiResponseProperty({ type: HealthReadinessResponseDependencyDto })
+  public database: HealthReadinessResponseDependencyDto;
 
-  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesItemDto })
-  public cache: HealthDependenciesResponseDependenciesItemDto;
+  @ApiResponseProperty({ type: HealthReadinessResponseDependencyDto })
+  public cache: HealthReadinessResponseDependencyDto;
 }
 
 export class HealthReadinessResponseDto {
@@ -31,6 +31,6 @@ export class HealthReadinessResponseDto {
   @ApiResponseProperty({ example: 'staff-app' })
   public app: string;
 
-  @ApiResponseProperty({ type: HealthDependenciesResponseDependenciesDto })
-  public dependencies: HealthDependenciesResponseDependenciesDto;
+  @ApiResponseProperty({ type: HealthReadinessResponseDependenciesDto })
+  public dependencies: HealthReadinessResponseDependenciesDto;
 }

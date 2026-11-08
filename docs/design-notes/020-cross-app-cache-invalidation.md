@@ -14,17 +14,17 @@ definition.
 that several apps use is defined once. It works because every app points `REDIS_URL` at one Redis,
 as the queues already require.
 
-**The read is cache-aside** (see `010-cache-aside.md`): `CatalogProductListUseCase` passes `compute` to
-`CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_PORT.wrap` under a key of the clamped page
-window, so windows that clamp to the same value share one entry.
+**The read is cache-aside** (see `010-cache-aside.md`): `CatalogProductListUseCase` passes `compute`
+to `CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_PORT.wrap` under a key of the clamped
+page window, so windows that clamp to the same value share one entry.
 
 **A drop deletes every page by prefix.** One write may move rows across many pages and change the
-total of all of them, so the adapters call `handleDelByPrefix(CACHE_KEYS.catalogPrefix())` rather than
-working out which pages changed.
+total of all of them, so the adapters call `handleDelByPrefix(CACHE_KEYS.catalogPrefix())` rather
+than working out which pages changed.
 
 **Each dropper has a port of its own module**, `PRODUCT_CATALOG_CACHE_PORT` or
-`PRODUCT_CORE_CATALOG_CACHE_PORT`, so the application never sees `CACHE_LIB_PORT`. A feature drops after
-its write has returned; a core module drops in `afterCommit` (see `026-transaction-port.md`).
+`PRODUCT_CORE_CATALOG_CACHE_PORT`, so the application never sees `CACHE_LIB_PORT`. A feature drops
+after its write has returned; a core module drops in `afterCommit` (see `026-transaction-port.md`).
 
 **A stale page lives until its TTL at most.** A page read just before a write may be cached again
 just after the drop.

@@ -1,8 +1,10 @@
-import { ILedgerAppendEntryCandidate } from '../interfaces/ledger-append-entry-candidate.interface';
-import { ILedgerAppendEntryDraft } from '../interfaces/ledger-append-entry-draft.interface';
+import { ILedgerAppendEntryCandidateInput } from '../interfaces/inputs/ledger-append-entry-candidate.input';
+import { ILedgerAppendEntryDraftOutput } from '../interfaces/outputs/ledger-append-entry-draft.output';
 
 export class LedgerAppendEntryModel {
-  public static createDraft(candidate: ILedgerAppendEntryCandidate): ILedgerAppendEntryDraft {
+  public static createDraft(
+    candidate: ILedgerAppendEntryCandidateInput,
+  ): ILedgerAppendEntryDraftOutput {
     const { operationKey, subjectType, subjectId, action, payload, correlationId, occurredAt } =
       candidate;
     const key = operationKey.trim();

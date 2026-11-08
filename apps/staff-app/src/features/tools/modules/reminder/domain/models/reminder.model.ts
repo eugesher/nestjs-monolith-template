@@ -6,10 +6,10 @@ import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invali
 import { ReminderDueOnInvalidException } from '../exceptions/reminder-due-on-invalid.exception';
 import { ReminderTitleInvalidException } from '../exceptions/reminder-title-invalid.exception';
 import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
-import { IReminderCandidate } from '../interfaces/reminder-candidate.interface';
-import { IReminderDraft } from '../interfaces/reminder-draft.interface';
-import { IReminderRecord } from '../interfaces/reminder-record.interface';
-import { IReminderSnapshot } from '../interfaces/reminder-snapshot.interface';
+import { IReminderCandidateInput } from '../interfaces/inputs/reminder-candidate.input';
+import { IReminderRecordInput } from '../interfaces/inputs/reminder-record.input';
+import { IReminderDraftOutput } from '../interfaces/outputs/reminder-draft.output';
+import { IReminderSnapshotOutput } from '../interfaces/outputs/reminder-snapshot.output';
 
 export class ReminderModel extends AggregateRoot<string> {
   public get dueOn(): string {
@@ -42,7 +42,7 @@ export class ReminderModel extends AggregateRoot<string> {
     super(id);
   }
 
-  public static reconstitute(record: IReminderRecord): ReminderModel {
+  public static reconstitute(record: IReminderRecordInput): ReminderModel {
     const { id, ownerId, title, body, dueOn, status, version, createdAt, updatedAt } = record;
     const validTitle = ReminderModel.validTitle(title);
     const validBody = ReminderModel.validBody(body);
@@ -62,7 +62,7 @@ export class ReminderModel extends AggregateRoot<string> {
     );
   }
 
-  public static createDraft(candidate: IReminderCandidate): IReminderDraft {
+  public static createDraft(candidate: IReminderCandidateInput): IReminderDraftOutput {
     const { ownerId, title, body, dueOn } = candidate;
     const validTitle = ReminderModel.validTitle(title);
     const validBody = ReminderModel.validBody(body);
@@ -98,7 +98,7 @@ export class ReminderModel extends AggregateRoot<string> {
     this.currentVersion += 1;
   }
 
-  public toView(): IReminderSnapshot {
+  public toSnapshot(): IReminderSnapshotOutput {
     return {
       id: this.id,
       ownerId: this.ownerId,

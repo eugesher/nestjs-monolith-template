@@ -23,7 +23,8 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   }
 
   public forById(orderId: string): this {
-    this.selectOrder()
+    this.withDeleted()
+      .selectOrder()
       .leftJoin(`${this.alias}.orderProducts`, this.orderProductAlias)
       .addSelect([`${this.orderProductAlias}.id`, `${this.orderProductAlias}.productId`])
       .leftJoin(`${this.orderProductAlias}.product`, this.productAlias)
@@ -33,8 +34,7 @@ export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
         `${this.productAlias}.name`,
       ])
       .whereId(orderId)
-      .orderBy(`${this.orderProductAlias}.id`, 'ASC')
-      .withDeleted();
+      .orderBy(`${this.orderProductAlias}.id`, 'ASC');
 
     return this;
   }

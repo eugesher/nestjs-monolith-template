@@ -14,24 +14,25 @@ export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECOR
 
 **A setup class, not a module.** `BullSetupModule` has no `@Module`: it is a class of static methods
 that return the modules of `@nestjs/bull`, and the options are built in the private static
-`options(config)`. `LocalStorageSetupModule` of `libs/local-storage` follows the same shape
-(see `012-app-bootstrap.md`).
+`options(config)`. `LocalStorageSetupModule` of `libs/local-storage` follows the same shape (see
+`012-app-bootstrap.md`).
 
-**The lib has no port.** Bull is reached through its decorators: a producer injects the queue
-with `@InjectQueue` in its `infrastructure/queue` adapter, and a processor declares `@Processor` in
-its presentation (see `008-queue-processor.md`). The lib holds only what every app repeated: the
+**The lib has no port.** Bull is reached through its decorators: a producer injects the queue with
+`@InjectQueue` in its `infrastructure/queue` adapter, and a processor declares `@Processor` in its
+presentation (see `008-queue-processor.md`). The lib holds only what every app repeated: the
 connection, the job options and the registration of a queue.
 
-## The lib reads the config of the app it runs in
+## The connection is per app, the job options are not
 
-`forRoot()` takes `REDIS_URL` and the `BULL_*` variables from `ConfigService`, as `libs/cache` and
-`libs/credentials` do. The Joi schema of each app validates them and holds the defaults; the
-options and their defaults are listed in `008-queue-processor.md`.
+`forRoot()` takes `REDIS_URL` from `ConfigService`, as `libs/cache` and `libs/credentials` do. The
+job options are the private constant `DEFAULT_JOB_OPTIONS` of `BullSetupModule`, listed in
+`008-queue-processor.md`. Two apps write to `ledger-record` and to `product-stock-post-subtract`;
+options read from the environment of each app would let their jobs retry differently, while the code
+of the lib is the same in every app.
 
 **`registerQueue` takes the name alone.** `@nestjs/bull` merges the root options and the queue
 options shallowly, so a queue with `defaultJobOptions` of its own would replace the root ones as a
-whole. With the name alone, every queue of an app enqueues with the options of `forRoot()`, and the
-producers of one queue in different apps differ only if their environments do.
+whole. With the name alone, every queue of every app enqueues with the options of `forRoot()`.
 
 ## Who sees the lib
 
@@ -41,7 +42,7 @@ producers of one queue in different apps differ only if their environments do.
 | `common/shared` of an app  | `registerQueue` |
 | the shell of a core module | `registerQueue` |
 
-No other layer imports `libs/queue`, and none of the three above imports `@nestjs/bull`: the
-package is left to the lib, to the queue adapters of `infrastructure/queue` and to the presentation
-of the processors. The lib itself sees `@nestjs/bull`, `@nestjs/common` and `@nestjs/config`
-(see `016-lint-allowlists.md`).
+No other layer imports `libs/queue`, and none of the three above imports `@nestjs/bull`: the package
+is left to the lib, to the queue adapters of `infrastructure/queue` and to the presentation of the
+processors. The lib itself sees `@nestjs/bull`, `@nestjs/common` and `@nestjs/config` (see
+`016-lint-allowlists.md`).

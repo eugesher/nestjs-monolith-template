@@ -96,7 +96,7 @@ export class OrderPlaceUseCase {
     const record = await this.repository.findPlaced(orderId);
 
     const placed = OrderModel.reconstitute(record);
-    const view = placed.toView();
+    const view = placed.toSnapshot();
     const movements = placed.getMovements();
 
     await this.productStock.withdraw({ movements });

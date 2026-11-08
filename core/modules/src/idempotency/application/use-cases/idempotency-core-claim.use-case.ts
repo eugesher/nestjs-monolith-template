@@ -7,7 +7,7 @@ import {
   IIdempotencyCoreClaimView,
 } from '@acme-core/contracts/idempotency';
 
-import { IdempotencyCoreKeyModel, IIdempotencyCoreKeyDraft } from '../../domain';
+import { IdempotencyCoreKeyModel, IIdempotencyCoreKeyDraftOutput } from '../../domain';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
   type IIdempotencyCoreClaimRepositoryPort,
@@ -51,7 +51,7 @@ export class IdempotencyCoreClaimUseCase {
     return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
   }
 
-  private async insert(draft: IIdempotencyCoreKeyDraft): Promise<boolean> {
+  private async insert(draft: IIdempotencyCoreKeyDraftOutput): Promise<boolean> {
     const { key, requestFingerprint, status, responseBody } = draft;
 
     try {
