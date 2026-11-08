@@ -26,7 +26,7 @@ describe('e2e sections', () => {
   ])('the e2e code MAY import %s', async (source) => {
     await expect({
       file: 'apps/customer-app/test/context/__fixture__.ts',
-      code: `import * as x from "${source}";`,
+      code: `import { x } from "${source}";`,
     }).toPassArchitectureLint();
   });
 

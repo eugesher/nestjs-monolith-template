@@ -1,9 +1,11 @@
 import {
   baseLibs,
   from,
+  fromFile,
   fromLib,
   fromLibContracts,
   libContracts,
+  libLayerFiles,
   libs,
   own,
   packages,
@@ -11,7 +13,10 @@ import {
 } from './selectors.mjs';
 
 export const acmeLibs = [
-  from('acme-libs', [to('acme-libs', own('lib')), to('acme-libs:contracts', own('lib'))]),
+  from('acme-libs', [to('acme-libs:contracts', own('lib'))]),
+  fromFile('acme-libs', `!${libLayerFiles('shell', 'application', 'infrastructure', 'outbound')}`, [
+    to('acme-libs', own('lib')),
+  ]),
   from('acme-libs:contracts', [to('acme-libs:contracts', own('lib')), baseLibs()]),
   fromLibContracts('database', [packages('typeorm')]),
   fromLib(

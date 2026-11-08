@@ -57,7 +57,7 @@ describe('awaited arguments', () => {
     }).toPassArchitectureLint();
   });
 
-  it('a spec keeps exactly the layer barrel selectors of the root config', async () => {
+  it('a spec keeps the selectors of the root config without the awaited arguments', async () => {
     const source = (await lintConfigFor(
       'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
     )) as { rules: Record<string, [unknown, ...object[]]> };
@@ -70,6 +70,6 @@ describe('awaited arguments', () => {
     expect(specEntries).toEqual(
       sourceEntries.filter((entry) => !JSON.stringify(entry).includes('awaited')),
     );
-    expect(specEntries.length).toBe(4);
+    expect(specEntries.length).toBe(8);
   });
 });

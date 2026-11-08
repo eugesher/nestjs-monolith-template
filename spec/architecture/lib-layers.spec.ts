@@ -23,6 +23,7 @@ describe('lib layers', () => {
     ['outbound', 'shell', '../shell/cache-lib.module'],
     ['outbound', 'application', '../application'],
     ['outbound', 'infrastructure', '../infrastructure'],
+    ['application', 'testing', '../testing'],
   ])('the %s of a lib may NOT reach its %s', async (from, _, source) => {
     await expect({
       file: `libs/cache/src/${from}/__fixture__.ts`,
@@ -35,6 +36,13 @@ describe('lib layers', () => {
       file: 'libs/local-storage/src/transaction/application/__fixture__.ts',
       code: 'import { x } from "../infrastructure";',
     }).toBreakRule('boundaries/dependencies');
+  });
+
+  it.each([
+    ['libs/database/src/orm/shell/__fixture__.ts', '../../naming/snake-naming.strategy'],
+    ['libs/database/src/orm/application/__fixture__.ts', '../../repository/hosted.repository'],
+  ])('%s MAY reach the part of its lib it is built on', async (file, source) => {
+    await expect({ file, code: `import { x } from "${source}";` }).toPassArchitectureLint();
   });
 
   it('a shell spec MAY reach the outbound tokens it overrides', async () => {
