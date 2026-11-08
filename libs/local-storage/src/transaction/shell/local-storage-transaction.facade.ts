@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ILocalStorageTransaction } from '@acme-libs/contracts/local-storage';
+import { ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import {
   LocalStorageTransactionAfterCommitUseCase,
@@ -8,7 +8,7 @@ import {
 } from '../application';
 
 @Injectable()
-export class LocalStorageTransactionFacade implements ILocalStorageTransaction {
+export class LocalStorageTransactionFacade implements ITransactionPort {
   constructor(
     private readonly runInTransaction: LocalStorageTransactionRunUseCase,
     private readonly addAfterCommitHook: LocalStorageTransactionAfterCommitUseCase,

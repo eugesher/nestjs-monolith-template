@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import {
-  LOCAL_STORAGE_TRANSACTION,
-  type ILocalStorageTransaction,
-} from '@acme-libs/contracts/local-storage';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,
@@ -25,8 +22,8 @@ export class ProductStockPostSubtractUseCase {
     private readonly onHand: IProductStockOnHandPort,
     @Inject(PRODUCT_STOCK_ARCHIVE_PORT)
     private readonly archive: IProductStockArchivePort,
-    @Inject(LOCAL_STORAGE_TRANSACTION)
-    private readonly transaction: ILocalStorageTransaction,
+    @Inject(TRANSACTION_PORT)
+    private readonly transaction: ITransactionPort,
     @InjectPinoLogger(ProductStockPostSubtractUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

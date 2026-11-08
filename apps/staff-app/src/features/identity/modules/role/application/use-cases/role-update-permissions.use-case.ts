@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import {
-  LOCAL_STORAGE_TRANSACTION,
-  type ILocalStorageTransaction,
-} from '@acme-libs/contracts/local-storage';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { AuthRoleNotFoundException, RoleModel, RolePermissionModel } from '../../domain';
 import {
@@ -18,8 +15,8 @@ export class RoleUpdatePermissionsUseCase {
   constructor(
     @Inject(ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT)
     private readonly repository: IRoleUpdatePermissionsRepositoryPort,
-    @Inject(LOCAL_STORAGE_TRANSACTION)
-    private readonly transaction: ILocalStorageTransaction,
+    @Inject(TRANSACTION_PORT)
+    private readonly transaction: ITransactionPort,
     @InjectPinoLogger(RoleUpdatePermissionsUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

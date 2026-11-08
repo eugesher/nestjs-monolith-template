@@ -20,7 +20,7 @@ export class LocalStorageTransactionAfterCommitUseCase {
     const hooks = this.context.getHooks();
 
     if (!this.host.isActive() || !hooks) {
-      throw new Error('afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run');
+      throw new Error('afterCommit must be called inside TRANSACTION_PORT.run');
     }
 
     hooks.push(hook);

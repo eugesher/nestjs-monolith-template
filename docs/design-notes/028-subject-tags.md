@@ -52,7 +52,7 @@ own `PRODUCT_TAG_NOT_FOUND` or `ORDER_TAG_NOT_FOUND`, answered as 422 with `deta
 
 `ProductReplaceTagsUseCase` and `OrderReplaceTagsUseCase` open a transaction, lock their own row
 `FOR UPDATE` and call `replace` inside it. `TagCommonReplaceUseCase` runs in
-`LOCAL_STORAGE_TRANSACTION.run`, so it joins that transaction (see `026-transaction-port.md`), and a
+`TRANSACTION_PORT.run`, so it joins that transaction (see `026-transaction-port.md`), and a
 refusal of the caller after it rolls the links back too.
 
 **The lock of the subject serializes the writers of its links.** The common module owns no row of

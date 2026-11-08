@@ -1,10 +1,10 @@
 # 026 — Transaction port
 
-The application layer opens a transaction through `LOCAL_STORAGE_TRANSACTION` of
+The application layer opens a transaction through `TRANSACTION_PORT` of
 `@acme-libs/contracts/local-storage`, never through TypeORM or `@nestjs-cls/transactional`:
 
 ```ts
-interface ILocalStorageTransaction {
+interface ITransactionPort {
   run<T>(work: () => Promise<T>): Promise<T>;
   afterCommit(hook: () => Promise<void>): void;
 }
@@ -54,7 +54,7 @@ a cache whose entries expire anyway; a fact that must not be lost goes into the 
 or onto a queue with retries.
 
 **A hook needs a transaction.** `afterCommit` outside `run`, or inside a transaction that
-`LOCAL_STORAGE_TRANSACTION` did not open, throws: a hook that ran at once instead would change the
+`TRANSACTION_PORT` did not open, throws: a hook that ran at once instead would change the
 order of effects without a trace.
 
 **A crash between the commit and a hook loses the hook.** The list lives in memory. The template

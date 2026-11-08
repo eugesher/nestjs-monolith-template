@@ -6,10 +6,7 @@ import { ClsModule } from 'nestjs-cls';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource, EntityManager } from 'typeorm';
 
-import {
-  ILocalStorageTransaction,
-  LOCAL_STORAGE_TRANSACTION,
-} from '@acme-libs/contracts/local-storage';
+import { ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
 
 import { LocalStorageTransactionModule } from '../local-storage-transaction.module';
 
@@ -18,7 +15,7 @@ describe('LocalStorageTransactionModule', () => {
   let dataSource: { manager: EntityManager; transaction: jest.Mock };
   let error: jest.SpyInstance;
   let context: INestApplicationContext;
-  let port: ILocalStorageTransaction;
+  let port: ITransactionPort;
   let transactionHost: TransactionHost<TransactionalAdapterTypeOrm>;
 
   beforeEach(async () => {
@@ -61,7 +58,7 @@ describe('LocalStorageTransactionModule', () => {
     class TestModule {}
 
     context = await NestFactory.createApplicationContext(TestModule, { logger: false });
-    port = context.get(LOCAL_STORAGE_TRANSACTION);
+    port = context.get(TRANSACTION_PORT);
     transactionHost = context.get(TransactionHost);
   });
 
@@ -168,7 +165,7 @@ describe('LocalStorageTransactionModule', () => {
 
     it('refuses a hook outside a run', () => {
       expect(() => port.afterCommit(() => Promise.resolve())).toThrow(
-        'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
+        'afterCommit must be called inside TRANSACTION_PORT.run',
       );
     });
   });

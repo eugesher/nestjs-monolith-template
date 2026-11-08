@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
-import {
-  LOCAL_STORAGE_TRANSACTION,
-  type ILocalStorageTransaction,
-} from '@acme-libs/contracts/local-storage';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
 import {
@@ -21,8 +18,8 @@ export class UserRegisterUseCase {
   constructor(
     @Inject(USER_REGISTER_REPOSITORY_PORT)
     private readonly repository: IUserRegisterRepositoryPort,
-    @Inject(LOCAL_STORAGE_TRANSACTION)
-    private readonly transaction: ILocalStorageTransaction,
+    @Inject(TRANSACTION_PORT)
+    private readonly transaction: ITransactionPort,
     @Inject(USER_CREDENTIALS_PORT)
     private readonly credentials: IUserCredentialsPort,
     @InjectPinoLogger(UserRegisterUseCase.name)

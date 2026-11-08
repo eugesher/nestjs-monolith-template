@@ -204,7 +204,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
-      code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
+      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
     }).toPassArchitectureLint();
   });
 
@@ -218,7 +218,7 @@ describe('lib entry points', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
+        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
