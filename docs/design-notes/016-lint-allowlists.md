@@ -154,3 +154,22 @@ long as its fixture used the old name too. `spec/architecture/policy-specifiers.
 resolved policies of the boundaries rule and checks with the TypeScript checker that every specifier
 named for a lib or a package is an export of it. The checker reads the declarations, so a type such
 as `ClassProvider` counts as an export, as it does for the import it guards.
+
+### The layers of a lib
+
+A lib with a port has the layers of a core module: `shell`, `application`, `outbound` and
+`infrastructure`, in `src/` (`libs/cache`, `libs/credentials`, `libs/health`) or in a part of the
+lib (`libs/database/src/orm`, `libs/local-storage/src/transaction`). Every file of a lib is one
+category, `acme-libs`, so its edges to other libs and packages stay per lib.
+`policies/lib-layers.mjs` adds the layers on top of it from the `file` capture, as disallow rules
+within the lib:
+
+| Layer            | May NOT reach                            |
+| ---------------- | ---------------------------------------- |
+| `shell`          | `outbound`                               |
+| `application`    | `shell`, `infrastructure`                |
+| `infrastructure` | `shell`, `application`                   |
+| `outbound`       | `shell`, `application`, `infrastructure` |
+
+The shell rule takes only the files directly in `shell/`, so a module spec may still read the tokens
+of `outbound` it overrides. `spec/architecture/lib-layers.spec.ts` holds a case per edge.
