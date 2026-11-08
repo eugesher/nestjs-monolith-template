@@ -1,5 +1,7 @@
-import { ITagCommonSubjectTagsRecordInput } from '../interfaces/inputs/tag-common-subject-tags-record.input';
-import { ITagCommonSubjectTagsChangesOutput } from '../interfaces/outputs/tag-common-subject-tags-changes.output';
+import {
+  ITagCommonSubjectTagsChangesOutput,
+  ITagCommonSubjectTagsRecordInput,
+} from '../interfaces';
 
 export class TagCommonSubjectTagsModel {
   private constructor(private readonly tagIds: ReadonlySet<string>) {}

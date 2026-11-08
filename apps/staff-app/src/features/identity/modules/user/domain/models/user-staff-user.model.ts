@@ -2,9 +2,11 @@ import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
-import { IUserStaffUserCandidateInput } from '../interfaces/inputs/user-staff-user-candidate.input';
-import { IUserStaffUserRecordInput } from '../interfaces/inputs/user-staff-user-record.input';
-import { IUserStaffUserDraftOutput } from '../interfaces/outputs/user-staff-user-draft.output';
+import {
+  IUserStaffUserCandidateInput,
+  IUserStaffUserDraftOutput,
+  IUserStaffUserRecordInput,
+} from '../interfaces';
 
 export class UserStaffUserModel {
   public get roles(): readonly RoleEnum[] {

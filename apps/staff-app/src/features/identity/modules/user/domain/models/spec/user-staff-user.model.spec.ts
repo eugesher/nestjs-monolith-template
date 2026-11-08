@@ -1,6 +1,6 @@
 import { IdentityExceptionCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
-import { IUserStaffUserDraftOutput } from '../../interfaces/outputs/user-staff-user-draft.output';
+import { IUserStaffUserDraftOutput } from '../../interfaces';
 import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {

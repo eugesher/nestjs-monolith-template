@@ -1,8 +1,7 @@
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
 import { AuthPermissionNotFoundException } from '../exceptions/auth-permission-not-found.exception';
-import { IRoleRecordInput } from '../interfaces/inputs/role-record.input';
-import { IRoleSnapshotOutput } from '../interfaces/outputs/role-snapshot.output';
+import { IRoleRecordInput, IRoleSnapshotOutput } from '../interfaces';
 import { RolePermissionModel } from './role-permission.model';
 
 export class RoleModel {

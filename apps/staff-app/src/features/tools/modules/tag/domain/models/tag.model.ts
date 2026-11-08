@@ -1,10 +1,12 @@
 import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { TagNameInvalidException } from '../exceptions/tag-name-invalid.exception';
-import { ITagCandidateInput } from '../interfaces/inputs/tag-candidate.input';
-import { ITagRecordInput } from '../interfaces/inputs/tag-record.input';
-import { ITagDraftOutput } from '../interfaces/outputs/tag-draft.output';
-import { ITagSnapshotOutput } from '../interfaces/outputs/tag-snapshot.output';
+import {
+  ITagCandidateInput,
+  ITagDraftOutput,
+  ITagRecordInput,
+  ITagSnapshotOutput,
+} from '../interfaces';
 
 export class TagModel extends AggregateRoot<string> {
   public get name(): string {

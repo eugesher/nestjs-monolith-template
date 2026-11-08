@@ -1,5 +1,4 @@
-import { ILedgerAppendEntryCandidateInput } from '../interfaces/inputs/ledger-append-entry-candidate.input';
-import { ILedgerAppendEntryDraftOutput } from '../interfaces/outputs/ledger-append-entry-draft.output';
+import { ILedgerAppendEntryCandidateInput, ILedgerAppendEntryDraftOutput } from '../interfaces';
 
 export class LedgerAppendEntryModel {
   public static createDraft(

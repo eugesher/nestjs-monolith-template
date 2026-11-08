@@ -1,6 +1,6 @@
 import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
 
-import { IStaffAuthCoreSubjectRecordInput } from '../interfaces/inputs/staff-auth-core-subject-record.input';
+import { IStaffAuthCoreSubjectRecordInput } from '../interfaces';
 
 export class StaffAuthCoreSubjectModel {
   private constructor(

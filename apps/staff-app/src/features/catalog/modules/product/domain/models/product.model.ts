@@ -6,11 +6,13 @@ import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductNameInvalidException } from '../exceptions/product-name-invalid.exception';
 import { ProductSkuInvalidException } from '../exceptions/product-sku-invalid.exception';
 import { ProductVersionInvalidException } from '../exceptions/product-version-invalid.exception';
-import { IProductCandidateInput } from '../interfaces/inputs/product-candidate.input';
-import { IProductChangesInput } from '../interfaces/inputs/product-changes.input';
-import { IProductRecordInput } from '../interfaces/inputs/product-record.input';
-import { IProductDraftOutput } from '../interfaces/outputs/product-draft.output';
-import { IProductSnapshotOutput } from '../interfaces/outputs/product-snapshot.output';
+import {
+  IProductCandidateInput,
+  IProductChangesInput,
+  IProductDraftOutput,
+  IProductRecordInput,
+  IProductSnapshotOutput,
+} from '../interfaces';
 
 export class ProductModel extends AggregateRoot<string> {
   public get name(): string {

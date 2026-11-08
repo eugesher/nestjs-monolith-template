@@ -6,10 +6,12 @@ import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invali
 import { ReminderDueOnInvalidException } from '../exceptions/reminder-due-on-invalid.exception';
 import { ReminderTitleInvalidException } from '../exceptions/reminder-title-invalid.exception';
 import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
-import { IReminderCandidateInput } from '../interfaces/inputs/reminder-candidate.input';
-import { IReminderRecordInput } from '../interfaces/inputs/reminder-record.input';
-import { IReminderDraftOutput } from '../interfaces/outputs/reminder-draft.output';
-import { IReminderSnapshotOutput } from '../interfaces/outputs/reminder-snapshot.output';
+import {
+  IReminderCandidateInput,
+  IReminderDraftOutput,
+  IReminderRecordInput,
+  IReminderSnapshotOutput,
+} from '../interfaces';
 
 export class ReminderModel extends AggregateRoot<string> {
   public get dueOn(): string {

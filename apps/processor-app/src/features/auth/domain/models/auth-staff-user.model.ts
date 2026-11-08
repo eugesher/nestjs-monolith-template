@@ -1,7 +1,7 @@
 import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
-import { IAuthStaffUserRecordInput } from '../interfaces/inputs/auth-staff-user-record.input';
+import { IAuthStaffUserRecordInput } from '../interfaces';
 
 export class AuthStaffUserModel {
   private constructor(

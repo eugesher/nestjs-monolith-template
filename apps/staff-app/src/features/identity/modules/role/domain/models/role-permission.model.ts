@@ -1,6 +1,6 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { IRolePermissionRecordInput } from '../interfaces/inputs/role-permission-record.input';
+import { IRolePermissionRecordInput } from '../interfaces';
 
 export class RolePermissionModel {
   private constructor(
