@@ -83,8 +83,9 @@ Node is the latest 24, and Yarn comes from `packageManager` through `corepack en
 
 ## Order the lint keeps
 
-`eslint-plugin-perfectionist` keeps the order of imports, exports and class members, one rule per
-file of `lint/configs`, so the order is fixed by `eslint --fix` and never argued in a review.
+`eslint-plugin-perfectionist` keeps the order of imports, exports, class members and module keys,
+one rule per file of `lint/configs`, so the order is fixed by `eslint --fix` and never argued in a
+review.
 
 **Imports** (`imports.mjs`, `sort-imports`) come in three blocks, separated by one blank line:
 
@@ -111,3 +112,8 @@ Groups are separated by one blank line. Static fields stand together without one
 a getter or method group are separated by one. Instance fields are not checked: a decorated field of
 a DTO or an entity spans several lines and takes a blank line, a plain one does not, and the rule
 cannot tell them apart.
+
+**Module keys** (`modules.mjs`, `sort-objects`) go `module`, `global`, `imports`, `exports`,
+`controllers`, `providers`: what the module takes and shows comes before how it is built. The rule
+applies to an object whose keys are all among these six, the argument of `@Module` and the object a
+`forRoot` returns alike, and leaves every other object as it is written.

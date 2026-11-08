@@ -9,6 +9,7 @@ import {
   exports,
   imports,
   libsDeepImports,
+  modules,
   plainNode,
   specs,
   style,
@@ -38,5 +39,6 @@ export default defineConfig(
   exports,
   imports,
   libsDeepImports,
+  modules,
   plainNode,
 );
