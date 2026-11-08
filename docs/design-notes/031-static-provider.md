@@ -48,7 +48,9 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
 ## Where the scheme stops
 
 - **Facades** in `shell/` stay `{ provide: <MODULE>_<LAYER>_PORT, useClass: <Facade> }`. A facade is
-  the public entry of a module, not an implementation of one of its outbound ports.
+  the public entry of a module, not an implementation of one of its outbound ports, and the module
+  exports the port it binds: the literal next to `exports` shows at a glance which class answers the
+  exported port. The binding is typed by the facade alone, which `implements` the port.
 - **The facades of `libs/database` and `libs/local-storage`** (`OrmFacade`,
   `LocalStorageTransactionFacade`) are bound under the contract tokens `ORM_PORT` and
   `TRANSACTION_PORT` by `OrmModule` and `LocalStorageTransactionModule` of their libs, next to the
