@@ -1,4 +1,6 @@
-export interface IConfigValueProvideOptions {
+import { IConfigValueProperties } from './config-value-properties.interface';
+
+export interface IConfigValueProvideOptions<Property extends keyof IConfigValueProperties> {
   injectionToken: symbol;
-  configProperty: string;
+  configProperty: Property;
 }

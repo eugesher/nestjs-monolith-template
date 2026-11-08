@@ -5,12 +5,12 @@ import {
   PRODUCT_STOCK_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
-export const ProductStockConfigRedisCommandTimeoutMsProvider = ConfigValueProvider.provide<number>({
+export const ProductStockConfigRedisCommandTimeoutMsProvider = ConfigValueProvider.provide({
   injectionToken: PRODUCT_STOCK_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   configProperty: 'REDIS_COMMAND_TIMEOUT_MS',
 });
 
-export const ProductStockConfigLedgerRetryAttemptsProvider = ConfigValueProvider.provide<number>({
+export const ProductStockConfigLedgerRetryAttemptsProvider = ConfigValueProvider.provide({
   injectionToken: PRODUCT_STOCK_LEDGER_RETRY_ATTEMPTS_TOKEN,
   configProperty: 'LEDGER_RETRY_ATTEMPTS',
 });

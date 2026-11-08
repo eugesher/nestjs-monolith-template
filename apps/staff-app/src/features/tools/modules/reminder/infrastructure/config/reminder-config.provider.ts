@@ -5,12 +5,12 @@ import {
   REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
 } from '../../outbound';
 
-export const ReminderConfigOccRetryAttemptsProvider = ConfigValueProvider.provide<number>({
+export const ReminderConfigOccRetryAttemptsProvider = ConfigValueProvider.provide({
   injectionToken: REMINDER_OCC_RETRY_ATTEMPTS_TOKEN,
   configProperty: 'OCC_RETRY_ATTEMPTS',
 });
 
-export const ReminderConfigCacheTtlMsDefaultProvider = ConfigValueProvider.provide<number>({
+export const ReminderConfigCacheTtlMsDefaultProvider = ConfigValueProvider.provide({
   injectionToken: REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
   configProperty: 'CACHE_TTL_MS_DEFAULT',
 });
