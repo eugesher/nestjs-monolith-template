@@ -1307,13 +1307,13 @@ exports[`App Sales Order GET /api/sales/orders should answer the page window it 
       "data": [
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
-          "customerId": "101",
-          "id": "600",
+          "customerId": "102",
+          "id": "601",
         },
       ],
       "page": 2,
-      "pageCount": 2,
-      "total": 2,
+      "pageCount": 3,
+      "total": 3,
     },
   },
 }
@@ -1343,8 +1343,13 @@ exports[`App Sales Order GET /api/sales/orders should list the orders of every c
 {
   "response": {
     "body": {
-      "count": 2,
+      "count": 3,
       "data": [
+        {
+          "createdAt": "2026-01-02T00:00:00.000Z",
+          "customerId": "102",
+          "id": "602",
+        },
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "customerId": "102",
@@ -1358,7 +1363,7 @@ exports[`App Sales Order GET /api/sales/orders should list the orders of every c
       ],
       "page": 1,
       "pageCount": 1,
-      "total": 2,
+      "total": 3,
     },
   },
 }
@@ -1423,6 +1428,26 @@ exports[`App Sales Order GET /api/sales/orders/:orderId should answer an unknown
       "code": "ORDER_NOT_FOUND",
       "message": "Order 999 was not found",
       "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Sales Order GET /api/sales/orders/:orderId should read an order with a product deleted after the order 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-02T00:00:00.000Z",
+      "customerId": "102",
+      "id": "602",
+      "products": [
+        {
+          "id": "603",
+          "name": "Deleted product",
+          "productId": "107",
+          "sku": "SKU-0008",
+        },
+      ],
     },
   },
 }

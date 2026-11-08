@@ -1,4 +1,4 @@
-name: 05-without-token
+name: 06-without-token
 description: |-
   e2e: Sales › Order › GET /api/sales/orders/:orderId › should refuse a caller without a token with 401
 

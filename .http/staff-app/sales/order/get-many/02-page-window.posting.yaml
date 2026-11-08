@@ -2,7 +2,7 @@ name: 02-page-window
 description: |-
   e2e: Sales › Order › GET /api/sales/orders › should answer the page window it was asked for
 
-  Expect: 200 OK, order 600 alone, page 2 of size 1, total 2
+  Expect: 200 OK, order 601 alone, page 2 of size 1, total 3
   User: viewer@example.com (token signed by scripts.py)
 url: $STAFF_APP_BASE_URL/sales/orders
 params:

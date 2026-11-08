@@ -1,4 +1,4 @@
-name: 03-unknown-order
+name: 04-unknown-order
 description: |-
   e2e: Order › GET /api/orders/:orderId › should answer an unknown order with the same 404
 

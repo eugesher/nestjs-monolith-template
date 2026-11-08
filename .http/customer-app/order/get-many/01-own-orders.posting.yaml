@@ -2,7 +2,7 @@ name: 01-own-orders
 description: |-
   e2e: Order › GET /api/orders › should list only the orders of the caller, newest first, without their products
 
-  Expect: 200 OK, order 601 alone, total 1
+  Expect: 200 OK, orders 602 and 601, total 2
   User: bob@example.com (token signed by scripts.py)
 url: $CUSTOMER_APP_BASE_URL/orders
 auth:

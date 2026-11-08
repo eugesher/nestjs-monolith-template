@@ -67,7 +67,6 @@ describe('OrderPersistenceBuilder', () => {
           'FROM `order` `Order` ' +
           'LEFT JOIN `order_product` `OrderProduct` ON `OrderProduct`.`order_id`=`Order`.`id` ' +
           'LEFT JOIN `product` `Product` ON `Product`.`id`=`OrderProduct`.`product_id` ' +
-          'AND (`Product`.`deletedAt` IS NULL) ' +
           'WHERE `Order`.`id` = ? AND `Order`.`customerId` = ? ' +
           'ORDER BY `OrderProduct_id` ASC',
         ['600', '7'],

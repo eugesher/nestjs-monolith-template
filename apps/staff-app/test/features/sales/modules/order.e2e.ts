@@ -111,6 +111,15 @@ export class OrderE2E {
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
+      it('should read an order with a product deleted after the order', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/sales/orders/602')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .expect(HttpStatus.OK);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
       it('should answer an unknown order with 404', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/sales/orders/999')

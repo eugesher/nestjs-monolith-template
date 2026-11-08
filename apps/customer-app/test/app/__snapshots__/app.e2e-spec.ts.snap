@@ -361,8 +361,12 @@ exports[`App Order GET /api/orders should list only the orders of the caller, ne
 {
   "response": {
     "body": {
-      "count": 1,
+      "count": 2,
       "data": [
+        {
+          "createdAt": "2026-01-02T00:00:00.000Z",
+          "id": "602",
+        },
         {
           "createdAt": "2026-01-01T00:00:00.000Z",
           "id": "601",
@@ -370,7 +374,7 @@ exports[`App Order GET /api/orders should list only the orders of the caller, ne
       ],
       "page": 1,
       "pageCount": 1,
-      "total": 1,
+      "total": 2,
     },
   },
 }
@@ -423,6 +427,25 @@ exports[`App Order GET /api/orders/:orderId should read an order of the caller w
           "name": "Seeded reference product",
           "productId": "100",
           "sku": "SKU-0001",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Order GET /api/orders/:orderId should read an order of the caller with a product deleted after the order 1`] = `
+{
+  "response": {
+    "body": {
+      "createdAt": "2026-01-02T00:00:00.000Z",
+      "id": "602",
+      "products": [
+        {
+          "id": "603",
+          "name": "Deleted product",
+          "productId": "107",
+          "sku": "SKU-0008",
         },
       ],
     },
@@ -731,6 +754,9 @@ exports[`App Order POST /api/orders should refuse the key of another customer wi
     "order": [
       {
         "id": "601",
+      },
+      {
+        "id": "602",
       },
     ],
   },

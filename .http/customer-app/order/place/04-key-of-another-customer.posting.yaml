@@ -2,7 +2,7 @@ name: 04-key-of-another-customer
 description: |-
   e2e: Order › POST /api/orders › should refuse the key of another customer with 422 rather than replay their order
 
-  Expect: 422 Unprocessable Entity, code ORDER_IDEMPOTENCY_KEY_REUSED, bob still has order 601 alone
+  Expect: 422 Unprocessable Entity, code ORDER_IDEMPOTENCY_KEY_REUSED, bob still has orders 601 and 602
   User: bob@example.com (token signed by scripts.py)
   Note: send place/01-place first
 method: POST
