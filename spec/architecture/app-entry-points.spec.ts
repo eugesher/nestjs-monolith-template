@@ -272,7 +272,7 @@ describe('app entry points', () => {
   );
 
   it.each([
-    'apps/processor-app/src/processors/ledger/presentation/ledger-append.processor.ts',
+    'apps/processor-app/src/processors/ledger/presentation/processors/ledger-append.processor.ts',
     'apps/staff-app/src/features/product/infrastructure/queue/' +
       'product-ledger-record-queue.adapter.ts',
     'apps/staff-app/src/common/shared/ledger/ledger-queue-setup.module.ts',

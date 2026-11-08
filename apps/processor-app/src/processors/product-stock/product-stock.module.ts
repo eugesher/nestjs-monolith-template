@@ -9,7 +9,7 @@ import {
   ProductStockOnHandCoreAdapter,
   ProductStockPostSubtractRepository,
 } from './infrastructure';
-import { ProductStockPostSubtractProcessor } from './presentation/product-stock-post-subtract.processor';
+import { ProductStockPostSubtractProcessor } from './presentation';
 
 @Module({
   imports: [ProductCoreModule, ProductStockCoreModule],

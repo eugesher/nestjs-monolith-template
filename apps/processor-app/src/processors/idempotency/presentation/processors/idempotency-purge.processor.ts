@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { IdempotencyPurgeUseCase } from '../application';
+import { IdempotencyPurgeUseCase } from '../../application';
 
 @Injectable()
 export class IdempotencyPurgeProcessor {

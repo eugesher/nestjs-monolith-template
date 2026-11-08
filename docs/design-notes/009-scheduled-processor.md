@@ -7,7 +7,7 @@ nothing else deletes them, so the delete lives here with a repository of its own
 
 | Layer                        | What it holds                                                          |
 | ---------------------------- | ---------------------------------------------------------------------- |
-| `presentation`               | `IdempotencyPurgeProcessor`, `@Cron(CronExpression.EVERY_HOUR)`        |
+| `presentation/processors`    | `IdempotencyPurgeProcessor`, `@Cron(CronExpression.EVERY_HOUR)`        |
 | `application`                | `IdempotencyPurgeUseCase`                                              |
 | `domain`                     | `IdempotencyPurgeHelper.expiryCutoff`                                  |
 | `outbound`                   | `IDEMPOTENCY_PURGE_REPOSITORY_PORT`, `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN` |

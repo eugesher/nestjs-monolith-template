@@ -7,7 +7,7 @@ import {
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
 } from '@acme-core/contracts/product-stock';
 
-import { ProductStockPostSubtractUseCase } from '../application';
+import { ProductStockPostSubtractUseCase } from '../../application';
 
 @Processor(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
 export class ProductStockPostSubtractProcessor {

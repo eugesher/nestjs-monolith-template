@@ -40,7 +40,7 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
         'apps/app/src/features/ledger/modules/ledger-export/ledger-export.module.ts',
         'apps/app/src/features/ledger/modules/ledger-export/modules/deeper/deeper.module.ts',
         'apps/app/src/processors/catalog-events/catalog-events.module.ts',
-        'apps/app/src/processors/catalog-events/presentation/catalog-events.processor.ts',
+        'apps/app/src/processors/catalog-events/presentation/processors/catalog-events.processor.ts',
         'apps/app/src/processors/purge/purge.module.ts',
         'apps/app/src/processors/purge/presentation/controllers/purge.controller.ts',
         'apps/app/src/processors/digest/digest.module.ts',

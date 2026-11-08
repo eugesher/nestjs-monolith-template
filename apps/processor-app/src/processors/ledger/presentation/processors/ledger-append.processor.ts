@@ -4,7 +4,7 @@ import { type Job } from 'bull';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 
-import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../application';
+import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../application';
 
 @Processor(LEDGER_RECORD_QUEUE)
 export class LedgerAppendProcessor {
