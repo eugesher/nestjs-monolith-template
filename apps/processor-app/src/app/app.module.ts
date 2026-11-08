@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { CacheLibModule } from '@acme-libs/cache';
-import { TypeOrmSetupModule } from '@acme-libs/database';
+import { OrmModule } from '@acme-libs/database';
 import { HttpExceptionFilter, StrictValidationPipe } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { LocalStorageSetupModule, LocalStorageTransactionModule } from '@acme-libs/local-storage';
@@ -20,7 +20,7 @@ import { ConfigSetupModule, ScheduleSetupModule } from './setup';
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.PROCESSOR_APP),
     LocalStorageSetupModule.forRoot(),
-    TypeOrmSetupModule.forRoot(entities),
+    OrmModule.forRoot(entities),
     LocalStorageTransactionModule.forRoot(),
     ScheduleSetupModule,
     BullSetupModule.forRoot(),

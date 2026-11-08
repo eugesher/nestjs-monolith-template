@@ -85,8 +85,7 @@ describe('common modules (common/modules/<module>)', () => {
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
     ])(
-      'common infrastructure may NOT import %s — ' +
-        'a repository reads tables through REPOSITORY_HOST_PORT',
+      'common infrastructure may NOT import %s — ' + 'a repository reads tables through ORM_PORT',
       async (source) => {
         await expect({
           file:

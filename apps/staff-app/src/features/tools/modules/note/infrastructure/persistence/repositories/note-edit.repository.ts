@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   INoteEditRepositoryPort,
@@ -17,8 +17,8 @@ export class NoteEditRepository extends NoteBaseRepository implements INoteEditR
   };
 
   constructor(
-    @Inject(REPOSITORY_HOST_PORT)
-    protected readonly repositoryHost: IRepositoryHostPort,
+    @Inject(ORM_PORT)
+    protected readonly orm: IOrmPort,
   ) {
     super();
   }

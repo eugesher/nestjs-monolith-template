@@ -1,13 +1,13 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Customer } from '@acme-core/entities';
 
 import { AuthGlobalPersistenceCustomerBuilder } from '../builders/auth-global-persistence-customer.builder';
 
 export abstract class AuthGlobalPersistenceHost {
-  protected abstract readonly repositoryHost: IRepositoryHostPort;
+  protected abstract readonly orm: IOrmPort;
 
   protected get customerRepository(): IHostedRepository<Customer> {
-    return this.repositoryHost.getRepository(Customer);
+    return this.orm.getRepository(Customer);
   }
 
   protected createCustomerBuilder(): AuthGlobalPersistenceCustomerBuilder {

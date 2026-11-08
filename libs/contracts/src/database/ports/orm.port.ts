@@ -2,10 +2,10 @@ import { EntityTarget, ObjectLiteral } from 'typeorm';
 
 import { IHostedRepository } from '../interfaces/hosted-repository.interface';
 
-export interface IRepositoryHostPort {
+export interface IOrmPort {
   getRepository<Entity extends ObjectLiteral>(
     entity: EntityTarget<Entity>,
   ): IHostedRepository<Entity>;
 }
 
-export const REPOSITORY_HOST_PORT = Symbol('REPOSITORY_HOST_PORT');
+export const ORM_PORT = Symbol('ORM_PORT');

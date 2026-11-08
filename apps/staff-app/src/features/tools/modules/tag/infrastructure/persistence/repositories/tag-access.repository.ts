@@ -1,7 +1,7 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   ITagAccessRecord,
@@ -18,8 +18,8 @@ export class TagAccessRepository extends TagPersistenceHost implements ITagAcces
   };
 
   constructor(
-    @Inject(REPOSITORY_HOST_PORT)
-    protected readonly repositoryHost: IRepositoryHostPort,
+    @Inject(ORM_PORT)
+    protected readonly orm: IOrmPort,
   ) {
     super();
   }

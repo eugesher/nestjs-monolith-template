@@ -12,10 +12,10 @@ The three apps connected Bull with the same module, so the connection lives in a
 export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);
 ```
 
-**A setup class, not a module.** `BullSetupModule` has no `@Module`: it is a class of static
-methods that return the modules of `@nestjs/bull`, and the options are built in the private static
-`options(config)`. `TypeOrmSetupModule` of `libs/database` and `LocalStorageSetupModule` of
-`libs/local-storage` follow the same shape (see `012-app-bootstrap.md`).
+**A setup class, not a module.** `BullSetupModule` has no `@Module`: it is a class of static methods
+that return the modules of `@nestjs/bull`, and the options are built in the private static
+`options(config)`. `LocalStorageSetupModule` of `libs/local-storage` follows the same shape, and
+`OrmModule` of `libs/database` builds its TypeORM options the same way (see `012-app-bootstrap.md`).
 
 **The lib has no port.** Bull is reached through its decorators: a producer injects the queue
 with `@InjectQueue` in its `infrastructure/queue` adapter, and a processor declares `@Processor` in

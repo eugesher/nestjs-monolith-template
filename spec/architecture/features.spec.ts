@@ -230,8 +230,7 @@ describe('features', () => {
         code: [
           'import { Injectable } from "@nestjs/common";',
           'import { Repository } from "typeorm";',
-          'import { type IRepositoryHostPort, ' +
-            'REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
+          'import { type IOrmPort, ' + 'ORM_PORT } from "@acme-libs/contracts/database";',
         ].join('\n'),
       }).toPassArchitectureLint();
     });
@@ -241,7 +240,7 @@ describe('features', () => {
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
     ])(
-      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
+      'infrastructure may NOT import %s — a repository reads tables through ORM_PORT',
       async (source) => {
         await expect({
           file:

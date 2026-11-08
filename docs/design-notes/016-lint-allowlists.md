@@ -110,23 +110,23 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   may. The lib itself sees only the base libs.
 - **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
   `@acme-libs/contracts/database` and `@nestjs/common`, as feature infrastructure does.
-- **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
+- **No module touches `@nestjs-cls`.** A repository injects `ORM_PORT` of
   `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
   not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
   `libs/local-storage` do. The application takes `TRANSACTION_PORT` from
   `@acme-libs/contracts/local-storage`.
-- **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
-  `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of
-  `libs/database` are bound in `app/setup`, so infrastructure cannot inject `RepositoryHostAdapter`
-  past the port. The http lib reads `MysqlErrorHelper` from the toolkit too.
+- **Infrastructure does not see `libs/database`.** A repository takes `ORM_PORT` from
+  `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. `OrmModule` of
+  `libs/database` binds `OrmFacade` under the port, so infrastructure cannot inject the facade past
+  it. The http lib reads `MysqlErrorHelper` from the toolkit too.
 - **`toolkit/src/database` may import `typeorm`.** `MysqlErrorHelper` checks for a TypeORM
   `QueryFailedError`. The edge is scoped to that folder by the `file` capture of the lib category,
   so the rest of the toolkit sees only `crypto` and the kernel sees no package.
-- **The database contracts name TypeORM.** The repository host port returns a TypeORM
+- **The database contracts name TypeORM.** The ORM port returns a TypeORM
   `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
   the base libs.
 - **No module registers entities.** The entities of an app are listed once in `app/entities` and
-  handed to `TypeOrmSetupModule.forRoot` of `libs/database`, so only that lib may import
+  handed to `OrmModule.forRoot` of `libs/database`, so only that lib may import
   `@nestjs/typeorm`; `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
 - **A module root binds no token.** An adapter carries its binding in a static `provider` (see
   `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see

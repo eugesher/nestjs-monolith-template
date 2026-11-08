@@ -2,18 +2,18 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { EntityManager } from 'typeorm';
 
-import { HostedRepository } from '../hosted.repository';
-import { RepositoryHostAdapter } from '../repository-host.adapter';
+import { OrmHostedRepository } from '../../repository/orm-hosted.repository';
+import { OrmHostAdapter } from '../orm-host.adapter';
 
-describe('RepositoryHostAdapter', () => {
+describe('OrmHostAdapter', () => {
   class Item {}
 
   let tx: EntityManager;
-  let adapter: RepositoryHostAdapter;
+  let adapter: OrmHostAdapter;
 
   beforeEach(() => {
     tx = { queryRunner: { name: 'runner' } } as unknown as EntityManager;
-    adapter = new RepositoryHostAdapter({
+    adapter = new OrmHostAdapter({
       get tx(): EntityManager {
         return tx;
       },
@@ -24,7 +24,7 @@ describe('RepositoryHostAdapter', () => {
     it('answers a hosted repository of the entity bound to the current transaction', () => {
       const repository = adapter.getRepository(Item);
 
-      expect(repository).toBeInstanceOf(HostedRepository);
+      expect(repository).toBeInstanceOf(OrmHostedRepository);
       expect(repository.target).toBe(Item);
       expect(repository.manager).toBe(tx);
       expect(repository.queryRunner).toBe(tx.queryRunner);

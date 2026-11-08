@@ -1,22 +1,22 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 import { RolePersistenceStaffPermissionBuilder } from '../builders/role-persistence-staff-permission.builder';
 import { RolePersistenceStaffRoleBuilder } from '../builders/role-persistence-staff-role.builder';
 
 export abstract class RolePersistenceHost {
-  protected abstract readonly repositoryHost: IRepositoryHostPort;
+  protected abstract readonly orm: IOrmPort;
 
   protected get staffPermissionRepository(): IHostedRepository<StaffPermission> {
-    return this.repositoryHost.getRepository(StaffPermission);
+    return this.orm.getRepository(StaffPermission);
   }
 
   protected get staffRolePermissionRepository(): IHostedRepository<StaffRolePermission> {
-    return this.repositoryHost.getRepository(StaffRolePermission);
+    return this.orm.getRepository(StaffRolePermission);
   }
 
   protected get staffRoleRepository(): IHostedRepository<StaffRole> {
-    return this.repositoryHost.getRepository(StaffRole);
+    return this.orm.getRepository(StaffRole);
   }
 
   protected createStaffRoleBuilder(): RolePersistenceStaffRoleBuilder {

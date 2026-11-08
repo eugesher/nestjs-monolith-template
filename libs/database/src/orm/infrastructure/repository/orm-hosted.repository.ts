@@ -2,7 +2,7 @@ import { ObjectLiteral, QueryDeepPartialEntity, Repository } from 'typeorm';
 
 import { IHostedRepository } from '@acme-libs/contracts/database';
 
-export class HostedRepository<Entity extends ObjectLiteral>
+export class OrmHostedRepository<Entity extends ObjectLiteral>
   extends Repository<Entity>
   implements IHostedRepository<Entity>
 {

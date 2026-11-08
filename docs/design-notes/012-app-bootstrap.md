@@ -59,7 +59,7 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 | `ConfigSetupModule.forRoot()`             | `app/setup/config`                                   | validates the environment of the app with Joi                                |
 | `LoggerSetupModule.forRoot(<app>)`        | `libs/observability`                                 | pino, HTTP request logs                                                      |
 | `LocalStorageSetupModule.forRoot()`       | `libs/local-storage`                                 | the CLS context of every request under its correlation id                    |
-| `TypeOrmSetupModule.forRoot(entities)`    | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `REPOSITORY_HOST_PORT`              |
+| `OrmModule.forRoot(entities)`             | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`                          |
 | `LocalStorageTransactionModule.forRoot()` | `libs/local-storage`                                 | the transactional plugin, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`                     | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                       |
 | `BullSetupModule.forRoot()`               | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue           |

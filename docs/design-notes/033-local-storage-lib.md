@@ -9,7 +9,7 @@ so they live in one lib, `libs/local-storage`, in two parts:
 | `transaction/` | `LocalStorageTransactionModule.forRoot()` | the transactional plugin, global `TRANSACTION_PORT`                         |
 
 `AppModule` imports both, around the connection:
-`LocalStorageSetupModule` → `TypeOrmSetupModule` → `LocalStorageTransactionModule` (see
+`LocalStorageSetupModule` → `OrmModule` → `LocalStorageTransactionModule` (see
 `012-app-bootstrap.md`).
 
 ## `setup/`
@@ -33,7 +33,7 @@ The part has the shape of `libs/cache` (see `010-cache-aside.md`):
 
 `forRoot()` returns a global module that registers `ClsPluginTransactional` with the TypeORM adapter
 through `ClsModule.registerPlugins` and exports `TRANSACTION_PORT`. It passes the plugin no
-`imports`: the `DataSource` comes from the global `TypeOrmCoreModule` of `TypeOrmSetupModule`. What
+`imports`: the `DataSource` comes from the global `TypeOrmCoreModule` of `OrmModule`. What
 `run` and `afterCommit` promise is in `026-transaction-port.md`.
 
 **The contract keeps its names.** The port is `ITransactionPort` / `TRANSACTION_PORT` of
@@ -43,7 +43,7 @@ core call it, and the names say what they do there.
 
 ## What stays in `libs/database`
 
-`libs/database` holds the connection and `REPOSITORY_HOST_PORT`. `RepositoryHostAdapter` takes
+`libs/database` holds the connection and `ORM_PORT`. `OrmHostAdapter` takes
 `TransactionHost` from the global module of the CLS plugins, so a repository joins the transaction
 that `TRANSACTION_PORT.run` opened without importing this lib. Only the two libs import
 `@nestjs-cls/transactional`.

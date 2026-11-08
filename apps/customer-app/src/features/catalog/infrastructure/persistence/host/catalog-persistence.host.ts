@@ -1,13 +1,13 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Product } from '@acme-core/entities';
 
 import { CatalogPersistenceProductBuilder } from '../builders/catalog-persistence-product.builder';
 
 export abstract class CatalogPersistenceHost {
-  protected abstract readonly repositoryHost: IRepositoryHostPort;
+  protected abstract readonly orm: IOrmPort;
 
   protected get productRepository(): IHostedRepository<Product> {
-    return this.repositoryHost.getRepository(Product);
+    return this.orm.getRepository(Product);
   }
 
   protected createProductBuilder(): CatalogPersistenceProductBuilder {

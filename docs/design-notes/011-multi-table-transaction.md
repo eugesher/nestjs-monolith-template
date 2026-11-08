@@ -20,7 +20,7 @@ interface INoteEditRepositoryPort {
 ## The transaction comes from the context
 
 The use case wraps the two calls in `TRANSACTION_PORT.run` (see `026-transaction-port.md`),
-and the repository reads its tables through `REPOSITORY_HOST_PORT`, so the two statements share one
+and the repository reads its tables through `ORM_PORT`, so the two statements share one
 transaction without passing anything to each other. A failed second insert fails `run`, and the
 first update rolls back with it.
 
