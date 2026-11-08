@@ -26,11 +26,6 @@ export class ConfigSetupModule {
         REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().default(500),
         CACHE_TTL_MS_DEFAULT: Joi.number().integer().positive().default(60_000),
 
-        BULL_JOB_ATTEMPTS: Joi.number().integer().min(1).default(3),
-        BULL_JOB_BACKOFF_TYPE: Joi.string().valid('fixed', 'exponential').default('exponential'),
-        BULL_JOB_BACKOFF_DELAY: Joi.number().integer().min(0).default(1000),
-        BULL_AUTO_SWEEP: Joi.boolean().default(true),
-
         OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(5),
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
         QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),

@@ -22,16 +22,17 @@ that return the modules of `@nestjs/bull`, and the options are built in the priv
 presentation (see `008-queue-processor.md`). The lib holds only what every app repeated: the
 connection, the job options and the registration of a queue.
 
-## The lib reads the config of the app it runs in
+## The connection is per app, the job options are not
 
-`forRoot()` takes `REDIS_URL` and the `BULL_*` variables from `ConfigService`, as `libs/cache` and
-`libs/credentials` do. The Joi schema of each app validates them and holds the defaults; the options
-and their defaults are listed in `008-queue-processor.md`.
+`forRoot()` takes `REDIS_URL` from `ConfigService`, as `libs/cache` and `libs/credentials` do. The
+job options are the private constant `DEFAULT_JOB_OPTIONS` of `BullSetupModule`, listed in
+`008-queue-processor.md`. Two apps write to `ledger-record` and to `product-stock-post-subtract`;
+options read from the environment of each app would let their jobs retry differently, while the code
+of the lib is the same in every app.
 
 **`registerQueue` takes the name alone.** `@nestjs/bull` merges the root options and the queue
 options shallowly, so a queue with `defaultJobOptions` of its own would replace the root ones as a
-whole. With the name alone, every queue of an app enqueues with the options of `forRoot()`, and the
-producers of one queue in different apps differ only if their environments do.
+whole. With the name alone, every queue of every app enqueues with the options of `forRoot()`.
 
 ## Who sees the lib
 

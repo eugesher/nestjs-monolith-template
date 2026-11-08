@@ -3,6 +3,12 @@ import { DynamicModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export class BullSetupModule {
+  private static readonly DEFAULT_JOB_OPTIONS: BullRootModuleOptions['defaultJobOptions'] = {
+    attempts: 3,
+    backoff: { type: 'exponential', delay: 1000 },
+    removeOnComplete: true,
+  };
+
   public static forRoot(): DynamicModule {
     return BullModule.forRootAsync({
       inject: [ConfigService],
@@ -16,11 +22,7 @@ export class BullSetupModule {
 
   private static options(config: ConfigService): BullRootModuleOptions {
     const url = config.getOrThrow<string>('REDIS_URL');
-    const attempts = config.getOrThrow<number>('BULL_JOB_ATTEMPTS');
-    const type = config.getOrThrow<string>('BULL_JOB_BACKOFF_TYPE');
-    const delay = config.getOrThrow<number>('BULL_JOB_BACKOFF_DELAY');
-    const removeOnComplete = config.getOrThrow<boolean>('BULL_AUTO_SWEEP');
 
-    return { url, defaultJobOptions: { attempts, backoff: { type, delay }, removeOnComplete } };
+    return { url, defaultJobOptions: BullSetupModule.DEFAULT_JOB_OPTIONS };
   }
 }
