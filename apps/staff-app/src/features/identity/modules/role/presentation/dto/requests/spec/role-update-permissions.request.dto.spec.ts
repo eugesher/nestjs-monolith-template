@@ -6,7 +6,7 @@ import { RoleUpdatePermissionsRequestDto } from '../role-update-permissions.requ
 describe('RoleUpdatePermissionsRequestDto', () => {
   it('accepts known permission codes', () => {
     const dto = plainToInstance(RoleUpdatePermissionsRequestDto, {
-      permissionCodes: ['iam:assign', 'ledger:read'],
+      permissionCodes: ['identity:role:assign', 'ledger:read'],
     });
 
     const errors = validateSync(dto);
@@ -16,8 +16,8 @@ describe('RoleUpdatePermissionsRequestDto', () => {
 
   it.each([
     ['an empty list', { permissionCodes: [] }, 'arrayNotEmpty'],
-    ['an unknown code', { permissionCodes: ['iam:assign', 'does-not:exist'] }, 'isEnum'],
-    ['codes that are not a list', { permissionCodes: 'iam:assign' }, 'isArray'],
+    ['an unknown code', { permissionCodes: ['identity:role:assign', 'does-not:exist'] }, 'isEnum'],
+    ['codes that are not a list', { permissionCodes: 'identity:role:assign' }, 'isArray'],
   ])('rejects %s', (_case, body, constraint) => {
     const dto = plainToInstance(RoleUpdatePermissionsRequestDto, body);
 

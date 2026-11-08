@@ -23,7 +23,7 @@ export class UserController {
   ) {}
 
   @Post()
-  @RequiresPermission(PermissionCodeEnum.IAM_USER_CREATE)
+  @RequiresPermission(PermissionCodeEnum.IDENTITY_USER_CREATE)
   @ApiOperation({ summary: 'Create a principal' })
   @ApiCreatedResponse({ type: UserResponseDto })
   public async handleRegister(@Body() body: UserRegisterRequestDto): Promise<UserResponseDto> {
@@ -31,7 +31,7 @@ export class UserController {
   }
 
   @Post(':userId/roles')
-  @RequiresPermission(PermissionCodeEnum.IAM_ASSIGN)
+  @RequiresPermission(PermissionCodeEnum.IDENTITY_ROLE_ASSIGN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Grant a role to a principal' })
   @ApiOkResponse({ type: UserRolesResponseDto })

@@ -33,20 +33,24 @@ describe('RoleController', () => {
       updatePermissions.mockResolvedValue({
         id: '3',
         name: 'viewer',
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+        permissionCodes: [PermissionCodeEnum.IDENTITY_ROLE_ASSIGN],
       });
 
       const response = await controller.handleUpdatePermissions(
         { roleId: '3' },
         {
-          permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+          permissionCodes: [PermissionCodeEnum.IDENTITY_ROLE_ASSIGN],
         },
       );
 
-      expect(response).toEqual({ id: '3', name: 'viewer', permissionCodes: ['iam:assign'] });
+      expect(response).toEqual({
+        id: '3',
+        name: 'viewer',
+        permissionCodes: ['identity:role:assign'],
+      });
       expect(updatePermissions).toHaveBeenCalledWith({
         roleId: '3',
-        permissionCodes: ['iam:assign'],
+        permissionCodes: ['identity:role:assign'],
       });
     });
   });

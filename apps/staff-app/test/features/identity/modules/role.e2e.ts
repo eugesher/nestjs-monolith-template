@@ -21,7 +21,7 @@ export class RoleE2E {
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it('should refuse a caller without iam:assign', async () => {
+      it('should refuse a caller without identity:role:assign', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/identity/roles')
           .auth(this.ctx.viewerToken, { type: 'bearer' })

@@ -1,6 +1,6 @@
-name: 02-without-iam-assign
+name: 02-without-identity-role-assign
 description: |-
-  e2e: Identity › Role › GET /api/identity/roles › should refuse a caller without iam:assign
+  e2e: Identity › Role › GET /api/identity/roles › should refuse a caller without identity:role:assign
 
   Expect: 403 Forbidden, Insufficient permissions
   User: viewer@example.com (token signed by scripts.py)

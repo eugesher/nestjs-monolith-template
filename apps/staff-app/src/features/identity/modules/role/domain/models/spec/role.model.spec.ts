@@ -10,13 +10,17 @@ describe('RoleModel', () => {
     role = RoleModel.reconstitute({
       id: '2',
       name: 'editor',
-      rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
+      rolePermissions: [{ permission: { code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN } }],
     });
   });
 
   describe('reconstitute', () => {
     it('keeps the stored state as is', () => {
-      expect(role).toMatchObject({ id: '2', name: 'editor', permissionCodes: ['iam:assign'] });
+      expect(role).toMatchObject({
+        id: '2',
+        name: 'editor',
+        permissionCodes: ['identity:role:assign'],
+      });
     });
   });
 
@@ -24,14 +28,14 @@ describe('RoleModel', () => {
     it('replaces the codes with the known ones, without duplicates', () => {
       role.replacePermissions(
         [
-          PermissionCodeEnum.IAM_ROLE_EDIT,
+          PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
           PermissionCodeEnum.PRODUCT_READ,
-          PermissionCodeEnum.IAM_ROLE_EDIT,
+          PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
         ],
         [
           RolePermissionModel.reconstitute({
             id: '2',
-            code: PermissionCodeEnum.IAM_ROLE_EDIT,
+            code: PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
           }),
           RolePermissionModel.reconstitute({
             id: '8',
@@ -40,7 +44,7 @@ describe('RoleModel', () => {
         ],
       );
 
-      expect(role.permissionCodes).toEqual(['iam:role-edit', 'product:read']);
+      expect(role.permissionCodes).toEqual(['identity:permission:assign', 'product:read']);
     });
 
     it('clears the codes with an empty list', () => {
@@ -53,14 +57,14 @@ describe('RoleModel', () => {
       const replace = (): void =>
         role.replacePermissions(
           [
-            PermissionCodeEnum.IAM_ROLE_EDIT,
+            PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
             PermissionCodeEnum.PRODUCT_READ,
             PermissionCodeEnum.LEDGER_READ,
           ],
           [
             RolePermissionModel.reconstitute({
               id: '2',
-              code: PermissionCodeEnum.IAM_ROLE_EDIT,
+              code: PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
             }),
           ],
         );
@@ -71,7 +75,7 @@ describe('RoleModel', () => {
           message: 'Unknown permission codes: product:read, ledger:read',
         }) as Error,
       );
-      expect(role.permissionCodes).toEqual(['iam:assign']);
+      expect(role.permissionCodes).toEqual(['identity:role:assign']);
     });
   });
 
@@ -81,7 +85,7 @@ describe('RoleModel', () => {
         id: '1',
         name: 'admin',
         rolePermissions: [
-          { permission: { code: PermissionCodeEnum.IAM_ASSIGN } },
+          { permission: { code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN } },
           { permission: { code: PermissionCodeEnum.LEDGER_READ } },
         ],
       });
@@ -91,7 +95,7 @@ describe('RoleModel', () => {
       expect(view).toEqual({
         id: '1',
         name: 'admin',
-        permissionCodes: ['iam:assign', 'ledger:read'],
+        permissionCodes: ['identity:role:assign', 'ledger:read'],
       });
     });
   });

@@ -1009,9 +1009,9 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
       {
         "name": "admin",
         "permissionCodes": [
-          "iam:assign",
-          "iam:role-edit",
-          "iam:user-create",
+          "identity:permission:assign",
+          "identity:role:assign",
+          "identity:user:create",
           "ledger:read",
           "order:read",
           "order:write",
@@ -1055,7 +1055,7 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
 }
 `;
 
-exports[`App Identity Role GET /api/identity/roles should refuse a caller without iam:assign 1`] = `
+exports[`App Identity Role GET /api/identity/roles should refuse a caller without identity:role:assign 1`] = `
 {
   "response": {
     "body": {
@@ -1109,7 +1109,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
+        "each value in permissionCodes must be one of the following values: ledger:read, identity:user:create, identity:role:assign, identity:permission:assign, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
       ],
       "statusCode": 400,
     },

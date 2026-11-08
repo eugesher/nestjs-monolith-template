@@ -18,7 +18,7 @@ export class RoleController {
   ) {}
 
   @Get()
-  @RequiresPermission(PermissionCodeEnum.IAM_ASSIGN)
+  @RequiresPermission(PermissionCodeEnum.IDENTITY_ROLE_ASSIGN)
   @ApiOperation({ summary: 'List roles and the permissions they grant' })
   @ApiOkResponse({ type: RoleResponseDto, isArray: true })
   public async handleList(): Promise<RoleResponseDto[]> {
@@ -26,7 +26,7 @@ export class RoleController {
   }
 
   @Put(':roleId/permissions')
-  @RequiresPermission(PermissionCodeEnum.IAM_ROLE_EDIT)
+  @RequiresPermission(PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN)
   @ApiOperation({ summary: 'Replace the permission set of a role' })
   @ApiOkResponse({ type: RoleResponseDto })
   public async handleUpdatePermissions(

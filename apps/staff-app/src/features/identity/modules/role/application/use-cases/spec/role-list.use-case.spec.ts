@@ -9,7 +9,7 @@ describe('RoleListUseCase', () => {
         {
           id: '1',
           name: 'admin',
-          rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
+          rolePermissions: [{ permission: { code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN } }],
         },
         {
           id: '3',
@@ -23,7 +23,7 @@ describe('RoleListUseCase', () => {
     const views = await useCase.execute();
 
     expect(views).toEqual([
-      { id: '1', name: 'admin', permissionCodes: ['iam:assign'] },
+      { id: '1', name: 'admin', permissionCodes: ['identity:role:assign'] },
       { id: '3', name: 'viewer', permissionCodes: [] },
     ]);
   });

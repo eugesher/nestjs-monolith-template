@@ -10,7 +10,10 @@ export class RoleResponseDto {
   public name: string;
 
   @ApiResponseProperty({
-    example: [PermissionCodeEnum.IAM_ASSIGN, PermissionCodeEnum.IAM_ROLE_EDIT],
+    example: [
+      PermissionCodeEnum.IDENTITY_ROLE_ASSIGN,
+      PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
+    ],
   })
   public permissionCodes: PermissionCodeEnum[];
 }
