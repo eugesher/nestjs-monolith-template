@@ -1,18 +1,18 @@
 import { EntityManager } from 'typeorm';
 
-import { OrmHostedRepository } from '../orm-hosted.repository';
+import { HostedRepository } from '../hosted.repository';
 
-describe('OrmHostedRepository', () => {
+describe('HostedRepository', () => {
   class Item {
     public id: string;
     public name: string;
   }
 
-  let repository: OrmHostedRepository<Item>;
+  let repository: HostedRepository<Item>;
   let insert: jest.SpyInstance;
 
   beforeEach(() => {
-    repository = new OrmHostedRepository(Item, {} as EntityManager);
+    repository = new HostedRepository(Item, {} as EntityManager);
     insert = jest.spyOn(repository, 'insert');
   });
 

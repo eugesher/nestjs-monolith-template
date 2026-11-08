@@ -5,8 +5,8 @@ import { EntityTarget, ObjectLiteral } from 'typeorm';
 
 import { IHostedRepository } from '@acme-libs/contracts/database';
 
+import { HostedRepository } from '../../../repository/hosted.repository';
 import { IOrmHostPort, ORM_HOST_PORT } from '../../outbound';
-import { OrmHostedRepository } from '../repository/orm-hosted.repository';
 
 @Injectable()
 export class OrmHostAdapter implements IOrmHostPort {
@@ -22,6 +22,6 @@ export class OrmHostAdapter implements IOrmHostPort {
   ): IHostedRepository<Entity> {
     const manager = this.transactionHost.tx;
 
-    return new OrmHostedRepository(entity, manager, manager.queryRunner);
+    return new HostedRepository(entity, manager, manager.queryRunner);
   }
 }
