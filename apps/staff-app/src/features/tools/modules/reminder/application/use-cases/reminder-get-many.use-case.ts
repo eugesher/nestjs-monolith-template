@@ -23,7 +23,7 @@ export class ReminderGetManyUseCase {
     const data = records.map((record) => {
       const reminder = ReminderModel.reconstitute(record);
 
-      return reminder.toView();
+      return reminder.toSnapshot();
     });
 
     return PaginationHelper.toPage(data, total, pageWindow);

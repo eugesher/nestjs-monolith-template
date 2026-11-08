@@ -1,10 +1,10 @@
 import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { TagNameInvalidException } from '../exceptions/tag-name-invalid.exception';
-import { ITagCandidate } from '../interfaces/tag-candidate.interface';
-import { ITagDraft } from '../interfaces/tag-draft.interface';
-import { ITagRecord } from '../interfaces/tag-record.interface';
-import { ITagSnapshot } from '../interfaces/tag-snapshot.interface';
+import { ITagCandidateInput } from '../interfaces/inputs/tag-candidate.input';
+import { ITagRecordInput } from '../interfaces/inputs/tag-record.input';
+import { ITagDraftOutput } from '../interfaces/outputs/tag-draft.output';
+import { ITagSnapshotOutput } from '../interfaces/outputs/tag-snapshot.output';
 
 export class TagModel extends AggregateRoot<string> {
   public get name(): string {
@@ -22,14 +22,14 @@ export class TagModel extends AggregateRoot<string> {
     super(id);
   }
 
-  public static reconstitute(record: ITagRecord): TagModel {
+  public static reconstitute(record: ITagRecordInput): TagModel {
     const { id, name, createdAt, updatedAt } = record;
     const validName = TagModel.validName(name);
 
     return new TagModel(id, validName, createdAt, updatedAt);
   }
 
-  public static createDraft(candidate: ITagCandidate): ITagDraft {
+  public static createDraft(candidate: ITagCandidateInput): ITagDraftOutput {
     const { name } = candidate;
     const validName = TagModel.validName(name);
 
@@ -40,7 +40,7 @@ export class TagModel extends AggregateRoot<string> {
     this.currentName = TagModel.validName(name);
   }
 
-  public toView(): ITagSnapshot {
+  public toSnapshot(): ITagSnapshotOutput {
     return {
       id: this.id,
       name: this.name,

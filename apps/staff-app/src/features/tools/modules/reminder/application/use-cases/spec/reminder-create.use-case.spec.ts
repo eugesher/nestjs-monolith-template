@@ -3,7 +3,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { IReminderDraft } from '../../../domain';
+import { IReminderDraftOutput } from '../../../domain';
 import { ReminderCreateUseCase } from '../reminder-create.use-case';
 
 describe('ReminderCreateUseCase', () => {
@@ -45,7 +45,7 @@ describe('ReminderCreateUseCase', () => {
           body: undefined,
           dueOn: '2026-11-05',
         });
-        const [reminder] = insert.mock.calls[0] as [IReminderDraft];
+        const [reminder] = insert.mock.calls[0] as [IReminderDraftOutput];
 
         expect(reminder.title).toBe('Call the bank');
         expect(reminder.body).toBe('');

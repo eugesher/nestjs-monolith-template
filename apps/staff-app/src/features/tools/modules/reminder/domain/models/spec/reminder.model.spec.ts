@@ -255,7 +255,7 @@ describe('ReminderModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('maps a stored reminder with its instants as ISO strings', () => {
       const reminder = ReminderModel.reconstitute({
         id: '7',
@@ -269,7 +269,7 @@ describe('ReminderModel', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       });
 
-      expect(reminder.toView()).toEqual({
+      expect(reminder.toSnapshot()).toEqual({
         id: '7',
         ownerId: 'owner-1',
         title: 'Call the bank',

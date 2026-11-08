@@ -44,6 +44,6 @@ export class ProductArchiveUseCase {
 
     const product = await this.accessService.load({ productId });
 
-    return product.toView();
+    return product.toSnapshot();
   }
 }

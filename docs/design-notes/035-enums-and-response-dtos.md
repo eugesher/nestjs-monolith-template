@@ -55,3 +55,23 @@ takes no `nullable`. The client reads one shape and never checks for an absent k
 
 **An enum field names its enum in the schema**: `@ApiResponseProperty({ enum, example })`, so the
 OpenAPI document lists the values and the client can generate the same enum.
+
+## Domain interfaces
+
+The interfaces of a domain lie in two folders, by the side of the model they are on:
+
+| Folder                       | Kind        | What it is                                                    |
+| ---------------------------- | ----------- | ------------------------------------------------------------- |
+| `domain/interfaces/inputs/`  | `record`    | the row a model is rebuilt from, `Model.reconstitute(record)` |
+|                              | `candidate` | the data a new row is checked against, `Model.createDraft`    |
+|                              | `changes`   | the edits a model takes, `ProductModel.update(changes)`       |
+| `domain/interfaces/outputs/` | `draft`     | the row `createDraft` answers for an insert                   |
+|                              | `snapshot`  | the state a model answers with `toSnapshot()`                 |
+|                              | `changes`   | the diff a model answers, `TagCommonSubjectTagsModel.replace` |
+
+The direction is the type of the file and the kind ends its name: `product-record.input.ts` holds
+`IProductRecordInput`, `auth-customer-draft.output.ts` holds `IAuthCustomerDraftOutput`, and
+`tag-common-subject-tags-changes.output.ts` sets the diff of tags apart from
+`product-changes.input.ts`. A part of an input or an output without a kind of its own takes the
+direction alone: `order-stock.input.ts` is a field of `IOrderCandidateInput`,
+`order-product.output.ts` an element of `IOrderSnapshotOutput`.

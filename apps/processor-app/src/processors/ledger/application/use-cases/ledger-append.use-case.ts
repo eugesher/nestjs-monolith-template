@@ -4,7 +4,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { ILedgerAppendEntryDraft, LedgerAppendEntryModel, LedgerAppendHelper } from '../../domain';
+import {
+  ILedgerAppendEntryDraftOutput,
+  LedgerAppendEntryModel,
+  LedgerAppendHelper,
+} from '../../domain';
 import { LEDGER_APPEND_REPOSITORY_PORT, type ILedgerAppendRepositoryPort } from '../../outbound';
 import { ILedgerAppendCommand, ILedgerAppendOutcomeView } from '../interfaces';
 
@@ -40,7 +44,7 @@ export class LedgerAppendUseCase {
     this.logger.info({ id, operationKey: draft.operationKey, appended }, message);
   }
 
-  private async append(draft: ILedgerAppendEntryDraft): Promise<ILedgerAppendOutcomeView> {
+  private async append(draft: ILedgerAppendEntryDraftOutput): Promise<ILedgerAppendOutcomeView> {
     try {
       const id = await this.repository.insert(draft);
 

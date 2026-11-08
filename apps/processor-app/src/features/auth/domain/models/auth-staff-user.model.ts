@@ -1,7 +1,7 @@
 import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
-import { IAuthStaffUserRecord } from '../interfaces/auth-staff-user-record.interface';
+import { IAuthStaffUserRecordInput } from '../interfaces/inputs/auth-staff-user-record.input';
 
 export class AuthStaffUserModel {
   private constructor(
@@ -10,7 +10,7 @@ export class AuthStaffUserModel {
     public readonly status: UserStatusEnum,
   ) {}
 
-  public static reconstitute(record: IAuthStaffUserRecord): AuthStaffUserModel {
+  public static reconstitute(record: IAuthStaffUserRecordInput): AuthStaffUserModel {
     const { id, passwordHash, status } = record;
 
     return new AuthStaffUserModel(id, passwordHash, status);

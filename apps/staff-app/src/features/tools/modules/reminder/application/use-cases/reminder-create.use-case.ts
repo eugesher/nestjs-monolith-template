@@ -30,7 +30,7 @@ export class ReminderCreateUseCase {
 
     await this.summary.invalidate(ownerId);
 
-    const view = created.toView();
+    const view = created.toSnapshot();
 
     this.logger.info({ reminderId: view.id, ownerId }, 'Reminder created');
 

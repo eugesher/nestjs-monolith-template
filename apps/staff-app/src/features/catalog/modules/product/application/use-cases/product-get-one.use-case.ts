@@ -11,6 +11,6 @@ export class ProductGetOneUseCase {
     const { productId } = command;
     const product = await this.accessService.load({ productId });
 
-    return product.toView();
+    return product.toSnapshot();
   }
 }

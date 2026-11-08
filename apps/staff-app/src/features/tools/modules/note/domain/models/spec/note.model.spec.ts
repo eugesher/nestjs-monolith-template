@@ -246,7 +246,7 @@ describe('NoteModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('maps a stored note with its instants as ISO strings', () => {
       const note = NoteModel.reconstitute({
         id: '7',
@@ -260,7 +260,7 @@ describe('NoteModel', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       });
 
-      expect(note.toView()).toEqual({
+      expect(note.toSnapshot()).toEqual({
         id: '7',
         subjectType: 'product',
         subjectId: '42',

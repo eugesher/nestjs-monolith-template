@@ -6,11 +6,11 @@ import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductNameInvalidException } from '../exceptions/product-name-invalid.exception';
 import { ProductSkuInvalidException } from '../exceptions/product-sku-invalid.exception';
 import { ProductVersionInvalidException } from '../exceptions/product-version-invalid.exception';
-import { IProductCandidate } from '../interfaces/product-candidate.interface';
-import { IProductChanges } from '../interfaces/product-changes.interface';
-import { IProductDraft } from '../interfaces/product-draft.interface';
-import { IProductRecord } from '../interfaces/product-record.interface';
-import { IProductSnapshot } from '../interfaces/product-snapshot.interface';
+import { IProductCandidateInput } from '../interfaces/inputs/product-candidate.input';
+import { IProductChangesInput } from '../interfaces/inputs/product-changes.input';
+import { IProductRecordInput } from '../interfaces/inputs/product-record.input';
+import { IProductDraftOutput } from '../interfaces/outputs/product-draft.output';
+import { IProductSnapshotOutput } from '../interfaces/outputs/product-snapshot.output';
 
 export class ProductModel extends AggregateRoot<string> {
   public get name(): string {
@@ -40,7 +40,7 @@ export class ProductModel extends AggregateRoot<string> {
     super(id);
   }
 
-  public static reconstitute(record: IProductRecord): ProductModel {
+  public static reconstitute(record: IProductRecordInput): ProductModel {
     const { id, sku, name, status, version, createdAt, updatedAt } = record;
     const validSku = ProductModel.validSku(sku);
     const validName = ProductModel.validName(name);
@@ -49,7 +49,7 @@ export class ProductModel extends AggregateRoot<string> {
     return new ProductModel(id, validSku, validName, status, validVersion, createdAt, updatedAt);
   }
 
-  public static createDraft(candidate: IProductCandidate): IProductDraft {
+  public static createDraft(candidate: IProductCandidateInput): IProductDraftOutput {
     const { sku, name } = candidate;
     const validSku = ProductModel.validSku(sku);
     const validName = ProductModel.validName(name);
@@ -57,7 +57,7 @@ export class ProductModel extends AggregateRoot<string> {
     return { sku: validSku, name: validName, status: ProductStatusEnum.DRAFT, version: 1 };
   }
 
-  public update(changes: IProductChanges): void {
+  public update(changes: IProductChangesInput): void {
     const { name } = changes;
 
     if (name === undefined) {
@@ -95,7 +95,7 @@ export class ProductModel extends AggregateRoot<string> {
     this.addDomainEvent(event);
   }
 
-  public toView(): IProductSnapshot {
+  public toSnapshot(): IProductSnapshotOutput {
     return {
       id: this.id,
       sku: this.sku,

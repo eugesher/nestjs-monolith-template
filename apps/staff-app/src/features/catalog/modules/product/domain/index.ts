@@ -17,10 +17,10 @@ export * from './exceptions/product-version-mismatch.exception';
 
 export * from './helpers/product.helper';
 
-export * from './interfaces/product-candidate.interface';
-export * from './interfaces/product-changes.interface';
-export * from './interfaces/product-draft.interface';
-export * from './interfaces/product-record.interface';
-export * from './interfaces/product-snapshot.interface';
+export * from './interfaces/inputs/product-candidate.input';
+export * from './interfaces/inputs/product-changes.input';
+export * from './interfaces/inputs/product-record.input';
+export * from './interfaces/outputs/product-draft.output';
+export * from './interfaces/outputs/product-snapshot.output';
 
 export * from './models/product.model';

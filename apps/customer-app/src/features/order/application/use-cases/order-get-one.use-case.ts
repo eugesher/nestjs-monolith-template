@@ -21,6 +21,6 @@ export class OrderGetOneUseCase {
 
     const order = OrderModel.reconstitute(record);
 
-    return order.toView();
+    return order.toSnapshot();
   }
 }

@@ -1,6 +1,6 @@
 import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
-import { IAuthCustomerDraft } from '../../interfaces/auth-customer-draft.interface';
+import { IAuthCustomerDraftOutput } from '../../interfaces/outputs/auth-customer-draft.output';
 import { AuthCustomerModel } from '../auth-customer.model';
 
 describe('AuthCustomerModel', () => {
@@ -21,7 +21,7 @@ describe('AuthCustomerModel', () => {
     it.each(['eve', 'eve@', '@example.com', 'eve@example', 'e ve@example.com'])(
       'rejects the malformed email %s',
       (email) => {
-        const register = (): IAuthCustomerDraft =>
+        const register = (): IAuthCustomerDraftOutput =>
           AuthCustomerModel.createDraft({ email, passwordHash: 'hash' });
 
         expect(register).toThrow(

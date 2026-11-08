@@ -1,6 +1,6 @@
 import { IdentityExceptionCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
 
-import { IUserStaffUserDraft } from '../../interfaces/user-staff-user-draft.interface';
+import { IUserStaffUserDraftOutput } from '../../interfaces/outputs/user-staff-user-draft.output';
 import { UserStaffUserModel } from '../user-staff-user.model';
 
 describe('UserStaffUserModel', () => {
@@ -27,7 +27,7 @@ describe('UserStaffUserModel', () => {
     it.each(['editor', 'editor@', '@example.com', 'editor@example', 'ed itor@example.com'])(
       'rejects the malformed email %s',
       (email) => {
-        const register = (): IUserStaffUserDraft =>
+        const register = (): IUserStaffUserDraftOutput =>
           UserStaffUserModel.createDraft({ email, passwordHash: 'hash', roles: [] });
 
         expect(register).toThrow(

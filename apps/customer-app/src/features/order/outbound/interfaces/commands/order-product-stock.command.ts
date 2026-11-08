@@ -1,9 +1,9 @@
-import { IOrderMovement } from '../../../domain';
+import { IOrderMovementOutput } from '../../../domain';
 
 export interface IOrderProductStockLockCommand {
   productIds: string[];
 }
 
 export interface IOrderProductStockWithdrawCommand {
-  movements: IOrderMovement[];
+  movements: IOrderMovementOutput[];
 }

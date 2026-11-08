@@ -5,7 +5,7 @@ import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import {
-  IProductDraft,
+  IProductDraftOutput,
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
   ProductModel,
@@ -82,12 +82,12 @@ export class ProductCreateUseCase {
     }
   }
 
-  private async persist(draft: IProductDraft, idempotencyKey: string): Promise<IProductView> {
+  private async persist(draft: IProductDraftOutput, idempotencyKey: string): Promise<IProductView> {
     try {
       const productId = await this.repository.insert(draft);
       const record = await this.repository.findInserted(productId);
       const created = ProductModel.reconstitute(record);
-      const view = created.toView();
+      const view = created.toSnapshot();
 
       await this.idempotency.complete({ key: idempotencyKey, response: view });
 

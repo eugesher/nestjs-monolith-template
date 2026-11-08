@@ -23,7 +23,7 @@ export class ReminderRescheduleUseCase {
 
     await this.summary.invalidate(ownerId);
 
-    const view = written.toView();
+    const view = written.toSnapshot();
 
     this.logger.info(
       { reminderId, dueOn: view.dueOn, version: view.version },

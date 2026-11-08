@@ -1,8 +1,8 @@
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import { INoteRevisionCandidate } from '../interfaces/note-revision-candidate.interface';
-import { INoteRevisionDraft } from '../interfaces/note-revision-draft.interface';
-import { INoteRevisionRecord } from '../interfaces/note-revision-record.interface';
-import { INoteRevisionSnapshot } from '../interfaces/note-revision-snapshot.interface';
+import { INoteRevisionCandidateInput } from '../interfaces/inputs/note-revision-candidate.input';
+import { INoteRevisionRecordInput } from '../interfaces/inputs/note-revision-record.input';
+import { INoteRevisionDraftOutput } from '../interfaces/outputs/note-revision-draft.output';
+import { INoteRevisionSnapshotOutput } from '../interfaces/outputs/note-revision-snapshot.output';
 
 export class NoteRevisionModel {
   private static readonly FIRST_REVISED_VERSION = 2;
@@ -20,7 +20,7 @@ export class NoteRevisionModel {
     Object.freeze(this);
   }
 
-  public static reconstitute(record: INoteRevisionRecord): NoteRevisionModel {
+  public static reconstitute(record: INoteRevisionRecordInput): NoteRevisionModel {
     const { id, noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId, recordedAt } =
       record;
     const validNoteVersion = NoteRevisionModel.validNoteVersion(noteVersion);
@@ -37,7 +37,7 @@ export class NoteRevisionModel {
     );
   }
 
-  public static createDraft(candidate: INoteRevisionCandidate): INoteRevisionDraft {
+  public static createDraft(candidate: INoteRevisionCandidateInput): INoteRevisionDraftOutput {
     const { noteId, noteVersion, bodyBefore, bodyAfter, editorId, correlationId } = candidate;
     const validNoteVersion = NoteRevisionModel.validNoteVersion(noteVersion);
 
@@ -51,7 +51,7 @@ export class NoteRevisionModel {
     };
   }
 
-  public toView(): INoteRevisionSnapshot {
+  public toSnapshot(): INoteRevisionSnapshotOutput {
     return {
       id: this.id,
       noteId: this.noteId,

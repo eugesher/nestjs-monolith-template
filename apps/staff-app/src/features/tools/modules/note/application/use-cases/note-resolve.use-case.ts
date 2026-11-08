@@ -21,7 +21,7 @@ export class NoteResolveUseCase {
   public async execute(command: INoteResolveCommand): Promise<INoteView> {
     const { noteId } = command;
     const resolved = await this.writeService.run({ noteId }, () => this.attempt(command));
-    const view = resolved.toView();
+    const view = resolved.toSnapshot();
 
     this.logger.info({ noteId, version: view.version }, 'Note resolved');
 

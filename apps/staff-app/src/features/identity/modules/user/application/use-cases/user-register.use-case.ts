@@ -4,7 +4,11 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { AuthEmailTakenException, IUserStaffUserDraft, UserStaffUserModel } from '../../domain';
+import {
+  AuthEmailTakenException,
+  IUserStaffUserDraftOutput,
+  UserStaffUserModel,
+} from '../../domain';
 import {
   USER_CREDENTIALS_PORT,
   USER_REGISTER_REPOSITORY_PORT,
@@ -40,7 +44,7 @@ export class UserRegisterUseCase {
     return { id, email: draft.email };
   }
 
-  private async insert(draft: IUserStaffUserDraft): Promise<string> {
+  private async insert(draft: IUserStaffUserDraftOutput): Promise<string> {
     const { email, passwordHash, status, roles } = draft;
 
     try {

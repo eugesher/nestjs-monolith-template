@@ -1,6 +1,6 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { IRolePermissionRecord } from '../interfaces/role-permission-record.interface';
+import { IRolePermissionRecordInput } from '../interfaces/inputs/role-permission-record.input';
 
 export class RolePermissionModel {
   private constructor(
@@ -8,7 +8,7 @@ export class RolePermissionModel {
     public readonly code: PermissionCodeEnum,
   ) {}
 
-  public static reconstitute(record: IRolePermissionRecord): RolePermissionModel {
+  public static reconstitute(record: IRolePermissionRecordInput): RolePermissionModel {
     const { id, code } = record;
 
     return new RolePermissionModel(id, code as PermissionCodeEnum);

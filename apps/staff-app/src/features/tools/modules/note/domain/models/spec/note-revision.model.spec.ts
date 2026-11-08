@@ -76,7 +76,7 @@ describe('NoteRevisionModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('maps a stored revision with its instant as an ISO string', () => {
       const revision = NoteRevisionModel.reconstitute({
         id: '11',
@@ -89,7 +89,7 @@ describe('NoteRevisionModel', () => {
         recordedAt: new Date('2026-01-02T00:00:00.123Z'),
       });
 
-      expect(revision.toView()).toEqual({
+      expect(revision.toSnapshot()).toEqual({
         id: '11',
         noteId: '7',
         noteVersion: 3,

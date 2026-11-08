@@ -17,7 +17,7 @@ export class RoleListUseCase {
     return records.map((record) => {
       const role = RoleModel.reconstitute(record);
 
-      return role.toView();
+      return role.toSnapshot();
     });
   }
 }

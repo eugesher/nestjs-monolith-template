@@ -8,6 +8,6 @@ export * from './exceptions/product-idempotent-request-in-flight.exception';
 export * from './exceptions/product-not-found.exception';
 export * from './exceptions/product-quantity-invalid.exception';
 
-export * from './interfaces/product-stock-record.interface';
+export * from './interfaces/inputs/product-stock-record.input';
 
 export * from './models/product-stock.model';

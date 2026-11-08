@@ -227,7 +227,7 @@ describe('ProductModel', () => {
     });
   });
 
-  describe('toView', () => {
+  describe('toSnapshot', () => {
     it('answers a stored product with ISO instants', () => {
       const product = ProductModel.reconstitute({
         id: '12',
@@ -239,7 +239,7 @@ describe('ProductModel', () => {
         updatedAt: new Date('2026-01-02T00:00:00.000Z'),
       });
 
-      const view = product.toView();
+      const view = product.toSnapshot();
 
       expect(view).toEqual({
         id: '12',

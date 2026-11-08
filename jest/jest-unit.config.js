@@ -32,7 +32,7 @@ module.exports = {
     '!apps/*/test/**',
     '!libs/*/src/testing/**',
     '!**/index.ts',
-    '!**/*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record}.ts',
+    '!**/*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record,input,output}.ts',
     '!**/*.module.ts',
     '!**/infrastructure/persistence/repositories/**',
     '!**/infrastructure/persistence/host/**',

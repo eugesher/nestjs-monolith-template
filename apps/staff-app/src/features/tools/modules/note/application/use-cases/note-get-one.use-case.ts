@@ -11,6 +11,6 @@ export class NoteGetOneUseCase {
     const { noteId, authorId } = command;
     const note = await this.accessService.loadOwned({ noteId, authorId });
 
-    return note.toView();
+    return note.toSnapshot();
   }
 }

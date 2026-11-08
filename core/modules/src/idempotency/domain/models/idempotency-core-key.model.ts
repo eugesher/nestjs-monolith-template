@@ -1,9 +1,9 @@
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreKeyCandidate } from '../interfaces/idempotency-core-key-candidate.interface';
-import { IIdempotencyCoreKeyDraft } from '../interfaces/idempotency-core-key-draft.interface';
-import { IIdempotencyCoreKeyRecord } from '../interfaces/idempotency-core-key-record.interface';
+import { IIdempotencyCoreKeyCandidateInput } from '../interfaces/inputs/idempotency-core-key-candidate.input';
+import { IIdempotencyCoreKeyRecordInput } from '../interfaces/inputs/idempotency-core-key-record.input';
+import { IIdempotencyCoreKeyDraftOutput } from '../interfaces/outputs/idempotency-core-key-draft.output';
 
 export class IdempotencyCoreKeyModel {
   private static readonly MAX_KEY_LENGTH = 128;
@@ -16,13 +16,15 @@ export class IdempotencyCoreKeyModel {
     Object.freeze(this);
   }
 
-  public static reconstitute(record: IIdempotencyCoreKeyRecord): IdempotencyCoreKeyModel {
+  public static reconstitute(record: IIdempotencyCoreKeyRecordInput): IdempotencyCoreKeyModel {
     const { requestFingerprint, status, responseBody } = record;
 
     return new IdempotencyCoreKeyModel(requestFingerprint, status, responseBody);
   }
 
-  public static createDraft(candidate: IIdempotencyCoreKeyCandidate): IIdempotencyCoreKeyDraft {
+  public static createDraft(
+    candidate: IIdempotencyCoreKeyCandidateInput,
+  ): IIdempotencyCoreKeyDraftOutput {
     const { key, requestFingerprint } = candidate;
 
     if (key.length === 0) {

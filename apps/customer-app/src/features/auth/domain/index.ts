@@ -5,8 +5,8 @@ export * from './exceptions/auth-password-too-weak.exception';
 export * from './exceptions/auth-user-inactive.exception';
 export * from './exceptions/base/auth-base.exception';
 
-export * from './interfaces/auth-customer-candidate.interface';
-export * from './interfaces/auth-customer-draft.interface';
-export * from './interfaces/auth-customer-record.interface';
+export * from './interfaces/inputs/auth-customer-candidate.input';
+export * from './interfaces/inputs/auth-customer-record.input';
+export * from './interfaces/outputs/auth-customer-draft.output';
 
 export * from './models/auth-customer.model';

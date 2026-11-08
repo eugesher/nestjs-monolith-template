@@ -33,7 +33,7 @@ export class ProductGetManyUseCase {
     const data = records.map((record) => {
       const product = ProductModel.reconstitute(record);
 
-      return product.toView();
+      return product.toSnapshot();
     });
 
     return PaginationHelper.toPage(data, total, pageWindow);
