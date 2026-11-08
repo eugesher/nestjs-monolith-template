@@ -51,6 +51,12 @@ attributes, adds `cache.hit` or `cache.keys_unlinked` as it learns them, and the
 them when the work settles. Single-flight, the fallbacks on a failed read or write, and their logs
 stay in the use cases, so neither adapter decides what a failure means.
 
+**The Redis commands are child spans.** `cache.wrap` reads and writes through the store, not through
+`cache.get` and `cache.set`, so it opens no nested span of the lib. The auto-instrumentation of
+ioredis, on in `TracerHelper`, records each command (`get`, `set`) as a child of the span the
+adapter opened, because `startActiveSpan` makes it the active one while the work runs. The tracer
+must start before ioredis is loaded, so `main.ts` imports `@acme-libs/observability/tracer` first.
+
 ## Invalidation after the write
 
 Every use case that writes calls `invalidate` once its write has returned. A write that fails or is
