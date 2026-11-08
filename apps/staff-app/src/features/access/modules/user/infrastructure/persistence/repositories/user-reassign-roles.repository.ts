@@ -4,6 +4,7 @@ import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IUserReassignRolesRepositoryPort,
+  IUserReassignRolesStaffRoleRecord,
   IUserReassignRolesStaffUserRoleInsertQuery,
   USER_REASSIGN_ROLES_REPOSITORY_PORT,
 } from '../../../outbound';
@@ -24,6 +25,18 @@ export class UserReassignRolesRepository
     protected readonly orm: IOrmPort,
   ) {
     super();
+  }
+
+  public async existsUser(id: string): Promise<boolean> {
+    return await this.staffUserRepository.existsBy({ id });
+  }
+
+  public async findRoles(ids: string[]): Promise<IUserReassignRolesStaffRoleRecord[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    return await this.createStaffRoleBuilder().forByIds(ids).getMany();
   }
 
   public async deleteUserRolesExcept(userId: string, roleIds: string[]): Promise<void> {

@@ -7,6 +7,7 @@ import {
   AuthEmailTakenException,
   AuthPasswordTooWeakException,
   AuthRoleNotFoundException,
+  AuthUserNotFoundException,
 } from '../../../domain';
 import { UserHttpExceptionFilter } from '../user-http-exception.filter';
 
@@ -31,6 +32,7 @@ describe('UserHttpExceptionFilter', () => {
   it.each([
     ['AUTH_EMAIL_INVALID', 400, new AuthEmailInvalidException('domain message')],
     ['AUTH_PASSWORD_TOO_WEAK', 400, new AuthPasswordTooWeakException(12, 'domain message')],
+    ['AUTH_USER_NOT_FOUND', 404, new AuthUserNotFoundException('1', 'domain message')],
     ['AUTH_ROLE_NOT_FOUND', 404, new AuthRoleNotFoundException('admin', 'domain message')],
     ['AUTH_EMAIL_TAKEN', 409, new AuthEmailTakenException('ann@example.com', 'domain message')],
   ])(

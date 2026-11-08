@@ -1,12 +1,18 @@
 import { PinoLogger } from 'nestjs-pino';
 
+import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { UserReassignRolesUseCase } from '../user-reassign-roles.use-case';
 
 describe('UserReassignRolesUseCase', () => {
   let outcomes: string[];
-  let repository: { deleteUserRolesExcept: jest.Mock; insertUserRolesIgnore: jest.Mock };
+  let repository: {
+    existsUser: jest.Mock;
+    findRoles: jest.Mock;
+    deleteUserRolesExcept: jest.Mock;
+    insertUserRolesIgnore: jest.Mock;
+  };
   let transaction: { run: jest.Mock; afterCommit: jest.Mock };
   let logger: PinoLoggerMock;
   let useCase: UserReassignRolesUseCase;
@@ -14,6 +20,8 @@ describe('UserReassignRolesUseCase', () => {
   beforeEach(() => {
     outcomes = [];
     repository = {
+      existsUser: jest.fn().mockResolvedValue(true),
+      findRoles: jest.fn().mockResolvedValue([{ id: '2' }, { id: '3' }]),
       deleteUserRolesExcept: jest.fn(() => {
         outcomes.push('delete');
 
@@ -59,6 +67,27 @@ describe('UserReassignRolesUseCase', () => {
       { userId: 'user-1', roleIds: ['2', '3'] },
       'Roles reassigned',
     );
+  });
+
+  it('rejects an unknown user and opens no transaction', async () => {
+    repository.existsUser.mockResolvedValue(false);
+
+    const reassign = useCase.execute({ userId: 'ghost', roleIds: ['2'] });
+
+    await expect(reassign).rejects.toMatchObject({
+      code: IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND,
+    });
+    expect(transaction.run).not.toHaveBeenCalled();
+  });
+
+  it('rejects a role that is not stored and opens no transaction', async () => {
+    const reassign = useCase.execute({ userId: 'user-1', roleIds: ['2', '99'] });
+
+    await expect(reassign).rejects.toMatchObject({
+      code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
+      message: 'Role 99 was not found',
+    });
+    expect(transaction.run).not.toHaveBeenCalled();
   });
 
   it('clears the roles with an empty list', async () => {

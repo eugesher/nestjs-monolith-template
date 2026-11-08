@@ -397,7 +397,7 @@ exports[`App Access User PUT /api/access/users/:userId/roles should reassign the
 }
 `;
 
-exports[`App Access User PUT /api/access/users/:userId/roles should skip a role id that is not stored 1`] = `
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for a role that is not stored and change nothing 1`] = `
 {
   "db": {
     "staff_user_roles": [
@@ -413,28 +413,21 @@ exports[`App Access User PUT /api/access/users/:userId/roles should skip a role 
   },
   "response": {
     "body": {
-      "id": "4",
-      "roleIds": [
-        "2",
-        "3",
-        "99",
-      ],
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role 99 was not found",
+      "statusCode": 404,
     },
   },
 }
 `;
 
-exports[`App Access User PUT /api/access/users/:userId/roles should store nothing for an unknown user 1`] = `
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for an unknown user 1`] = `
 {
-  "db": {
-    "staff_user_roles": [],
-  },
   "response": {
     "body": {
-      "id": "99",
-      "roleIds": [
-        "2",
-      ],
+      "code": "AUTH_USER_NOT_FOUND",
+      "message": "User 99 was not found",
+      "statusCode": 404,
     },
   },
 }

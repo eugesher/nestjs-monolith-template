@@ -4,6 +4,14 @@ import { validateSync } from 'class-validator';
 import { RolePermissionsReassignRequestDto } from '../role-permissions-reassign.request.dto';
 
 describe('RolePermissionsReassignRequestDto', () => {
+  it('accepts an empty list', () => {
+    const dto = plainToInstance(RolePermissionsReassignRequestDto, { permissionCodes: [] });
+
+    const errors = validateSync(dto);
+
+    expect(errors).toEqual([]);
+  });
+
   it('accepts known permission codes', () => {
     const dto = plainToInstance(RolePermissionsReassignRequestDto, {
       permissionCodes: ['access-management', 'ledger:read'],
@@ -15,7 +23,6 @@ describe('RolePermissionsReassignRequestDto', () => {
   });
 
   it.each([
-    ['an empty list', { permissionCodes: [] }, 'arrayNotEmpty'],
     ['an unknown code', { permissionCodes: ['access-management', 'does-not:exist'] }, 'isEnum'],
     ['codes that are not a list', { permissionCodes: 'access-management' }, 'isArray'],
   ])('rejects %s', (_case, body, constraint) => {

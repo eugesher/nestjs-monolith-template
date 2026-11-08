@@ -1,8 +1,8 @@
 name: 02-unknown-user
 description: |-
-  e2e: Access › User › PUT /api/access/users/:userId/roles › should store nothing for an unknown user
+  e2e: Access › User › PUT /api/access/users/:userId/roles › should answer 404 for an unknown user
 
-  Expect: 200 OK, no rows for the user
+  Expect: 404 Not Found, code AUTH_USER_NOT_FOUND
   User: admin@example.com (token signed by scripts.py)
 method: PUT
 url: $STAFF_APP_BASE_URL/access/users/99/roles

@@ -3,6 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
+import { AuthRoleNotFoundException, AuthUserNotFoundException } from '../../domain';
 import {
   USER_REASSIGN_ROLES_REPOSITORY_PORT,
   type IUserReassignRolesRepositoryPort,
@@ -22,6 +23,18 @@ export class UserReassignRolesUseCase {
 
   public async execute(command: IUserReassignRolesCommand): Promise<IUserReassignRolesView> {
     const { userId, roleIds } = command;
+    const exists = await this.repository.existsUser(userId);
+
+    if (!exists) {
+      throw new AuthUserNotFoundException(userId);
+    }
+
+    const storedRoles = await this.repository.findRoles(roleIds);
+    const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
+
+    if (missing !== undefined) {
+      throw new AuthRoleNotFoundException(missing);
+    }
 
     await this.transaction.run(() => this.reassign(command));
 

@@ -188,12 +188,12 @@ export class UserE2E {
         }).toMatchSnapshot();
       });
 
-      it('should skip a role id that is not stored', async () => {
+      it('should answer 404 for a role that is not stored and change nothing', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/access/users/4/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ roleIds: ['2', '3', '99'] })
-          .expect(HttpStatus.OK);
+          .send({ roleIds: ['2', '99'] })
+          .expect(HttpStatus.NOT_FOUND);
 
         expect({
           response: { body: response.body },
@@ -201,17 +201,14 @@ export class UserE2E {
         }).toMatchSnapshot();
       });
 
-      it('should store nothing for an unknown user', async () => {
+      it('should answer 404 for an unknown user', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/access/users/99/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ roleIds: ['2'] })
-          .expect(HttpStatus.OK);
+          .expect(HttpStatus.NOT_FOUND);
 
-        expect({
-          response: { body: response.body },
-          db: { staff_user_roles: await staffUserRolesOf('99') },
-        }).toMatchSnapshot();
+        expect({ response: { body: response.body } }).toMatchSnapshot();
       });
     });
   }
