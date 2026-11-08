@@ -1,6 +1,5 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import { RoleEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 import { RolePersistenceStaffRoleBuilder } from '../role-persistence-staff-role.builder';
@@ -59,7 +58,7 @@ describe('RolePersistenceStaffRoleBuilder', () => {
     it('selects the role with its permissions by name', () => {
       const builder = new RolePersistenceStaffRoleBuilder(baseBuilder);
 
-      builder.forRole(RoleEnum.EDITOR);
+      builder.forRole('editor');
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
@@ -79,7 +78,7 @@ describe('RolePersistenceStaffRoleBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new RolePersistenceStaffRoleBuilder(baseBuilder);
-      const chained = builder.forRole(RoleEnum.EDITOR);
+      const chained = builder.forRole('editor');
 
       expect(chained).toBe(builder);
     });

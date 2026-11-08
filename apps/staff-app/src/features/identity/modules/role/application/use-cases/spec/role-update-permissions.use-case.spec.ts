@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityExceptionCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, PermissionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { RoleUpdatePermissionsUseCase } from '../role-update-permissions.use-case';
@@ -22,7 +22,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     repository = {
       findRole: jest.fn().mockResolvedValue({
         id: '2',
-        name: RoleEnum.EDITOR,
+        name: 'editor',
         rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
       }),
       findPermissions: jest.fn().mockResolvedValue([
@@ -60,7 +60,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
 
   it('replaces the permissions of the role in one transaction', async () => {
     const view = await useCase.execute({
-      role: RoleEnum.EDITOR,
+      role: 'editor',
       permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.PRODUCT_READ],
     });
 
@@ -81,7 +81,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
   it('rejects an unknown role', async () => {
     repository.findRole.mockResolvedValue(null);
 
-    const update = useCase.execute({ role: RoleEnum.ADMIN, permissionCodes: [] });
+    const update = useCase.execute({ role: 'admin', permissionCodes: [] });
 
     await expect(update).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
@@ -92,7 +92,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
 
   it('rejects unknown permission codes and writes nothing', async () => {
     const update = useCase.execute({
-      role: RoleEnum.EDITOR,
+      role: 'editor',
       permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.LEDGER_READ],
     });
 

@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsEnum, IsString, MinLength } from 'class-validator';
-
-import { RoleEnum } from '@acme-libs/kernel';
+import { IsArray, IsEmail, IsString, MinLength } from 'class-validator';
 
 export class UserRegisterRequestDto {
   @ApiProperty({ example: 'editor@example.com' })
@@ -13,8 +11,8 @@ export class UserRegisterRequestDto {
   @MinLength(12)
   public password: string;
 
-  @ApiProperty({ enum: RoleEnum, isArray: true, example: [RoleEnum.EDITOR] })
+  @ApiProperty({ isArray: true, example: ['editor'] })
   @IsArray()
-  @IsEnum(RoleEnum, { each: true })
-  public roles: RoleEnum[];
+  @IsString({ each: true })
+  public roles: string[];
 }

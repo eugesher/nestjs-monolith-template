@@ -1,5 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
-
 import {
   IUserRegisterStaffRoleRecord,
   IUserRegisterStaffUserInsertQuery,
@@ -8,7 +6,7 @@ import {
 
 export interface IUserRegisterRepositoryPort {
   insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string>;
-  findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord[]>;
+  findRoles(names: string[]): Promise<IUserRegisterStaffRoleRecord[]>;
   insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void>;
 }
 

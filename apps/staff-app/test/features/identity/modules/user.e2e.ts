@@ -68,6 +68,30 @@ export class UserE2E {
         expect(login.body).toEqual({ accessToken: expect.any(String) });
       });
 
+      it('should refuse a role that is not stored with 404 and create no user', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/users')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({
+            email: 'unknown-role@example.com',
+            password: 'unknown-role-password-please-change',
+            roles: ['viewer', 'auditor'],
+          })
+          .expect(HttpStatus.NOT_FOUND);
+
+        const actual = {
+          response: { body: response.body },
+          db: {
+            staff_user: await this.ctx.dataSource.query(
+              'SELECT * FROM staff_user WHERE email = ? ORDER BY id',
+              ['unknown-role@example.com'],
+            ),
+          },
+        };
+
+        expect(actual).toMatchSnapshot();
+      });
+
       it('should let one of two simultaneous registrations with one email through and refuse the other with 409', async () => {
         const body = {
           email: 'race-viewer@example.com',

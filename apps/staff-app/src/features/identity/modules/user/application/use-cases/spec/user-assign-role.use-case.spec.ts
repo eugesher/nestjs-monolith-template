@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityExceptionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { UserAssignRoleUseCase } from '../user-assign-role.use-case';
@@ -24,7 +24,7 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('stores a new role and returns every role of the user', async () => {
-    const view = await useCase.execute({ userId: 'user-1', role: RoleEnum.VIEWER });
+    const view = await useCase.execute({ userId: 'user-1', role: 'viewer' });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor', 'viewer'] });
     expect(repository.findRole).toHaveBeenCalledWith('viewer');
@@ -33,7 +33,7 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('writes nothing for a role the user already has', async () => {
-    const view = await useCase.execute({ userId: 'user-1', role: RoleEnum.EDITOR });
+    const view = await useCase.execute({ userId: 'user-1', role: 'editor' });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor'] });
     expect(repository.insertUserRole).not.toHaveBeenCalled();
@@ -42,7 +42,7 @@ describe('UserAssignRoleUseCase', () => {
   it('rejects an unknown user', async () => {
     repository.findById.mockResolvedValue(null);
 
-    const assign = useCase.execute({ userId: 'ghost', role: RoleEnum.VIEWER });
+    const assign = useCase.execute({ userId: 'ghost', role: 'viewer' });
 
     await expect(assign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND,
@@ -53,7 +53,7 @@ describe('UserAssignRoleUseCase', () => {
   it('rejects a role missing from the role table', async () => {
     repository.findRole.mockResolvedValue(null);
 
-    const assign = useCase.execute({ userId: 'user-1', role: RoleEnum.ADMIN });
+    const assign = useCase.execute({ userId: 'user-1', role: 'admin' });
 
     await expect(assign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,

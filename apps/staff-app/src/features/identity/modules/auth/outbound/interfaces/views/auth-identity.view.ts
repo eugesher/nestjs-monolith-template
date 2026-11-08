@@ -1,9 +1,9 @@
-import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
 export interface IAuthIdentitySubjectView {
   id: string;
   email: string;
-  roles: RoleEnum[];
+  roles: string[];
 }
 
 export interface IAuthIdentityUserView {

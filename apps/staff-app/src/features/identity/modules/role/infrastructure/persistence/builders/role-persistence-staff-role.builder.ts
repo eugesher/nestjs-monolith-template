@@ -1,6 +1,5 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { RoleEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 export class RolePersistenceStaffRoleBuilder extends SelectQueryBuilder<StaffRole> {
@@ -13,7 +12,7 @@ export class RolePersistenceStaffRoleBuilder extends SelectQueryBuilder<StaffRol
     return this;
   }
 
-  public forRole(name: RoleEnum): this {
+  public forRole(name: string): this {
     this.selectRoleWithPermissions().where(`${this.alias}.name = :name`, { name });
 
     return this;

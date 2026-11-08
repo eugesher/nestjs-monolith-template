@@ -151,7 +151,7 @@ describe('libs by layer', () => {
 
   it.each([
     ['staff-app', 'import { CurrentUser, RequiresPermission } from "@acme-libs/auth";'],
-    ['staff-app', 'import { PermissionCodeEnum, RoleEnum } from "@acme-libs/kernel";'],
+    ['staff-app', 'import { PermissionCodeEnum } from "@acme-libs/kernel";'],
     ['customer-app', 'import { CurrentUser, Public } from "@acme-libs/auth";'],
     ['customer-app', 'import type { IAuthCurrentUserView } from "@acme-libs/contracts/auth";'],
   ])('%s presentation MAY take %s', async (app, code) => {
@@ -164,7 +164,6 @@ describe('libs by layer', () => {
   it.each([
     'import { CurrentUser, RequiresPermission } from "@acme-libs/auth";',
     'import { PermissionCodeEnum } from "@acme-libs/kernel";',
-    'import { ReminderStatusEnum, RoleEnum } from "@acme-libs/kernel";',
     'import { ReminderStatusEnum } from "@acme-libs/kernel";',
   ])(
     'customer-app presentation may NOT take %s — a customer holds no roles or permissions',

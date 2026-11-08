@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../../application';
 import { RoleController } from '../role.controller';
@@ -20,7 +20,7 @@ describe('RoleController', () => {
 
   describe('handleList', () => {
     it('answers the roles', async () => {
-      list.mockResolvedValue([{ name: RoleEnum.VIEWER, permissionCodes: [] }]);
+      list.mockResolvedValue([{ name: 'viewer', permissionCodes: [] }]);
 
       const response = await controller.handleList();
 
@@ -31,11 +31,11 @@ describe('RoleController', () => {
   describe('handleUpdatePermissions', () => {
     it('replaces the permissions of the role of the path with the codes of the body', async () => {
       updatePermissions.mockResolvedValue({
-        name: RoleEnum.VIEWER,
+        name: 'viewer',
         permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
-      const response = await controller.handleUpdatePermissions(RoleEnum.VIEWER, {
+      const response = await controller.handleUpdatePermissions('viewer', {
         permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 

@@ -25,5 +25,5 @@ the spec of a query builder registers them on its data source.
 
 **An app without claims mounts `AuthJwtModule` alone**, so no claim guard runs there (see
 `002-global-auth-guards.md`). `lint/boundaries/policies/customer-claims.mjs` refuses in customer-app
-the decorators that would be silently ignored: `AuthPermissionModule`, `@RequiresPermission`,
-`RoleEnum` and `PermissionCodeEnum`.
+the decorators that would be silently ignored: `AuthPermissionModule`, `@RequiresPermission` and
+`PermissionCodeEnum`.

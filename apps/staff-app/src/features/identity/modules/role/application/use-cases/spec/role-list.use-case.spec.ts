@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RoleListUseCase } from '../role-list.use-case';
 
@@ -8,12 +8,12 @@ describe('RoleListUseCase', () => {
       list: jest.fn().mockResolvedValue([
         {
           id: '1',
-          name: RoleEnum.ADMIN,
+          name: 'admin',
           rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
         },
         {
           id: '3',
-          name: RoleEnum.VIEWER,
+          name: 'viewer',
           rolePermissions: [],
         },
       ]),

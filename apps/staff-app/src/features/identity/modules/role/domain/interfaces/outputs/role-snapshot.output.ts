@@ -1,6 +1,6 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 export interface IRoleSnapshotOutput {
-  name: RoleEnum;
+  name: string;
   permissionCodes: PermissionCodeEnum[];
 }

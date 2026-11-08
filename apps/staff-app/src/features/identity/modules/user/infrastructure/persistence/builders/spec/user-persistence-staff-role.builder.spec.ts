@@ -1,6 +1,5 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import { RoleEnum } from '@acme-libs/kernel';
 import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 import { UserPersistenceStaffRoleBuilder } from '../user-persistence-staff-role.builder';
@@ -29,7 +28,7 @@ describe('UserPersistenceStaffRoleBuilder', () => {
     it('selects the id of the role by name', () => {
       const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
 
-      builder.forRole(RoleEnum.EDITOR);
+      builder.forRole('editor');
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id` ' +
@@ -41,7 +40,7 @@ describe('UserPersistenceStaffRoleBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
-      const chained = builder.forRole(RoleEnum.EDITOR);
+      const chained = builder.forRole('editor');
 
       expect(chained).toBe(builder);
     });
@@ -51,7 +50,7 @@ describe('UserPersistenceStaffRoleBuilder', () => {
     it('selects the ids of the roles with the given names', () => {
       const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
 
-      builder.forRoles([RoleEnum.EDITOR, RoleEnum.VIEWER]);
+      builder.forRoles(['editor', 'viewer']);
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id` ' +
@@ -63,7 +62,7 @@ describe('UserPersistenceStaffRoleBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
-      const chained = builder.forRoles([RoleEnum.EDITOR, RoleEnum.VIEWER]);
+      const chained = builder.forRoles(['editor', 'viewer']);
 
       expect(chained).toBe(builder);
     });

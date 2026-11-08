@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum } from 'class-validator';
-
-import { RoleEnum } from '@acme-libs/kernel';
+import { IsString } from 'class-validator';
 
 export class UserAssignRoleRequestDto {
-  @ApiProperty({ enum: RoleEnum })
-  @IsEnum(RoleEnum)
-  public role: RoleEnum;
+  @ApiProperty({ example: 'editor' })
+  @IsString()
+  public role: string;
 }

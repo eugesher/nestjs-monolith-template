@@ -1,4 +1,4 @@
-import { IdentityExceptionCodeEnum, PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RolePermissionModel } from '../role-permission.model';
 import { RoleModel } from '../role.model';
@@ -9,7 +9,7 @@ describe('RoleModel', () => {
   beforeEach(() => {
     role = RoleModel.reconstitute({
       id: '2',
-      name: RoleEnum.EDITOR,
+      name: 'editor',
       rolePermissions: [{ permission: { code: PermissionCodeEnum.IAM_ASSIGN } }],
     });
   });
@@ -79,7 +79,7 @@ describe('RoleModel', () => {
     it('copies the name and the permission codes of the role', () => {
       const role = RoleModel.reconstitute({
         id: '1',
-        name: RoleEnum.ADMIN,
+        name: 'admin',
         rolePermissions: [
           { permission: { code: PermissionCodeEnum.IAM_ASSIGN } },
           { permission: { code: PermissionCodeEnum.LEDGER_READ } },

@@ -1,4 +1,4 @@
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { AuthPermissionNotFoundException } from '../exceptions/auth-permission-not-found.exception';
 import { IRoleRecordInput, IRoleSnapshotOutput } from '../interfaces';
@@ -11,7 +11,7 @@ export class RoleModel {
 
   private constructor(
     public readonly id: string,
-    public readonly name: RoleEnum,
+    public readonly name: string,
     private codes: PermissionCodeEnum[],
   ) {}
 
@@ -21,7 +21,7 @@ export class RoleModel {
       .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
       .sort();
 
-    return new RoleModel(id, name as RoleEnum, permissionCodes);
+    return new RoleModel(id, name, permissionCodes);
   }
 
   public replacePermissions(requested: PermissionCodeEnum[], known: RolePermissionModel[]): void {

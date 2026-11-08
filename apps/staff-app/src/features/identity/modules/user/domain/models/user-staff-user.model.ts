@@ -1,4 +1,4 @@
-import { RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
@@ -9,7 +9,7 @@ import {
 } from '../interfaces';
 
 export class UserStaffUserModel {
-  public get roles(): readonly RoleEnum[] {
+  public get roles(): readonly string[] {
     return this.assignedRoles;
   }
 
@@ -18,12 +18,12 @@ export class UserStaffUserModel {
 
   private constructor(
     public readonly id: string,
-    private assignedRoles: RoleEnum[],
+    private assignedRoles: string[],
   ) {}
 
   public static reconstitute(record: IUserStaffUserRecordInput): UserStaffUserModel {
     const { id, userRoles } = record;
-    const roles = userRoles.map((userRole) => userRole.role.name as RoleEnum).sort();
+    const roles = userRoles.map((userRole) => userRole.role.name).sort();
 
     return new UserStaffUserModel(id, roles);
   }
@@ -47,7 +47,7 @@ export class UserStaffUserModel {
     }
   }
 
-  public assignRole(role: RoleEnum): boolean {
+  public assignRole(role: string): boolean {
     if (this.assignedRoles.includes(role)) {
       return false;
     }

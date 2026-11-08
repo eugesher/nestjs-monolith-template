@@ -1,6 +1,5 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { RoleEnum } from '@acme-libs/kernel';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
@@ -33,7 +32,7 @@ export class UserRegisterRepository
     return await this.staffUserRepository.insertOne(query);
   }
 
-  public async findRoles(names: RoleEnum[]): Promise<IUserRegisterStaffRoleRecord[]> {
+  public async findRoles(names: string[]): Promise<IUserRegisterStaffRoleRecord[]> {
     if (names.length === 0) {
       return [];
     }

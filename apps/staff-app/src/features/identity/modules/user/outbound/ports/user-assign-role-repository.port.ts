@@ -1,4 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
 import {
@@ -9,7 +8,7 @@ import {
 
 export interface IUserAssignRoleRepositoryPort {
   findById(id: string): Promise<Nullable<IUserAssignRoleStaffUserRecord>>;
-  findRole(name: RoleEnum): Promise<Nullable<IUserAssignRoleStaffRoleRecord>>;
+  findRole(name: string): Promise<Nullable<IUserAssignRoleStaffRoleRecord>>;
   insertUserRole(query: IUserAssignRoleStaffUserRoleInsertQuery): Promise<void>;
 }
 

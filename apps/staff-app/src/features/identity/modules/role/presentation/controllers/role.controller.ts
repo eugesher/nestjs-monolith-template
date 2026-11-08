@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Put, UseFilters } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { RequiresPermission } from '@acme-libs/auth';
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../application';
 import { RoleResponseDto, RoleUpdatePermissionsRequestDto } from '../dto';
@@ -30,7 +30,7 @@ export class RoleController {
   @ApiOperation({ summary: 'Replace the permission set of a role' })
   @ApiOkResponse({ type: RoleResponseDto })
   public async handleUpdatePermissions(
-    @Param('role') role: RoleEnum,
+    @Param('role') role: string,
     @Body() body: RoleUpdatePermissionsRequestDto,
   ): Promise<RoleResponseDto> {
     const { permissionCodes } = body;

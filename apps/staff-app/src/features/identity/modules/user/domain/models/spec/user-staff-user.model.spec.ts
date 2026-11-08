@@ -1,4 +1,4 @@
-import { IdentityExceptionCodeEnum, RoleEnum, UserStatusEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
 import { IUserStaffUserDraftOutput } from '../../interfaces';
 import { UserStaffUserModel } from '../user-staff-user.model';
@@ -12,7 +12,7 @@ describe('UserStaffUserModel', () => {
         const draft = UserStaffUserModel.createDraft({
           email: '  Editor@Example.COM ',
           passwordHash: 'hash',
-          roles: [RoleEnum.EDITOR, RoleEnum.EDITOR, RoleEnum.VIEWER],
+          roles: ['editor', 'editor', 'viewer'],
         });
 
         expect(draft).toEqual({
@@ -84,14 +84,14 @@ describe('UserStaffUserModel', () => {
     });
 
     it('adds a new role and reports the change', () => {
-      const added = user.assignRole(RoleEnum.EDITOR);
+      const added = user.assignRole('editor');
 
       expect(added).toBe(true);
       expect(user.roles).toEqual(['viewer', 'editor']);
     });
 
     it('keeps a role the user already has and reports no change', () => {
-      const added = user.assignRole(RoleEnum.VIEWER);
+      const added = user.assignRole('viewer');
 
       expect(added).toBe(false);
       expect(user.roles).toEqual(['viewer']);

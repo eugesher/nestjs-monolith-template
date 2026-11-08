@@ -6,6 +6,7 @@ import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/lo
 
 import {
   AuthEmailTakenException,
+  AuthRoleNotFoundException,
   IUserStaffUserDraftOutput,
   UserStaffUserModel,
 } from '../../domain';
@@ -50,6 +51,12 @@ export class UserRegisterUseCase {
     try {
       const id = await this.repository.insertUser({ email, passwordHash, status });
       const storedRoles = await this.repository.findRoles(roles);
+      const missing = roles.find((role) => !storedRoles.some((stored) => stored.name === role));
+
+      if (missing !== undefined) {
+        throw new AuthRoleNotFoundException(missing);
+      }
+
       const userRoles = storedRoles.map((role) => ({ userId: id, roleId: role.id }));
 
       await this.repository.insertUserRoles(userRoles);

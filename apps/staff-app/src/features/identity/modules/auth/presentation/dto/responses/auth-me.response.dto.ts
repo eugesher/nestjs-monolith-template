@@ -1,7 +1,5 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
 
-import { RoleEnum } from '@acme-libs/kernel';
-
 export class AuthMeResponseDto {
   @ApiResponseProperty()
   public id: string;
@@ -9,6 +7,6 @@ export class AuthMeResponseDto {
   @ApiResponseProperty({ example: 'admin@example.com' })
   public email: string;
 
-  @ApiResponseProperty({ example: [RoleEnum.ADMIN] })
-  public roles: RoleEnum[];
+  @ApiResponseProperty({ example: ['admin'] })
+  public roles: string[];
 }

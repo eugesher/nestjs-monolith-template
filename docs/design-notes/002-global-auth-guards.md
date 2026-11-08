@@ -51,9 +51,9 @@ by permissions only, and a role is a named set of them.
 
 **Two static modules, not a flag.** `AuthJwtModule.forRoot({ claims: true })` would hide the choice
 in an argument that no lint can read. An import of `AuthPermissionModule` is visible, and the lint
-policy `customer-claims.mjs` refuses it in customer-app, together with `@RequiresPermission`,
-`RoleEnum` and `PermissionCodeEnum`. Without the permission module the decorators would be silently
-ignored, so a route of customer-app cannot even name them.
+policy `customer-claims.mjs` refuses it in customer-app, together with `@RequiresPermission` and
+`PermissionCodeEnum`. Without the permission module the decorators would be silently ignored, so a
+route of customer-app cannot even name them.
 
 ## Order
 

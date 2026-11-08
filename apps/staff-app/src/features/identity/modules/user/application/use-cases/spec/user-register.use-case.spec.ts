@@ -1,6 +1,6 @@
 import { PinoLogger } from 'nestjs-pino';
 
-import { IdentityExceptionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
@@ -22,7 +22,7 @@ describe('UserRegisterUseCase', () => {
 
         return Promise.resolve('5');
       }),
-      findRoles: jest.fn().mockResolvedValue([{ id: '2' }]),
+      findRoles: jest.fn().mockResolvedValue([{ id: '2', name: 'editor' }]),
       insertUserRoles: jest.fn().mockResolvedValue(undefined),
     };
     transaction = {
@@ -55,7 +55,7 @@ describe('UserRegisterUseCase', () => {
     const view = await useCase.execute({
       email: 'Editor@Example.com',
       password: 'correct-horse-battery',
-      roles: [RoleEnum.EDITOR],
+      roles: ['editor'],
     });
 
     expect(view).toEqual({ id: '5', email: 'editor@example.com' });
@@ -69,6 +69,21 @@ describe('UserRegisterUseCase', () => {
     expect(repository.insertUserRoles).toHaveBeenCalledWith([{ userId: '5', roleId: '2' }]);
     expect(outcomes).toEqual(['begin', 'insert', 'commit']);
     expect(logger.info).toHaveBeenCalledWith({ userId: '5' }, 'User registered');
+  });
+
+  it('refuses a role that is not stored and rolls the transaction back', async () => {
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'correct-horse-battery',
+      roles: ['editor', 'auditor'],
+    });
+
+    await expect(register).rejects.toMatchObject({
+      code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
+      message: 'Role auditor was not found',
+    });
+    expect(repository.insertUserRoles).not.toHaveBeenCalled();
+    expect(outcomes).not.toContain('commit');
   });
 
   it('rejects a weak password before hashing it', async () => {

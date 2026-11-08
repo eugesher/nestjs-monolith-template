@@ -1,5 +1,3 @@
-import { RoleEnum } from '@acme-libs/kernel';
-
 import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../../application';
 import { UserController } from '../user.controller';
 
@@ -25,7 +23,7 @@ describe('UserController', () => {
       const response = await controller.handleRegister({
         email: 'ann@example.com',
         password: 'long-enough-password',
-        roles: [RoleEnum.EDITOR],
+        roles: ['editor'],
       });
 
       expect(response).toEqual({ id: 'user-1', email: 'ann@example.com' });
@@ -34,9 +32,9 @@ describe('UserController', () => {
 
   describe('handleAssignRole', () => {
     it('grants the role of the body to the user of the path', async () => {
-      assignRole.mockResolvedValue({ id: 'user-1', roles: [RoleEnum.VIEWER] });
+      assignRole.mockResolvedValue({ id: 'user-1', roles: ['viewer'] });
 
-      const response = await controller.handleAssignRole('user-1', { role: RoleEnum.VIEWER });
+      const response = await controller.handleAssignRole('user-1', { role: 'viewer' });
 
       expect(response).toEqual({ id: 'user-1', roles: ['viewer'] });
       expect(assignRole).toHaveBeenCalledWith({ userId: 'user-1', role: 'viewer' });

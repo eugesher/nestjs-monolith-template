@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { PermissionCodeEnum, RoleEnum } from '@acme-libs/kernel';
+import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
@@ -30,7 +30,7 @@ export class RoleUpdatePermissionsRepository
     super();
   }
 
-  public async findRole(name: RoleEnum): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
+  public async findRole(name: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
     return await this.createStaffRoleBuilder().forRole(name).getOne();
   }
 
