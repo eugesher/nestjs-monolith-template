@@ -1,14 +1,14 @@
-import { Body, Controller, HttpCode, HttpStatus, Param, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../application';
+import { UserReassignRolesUseCase, UserRegisterUseCase } from '../../application';
 import {
-  UserAssignRoleRequestDto,
   UserRegisterRequestDto,
   UserResponseDto,
+  UserRolesReassignRequestDto,
   UserRolesResponseDto,
 } from '../dto';
 import { UserHttpExceptionFilter } from '../filters/user-http-exception.filter';
@@ -19,7 +19,7 @@ import { UserHttpExceptionFilter } from '../filters/user-http-exception.filter';
 export class UserController {
   constructor(
     private readonly register: UserRegisterUseCase,
-    private readonly assignRole: UserAssignRoleUseCase,
+    private readonly reassignRoles: UserReassignRolesUseCase,
   ) {}
 
   @Post()
@@ -30,17 +30,16 @@ export class UserController {
     return await this.register.execute(body);
   }
 
-  @Post(':userId/roles')
+  @Put(':userId/roles')
   @RequiresPermission(PermissionCodeEnum.IDENTITY_ROLE_ASSIGN)
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Grant a role to a principal' })
+  @ApiOperation({ summary: 'Reassign the roles of a principal' })
   @ApiOkResponse({ type: UserRolesResponseDto })
-  public async handleAssignRole(
+  public async handleReassignRoles(
     @Param('userId') userId: string,
-    @Body() body: UserAssignRoleRequestDto,
+    @Body() body: UserRolesReassignRequestDto,
   ): Promise<UserRolesResponseDto> {
-    const { roleId } = body;
+    const { roleIds } = body;
 
-    return await this.assignRole.execute({ userId, roleId });
+    return await this.reassignRoles.execute({ userId, roleIds });
   }
 }

@@ -1,15 +1,15 @@
-name: 01-assign
+name: 02-unknown-user
 description: |-
-  e2e: Identity › User › POST /api/identity/users/:userId/roles › should grant a role and answer 200
+  e2e: Identity › User › PUT /api/identity/users/:userId/roles › should store nothing for an unknown user
 
-  Expect: 200 OK, roles viewer and editor
+  Expect: 200 OK, no rows for the user
   User: admin@example.com (token signed by scripts.py)
-method: POST
-url: $STAFF_APP_BASE_URL/identity/users/4/roles
+method: PUT
+url: $STAFF_APP_BASE_URL/identity/users/99/roles
 body:
   content: |-
     {
-      "roleId": "2"
+      "roleIds": ["2"]
     }
 auth:
   type: bearer_token

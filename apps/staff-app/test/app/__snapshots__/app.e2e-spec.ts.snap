@@ -1217,44 +1217,6 @@ exports[`App Identity User POST /api/identity/users should refuse a taken email 
 }
 `;
 
-exports[`App Identity User POST /api/identity/users/:userId/roles should answer 404 for an unknown user 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_NOT_FOUND",
-      "message": "User 99 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Identity User POST /api/identity/users/:userId/roles should grant a role and answer 200 1`] = `
-{
-  "db": {
-    "staff_user_roles": [
-      {
-        "role_id": "2",
-        "user_id": "4",
-      },
-      {
-        "role_id": "3",
-        "user_id": "4",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "id": "4",
-      "roles": [
-        "viewer",
-        "editor",
-      ],
-    },
-  },
-}
-`;
-
 exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] = `
 {
   "response": {

@@ -27,7 +27,7 @@ export class IdentityE2E {
 
     describe('User', () => {
       this.userE2E.handleRegister();
-      this.userE2E.handleAssignRole();
+      this.userE2E.handleReassignRoles();
     });
   }
 }

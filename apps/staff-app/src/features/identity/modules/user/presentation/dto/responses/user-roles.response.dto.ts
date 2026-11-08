@@ -4,6 +4,6 @@ export class UserRolesResponseDto {
   @ApiResponseProperty()
   public id: string;
 
-  @ApiResponseProperty({ example: ['editor'] })
-  public roles: string[];
+  @ApiResponseProperty({ example: ['2', '3'] })
+  public roleIds: string[];
 }

@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { UserAssignRoleUseCase, UserRegisterUseCase } from './application';
+import { UserReassignRolesUseCase, UserRegisterUseCase } from './application';
 import {
-  UserAssignRoleRepository,
   UserCredentialsLibAdapter,
+  UserReassignRolesRepository,
   UserRegisterRepository,
 } from './infrastructure';
 import { UserController } from './presentation';
@@ -17,8 +17,8 @@ import { UserController } from './presentation';
   providers: [
     HttpExceptionFilter,
     UserRegisterUseCase,
-    UserAssignRoleUseCase,
-    UserAssignRoleRepository.provider,
+    UserReassignRolesUseCase,
+    UserReassignRolesRepository.provider,
     UserRegisterRepository.provider,
     UserCredentialsLibAdapter.provider,
   ],

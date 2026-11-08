@@ -40,20 +40,6 @@ describe('UserStaffUserModel', () => {
     );
   });
 
-  describe('reconstitute', () => {
-    it('keeps the stored state as is', () => {
-      const user = UserStaffUserModel.reconstitute({
-        id: 'user-1',
-        userRoles: [{ role: { name: 'viewer' } }],
-      });
-
-      expect(user).toMatchObject({
-        id: 'user-1',
-        roles: ['viewer'],
-      });
-    });
-  });
-
   describe('assertPasswordStrength', () => {
     it('accepts a password of 12 characters', () => {
       const assert = (): void => UserStaffUserModel.assertPasswordStrength('123456789012');
@@ -70,31 +56,6 @@ describe('UserStaffUserModel', () => {
           message: 'Password must be at least 12 characters',
         }) as Error,
       );
-    });
-  });
-
-  describe('assignRole', () => {
-    let user: UserStaffUserModel;
-
-    beforeEach(() => {
-      user = UserStaffUserModel.reconstitute({
-        id: 'user-1',
-        userRoles: [{ role: { name: 'viewer' } }],
-      });
-    });
-
-    it('adds a new role and reports the change', () => {
-      const added = user.assignRole('editor');
-
-      expect(added).toBe(true);
-      expect(user.roles).toEqual(['viewer', 'editor']);
-    });
-
-    it('keeps a role the user already has and reports no change', () => {
-      const added = user.assignRole('viewer');
-
-      expect(added).toBe(false);
-      expect(user.roles).toEqual(['viewer']);
     });
   });
 });

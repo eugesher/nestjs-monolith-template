@@ -148,34 +148,70 @@ export class UserE2E {
     });
   }
 
-  public handleAssignRole(): void {
-    describe('POST /api/identity/users/:userId/roles', () => {
-      it('should grant a role and answer 200', async () => {
+  public handleReassignRoles(): void {
+    describe('PUT /api/identity/users/:userId/roles', () => {
+      const staffUserRolesOf = async (userId: string): Promise<unknown> =>
+        await this.ctx.dataSource.query(
+          'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
+          [userId],
+        );
+
+      it('should clear the roles with an empty list and answer 200', async () => {
+        try {
+          const response = await request(this.ctx.app.getHttpServer())
+            .put('/api/identity/users/4/roles')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send({ roleIds: [] })
+            .expect(HttpStatus.OK);
+
+          expect({
+            response: { body: response.body },
+            db: { staff_user_roles: await staffUserRolesOf('4') },
+          }).toMatchSnapshot();
+        } finally {
+          await this.ctx.dataSource.query(
+            'INSERT INTO staff_user_roles (user_id, role_id) VALUES (4, 3)',
+          );
+        }
+      });
+
+      it('should reassign the roles and answer 200', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/identity/users/4/roles')
+          .put('/api/identity/users/4/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ roleId: '2' })
+          .send({ roleIds: ['2', '3'] })
           .expect(HttpStatus.OK);
 
         expect({
           response: { body: response.body },
-          db: {
-            staff_user_roles: await this.ctx.dataSource.query(
-              'SELECT * FROM staff_user_roles WHERE user_id = ? ORDER BY role_id',
-              ['4'],
-            ),
-          },
+          db: { staff_user_roles: await staffUserRolesOf('4') },
         }).toMatchSnapshot();
       });
 
-      it('should answer 404 for an unknown user', async () => {
+      it('should skip a role id that is not stored', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .post('/api/identity/users/99/roles')
+          .put('/api/identity/users/4/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ roleId: '2' })
-          .expect(HttpStatus.NOT_FOUND);
+          .send({ roleIds: ['2', '3', '99'] })
+          .expect(HttpStatus.OK);
 
-        expect({ response: { body: response.body } }).toMatchSnapshot();
+        expect({
+          response: { body: response.body },
+          db: { staff_user_roles: await staffUserRolesOf('4') },
+        }).toMatchSnapshot();
+      });
+
+      it('should store nothing for an unknown user', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .put('/api/identity/users/99/roles')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ roleIds: ['2'] })
+          .expect(HttpStatus.OK);
+
+        expect({
+          response: { body: response.body },
+          db: { staff_user_roles: await staffUserRolesOf('99') },
+        }).toMatchSnapshot();
       });
     });
   }

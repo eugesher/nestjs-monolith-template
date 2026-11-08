@@ -1,18 +1,18 @@
-import { UserAssignRoleUseCase, UserRegisterUseCase } from '../../../application';
+import { UserReassignRolesUseCase, UserRegisterUseCase } from '../../../application';
 import { UserController } from '../user.controller';
 
 describe('UserController', () => {
   let register: jest.Mock;
-  let assignRole: jest.Mock;
+  let reassignRoles: jest.Mock;
   let controller: UserController;
 
   beforeEach(() => {
     register = jest.fn();
-    assignRole = jest.fn();
+    reassignRoles = jest.fn();
 
     controller = new UserController(
       { execute: register } as unknown as UserRegisterUseCase,
-      { execute: assignRole } as unknown as UserAssignRoleUseCase,
+      { execute: reassignRoles } as unknown as UserReassignRolesUseCase,
     );
   });
 
@@ -30,14 +30,14 @@ describe('UserController', () => {
     });
   });
 
-  describe('handleAssignRole', () => {
-    it('grants the role of the body to the user of the path', async () => {
-      assignRole.mockResolvedValue({ id: 'user-1', roles: ['viewer'] });
+  describe('handleReassignRoles', () => {
+    it('reassigns the roles of the user of the path with the ids of the body', async () => {
+      reassignRoles.mockResolvedValue({ id: 'user-1', roleIds: ['3'] });
 
-      const response = await controller.handleAssignRole('user-1', { roleId: '3' });
+      const response = await controller.handleReassignRoles('user-1', { roleIds: ['3'] });
 
-      expect(response).toEqual({ id: 'user-1', roles: ['viewer'] });
-      expect(assignRole).toHaveBeenCalledWith({ userId: 'user-1', roleId: '3' });
+      expect(response).toEqual({ id: 'user-1', roleIds: ['3'] });
+      expect(reassignRoles).toHaveBeenCalledWith({ userId: 'user-1', roleIds: ['3'] });
     });
   });
 });

@@ -24,28 +24,6 @@ describe('UserPersistenceStaffRoleBuilder', () => {
     baseBuilder = dataSource.getRepository(StaffRole).createQueryBuilder(StaffRole.name);
   });
 
-  describe('forById', () => {
-    it('selects the id and the name of the role by id', () => {
-      const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
-
-      builder.forById('2');
-
-      expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name` ' +
-          'FROM `staff_role` `StaffRole` ' +
-          'WHERE `StaffRole`.`id` = ?',
-        ['2'],
-      ]);
-    });
-
-    it('returns the same builder for chaining', () => {
-      const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);
-      const chained = builder.forById('2');
-
-      expect(chained).toBe(builder);
-    });
-  });
-
   describe('forByIds', () => {
     it('selects the ids of the roles with the given ids', () => {
       const builder = new UserPersistenceStaffRoleBuilder(baseBuilder);

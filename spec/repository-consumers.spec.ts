@@ -6,7 +6,7 @@ describe('one repository per use case, service or facade', () => {
 
     expect(names).toEqual(
       expect.arrayContaining([
-        'UserAssignRoleUseCase',
+        'UserReassignRolesUseCase',
         'StaffAuthCoreFindSubjectUseCase',
         'IdempotencyPurgeUseCase',
         'IdempotencyCoreClaimUseCase',
