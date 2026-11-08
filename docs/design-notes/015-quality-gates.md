@@ -87,6 +87,11 @@ Node is the latest 24, and Yarn comes from `packageManager` through `corepack en
 one rule per file of `lint/configs`, so the order is fixed by `eslint --fix` and never argued in a
 review.
 
+**Line width has two limits.** Prettier wraps at `printWidth` 100, and `max-len` of `style.mjs`
+fails a line over 150. An import of one name is never wrapped by Prettier, so the path decides its
+length: a host importing its builder or a spec importing its subject can run past 100 under the
+naming of `029-naming.md`, and stays within the limit of the lint.
+
 **Imports** (`imports.mjs`, `sort-imports`) come in three blocks, separated by one blank line:
 
 1. `@nestjs/*`, then the other packages;
