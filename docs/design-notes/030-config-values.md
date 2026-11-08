@@ -24,10 +24,10 @@ every variable with Joi, so `LEDGER_RETRY_ATTEMPTS` is already a number when it 
 the property with `getOrThrow`. The type argument states what the schema produces; it checks
 nothing, so it must follow the Joi type of the property.
 
-**The token belongs to the consumer.** The outbound layer declares the token, as it declares a
-port, and the adapter or use case that needs the value injects it. Nothing outside
-`infrastructure/config` knows which variable of `.env` feeds the token. The token is named after
-the module and the property (see `029-naming.md`).
+**The token belongs to the consumer.** The outbound layer declares the token, as it declares a port,
+and the adapter or use case that needs the value injects it. Nothing outside `infrastructure/config`
+knows which variable of `.env` feeds the token. The token is named after the module and the property
+(see `029-naming.md`).
 
 **One file per module binds its values.** `infrastructure/config/<module>-config.provider.ts`
 exports one constant per value, `<Module>Config<Property>Provider`, and the barrel of
@@ -36,13 +36,13 @@ not repeat it: `IdempotencyConfigKeyTtlHoursProvider`. The module root lists the
 the `provider` of its adapters (see `031-static-provider.md`) and so reaches neither `outbound` nor
 the config lib.
 
-**The options name what goes in.** `injectionToken` and `configProperty` keep the input apart
-from the `FactoryProvider` that comes out, whose fields `provide`, `inject` and `useFactory` belong
-to Nest.
+**The options name what goes in.** `injectionToken` and `configProperty` keep the input apart from
+the `FactoryProvider` that comes out, whose fields `provide`, `inject` and `useFactory` belong to
+Nest.
 
-**The provider is a literal, not a class.** A class with static `provide`, `inject` and
-`useFactory` fields satisfies `FactoryProvider` too, because both TypeScript and Nest check the
-shape, but it adds nothing over the literal and makes Nest scan its prototype for enhancers.
+**The provider is a literal, not a class.** A class with static `provide`, `inject` and `useFactory`
+fields satisfies `FactoryProvider` too, because both TypeScript and Nest check the shape, but it
+adds nothing over the literal and makes Nest scan its prototype for enhancers.
 
 ## Lint
 
@@ -54,6 +54,6 @@ observability lib.
 
 ## Tests
 
-A spec next to each provider file checks that every constant binds its token and reads its
-property. That `inject` holds `ConfigService` is checked once, by the spec of `ConfigValueProvider`,
-so the module spec does not import `@nestjs/config`, which its layer may not reach.
+A spec next to each provider file checks that every constant binds its token and reads its property.
+That `inject` holds `ConfigService` is checked once, by the spec of `ConfigValueProvider`, so the
+module spec does not import `@nestjs/config`, which its layer may not reach.

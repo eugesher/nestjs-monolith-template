@@ -1,7 +1,7 @@
 # 025 — Feature groups
 
-The features of staff-app sit in groups: a parent module that
-mounts its child modules and holds no code of its own.
+The features of staff-app sit in groups: a parent module that mounts its child modules and holds no
+code of its own.
 
 | Group      | Modules                   | Routes                                                 |
 | ---------- | ------------------------- | ------------------------------------------------------ |
@@ -39,8 +39,8 @@ children only through `modules/index.ts`, and `modules/index.ts` re-exports only
 its own children (see `spec/architecture/nested-features.spec.ts`).
 
 **A child keeps its own name.** The classes of `identity/modules/role` carry the `Role` prefix, not
-`IdentityRole`: the group is a folder, not a context. Two children of different groups with one
-name would need a prefix; none exist.
+`IdentityRole`: the group is a folder, not a context. Two children of different groups with one name
+would need a prefix; none exist.
 
 ## Routes and tags
 
@@ -53,8 +53,9 @@ page lists the modules of a group together.
 
 ## Tests and requests follow the groups
 
-- The e2e classes of the modules sit in `apps/staff-app/test/features/<group>/modules/<module>.e2e.ts`,
-  and `<group>/<group>.e2e.ts` mounts them: its `execute()` holds a `describe` per module, and
-  `app.e2e-spec.ts` calls it inside the `describe` of the group (see `014-e2e-suites.md`).
+- The e2e classes of the modules sit in
+  `apps/staff-app/test/features/<group>/modules/<module>.e2e.ts`, and `<group>/<group>.e2e.ts`
+  mounts them: its `execute()` holds a `describe` per module, and `app.e2e-spec.ts` calls it inside
+  the `describe` of the group (see `014-e2e-suites.md`).
 - The Posting requests sit in `.http/staff-app/<group>/<module>/<endpoint>/`, and the first line of
   a description names the e2e test with the group in it.

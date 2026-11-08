@@ -2,8 +2,8 @@
 
 Each app has one e2e suite that boots its `AppModule` against the infrastructure of
 `013-e2e-infrastructure.md`. The suites keep only what unit specs cannot show: SQL, transactions,
-the wiring of guards, pipes, filters and middleware, the cache, idempotency and the ledger record queue.
-Logic stays in the unit specs.
+the wiring of guards, pipes, filters and middleware, the cache, idempotency and the ledger record
+queue. Logic stays in the unit specs.
 
 ## Running
 
@@ -63,25 +63,28 @@ describe('Identity', () => {
 });
 ```
 
-The name of a case starts with the group and the module: `Identity › Role › GET /api/identity/roles`.
+The name of a case starts with the group and the module:
+`Identity › Role › GET /api/identity/roles`.
 
 The order of the calls is the order of the database states: the cases that read a whole list come
 before the cases that write into it.
 
 **A feature class has one public method per endpoint**, named after the controller method, and the
 method wraps the `describe` of that endpoint. `ProductE2E.of(ctx)` builds it over the context. A
-feature that needs a hook before each case has `hooks()`, as `ReminderE2E` deletes the `acme:` keys from Redis.
+feature that needs a hook before each case has `hooks()`, as `ReminderE2E` deletes the `acme:` keys
+from Redis.
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
 the logger and the global prefix, and signs one access token for each seeded account the cases use
 with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app.
-processor-app has no auth and signs nothing. Everything the cases read is a getter that throws before
-`init()`. The staff-app context also holds the Redis client, through `@acme-libs/cache/testing`.
+processor-app has no auth and signs nothing. Everything the cases read is a getter that throws
+before `init()`. The staff-app context also holds the Redis client, through
+`@acme-libs/cache/testing`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
-records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes the
-`acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull writes its
-own keys at any moment.
+records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes
+the `acme:*` keys before each case, and the cases list the `acme:*` keys only: a timer of Bull
+writes its own keys at any moment.
 
 **staff-app and customer-app read the job, not the ledger.** Neither processes the queue, so their
 contexts have `takeLedgerRecords()`: it returns the data of the waiting jobs of the `ledger-record`
@@ -89,12 +92,13 @@ queue and empties the queue, as `takeRootWarnings()` takes the warnings. A case 
 the jobs, so the next case starts from an empty queue.
 
 **processor-app waits for the queue and the schedules.** Its cases add jobs to the queue themselves
-and read the ledger. `waitForLedgerRecordQueue()` polls `getJobCounts()` every 100 ms until no job is
-waiting, active or delayed, and throws after 100 polls; the jobs run in the e2e process, so a drained
-queue means the rows are written. `fireSchedule(name)` fires a schedule through `SchedulerRegistry`
-without waiting for it, and `waitFor(description, settled)` polls until the outcome shows. A failing
-job is a record whose `subjectType` is longer than its column, enqueued with `attempts: 1`; the
-`/queues` cases retry and delete such jobs over HTTP with the tokens of the seeded staff users.
+and read the ledger. `waitForLedgerRecordQueue()` polls `getJobCounts()` every 100 ms until no job
+is waiting, active or delayed, and throws after 100 polls; the jobs run in the e2e process, so a
+drained queue means the rows are written. `fireSchedule(name)` fires a schedule through
+`SchedulerRegistry` without waiting for it, and `waitFor(description, settled)` polls until the
+outcome shows. A failing job is a record whose `subjectType` is longer than its column, enqueued
+with `attempts: 1`; the `/queues` cases retry and delete such jobs over HTTP with the tokens of the
+seeded staff users.
 
 The Jest files outside the apps live in `jest/`:
 
@@ -103,13 +107,12 @@ The Jest files outside the apps live in `jest/`:
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
 | `<app>.e2e-setup.js`        | the environment of one app under test, set before any module loads              |
 
-**The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module
-loads and sets every variable the config schema of its app reads, and nothing else. A developer's
-`.env.local` never leaks into a run: the variables of the process take precedence over the env
-files.
+**The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module loads and
+sets every variable the config schema of its app reads, and nothing else. A developer's `.env.local`
+never leaks into a run: the variables of the process take precedence over the env files.
 
-**The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a
-JavaScript `Date` come back a day early, so the reminder cases catch it.
+**The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
+`Date` come back a day early, so the reminder cases catch it.
 
 ## Root warnings
 
@@ -121,8 +124,8 @@ afterEach(() => {
 });
 ```
 
-A warning on the root logger means a correlation context was lost: `CorrelationContextHelper`
-logs one when it has to mint an id outside a request.
+A warning on the root logger means a correlation context was lost: `CorrelationContextHelper` logs
+one when it has to mint an id outside a request.
 
 **A spy on `PinoLogger.root.warn` also sees the request loggers.** pino builds a child logger with
 `Object.create(parent)`, so the request logger inherits the spied method of the root. The context
@@ -134,14 +137,14 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 - **One object per case goes into `toMatchSnapshot()`**, its keys in the order they are read:
   `response: { body }`, then `db: { <table>: rows }`, then `cache: { keys, values }`.
 - **The body is whole, and a row is read back whole**, with `SELECT *` and `ORDER BY`.
-- **A value that changes per run gets a matcher in the snapshot and an exact check after it.** A
-  row a case creates is found by `MAX(id)` read before the call: the snapshot has
+- **A value that changes per run gets a matcher in the snapshot and an exact check after it.** A row
+  a case creates is found by `MAX(id)` read before the call: the snapshot has
   `id: expect.any(String)`, and a check after it compares the id with the response and with
   `MAX(id)`. A literal auto-increment id never enters a snapshot.
-- **A case that needs a state the seeds lack makes it and undoes it in `finally`**, as the
-  rollback of a note edit inserts the revision that breaks the edit and deletes it afterwards.
-- **A case that writes sends a fixed `x-correlation-id`** when the correlation id lands in a row,
-  so the row is literal in the snapshot.
+- **A case that needs a state the seeds lack makes it and undoes it in `finally`**, as the rollback
+  of a note edit inserts the revision that breaks the edit and deletes it afterwards.
+- **A case that writes sends a fixed `x-correlation-id`** when the correlation id lands in a row, so
+  the row is literal in the snapshot.
 
 ## What the suites cover
 
@@ -154,11 +157,12 @@ The snapshots in `apps/<app>/test/app/__snapshots__` hold what each case asserts
 `apps/*/test/**` is the category `acme-app:test`. It sees its own app's tests, its `AppModule`, its
 contracts, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`, `cache` and
 `observability`, and the packages `@nestjs/common`, `@nestjs/config`, `@nestjs/jwt`,
-`@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
+`@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and `typeorm`.
+`spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
-(`lint/configs/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot is
-what checks their shape.
+(`lint/configs/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot
+is what checks their shape.
 
 ## HTTP collection
 

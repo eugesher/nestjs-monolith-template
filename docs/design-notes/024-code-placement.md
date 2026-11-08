@@ -8,8 +8,8 @@ Code lives as close to its callers as it can. A method of a facade decides where
 | two or more modules of one app                       | a common module, `apps/<app>/src/common/modules/<m>` |
 | one module (a feature, a processor, a global module) | that module, behind a port of its own                |
 
-The rule counts callers per method, not per module. A core module whose every method serves two
-apps stays in core; a method of it that one app calls moves into that app, and the rest stays.
+The rule counts callers per method, not per module. A core module whose every method serves two apps
+stays in core; a method of it that one app calls moves into that app, and the rest stays.
 
 ## What lives where today
 

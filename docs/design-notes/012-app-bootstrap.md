@@ -35,18 +35,18 @@ A variable with the same meaning has the same name in every app: `PORT`, `DATABA
 secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
 its own `.env.local` filled in.
 
-`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local` sits next
-to its example.
+`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local`
+sits next to its example.
 
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
 the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
-bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads
-no file, and the environment comes from the container. The variables of the process always take
+bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads no
+file, and the environment comes from the container. The variables of the process always take
 precedence over the files.
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
-filters, the guards and the correlation context are all in `AppModule` or in modules it imports.
-An e2e context built from `AppModule` without `main.ts` behaves like the running app.
+filters, the guards and the correlation context are all in `AppModule` or in modules it imports. An
+e2e context built from `AppModule` without `main.ts` behaves like the running app.
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
 `API_USE_API_REFERENCE` is true, which is the default outside production. It runs after
@@ -80,18 +80,18 @@ is mounted on every route and opens the context with `run`, never with `enterWit
 under `CLS_ID`. `LocalStorageTransactionModule` of the same lib, which `OrmModule` imports, adds the
 transactional plugin with `ClsModule.registerPlugins`, and `TRANSACTION_PORT.run` opens a nested
 context with `ifNested: 'inherit'`, so the id stays inside the transaction. A queue job or a tick
-has no request, so `CorrelationContextHelper.run` opens a context of its own (`ifNested:
-'override'`).
+has no request, so `CorrelationContextHelper.run` opens a context of its own
+(`ifNested: 'override'`).
 
 **The context and the request logger see one id.** Both call `CorrelationIdHelper.resolve`, which
 takes the inbound `x-correlation-id`, or creates one and sets it on the request and the response.
 Whichever runs first decides, and the other reads the same header. Inside the request,
 `CorrelationContextHelper.current()` answers that id, so a ledger entry written by the request
-carries the id the client got back. The pino `mixin` of `LoggerSetupConfig` adds
-the id of the CLS context to every line, the `request completed` line of pino-http included.
+carries the id the client got back. The pino `mixin` of `LoggerSetupConfig` adds the id of the CLS
+context to every line, the `request completed` line of pino-http included.
 
-The entity list of each app holds exactly the entities of the modules it mounts. customer-app has
-no `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
+The entity list of each app holds exactly the entities of the modules it mounts. customer-app has no
+`Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
 ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module.
 processor-app has only `IdempotencyKey` and `LedgerEntry`, the tables of the purge and of the ledger
 append.
@@ -100,8 +100,8 @@ append.
 
 Outside production, the `info` lines of `InstanceLoader`, `NestFactory`, `NestApplication`,
 `RouterExplorer` and `RoutesResolver` are dropped by a pino `logMethod` hook in `LoggerSetupConfig`:
-a start prints `listening` instead of one line per module and route. Their warnings and errors
-still pass, and production keeps everything.
+a start prints `listening` instead of one line per module and route. Their warnings and errors still
+pass, and production keeps everything.
 
 ## Entry points
 

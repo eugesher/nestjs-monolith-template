@@ -18,14 +18,14 @@ another.
 ## Append is the only verb
 
 **An entry is a frozen value object.** `LedgerAppendEntryModel`
-(`apps/processor-app/src/processors/ledger/domain/models/ledger-append-entry.model.ts`)
-calls `Object.freeze`, has no behavior beyond its invariants, and a broken invariant throws a plain
+(`apps/processor-app/src/processors/ledger/domain/models/ledger-append-entry.model.ts`) calls
+`Object.freeze`, has no behavior beyond its invariants, and a broken invariant throws a plain
 `Error`: it is a programming mistake of a producer, not a refusal a client sees.
 
 **The operation key makes the append idempotent.** Every record carries an `operationKey` with a
-UNIQUE index. `LedgerAppendRepository` catches exactly the duplicate-key error, reads the id
-of the existing row and answers `{ id, appended: false }`, so a job delivered twice gets one row and
-no exception. Any other database error passes through, and Bull retries the job.
+UNIQUE index. `LedgerAppendRepository` catches exactly the duplicate-key error, reads the id of the
+existing row and answers `{ id, appended: false }`, so a job delivered twice gets one row and no
+exception. Any other database error passes through, and Bull retries the job.
 
 **A key names one occurrence.** A producer that can record the same kind of record twice for one
 subject puts what tells the occurrences apart into the key, such as a version or a row id (see
@@ -35,9 +35,9 @@ The rejected insert still consumes an auto-increment value, so ids may have gaps
 
 ## Time and correlation
 
-**An instant must carry its zone.** `LedgerAppendHelper.parseInstant` refuses
-`2026-01-01T00:00:00`, because `Date` would read it in the server's zone. With `Z` or an offset,
-every server stores the same instant.
+**An instant must carry its zone.** `LedgerAppendHelper.parseInstant` refuses `2026-01-01T00:00:00`,
+because `Date` would read it in the server's zone. With `Z` or an offset, every server stores the
+same instant.
 
 **The correlation id comes from the context.** The job carries the id of the request that produced
 it, the processor opens the context with that id, and `LedgerAppendUseCase` reads it with

@@ -33,15 +33,15 @@ a threshold.
 - for every file of `domain/` and `application/` in a feature, a nested feature module
   (`features/<area>/modules/<module>`), a processor, a common module and a core module.
 
-The per-file keys are what matter. One unit without a spec barely moves the global numbers, but
-its file drops to zero and fails its own key.
+The per-file keys are what matter. One unit without a spec barely moves the global numbers, but its
+file drops to zero and fails its own key.
 
 **ts-jest compiles the unit suite with type information** (`isolatedModules: false`). With
-`emitDecoratorMetadata`, a file compiled on its own cannot tell whether a constructor parameter
-type is a class, so it guards the reference: `typeof X === "undefined" ? Object : X`. Istanbul
-counts that guard as a branch no test can take, and a use case with an injected service lands at
-75% of branches with 100% of lines. With the whole program the compiler knows `X` is a class and
-emits it as is. The e2e configs keep the faster per-file compile: they collect no coverage.
+`emitDecoratorMetadata`, a file compiled on its own cannot tell whether a constructor parameter type
+is a class, so it guards the reference: `typeof X === "undefined" ? Object : X`. Istanbul counts
+that guard as a branch no test can take, and a use case with an injected service lands at 75% of
+branches with 100% of lines. With the whole program the compiler knows `X` is a class and emits it
+as is. The e2e configs keep the faster per-file compile: they collect no coverage.
 
 **TS151002 is silenced on purpose.** ts-jest warns that a `nodenext` module needs
 `isolatedModules: true`; the per-file compile is exactly what loses the classes above.
@@ -74,9 +74,9 @@ lint → typecheck → build → unit → e2e
 - `lint` runs `yarn lint:all` and `yarn format:check`, which checks every file Prettier knows
   outside `.gitignore`;
 - `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
-- `e2e` starts MySQL and Redis of `test/infra` and reseeds before each suite, as
-  `014-e2e-suites.md` requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`,
-  so the `node` service of the compose file is not built. The suites read no env file:
-  `jest/<app>.e2e-setup.js` sets the whole environment.
+- `e2e` starts MySQL and Redis of `test/infra` and reseeds before each suite, as `014-e2e-suites.md`
+  requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`, so the `node`
+  service of the compose file is not built. The suites read no env file: `jest/<app>.e2e-setup.js`
+  sets the whole environment.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.

@@ -1,9 +1,9 @@
 # 003 — Authentication
 
-Login, token signing and the read of the current user live in an `auth` feature of each app.
-`auth` also names the lib, its contract and the global module, so the classes of the global module
-carry the `AuthGlobal` prefix (see `002-global-auth-guards.md`) and the feature keeps the plain
-`Auth` prefix.
+Login, token signing and the read of the current user live in an `auth` feature of each app. `auth`
+also names the lib, its contract and the global module, so the classes of the global module carry
+the `AuthGlobal` prefix (see `002-global-auth-guards.md`) and the feature keeps the plain `Auth`
+prefix.
 
 | App          | Feature                                             |
 | ------------ | --------------------------------------------------- |
@@ -33,8 +33,8 @@ checks the password and signs the token itself (see `024-code-placement.md`).
 `AuthRegisterRepository` of customer-app inserts at once and turns the duplicate-key error of the
 driver into a domain error with `MysqlErrorHelper.isDuplicateKey`
 (`libs/toolkit/src/database/mysql-error.helper.ts`). A lookup and an insert are two statements: two
-concurrent requests would both pass the lookup, and the loser would hit the index as a 500. The
-e2e of each app sends two such requests at once and expects one 201 and one 409.
+concurrent requests would both pass the lookup, and the loser would hit the index as a 500. The e2e
+of each app sends two such requests at once and expects one 201 and one 409.
 
 ## The feature filter delegates
 
@@ -45,9 +45,9 @@ feature module provides `HttpExceptionFilter` so that Nest can inject it into th
 
 ## One token per app
 
-Each app signs and verifies with its own `JWT_SECRET`, so a token of one app is refused by the
-other with 401. Login carries `@Public()`; without it the global JWT guard would answer 401 before
-the controller runs. The token carries only `sub`, `iat` and `exp`, and its lifetime is
+Each app signs and verifies with its own `JWT_SECRET`, so a token of one app is refused by the other
+with 401. Login carries `@Public()`; without it the global JWT guard would answer 401 before the
+controller runs. The token carries only `sub`, `iat` and `exp`, and its lifetime is
 `JWT_EXPIRES_IN`. Signing lives in `libs/credentials` (see `017-credentials-lib.md`).
 
 **The lifetime does not delay revocation.** The guard re-reads the user on every request (see

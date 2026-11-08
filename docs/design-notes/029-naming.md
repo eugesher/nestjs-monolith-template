@@ -17,8 +17,8 @@ A name says who or where; the action lives in the method or in the port.
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
-facade of `@acme-core/contracts/idempotency` under `IdempotencyCoreFacade` without knowing what
-the module stores.
+facade of `@acme-core/contracts/idempotency` under `IdempotencyCoreFacade` without knowing what the
+module stores.
 
 **A facade method is `handle<Action>`, its use case is `<action>`.** The facade forwards each method
 to one use case. The field that holds the use case takes the action alone, because its type already
@@ -36,8 +36,8 @@ serves the identity exceptions of several apps the same way.
 **A queue adapter is named by where it sends, the port by what it does.** The adapter is transport
 to a target, the ledger here, so `OrderLedgerQueueAdapter` drops the action. The outbound port it
 implements keeps the action: `IOrderLedgerRecordPort`, `ORDER_LEDGER_RECORD_PORT`. A target with a
-compound name keeps it whole: `ProductStockCorePostSubtractQueueAdapter` sends to the
-post-subtract queue.
+compound name keeps it whole: `ProductStockCorePostSubtractQueueAdapter` sends to the post-subtract
+queue.
 
 **The commands of a service live in one file named after the service.** A service of
 `application/services` takes its commands from
@@ -48,8 +48,8 @@ post-subtract queue.
 the service. A use case keeps one command file of its own, `<context>-<verb>.command.ts`.
 
 **A config token is the module, the property and `_TOKEN`.** A token that carries a value read with
-`ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration
-property it reads and the suffix `_TOKEN`: the order module reads `REDIS_COMMAND_TIMEOUT_MS` into
+`ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration property
+it reads and the suffix `_TOKEN`: the order module reads `REDIS_COMMAND_TIMEOUT_MS` into
 `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`, the product-stock core module reads `QUEUE_RETRY_ATTEMPTS`
 into `PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from,
 not what the module does with it, so a reader finds the variable of `.env` by the name alone. A

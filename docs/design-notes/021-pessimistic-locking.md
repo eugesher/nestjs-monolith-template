@@ -32,9 +32,9 @@ repository, and every repository of the module extends it.
 before. Locking an empty list answers `[]` without a query.
 
 **The caller locks before it reads.** A read after the lock sees the row as the last committed
-writer left it. A later lock of the same row in the same transaction costs a query and nothing
-else, so a callee that locks again stays safe.
+writer left it. A later lock of the same row in the same transaction costs a query and nothing else,
+so a callee that locks again stays safe.
 
 **A lock instead of an optimistic retry.** When the row is locked before it is read, no other write
-can change it between the read and the update, so there is no lost race to retry. The core
-`archive` works this way (see `027-core-module-outcomes.md`).
+can change it between the read and the update, so there is no lost race to retry. The core `archive`
+works this way (see `027-core-module-outcomes.md`).

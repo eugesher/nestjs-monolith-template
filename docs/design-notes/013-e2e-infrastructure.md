@@ -1,8 +1,8 @@
 # 013 — E2E infrastructure
 
-The e2e suites run against a real MySQL and a real Redis, started by `test/infra`. The
-development stack in the root `docker-compose.yml` uses other host ports, so a dev server never
-attaches to the test infrastructure.
+The e2e suites run against a real MySQL and a real Redis, started by `test/infra`. The development
+stack in the root `docker-compose.yml` uses other host ports, so a dev server never attaches to the
+test infrastructure.
 
 |              | Development                           | Tests                                           |
 | ------------ | ------------------------------------- | ----------------------------------------------- |
@@ -24,13 +24,13 @@ attaches to the test infrastructure.
 | `test:e2e:staff`, `test:e2e:customer` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
-healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`:
-that exit is the signal that the infrastructure is ready.
+healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`: that
+exit is the signal that the infrastructure is ready.
 
-**`reseed` resets running infrastructure in seconds.** It drops and creates `acme_db`, flushes
-Redis with its password, runs the migrations and the seed from the host. It talks to the containers
-with `docker exec` by container name, so it needs `up` to be running. Each e2e run starts from a
-reseed; the final run of a change starts from a reload.
+**`reseed` resets running infrastructure in seconds.** It drops and creates `acme_db`, flushes Redis
+with its password, runs the migrations and the seed from the host. It talks to the containers with
+`docker exec` by container name, so it needs `up` to be running. Each e2e run starts from a reseed;
+the final run of a change starts from a reload.
 
 ## Seeds
 
@@ -42,20 +42,20 @@ reseed; the final run of a change starts from a reload.
 - no comments.
 
 `seed/index.ts` runs the files in name order on one `QueryRunner` between
-`SET FOREIGN_KEY_CHECKS = 0` and `= 1`, so the files need no order among themselves. Then it
-reads every foreign key of the seeded tables from `information_schema.KEY_COLUMN_USAGE` and counts
-the rows whose parent is missing. An orphan stops the seed with exit code 1:
+`SET FOREIGN_KEY_CHECKS = 0` and `= 1`, so the files need no order among themselves. Then it reads
+every foreign key of the seeded tables from `information_schema.KEY_COLUMN_USAGE` and counts the
+rows whose parent is missing. An orphan stops the seed with exit code 1:
 
 ```text
 Seed failed: Seeded rows break foreign keys:
 fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 ```
 
-**The seed runs under plain `node`**, like the migrations: `test/` has its own
-`package.json` with `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`.
-It imports no project code, only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from
-the environment of the process and never from an env file, so it cannot seed the development
-database by accident. To seed it on purpose:
+**The seed runs under plain `node`**, like the migrations: `test/` has its own `package.json` with
+`"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`. It imports no project code,
+only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from the environment of the process
+and never from an env file, so it cannot seed the development database by accident. To seed it on
+purpose:
 
 ```bash
 DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
@@ -71,9 +71,9 @@ value dropped from its enum leaves its id unused.
 ### Id ranges
 
 Each feature takes its fixture ids from its own range, so a fixture added for one feature never
-shifts the rows another feature's tests read. A row created by a test gets the next
-`AUTO_INCREMENT` value after the highest seeded id, and tests find it through `MAX(id)` read before
-the call, never by a literal.
+shifts the rows another feature's tests read. A row created by a test gets the next `AUTO_INCREMENT`
+value after the highest seeded id, and tests find it through `MAX(id)` read before the call, never
+by a literal.
 
 | Feature     | Tables                           | Range                                                     |
 | ----------- | -------------------------------- | --------------------------------------------------------- |
@@ -90,14 +90,13 @@ the call, never by a literal.
 
 ## Images
 
-The app image is built from the root `Dockerfile` with the build argument `APP_NAME`: the same
-image recipe serves both deployables. The builder installs every dependency, builds the app and
-then keeps only the production dependencies with `yarn workspaces focus --all --production`. The
-runtime stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with
-`NODE_ENV=production`.
+The app image is built from the root `Dockerfile` with the build argument `APP_NAME`: the same image
+recipe serves both deployables. The builder installs every dependency, builds the app and then keeps
+only the production dependencies with `yarn workspaces focus --all --production`. The runtime stage
+copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with `NODE_ENV=production`.
 
-Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs all three apps
-with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the reference page.
+Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs all three
+apps with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the reference page.
 
 `docker-compose.observability.yml` adds Jaeger and an OpenTelemetry collector:
 
@@ -105,6 +104,5 @@ with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the 
 docker compose -f docker-compose.yml -f docker-compose.observability.yml up
 ```
 
-The collector reads `opentelemetry-collector.config.yaml` and forwards the
-traces to Jaeger, whose UI is at `localhost:16686`. Tracing stays off until an app runs with
-`OTEL_SDK_DISABLED=false`.
+The collector reads `opentelemetry-collector.config.yaml` and forwards the traces to Jaeger, whose
+UI is at `localhost:16686`. Tracing stays off until an app runs with `OTEL_SDK_DISABLED=false`.

@@ -32,14 +32,13 @@ local to the module, the retry loop cannot swallow another module's conflict.
 
 **The budget comes from config** (`OCC_RETRY_ATTEMPTS` into a token of the module). A pinned
 `If-Match` collapses it to one attempt: retrying against a newer version would apply a change the
-client never saw. A spent budget is `VERSION_MISMATCH` (409) with `details.currentVersion`. A
-domain refusal is never retried.
+client never saw. A spent budget is `VERSION_MISMATCH` (409) with `details.currentVersion`. A domain
+refusal is never retried.
 
-After a successful save the service reads the row again, so the answer carries the new
-`updatedAt`.
+After a successful save the service reads the row again, so the answer carries the new `updatedAt`.
 
-**There is no global filter for TypeORM's `OptimisticLockVersionMismatchError`.** TypeORM throws
-it only for a read with an optimistic lock, and nothing reads that way: the version check is the
+**There is no global filter for TypeORM's `OptimisticLockVersionMismatchError`.** TypeORM throws it
+only for a read with an optimistic lock, and nothing reads that way: the version check is the
 `WHERE` of the update.
 
 ## `If-Match` is a version
@@ -51,12 +50,14 @@ because only staff features read the header.
 
 ## Domain events feed the ledger
 
-The model records a domain event per change (`apps/staff-app/src/features/catalog/modules/product/domain/events`). A use case pulls them after the
-write and hands them to `ProductLedgerService`, which turns them into records of the
+The model records a domain event per change
+(`apps/staff-app/src/features/catalog/modules/product/domain/events`). A use case pulls them after
+the write and hands them to `ProductLedgerService`, which turns them into records of the
 `ledger-record` queue (see `022-enqueue-after-commit.md` and `004-append-only-journal.md`).
 
 ## `PATCH` edits fields, `PUT` sets a state
 
 `PATCH /catalog/products/:productId` takes the fields to change, every one optional
-(`apps/staff-app/src/features/catalog/modules/product/presentation/dto/requests/product-update.request.dto.ts`). A state change has no body: `PUT` on the
-state resource (`.../publish`, `.../archive`) says what the row becomes.
+(`apps/staff-app/src/features/catalog/modules/product/presentation/dto/requests/product-update.request.dto.ts`).
+A state change has no body: `PUT` on the state resource (`.../publish`, `.../archive`) says what the
+row becomes.

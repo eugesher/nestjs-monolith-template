@@ -3,19 +3,20 @@
 `core/modules/src/idempotency` keeps the `idempotency_key` table: which `Idempotency-Key` a client
 has used, for which request body, and what the first request answered. It is a core module because
 features of two apps claim keys while serving writes, for example
-`apps/staff-app/src/features/catalog/modules/product/application/use-cases/product-create.use-case.ts`. Its contract `core/contracts/src/idempotency` has one port:
+`apps/staff-app/src/features/catalog/modules/product/application/use-cases/product-create.use-case.ts`.
+Its contract `core/contracts/src/idempotency` has one port:
 
 | Port                    | Facade                  | Consumer                                  |
 | ----------------------- | ----------------------- | ----------------------------------------- |
 | `IDEMPOTENCY_CORE_PORT` | `IdempotencyCoreFacade` | a feature that serves an idempotent write |
 
-Deleting the expired keys has one caller, the `idempotency` processor of processor-app, so it
-lives in the processor with a repository of its own (see `009-scheduled-processor.md` and
+Deleting the expired keys has one caller, the `idempotency` processor of processor-app, so it lives
+in the processor with a repository of its own (see `009-scheduled-processor.md` and
 `024-code-placement.md`).
 
-A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency`
-and reaches a port only from a core-adapter, like any core module. The `IdempotencyKey` decorator
-that reads the header lives in `@acme-libs/http`, so both apps parse the key the same way.
+A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempotency` and reaches a
+port only from a core-adapter, like any core module. The `IdempotencyKey` decorator that reads the
+header lives in `@acme-libs/http`, so both apps parse the key the same way.
 
 Keys share one table and one UNIQUE index across the apps. A key that one app or one client already
 used is a `mismatch` for any other body, so a caller that wants keys scoped per user puts the user
@@ -39,7 +40,8 @@ is kept. The caller must leave out anything that changes on a retry, such as the
 | `in-flight` | same key, same body, not completed | asks the client to retry shortly (409)                       |
 | `mismatch`  | same key, different body           | refuses (422): the stored answer belongs to another question |
 
-The outcome enum lives in the contract, not in `libs/kernel`, because only the core-adapters read it.
+The outcome enum lives in the contract, not in `libs/kernel`, because only the core-adapters read
+it.
 
 **A key that vanished is in flight.** If the insert hits a duplicate but the row is gone when the
 module reads it, the holder has just released it. The answer is `in-flight`: the client retries and
@@ -52,8 +54,8 @@ concurrent duplicate could work too.
   hands over the object it is about to return and never sees the serialized form.
 - **`release` deletes only an in-flight row.** A completed key survives a late release, so a replay
   stays possible.
-- **The module never expires a key.** It reads no configuration, so staff-app and customer-app
-  mount it without a TTL. Until the purge of processor-app runs, an expired key still replays.
+- **The module never expires a key.** It reads no configuration, so staff-app and customer-app mount
+  it without a TTL. Until the purge of processor-app runs, an expired key still replays.
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.

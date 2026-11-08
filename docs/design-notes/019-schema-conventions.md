@@ -1,8 +1,8 @@
 # 019 — Schema conventions
 
 An entity that several apps map lives in `core/entities/src`, an entity of one app in
-`apps/<app>/src/common/entities`, and the migrations in `migrations/`. Examples below use
-the tables of `core/entities/src/order` and `core/entities/src/product`.
+`apps/<app>/src/common/entities`, and the migrations in `migrations/`. Examples below use the tables
+of `core/entities/src/order` and `core/entities/src/product`.
 
 **Every key is `BIGINT UNSIGNED`.** A primary key is `BIGINT UNSIGNED AUTO_INCREMENT`
 (`@PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })`), and every column that references

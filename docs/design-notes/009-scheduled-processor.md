@@ -33,27 +33,27 @@ interval that `onModuleDestroy` removes, or the timer would keep the process ali
 
 ## The use case owns the outcome
 
-The use case, not the processor, holds the guard and the logs, because a processor does not
-log: outcomes are logged by the application.
+The use case, not the processor, holds the guard and the logs, because a processor does not log:
+outcomes are logged by the application.
 
 - **An overlapping tick is skipped, not raced.** `@Cron` fires on its cadence whatever the previous
   callback is doing. While a purge runs, the next tick logs
   `Idempotency purge still running, this tick is skipped` at `info` and returns. Nest makes the use
   case a singleton, so the flag is shared by every tick.
 - **The flag is cleared in `finally`.** A throw must not leave it set and silence every later tick.
-- **A failed purge is logged, not thrown.** It logs `Idempotency purge failed, the next tick
-retries` at `warn` with the error. Expired keys only cost space until the next tick.
+- **A failed purge is logged, not thrown.** It logs
+  `Idempotency purge failed, the next tick retries` at `warn` with the error. Expired keys only cost
+  space until the next tick.
 
 - **A successful purge logs one line**, `Expired idempotency keys purged`, with the cutoff, the
   count of deleted keys and the TTL.
 
 ## Wiring
 
-processor-app mounts `IdempotencyModule` through
-`@acme-processor/processors`. `@Cron` only marks the method: the tick fires because processor-app
-imports `ScheduleSetupModule`, which imports `ScheduleModule.forRoot()`. The schedule is named
-`idempotency-purge`, so the e2e suite fires it through `SchedulerRegistry`.
+processor-app mounts `IdempotencyModule` through `@acme-processor/processors`. `@Cron` only marks
+the method: the tick fires because processor-app imports `ScheduleSetupModule`, which imports
+`ScheduleModule.forRoot()`. The schedule is named `idempotency-purge`, so the e2e suite fires it
+through `SchedulerRegistry`.
 
-Lint lets a processor take only `Cron` and `CronExpression` from `@nestjs/schedule`, the
-app only `ScheduleModule`, and the e2e code only `SchedulerRegistry`. No other layer imports the
-package.
+Lint lets a processor take only `Cron` and `CronExpression` from `@nestjs/schedule`, the app only
+`ScheduleModule`, and the e2e code only `SchedulerRegistry`. No other layer imports the package.

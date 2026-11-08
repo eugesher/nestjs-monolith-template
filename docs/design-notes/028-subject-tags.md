@@ -37,11 +37,11 @@ No foreign key points at the subject, since the table serves several; the caller
 
 ## Two modules over one table
 
-**The dictionary is a feature, the links are a common module.** Only `/tools/tags` creates,
-renames and deletes tags, so that code stays with its only caller. Reading the tags of a subject,
-replacing them and finding the subjects of a tag are asked by both `product` and `order`, so they
-move up into the common module. `Tag` is mapped by both; each keeps its own model narrowed to what
-it uses (`TagModel`, `TagCommonSubjectTagsModel`).
+**The dictionary is a feature, the links are a common module.** Only `/tools/tags` creates, renames
+and deletes tags, so that code stays with its only caller. Reading the tags of a subject, replacing
+them and finding the subjects of a tag are asked by both `product` and `order`, so they move up into
+the common module. `Tag` is mapped by both; each keeps its own model narrowed to what it uses
+(`TagModel`, `TagCommonSubjectTagsModel`).
 
 **A refusal is an outcome.** `replace` answers `TagCommonReplaceOutcomeEnum.TAG_NOT_FOUND` with
 `missingTagIds` instead of throwing, as a core module does (see `027-core-module-outcomes.md`). The
@@ -51,9 +51,9 @@ own `PRODUCT_TAG_NOT_FOUND` or `ORDER_TAG_NOT_FOUND`, answered as 422 with `deta
 ## The caller owns the transaction
 
 `ProductReplaceTagsUseCase` and `OrderReplaceTagsUseCase` open a transaction, lock their own row
-`FOR UPDATE` and call `replace` inside it. `TagCommonReplaceUseCase` runs in
-`TRANSACTION_PORT.run`, so it joins that transaction (see `026-transaction-port.md`), and a
-refusal of the caller after it rolls the links back too.
+`FOR UPDATE` and call `replace` inside it. `TagCommonReplaceUseCase` runs in `TRANSACTION_PORT.run`,
+so it joins that transaction (see `026-transaction-port.md`), and a refusal of the caller after it
+rolls the links back too.
 
 **The lock of the subject serializes the writers of its links.** The common module owns no row of
 the subject. Two replaces of one subject without that lock would both read the links, take
@@ -64,7 +64,7 @@ instead of breaking the foreign key of a new link.
 ## The filter
 
 `?tagId=` asks the facade for the subject ids that carry the tag, then lists its own table with
-`WHERE id IN (...)`. No repository of `product` or `order` joins `subject_tag`: that table belongs to
-the common module, and the lint forbids reaching it. A tag no subject carries answers an empty page
-without a query. The id list grows with the tagged subjects; a catalog where one tag marks tens of
-thousands of rows needs a paged lookup instead.
+`WHERE id IN (...)`. No repository of `product` or `order` joins `subject_tag`: that table belongs
+to the common module, and the lint forbids reaching it. A tag no subject carries answers an empty
+page without a query. The id list grows with the tagged subjects; a catalog where one tag marks tens
+of thousands of rows needs a paged lookup instead.

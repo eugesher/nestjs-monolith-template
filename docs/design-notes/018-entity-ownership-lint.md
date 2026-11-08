@@ -12,9 +12,9 @@ Core belongs to no app: lint decides by the layer of the importing file, never b
 entity, contract and module in those layers.
 
 **An entity of one app needs no rule of its own.** An entity that only one app maps lives in
-`apps/<app>/src/common/entities` (category `acme-app:common:entities`). Only the infrastructure,
-the `app/` folder and the e2e code of the same app may import it, so another app cannot reach it.
-An entity that several apps map stays in `core/entities`.
+`apps/<app>/src/common/entities` (category `acme-app:common:entities`). Only the infrastructure, the
+`app/` folder and the e2e code of the same app may import it, so another app cannot reach it. An
+entity that several apps map stays in `core/entities`.
 
 **Code needs no rule of its own.** An app may import only its own contracts and common modules, so
 one app cannot reach the contracts or common modules of another.
