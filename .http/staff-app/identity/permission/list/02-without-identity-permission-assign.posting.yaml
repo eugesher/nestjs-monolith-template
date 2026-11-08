@@ -1,0 +1,13 @@
+name: 02-without-identity-permission-assign
+description: |-
+  e2e: Identity › Permission › GET /api/identity/permissions › should refuse a caller without identity:permission:assign
+
+  Expect: 403 Forbidden, Insufficient permissions
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/identity/permissions
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer
