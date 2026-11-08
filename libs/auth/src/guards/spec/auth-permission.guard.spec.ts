@@ -24,7 +24,7 @@ describe('AuthPermissionGuard', () => {
     const allowed = guard.canActivate(context);
 
     expect(allowed).toBe(true);
-    expect(getAllAndOverride).toHaveBeenCalledWith('auth:permissions', ['handler', 'class']);
+    expect(getAllAndOverride).toHaveBeenCalledWith('auth:permission', ['handler', 'class']);
   });
 
   it('lets a route without required permissions through', () => {

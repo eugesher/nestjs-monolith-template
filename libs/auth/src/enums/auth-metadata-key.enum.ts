@@ -1,4 +1,4 @@
 export enum AuthMetadataKeyEnum {
-  PERMISSIONS = 'auth:permissions',
+  PERMISSION = 'auth:permission',
   PUBLIC = 'auth:public',
 }

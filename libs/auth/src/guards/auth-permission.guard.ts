@@ -14,7 +14,7 @@ export class AuthPermissionGuard implements CanActivate {
   public canActivate(context: ExecutionContext): boolean {
     const targets = [context.getHandler(), context.getClass()];
     const required = this.reflector.getAllAndOverride<Maybe<PermissionCodeEnum>>(
-      AuthMetadataKeyEnum.PERMISSIONS,
+      AuthMetadataKeyEnum.PERMISSION,
       targets,
     );
 
