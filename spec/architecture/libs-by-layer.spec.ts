@@ -178,7 +178,7 @@ describe('libs by layer', () => {
   it.each([
     [
       'apps/customer-app/src/app/global/auth/shell/__fixture__.ts',
-      'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";',
+      'import { AuthJwtModule, AuthPermissionModule } from "@acme-libs/auth";',
     ],
   ])('%s may NOT wire the claim guards: %s', async (file, code) => {
     await expect({ file, code }).toBreakRule('boundaries/dependencies');
@@ -188,7 +188,7 @@ describe('libs by layer', () => {
     await expect({
       file: 'apps/staff-app/src/app/global/auth/shell/__fixture__.ts',
       code:
-        'import { AuthClaimsLibModule, AuthLibModule } from "@acme-libs/auth";\n' +
+        'import { AuthJwtModule, AuthPermissionModule } from "@acme-libs/auth";\n' +
         'import { AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
     }).toPassArchitectureLint();
   });

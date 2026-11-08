@@ -1,23 +1,23 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { AuthPermissionsGuard } from '../auth-permissions.guard';
+import { AuthPermissionGuard } from '../auth-permission.guard';
 
-describe('AuthPermissionsGuard', () => {
+describe('AuthPermissionGuard', () => {
   let getAllAndOverride: jest.Mock;
   let request: Record<string, unknown>;
   let context: ExecutionContext;
-  let guard: AuthPermissionsGuard;
+  let guard: AuthPermissionGuard;
 
   beforeEach(() => {
-    getAllAndOverride = jest.fn().mockReturnValue(['product:write']);
+    getAllAndOverride = jest.fn().mockReturnValue('product:write');
     request = { user: { id: 'user-1', permissionCodes: ['product:write'] } };
     context = {
       getHandler: () => 'handler',
       getClass: () => 'class',
       switchToHttp: () => ({ getRequest: () => request }),
     } as unknown as ExecutionContext;
-    guard = new AuthPermissionsGuard({ getAllAndOverride } as unknown as Reflector);
+    guard = new AuthPermissionGuard({ getAllAndOverride } as unknown as Reflector);
   });
 
   it('admits a user holding a required permission', () => {

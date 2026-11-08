@@ -28,9 +28,6 @@ interface IAppE2EState {
 }
 
 export class AppE2EContext {
-  private static readonly POLL_INTERVAL_MS = 100;
-  private static readonly POLL_ATTEMPTS = 100;
-
   public get app(): INestApplication {
     return this.started.app;
   }
@@ -58,6 +55,9 @@ export class AppE2EContext {
   public get viewerToken(): string {
     return this.started.viewerToken;
   }
+
+  private static readonly POLL_INTERVAL_MS = 100;
+  private static readonly POLL_ATTEMPTS = 100;
 
   private state: Maybe<IAppE2EState>;
 

@@ -20,6 +20,13 @@ export class ProductStockModel extends AggregateRoot<string> {
     return new ProductStockModel(id, sku);
   }
 
+  public add(quantity: number): void {
+    const validQuantity = ProductStockModel.validQuantity(quantity);
+    const event = new ProductStockAddedEvent(this.id, this.sku, validQuantity);
+
+    this.addDomainEvent(event);
+  }
+
   private static validQuantity(quantity: number): number {
     if (
       !Number.isInteger(quantity) ||
@@ -30,12 +37,5 @@ export class ProductStockModel extends AggregateRoot<string> {
     }
 
     return quantity;
-  }
-
-  public add(quantity: number): void {
-    const validQuantity = ProductStockModel.validQuantity(quantity);
-    const event = new ProductStockAddedEvent(this.id, this.sku, validQuantity);
-
-    this.addDomainEvent(event);
   }
 }

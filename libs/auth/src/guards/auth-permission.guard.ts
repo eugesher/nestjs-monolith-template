@@ -5,31 +5,41 @@ import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { Maybe } from '@acme-libs/toolkit';
 
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
-import { AuthClaimHelper } from '../helpers/auth-claim.helper';
 import { IAuthRequest } from '../interfaces/auth-request.interface';
 
 @Injectable()
-export class AuthPermissionsGuard implements CanActivate {
+export class AuthPermissionGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   public canActivate(context: ExecutionContext): boolean {
     const targets = [context.getHandler(), context.getClass()];
-    const required = this.reflector.getAllAndOverride<Maybe<PermissionCodeEnum[]>>(
+    const required = this.reflector.getAllAndOverride<Maybe<PermissionCodeEnum>>(
       AuthMetadataKeyEnum.PERMISSIONS,
       targets,
     );
 
-    if (!required || required.length === 0) {
+    if (!required) {
       return true;
     }
 
     const request = context.switchToHttp().getRequest<IAuthRequest>();
     const held = request.user?.permissionCodes;
 
-    if (!AuthClaimHelper.holdsAny(required, held)) {
+    if (AuthPermissionGuard.isForbidden(required, held)) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
     return true;
+  }
+
+  private static isForbidden(
+    required: PermissionCodeEnum,
+    held: Maybe<readonly PermissionCodeEnum[]>,
+  ): boolean {
+    if (!held) {
+      return true;
+    }
+
+    return !held.includes(required);
   }
 }

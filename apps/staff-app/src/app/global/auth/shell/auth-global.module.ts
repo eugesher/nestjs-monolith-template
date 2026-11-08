@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 
-import { AuthClaimsLibModule, AuthLibModule } from '@acme-libs/auth';
+import { AuthJwtModule, AuthPermissionModule } from '@acme-libs/auth';
 import { AUTH_USER_VALIDATOR_PORT } from '@acme-libs/contracts/auth';
 import { StaffAuthCoreModule } from '@acme-core/modules/staff-auth';
 
@@ -10,7 +10,7 @@ import { AuthGlobalFacade } from './auth-global.facade';
 
 @Global()
 @Module({
-  imports: [AuthLibModule, AuthClaimsLibModule, StaffAuthCoreModule],
+  imports: [AuthJwtModule, AuthPermissionModule, StaffAuthCoreModule],
   exports: [AUTH_USER_VALIDATOR_PORT],
   providers: [
     { provide: AUTH_USER_VALIDATOR_PORT, useClass: AuthGlobalFacade },

@@ -13,9 +13,6 @@ import { IProductRecord } from '../interfaces/product-record.interface';
 import { IProductSnapshot } from '../interfaces/product-snapshot.interface';
 
 export class ProductModel extends AggregateRoot<string> {
-  private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
-  private static readonly NAME_MAX_LENGTH = 255;
-
   public get name(): string {
     return this.currentName;
   }
@@ -27,6 +24,9 @@ export class ProductModel extends AggregateRoot<string> {
   public get version(): number {
     return this.currentVersion;
   }
+
+  private static readonly SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,63}$/;
+  private static readonly NAME_MAX_LENGTH = 255;
 
   private constructor(
     id: string,
@@ -55,32 +55,6 @@ export class ProductModel extends AggregateRoot<string> {
     const validName = ProductModel.validName(name);
 
     return { sku: validSku, name: validName, status: ProductStatusEnum.DRAFT, version: 1 };
-  }
-
-  private static validSku(sku: string): string {
-    if (!ProductModel.SKU_PATTERN.test(sku)) {
-      throw new ProductSkuInvalidException(ProductModel.SKU_PATTERN, sku);
-    }
-
-    return sku;
-  }
-
-  private static validName(name: string): string {
-    const trimmed = name.trim();
-
-    if (trimmed.length === 0 || trimmed.length > ProductModel.NAME_MAX_LENGTH) {
-      throw new ProductNameInvalidException(ProductModel.NAME_MAX_LENGTH);
-    }
-
-    return trimmed;
-  }
-
-  private static validVersion(version: number): number {
-    if (!Number.isInteger(version) || version < 1) {
-      throw new ProductVersionInvalidException(version);
-    }
-
-    return version;
   }
 
   public update(changes: IProductChanges): void {
@@ -131,5 +105,31 @@ export class ProductModel extends AggregateRoot<string> {
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
     };
+  }
+
+  private static validSku(sku: string): string {
+    if (!ProductModel.SKU_PATTERN.test(sku)) {
+      throw new ProductSkuInvalidException(ProductModel.SKU_PATTERN, sku);
+    }
+
+    return sku;
+  }
+
+  private static validName(name: string): string {
+    const trimmed = name.trim();
+
+    if (trimmed.length === 0 || trimmed.length > ProductModel.NAME_MAX_LENGTH) {
+      throw new ProductNameInvalidException(ProductModel.NAME_MAX_LENGTH);
+    }
+
+    return trimmed;
+  }
+
+  private static validVersion(version: number): number {
+    if (!Number.isInteger(version) || version < 1) {
+      throw new ProductVersionInvalidException(version);
+    }
+
+    return version;
   }
 }

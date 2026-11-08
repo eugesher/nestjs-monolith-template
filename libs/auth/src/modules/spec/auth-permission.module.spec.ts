@@ -7,10 +7,10 @@ import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
-import { AuthClaimsLibModule } from '../auth-claims-lib.module';
-import { AuthLibModule } from '../auth-lib.module';
+import { AuthJwtModule } from '../auth-jwt.module';
+import { AuthPermissionModule } from '../auth-permission.module';
 
-describe('AuthClaimsLibModule', () => {
+describe('AuthPermissionModule', () => {
   let app: INestApplication;
   let url: string;
 
@@ -22,7 +22,7 @@ describe('AuthClaimsLibModule', () => {
         return 'plain';
       }
 
-      @RequiresPermission(PermissionCodeEnum.PRODUCT_WRITE, PermissionCodeEnum.PRODUCT_READ)
+      @RequiresPermission(PermissionCodeEnum.PRODUCT_READ)
       @Get('note')
       public note(): string {
         return 'note';
@@ -66,7 +66,7 @@ describe('AuthClaimsLibModule', () => {
     class ValidatorModule {}
 
     @Module({
-      imports: [ValidatorModule, AuthLibModule, AuthClaimsLibModule],
+      imports: [ValidatorModule, AuthJwtModule, AuthPermissionModule],
       controllers: [ProbeController],
     })
     class TestModule {}

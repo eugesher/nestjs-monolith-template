@@ -114,7 +114,7 @@ describe('lib entry points', () => {
     '@acme-libs/openapi/api-reference/api-reference',
     '@acme-libs/queue/bull/bull-setup.module',
     '@acme-libs/health/shell/health-lib.module',
-    '@acme-libs/auth/shell/auth-lib.module',
+    '@acme-libs/auth/modules/auth-jwt.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
     '@acme-libs/local-storage/setup/local-storage-setup.module',
     '@acme-libs/contracts/local-storage/ports/local-storage-transaction.port',

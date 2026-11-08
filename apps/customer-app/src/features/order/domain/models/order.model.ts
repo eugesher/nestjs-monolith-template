@@ -46,6 +46,28 @@ export class OrderModel extends AggregateRoot<string> {
     return { customerId, productIds: [...productIds] };
   }
 
+  public getMovements(): IOrderMovement[] {
+    return this.products.map((product) => ({
+      productId: product.productId,
+      orderProductId: product.id,
+    }));
+  }
+
+  public toView(): IOrderSnapshot {
+    const products = this.products.map((product) => ({
+      id: product.id,
+      productId: product.productId,
+      sku: product.sku,
+      name: product.name,
+    }));
+
+    return {
+      id: this.id,
+      createdAt: this.createdAt.toISOString(),
+      products,
+    };
+  }
+
   private static assertFound(productIds: string[], products: IOrderActiveProduct[]): void {
     for (const productId of productIds) {
       const found = products.some((product) => product.id === productId);
@@ -68,27 +90,5 @@ export class OrderModel extends AggregateRoot<string> {
         throw new OrderStockInsufficientException(productId, requested, available);
       }
     }
-  }
-
-  public getMovements(): IOrderMovement[] {
-    return this.products.map((product) => ({
-      productId: product.productId,
-      orderProductId: product.id,
-    }));
-  }
-
-  public toView(): IOrderSnapshot {
-    const products = this.products.map((product) => ({
-      id: product.id,
-      productId: product.productId,
-      sku: product.sku,
-      name: product.name,
-    }));
-
-    return {
-      id: this.id,
-      createdAt: this.createdAt.toISOString(),
-      products,
-    };
   }
 }

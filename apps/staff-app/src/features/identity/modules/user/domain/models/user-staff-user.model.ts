@@ -7,12 +7,12 @@ import { IUserStaffUserDraft } from '../interfaces/user-staff-user-draft.interfa
 import { IUserStaffUserRecord } from '../interfaces/user-staff-user-record.interface';
 
 export class UserStaffUserModel {
-  private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  private static readonly MIN_PASSWORD_LENGTH = 12;
-
   public get roles(): readonly RoleEnum[] {
     return this.assignedRoles;
   }
+
+  private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  private static readonly MIN_PASSWORD_LENGTH = 12;
 
   private constructor(
     public readonly id: string,
@@ -45,10 +45,6 @@ export class UserStaffUserModel {
     }
   }
 
-  private static normalizeEmail(email: string): string {
-    return email.trim().toLowerCase();
-  }
-
   public assignRole(role: RoleEnum): boolean {
     if (this.assignedRoles.includes(role)) {
       return false;
@@ -57,5 +53,9 @@ export class UserStaffUserModel {
     this.assignedRoles = [...this.assignedRoles, role];
 
     return true;
+  }
+
+  private static normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
   }
 }
