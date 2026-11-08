@@ -146,9 +146,11 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 
 ### Policies that name exports
 
-A policy that refuses or allows a name of a lib, such as `customer-claims.mjs` with
-`AuthPermissionModule` and `RequiresPermission`, matches the specifier of the import, not the file
-behind it. A renamed export would leave the policy guarding a name nobody imports, and its negative
-case would stay green as long as its fixture used the old name too.
-`spec/architecture/policy-specifiers.spec.ts` reads the resolved policies of the boundaries rule and
-checks that every specifier named for a lib is an export of that lib.
+A policy that refuses or allows a name of a lib or a package, such as `customer-claims.mjs` with
+`AuthPermissionModule` and `RequiresPermission` or `http-surface.mjs` with the DI names of
+`@nestjs/common`, matches the specifier of the import, not the file behind it. A renamed export
+would leave the policy guarding a name nobody imports, and its negative case would stay green as
+long as its fixture used the old name too. `spec/architecture/policy-specifiers.spec.ts` reads the
+resolved policies of the boundaries rule and checks with the TypeScript checker that every specifier
+named for a lib or a package is an export of it. The checker reads the declarations, so a type such
+as `ClassProvider` counts as an export, as it does for the import it guards.
