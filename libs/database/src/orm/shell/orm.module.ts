@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+import { LocalStorageTransactionModule } from '@acme-libs/local-storage';
 import { ORM_PORT } from '@acme-libs/contracts/database';
 
 import { SnakeNamingStrategy } from '../../naming/snake-naming.strategy';
@@ -16,11 +17,12 @@ export class OrmModule {
       useFactory: (config: ConfigService): TypeOrmModuleOptions =>
         OrmModule.options(config, entities),
     });
+    const transaction = LocalStorageTransactionModule.forRoot();
 
     return {
       module: OrmModule,
       global: true,
-      imports: [typeOrm],
+      imports: [typeOrm, transaction],
       exports: [ORM_PORT],
       providers: [
         { provide: ORM_PORT, useClass: OrmFacade },

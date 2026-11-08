@@ -54,20 +54,19 @@ An e2e context built from `AppModule` without `main.ts` behaves like the running
 
 ## AppModule
 
-| Piece                                     | Where                                                | What it does                                                                 |
-| ----------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `ConfigSetupModule.forRoot()`             | `app/setup/config`                                   | validates the environment of the app with Joi                                |
-| `LoggerSetupModule.forRoot(<app>)`        | `libs/observability`                                 | pino, HTTP request logs                                                      |
-| `LocalStorageSetupModule.forRoot()`       | `libs/local-storage`                                 | the CLS context of every request under its correlation id                    |
-| `OrmModule.forRoot(entities)`             | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`                          |
-| `LocalStorageTransactionModule.forRoot()` | `libs/local-storage`                                 | the transactional plugin, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
-| `ScheduleSetupModule`                     | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                       |
-| `BullSetupModule.forRoot()`               | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue           |
-| `CacheLibModule`                          | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                      |
-| `AuthGlobalModule`                        | `app/global/auth`, not in processor-app              | the three global guards                                                      |
-| features, processors                      | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                |
-| `APP_PIPE`                                | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                              |
-| `APP_FILTER`                              | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                 |
+| Piece                               | Where                                                | What it does                                                                                            |
+| ----------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ConfigSetupModule.forRoot()`       | `app/setup/config`                                   | validates the environment of the app with Joi                                                           |
+| `LoggerSetupModule.forRoot(<app>)`  | `libs/observability`                                 | pino, HTTP request logs                                                                                 |
+| `LocalStorageSetupModule.forRoot()` | `libs/local-storage`                                 | the CLS context of every request under its correlation id                                               |
+| `OrmModule.forRoot(entities)`       | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
+| `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
+| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                                      |
+| `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
+| `AuthGlobalModule`                  | `app/global/auth`, not in processor-app              | the three global guards                                                                                 |
+| features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
+| `APP_PIPE`                          | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                                         |
+| `APP_FILTER`                        | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                            |
 
 Every module in `app/setup/` is named `*SetupModule`.
 
@@ -78,10 +77,11 @@ feature first and hands the response to `HttpExceptionFilter`.
 **One CLS context carries the correlation id, the transaction and the logs.**
 `LocalStorageSetupModule` of `libs/local-storage` is the root `ClsModule` of the app. Its middleware
 is mounted on every route and opens the context with `run`, never with `enterWith`. It stores the id
-under `CLS_ID`. `LocalStorageTransactionModule` of the same lib adds the transactional plugin with
-`ClsModule.registerPlugins`, and `TRANSACTION_PORT.run` opens a nested context with
-`ifNested: 'inherit'`, so the id stays inside the transaction. A queue job or a tick has no request, so
-`CorrelationContextHelper.run` opens a context of its own (`ifNested: 'override'`).
+under `CLS_ID`. `LocalStorageTransactionModule` of the same lib, which `OrmModule` imports, adds the
+transactional plugin with `ClsModule.registerPlugins`, and `TRANSACTION_PORT.run` opens a nested
+context with `ifNested: 'inherit'`, so the id stays inside the transaction. A queue job or a tick
+has no request, so `CorrelationContextHelper.run` opens a context of its own (`ifNested:
+'override'`).
 
 **The context and the request logger see one id.** Both call `CorrelationIdHelper.resolve`, which
 takes the inbound `x-correlation-id`, or creates one and sets it on the request and the response.

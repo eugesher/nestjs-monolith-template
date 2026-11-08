@@ -52,7 +52,8 @@ lands on the object that `useClass` holds. A subclass, such as a queue adapter t
   `LocalStorageTransactionFacade`) are bound under the contract tokens `ORM_PORT` and
   `TRANSACTION_PORT` by `OrmModule` and `LocalStorageTransactionModule` of their libs, next to the
   TypeORM connection and the transactional plugin they need. The app picks the implementation by
-  mounting the modules and hands `OrmModule` only its entities.
+  mounting `OrmModule`, which imports `LocalStorageTransactionModule`, and hands it only its
+  entities.
 - **Global enhancers** (`APP_PIPE`, `APP_FILTER`, `APP_GUARD`) are bound by the app module and the
   auth lib, under tokens of Nest.
 

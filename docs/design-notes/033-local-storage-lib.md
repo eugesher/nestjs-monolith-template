@@ -8,9 +8,8 @@ so they live in one lib, `libs/local-storage`, in two parts:
 | `setup/`       | `LocalStorageSetupModule.forRoot()`       | the root `ClsModule`, the context of every request under its correlation id |
 | `transaction/` | `LocalStorageTransactionModule.forRoot()` | the transactional plugin, global `TRANSACTION_PORT`                         |
 
-`AppModule` imports both, around the connection:
-`LocalStorageSetupModule` → `OrmModule` → `LocalStorageTransactionModule` (see
-`012-app-bootstrap.md`).
+`AppModule` imports `LocalStorageSetupModule` before `OrmModule` of `libs/database`, and `OrmModule`
+imports `LocalStorageTransactionModule` (see `012-app-bootstrap.md`).
 
 ## `setup/`
 
@@ -43,17 +42,24 @@ core call it, and the names say what they do there.
 
 ## What stays in `libs/database`
 
-`libs/database` holds the connection and `ORM_PORT`. `OrmHostAdapter` takes
-`TransactionHost` from the global module of the CLS plugins, so a repository joins the transaction
-that `TRANSACTION_PORT.run` opened without importing this lib. Only the two libs import
+`libs/database` holds the connection and `ORM_PORT`. `OrmHostAdapter` takes `TransactionHost` from
+the global module of the CLS plugins, so a repository joins the transaction that
+`TRANSACTION_PORT.run` opened without importing this lib. Only the two libs import
 `@nestjs-cls/transactional`.
+
+**`OrmModule` mounts the transactions.** `OrmHostAdapter` needs `TransactionHost`, which only the
+plugin of `LocalStorageTransactionModule` provides, and the plugin needs the `DataSource` of
+`OrmModule`. `OrmModule.forRoot` imports `LocalStorageTransactionModule.forRoot()` itself, so an app
+cannot mount the connection without the transactions; `libs/database` is the only lib that may
+import `libs/local-storage`.
 
 ## Who sees the lib
 
-| Importer                               | Uses                                  |
-| -------------------------------------- | ------------------------------------- |
-| `app.module.ts`                        | both `forRoot()`                      |
-| `application` of the apps and the core | `TRANSACTION_PORT` from the contracts |
+| Importer                               | Uses                                      |
+| -------------------------------------- | ----------------------------------------- |
+| `app.module.ts`                        | `LocalStorageSetupModule.forRoot()`       |
+| `OrmModule` of `libs/database`         | `LocalStorageTransactionModule.forRoot()` |
+| `application` of the apps and the core | `TRANSACTION_PORT` from the contracts     |
 
-No other layer imports the lib or its contracts. The lib itself sees `libs/observability` and the
-packages of CLS, the TypeORM adapter, `http` and `nestjs-pino` (see `016-lint-allowlists.md`).
+No other layer or lib imports the lib or its contracts. The lib itself sees `libs/observability` and
+the packages of CLS, the TypeORM adapter, `http` and `nestjs-pino` (see `016-lint-allowlists.md`).
