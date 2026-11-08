@@ -30,15 +30,15 @@ Verifying a token stays in `libs/auth`: signing and verifying meet only in `JWT_
 
 Modules that read the same table keep models of their own, narrowed to what each uses (see
 `024-code-placement.md`). Example: `AuthStaffUserModel`
-(`apps/staff-app/src/features/identity/modules/auth/domain/models`), `UserStaffUserModel`
-(`apps/staff-app/src/features/identity/modules/user/domain/models`) and `StaffAuthCoreSubjectModel`
+(`apps/staff-app/src/features/auth/domain/models`), `UserStaffUserModel`
+(`apps/staff-app/src/features/access/modules/user/domain/models`) and `StaffAuthCoreSubjectModel`
 (`core/modules/src/staff-auth/domain/models`) all map `staff_user`.
 
 ## A core module for the staff of two apps
 
 staff-app and processor-app both sign the staff in and check the subject of every request, so the
 reads live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
-(`core/contracts/src/staff-auth`): `handleFindSubject` for the guard and `GET /identity/auth/me`,
+(`core/contracts/src/staff-auth`): `handleFindSubject` for the guard and `GET /auth/me`,
 `handleFindByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its
 `auth` feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the
 token stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the

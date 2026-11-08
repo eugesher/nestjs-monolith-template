@@ -1,5 +1,578 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Access Permission GET /api/access/permissions should list every permission code 1`] = `
+{
+  "response": {
+    "body": {
+      "codes": [
+        "ledger:read",
+        "access-management",
+        "product:read",
+        "product:write",
+        "product:archive",
+        "product:restock",
+        "order:read",
+        "order:write",
+        "queue:read",
+        "queue:retry",
+        "queue:delete",
+        "tag:read",
+        "tag:write",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Access Permission GET /api/access/permissions should refuse a caller without access-management 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Access Role GET /api/access/roles should list the roles with their permissions from the database 1`] = `
+{
+  "response": {
+    "body": [
+      {
+        "id": "1",
+        "name": "admin",
+        "permissionCodes": [
+          "access-management",
+          "ledger:read",
+          "order:read",
+          "order:write",
+          "product:archive",
+          "product:read",
+          "product:restock",
+          "product:write",
+          "queue:delete",
+          "queue:read",
+          "queue:retry",
+          "tag:read",
+          "tag:write",
+        ],
+      },
+      {
+        "id": "2",
+        "name": "editor",
+        "permissionCodes": [
+          "ledger:read",
+          "order:read",
+          "order:write",
+          "product:archive",
+          "product:read",
+          "product:restock",
+          "product:write",
+          "tag:read",
+          "tag:write",
+        ],
+      },
+      {
+        "id": "3",
+        "name": "viewer",
+        "permissionCodes": [
+          "ledger:read",
+          "order:read",
+          "product:read",
+          "queue:read",
+          "tag:read",
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`App Access Role GET /api/access/roles should refuse a caller without access-management 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Access Role POST /api/access/roles should create a role with an empty permission list 1`] = `
+{
+  "db": {
+    "staff_role": [
+      {
+        "name": "auditor",
+      },
+    ],
+    "staff_role_permissions": [],
+  },
+  "response": {
+    "body": {
+      "id": Any<String>,
+      "name": "auditor",
+      "permissionCodes": [],
+    },
+  },
+}
+`;
+
+exports[`App Access Role POST /api/access/roles should create a role with its permissions and answer 201 1`] = `
+{
+  "db": {
+    "staff_role": [
+      {
+        "name": "auditor",
+      },
+    ],
+    "staff_role_permissions": [
+      {
+        "code": "ledger:read",
+      },
+      {
+        "code": "order:read",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "id": Any<String>,
+      "name": "auditor",
+      "permissionCodes": [
+        "ledger:read",
+        "order:read",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Access Role POST /api/access/roles should refuse a caller without access-management 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Access Role POST /api/access/roles should refuse a missing permission list with 400 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each value in permissionCodes must be one of the following values: ledger:read, access-management, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
+        "permissionCodes must be an array",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Access Role POST /api/access/roles should refuse a taken name with 409 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NAME_TAKEN",
+      "message": "Role name admin is already taken",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should answer 404 for an unknown role 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should reassign the permissions and refuse the same token at once 1`] = `
+{
+  "before": {
+    "status": 200,
+  },
+  "db": {
+    "staff_role_permissions": [
+      {
+        "code": "product:write",
+        "role_id": "3",
+      },
+    ],
+  },
+  "ledger": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+  "response": {
+    "body": {
+      "id": "3",
+      "name": "viewer",
+      "permissionCodes": [
+        "product:write",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should refuse an unknown permission code with 400 1`] = `
+{
+  "db": {
+    "staff_role_permissions": [
+      {
+        "code": "ledger:read",
+        "role_id": "3",
+      },
+      {
+        "code": "order:read",
+        "role_id": "3",
+      },
+      {
+        "code": "product:read",
+        "role_id": "3",
+      },
+      {
+        "code": "queue:read",
+        "role_id": "3",
+      },
+      {
+        "code": "tag:read",
+        "role_id": "3",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "each value in permissionCodes must be one of the following values: ledger:read, access-management, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Access User POST /api/access/users should create a user who can log in at once 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "created_at": Any<Date>,
+        "email": "new-viewer@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "staff_user_roles": [
+      {
+        "role_id": "3",
+        "user_id": Any<String>,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "email": "new-viewer@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Access User POST /api/access/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "email": "race-viewer@example.com",
+      },
+    ],
+  },
+  "refused": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email race-viewer@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+  "statuses": [
+    201,
+    409,
+  ],
+}
+`;
+
+exports[`App Access User POST /api/access/users should refuse a role that is not stored with 404 and create no user 1`] = `
+{
+  "db": {
+    "staff_user": [],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Access User POST /api/access/users should refuse a taken email in another case with 409 1`] = `
+{
+  "db": {
+    "staff_user": [
+      {
+        "email": "editor@example.com",
+        "id": "2",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_EMAIL_TAKEN",
+      "message": "Email editor@example.com is already registered",
+      "statusCode": 409,
+    },
+  },
+}
+`;
+
+exports[`App Access User PUT /api/access/users/:userId/roles should clear the roles with an empty list and answer 200 1`] = `
+{
+  "db": {
+    "staff_user_roles": [],
+  },
+  "response": {
+    "body": {
+      "id": "4",
+      "roleIds": [],
+    },
+  },
+}
+`;
+
+exports[`App Access User PUT /api/access/users/:userId/roles should reassign the roles and answer 200 1`] = `
+{
+  "db": {
+    "staff_user_roles": [
+      {
+        "role_id": "2",
+        "user_id": "4",
+      },
+      {
+        "role_id": "3",
+        "user_id": "4",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "id": "4",
+      "roleIds": [
+        "2",
+        "3",
+      ],
+    },
+  },
+}
+`;
+
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for a role that is not stored and change nothing 1`] = `
+{
+  "db": {
+    "staff_user_roles": [
+      {
+        "role_id": "2",
+        "user_id": "4",
+      },
+      {
+        "role_id": "3",
+        "user_id": "4",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for an unknown user 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_NOT_FOUND",
+      "message": "User 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
+{
+  "response": {
+    "body": {
+      "email": "viewer@example.com",
+      "id": "3",
+      "roles": [
+        "viewer",
+      ],
+    },
+  },
+  "roles": {
+    "error": "Forbidden",
+    "message": "Insufficient permissions",
+    "statusCode": 403,
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+{
+  "claims": [
+    "exp",
+    "iat",
+    "sub",
+  ],
+  "lifetime": 2592000,
+  "me": {
+    "email": "editor@example.com",
+    "id": "2",
+    "roles": [
+      "editor",
+    ],
+  },
+  "response": {
+    "body": {
+      "accessToken": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_INACTIVE",
+      "message": "User 4 is disabled",
+      "statusCode": 403,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
+{
+  "response": {
+    "body": {
+      "error": "Bad Request",
+      "message": [
+        "email must be shorter than or equal to 255 characters",
+        "email must be an email",
+        "password must be shorter than or equal to 256 characters",
+        "password must be longer than or equal to 1 characters",
+        "password must be a string",
+      ],
+      "statusCode": 400,
+    },
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Catalog Product GET /api/catalog/products should list only the products that carry the tag 1`] = `
 {
   "response": {
@@ -857,399 +1430,6 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
         },
       },
       "status": "ready",
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth GET /api/identity/auth/me should refuse a caller without a token 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a disabled user 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth GET /api/identity/auth/me should take the roles from the database, not from the token claims 1`] = `
-{
-  "response": {
-    "body": {
-      "email": "viewer@example.com",
-      "id": "3",
-      "roles": [
-        "viewer",
-      ],
-    },
-  },
-  "roles": {
-    "error": "Forbidden",
-    "message": "Insufficient permissions",
-    "statusCode": 403,
-  },
-}
-`;
-
-exports[`App Identity Auth POST /api/identity/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
-{
-  "claims": [
-    "exp",
-    "iat",
-    "sub",
-  ],
-  "lifetime": 2592000,
-  "me": {
-    "email": "editor@example.com",
-    "id": "2",
-    "roles": [
-      "editor",
-    ],
-  },
-  "response": {
-    "body": {
-      "accessToken": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth POST /api/identity/auth/login should refuse a disabled user with 403 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_INACTIVE",
-      "message": "User 4 is disabled",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth POST /api/identity/auth/login should refuse a wrong password with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth POST /api/identity/auth/login should refuse an empty body with 400 from validation 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "email must be shorter than or equal to 255 characters",
-        "email must be an email",
-        "password must be shorter than or equal to 256 characters",
-        "password must be longer than or equal to 1 characters",
-        "password must be a string",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Identity Auth POST /api/identity/auth/login should refuse an unknown email with the same 401 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_INVALID_CREDENTIALS",
-      "message": "Invalid credentials",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
-exports[`App Identity Role GET /api/identity/roles should list the roles with their permissions from the database 1`] = `
-{
-  "response": {
-    "body": [
-      {
-        "name": "admin",
-        "permissionCodes": [
-          "iam:assign",
-          "iam:role-edit",
-          "iam:user-create",
-          "ledger:read",
-          "order:read",
-          "order:write",
-          "product:archive",
-          "product:read",
-          "product:restock",
-          "product:write",
-          "queue:delete",
-          "queue:read",
-          "queue:retry",
-          "tag:read",
-          "tag:write",
-        ],
-      },
-      {
-        "name": "editor",
-        "permissionCodes": [
-          "ledger:read",
-          "order:read",
-          "order:write",
-          "product:archive",
-          "product:read",
-          "product:restock",
-          "product:write",
-          "tag:read",
-          "tag:write",
-        ],
-      },
-      {
-        "name": "viewer",
-        "permissionCodes": [
-          "ledger:read",
-          "order:read",
-          "product:read",
-          "queue:read",
-          "tag:read",
-        ],
-      },
-    ],
-  },
-}
-`;
-
-exports[`App Identity Role GET /api/identity/roles should refuse a caller without iam:assign 1`] = `
-{
-  "response": {
-    "body": {
-      "error": "Forbidden",
-      "message": "Insufficient permissions",
-      "statusCode": 403,
-    },
-  },
-}
-`;
-
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should answer 404 for an unknown role 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_ROLE_NOT_FOUND",
-      "message": "Role auditor was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
-{
-  "db": {
-    "staff_role_permissions": [
-      {
-        "permission_id": "1",
-        "role_id": "3",
-      },
-      {
-        "permission_id": "7",
-        "role_id": "3",
-      },
-      {
-        "permission_id": "10",
-        "role_id": "3",
-      },
-      {
-        "permission_id": "12",
-        "role_id": "3",
-      },
-      {
-        "permission_id": "16",
-        "role_id": "3",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "error": "Bad Request",
-      "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, iam:user-create, iam:assign, iam:role-edit, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
-      ],
-      "statusCode": 400,
-    },
-  },
-}
-`;
-
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
-{
-  "before": {
-    "status": 200,
-  },
-  "db": {
-    "staff_role_permissions": [
-      {
-        "permission_id": "8",
-        "role_id": "3",
-      },
-    ],
-  },
-  "ledger": {
-    "error": "Forbidden",
-    "message": "Insufficient permissions",
-    "statusCode": 403,
-  },
-  "response": {
-    "body": {
-      "name": "viewer",
-      "permissionCodes": [
-        "product:write",
-      ],
-    },
-  },
-}
-`;
-
-exports[`App Identity User POST /api/identity/users should create a user who can log in at once 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "created_at": Any<Date>,
-        "email": "new-viewer@example.com",
-        "id": Any<String>,
-        "password_hash": Any<String>,
-        "status": "active",
-      },
-    ],
-    "staff_user_roles": [
-      {
-        "role_id": "3",
-        "user_id": Any<String>,
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "email": "new-viewer@example.com",
-      "id": Any<String>,
-    },
-  },
-}
-`;
-
-exports[`App Identity User POST /api/identity/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "email": "race-viewer@example.com",
-      },
-    ],
-  },
-  "refused": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email race-viewer@example.com is already registered",
-      "statusCode": 409,
-    },
-  },
-  "statuses": [
-    201,
-    409,
-  ],
-}
-`;
-
-exports[`App Identity User POST /api/identity/users should refuse a taken email in another case with 409 1`] = `
-{
-  "db": {
-    "staff_user": [
-      {
-        "email": "editor@example.com",
-        "id": "2",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email editor@example.com is already registered",
-      "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Identity User POST /api/identity/users/:userId/roles should answer 404 for an unknown user 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_NOT_FOUND",
-      "message": "User 99 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Identity User POST /api/identity/users/:userId/roles should grant a role and answer 200 1`] = `
-{
-  "db": {
-    "staff_user_roles": [
-      {
-        "role_id": "2",
-        "user_id": "4",
-      },
-      {
-        "role_id": "3",
-        "user_id": "4",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "id": "4",
-      "roles": [
-        "viewer",
-        "editor",
-      ],
     },
   },
 }

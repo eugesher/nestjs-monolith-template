@@ -7,14 +7,11 @@ import { AuthBaseException } from '../../domain';
 
 @Catch(AuthBaseException)
 export class AuthHttpExceptionFilter implements ExceptionFilter<AuthBaseException> {
-  private static readonly STATUS: Record<IdentityExceptionCodeEnum, HttpStatus> = {
+  private static readonly STATUS: Record<AuthBaseException['code'], HttpStatus> = {
     [IdentityExceptionCodeEnum.AUTH_EMAIL_INVALID]: HttpStatus.BAD_REQUEST,
     [IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK]: HttpStatus.BAD_REQUEST,
     [IdentityExceptionCodeEnum.AUTH_INVALID_CREDENTIALS]: HttpStatus.UNAUTHORIZED,
     [IdentityExceptionCodeEnum.AUTH_USER_INACTIVE]: HttpStatus.FORBIDDEN,
-    [IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND]: HttpStatus.NOT_FOUND,
-    [IdentityExceptionCodeEnum.AUTH_PERMISSION_NOT_FOUND]: HttpStatus.BAD_REQUEST,
     [IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN]: HttpStatus.CONFLICT,
   };
 

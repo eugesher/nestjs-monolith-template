@@ -8,9 +8,7 @@ describe('StaffAuthCoreFindSubjectUseCase', () => {
     findActiveById = jest.fn().mockResolvedValue({
       id: 'user-1',
       email: 'editor@example.com',
-      userRoles: [
-        { role: { name: 'editor', rolePermissions: [{ permission: { code: 'ledger:read' } }] } },
-      ],
+      userRoles: [{ role: { name: 'editor', rolePermissions: [{ code: 'ledger:read' }] } }],
     });
     useCase = new StaffAuthCoreFindSubjectUseCase({ findActiveById });
   });

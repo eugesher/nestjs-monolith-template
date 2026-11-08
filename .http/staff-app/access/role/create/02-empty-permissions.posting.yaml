@@ -1,0 +1,21 @@
+name: 02-empty-permissions
+description: |-
+  e2e: Access › Role › POST /api/access/roles › should create a role with an empty permission list
+
+  Expect: 201 Created, no codes
+  User: admin@example.com (token signed by scripts.py)
+  After: SQL: DELETE FROM staff_role WHERE name = 'auditor'
+method: POST
+url: $STAFF_APP_BASE_URL/access/roles
+body:
+  content: |-
+    { "name": "auditor", "permissionCodes": [] }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

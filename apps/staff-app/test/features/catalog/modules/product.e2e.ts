@@ -621,7 +621,7 @@ export class ProductE2E {
       it('should refuse a role without product:write with 403', async () => {
         try {
           await this.ctx.dataSource.query(
-            'DELETE FROM staff_role_permissions WHERE role_id = 2 AND permission_id = 8',
+            "DELETE FROM staff_role_permissions WHERE role_id = 2 AND code = 'product:write'",
           );
 
           const response = await request(this.ctx.app.getHttpServer())
@@ -633,7 +633,7 @@ export class ProductE2E {
           expect({ response: { body: response.body } }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (2, 8)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (2, 'product:write')",
           );
         }
       });

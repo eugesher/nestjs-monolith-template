@@ -5,10 +5,10 @@ also names the lib, its contract and the global module, so the classes of the gl
 the `AuthGlobal` prefix (see `002-global-auth-guards.md`) and the feature keeps the plain `Auth`
 prefix.
 
-| App          | Feature                                             |
-| ------------ | --------------------------------------------------- |
-| staff-app    | `apps/staff-app/src/features/identity/modules/auth` |
-| customer-app | `apps/customer-app/src/features/auth`               |
+| App          | Feature                               |
+| ------------ | ------------------------------------- |
+| staff-app    | `apps/staff-app/src/features/auth`    |
+| customer-app | `apps/customer-app/src/features/auth` |
 
 ## The full path, even for a thin feature
 

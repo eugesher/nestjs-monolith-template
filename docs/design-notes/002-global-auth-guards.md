@@ -20,9 +20,9 @@ every facade method calls a use case, and the use case reaches the data through 
 | customer-app  | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                           | `AUTH_USER_VALIDATOR_PORT` |
 
 The staff subject lives in the core module `core/modules/src/staff-auth`: two apps ask for it, and
-staff-app asks twice, from the guard and from `GET /identity/auth/me`. One query reads the user, its
-roles and the codes of their permissions; the global module keeps the id, the email and the codes.
-The customer check has one caller, so it lives in customer-app.
+staff-app asks twice, from the guard and from `GET /auth/me`. One query reads the user, its roles
+and the codes of their permissions; the global module keeps the id, the email and the codes. The
+customer check has one caller, so it lives in customer-app.
 
 The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.
@@ -51,9 +51,9 @@ by permissions only, and a role is a named set of them.
 
 **Two static modules, not a flag.** `AuthJwtModule.forRoot({ claims: true })` would hide the choice
 in an argument that no lint can read. An import of `AuthPermissionModule` is visible, and the lint
-policy `customer-claims.mjs` refuses it in customer-app, together with `@RequiresPermission`,
-`RoleEnum` and `PermissionCodeEnum`. Without the permission module the decorators would be silently
-ignored, so a route of customer-app cannot even name them.
+policy `customer-claims.mjs` refuses it in customer-app, together with `@RequiresPermission` and
+`PermissionCodeEnum`. Without the permission module the decorators would be silently ignored, so a
+route of customer-app cannot even name them.
 
 ## Order
 

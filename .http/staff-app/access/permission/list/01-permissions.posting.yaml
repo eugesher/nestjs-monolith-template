@@ -1,0 +1,13 @@
+name: 01-permissions
+description: |-
+  e2e: Access › Permission › GET /api/access/permissions › should list every permission code
+
+  Expect: 200 OK, every permission code
+  User: admin@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/access/permissions
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_admin

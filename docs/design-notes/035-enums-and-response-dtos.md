@@ -8,14 +8,14 @@ it belongs to: the liveness answer is `HealthLivenessStatusEnum.OK`, a replayed 
 
 An enum lives with the narrowest code that reads all of its values:
 
-| Folder                                  | What it holds                                         | Example                                                      |
-| --------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------ |
-| `domain/enums`                          | the exception codes of a module                       | `ProductExceptionCodeEnum`                                   |
-| `outbound/enums`                        | the outcomes of a port of the module                  | `ProductStatusArchiveOutcomeEnum`                            |
-| `core/contracts/src/<module>/enums`     | the outcomes and kinds a core module answers or takes | `ProductCoreArchiveOutcomeEnum`                              |
-| `apps/<app>/src/contracts/<name>/enums` | the same for a common module of the app               | `TagCommonReplaceOutcomeEnum`, `TagCommonSubjectTypeEnum`    |
-| `libs/kernel`                           | a vocabulary of several layers, modules or apps       | `RoleEnum`, `ProductStatusEnum`, `HealthReadinessStatusEnum` |
-| `libs/<lib>/src/enums`                  | what only the lib reads                               | `AuthMetadataKeyEnum`                                        |
+| Folder                                  | What it holds                                         | Example                                                                |
+| --------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| `domain/enums`                          | the exception codes of a module                       | `ProductExceptionCodeEnum`                                             |
+| `outbound/enums`                        | the outcomes of a port of the module                  | `ProductStatusArchiveOutcomeEnum`                                      |
+| `core/contracts/src/<module>/enums`     | the outcomes and kinds a core module answers or takes | `ProductCoreArchiveOutcomeEnum`                                        |
+| `apps/<app>/src/contracts/<name>/enums` | the same for a common module of the app               | `TagCommonReplaceOutcomeEnum`, `TagCommonSubjectTypeEnum`              |
+| `libs/kernel`                           | a vocabulary of several layers, modules or apps       | `PermissionCodeEnum`, `ProductStatusEnum`, `HealthReadinessStatusEnum` |
+| `libs/<lib>/src/enums`                  | what only the lib reads                               | `AuthMetadataKeyEnum`                                                  |
 
 **An outcome stays with its port.** The outcome of a core module lives in its contract, not in the
 kernel, because only the core-adapters read it (see `006-idempotency-keys.md` and
@@ -23,9 +23,10 @@ kernel, because only the core-adapters read it (see `006-idempotency-keys.md` an
 core-adapter maps one into the other.
 
 **The kernel holds what a column or a token stores.** `ProductStatusEnum` is a column of a core
-entity read by all three apps, `IdempotencyStatusEnum` a column of `idempotency_key`, `RoleEnum` and
-`PermissionCodeEnum` the claims of a token. The health statuses are in the kernel because both the
-health lib and the health features of the apps name them.
+entity read by all three apps, `IdempotencyStatusEnum` a column of `idempotency_key`,
+`PermissionCodeEnum` a claim of a token. A role is not an enum: the names live in `staff_role`, no
+code branches on one, and a new role needs no release. The health statuses are in the kernel because
+both the health lib and the health features of the apps name them.
 
 **An enum is never copied between a lib and an app.** The app imports the kernel enum the lib
 answers with, so a new value reaches both at once.

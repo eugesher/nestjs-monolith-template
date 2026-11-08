@@ -8,9 +8,10 @@ import * as entities from '@acme-core/entities';
 
 import { AppE2EContext } from '../context/app-e2e.context';
 import {
+  AccessE2E,
+  AuthE2E,
   CatalogE2E,
   HealthE2E,
-  IdentityE2E,
   LedgerE2E,
   SalesE2E,
   ToolsE2E,
@@ -23,7 +24,8 @@ describe('App', () => {
   const ctx = new AppE2EContext();
 
   const healthE2E = HealthE2E.of(ctx);
-  const identityE2E = IdentityE2E.of(ctx);
+  const accessE2E = AccessE2E.of(ctx);
+  const authE2E = AuthE2E.of(ctx);
   const ledgerE2E = LedgerE2E.of(ctx);
   const toolsE2E = ToolsE2E.of(ctx);
   const salesE2E = SalesE2E.of(ctx);
@@ -73,8 +75,13 @@ describe('App', () => {
     healthE2E.ready();
   });
 
-  describe('Identity', () => {
-    identityE2E.execute();
+  describe('Auth', () => {
+    authE2E.handleLogin();
+    authE2E.handleMe();
+  });
+
+  describe('Access', () => {
+    accessE2E.execute();
   });
 
   describe('Ledger', () => {

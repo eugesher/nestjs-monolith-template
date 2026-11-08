@@ -4,8 +4,8 @@ description: |-
 
   Expect: 403 Forbidden
   User: viewer@example.com (token signed by scripts.py)
-  Before: SQL: DELETE FROM staff_role_permissions WHERE role_id = 3 AND permission_id = 10
-  After: SQL: INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 10)
+  Before: SQL: DELETE FROM staff_role_permissions WHERE role_id = 3 AND code = 'order:read'
+  After: SQL: INSERT INTO staff_role_permissions (role_id, code) VALUES (3, 'order:read')
 url: $STAFF_APP_BASE_URL/sales/orders
 auth:
   type: bearer_token

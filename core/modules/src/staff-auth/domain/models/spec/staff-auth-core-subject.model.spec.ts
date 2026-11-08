@@ -1,3 +1,5 @@
+import { PermissionCodeEnum } from '@acme-libs/kernel';
+
 import { StaffAuthCoreSubjectModel } from '../staff-auth-core-subject.model';
 
 describe('StaffAuthCoreSubjectModel', () => {
@@ -13,15 +15,15 @@ describe('StaffAuthCoreSubjectModel', () => {
               role: {
                 name: 'viewer',
                 rolePermissions: [
-                  { permission: { code: 'order:read' } },
-                  { permission: { code: 'ledger:read' } },
+                  { code: PermissionCodeEnum.ORDER_READ },
+                  { code: PermissionCodeEnum.LEDGER_READ },
                 ],
               },
             },
             {
               role: {
                 name: 'editor',
-                rolePermissions: [{ permission: { code: 'ledger:read' } }],
+                rolePermissions: [{ code: PermissionCodeEnum.LEDGER_READ }],
               },
             },
           ],

@@ -75,18 +75,18 @@ shifts the rows another feature's tests read. A row created by a test gets the n
 value after the highest seeded id, and tests find it through `MAX(id)` read before the call, never
 by a literal.
 
-| Feature     | Tables                           | Range                                                     |
-| ----------- | -------------------------------- | --------------------------------------------------------- |
-| identity    | `staff_role`, `staff_permission` | 1–99                                                      |
-| identity    | `staff_user`                     | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
-| identity    | `customer`                       | `00000000-0000-4000-8000-000000000101` to `…000000000199` |
-| product     | `product`                        | 100–199                                                   |
-| note        | `note`, `note_revision`          | 200–299                                                   |
-| reminder    | `reminder`                       | 300–399                                                   |
-| ledger      | `ledger_entry`                   | 400–499                                                   |
-| idempotency | `idempotency_key`                | 500–599                                                   |
-| order       | `order`, `order_product`         | 600–699                                                   |
-| stock       | `product_stock`                  | 700–799                                                   |
+| Feature     | Tables                   | Range                                                     |
+| ----------- | ------------------------ | --------------------------------------------------------- |
+| identity    | `staff_role`             | 1–99                                                      |
+| identity    | `staff_user`             | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
+| identity    | `customer`               | `00000000-0000-4000-8000-000000000101` to `…000000000199` |
+| product     | `product`                | 100–199                                                   |
+| note        | `note`, `note_revision`  | 200–299                                                   |
+| reminder    | `reminder`               | 300–399                                                   |
+| ledger      | `ledger_entry`           | 400–499                                                   |
+| idempotency | `idempotency_key`        | 500–599                                                   |
+| order       | `order`, `order_product` | 600–699                                                   |
+| stock       | `product_stock`          | 700–799                                                   |
 
 ## Images
 

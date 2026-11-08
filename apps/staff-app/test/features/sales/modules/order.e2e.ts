@@ -74,7 +74,7 @@ export class OrderE2E {
       it('should refuse a role without order:read with 403', async () => {
         try {
           await this.ctx.dataSource.query(
-            'DELETE FROM staff_role_permissions WHERE role_id = 3 AND permission_id = 10',
+            "DELETE FROM staff_role_permissions WHERE role_id = 3 AND code = 'order:read'",
           );
 
           const response = await request(this.ctx.app.getHttpServer())
@@ -85,7 +85,7 @@ export class OrderE2E {
           expect({ response: { body: response.body } }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 10)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (3, 'order:read')",
           );
         }
       });
@@ -141,7 +141,7 @@ export class OrderE2E {
       it('should refuse a role without order:read with 403', async () => {
         try {
           await this.ctx.dataSource.query(
-            'DELETE FROM staff_role_permissions WHERE role_id = 3 AND permission_id = 10',
+            "DELETE FROM staff_role_permissions WHERE role_id = 3 AND code = 'order:read'",
           );
 
           const response = await request(this.ctx.app.getHttpServer())
@@ -152,7 +152,7 @@ export class OrderE2E {
           expect({ response: { body: response.body } }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 10)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (3, 'order:read')",
           );
         }
       });
@@ -292,7 +292,7 @@ export class OrderE2E {
       it('should refuse a role without order:write with 403', async () => {
         try {
           await this.ctx.dataSource.query(
-            'DELETE FROM staff_role_permissions WHERE role_id = 2 AND permission_id = 15',
+            "DELETE FROM staff_role_permissions WHERE role_id = 2 AND code = 'order:write'",
           );
 
           const response = await request(this.ctx.app.getHttpServer())
@@ -304,7 +304,7 @@ export class OrderE2E {
           expect({ response: { body: response.body } }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (2, 15)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (2, 'order:write')",
           );
         }
       });

@@ -1,19 +1,12 @@
 import { SelectQueryBuilder } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
-import {
-  StaffPermission,
-  StaffRole,
-  StaffRolePermission,
-  StaffUser,
-  StaffUserRole,
-} from '@acme-core/entities';
+import { StaffRole, StaffRolePermission, StaffUser, StaffUserRole } from '@acme-core/entities';
 
 export class StaffAuthCorePersistenceStaffUserBuilder extends SelectQueryBuilder<StaffUser> {
   private readonly staffUserRoleAlias = StaffUserRole.name;
   private readonly staffRoleAlias = StaffRole.name;
   private readonly staffRolePermissionAlias = StaffRolePermission.name;
-  private readonly staffPermissionAlias = StaffPermission.name;
 
   public forByEmail(email: string): this {
     this.select([`${this.alias}.id`, `${this.alias}.passwordHash`, `${this.alias}.status`]).where(
@@ -33,10 +26,8 @@ export class StaffAuthCorePersistenceStaffUserBuilder extends SelectQueryBuilder
       .leftJoin(`${this.staffRoleAlias}.rolePermissions`, this.staffRolePermissionAlias)
       .addSelect([
         `${this.staffRolePermissionAlias}.roleId`,
-        `${this.staffRolePermissionAlias}.permissionId`,
+        `${this.staffRolePermissionAlias}.code`,
       ])
-      .leftJoin(`${this.staffRolePermissionAlias}.permission`, this.staffPermissionAlias)
-      .addSelect([`${this.staffPermissionAlias}.id`, `${this.staffPermissionAlias}.code`])
       .where(`${this.alias}.id = :id`, { id })
       .andWhere(`${this.alias}.status = :status`, { status: UserStatusEnum.ACTIVE });
 
