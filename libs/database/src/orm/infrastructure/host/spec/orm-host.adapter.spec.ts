@@ -1,18 +1,19 @@
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
-import { HostedRepository } from '../../../../repository/hosted.repository';
 import { OrmHostAdapter } from '../orm-host.adapter';
 
 describe('OrmHostAdapter', () => {
   class Item {}
 
+  let getRepository: jest.Mock;
   let tx: EntityManager;
   let adapter: OrmHostAdapter;
 
   beforeEach(() => {
-    tx = { queryRunner: { name: 'runner' } } as unknown as EntityManager;
+    getRepository = jest.fn();
+    tx = { getRepository } as unknown as EntityManager;
     adapter = new OrmHostAdapter({
       get tx(): EntityManager {
         return tx;
@@ -21,26 +22,25 @@ describe('OrmHostAdapter', () => {
   });
 
   describe('getRepository', () => {
-    it('answers a hosted repository of the entity bound to the current transaction', () => {
-      const repository = adapter.getRepository(Item);
+    it('answers the repository of the entity from the current transaction', () => {
+      const repository = { target: Item } as unknown as Repository<Item>;
+      getRepository.mockReturnValue(repository);
 
-      expect(repository).toBeInstanceOf(HostedRepository);
-      expect(repository.target).toBe(Item);
-      expect(repository.manager).toBe(tx);
-      expect(repository.queryRunner).toBe(tx.queryRunner);
+      const result = adapter.getRepository(Item);
+
+      expect(result).toBe(repository);
+      expect(getRepository).toHaveBeenCalledWith(Item);
     });
 
     it('reads the current transaction on every call', () => {
-      const first = tx;
-      const before = adapter.getRepository(Item);
-      const second = { queryRunner: { name: 'second' } } as unknown as EntityManager;
+      const getSecondRepository = jest.fn();
 
-      tx = second;
+      adapter.getRepository(Item);
+      tx = { getRepository: getSecondRepository } as unknown as EntityManager;
+      adapter.getRepository(Item);
 
-      const after = adapter.getRepository(Item);
-
-      expect(before.manager).toBe(first);
-      expect(after.manager).toBe(second);
+      expect(getRepository).toHaveBeenCalledTimes(1);
+      expect(getSecondRepository).toHaveBeenCalledTimes(1);
     });
   });
 });

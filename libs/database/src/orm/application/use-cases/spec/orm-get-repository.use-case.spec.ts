@@ -1,5 +1,6 @@
-import { IHostedRepository } from '@acme-libs/contracts/database';
+import { EntityManager, QueryRunner, Repository } from 'typeorm';
 
+import { HostedRepository } from '../../../../repository/hosted.repository';
 import { OrmGetRepositoryUseCase } from '../orm-get-repository.use-case';
 
 describe('OrmGetRepositoryUseCase', () => {
@@ -13,13 +14,18 @@ describe('OrmGetRepositoryUseCase', () => {
     useCase = new OrmGetRepositoryUseCase({ getRepository });
   });
 
-  it('answers the repository of the entity from the host', () => {
-    const repository = { target: Item } as unknown as IHostedRepository<Item>;
+  it('answers a hosted repository over the repository of the host', () => {
+    const manager = { name: 'manager' } as unknown as EntityManager;
+    const queryRunner = { name: 'runner' } as unknown as QueryRunner;
+    const repository = new Repository(Item, manager, queryRunner);
     getRepository.mockReturnValue(repository);
 
     const result = useCase.execute(Item);
 
-    expect(result).toBe(repository);
+    expect(result).toBeInstanceOf(HostedRepository);
+    expect(result.target).toBe(Item);
+    expect(result.manager).toBe(manager);
+    expect(result.queryRunner).toBe(queryRunner);
     expect(getRepository).toHaveBeenCalledWith(Item);
   });
 });

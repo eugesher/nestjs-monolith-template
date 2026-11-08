@@ -3,6 +3,7 @@ import { EntityTarget, ObjectLiteral } from 'typeorm';
 
 import { IHostedRepository } from '@acme-libs/contracts/database';
 
+import { HostedRepository } from '../../../repository/hosted.repository';
 import { ORM_HOST_PORT, type IOrmHostPort } from '../../outbound';
 
 @Injectable()
@@ -15,6 +16,8 @@ export class OrmGetRepositoryUseCase {
   public execute<Entity extends ObjectLiteral>(
     entity: EntityTarget<Entity>,
   ): IHostedRepository<Entity> {
-    return this.host.getRepository(entity);
+    const repository = this.host.getRepository(entity);
+
+    return new HostedRepository(repository.target, repository.manager, repository.queryRunner);
   }
 }
