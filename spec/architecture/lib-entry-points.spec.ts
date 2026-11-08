@@ -109,16 +109,16 @@ describe('lib entry points', () => {
     '@acme-libs/toolkit/ddd/entity.base',
     '@acme-libs/config/env/env.helper',
     '@acme-libs/local-storage/transaction/shell/local-storage-transaction.module',
-    '@acme-libs/database/repository/repository-host.adapter',
+    '@acme-libs/database/orm/infrastructure/host/orm-host.adapter',
     '@acme-libs/http/filters/http-exception.filter',
     '@acme-libs/openapi/api-reference/api-reference',
     '@acme-libs/queue/bull/bull-setup.module',
     '@acme-libs/health/shell/health-lib.module',
-    '@acme-libs/auth/shell/auth-lib.module',
+    '@acme-libs/auth/modules/auth-jwt.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
     '@acme-libs/local-storage/setup/local-storage-setup.module',
     '@acme-libs/contracts/local-storage/ports/local-storage-transaction.port',
-    '@acme-libs/contracts/database/ports/repository-host.port',
+    '@acme-libs/contracts/database/ports/orm.port',
     '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',
     '@acme-libs/contracts/cache/ports/cache-lib.port',
     '@acme-libs/contracts/health/ports/health-lib.port',
@@ -204,7 +204,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
-      code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
+      code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
     }).toPassArchitectureLint();
   });
 
@@ -218,7 +218,7 @@ describe('lib entry points', () => {
     async (file) => {
       await expect({
         file,
-        code: 'import { LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";',
+        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
       }).toBreakRule('boundaries/dependencies');
     },
   );
@@ -226,7 +226,7 @@ describe('lib entry points', () => {
   it('the AppModule MAY import the database lib by its alias', async () => {
     await expect({
       file: 'apps/staff-app/src/app/app.module.ts',
-      code: 'import { TypeOrmSetupModule } from "@acme-libs/database";',
+      code: 'import { OrmModule } from "@acme-libs/database";',
     }).toPassArchitectureLint();
   });
 

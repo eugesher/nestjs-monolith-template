@@ -31,6 +31,13 @@ created, so a spec that scaffolds `libs/kernel/src/index.ts` leaves a real `libs
 Scaffolded apps and modules are named `__<topic>-fixture__` so they never collide with real code.
 Libs keep their real names: the lint rules capture the lib name, and the edges are per lib.
 
+**A killed run leaves no scaffold behind.** A scaffold may write outside `__*-fixture__`, such as
+`libs/http/src/exceptions/unauthorized-http.exception.ts`, where `.gitignore` does not hide it. A
+scaffold records every path in the gitignored `.scaffold-manifest` before it writes it and strikes
+the path out in `remove`. `spec/support/global-setup.ts`, the `globalSetup` of the unit config,
+removes whatever the manifest still lists, so a run killed before its `afterAll` is cleaned up at
+the start of the next one.
+
 **One spec file at a time is mandatory.** Scaffolds write into the real tree. Two spec files running
 in parallel would see each other's half-built scaffolds: one removes a directory the other is still
 linting against, or an unknown-file case finds a file that belongs to its neighbor. `test:unit`

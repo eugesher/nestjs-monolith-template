@@ -284,7 +284,7 @@ describe('global modules (app/global) — modules without controllers', () => {
     '@nestjs-cls/transactional-adapter-typeorm',
   ])(
     'the rest of infrastructure may NOT import %s — ' +
-      'a repository reads tables through REPOSITORY_HOST_PORT',
+      'a repository reads tables through ORM_PORT',
     async (source) => {
       await expect({
         file:

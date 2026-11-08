@@ -51,17 +51,6 @@ export class NoteRevisionModel {
     };
   }
 
-  private static validNoteVersion(noteVersion: number): number {
-    if (!Number.isInteger(noteVersion) || noteVersion < NoteRevisionModel.FIRST_REVISED_VERSION) {
-      throw new NoteVersionInvalidException(
-        noteVersion,
-        `NoteRevision.noteVersion must be an integer of at least ${NoteRevisionModel.FIRST_REVISED_VERSION}, got ${noteVersion}`,
-      );
-    }
-
-    return noteVersion;
-  }
-
   public toView(): INoteRevisionSnapshot {
     return {
       id: this.id,
@@ -73,5 +62,16 @@ export class NoteRevisionModel {
       correlationId: this.correlationId,
       recordedAt: this.recordedAt.toISOString(),
     };
+  }
+
+  private static validNoteVersion(noteVersion: number): number {
+    if (!Number.isInteger(noteVersion) || noteVersion < NoteRevisionModel.FIRST_REVISED_VERSION) {
+      throw new NoteVersionInvalidException(
+        noteVersion,
+        `NoteRevision.noteVersion must be an integer of at least ${NoteRevisionModel.FIRST_REVISED_VERSION}, got ${noteVersion}`,
+      );
+    }
+
+    return noteVersion;
   }
 }

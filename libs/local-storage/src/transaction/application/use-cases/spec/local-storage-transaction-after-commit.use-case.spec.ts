@@ -28,7 +28,7 @@ describe('LocalStorageTransactionAfterCommitUseCase', () => {
     isActive.mockReturnValue(false);
 
     expect(() => useCase.execute(() => Promise.resolve())).toThrow(
-      'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
+      'afterCommit must be called inside TRANSACTION_PORT.run',
     );
   });
 
@@ -36,7 +36,7 @@ describe('LocalStorageTransactionAfterCommitUseCase', () => {
     getHooks.mockReturnValue(undefined);
 
     expect(() => useCase.execute(() => Promise.resolve())).toThrow(
-      'afterCommit must be called inside LOCAL_STORAGE_TRANSACTION.run',
+      'afterCommit must be called inside TRANSACTION_PORT.run',
     );
   });
 });

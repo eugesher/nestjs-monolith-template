@@ -1,7 +1,7 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   ITagCommonReplaceFindLinkedQuery,
@@ -25,8 +25,8 @@ export class TagCommonReplaceRepository
   };
 
   constructor(
-    @Inject(REPOSITORY_HOST_PORT)
-    protected readonly repositoryHost: IRepositoryHostPort,
+    @Inject(ORM_PORT)
+    protected readonly orm: IOrmPort,
   ) {
     super();
   }

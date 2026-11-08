@@ -13,6 +13,7 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '../',
   testEnvironment: 'node',
+  globalSetup: '<rootDir>/spec/support/global-setup.ts',
   setupFiles: ['reflect-metadata'],
   testRegex: '\\.spec.ts$',
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.claude/'],

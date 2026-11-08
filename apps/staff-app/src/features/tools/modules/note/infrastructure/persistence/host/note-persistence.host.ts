@@ -1,18 +1,18 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Note, NoteRevision } from '@acme-staff/common/entities';
 
 import { NotePersistenceNoteRevisionBuilder } from '../builders/note-persistence-note-revision.builder';
 import { NotePersistenceBuilder } from '../builders/note-persistence.builder';
 
 export abstract class NotePersistenceHost {
-  protected abstract readonly repositoryHost: IRepositoryHostPort;
+  protected abstract readonly orm: IOrmPort;
 
   protected get noteRepository(): IHostedRepository<Note> {
-    return this.repositoryHost.getRepository(Note);
+    return this.orm.getRepository(Note);
   }
 
   protected get noteRevisionRepository(): IHostedRepository<NoteRevision> {
-    return this.repositoryHost.getRepository(NoteRevision);
+    return this.orm.getRepository(NoteRevision);
   }
 
   protected createNoteBuilder(): NotePersistenceBuilder {

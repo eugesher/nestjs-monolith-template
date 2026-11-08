@@ -220,8 +220,8 @@ describe('processors (processors/<module>) — modules entered by queues and sch
           'persistence/__fixture__.ts',
         code:
           'import { Repository } from "typeorm";\n' +
-          'import { type IRepositoryHostPort, ' +
-          'REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
+          'import { type IOrmPort, ' +
+          'ORM_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
@@ -230,7 +230,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
     ])(
-      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
+      'infrastructure may NOT import %s — a repository reads tables through ORM_PORT',
       async (source) => {
         await expect({
           file:

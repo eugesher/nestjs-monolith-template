@@ -12,6 +12,9 @@ import { Maybe } from '@acme-libs/toolkit';
 import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 
 export class LoggerSetupConfig implements Params {
+  public readonly pinoHttp: Options;
+  public readonly forRoutes: NonNullable<Params['forRoutes']>;
+
   private static readonly NOISY_CONTEXTS = new Set<unknown>([
     'InstanceLoader',
     'NestFactory',
@@ -19,9 +22,6 @@ export class LoggerSetupConfig implements Params {
     'RouterExplorer',
     'RoutesResolver',
   ]);
-
-  public readonly pinoHttp: Options;
-  public readonly forRoutes: NonNullable<Params['forRoutes']>;
 
   constructor(appName: AppNameEnum) {
     const isProduction = EnvHelper.isProduction();

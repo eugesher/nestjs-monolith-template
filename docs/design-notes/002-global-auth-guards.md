@@ -39,20 +39,20 @@ without a new policy.
 
 ## Two lib modules
 
-| Module                | Guards                 | Needs                               | Imported by                            |
-| --------------------- | ---------------------- | ----------------------------------- | -------------------------------------- |
-| `AuthLibModule`       | `AuthJwtGuard`         | `AUTH_USER_VALIDATOR_PORT`          | staff-app, processor-app, customer-app |
-| `AuthClaimsLibModule` | `AuthPermissionsGuard` | `permissionCodes` on `request.user` | staff-app, processor-app               |
+| Module                 | Guards                | Needs                               | Imported by                            |
+| ---------------------- | --------------------- | ----------------------------------- | -------------------------------------- |
+| `AuthJwtModule`        | `AuthJwtGuard`        | `AUTH_USER_VALIDATOR_PORT`          | staff-app, processor-app, customer-app |
+| `AuthPermissionModule` | `AuthPermissionGuard` | `permissionCodes` on `request.user` | staff-app, processor-app               |
 
 **Who the user is and what the user may do come in one answer.** `AUTH_USER_VALIDATOR_PORT.validate`
 answers `{ id, email, permissionCodes? }`. A staff app fills `permissionCodes`; customer-app leaves
-it out and imports `AuthLibModule` alone. There is no roles guard and no `@Roles`: routes are gated
+it out and imports `AuthJwtModule` alone. There is no roles guard and no `@Roles`: routes are gated
 by permissions only, and a role is a named set of them.
 
-**Two static modules, not a flag.** `AuthLibModule.forRoot({ claims: true })` would hide the choice
-in an argument that no lint can read. An import of `AuthClaimsLibModule` is visible, and the lint
+**Two static modules, not a flag.** `AuthJwtModule.forRoot({ claims: true })` would hide the choice
+in an argument that no lint can read. An import of `AuthPermissionModule` is visible, and the lint
 policy `customer-claims.mjs` refuses it in customer-app, together with
-`@RequiresPermission`, `RoleEnum` and `PermissionCodeEnum`. Without the claims
+`@RequiresPermission`, `RoleEnum` and `PermissionCodeEnum`. Without the permission
 module the decorators would be silently ignored, so a route of customer-app cannot even name them.
 
 ## Order
@@ -62,13 +62,13 @@ Each guard is one `APP_GUARD` provider, and Nest runs global guards in registrat
 1. `AuthJwtGuard` — lets a `@Public()` route through, otherwise needs a valid
    `Authorization: Bearer` token and a subject the validator still accepts. Anything else is 401.
    It puts the user on `request.user`.
-2. `AuthPermissionsGuard` — `@RequiresPermission(...)`: 403 unless `request.user.permissionCodes`
-   holds ANY of the listed codes.
+2. `AuthPermissionGuard` — `@RequiresPermission(<code>)`: 403 unless
+   `request.user.permissionCodes` holds the code. The decorator takes one code.
 
-**Authentication must come first.** The permissions guard reads `request.user`. Ahead of the JWT guard
-they would see an anonymous request on every gated route and answer 403 where 401 is meant. The
-`AuthGlobalModule` of a staff app imports `AuthLibModule` before `AuthClaimsLibModule`, and the spec of the
-claims module checks that a gated route without a token answers 401.
+**Authentication must come first.** The permissions guard reads `request.user`. Ahead of the JWT
+guard they would see an anonymous request on every gated route and answer 403 where 401 is meant.
+The `AuthGlobalModule` of a staff app imports `AuthJwtModule` before `AuthPermissionModule`, and the
+spec of the permission module checks that a gated route without a token answers 401.
 
 **Deny by default.** A route without decorators needs a token. `@Public()` is the only way out, and
 it is visible in the controller. Health endpoints are public: an orchestrator probes them without

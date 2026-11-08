@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import { IProductAccessRepositoryPort, PRODUCT_ACCESS_REPOSITORY_PORT } from '../../../outbound';
 import { ProductBaseRepository } from './base/product-base.repository';
@@ -16,8 +16,8 @@ export class ProductAccessRepository
   };
 
   constructor(
-    @Inject(REPOSITORY_HOST_PORT)
-    protected readonly repositoryHost: IRepositoryHostPort,
+    @Inject(ORM_PORT)
+    protected readonly orm: IOrmPort,
   ) {
     super();
   }

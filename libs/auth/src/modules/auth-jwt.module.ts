@@ -16,4 +16,4 @@ import { AuthJwtGuard } from '../guards/auth-jwt.guard';
   ],
   providers: [{ provide: APP_GUARD, useClass: AuthJwtGuard }],
 })
-export class AuthLibModule {}
+export class AuthJwtModule {}

@@ -12,10 +12,6 @@ import { IReminderRecord } from '../interfaces/reminder-record.interface';
 import { IReminderSnapshot } from '../interfaces/reminder-snapshot.interface';
 
 export class ReminderModel extends AggregateRoot<string> {
-  private static readonly TITLE_MAX_LENGTH = 255;
-  private static readonly BODY_MAX_LENGTH = 2000;
-  private static readonly DUE_ON_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
   public get dueOn(): string {
     return this.currentDueOn;
   }
@@ -27,6 +23,10 @@ export class ReminderModel extends AggregateRoot<string> {
   public get version(): number {
     return this.currentVersion;
   }
+
+  private static readonly TITLE_MAX_LENGTH = 255;
+  private static readonly BODY_MAX_LENGTH = 2000;
+  private static readonly DUE_ON_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
   private constructor(
     id: string,
@@ -78,6 +78,40 @@ export class ReminderModel extends AggregateRoot<string> {
     };
   }
 
+  public complete(): void {
+    this.assertPending();
+
+    this.currentStatus = ReminderStatusEnum.DONE;
+    this.currentVersion += 1;
+  }
+
+  public reschedule(dueOn: string): void {
+    this.assertPending();
+
+    const validDueOn = ReminderModel.validDueOn(dueOn);
+
+    if (validDueOn === this.currentDueOn) {
+      return;
+    }
+
+    this.currentDueOn = validDueOn;
+    this.currentVersion += 1;
+  }
+
+  public toView(): IReminderSnapshot {
+    return {
+      id: this.id,
+      ownerId: this.ownerId,
+      title: this.title,
+      body: this.body,
+      dueOn: this.dueOn,
+      status: this.status,
+      version: this.version,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
+    };
+  }
+
   private static validTitle(title: string): string {
     const trimmed = title.trim();
 
@@ -121,40 +155,6 @@ export class ReminderModel extends AggregateRoot<string> {
     }
 
     return version;
-  }
-
-  public complete(): void {
-    this.assertPending();
-
-    this.currentStatus = ReminderStatusEnum.DONE;
-    this.currentVersion += 1;
-  }
-
-  public reschedule(dueOn: string): void {
-    this.assertPending();
-
-    const validDueOn = ReminderModel.validDueOn(dueOn);
-
-    if (validDueOn === this.currentDueOn) {
-      return;
-    }
-
-    this.currentDueOn = validDueOn;
-    this.currentVersion += 1;
-  }
-
-  public toView(): IReminderSnapshot {
-    return {
-      id: this.id,
-      ownerId: this.ownerId,
-      title: this.title,
-      body: this.body,
-      dueOn: this.dueOn,
-      status: this.status,
-      version: this.version,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString(),
-    };
   }
 
   private assertPending(): void {

@@ -101,7 +101,7 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
   `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
-  presentation may not. `LOCAL_STORAGE_TRANSACTION` and the types of `@acme-libs/contracts/auth`
+  presentation may not. `TRANSACTION_PORT` and the types of `@acme-libs/contracts/auth`
   stay direct.
 - **A feature and a core module write to the ledger.** Their outbound, application and
   `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
@@ -110,23 +110,23 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
   may. The lib itself sees only the base libs.
 - **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
   `@acme-libs/contracts/database` and `@nestjs/common`, as feature infrastructure does.
-- **No module touches `@nestjs-cls`.** A repository injects `REPOSITORY_HOST_PORT` of
+- **No module touches `@nestjs-cls`.** A repository injects `ORM_PORT` of
   `@acme-libs/contracts/database` and reads through `getRepository(<Entity>)`, so infrastructure may
   not import `@nestjs-cls/transactional` or its TypeORM adapter; only `libs/database` and
-  `libs/local-storage` do. The application takes `LOCAL_STORAGE_TRANSACTION` from
+  `libs/local-storage` do. The application takes `TRANSACTION_PORT` from
   `@acme-libs/contracts/local-storage`.
-- **Infrastructure does not see `libs/database`.** A repository takes the repository host port from
-  `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. The adapters of
-  `libs/database` are bound in `app/setup`, so infrastructure cannot inject `RepositoryHostAdapter`
-  past the port. The http lib reads `MysqlErrorHelper` from the toolkit too.
+- **Infrastructure does not see `libs/database`.** A repository takes `ORM_PORT` from
+  `@acme-libs/contracts/database` and `MysqlErrorHelper` from the toolkit. `OrmModule` of
+  `libs/database` binds `OrmFacade` under the port, so infrastructure cannot inject the facade past
+  it. The http lib reads `MysqlErrorHelper` from the toolkit too.
 - **`toolkit/src/database` may import `typeorm`.** `MysqlErrorHelper` checks for a TypeORM
   `QueryFailedError`. The edge is scoped to that folder by the `file` capture of the lib category,
   so the rest of the toolkit sees only `crypto` and the kernel sees no package.
-- **The database contracts name TypeORM.** The repository host port returns a TypeORM
+- **The database contracts name TypeORM.** The ORM port returns a TypeORM
   `Repository`, so the contracts of `database` may import `typeorm`; the other contracts see only
   the base libs.
 - **No module registers entities.** The entities of an app are listed once in `app/entities` and
-  handed to `TypeOrmSetupModule.forRoot` of `libs/database`, so only that lib may import
+  handed to `OrmModule.forRoot` of `libs/database`, so only that lib may import
   `@nestjs/typeorm`; `TypeOrmModule.forFeature` would add repository tokens that nothing injects.
 - **A module root binds no token.** An adapter carries its binding in a static `provider` (see
   `031-static-provider.md`), and a config value is bound in `infrastructure/config` (see
@@ -139,3 +139,12 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **A global common-adapter reaches any contract of its app and its own outbound.** It implements
   a port of its module's outbound with the port of a common module, which is named after that
   module, not after the global module, so the namesake rule of `appContracts` would refuse it.
+
+### Policies that name exports
+
+A policy that refuses or allows a name of a lib, such as `customer-claims.mjs` with
+`AuthPermissionModule` and `RequiresPermission`, matches the specifier of the import, not the file
+behind it. A renamed export would leave the policy guarding a name nobody imports, and its negative
+case would stay green as long as its fixture used the old name too.
+`spec/architecture/policy-specifiers.spec.ts` reads the resolved policies of the boundaries rule and
+checks that every specifier named for a lib is an export of that lib.

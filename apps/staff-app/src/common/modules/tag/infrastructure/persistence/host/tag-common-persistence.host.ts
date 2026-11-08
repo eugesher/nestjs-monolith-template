@@ -1,18 +1,18 @@
-import { IHostedRepository, IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { SubjectTag, Tag } from '@acme-staff/common/entities';
 
 import { TagCommonPersistenceSubjectTagBuilder } from '../builders/tag-common-persistence-subject-tag.builder';
 import { TagCommonPersistenceBuilder } from '../builders/tag-common-persistence.builder';
 
 export abstract class TagCommonPersistenceHost {
-  protected abstract readonly repositoryHost: IRepositoryHostPort;
+  protected abstract readonly orm: IOrmPort;
 
   protected get subjectTagRepository(): IHostedRepository<SubjectTag> {
-    return this.repositoryHost.getRepository(SubjectTag);
+    return this.orm.getRepository(SubjectTag);
   }
 
   protected get tagRepository(): IHostedRepository<Tag> {
-    return this.repositoryHost.getRepository(Tag);
+    return this.orm.getRepository(Tag);
   }
 
   protected createTagBuilder(): TagCommonPersistenceBuilder {

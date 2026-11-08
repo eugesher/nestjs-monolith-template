@@ -217,8 +217,8 @@ describe('core modules', () => {
         file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
         code:
           'import { Repository } from "typeorm";\n' +
-          'import { type IRepositoryHostPort, ' +
-          'REPOSITORY_HOST_PORT } from "@acme-libs/contracts/database";',
+          'import { type IOrmPort, ' +
+          'ORM_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
@@ -227,7 +227,7 @@ describe('core modules', () => {
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',
     ])(
-      'infrastructure may NOT import %s — a repository reads tables through REPOSITORY_HOST_PORT',
+      'infrastructure may NOT import %s — a repository reads tables through ORM_PORT',
       async (source) => {
         await expect({
           file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
@@ -293,7 +293,7 @@ describe('core modules', () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
         code:
-          'import { ILocalStorageTransaction, LOCAL_STORAGE_TRANSACTION } from "@acme-libs/contracts/local-storage";\n' +
+          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";\n' +
           'import { PinoLogger } from "nestjs-pino";',
       }).toPassArchitectureLint();
     });

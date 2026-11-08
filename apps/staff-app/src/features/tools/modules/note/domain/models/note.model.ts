@@ -10,10 +10,6 @@ import { INoteRecord } from '../interfaces/note-record.interface';
 import { INoteSnapshot } from '../interfaces/note-snapshot.interface';
 
 export class NoteModel extends AggregateRoot<string> {
-  private static readonly SUBJECT_TYPE_PATTERN = /^[a-z][a-z-]{1,63}$/;
-  private static readonly SUBJECT_ID_MAX_LENGTH = 64;
-  private static readonly BODY_MAX_LENGTH = 4000;
-
   public get body(): string {
     return this.currentBody;
   }
@@ -25,6 +21,10 @@ export class NoteModel extends AggregateRoot<string> {
   public get version(): number {
     return this.currentVersion;
   }
+
+  private static readonly SUBJECT_TYPE_PATTERN = /^[a-z][a-z-]{1,63}$/;
+  private static readonly SUBJECT_ID_MAX_LENGTH = 64;
+  private static readonly BODY_MAX_LENGTH = 4000;
 
   private constructor(
     id: string,
@@ -77,6 +77,40 @@ export class NoteModel extends AggregateRoot<string> {
     };
   }
 
+  public edit(body: string): void {
+    this.assertOpen();
+
+    const validBody = NoteModel.validBody(body);
+
+    if (validBody === this.currentBody) {
+      return;
+    }
+
+    this.currentBody = validBody;
+    this.currentVersion += 1;
+  }
+
+  public resolve(): void {
+    this.assertOpen();
+
+    this.currentResolved = true;
+    this.currentVersion += 1;
+  }
+
+  public toView(): INoteSnapshot {
+    return {
+      id: this.id,
+      subjectType: this.subjectType,
+      subjectId: this.subjectId,
+      body: this.body,
+      authorId: this.authorId,
+      resolved: this.resolved,
+      version: this.version,
+      createdAt: this.createdAt.toISOString(),
+      updatedAt: this.updatedAt.toISOString(),
+    };
+  }
+
   private static validSubjectType(subjectType: string): string {
     if (!NoteModel.SUBJECT_TYPE_PATTERN.test(subjectType)) {
       throw new NoteSubjectInvalidException(
@@ -115,40 +149,6 @@ export class NoteModel extends AggregateRoot<string> {
     }
 
     return version;
-  }
-
-  public edit(body: string): void {
-    this.assertOpen();
-
-    const validBody = NoteModel.validBody(body);
-
-    if (validBody === this.currentBody) {
-      return;
-    }
-
-    this.currentBody = validBody;
-    this.currentVersion += 1;
-  }
-
-  public resolve(): void {
-    this.assertOpen();
-
-    this.currentResolved = true;
-    this.currentVersion += 1;
-  }
-
-  public toView(): INoteSnapshot {
-    return {
-      id: this.id,
-      subjectType: this.subjectType,
-      subjectId: this.subjectId,
-      body: this.body,
-      authorId: this.authorId,
-      resolved: this.resolved,
-      version: this.version,
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString(),
-    };
   }
 
   private assertOpen(): void {

@@ -8,9 +8,9 @@ import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contr
 
 import { CurrentUser } from '../../decorators/auth-current-user.decorator';
 import { Public } from '../../decorators/auth-public.decorator';
-import { AuthLibModule } from '../auth-lib.module';
+import { AuthJwtModule } from '../auth-jwt.module';
 
-describe('AuthLibModule', () => {
+describe('AuthJwtModule', () => {
   let app: INestApplication;
   let url: string;
 
@@ -56,7 +56,7 @@ describe('AuthLibModule', () => {
     })
     class ValidatorModule {}
 
-    @Module({ imports: [ValidatorModule, AuthLibModule], controllers: [ProbeController] })
+    @Module({ imports: [ValidatorModule, AuthJwtModule], controllers: [ProbeController] })
     class TestModule {}
 
     app = await NestFactory.create(TestModule, { logger: false });

@@ -7,11 +7,11 @@ import { ITagRecord } from '../interfaces/tag-record.interface';
 import { ITagSnapshot } from '../interfaces/tag-snapshot.interface';
 
 export class TagModel extends AggregateRoot<string> {
-  private static readonly NAME_MAX_LENGTH = 64;
-
   public get name(): string {
     return this.currentName;
   }
+
+  private static readonly NAME_MAX_LENGTH = 64;
 
   private constructor(
     id: string,
@@ -36,16 +36,6 @@ export class TagModel extends AggregateRoot<string> {
     return { name: validName };
   }
 
-  private static validName(name: string): string {
-    const trimmed = name.trim();
-
-    if (trimmed.length === 0 || trimmed.length > TagModel.NAME_MAX_LENGTH) {
-      throw new TagNameInvalidException(TagModel.NAME_MAX_LENGTH);
-    }
-
-    return trimmed;
-  }
-
   public rename(name: string): void {
     this.currentName = TagModel.validName(name);
   }
@@ -57,5 +47,15 @@ export class TagModel extends AggregateRoot<string> {
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
     };
+  }
+
+  private static validName(name: string): string {
+    const trimmed = name.trim();
+
+    if (trimmed.length === 0 || trimmed.length > TagModel.NAME_MAX_LENGTH) {
+      throw new TagNameInvalidException(TagModel.NAME_MAX_LENGTH);
+    }
+
+    return trimmed;
   }
 }

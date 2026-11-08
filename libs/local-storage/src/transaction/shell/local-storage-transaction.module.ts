@@ -4,7 +4,7 @@ import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-t
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
 
-import { LOCAL_STORAGE_TRANSACTION } from '@acme-libs/contracts/local-storage';
+import { TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
 
 import {
   LocalStorageTransactionAfterCommitUseCase,
@@ -25,9 +25,9 @@ export class LocalStorageTransactionModule {
       module: LocalStorageTransactionModule,
       global: true,
       imports: [ClsModule.registerPlugins([transactional])],
-      exports: [LOCAL_STORAGE_TRANSACTION],
+      exports: [TRANSACTION_PORT],
       providers: [
-        { provide: LOCAL_STORAGE_TRANSACTION, useClass: LocalStorageTransactionFacade },
+        { provide: TRANSACTION_PORT, useClass: LocalStorageTransactionFacade },
         LocalStorageTransactionRunUseCase,
         LocalStorageTransactionAfterCommitUseCase,
         LocalStorageTransactionHostAdapter.provider,

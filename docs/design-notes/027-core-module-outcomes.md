@@ -17,7 +17,7 @@ line. The enum lives in the contract, and a core-adapter maps it into the plain 
 feature port with a `Record` over every value, so a new value fails the typecheck of every caller.
 
 **The use case opens or joins a transaction.** `ProductCoreArchiveUseCase` runs in
-`LOCAL_STORAGE_TRANSACTION.run`, so it joins the transaction of a caller that has one and opens its
+`TRANSACTION_PORT.run`, so it joins the transaction of a caller that has one and opens its
 own otherwise. It locks the row before it reads it (see `021-pessimistic-locking.md`), compares
 `expectedVersion` for the `If-Match` of a caller, writes, and announces the write in `afterCommit`:
 it drops a cache (see `020-cross-app-cache-invalidation.md`) and enqueues a ledger record (see

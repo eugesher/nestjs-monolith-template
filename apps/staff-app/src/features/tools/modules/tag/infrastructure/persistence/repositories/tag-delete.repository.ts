@@ -1,6 +1,6 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { REPOSITORY_HOST_PORT, type IRepositoryHostPort } from '@acme-libs/contracts/database';
+import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import { ITagDeleteRepositoryPort, TAG_DELETE_REPOSITORY_PORT } from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
@@ -13,8 +13,8 @@ export class TagDeleteRepository extends TagPersistenceHost implements ITagDelet
   };
 
   constructor(
-    @Inject(REPOSITORY_HOST_PORT)
-    protected readonly repositoryHost: IRepositoryHostPort,
+    @Inject(ORM_PORT)
+    protected readonly orm: IOrmPort,
   ) {
     super();
   }

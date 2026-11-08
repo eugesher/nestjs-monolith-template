@@ -1,13 +1,6 @@
 import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
 
 export class SnakeNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
-  private static snakeCase(this: void, value: string): string {
-    return value
-      .replaceAll(/([A-Z])([A-Z])([a-z])/g, '$1_$2$3')
-      .replaceAll(/([a-z0-9])([A-Z])/g, '$1_$2')
-      .toLowerCase();
-  }
-
   public override tableName(className: string, customName: string | undefined): string {
     return customName ?? SnakeNamingStrategy.snakeCase(className);
   }
@@ -47,5 +40,12 @@ export class SnakeNamingStrategy extends DefaultNamingStrategy implements Naming
     columnName?: string,
   ): string {
     return SnakeNamingStrategy.snakeCase(`${tableName}_${columnName ?? propertyName}`);
+  }
+
+  private static snakeCase(this: void, value: string): string {
+    return value
+      .replaceAll(/([A-Z])([A-Z])([a-z])/g, '$1_$2$3')
+      .replaceAll(/([a-z0-9])([A-Z])/g, '$1_$2')
+      .toLowerCase();
   }
 }

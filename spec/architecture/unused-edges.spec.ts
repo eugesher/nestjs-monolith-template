@@ -62,7 +62,7 @@ describe('unused edges', () => {
         '../../../../libs/config/src',
       ],
       [
-        'a setup module may NOT reach the database lib: the app module mounts TypeOrmSetupModule',
+        'a setup module may NOT reach the database lib: the app module mounts OrmModule',
         'apps/__unused-fixture__/src/app/setup/config/__fixture__.ts',
         '../../../../../../libs/database/src',
       ],

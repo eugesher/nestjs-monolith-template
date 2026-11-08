@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { CacheLibModule } from '@acme-libs/cache';
-import { TypeOrmSetupModule } from '@acme-libs/database';
+import { OrmModule } from '@acme-libs/database';
 import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
   StrictValidationPipe,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { LocalStorageSetupModule, LocalStorageTransactionModule } from '@acme-libs/local-storage';
+import { LocalStorageSetupModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import {
@@ -31,8 +31,7 @@ import { ConfigSetupModule } from './setup';
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.STAFF_APP),
     LocalStorageSetupModule.forRoot(),
-    TypeOrmSetupModule.forRoot(entities),
-    LocalStorageTransactionModule.forRoot(),
+    OrmModule.forRoot(entities),
     BullSetupModule.forRoot(),
     CacheLibModule,
     AuthGlobalModule,
