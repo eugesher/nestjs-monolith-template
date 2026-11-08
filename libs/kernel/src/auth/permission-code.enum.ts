@@ -1,8 +1,6 @@
 export enum PermissionCodeEnum {
   LEDGER_READ = 'ledger:read',
-  IDENTITY_USER_CREATE = 'identity:user:create',
-  IDENTITY_ROLE_ASSIGN = 'identity:role:assign',
-  IDENTITY_PERMISSION_ASSIGN = 'identity:permission:assign',
+  ACCESS_MANAGEMENT = 'access-management',
   PRODUCT_READ = 'product:read',
   PRODUCT_WRITE = 'product:write',
   PRODUCT_ARCHIVE = 'product:archive',

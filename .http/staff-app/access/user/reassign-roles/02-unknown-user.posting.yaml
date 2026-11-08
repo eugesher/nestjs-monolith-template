@@ -1,0 +1,22 @@
+name: 02-unknown-user
+description: |-
+  e2e: Access › User › PUT /api/access/users/:userId/roles › should store nothing for an unknown user
+
+  Expect: 200 OK, no rows for the user
+  User: admin@example.com (token signed by scripts.py)
+method: PUT
+url: $STAFF_APP_BASE_URL/access/users/99/roles
+body:
+  content: |-
+    {
+      "roleIds": ["2"]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

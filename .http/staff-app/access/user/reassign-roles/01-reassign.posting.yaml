@@ -1,0 +1,22 @@
+name: 01-reassign
+description: |-
+  e2e: Access › User › PUT /api/access/users/:userId/roles › should reassign the roles and answer 200
+
+  Expect: 200 OK, role ids 2 and 3
+  User: admin@example.com (token signed by scripts.py)
+method: PUT
+url: $STAFF_APP_BASE_URL/access/users/4/roles
+body:
+  content: |-
+    {
+      "roleIds": ["2", "3"]
+    }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin

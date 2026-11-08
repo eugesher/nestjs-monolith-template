@@ -52,19 +52,18 @@ describe('Note', () => {
 });
 ```
 
-**A group of features has a class of its own** (see `025-feature-groups.md`). `IdentityE2E.of(ctx)`
+**A group of features has a class of its own** (see `025-feature-groups.md`). `AccessE2E.of(ctx)`
 builds the classes of its modules from `modules/`, and `execute()` holds one `describe` per module
 with the calls of that module. The entry calls only `execute()` inside the `describe` of the group,
 and `features/index.ts` exports the group, not its modules:
 
 ```ts
-describe('Identity', () => {
-  identityE2E.execute();
+describe('Access', () => {
+  accessE2E.execute();
 });
 ```
 
-The name of a case starts with the group and the module:
-`Identity › Role › GET /api/identity/roles`.
+The name of a case starts with the group and the module: `Access › Role › GET /api/access/roles`.
 
 The order of the calls is the order of the database states: the cases that read a whole list come
 before the cases that write into it.

@@ -1,9 +1,7 @@
 INSERT INTO staff_role_permissions (role_id, code)
 VALUES
   (1, 'ledger:read'),
-  (1, 'identity:user:create'),
-  (1, 'identity:role:assign'),
-  (1, 'identity:permission:assign'),
+  (1, 'access-management'),
   (1, 'product:read'),
   (1, 'product:write'),
   (1, 'product:archive'),

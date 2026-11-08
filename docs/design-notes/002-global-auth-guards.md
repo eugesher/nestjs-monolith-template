@@ -20,9 +20,9 @@ every facade method calls a use case, and the use case reaches the data through 
 | customer-app  | `AuthGlobalValidateSubjectUseCase` and its repository                                                                                           | `AUTH_USER_VALIDATOR_PORT` |
 
 The staff subject lives in the core module `core/modules/src/staff-auth`: two apps ask for it, and
-staff-app asks twice, from the guard and from `GET /identity/auth/me`. One query reads the user, its
-roles and the codes of their permissions; the global module keeps the id, the email and the codes.
-The customer check has one caller, so it lives in customer-app.
+staff-app asks twice, from the guard and from `GET /auth/me`. One query reads the user, its roles
+and the codes of their permissions; the global module keeps the id, the email and the codes. The
+customer check has one caller, so it lives in customer-app.
 
 The global module also imports the lib modules, so mounting `AuthGlobalModule` in `AppModule` is the
 whole wiring.

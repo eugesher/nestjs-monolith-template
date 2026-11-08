@@ -13,9 +13,10 @@ import { LocalStorageSetupModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import {
+  AccessModule,
+  AuthModule,
   CatalogModule,
   HealthModule,
-  IdentityModule,
   LedgerModule,
   SalesModule,
   ToolsModule,
@@ -36,7 +37,8 @@ import { ConfigSetupModule } from './setup';
     CacheLibModule,
     AuthGlobalModule,
     HealthModule,
-    IdentityModule,
+    AccessModule,
+    AuthModule,
     LedgerModule,
     ToolsModule,
     CatalogModule,

@@ -32,8 +32,7 @@ Nine e2e cases are not one request:
 - two simultaneous orders for the last units of a product send the same request twice at once with
   two keys, as `customer-app/order/place/13-simultaneous` says;
 - two simultaneous registrations with one email send the same request twice at once, in
-  `customer-app/auth/register/03-simultaneous` and
-  `staff-app/identity/user/register/02-simultaneous`;
+  `customer-app/auth/register/03-simultaneous` and `staff-app/access/user/register/02-simultaneous`;
 - the sign-up of a customer goes on to log in and read `me` with the new credentials, as
   `auth/register/01-register` says.
 

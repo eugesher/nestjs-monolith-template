@@ -1,0 +1,13 @@
+name: 02-without-access-management
+description: |-
+  e2e: Access › Permission › GET /api/access/permissions › should refuse a caller without access-management
+
+  Expect: 403 Forbidden, Insufficient permissions
+  User: viewer@example.com (token signed by scripts.py)
+url: $STAFF_APP_BASE_URL/access/permissions
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_viewer

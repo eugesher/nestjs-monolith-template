@@ -26,7 +26,7 @@ describe('App', () => {
     await ctx.close();
   });
 
-  it.each(['/api/identity/roles', '/api/ledger', '/api/tools/notes', '/api/tools/reminders'])(
+  it.each(['/api/access/roles', '/api/ledger', '/api/tools/notes', '/api/tools/reminders'])(
     'should not mount the staff-app route %s',
     async (path) => {
       await request(ctx.app.getHttpServer())

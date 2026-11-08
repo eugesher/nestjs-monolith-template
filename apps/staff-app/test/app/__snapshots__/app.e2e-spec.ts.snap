@@ -862,7 +862,7 @@ exports[`App Health GET /api/health/ready should report readiness of the databas
 }
 `;
 
-exports[`App Identity Auth GET /api/identity/auth/me should refuse a caller without a token 1`] = `
+exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = `
 {
   "response": {
     "body": {
@@ -873,7 +873,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should refuse a caller with
 }
 `;
 
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
+exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of this app 1`] = `
 {
   "response": {
     "body": {
@@ -884,7 +884,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of 
 }
 `;
 
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a disabled user 1`] = `
+exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`] = `
 {
   "response": {
     "body": {
@@ -895,7 +895,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of 
 }
 `;
 
-exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
+exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
 {
   "response": {
     "body": {
@@ -906,7 +906,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should refuse the token of 
 }
 `;
 
-exports[`App Identity Auth GET /api/identity/auth/me should take the roles from the database, not from the token claims 1`] = `
+exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
 {
   "response": {
     "body": {
@@ -925,7 +925,7 @@ exports[`App Identity Auth GET /api/identity/auth/me should take the roles from 
 }
 `;
 
-exports[`App Identity Auth POST /api/identity/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
+exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
   "claims": [
     "exp",
@@ -948,7 +948,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should issue an access 
 }
 `;
 
-exports[`App Identity Auth POST /api/identity/auth/login should refuse a disabled user with 403 1`] = `
+exports[`App Auth POST /api/auth/login should refuse a disabled user with 403 1`] = `
 {
   "response": {
     "body": {
@@ -960,7 +960,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should refuse a disable
 }
 `;
 
-exports[`App Identity Auth POST /api/identity/auth/login should refuse a wrong password with the same 401 1`] = `
+exports[`App Auth POST /api/auth/login should refuse a wrong password with the same 401 1`] = `
 {
   "response": {
     "body": {
@@ -972,7 +972,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should refuse a wrong p
 }
 `;
 
-exports[`App Identity Auth POST /api/identity/auth/login should refuse an empty body with 400 from validation 1`] = `
+exports[`App Auth POST /api/auth/login should refuse an empty body with 400 from validation 1`] = `
 {
   "response": {
     "body": {
@@ -990,7 +990,7 @@ exports[`App Identity Auth POST /api/identity/auth/login should refuse an empty 
 }
 `;
 
-exports[`App Identity Auth POST /api/identity/auth/login should refuse an unknown email with the same 401 1`] = `
+exports[`App Auth POST /api/auth/login should refuse an unknown email with the same 401 1`] = `
 {
   "response": {
     "body": {
@@ -1002,16 +1002,14 @@ exports[`App Identity Auth POST /api/identity/auth/login should refuse an unknow
 }
 `;
 
-exports[`App Identity Role GET /api/identity/roles should list the roles with their permissions from the database 1`] = `
+exports[`App Access Role GET /api/access/roles should list the roles with their permissions from the database 1`] = `
 {
   "response": {
     "body": [
       {
         "name": "admin",
         "permissionCodes": [
-          "identity:permission:assign",
-          "identity:role:assign",
-          "identity:user:create",
+          "access-management",
           "ledger:read",
           "order:read",
           "order:write",
@@ -1055,7 +1053,7 @@ exports[`App Identity Role GET /api/identity/roles should list the roles with th
 }
 `;
 
-exports[`App Identity Role GET /api/identity/roles should refuse a caller without identity:role:assign 1`] = `
+exports[`App Access Role GET /api/access/roles should refuse a caller without access-management 1`] = `
 {
   "response": {
     "body": {
@@ -1067,7 +1065,7 @@ exports[`App Identity Role GET /api/identity/roles should refuse a caller withou
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should answer 404 for an unknown role 1`] = `
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should answer 404 for an unknown role 1`] = `
 {
   "response": {
     "body": {
@@ -1079,7 +1077,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should an
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should refuse an unknown permission code with 400 1`] = `
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should refuse an unknown permission code with 400 1`] = `
 {
   "db": {
     "staff_role_permissions": [
@@ -1109,7 +1107,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
     "body": {
       "error": "Bad Request",
       "message": [
-        "each value in permissionCodes must be one of the following values: ledger:read, identity:user:create, identity:role:assign, identity:permission:assign, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
+        "each value in permissionCodes must be one of the following values: ledger:read, access-management, product:read, product:write, product:archive, product:restock, order:read, order:write, queue:read, queue:retry, queue:delete, tag:read, tag:write",
       ],
       "statusCode": 400,
     },
@@ -1117,7 +1115,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should reassign the permissions and refuse the same token at once 1`] = `
+exports[`App Access Role PUT /api/access/roles/:roleId/permissions should reassign the permissions and refuse the same token at once 1`] = `
 {
   "before": {
     "status": 200,
@@ -1146,7 +1144,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
 }
 `;
 
-exports[`App Identity User POST /api/identity/users should create a user who can log in at once 1`] = `
+exports[`App Access User POST /api/access/users should create a user who can log in at once 1`] = `
 {
   "db": {
     "staff_user": [
@@ -1174,7 +1172,7 @@ exports[`App Identity User POST /api/identity/users should create a user who can
 }
 `;
 
-exports[`App Identity User POST /api/identity/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
+exports[`App Access User POST /api/access/users should let one of two simultaneous registrations with one email through and refuse the other with 409 1`] = `
 {
   "db": {
     "staff_user": [
@@ -1197,7 +1195,7 @@ exports[`App Identity User POST /api/identity/users should let one of two simult
 }
 `;
 
-exports[`App Identity User POST /api/identity/users should refuse a taken email in another case with 409 1`] = `
+exports[`App Access User POST /api/access/users should refuse a taken email in another case with 409 1`] = `
 {
   "db": {
     "staff_user": [
