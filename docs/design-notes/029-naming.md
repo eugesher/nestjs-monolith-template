@@ -2,18 +2,18 @@
 
 A name says who or where; the action lives in the method or in the port.
 
-| Element                            | Name                                                                        | Example                                                       |
-| ---------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts` | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`               |
-| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                       | `IdempotencyCoreFacade`                                       |
-| facade method                      | `handle<Action>`                                                            | `handleClaim`, `handleSignAccessToken`                        |
-| use case held by a facade          | `<action>`, without the context                                             | `claim: IdempotencyCoreClaimUseCase`                          |
-| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`            | `OrderExceptionCodeEnum`                                      |
-| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`      | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort` |
-| commands of a service              | one file `<context>-<service>.command.ts`                                   | `product-ledger.command.ts` for `ProductLedgerService`        |
-| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                 | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                        |
-| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                    | `OrderIdempotencyCoreAdapter.provider`                        |
-| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`           | `OrderConfigRedisCommandTimeoutMsProvider`                    |
+| Element                            | Name                                                                            | Example                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts`     | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`                    |
+| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                           | `IdempotencyCoreFacade`                                            |
+| facade method                      | `handle<Action>`                                                                | `handleClaim`, `handleSignAccessToken`                             |
+| use case held by a facade          | `<action>`, without the context                                                 | `claim: IdempotencyCoreClaimUseCase`                               |
+| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`                | `OrderExceptionCodeEnum`                                           |
+| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`          | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort`      |
+| commands of a service              | `I<Context><Service><Method>Command`, one file `<context>-<service>.command.ts` | `IProductLedgerRecordEventsCommand` in `product-ledger.command.ts` |
+| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                     | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                             |
+| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                        | `OrderIdempotencyCoreAdapter.provider`                             |
+| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`               | `OrderConfigRedisCommandTimeoutMsProvider`                         |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
@@ -42,10 +42,11 @@ queue.
 **The commands of a service live in one file named after the service.** A service of
 `application/services` takes its commands from
 `application/interfaces/commands/<context>-<service>.command.ts`, next to
-`<context>-<service>.service.ts`. Two commands of one service share the file, as
-`IProductLedgerRecordCommand` and `IProductLedgerRecordCreatedCommand` do in
-`product-ledger.command.ts`. The interfaces keep the names of what they carry; only the file follows
-the service. A use case keeps one command file of its own, `<context>-<verb>.command.ts`.
+`<context>-<service>.service.ts`. Each command is named after the service and the method that takes
+it, `I<Context><Service><Method>Command`, as the command of a port is named after the port and its
+method: `IProductLedgerRecordCreatedCommand` for `recordCreated` and
+`IProductLedgerRecordEventsCommand` for `recordEvents` share `product-ledger.command.ts`. A use case
+keeps one command file of its own, `<context>-<verb>.command.ts`.
 
 **A config token is the module, the property and `_TOKEN`.** A token that carries a value read with
 `ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration property

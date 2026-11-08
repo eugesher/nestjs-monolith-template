@@ -1,4 +1,4 @@
-export interface INoteWriteCommand {
+export interface INoteWriteRunCommand {
   noteId: string;
 }
 
