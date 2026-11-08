@@ -58,14 +58,14 @@ export class RoleE2E {
             ledger: ledger.body,
             db: {
               staff_role_permissions: await this.ctx.dataSource.query(
-                'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY permission_id',
+                'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY code',
               ),
             },
           }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query('DELETE FROM staff_role_permissions WHERE role_id = 3');
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 1), (3, 7), (3, 10), (3, 12), (3, 16)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (3, 'ledger:read'), (3, 'product:read'), (3, 'order:read'), (3, 'queue:read'), (3, 'tag:read')",
           );
         }
       });
@@ -81,7 +81,7 @@ export class RoleE2E {
           response: { body: response.body },
           db: {
             staff_role_permissions: await this.ctx.dataSource.query(
-              'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY permission_id',
+              'SELECT * FROM staff_role_permissions WHERE role_id = 3 ORDER BY code',
             ),
           },
         }).toMatchSnapshot();

@@ -14,9 +14,7 @@ export class StaffAuthCoreSubjectModel {
     const { id, email, userRoles } = record;
     const roles = userRoles.map((userRole) => userRole.role.name).sort();
     const codes = userRoles.flatMap((userRole) =>
-      userRole.role.rolePermissions.map(
-        (rolePermission) => rolePermission.permission.code as PermissionCodeEnum,
-      ),
+      userRole.role.rolePermissions.map((rolePermission) => rolePermission.code),
     );
     const permissionCodes = [...new Set(codes)].sort();
 

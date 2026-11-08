@@ -1,6 +1,6 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
+import { StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 import { RolePersistenceStaffRoleBuilder } from '../role-persistence-staff-role.builder';
 
@@ -12,7 +12,7 @@ describe('RolePersistenceStaffRoleBuilder', () => {
     dataSource = new DataSource({
       type: 'mysql',
       database: 'acme',
-      entities: [StaffPermission, StaffRole, StaffRolePermission],
+      entities: [StaffRole, StaffRolePermission],
     });
     jest.spyOn(dataSource.driver, 'connect').mockResolvedValue();
     jest.spyOn(dataSource.driver, 'afterConnect').mockResolvedValue();
@@ -33,14 +33,10 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
           '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
-          '`StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, ' +
-          '`StaffPermission`.`id` AS `StaffPermission_id`, ' +
-          '`StaffPermission`.`code` AS `StaffPermission_code` ' +
+          '`StaffRolePermission`.`code` AS `StaffRolePermission_code` ' +
           'FROM `staff_role` `StaffRole` ' +
           'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
           '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'LEFT JOIN `staff_permission` `StaffPermission` ON ' +
-          '`StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
           'ORDER BY `StaffRole_id` ASC',
         [],
       ]);
@@ -63,14 +59,10 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
           '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
-          '`StaffRolePermission`.`permissionId` AS `StaffRolePermission_permissionId`, ' +
-          '`StaffPermission`.`id` AS `StaffPermission_id`, ' +
-          '`StaffPermission`.`code` AS `StaffPermission_code` ' +
+          '`StaffRolePermission`.`code` AS `StaffRolePermission_code` ' +
           'FROM `staff_role` `StaffRole` ' +
           'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
           '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'LEFT JOIN `staff_permission` `StaffPermission` ON ' +
-          '`StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
           'WHERE `StaffRole`.`id` = ?',
         ['2'],
       ]);

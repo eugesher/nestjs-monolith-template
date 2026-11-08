@@ -9,7 +9,7 @@ describe('RoleListUseCase', () => {
         {
           id: '1',
           name: 'admin',
-          rolePermissions: [{ permission: { code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN } }],
+          rolePermissions: [{ code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN }],
         },
         {
           id: '3',

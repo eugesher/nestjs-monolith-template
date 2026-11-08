@@ -1,8 +1,6 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { AuthPermissionNotFoundException } from '../exceptions/auth-permission-not-found.exception';
 import { IRoleRecordInput, IRoleSnapshotOutput } from '../interfaces';
-import { RolePermissionModel } from './role-permission.model';
 
 export class RoleModel {
   public get permissionCodes(): readonly PermissionCodeEnum[] {
@@ -17,23 +15,13 @@ export class RoleModel {
 
   public static reconstitute(record: IRoleRecordInput): RoleModel {
     const { id, name, rolePermissions } = record;
-    const permissionCodes = rolePermissions
-      .map((rolePermission) => rolePermission.permission.code as PermissionCodeEnum)
-      .sort();
+    const permissionCodes = rolePermissions.map((rolePermission) => rolePermission.code).sort();
 
     return new RoleModel(id, name, permissionCodes);
   }
 
-  public replacePermissions(requested: PermissionCodeEnum[], known: RolePermissionModel[]): void {
-    const knownCodes = new Set(known.map((permission) => permission.code));
-    const unique = [...new Set(requested)];
-    const unknown = unique.filter((code) => !knownCodes.has(code));
-
-    if (unknown.length > 0) {
-      throw new AuthPermissionNotFoundException(unknown);
-    }
-
-    this.codes = unique;
+  public replacePermissions(requested: PermissionCodeEnum[]): void {
+    this.codes = [...new Set(requested)];
   }
 
   public toSnapshot(): IRoleSnapshotOutput {

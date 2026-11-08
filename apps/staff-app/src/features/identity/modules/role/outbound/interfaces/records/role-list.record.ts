@@ -1,5 +1,5 @@
-import { StaffPermission, StaffRole } from '@acme-core/entities';
+import { StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 export type IRoleListRecord = Pick<StaffRole, 'id' | 'name'> & {
-  rolePermissions: { permission: Pick<StaffPermission, 'code'> }[];
+  rolePermissions: Pick<StaffRolePermission, 'code'>[];
 };

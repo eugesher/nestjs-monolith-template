@@ -1084,23 +1084,23 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": "1",
+        "code": "ledger:read",
         "role_id": "3",
       },
       {
-        "permission_id": "7",
+        "code": "order:read",
         "role_id": "3",
       },
       {
-        "permission_id": "10",
+        "code": "product:read",
         "role_id": "3",
       },
       {
-        "permission_id": "12",
+        "code": "queue:read",
         "role_id": "3",
       },
       {
-        "permission_id": "16",
+        "code": "tag:read",
         "role_id": "3",
       },
     ],
@@ -1125,7 +1125,7 @@ exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should re
   "db": {
     "staff_role_permissions": [
       {
-        "permission_id": "8",
+        "code": "product:write",
         "role_id": "3",
       },
     ],

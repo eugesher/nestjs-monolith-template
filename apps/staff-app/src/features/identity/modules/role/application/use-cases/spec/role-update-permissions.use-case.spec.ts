@@ -9,7 +9,6 @@ describe('RoleUpdatePermissionsUseCase', () => {
   let outcomes: string[];
   let repository: {
     findRole: jest.Mock;
-    findPermissions: jest.Mock;
     deleteRolePermissions: jest.Mock;
     insertRolePermissions: jest.Mock;
   };
@@ -23,18 +22,8 @@ describe('RoleUpdatePermissionsUseCase', () => {
       findRole: jest.fn().mockResolvedValue({
         id: '2',
         name: 'editor',
-        rolePermissions: [{ permission: { code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN } }],
+        rolePermissions: [{ code: PermissionCodeEnum.IDENTITY_ROLE_ASSIGN }],
       }),
-      findPermissions: jest.fn().mockResolvedValue([
-        {
-          id: '2',
-          code: PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
-        },
-        {
-          id: '8',
-          code: PermissionCodeEnum.PRODUCT_READ,
-        },
-      ]),
       deleteRolePermissions: jest.fn().mockResolvedValue(undefined),
       insertRolePermissions: jest.fn().mockResolvedValue(undefined),
     };
@@ -72,14 +61,10 @@ describe('RoleUpdatePermissionsUseCase', () => {
       name: 'editor',
       permissionCodes: ['identity:permission:assign', 'product:read'],
     });
-    expect(repository.findPermissions).toHaveBeenCalledWith([
-      'identity:permission:assign',
-      'product:read',
-    ]);
     expect(repository.deleteRolePermissions).toHaveBeenCalledWith('2');
     expect(repository.insertRolePermissions).toHaveBeenCalledWith([
-      { roleId: '2', permissionId: '2' },
-      { roleId: '2', permissionId: '8' },
+      { roleId: '2', code: 'identity:permission:assign' },
+      { roleId: '2', code: 'product:read' },
     ]);
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
@@ -97,23 +82,6 @@ describe('RoleUpdatePermissionsUseCase', () => {
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
       message: 'Role admin was not found',
     });
-    expect(repository.findPermissions).not.toHaveBeenCalled();
-  });
-
-  it('rejects unknown permission codes and writes nothing', async () => {
-    const update = useCase.execute({
-      roleId: '2',
-      permissionCodes: [
-        PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN,
-        PermissionCodeEnum.LEDGER_READ,
-      ],
-    });
-
-    await expect(update).rejects.toMatchObject({
-      code: IdentityExceptionCodeEnum.AUTH_PERMISSION_NOT_FOUND,
-      message: 'Unknown permission codes: ledger:read',
-    });
     expect(repository.deleteRolePermissions).not.toHaveBeenCalled();
-    expect(outcomes).toEqual(['begin']);
   });
 });

@@ -1,10 +1,9 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { StaffPermission, StaffRole, StaffRolePermission } from '@acme-core/entities';
+import { StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 export class RolePersistenceStaffRoleBuilder extends SelectQueryBuilder<StaffRole> {
   private readonly staffRolePermissionAlias = StaffRolePermission.name;
-  private readonly staffPermissionAlias = StaffPermission.name;
 
   public forList(): this {
     this.selectRoleWithPermissions().orderBy(`${this.alias}.id`, 'ASC');
@@ -23,10 +22,8 @@ export class RolePersistenceStaffRoleBuilder extends SelectQueryBuilder<StaffRol
       .leftJoin(`${this.alias}.rolePermissions`, this.staffRolePermissionAlias)
       .addSelect([
         `${this.staffRolePermissionAlias}.roleId`,
-        `${this.staffRolePermissionAlias}.permissionId`,
-      ])
-      .leftJoin(`${this.staffRolePermissionAlias}.permission`, this.staffPermissionAlias)
-      .addSelect([`${this.staffPermissionAlias}.id`, `${this.staffPermissionAlias}.code`]);
+        `${this.staffRolePermissionAlias}.code`,
+      ]);
 
     return this;
   }

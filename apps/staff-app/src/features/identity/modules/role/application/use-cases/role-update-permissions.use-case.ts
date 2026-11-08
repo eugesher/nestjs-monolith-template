@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { AuthRoleNotFoundException, RoleModel, RolePermissionModel } from '../../domain';
+import { AuthRoleNotFoundException, RoleModel } from '../../domain';
 import {
   ROLE_UPDATE_PERMISSIONS_REPOSITORY_PORT,
   type IRoleUpdatePermissionsRepositoryPort,
@@ -41,17 +41,10 @@ export class RoleUpdatePermissionsUseCase {
     }
 
     const role = RoleModel.reconstitute(record);
-    const permissionRecords = await this.repository.findPermissions(permissionCodes);
-    const known = permissionRecords.map((permission) =>
-      RolePermissionModel.reconstitute(permission),
-    );
 
-    role.replacePermissions(permissionCodes, known);
+    role.replacePermissions(permissionCodes);
 
-    const rolePermissions = known.map((permission) => ({
-      roleId: role.id,
-      permissionId: permission.id,
-    }));
+    const rolePermissions = role.permissionCodes.map((code) => ({ roleId: role.id, code }));
 
     await this.repository.deleteRolePermissions(role.id);
     await this.repository.insertRolePermissions(rolePermissions);

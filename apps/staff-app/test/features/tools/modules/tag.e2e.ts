@@ -34,7 +34,7 @@ export class TagE2E {
       it('should refuse a role without tag:read with 403', async () => {
         try {
           await this.ctx.dataSource.query(
-            'DELETE FROM staff_role_permissions WHERE role_id = 3 AND permission_id = 16',
+            "DELETE FROM staff_role_permissions WHERE role_id = 3 AND code = 'tag:read'",
           );
 
           const response = await request(this.ctx.app.getHttpServer())
@@ -45,7 +45,7 @@ export class TagE2E {
           expect({ response: { body: response.body } }).toMatchSnapshot();
         } finally {
           await this.ctx.dataSource.query(
-            'INSERT INTO staff_role_permissions (role_id, permission_id) VALUES (3, 16)',
+            "INSERT INTO staff_role_permissions (role_id, code) VALUES (3, 'tag:read')",
           );
         }
       });

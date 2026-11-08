@@ -1,12 +1,6 @@
 import { DataSource, SelectQueryBuilder } from 'typeorm';
 
-import {
-  StaffPermission,
-  StaffRole,
-  StaffRolePermission,
-  StaffUser,
-  StaffUserRole,
-} from '@acme-core/entities';
+import { StaffRole, StaffRolePermission, StaffUser, StaffUserRole } from '@acme-core/entities';
 
 import { UserPersistenceStaffUserBuilder } from '../user-persistence-staff-user.builder';
 
@@ -18,7 +12,7 @@ describe('UserPersistenceStaffUserBuilder', () => {
     dataSource = new DataSource({
       type: 'mysql',
       database: 'acme',
-      entities: [StaffPermission, StaffRole, StaffRolePermission, StaffUser, StaffUserRole],
+      entities: [StaffRole, StaffRolePermission, StaffUser, StaffUserRole],
     });
     jest.spyOn(dataSource.driver, 'connect').mockResolvedValue();
     jest.spyOn(dataSource.driver, 'afterConnect').mockResolvedValue();

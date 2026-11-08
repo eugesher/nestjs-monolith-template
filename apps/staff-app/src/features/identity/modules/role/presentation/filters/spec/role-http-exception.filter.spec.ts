@@ -2,7 +2,7 @@ import { ArgumentsHost, HttpException } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 
-import { AuthPermissionNotFoundException, AuthRoleNotFoundException } from '../../../domain';
+import { AuthRoleNotFoundException } from '../../../domain';
 import { RoleHttpExceptionFilter } from '../role-http-exception.filter';
 
 describe('RoleHttpExceptionFilter', () => {
@@ -23,14 +23,7 @@ describe('RoleHttpExceptionFilter', () => {
     expect(httpExceptionFilter.catch).toHaveBeenCalledWith(expect.any(HttpException), host);
   });
 
-  it.each([
-    ['AUTH_ROLE_NOT_FOUND', 404, new AuthRoleNotFoundException('admin', 'domain message')],
-    [
-      'AUTH_PERMISSION_NOT_FOUND',
-      400,
-      new AuthPermissionNotFoundException(['unknown:code'], 'domain message'),
-    ],
-  ])(
+  it.each([['AUTH_ROLE_NOT_FOUND', 404, new AuthRoleNotFoundException('admin', 'domain message')]])(
     'maps %s to %i with the code and the domain message in the body',
     (code, status, exception) => {
       filter.catch(exception, {} as ArgumentsHost);

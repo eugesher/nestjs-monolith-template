@@ -34,15 +34,6 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TABLE staff_permission (
-        id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        code        VARCHAR(64) NOT NULL,
-        description VARCHAR(255) NULL,
-        UNIQUE KEY uq_staff_permission_code (code)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-    `);
-
-    await queryRunner.query(`
       CREATE TABLE staff_user_roles (
         user_id BIGINT UNSIGNED NOT NULL,
         role_id BIGINT UNSIGNED NOT NULL,
@@ -54,11 +45,10 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE staff_role_permissions (
-        role_id       BIGINT UNSIGNED NOT NULL,
-        permission_id BIGINT UNSIGNED NOT NULL,
-        PRIMARY KEY (role_id, permission_id),
-        CONSTRAINT fk_staff_role_permissions_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE,
-        CONSTRAINT fk_staff_role_permissions_permission FOREIGN KEY (permission_id) REFERENCES staff_permission(id) ON DELETE CASCADE
+        role_id BIGINT UNSIGNED NOT NULL,
+        code    VARCHAR(64) NOT NULL,
+        PRIMARY KEY (role_id, code),
+        CONSTRAINT fk_staff_role_permissions_role FOREIGN KEY (role_id) REFERENCES staff_role(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `);
 
@@ -113,7 +103,6 @@ export class InitTemplateSchema1793170000000 implements MigrationInterface {
     await queryRunner.query('DROP TABLE IF EXISTS product');
     await queryRunner.query('DROP TABLE IF EXISTS staff_role_permissions');
     await queryRunner.query('DROP TABLE IF EXISTS staff_user_roles');
-    await queryRunner.query('DROP TABLE IF EXISTS staff_permission');
     await queryRunner.query('DROP TABLE IF EXISTS staff_role');
     await queryRunner.query('DROP TABLE IF EXISTS staff_user');
     await queryRunner.query('DROP TABLE IF EXISTS customer');
