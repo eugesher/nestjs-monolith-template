@@ -13,8 +13,12 @@ own words.
 
 **A core exception would leak into the callers.** A feature must not import a core domain exception,
 and each caller maps a refusal differently: one into an HTTP status, another into a log line. The
-enum lives in the contract, and a core-adapter maps it into the plain outcome of the feature port
-with a `Record` over every value, so a new value fails the typecheck of every caller.
+enum lives in the contract (see `035-enums-and-response-dtos.md`). The core-adapter of a feature
+maps it into the outcome enum of the feature port with a `Record` over every value, so a new value
+fails the typecheck of that adapter. A caller that needs one answer reduces the outcome to it: the
+processor asks only whether the product was archived,
+`outcome === ProductCoreArchiveOutcomeEnum.ARCHIVED`, and every other value is a no for it, a new
+one included.
 
 **The use case opens or joins a transaction.** `ProductCoreArchiveUseCase` runs in
 `TRANSACTION_PORT.run`, so it joins the transaction of a caller that has one and opens its own

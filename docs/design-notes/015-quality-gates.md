@@ -80,3 +80,34 @@ lint → typecheck → build → unit → e2e
   sets the whole environment.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.
+
+## Order the lint keeps
+
+`eslint-plugin-perfectionist` keeps the order of imports, exports and class members, one rule per
+file of `lint/configs`, so the order is fixed by `eslint --fix` and never argued in a review.
+
+**Imports** (`imports.mjs`, `sort-imports`) come in three blocks, separated by one blank line:
+
+1. `@nestjs/*`, then the other packages;
+2. the aliases of the repository: the libs, the lib contracts, the core, the core contracts, then
+   the `app`, `common`, `contracts`, `features` and `processors` of an app;
+3. relative imports: two levels up and more, one level up, the same folder.
+
+Within a block the groups follow each other without a blank line, and a group's `import type` comes
+after all the value imports of its block. Names are sorted alphabetically, case ignored.
+`sort-named-imports` puts the `type` specifiers of one import after its values.
+
+**Exports** (`exports.mjs`, `sort-exports`) of a barrel are sorted alphabetically within each run of
+lines; a blank line starts a new run, so a barrel can keep its folders apart.
+
+**Class members** (`classes.mjs`, `sort-classes`) go by kind and accessibility, not by name
+(`type: 'unsorted'`):
+
+1. fields and accessors: public, protected, then private, static before instance in each;
+2. the static block, then the constructor;
+3. methods: public, protected, then private, static before instance in each.
+
+Groups are separated by one blank line. Static fields stand together without one, and the members of
+a getter or method group are separated by one. Instance fields are not checked: a decorated field of
+a DTO or an entity spans several lines and takes a blank line, a plain one does not, and the rule
+cannot tell them apart.
