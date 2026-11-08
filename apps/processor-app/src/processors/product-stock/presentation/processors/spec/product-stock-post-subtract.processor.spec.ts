@@ -3,7 +3,7 @@ import { Job } from 'bull';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 
-import { ProductStockPostSubtractUseCase } from '../../application';
+import { ProductStockPostSubtractUseCase } from '../../../application';
 import { ProductStockPostSubtractProcessor } from '../product-stock-post-subtract.processor';
 
 describe('ProductStockPostSubtractProcessor', () => {

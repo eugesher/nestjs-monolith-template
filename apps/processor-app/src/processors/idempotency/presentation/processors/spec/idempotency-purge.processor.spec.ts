@@ -1,6 +1,6 @@
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { IdempotencyPurgeUseCase } from '../../application';
+import { IdempotencyPurgeUseCase } from '../../../application';
 import { IdempotencyPurgeProcessor } from '../idempotency-purge.processor';
 
 describe('IdempotencyPurgeProcessor', () => {

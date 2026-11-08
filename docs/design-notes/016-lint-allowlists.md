@@ -155,21 +155,28 @@ resolved policies of the boundaries rule and checks with the TypeScript checker 
 named for a lib or a package is an export of it. The checker reads the declarations, so a type such
 as `ClassProvider` counts as an export, as it does for the import it guards.
 
+A policy that names exports is an allowlist of names: `customer-claims.mjs` lists what customer-app
+takes from `@acme-libs/auth` and `@acme-libs/kernel`, so a new name is a decision. A namespace,
+default, side-effect, star or dynamic import has no specifier for a policy to read, so
+`lint/syntax/named-imports.selectors.mjs` refuses those forms for every module a policy lists by
+name.
+
 ### The layers of a lib
 
 A lib with a port has the layers of a core module: `shell`, `application`, `outbound` and
 `infrastructure`, in `src/` (`libs/cache`, `libs/credentials`, `libs/health`) or in a part of the
 lib (`libs/database/src/orm`, `libs/local-storage/src/transaction`). Every file of a lib is one
 category, `acme-libs`, so its edges to other libs and packages stay per lib.
-`policies/lib-layers.mjs` adds the layers on top of it from the `file` capture, as disallow rules
-within the lib:
+`policies/lib-layers.mjs` gives every layer file an allowlist within its lib from the `file`
+capture; the files outside the layers may reach the whole lib:
 
-| Layer            | May NOT reach                            |
+| Layer            | May reach                                |
 | ---------------- | ---------------------------------------- |
-| `shell`          | `outbound`                               |
-| `application`    | `shell`, `infrastructure`                |
-| `infrastructure` | `shell`, `application`                   |
-| `outbound`       | `shell`, `application`, `infrastructure` |
+| `shell`          | `shell`, `application`, `infrastructure` |
+| `application`    | `application`, `outbound`                |
+| `infrastructure` | `infrastructure`, `outbound`             |
+| `outbound`       | `outbound`                               |
 
-The shell rule takes only the files directly in `shell/`, so a module spec may still read the tokens
-of `outbound` it overrides. `spec/architecture/lib-layers.spec.ts` holds a case per edge.
+A shell spec may also read the tokens of `outbound` it overrides. In `libs/database`, `orm/shell`
+may reach `naming` and `orm/application` may reach `repository`.
+`spec/architecture/lib-layers.spec.ts` holds a case per edge.

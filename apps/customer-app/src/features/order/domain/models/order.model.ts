@@ -3,14 +3,16 @@ import { AggregateRoot } from '@acme-libs/toolkit';
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
 import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
-import { IOrderActiveProductInput } from '../interfaces/inputs/order-active-product.input';
-import { IOrderCandidateInput } from '../interfaces/inputs/order-candidate.input';
-import { IOrderRecordInput } from '../interfaces/inputs/order-record.input';
-import { IOrderStockInput } from '../interfaces/inputs/order-stock.input';
-import { IOrderDraftOutput } from '../interfaces/outputs/order-draft.output';
-import { IOrderMovementOutput } from '../interfaces/outputs/order-movement.output';
-import { IOrderProductOutput } from '../interfaces/outputs/order-product.output';
-import { IOrderSnapshotOutput } from '../interfaces/outputs/order-snapshot.output';
+import {
+  IOrderActiveProductInput,
+  IOrderCandidateInput,
+  IOrderDraftOutput,
+  IOrderMovementOutput,
+  IOrderProductOutput,
+  IOrderRecordInput,
+  IOrderSnapshotOutput,
+  IOrderStockInput,
+} from '../interfaces';
 
 export class OrderModel extends AggregateRoot<string> {
   private constructor(

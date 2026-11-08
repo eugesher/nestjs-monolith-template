@@ -17,10 +17,6 @@ export * from './exceptions/product-version-mismatch.exception';
 
 export * from './helpers/product.helper';
 
-export * from './interfaces/inputs/product-candidate.input';
-export * from './interfaces/inputs/product-changes.input';
-export * from './interfaces/inputs/product-record.input';
-export * from './interfaces/outputs/product-draft.output';
-export * from './interfaces/outputs/product-snapshot.output';
+export * from './interfaces';
 
 export * from './models/product.model';

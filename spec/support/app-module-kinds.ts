@@ -12,9 +12,9 @@ const AREAS = {
     missing: 'a feature must have a controller in presentation/controllers',
   },
   processors: {
-    folder: 'presentation',
+    folder: path.join('presentation', 'processors'),
     suffix: '.processor.ts',
-    missing: 'a processor must have a .processor.ts in presentation',
+    missing: 'a processor must have a .processor.ts in presentation/processors',
   },
 };
 

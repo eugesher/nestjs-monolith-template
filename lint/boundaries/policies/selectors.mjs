@@ -32,6 +32,12 @@ export const fromFile = (category, file, allow) => ({
   allow,
 });
 
+export const libLayerFiles = (...names) => {
+  const folders = names.flatMap((name) => [name, `*/${name}`]).join(',');
+
+  return `{${folders}}/**`;
+};
+
 export const persistenceInterfaces = 'interfaces/{records,queries}/*.ts';
 
 export const fromSpec = (category) => ({

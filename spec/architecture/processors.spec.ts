@@ -15,7 +15,7 @@ describe('processors (processors/<module>) — modules entered by queues and sch
         'ledger-record.service.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/infrastructure/index.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/index.ts',
-      'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+      'apps/__processors-fixture__/src/processors/ledger-record/presentation/processors/' +
         'ledger-record.processor.ts',
       'apps/__processors-fixture__/src/processors/ledger-record/presentation/handlers/' +
         'ledger-record.handler.ts',
@@ -109,19 +109,15 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('no-restricted-syntax');
     });
 
-    it('MAY reach its processor directly', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
-        code: 'import { x } from "./presentation/ledger-record.processor";',
-      }).toPassArchitectureLint();
-    });
-
-    it('may NOT reach a nested presentation file that is not a processor', async () => {
-      await expect({
-        file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
-        code: 'import { x } from "./presentation/handlers/ledger-record.handler";',
-      }).toBreakRule('no-restricted-syntax');
-    });
+    it.each(['processors/ledger-record.processor', 'handlers/ledger-record.handler'])(
+      'may NOT reach %s past the barrel of presentation',
+      async (source) => {
+        await expect({
+          file: 'apps/__processors-fixture__/src/processors/ledger-record/__fixture__.ts',
+          code: `import { x } from "./presentation/${source}";`,
+        }).toBreakRule('no-restricted-syntax');
+      },
+    );
 
     it('may NOT declare HTTP controllers', async () => {
       await expect({

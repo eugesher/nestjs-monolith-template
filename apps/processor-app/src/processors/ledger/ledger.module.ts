@@ -4,7 +4,7 @@ import { LedgerQueueSetupModule } from '@acme-processor/common/shared';
 
 import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from './application';
 import { LedgerAppendRepository } from './infrastructure';
-import { LedgerAppendProcessor } from './presentation/ledger-append.processor';
+import { LedgerAppendProcessor } from './presentation';
 
 @Module({
   imports: [LedgerQueueSetupModule],

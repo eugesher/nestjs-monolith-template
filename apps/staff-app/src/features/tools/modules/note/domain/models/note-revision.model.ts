@@ -1,8 +1,10 @@
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import { INoteRevisionCandidateInput } from '../interfaces/inputs/note-revision-candidate.input';
-import { INoteRevisionRecordInput } from '../interfaces/inputs/note-revision-record.input';
-import { INoteRevisionDraftOutput } from '../interfaces/outputs/note-revision-draft.output';
-import { INoteRevisionSnapshotOutput } from '../interfaces/outputs/note-revision-snapshot.output';
+import {
+  INoteRevisionCandidateInput,
+  INoteRevisionDraftOutput,
+  INoteRevisionRecordInput,
+  INoteRevisionSnapshotOutput,
+} from '../interfaces';
 
 export class NoteRevisionModel {
   private static readonly FIRST_REVISED_VERSION = 2;

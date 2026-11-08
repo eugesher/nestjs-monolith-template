@@ -1,6 +1,6 @@
 import { DomainEvent } from '@acme-libs/toolkit';
 
-import { IProductChangesInput } from '../interfaces/inputs/product-changes.input';
+import { IProductChangesInput } from '../interfaces';
 
 export class ProductUpdatedEvent extends DomainEvent<string> {
   constructor(

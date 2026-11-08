@@ -3,9 +3,11 @@ import { UserStatusEnum } from '@acme-libs/kernel';
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
 import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
-import { IAuthCustomerCandidateInput } from '../interfaces/inputs/auth-customer-candidate.input';
-import { IAuthCustomerRecordInput } from '../interfaces/inputs/auth-customer-record.input';
-import { IAuthCustomerDraftOutput } from '../interfaces/outputs/auth-customer-draft.output';
+import {
+  IAuthCustomerCandidateInput,
+  IAuthCustomerDraftOutput,
+  IAuthCustomerRecordInput,
+} from '../interfaces';
 
 export class AuthCustomerModel {
   private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -4,10 +4,12 @@ import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.except
 import { NoteResolvedException } from '../exceptions/note-resolved.exception';
 import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.exception';
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import { INoteCandidateInput } from '../interfaces/inputs/note-candidate.input';
-import { INoteRecordInput } from '../interfaces/inputs/note-record.input';
-import { INoteDraftOutput } from '../interfaces/outputs/note-draft.output';
-import { INoteSnapshotOutput } from '../interfaces/outputs/note-snapshot.output';
+import {
+  INoteCandidateInput,
+  INoteDraftOutput,
+  INoteRecordInput,
+  INoteSnapshotOutput,
+} from '../interfaces';
 
 export class NoteModel extends AggregateRoot<string> {
   public get body(): string {

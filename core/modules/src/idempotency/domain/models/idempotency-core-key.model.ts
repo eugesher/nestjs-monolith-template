@@ -1,9 +1,11 @@
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { Nullable } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreKeyCandidateInput } from '../interfaces/inputs/idempotency-core-key-candidate.input';
-import { IIdempotencyCoreKeyRecordInput } from '../interfaces/inputs/idempotency-core-key-record.input';
-import { IIdempotencyCoreKeyDraftOutput } from '../interfaces/outputs/idempotency-core-key-draft.output';
+import {
+  IIdempotencyCoreKeyCandidateInput,
+  IIdempotencyCoreKeyDraftOutput,
+  IIdempotencyCoreKeyRecordInput,
+} from '../interfaces';
 
 export class IdempotencyCoreKeyModel {
   private static readonly MAX_KEY_LENGTH = 128;
