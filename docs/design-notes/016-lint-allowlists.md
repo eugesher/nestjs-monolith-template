@@ -3,10 +3,17 @@
 Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
 
-**A removed edge is pinned by a spec.** `spec/architecture/unused-edges.spec.ts` holds one negative
-case per edge that was allowed and had no use, with the reason in its name: for example, the app
-module may NOT import `typeorm`, because a setup module in `app/setup` configures it. The cases fail
-against the policies that still allowed those edges.
+**A removed edge is pinned by a spec.** Every edge that was allowed and had no use keeps one
+negative case, with the reason in its name, and the case fails against the policy that still allowed
+the edge. The case lives with the rule that took the edge's place:
+
+- **in the spec of the layer** when the layer still has a positive case for where the code went:
+  `features.spec.ts` says the module root may NOT reach its own outbound, because infrastructure
+  binds the tokens, and that a use case may NOT take the config lib, next to the case where
+  `infrastructure/config` may; `app-global.spec.ts` and `libs-by-layer.spec.ts` do the same for
+  global modules and for the libs of each layer;
+- **in `spec/architecture/unused-edges.spec.ts`** when no layer spec covers the importer: the app
+  module may NOT import `typeorm`, because the database lib configures it.
 
 **An edge used only by specs counts as used.** A lib module spec imports `@nestjs/core`, and a
 common-module spec imports the kernel; both are code the lint checks.
