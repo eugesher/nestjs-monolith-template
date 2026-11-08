@@ -12,17 +12,10 @@ import { OrmFacade } from './orm.facade';
 
 export class OrmModule {
   public static forRoot(entities: TypeOrmModuleOptions['entities']): DynamicModule {
-    const typeOrm = TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService): TypeOrmModuleOptions =>
-        OrmModule.options(config, entities),
-    });
-    const transaction = LocalStorageTransactionModule.forRoot();
-
     return {
       module: OrmModule,
       global: true,
-      imports: [typeOrm, transaction],
+      imports: [OrmModule.forRootAsync(entities), LocalStorageTransactionModule.forRoot()],
       exports: [ORM_PORT],
       providers: [
         { provide: ORM_PORT, useClass: OrmFacade },
@@ -32,24 +25,26 @@ export class OrmModule {
     };
   }
 
-  private static options(
-    config: ConfigService,
-    entities: TypeOrmModuleOptions['entities'],
-  ): TypeOrmModuleOptions {
-    const url = config.getOrThrow<string>('DATABASE_URL');
-    const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
-    const namingStrategy = new SnakeNamingStrategy();
+  private static forRootAsync(entities: TypeOrmModuleOptions['entities']): DynamicModule {
+    return TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService): TypeOrmModuleOptions => {
+        const url = config.getOrThrow<string>('DATABASE_URL');
+        const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
+        const namingStrategy = new SnakeNamingStrategy();
 
-    return {
-      entities,
-      type: 'mysql',
-      url,
-      logging,
-      synchronize: false,
-      timezone: 'Z',
-      dateStrings: ['DATE'],
-      charset: 'utf8mb4',
-      namingStrategy,
-    };
+        return {
+          entities,
+          type: 'mysql',
+          url,
+          logging,
+          synchronize: false,
+          timezone: 'Z',
+          dateStrings: ['DATE'],
+          charset: 'utf8mb4',
+          namingStrategy,
+        };
+      },
+    });
   }
 }
