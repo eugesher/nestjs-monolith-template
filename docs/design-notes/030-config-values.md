@@ -28,7 +28,9 @@ each of them to the type its Joi schema produces, `LEDGER_RETRY_ATTEMPTS: number
 takes only a key of that map, so a misspelled property fails the typecheck, and the provider takes
 its type from the map instead of a type argument at each call. The map follows the schemas by hand,
 in one place: a property a module starts to read is added to the map and to the schema of every app
-that mounts the module.
+that mounts the module. A property missing from the schema of an app fails that app before its first
+test: each e2e suite compiles the whole `AppModule`, so every provider of a config value reads its
+property with `getOrThrow` (see `014-e2e-suites.md`).
 
 **The token belongs to the consumer.** The outbound layer declares the token, as it declares a port,
 and the adapter or use case that needs the value injects it. Nothing outside `infrastructure/config`
