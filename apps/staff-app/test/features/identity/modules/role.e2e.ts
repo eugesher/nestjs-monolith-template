@@ -32,6 +32,88 @@ export class RoleE2E {
     });
   }
 
+  public handleCreate(): void {
+    describe('POST /api/identity/roles', () => {
+      const removeRole = async (): Promise<void> => {
+        await this.ctx.dataSource.query('DELETE FROM staff_role WHERE name = ?', ['auditor']);
+      };
+
+      const storedOf = async (id: string): Promise<unknown> => ({
+        staff_role: await this.ctx.dataSource.query('SELECT name FROM staff_role WHERE id = ?', [
+          id,
+        ]),
+        staff_role_permissions: await this.ctx.dataSource.query(
+          'SELECT code FROM staff_role_permissions WHERE role_id = ? ORDER BY code',
+          [id],
+        ),
+      });
+
+      it('should create a role with its permissions and answer 201', async () => {
+        try {
+          const response = await request(this.ctx.app.getHttpServer())
+            .post('/api/identity/roles')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send({ name: 'auditor', permissionCodes: ['ledger:read', 'order:read'] })
+            .expect(HttpStatus.CREATED);
+
+          expect({
+            response: { body: response.body },
+            db: await storedOf(response.body.id),
+          }).toMatchSnapshot({ response: { body: { id: expect.any(String) } } });
+        } finally {
+          await removeRole();
+        }
+      });
+
+      it('should create a role with an empty permission list', async () => {
+        try {
+          const response = await request(this.ctx.app.getHttpServer())
+            .post('/api/identity/roles')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send({ name: 'auditor', permissionCodes: [] })
+            .expect(HttpStatus.CREATED);
+
+          expect({
+            response: { body: response.body },
+            db: await storedOf(response.body.id),
+          }).toMatchSnapshot({ response: { body: { id: expect.any(String) } } });
+        } finally {
+          await removeRole();
+        }
+      });
+
+      it('should refuse a missing permission list with 400', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/roles')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ name: 'auditor' })
+          .expect(HttpStatus.BAD_REQUEST);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a taken name with 409', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/roles')
+          .auth(this.ctx.adminToken, { type: 'bearer' })
+          .send({ name: 'admin', permissionCodes: [] })
+          .expect(HttpStatus.CONFLICT);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse a caller without identity:permission:assign', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .post('/api/identity/roles')
+          .auth(this.ctx.viewerToken, { type: 'bearer' })
+          .send({ name: 'auditor', permissionCodes: [] })
+          .expect(HttpStatus.FORBIDDEN);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+    });
+  }
+
   public handleReassignPermissions(): void {
     describe('PUT /api/identity/roles/:roleId/permissions', () => {
       it('should reassign the permissions and refuse the same token at once', async () => {

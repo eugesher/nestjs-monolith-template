@@ -33,6 +33,7 @@ export class IdentityE2E {
 
     describe('Role', () => {
       this.roleE2E.handleList();
+      this.roleE2E.handleCreate();
       this.roleE2E.handleReassignPermissions();
     });
 

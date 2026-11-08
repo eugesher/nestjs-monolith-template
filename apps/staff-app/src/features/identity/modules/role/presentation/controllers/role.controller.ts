@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Param, Put, UseFilters } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { RoleListUseCase, RoleReassignPermissionsUseCase } from '../../application';
-import { RoleIdParamDto, RolePermissionsReassignRequestDto, RoleResponseDto } from '../dto';
+import {
+  RoleCreateUseCase,
+  RoleListUseCase,
+  RoleReassignPermissionsUseCase,
+} from '../../application';
+import {
+  RoleCreateRequestDto,
+  RoleIdParamDto,
+  RolePermissionsReassignRequestDto,
+  RoleResponseDto,
+} from '../dto';
 import { RoleHttpExceptionFilter } from '../filters/role-http-exception.filter';
 
 @ApiTags('Identity/Role')
@@ -14,6 +23,7 @@ import { RoleHttpExceptionFilter } from '../filters/role-http-exception.filter';
 export class RoleController {
   constructor(
     private readonly list: RoleListUseCase,
+    private readonly create: RoleCreateUseCase,
     private readonly reassignPermissions: RoleReassignPermissionsUseCase,
   ) {}
 
@@ -23,6 +33,16 @@ export class RoleController {
   @ApiOkResponse({ type: RoleResponseDto, isArray: true })
   public async handleList(): Promise<RoleResponseDto[]> {
     return await this.list.execute();
+  }
+
+  @Post()
+  @RequiresPermission(PermissionCodeEnum.IDENTITY_PERMISSION_ASSIGN)
+  @ApiOperation({ summary: 'Create a role with its permissions' })
+  @ApiCreatedResponse({ type: RoleResponseDto })
+  public async handleCreate(@Body() body: RoleCreateRequestDto): Promise<RoleResponseDto> {
+    const { name, permissionCodes } = body;
+
+    return await this.create.execute({ name, permissionCodes });
   }
 
   @Put(':roleId/permissions')

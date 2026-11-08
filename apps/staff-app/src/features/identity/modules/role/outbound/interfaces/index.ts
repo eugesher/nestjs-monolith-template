@@ -1,3 +1,4 @@
+export * from './queries/role-create.query';
 export * from './queries/role-reassign-permissions.query';
 
 export * from './records/role-list.record';

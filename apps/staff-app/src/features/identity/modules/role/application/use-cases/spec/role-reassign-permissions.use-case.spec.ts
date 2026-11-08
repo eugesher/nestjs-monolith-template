@@ -68,7 +68,7 @@ describe('RoleReassignPermissionsUseCase', () => {
     ]);
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
-      { roleId: '2', permissionCodes: ['identity:permission:assign', 'product:read'] },
+      { role: 'editor', permissionCodes: ['identity:permission:assign', 'product:read'] },
       'Role permissions reassigned',
     );
   });
@@ -80,7 +80,7 @@ describe('RoleReassignPermissionsUseCase', () => {
 
     await expect(reassign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
-      message: 'Role admin was not found',
+      message: 'Role 1 was not found',
     });
     expect(repository.deleteRolePermissions).not.toHaveBeenCalled();
   });

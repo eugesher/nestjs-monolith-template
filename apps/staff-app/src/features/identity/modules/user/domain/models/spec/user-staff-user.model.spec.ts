@@ -28,7 +28,7 @@ describe('UserStaffUserModel', () => {
       'rejects the malformed email %s',
       (email) => {
         const register = (): IUserStaffUserDraftOutput =>
-          UserStaffUserModel.createDraft({ email, passwordHash: 'hash', roles: [] });
+          UserStaffUserModel.createDraft({ email, passwordHash: 'hash', roleIds: [] });
 
         expect(register).toThrow(
           expect.objectContaining({

@@ -1,19 +1,26 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { RoleListUseCase, RoleReassignPermissionsUseCase } from '../../../application';
+import {
+  RoleCreateUseCase,
+  RoleListUseCase,
+  RoleReassignPermissionsUseCase,
+} from '../../../application';
 import { RoleController } from '../role.controller';
 
 describe('RoleController', () => {
   let list: jest.Mock;
+  let create: jest.Mock;
   let reassignPermissions: jest.Mock;
   let controller: RoleController;
 
   beforeEach(() => {
     list = jest.fn();
+    create = jest.fn();
     reassignPermissions = jest.fn();
 
     controller = new RoleController(
       { execute: list } as unknown as RoleListUseCase,
+      { execute: create } as unknown as RoleCreateUseCase,
       { execute: reassignPermissions } as unknown as RoleReassignPermissionsUseCase,
     );
   });
@@ -25,6 +32,17 @@ describe('RoleController', () => {
       const response = await controller.handleList();
 
       expect(response).toEqual([{ id: '3', name: 'viewer', permissionCodes: [] }]);
+    });
+  });
+
+  describe('handleCreate', () => {
+    it('creates the role from the body and answers it', async () => {
+      create.mockResolvedValue({ id: '7', name: 'auditor', permissionCodes: [] });
+
+      const response = await controller.handleCreate({ name: 'auditor', permissionCodes: [] });
+
+      expect(response).toEqual({ id: '7', name: 'auditor', permissionCodes: [] });
+      expect(create).toHaveBeenCalledWith({ name: 'auditor', permissionCodes: [] });
     });
   });
 

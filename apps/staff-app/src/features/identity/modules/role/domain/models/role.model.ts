@@ -1,6 +1,11 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { IRoleRecordInput, IRoleSnapshotOutput } from '../interfaces';
+import {
+  IRoleCandidateInput,
+  IRoleDraftOutput,
+  IRoleRecordInput,
+  IRoleSnapshotOutput,
+} from '../interfaces';
 
 export class RoleModel {
   public get permissionCodes(): readonly PermissionCodeEnum[] {
@@ -18,6 +23,12 @@ export class RoleModel {
     const permissionCodes = rolePermissions.map((rolePermission) => rolePermission.code).sort();
 
     return new RoleModel(id, name, permissionCodes);
+  }
+
+  public static createDraft(candidate: IRoleCandidateInput): IRoleDraftOutput {
+    const { name, permissionCodes } = candidate;
+
+    return { name, permissionCodes: [...new Set(permissionCodes)] };
   }
 
   public reassignPermissions(requested: PermissionCodeEnum[]): void {

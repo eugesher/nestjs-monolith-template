@@ -1,0 +1,21 @@
+name: 01-create
+description: |-
+  e2e: Identity › Role › POST /api/identity/roles › should create a role with its permissions and answer 201
+
+  Expect: 201 Created, the role with two codes
+  User: admin@example.com (token signed by scripts.py)
+  After: SQL: DELETE FROM staff_role WHERE name = 'auditor'
+method: POST
+url: $STAFF_APP_BASE_URL/identity/roles
+body:
+  content: |-
+    { "name": "auditor", "permissionCodes": ["ledger:read", "order:read"] }
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+headers:
+  - name: Content-Type
+    value: application/json
+scripts:
+  setup: scripts.py:as_admin
