@@ -39,8 +39,8 @@ export class UserController {
     @Param('userId') userId: string,
     @Body() body: UserAssignRoleRequestDto,
   ): Promise<UserRolesResponseDto> {
-    const { role } = body;
+    const { roleId } = body;
 
-    return await this.assignRole.execute({ userId, role });
+    return await this.assignRole.execute({ userId, roleId });
   }
 }

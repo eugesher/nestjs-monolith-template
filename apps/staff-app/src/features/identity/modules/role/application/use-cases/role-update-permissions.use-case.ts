@@ -33,11 +33,11 @@ export class RoleUpdatePermissionsUseCase {
   }
 
   private async replace(command: IRoleUpdatePermissionsCommand): Promise<RoleModel> {
-    const { role: name, permissionCodes } = command;
-    const record = await this.repository.findRole(name);
+    const { roleId, permissionCodes } = command;
+    const record = await this.repository.findRole(roleId);
 
     if (!record) {
-      throw new AuthRoleNotFoundException(name);
+      throw new AuthRoleNotFoundException(roleId);
     }
 
     const role = RoleModel.reconstitute(record);

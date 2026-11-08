@@ -8,7 +8,7 @@ import {
 
 export interface IUserAssignRoleRepositoryPort {
   findById(id: string): Promise<Nullable<IUserAssignRoleStaffUserRecord>>;
-  findRole(name: string): Promise<Nullable<IUserAssignRoleStaffRoleRecord>>;
+  findRole(id: string): Promise<Nullable<IUserAssignRoleStaffRoleRecord>>;
   insertUserRole(query: IUserAssignRoleStaffUserRoleInsertQuery): Promise<void>;
 }
 

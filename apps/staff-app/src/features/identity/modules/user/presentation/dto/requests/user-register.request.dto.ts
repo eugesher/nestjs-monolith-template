@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
 export class UserRegisterRequestDto {
   @ApiProperty({ example: 'editor@example.com' })
@@ -11,8 +11,8 @@ export class UserRegisterRequestDto {
   @MinLength(12)
   public password: string;
 
-  @ApiProperty({ isArray: true, example: ['editor'] })
+  @ApiProperty({ isArray: true, example: ['2'] })
   @IsArray()
-  @IsString({ each: true })
-  public roles: string[];
+  @Matches(/^[1-9]\d{0,19}$/, { each: true, message: 'roleIds must be positive integers' })
+  public roleIds: string[];
 }

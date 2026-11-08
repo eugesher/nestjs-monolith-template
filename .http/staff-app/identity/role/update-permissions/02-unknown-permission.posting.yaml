@@ -1,11 +1,11 @@
 name: 02-unknown-permission
 description: |-
-  e2e: Identity › Role › PUT /api/identity/roles/:role/permissions › should refuse an unknown permission code with 400
+  e2e: Identity › Role › PUT /api/identity/roles/:roleId/permissions › should refuse an unknown permission code with 400
 
   Expect: 400 Bad Request from validation, permissions unchanged
   User: admin@example.com (token signed by scripts.py)
 method: PUT
-url: $STAFF_APP_BASE_URL/identity/roles/viewer/permissions
+url: $STAFF_APP_BASE_URL/identity/roles/3/permissions
 body:
   content: |-
     {

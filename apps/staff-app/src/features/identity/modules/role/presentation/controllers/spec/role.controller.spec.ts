@@ -20,28 +20,32 @@ describe('RoleController', () => {
 
   describe('handleList', () => {
     it('answers the roles', async () => {
-      list.mockResolvedValue([{ name: 'viewer', permissionCodes: [] }]);
+      list.mockResolvedValue([{ id: '3', name: 'viewer', permissionCodes: [] }]);
 
       const response = await controller.handleList();
 
-      expect(response).toEqual([{ name: 'viewer', permissionCodes: [] }]);
+      expect(response).toEqual([{ id: '3', name: 'viewer', permissionCodes: [] }]);
     });
   });
 
   describe('handleUpdatePermissions', () => {
     it('replaces the permissions of the role of the path with the codes of the body', async () => {
       updatePermissions.mockResolvedValue({
+        id: '3',
         name: 'viewer',
         permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
       });
 
-      const response = await controller.handleUpdatePermissions('viewer', {
-        permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
-      });
+      const response = await controller.handleUpdatePermissions(
+        { roleId: '3' },
+        {
+          permissionCodes: [PermissionCodeEnum.IAM_ASSIGN],
+        },
+      );
 
-      expect(response).toEqual({ name: 'viewer', permissionCodes: ['iam:assign'] });
+      expect(response).toEqual({ id: '3', name: 'viewer', permissionCodes: ['iam:assign'] });
       expect(updatePermissions).toHaveBeenCalledWith({
-        role: 'viewer',
+        roleId: '3',
         permissionCodes: ['iam:assign'],
       });
     });

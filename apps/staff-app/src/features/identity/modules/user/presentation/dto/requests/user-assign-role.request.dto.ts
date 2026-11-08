@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { Matches } from 'class-validator';
 
 export class UserAssignRoleRequestDto {
-  @ApiProperty({ example: 'editor' })
-  @IsString()
-  public role: string;
+  @ApiProperty({ example: '2', description: 'A positive integer of up to 20 digits' })
+  @Matches(/^[1-9]\d{0,19}$/, { message: 'roleId must be a positive integer' })
+  public roleId: string;
 }

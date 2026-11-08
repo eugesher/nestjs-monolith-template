@@ -5,7 +5,7 @@ import { RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 import { RoleListUseCase, RoleUpdatePermissionsUseCase } from '../../application';
-import { RoleResponseDto, RoleUpdatePermissionsRequestDto } from '../dto';
+import { RoleIdParamDto, RoleResponseDto, RoleUpdatePermissionsRequestDto } from '../dto';
 import { RoleHttpExceptionFilter } from '../filters/role-http-exception.filter';
 
 @ApiTags('Identity/Role')
@@ -25,16 +25,17 @@ export class RoleController {
     return await this.list.execute();
   }
 
-  @Put(':role/permissions')
+  @Put(':roleId/permissions')
   @RequiresPermission(PermissionCodeEnum.IAM_ROLE_EDIT)
   @ApiOperation({ summary: 'Replace the permission set of a role' })
   @ApiOkResponse({ type: RoleResponseDto })
   public async handleUpdatePermissions(
-    @Param('role') role: string,
+    @Param() params: RoleIdParamDto,
     @Body() body: RoleUpdatePermissionsRequestDto,
   ): Promise<RoleResponseDto> {
+    const { roleId } = params;
     const { permissionCodes } = body;
 
-    return await this.updatePermissions.execute({ role, permissionCodes });
+    return await this.updatePermissions.execute({ roleId, permissionCodes });
   }
 }

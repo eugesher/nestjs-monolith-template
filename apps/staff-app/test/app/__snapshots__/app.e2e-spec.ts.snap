@@ -1067,19 +1067,19 @@ exports[`App Identity Role GET /api/identity/roles should refuse a caller withou
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should answer 404 for an unknown role 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should answer 404 for an unknown role 1`] = `
 {
   "response": {
     "body": {
       "code": "AUTH_ROLE_NOT_FOUND",
-      "message": "Role auditor was not found",
+      "message": "Role 99 was not found",
       "statusCode": 404,
     },
   },
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refuse an unknown permission code with 400 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should refuse an unknown permission code with 400 1`] = `
 {
   "db": {
     "staff_role_permissions": [
@@ -1117,7 +1117,7 @@ exports[`App Identity Role PUT /api/identity/roles/:role/permissions should refu
 }
 `;
 
-exports[`App Identity Role PUT /api/identity/roles/:role/permissions should replace the permissions and refuse the same token at once 1`] = `
+exports[`App Identity Role PUT /api/identity/roles/:roleId/permissions should replace the permissions and refuse the same token at once 1`] = `
 {
   "before": {
     "status": 200,

@@ -29,16 +29,16 @@ export class UserStaffUserModel {
   }
 
   public static createDraft(candidate: IUserStaffUserCandidateInput): IUserStaffUserDraftOutput {
-    const { email, passwordHash, roles } = candidate;
+    const { email, passwordHash, roleIds } = candidate;
     const normalized = UserStaffUserModel.normalizeEmail(email);
 
     if (!UserStaffUserModel.EMAIL_PATTERN.test(normalized)) {
       throw new AuthEmailInvalidException();
     }
 
-    const unique = [...new Set(roles)];
+    const unique = [...new Set(roleIds)];
 
-    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE, roles: unique };
+    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE, roleIds: unique };
   }
 
   public static assertPasswordStrength(password: string): void {

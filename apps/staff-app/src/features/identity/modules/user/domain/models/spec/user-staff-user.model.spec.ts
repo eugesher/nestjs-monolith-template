@@ -12,14 +12,14 @@ describe('UserStaffUserModel', () => {
         const draft = UserStaffUserModel.createDraft({
           email: '  Editor@Example.COM ',
           passwordHash: 'hash',
-          roles: ['editor', 'editor', 'viewer'],
+          roleIds: ['2', '2', '3'],
         });
 
         expect(draft).toEqual({
           email: 'editor@example.com',
           passwordHash: 'hash',
           status: UserStatusEnum.ACTIVE,
-          roles: ['editor', 'viewer'],
+          roleIds: ['2', '3'],
         });
       },
     );

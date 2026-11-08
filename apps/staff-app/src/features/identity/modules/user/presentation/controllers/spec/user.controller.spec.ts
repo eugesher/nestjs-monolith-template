@@ -23,7 +23,7 @@ describe('UserController', () => {
       const response = await controller.handleRegister({
         email: 'ann@example.com',
         password: 'long-enough-password',
-        roles: ['editor'],
+        roleIds: ['2'],
       });
 
       expect(response).toEqual({ id: 'user-1', email: 'ann@example.com' });
@@ -34,10 +34,10 @@ describe('UserController', () => {
     it('grants the role of the body to the user of the path', async () => {
       assignRole.mockResolvedValue({ id: 'user-1', roles: ['viewer'] });
 
-      const response = await controller.handleAssignRole('user-1', { role: 'viewer' });
+      const response = await controller.handleAssignRole('user-1', { roleId: '3' });
 
       expect(response).toEqual({ id: 'user-1', roles: ['viewer'] });
-      expect(assignRole).toHaveBeenCalledWith({ userId: 'user-1', role: 'viewer' });
+      expect(assignRole).toHaveBeenCalledWith({ userId: 'user-1', roleId: '3' });
     });
   });
 });

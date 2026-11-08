@@ -9,7 +9,7 @@ url: $STAFF_APP_BASE_URL/identity/users/99/roles
 body:
   content: |-
     {
-      "role": "editor"
+      "roleId": "2"
     }
 auth:
   type: bearer_token

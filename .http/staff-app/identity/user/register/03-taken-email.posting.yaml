@@ -11,8 +11,8 @@ body:
     {
       "email": "EDITOR@example.com",
       "password": "another-password-please-change",
-      "roles": [
-        "viewer"
+      "roleIds": [
+        "3"
       ]
     }
 auth:

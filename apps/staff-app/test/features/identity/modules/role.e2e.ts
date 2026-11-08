@@ -33,7 +33,7 @@ export class RoleE2E {
   }
 
   public handleUpdatePermissions(): void {
-    describe('PUT /api/identity/roles/:role/permissions', () => {
+    describe('PUT /api/identity/roles/:roleId/permissions', () => {
       it('should replace the permissions and refuse the same token at once', async () => {
         try {
           const before = await request(this.ctx.app.getHttpServer())
@@ -42,7 +42,7 @@ export class RoleE2E {
             .expect(HttpStatus.OK);
 
           const response = await request(this.ctx.app.getHttpServer())
-            .put('/api/identity/roles/viewer/permissions')
+            .put('/api/identity/roles/3/permissions')
             .auth(this.ctx.adminToken, { type: 'bearer' })
             .send({ permissionCodes: ['product:write'] })
             .expect(HttpStatus.OK);
@@ -72,7 +72,7 @@ export class RoleE2E {
 
       it('should refuse an unknown permission code with 400', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .put('/api/identity/roles/viewer/permissions')
+          .put('/api/identity/roles/3/permissions')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ permissionCodes: ['ledger:read', 'ledger:delete'] })
           .expect(HttpStatus.BAD_REQUEST);
@@ -89,7 +89,7 @@ export class RoleE2E {
 
       it('should answer 404 for an unknown role', async () => {
         const response = await request(this.ctx.app.getHttpServer())
-          .put('/api/identity/roles/auditor/permissions')
+          .put('/api/identity/roles/99/permissions')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ permissionCodes: ['ledger:read'] })
           .expect(HttpStatus.NOT_FOUND);

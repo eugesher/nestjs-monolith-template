@@ -23,8 +23,8 @@ describe('RoleListUseCase', () => {
     const views = await useCase.execute();
 
     expect(views).toEqual([
-      { name: 'admin', permissionCodes: ['iam:assign'] },
-      { name: 'viewer', permissionCodes: [] },
+      { id: '1', name: 'admin', permissionCodes: ['iam:assign'] },
+      { id: '3', name: 'viewer', permissionCodes: [] },
     ]);
   });
 });

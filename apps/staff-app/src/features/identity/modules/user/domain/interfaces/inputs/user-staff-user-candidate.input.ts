@@ -1,5 +1,5 @@
 export interface IUserStaffUserCandidateInput {
   email: string;
   passwordHash: string;
-  roles: string[];
+  roleIds: string[];
 }

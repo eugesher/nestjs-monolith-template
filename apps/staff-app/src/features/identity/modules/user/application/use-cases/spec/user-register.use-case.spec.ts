@@ -22,7 +22,7 @@ describe('UserRegisterUseCase', () => {
 
         return Promise.resolve('5');
       }),
-      findRoles: jest.fn().mockResolvedValue([{ id: '2', name: 'editor' }]),
+      findRoles: jest.fn().mockResolvedValue([{ id: '2' }]),
       insertUserRoles: jest.fn().mockResolvedValue(undefined),
     };
     transaction = {
@@ -55,7 +55,7 @@ describe('UserRegisterUseCase', () => {
     const view = await useCase.execute({
       email: 'Editor@Example.com',
       password: 'correct-horse-battery',
-      roles: ['editor'],
+      roleIds: ['2'],
     });
 
     expect(view).toEqual({ id: '5', email: 'editor@example.com' });
@@ -65,7 +65,7 @@ describe('UserRegisterUseCase', () => {
       passwordHash: 'argon-hash',
       status: 'active',
     });
-    expect(repository.findRoles).toHaveBeenCalledWith(['editor']);
+    expect(repository.findRoles).toHaveBeenCalledWith(['2']);
     expect(repository.insertUserRoles).toHaveBeenCalledWith([{ userId: '5', roleId: '2' }]);
     expect(outcomes).toEqual(['begin', 'insert', 'commit']);
     expect(logger.info).toHaveBeenCalledWith({ userId: '5' }, 'User registered');
@@ -75,19 +75,23 @@ describe('UserRegisterUseCase', () => {
     const register = useCase.execute({
       email: 'editor@example.com',
       password: 'correct-horse-battery',
-      roles: ['editor', 'auditor'],
+      roleIds: ['2', '99'],
     });
 
     await expect(register).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
-      message: 'Role auditor was not found',
+      message: 'Role 99 was not found',
     });
     expect(repository.insertUserRoles).not.toHaveBeenCalled();
     expect(outcomes).not.toContain('commit');
   });
 
   it('rejects a weak password before hashing it', async () => {
-    const register = useCase.execute({ email: 'editor@example.com', password: 'short', roles: [] });
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'short',
+      roleIds: [],
+    });
 
     await expect(register).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_PASSWORD_TOO_WEAK,
@@ -99,7 +103,7 @@ describe('UserRegisterUseCase', () => {
     const register = useCase.execute({
       email: 'not-an-email',
       password: 'correct-horse-battery',
-      roles: [],
+      roleIds: [],
     });
 
     await expect(register).rejects.toMatchObject({
@@ -117,7 +121,7 @@ describe('UserRegisterUseCase', () => {
       const register = useCase.execute({
         email: 'editor@example.com',
         password: 'correct-horse-battery',
-        roles: [],
+        roleIds: [],
       });
 
       await expect(register).rejects.toMatchObject({
@@ -135,7 +139,7 @@ describe('UserRegisterUseCase', () => {
     const register = useCase.execute({
       email: 'editor@example.com',
       password: 'correct-horse-battery',
-      roles: [],
+      roleIds: [],
     });
 
     await expect(register).rejects.toThrow('deadlock');

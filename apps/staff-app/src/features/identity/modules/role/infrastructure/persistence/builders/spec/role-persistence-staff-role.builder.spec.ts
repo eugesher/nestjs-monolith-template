@@ -54,11 +54,11 @@ describe('RolePersistenceStaffRoleBuilder', () => {
     });
   });
 
-  describe('forRole', () => {
-    it('selects the role with its permissions by name', () => {
+  describe('forById', () => {
+    it('selects the role with its permissions by id', () => {
       const builder = new RolePersistenceStaffRoleBuilder(baseBuilder);
 
-      builder.forRole('editor');
+      builder.forById('2');
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
@@ -71,14 +71,14 @@ describe('RolePersistenceStaffRoleBuilder', () => {
           '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
           'LEFT JOIN `staff_permission` `StaffPermission` ON ' +
           '`StaffPermission`.`id`=`StaffRolePermission`.`permission_id` ' +
-          'WHERE `StaffRole`.`name` = ?',
-        ['editor'],
+          'WHERE `StaffRole`.`id` = ?',
+        ['2'],
       ]);
     });
 
     it('returns the same builder for chaining', () => {
       const builder = new RolePersistenceStaffRoleBuilder(baseBuilder);
-      const chained = builder.forRole('editor');
+      const chained = builder.forById('2');
 
       expect(chained).toBe(builder);
     });

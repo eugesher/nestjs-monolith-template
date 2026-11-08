@@ -88,7 +88,11 @@ describe('RoleModel', () => {
 
       const view = role.toSnapshot();
 
-      expect(view).toEqual({ name: 'admin', permissionCodes: ['iam:assign', 'ledger:read'] });
+      expect(view).toEqual({
+        id: '1',
+        name: 'admin',
+        permissionCodes: ['iam:assign', 'ledger:read'],
+      });
     });
   });
 });

@@ -6,7 +6,7 @@ import {
 
 export interface IUserRegisterRepositoryPort {
   insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string>;
-  findRoles(names: string[]): Promise<IUserRegisterStaffRoleRecord[]>;
+  findRoles(ids: string[]): Promise<IUserRegisterStaffRoleRecord[]>;
   insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void>;
 }
 

@@ -32,12 +32,12 @@ export class UserRegisterUseCase {
   ) {}
 
   public async execute(command: IUserRegisterCommand): Promise<IUserRegisterView> {
-    const { email, password, roles } = command;
+    const { email, password, roleIds } = command;
 
     UserStaffUserModel.assertPasswordStrength(password);
 
     const passwordHash = await this.credentials.hashPassword(password);
-    const draft = UserStaffUserModel.createDraft({ email, passwordHash, roles });
+    const draft = UserStaffUserModel.createDraft({ email, passwordHash, roleIds });
     const id = await this.transaction.run(() => this.insert(draft));
 
     this.logger.info({ userId: id }, 'User registered');
@@ -46,12 +46,12 @@ export class UserRegisterUseCase {
   }
 
   private async insert(draft: IUserStaffUserDraftOutput): Promise<string> {
-    const { email, passwordHash, status, roles } = draft;
+    const { email, passwordHash, status, roleIds } = draft;
 
     try {
       const id = await this.repository.insertUser({ email, passwordHash, status });
-      const storedRoles = await this.repository.findRoles(roles);
-      const missing = roles.find((role) => !storedRoles.some((stored) => stored.name === role));
+      const storedRoles = await this.repository.findRoles(roleIds);
+      const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
 
       if (missing !== undefined) {
         throw new AuthRoleNotFoundException(missing);

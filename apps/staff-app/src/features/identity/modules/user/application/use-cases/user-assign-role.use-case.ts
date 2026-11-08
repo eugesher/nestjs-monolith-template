@@ -22,27 +22,27 @@ export class UserAssignRoleUseCase {
   ) {}
 
   public async execute(command: IUserAssignRoleCommand): Promise<IUserAssignRoleView> {
-    const { userId, role } = command;
+    const { userId, roleId } = command;
     const record = await this.repository.findById(userId);
 
     if (!record) {
       throw new AuthUserNotFoundException(userId);
     }
 
-    const user = UserStaffUserModel.reconstitute(record);
-    const added = user.assignRole(role);
+    const role = await this.repository.findRole(roleId);
 
-    if (added) {
-      const stored = await this.repository.findRole(role);
-
-      if (!stored) {
-        throw new AuthRoleNotFoundException(role);
-      }
-
-      await this.repository.insertUserRole({ userId: user.id, roleId: stored.id });
+    if (!role) {
+      throw new AuthRoleNotFoundException(roleId);
     }
 
-    this.logger.info({ userId, role }, 'Role assigned');
+    const user = UserStaffUserModel.reconstitute(record);
+    const added = user.assignRole(role.name);
+
+    if (added) {
+      await this.repository.insertUserRole({ userId: user.id, roleId: role.id });
+    }
+
+    this.logger.info({ userId, roleId }, 'Role assigned');
 
     return { id: user.id, roles: [...user.roles] };
   }

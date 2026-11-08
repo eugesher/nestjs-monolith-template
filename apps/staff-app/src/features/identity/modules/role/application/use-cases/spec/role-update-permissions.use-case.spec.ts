@@ -60,11 +60,15 @@ describe('RoleUpdatePermissionsUseCase', () => {
 
   it('replaces the permissions of the role in one transaction', async () => {
     const view = await useCase.execute({
-      role: 'editor',
+      roleId: '2',
       permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.PRODUCT_READ],
     });
 
-    expect(view).toEqual({ name: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] });
+    expect(view).toEqual({
+      id: '2',
+      name: 'editor',
+      permissionCodes: ['iam:role-edit', 'product:read'],
+    });
     expect(repository.findPermissions).toHaveBeenCalledWith(['iam:role-edit', 'product:read']);
     expect(repository.deleteRolePermissions).toHaveBeenCalledWith('2');
     expect(repository.insertRolePermissions).toHaveBeenCalledWith([
@@ -73,7 +77,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
     ]);
     expect(outcomes).toEqual(['begin', 'commit']);
     expect(logger.info).toHaveBeenCalledWith(
-      { role: 'editor', permissionCodes: ['iam:role-edit', 'product:read'] },
+      { roleId: '2', permissionCodes: ['iam:role-edit', 'product:read'] },
       'Role permissions replaced',
     );
   });
@@ -81,7 +85,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
   it('rejects an unknown role', async () => {
     repository.findRole.mockResolvedValue(null);
 
-    const update = useCase.execute({ role: 'admin', permissionCodes: [] });
+    const update = useCase.execute({ roleId: '1', permissionCodes: [] });
 
     await expect(update).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,
@@ -92,7 +96,7 @@ describe('RoleUpdatePermissionsUseCase', () => {
 
   it('rejects unknown permission codes and writes nothing', async () => {
     const update = useCase.execute({
-      role: 'editor',
+      roleId: '2',
       permissionCodes: [PermissionCodeEnum.IAM_ROLE_EDIT, PermissionCodeEnum.LEDGER_READ],
     });
 

@@ -19,7 +19,7 @@ export class UserE2E {
           .send({
             email: 'new-viewer@example.com',
             password: 'new-viewer-password-please-change',
-            roles: ['viewer'],
+            roleIds: ['3'],
           })
           .expect(HttpStatus.CREATED);
 
@@ -75,7 +75,7 @@ export class UserE2E {
           .send({
             email: 'unknown-role@example.com',
             password: 'unknown-role-password-please-change',
-            roles: ['viewer', 'auditor'],
+            roleIds: ['3', '99'],
           })
           .expect(HttpStatus.NOT_FOUND);
 
@@ -96,7 +96,7 @@ export class UserE2E {
         const body = {
           email: 'race-viewer@example.com',
           password: 'race-viewer-password-please-change',
-          roles: ['viewer'],
+          roleIds: ['3'],
         };
 
         const responses = await Promise.all([
@@ -131,7 +131,7 @@ export class UserE2E {
           .send({
             email: 'EDITOR@example.com',
             password: 'another-password-please-change',
-            roles: ['viewer'],
+            roleIds: ['3'],
           })
           .expect(HttpStatus.CONFLICT);
 
@@ -154,7 +154,7 @@ export class UserE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/identity/users/4/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ role: 'editor' })
+          .send({ roleId: '2' })
           .expect(HttpStatus.OK);
 
         expect({
@@ -172,7 +172,7 @@ export class UserE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/identity/users/99/roles')
           .auth(this.ctx.adminToken, { type: 'bearer' })
-          .send({ role: 'editor' })
+          .send({ roleId: '2' })
           .expect(HttpStatus.NOT_FOUND);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();

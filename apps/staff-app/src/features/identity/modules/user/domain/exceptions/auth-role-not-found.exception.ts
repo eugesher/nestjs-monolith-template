@@ -5,7 +5,7 @@ import { UserBaseException } from './base/user-base.exception';
 export class AuthRoleNotFoundException extends UserBaseException {
   public readonly code = IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND;
 
-  constructor(role: string, message = `Role ${role} was not found`) {
+  constructor(id: string, message = `Role ${id} was not found`) {
     super(message);
   }
 }

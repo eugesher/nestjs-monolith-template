@@ -4,5 +4,5 @@ export interface IUserStaffUserDraftOutput {
   email: string;
   passwordHash: string;
   status: UserStatusEnum;
-  roles: string[];
+  roleIds: string[];
 }

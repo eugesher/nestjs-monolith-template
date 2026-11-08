@@ -4,4 +4,4 @@ export type IUserAssignRoleStaffUserRecord = Pick<StaffUser, 'id'> & {
   userRoles: { role: Pick<StaffRole, 'name'> }[];
 };
 
-export type IUserAssignRoleStaffRoleRecord = Pick<StaffRole, 'id'>;
+export type IUserAssignRoleStaffRoleRecord = Pick<StaffRole, 'id' | 'name'>;

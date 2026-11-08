@@ -12,8 +12,8 @@ body:
     {
       "email": "race-viewer@example.com",
       "password": "race-viewer-password-please-change",
-      "roles": [
-        "viewer"
+      "roleIds": [
+        "3"
       ]
     }
 auth:

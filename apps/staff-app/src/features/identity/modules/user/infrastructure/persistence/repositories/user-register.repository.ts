@@ -32,12 +32,12 @@ export class UserRegisterRepository
     return await this.staffUserRepository.insertOne(query);
   }
 
-  public async findRoles(names: string[]): Promise<IUserRegisterStaffRoleRecord[]> {
-    if (names.length === 0) {
+  public async findRoles(ids: string[]): Promise<IUserRegisterStaffRoleRecord[]> {
+    if (ids.length === 0) {
       return [];
     }
 
-    return await this.createStaffRoleBuilder().forRoles(names).getMany();
+    return await this.createStaffRoleBuilder().forByIds(ids).getMany();
   }
 
   public async insertUserRoles(queries: IUserRegisterStaffUserRoleInsertQuery[]): Promise<void> {

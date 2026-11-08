@@ -37,6 +37,6 @@ export class RoleModel {
   }
 
   public toSnapshot(): IRoleSnapshotOutput {
-    return { name: this.name, permissionCodes: [...this.permissionCodes] };
+    return { id: this.id, name: this.name, permissionCodes: [...this.permissionCodes] };
   }
 }

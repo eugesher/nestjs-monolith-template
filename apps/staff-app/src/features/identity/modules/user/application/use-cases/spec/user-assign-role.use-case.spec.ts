@@ -16,7 +16,7 @@ describe('UserAssignRoleUseCase', () => {
         id: 'user-1',
         userRoles: [{ role: { name: 'editor' } }],
       }),
-      findRole: jest.fn().mockResolvedValue({ id: '3' }),
+      findRole: jest.fn().mockResolvedValue({ id: '3', name: 'viewer' }),
       insertUserRole: jest.fn().mockResolvedValue(undefined),
     };
     logger = makePinoLoggerMock();
@@ -24,16 +24,18 @@ describe('UserAssignRoleUseCase', () => {
   });
 
   it('stores a new role and returns every role of the user', async () => {
-    const view = await useCase.execute({ userId: 'user-1', role: 'viewer' });
+    const view = await useCase.execute({ userId: 'user-1', roleId: '3' });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor', 'viewer'] });
-    expect(repository.findRole).toHaveBeenCalledWith('viewer');
+    expect(repository.findRole).toHaveBeenCalledWith('3');
     expect(repository.insertUserRole).toHaveBeenCalledWith({ userId: 'user-1', roleId: '3' });
-    expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1', role: 'viewer' }, 'Role assigned');
+    expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1', roleId: '3' }, 'Role assigned');
   });
 
   it('writes nothing for a role the user already has', async () => {
-    const view = await useCase.execute({ userId: 'user-1', role: 'editor' });
+    repository.findRole.mockResolvedValue({ id: '2', name: 'editor' });
+
+    const view = await useCase.execute({ userId: 'user-1', roleId: '2' });
 
     expect(view).toEqual({ id: 'user-1', roles: ['editor'] });
     expect(repository.insertUserRole).not.toHaveBeenCalled();
@@ -42,7 +44,7 @@ describe('UserAssignRoleUseCase', () => {
   it('rejects an unknown user', async () => {
     repository.findById.mockResolvedValue(null);
 
-    const assign = useCase.execute({ userId: 'ghost', role: 'viewer' });
+    const assign = useCase.execute({ userId: 'ghost', roleId: '3' });
 
     await expect(assign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_USER_NOT_FOUND,
@@ -53,7 +55,7 @@ describe('UserAssignRoleUseCase', () => {
   it('rejects a role missing from the role table', async () => {
     repository.findRole.mockResolvedValue(null);
 
-    const assign = useCase.execute({ userId: 'user-1', role: 'admin' });
+    const assign = useCase.execute({ userId: 'user-1', roleId: '1' });
 
     await expect(assign).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_ROLE_NOT_FOUND,

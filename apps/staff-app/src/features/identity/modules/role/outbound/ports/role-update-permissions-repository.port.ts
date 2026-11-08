@@ -8,7 +8,7 @@ import {
 } from '../interfaces';
 
 export interface IRoleUpdatePermissionsRepositoryPort {
-  findRole(name: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>>;
+  findRole(id: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>>;
   findPermissions(codes: PermissionCodeEnum[]): Promise<IRoleUpdatePermissionsPermissionRecord[]>;
   deleteRolePermissions(roleId: string): Promise<void>;
   insertRolePermissions(queries: IRoleUpdatePermissionsRolePermissionInsertQuery[]): Promise<void>;

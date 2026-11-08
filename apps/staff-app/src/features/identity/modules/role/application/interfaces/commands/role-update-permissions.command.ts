@@ -1,6 +1,6 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
 export interface IRoleUpdatePermissionsCommand {
-  role: string;
+  roleId: string;
   permissionCodes: PermissionCodeEnum[];
 }

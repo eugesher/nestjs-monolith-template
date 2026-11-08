@@ -1,4 +1,4 @@
 export interface IUserAssignRoleCommand {
   userId: string;
-  role: string;
+  roleId: string;
 }

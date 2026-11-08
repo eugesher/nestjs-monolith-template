@@ -30,8 +30,8 @@ export class RoleUpdatePermissionsRepository
     super();
   }
 
-  public async findRole(name: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
-    return await this.createStaffRoleBuilder().forRole(name).getOne();
+  public async findRole(id: string): Promise<Nullable<IRoleUpdatePermissionsRoleRecord>> {
+    return await this.createStaffRoleBuilder().forById(id).getOne();
   }
 
   public async findPermissions(

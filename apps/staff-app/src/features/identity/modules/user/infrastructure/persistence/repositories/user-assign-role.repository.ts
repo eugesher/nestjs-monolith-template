@@ -33,8 +33,8 @@ export class UserAssignRoleRepository
     return await this.createStaffUserBuilder().forById(id).getOne();
   }
 
-  public async findRole(name: string): Promise<Nullable<IUserAssignRoleStaffRoleRecord>> {
-    return await this.createStaffRoleBuilder().forRole(name).getOne();
+  public async findRole(id: string): Promise<Nullable<IUserAssignRoleStaffRoleRecord>> {
+    return await this.createStaffRoleBuilder().forById(id).getOne();
   }
 
   public async insertUserRole(query: IUserAssignRoleStaffUserRoleInsertQuery): Promise<void> {
