@@ -6,13 +6,13 @@ and the e2e suites. Only the config files differ: `.env` for a local run, a giti
 `docker-compose.yml` is the production stack: it runs the built images over a MySQL and a Redis of
 its own, on the standard ports.
 
-|              | Root compose                                 | `test/infra`                                    |
-| ------------ | -------------------------------------------- | ----------------------------------------------- |
-| Compose file | `docker-compose.yml`                         | `test/infra/docker-compose.yml`                 |
-| Project      | `acme`                                       | `acme-e2e`                                      |
-| MySQL        | `127.0.0.1:3306`, `acme` / `$MYSQL_PASSWORD` | `localhost:3307`, `root` / `root`               |
-| Redis        | `127.0.0.1:6379`, password `$REDIS_PASSWORD` | `localhost:6380`, password `e2e-redis-password` |
-| Data         | a named volume, kept                         | an anonymous volume, rebuilt on every `up`      |
+|              | Root compose                                        | `test/infra`                                    |
+| ------------ | --------------------------------------------------- | ----------------------------------------------- |
+| Compose file | `docker-compose.yml`                                | `test/infra/docker-compose.yml`                 |
+| Project      | `acme`                                              | `acme-e2e`                                      |
+| MySQL        | `127.0.0.1:3306`, `acme` / `$MYSQL_PASSWORD`        | `localhost:3307`, `root` / `root`               |
+| Redis        | `127.0.0.1:6379`, password `$REDIS_SERVER_PASSWORD` | `localhost:6380`, password `e2e-redis-password` |
+| Data         | a named volume, kept                                | an anonymous volume, rebuilt on every `up`      |
 
 ## Scripts
 
@@ -58,12 +58,8 @@ fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 **The seed runs under plain `node`**, like the migrations: `test/` has its own `package.json` with
 `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`. It imports no project code,
 only `dotenv`, `fs`, `joi`, `path` and `typeorm`. It reads the `DATABASE_*` variables from
-`env/migrations/.env.test`, and a variable of the process takes precedence. To seed another
-database:
-
-```bash
-DATABASE_HOST=127.0.0.1 DATABASE_PORT=3306 DATABASE_USER=acme DATABASE_PASSWORD=<password> yarn test:e2e:seed
-```
+`env/migrations/.env.test`, over any variable of the process, so it cannot seed another database by
+accident. `reseed` runs the migrations the same way, under `NODE_ENV=test`.
 
 ### Seeded accounts
 

@@ -12,9 +12,10 @@ interface IMigrationEnv {
 }
 
 const directory = join(import.meta.dirname, '../../env/migrations');
-const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+const isTest = process.env.NODE_ENV === 'test';
+const envFile = isTest ? '.env.test' : '.env';
 
-dotenv.config({ path: join(directory, envFile), quiet: true });
+dotenv.config({ path: join(directory, envFile), override: isTest, quiet: true });
 
 const schema = Joi.object<IMigrationEnv>({
   DATABASE_HOST: Joi.string().hostname().required(),

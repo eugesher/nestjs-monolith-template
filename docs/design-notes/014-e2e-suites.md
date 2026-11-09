@@ -106,8 +106,9 @@ The Jest files outside the apps live in `jest/`:
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
 
 **The environment comes from `env/apps/<app>/.env.test`.** The scripts set `NODE_ENV=test`, and
-`EnvHelper.appEnvFilePaths` picks that file, which is in the repository. The variables of the
-process take precedence over it.
+`EnvHelper.appEnvFilePaths` picks that file, which is in the repository. `jest-common.e2e.config.js`
+loads the file over the variables of the process, so a variable left in the shell, such as a
+production database host, cannot point a suite at another database.
 
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
 `Date` come back a day early, so the reminder cases catch it.

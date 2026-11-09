@@ -37,6 +37,7 @@ interface IForeignKey {
 const readEnv = (): ISeedEnv => {
   dotenv.config({
     path: join(import.meta.dirname, '../../../env/migrations/.env.test'),
+    override: true,
     quiet: true,
   });
 

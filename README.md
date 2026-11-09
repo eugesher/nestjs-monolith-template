@@ -130,7 +130,7 @@ Replace these values in the three app files:
 | `DATABASE_PASSWORD`        | the value of `MYSQL_PASSWORD`                                                                     |
 | `REDIS_HOST`               | `redis`                                                                                           |
 | `REDIS_PORT`               | `6379`                                                                                            |
-| `REDIS_PASSWORD`           | the value of `REDIS_PASSWORD`                                                                     |
+| `REDIS_PASSWORD`           | the value of `REDIS_SERVER_PASSWORD`                                                              |
 | `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
 | `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
 
@@ -147,7 +147,7 @@ export MYSQL_PASSWORD=<password of the acme user>
 ```
 
 ```bash
-export REDIS_PASSWORD=<password of Redis>
+export REDIS_SERVER_PASSWORD=<password of Redis>
 ```
 
 ```bash
