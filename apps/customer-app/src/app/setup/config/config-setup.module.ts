@@ -28,7 +28,7 @@ export class ConfigSetupModule {
 
         REDIS_URL: Joi.string()
           .uri({ scheme: 'redis' })
-          .pattern(/^redis:\/\/[^/]+/)
+          .pattern(/^redis:\/\/[^/@]*:[^/@]+@[^/]+/)
           .required(),
         REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
         CACHE_TTL_MS_DEFAULT: Joi.number().integer().positive().required(),

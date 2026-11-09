@@ -125,14 +125,14 @@ Replace these values in the three app files:
 | `NODE_ENV`                 | `production`                                                                                      |
 | `API_USE_API_REFERENCE`    | `false`                                                                                           |
 | `DATABASE_URL`             | `mysql://acme:<MYSQL_PASSWORD>@mysql:3306/acme_db`                                                |
-| `REDIS_URL`                | `redis://redis:6379`                                                                              |
+| `REDIS_URL`                | `redis://:<REDIS_PASSWORD>@redis:6379`                                                            |
 | `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
 | `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
 
-In `env/migrations/.env`, set `DATABASE_URL` to the same value. Encode a special character of the
-password in the URL.
+In `env/migrations/.env`, set `DATABASE_URL` to the same value. Encode a special character of a
+password in its URL.
 
-Set the database passwords, then build and start everything:
+Set the passwords of the database and Redis, then build and start everything:
 
 ```bash
 export MYSQL_ROOT_PASSWORD=<root password>
@@ -140,6 +140,10 @@ export MYSQL_ROOT_PASSWORD=<root password>
 
 ```bash
 export MYSQL_PASSWORD=<password of the acme user>
+```
+
+```bash
+export REDIS_PASSWORD=<password of Redis>
 ```
 
 ```bash

@@ -22,6 +22,9 @@ services:
 
   redis:
     image: redis:8.10.3-alpine
+    command: ['sh', '-c', 'exec redis-server --requirepass "$$REDISCLI_AUTH"']
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
     ports:
       - '127.0.0.1:6379:6379'
     healthcheck:

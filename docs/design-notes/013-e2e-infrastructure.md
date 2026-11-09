@@ -11,7 +11,7 @@ its own, on the standard ports.
 | Compose file | `docker-compose.yml`                         | `test/infra/docker-compose.yml`                 |
 | Project      | `acme`                                       | `acme-e2e`                                      |
 | MySQL        | `127.0.0.1:3306`, `acme` / `$MYSQL_PASSWORD` | `localhost:3307`, `root` / `root`               |
-| Redis        | `127.0.0.1:6379`, no password                | `localhost:6380`, password `e2e-redis-password` |
+| Redis        | `127.0.0.1:6379`, password `$REDIS_PASSWORD` | `localhost:6380`, password `e2e-redis-password` |
 | Data         | a named volume, kept                         | an anonymous volume, rebuilt on every `up`      |
 
 ## Scripts

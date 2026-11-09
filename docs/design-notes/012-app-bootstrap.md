@@ -35,7 +35,7 @@ Each app has its own env file, and the migrations have theirs, all in `env/`:
 A variable with the same meaning has the same name in every app: `PORT`, `DATABASE_URL`, the JWT
 secrets. An example lists exactly the variables its schema reads and connects to the infrastructure
 of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a missing or invalid
-variable stops the app at boot.
+variable stops the app at boot, and `REDIS_URL` must carry a password.
 
 `ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
 `NODE_ENV=test`. Each file sits next to its example. `migrations/config/data-source.ts` chooses
