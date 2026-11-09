@@ -1,9 +1,9 @@
 # 013 — E2E infrastructure
 
 `test/infra` starts one MySQL and one Redis for everything: a local run of the apps, the migrations
-and the e2e suites. Only the config files differ: `.env` for a local run and `.env.test` for the
-suites, both copies of one `.env.example`. The root `docker-compose.yml` runs the built images on
-its own host ports.
+and the e2e suites. Only the config files differ: `.env` for a local run, a gitignored copy of
+`.env.example`, and `.env.test` for the suites, which is in the repository. The root
+`docker-compose.yml` runs the built images on its own host ports.
 
 |              | Root compose                          | `test/infra`                                    |
 | ------------ | ------------------------------------- | ----------------------------------------------- |

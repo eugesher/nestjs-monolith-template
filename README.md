@@ -16,8 +16,9 @@ yarn install
 
 One infrastructure serves a local run, the migrations and the e2e suites; only the config files
 differ. Each `.env.example` in `env/` holds everything needed to connect to that infrastructure and
-run the system. The copies are gitignored. There are no default values: a missing or invalid
-variable stops the process with a validation error.
+run the system; a local run uses gitignored copies of them, and the `.env.test` files are in the
+repository. There are no default values: a missing or invalid variable stops the process with a
+validation error.
 
 | File                       | Read by                                               |
 | -------------------------- | ----------------------------------------------------- |
@@ -27,12 +28,6 @@ variable stops the process with a validation error.
 | `env/migrations/.env.test` | the migrations and the seed of the e2e infrastructure |
 
 ## Infrastructure
-
-Create the env file of the migrations for the infrastructure:
-
-```bash
-cp env/migrations/.env.example env/migrations/.env.test
-```
 
 Start MySQL and Redis in a terminal of their own. The command stays attached, and the `node`
 container exits with code 0 once the migrations and the seed have run:
@@ -81,20 +76,6 @@ yarn migration:run
 ```
 
 ## Run the e2e tests
-
-Create the env files of the suites:
-
-```bash
-cp env/apps/staff-app/.env.example env/apps/staff-app/.env.test
-```
-
-```bash
-cp env/apps/customer-app/.env.example env/apps/customer-app/.env.test
-```
-
-```bash
-cp env/apps/processor-app/.env.example env/apps/processor-app/.env.test
-```
 
 With the infrastructure running, reset its data and run a suite. Every suite needs its own reset,
 because the cases write to the fixtures:

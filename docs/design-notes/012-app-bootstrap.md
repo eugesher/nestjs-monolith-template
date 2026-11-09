@@ -38,7 +38,7 @@ of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: 
 variable stops the app at boot.
 
 `ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
-`NODE_ENV=test`. Each copy sits next to its example. `migrations/config/data-source.ts` chooses
+`NODE_ENV=test`. Each file sits next to its example. `migrations/config/data-source.ts` chooses
 between `env/migrations/.env` and `env/migrations/.env.test` the same way.
 
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
