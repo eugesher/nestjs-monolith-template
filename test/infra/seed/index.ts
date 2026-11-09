@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { readdirSync, readFileSync } from 'fs';
 import Joi from 'joi';
 import { basename, join } from 'path';
@@ -30,6 +31,11 @@ interface IForeignKey {
 }
 
 const readEnv = (): ISeedEnv => {
+  dotenv.config({
+    path: join(import.meta.dirname, '../../../env/migrations/.env.test'),
+    quiet: true,
+  });
+
   const schema = Joi.object<ISeedEnv>({
     DATABASE_URL: Joi.string().uri({ scheme: 'mysql' }).required(),
   }).unknown();

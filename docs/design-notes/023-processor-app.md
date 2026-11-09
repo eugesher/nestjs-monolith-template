@@ -81,11 +81,11 @@ comes after it waits (see `021-pessimistic-locking.md`).
 
 ## Running
 
-| Script                         | What it does                                          |
-| ------------------------------ | ----------------------------------------------------- |
-| `yarn start:dev:processor-app` | watch mode, reads `env/apps/processor-app/.env.local` |
-| `yarn build:processor-app`     | the bundle in `dist/apps/processor-app`               |
-| `yarn test:e2e:processor`      | the e2e suite (see `014-e2e-suites.md`)               |
+| Script                         | What it does                                    |
+| ------------------------------ | ----------------------------------------------- |
+| `yarn start:dev:processor-app` | watch mode, reads `env/apps/processor-app/.env` |
+| `yarn build:processor-app`     | the bundle in `dist/apps/processor-app`         |
+| `yarn test:e2e:processor`      | the e2e suite (see `014-e2e-suites.md`)         |
 
 `yarn start:dev` starts the three apps. The root `docker-compose.yml` runs processor-app on port
 3002 from the same `Dockerfile`, with `APP_NAME=processor-app`.

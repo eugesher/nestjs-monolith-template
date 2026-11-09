@@ -46,15 +46,25 @@ describe('EnvHelper', () => {
       jest.restoreAllMocks();
     });
 
-    it('returns the env files of the app under the repository root', () => {
+    it.each(['development', 'production'])(
+      'returns the .env of the app under the repository root when NODE_ENV is %s',
+      (nodeEnv) => {
+        process.env.NODE_ENV = nodeEnv;
+        const root = join(__dirname, '../../../../..');
+
+        const paths = EnvHelper.appEnvFilePaths('staff-app');
+
+        expect(paths).toEqual([join(root, 'env/apps/staff-app/.env')]);
+      },
+    );
+
+    it('returns the .env.test of the app when NODE_ENV is test', () => {
+      process.env.NODE_ENV = 'test';
       const root = join(__dirname, '../../../../..');
 
       const paths = EnvHelper.appEnvFilePaths('staff-app');
 
-      expect(paths).toEqual([
-        join(root, 'env/apps/staff-app/.env.local'),
-        join(root, 'env/apps/staff-app/.env'),
-      ]);
+      expect(paths).toEqual([join(root, 'env/apps/staff-app/.env.test')]);
     });
 
     it('returns no files outside the repository', () => {

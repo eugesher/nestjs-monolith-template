@@ -104,12 +104,10 @@ The Jest files outside the apps live in `jest/`:
 | File                        | What it does                                                                    |
 | --------------------------- | ------------------------------------------------------------------------------- |
 | `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
-| `<app>.e2e-setup.js`        | the environment of one app under test, set before any module loads              |
 
-**The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module loads and
-sets the variables the config schema of its app requires and the ones the cases depend on, and no
-variable outside the schema; the others take the defaults of the schema. A developer's `.env.local`
-never leaks into a run: the variables of the process take precedence over the env files.
+**The environment comes from `env/apps/<app>/.env.test`.** The scripts set `NODE_ENV=test`, and
+`EnvHelper.appEnvFilePaths` picks that file, a copy of the `.env.example` of the app. The variables
+of the process take precedence over it.
 
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
 `Date` come back a day early, so the reminder cases catch it.

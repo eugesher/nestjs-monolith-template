@@ -1,10 +1,11 @@
 # 013 — E2E infrastructure
 
-The e2e suites run against a real MySQL and a real Redis, started by `test/infra`. The development
-stack in the root `docker-compose.yml` uses other host ports, so a dev server never attaches to the
-test infrastructure.
+`test/infra` starts one MySQL and one Redis for everything: a local run of the apps, the migrations
+and the e2e suites. Only the config files differ: `.env` for a local run and `.env.test` for the
+suites, both copies of one `.env.example`. The root `docker-compose.yml` runs the built images on
+its own host ports.
 
-|              | Development                           | Tests                                           |
+|              | Root compose                          | `test/infra`                                    |
 | ------------ | ------------------------------------- | ----------------------------------------------- |
 | Compose file | `docker-compose.yml`                  | `test/infra/docker-compose.yml`                 |
 | Project      | `acme`                                | `acme-e2e`                                      |
@@ -25,12 +26,14 @@ test infrastructure.
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`: that
-exit is the signal that the infrastructure is ready.
+exit is the signal that the infrastructure is ready. Compose hands it `env/migrations/.env.test` as
+an `env_file`, and it runs on the network of the host, so the address in that file works both there
+and on the host.
 
 **`reseed` resets running infrastructure in seconds.** It drops and creates `acme_db`, flushes Redis
-with its password, runs the migrations and the seed from the host. It talks to the containers with
-`docker exec` by container name, so it needs `up` to be running. Each e2e run starts from a reseed;
-the final run of a change starts from a reload.
+with its password, runs the migrations and the seed from the host with `env/migrations/.env.test`.
+It talks to the containers with `docker exec` by container name, so it needs `up` to be running.
+Each e2e run starts from a reseed; the final run of a change starts from a reload.
 
 ## Seeds
 
@@ -53,9 +56,9 @@ fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 
 **The seed runs under plain `node`**, like the migrations: `test/` has its own `package.json` with
 `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`. It imports no project code,
-only `fs`, `path`, `joi` and `typeorm`. It reads `DATABASE_URL` from the environment of the process
-and never from an env file, so it cannot seed the development database by accident. To seed it on
-purpose:
+only `dotenv`, `fs`, `joi`, `path` and `typeorm`. It reads `DATABASE_URL` from
+`env/migrations/.env.test`, and a variable of the process takes precedence. To seed another
+database:
 
 ```bash
 DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed

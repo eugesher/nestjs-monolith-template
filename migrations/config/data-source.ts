@@ -8,9 +8,9 @@ interface IMigrationEnv {
 }
 
 const directory = join(import.meta.dirname, '../../env/migrations');
-const envFiles = [join(directory, '.env.local'), join(directory, '.env')];
+const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
 
-dotenv.config({ path: envFiles, quiet: true });
+dotenv.config({ path: join(directory, envFile), quiet: true });
 
 const schema = Joi.object<IMigrationEnv>({
   DATABASE_URL: Joi.string().uri({ scheme: 'mysql' }).required(),

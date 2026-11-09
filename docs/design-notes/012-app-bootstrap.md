@@ -33,11 +33,13 @@ Each app has its own env file, and the migrations have theirs, all in `env/`:
 | `env/migrations/.env.example`         | `migrations/config/data-source.ts` | `DATABASE_URL` only                        |
 
 A variable with the same meaning has the same name in every app: `PORT`, `DATABASE_URL`, the JWT
-secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
-its own `.env.local` filled in.
+secrets. An example lists exactly the variables its schema reads and connects to the infrastructure
+of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a missing or invalid
+variable stops the app at boot.
 
-`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local`
-sits next to its example.
+`ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
+`NODE_ENV=test`. Each copy sits next to its example. `migrations/config/data-source.ts` chooses
+between `env/migrations/.env` and `env/migrations/.env.test` the same way.
 
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
 the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
@@ -50,8 +52,8 @@ filters, the guards and the correlation context are all in `AppModule` or in mod
 e2e context built from `AppModule` without `main.ts` behaves like the running app.
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
-`API_USE_API_REFERENCE` is true, which is the default outside production. It runs after
-`setGlobalPrefix`, so the document lists the prefixed paths.
+`API_USE_API_REFERENCE` is true. It runs after `setGlobalPrefix`, so the document lists the prefixed
+paths.
 
 ## AppModule
 

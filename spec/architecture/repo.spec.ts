@@ -36,16 +36,12 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it(
-      'a seed script may NOT import dotenv — ' +
-        'the database comes from the environment of the process',
-      async () => {
-        await expect({
-          file: 'test/infra/seed/__fixture__.ts',
-          code: 'import dotenv from "dotenv";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('a seed script MAY import dotenv — it reads env/migrations/.env.test', async () => {
+      await expect({
+        file: 'test/infra/seed/__fixture__.ts',
+        code: 'import dotenv from "dotenv";',
+      }).toPassArchitectureLint();
+    });
 
     it.each(['../../../libs/toolkit/src', '../../../core/entities/src'])(
       'a seed script may NOT import project code (%s) — it runs under plain node',
