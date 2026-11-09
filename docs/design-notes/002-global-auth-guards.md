@@ -94,4 +94,4 @@ feature signs the access token with. staff-app and processor-app serve the same 
 secret, so a staff token works in both and either app signs one in. customer-app has its own secret,
 so its tokens fail the signature check in the staff apps. Even with a shared secret it would fail:
 the subject of a customer is not a row of `staff_user`, and the other way round. The auth e2e of
-each app sends both kinds of foreign token and expects 401.
+staff-app and of customer-app sends both kinds of foreign token and expects 401.

@@ -3,11 +3,11 @@
 Every `allow` entry of a policy in `lint/boundaries/policies/` is a dependency the code has. An
 entry no file uses is removed, unless it is kept on purpose for one of the reasons below.
 
-**A removed edge is pinned by a spec.** Every edge that was allowed and had no use keeps one
-negative case, with the reason in its name, and the case fails against the policy that still allowed
-the edge. The case lives with the rule that took the edge's place:
+**A forbidden edge is pinned by a spec.** An edge the code must not have keeps one negative case,
+with the reason in its name, and the case fails against a policy that allows the edge. The case
+lives with the rule that covers the importer:
 
-- **in the spec of the layer** when the layer still has a positive case for where the code went:
+- **in the spec of the layer** when the layer has a positive case for where the code belongs:
   `features.spec.ts` says the module root may NOT reach its own outbound, because infrastructure
   binds the tokens, and that a use case may NOT take the config lib, next to the case where
   `infrastructure/config` may; `app-global.spec.ts` and `libs-by-layer.spec.ts` do the same for
@@ -24,7 +24,7 @@ common-module spec imports the kernel; both are code the lint checks.
 
 `baseLibs(...names)` is `libs('kernel', 'toolkit', ...names)`. The kernel is the vocabulary and the
 toolkit is the technique of every layer, so each layer gets both whether or not one of its files
-imports them today. The names after them are what the layer adds: `baseLibs('observability')` for an
+imports them. The names after them are what the layer adds: `baseLibs('observability')` for an
 application layer, `baseLibs('ledger', 'observability')` for the application of a core module.
 
 `main.ts` and the core entities are the exceptions: they list their libs one by one.
@@ -32,13 +32,13 @@ application layer, `baseLibs('ledger', 'observability')` for the application of 
 ### A layer may import itself
 
 A layer split over several files imports its own files. The entry stays even where every layer of
-that kind is one file today: the module root of a common or core module, the application and
-outbound of a global module.
+that kind is one file: the module root of a common or core module, the application and outbound of a
+global module.
 
 ### Positive cases of the architecture specs
 
 Some edges are part of the documented shape of the template and have a `MAY` case in
-`spec/architecture/`, even though no file uses them yet:
+`spec/architecture/`, even though no file uses them:
 
 - the index of nested features and processors, and the module roots that mount through it;
 - a bootstrap file that mounts the features, processors and global modules through their indexes;
@@ -80,7 +80,7 @@ common module may (a positive case of the common modules spec).
 
 A core-adapter and a common-adapter have the same shape: they implement an outbound port of their
 module and call a contract outside it. Both may reach the domain and the outbound layer of their
-module, though today only feature core-adapters reach the domain.
+module, though only feature core-adapters reach the domain.
 
 ### `acme-core.mjs` — a core module that writes to a queue or a cache
 
@@ -102,7 +102,7 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 
 - **A feature signs its users in.** Its `infrastructure/lib-adapters` may take
   `@acme-libs/contracts/credentials`, and its module root may mount `@acme-libs/credentials`. No
-  core module and no common module signs anyone in today, so neither may.
+  core module and no common module signs anyone in, so neither may.
 - **A lib port is reached through a lib adapter.** A feature declares a port of its own in
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
@@ -147,13 +147,13 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 ### Policies that name exports
 
 A policy that refuses or allows a name of a lib or a package, such as `customer-claims.mjs` with
-`AuthPermissionModule` and `RequiresPermission` or `http-surface.mjs` with the DI names of
-`@nestjs/common`, matches the specifier of the import, not the file behind it. A renamed export
-would leave the policy guarding a name nobody imports, and its negative case would stay green as
-long as its fixture used the old name too. `spec/architecture/policy-specifiers.spec.ts` reads the
-resolved policies of the boundaries rule and checks with the TypeScript checker that every specifier
-named for a lib or a package is an export of it. The checker reads the declarations, so a type such
-as `ClassProvider` counts as an export, as it does for the import it guards.
+`AuthJwtModule` and `CurrentUser` or `http-surface.mjs` with the DI names of `@nestjs/common`,
+matches the specifier of the import, not the file behind it. A renamed export would leave the policy
+guarding a name nobody imports, and its negative case would stay green as long as its fixture used
+the old name too. `spec/architecture/policy-specifiers.spec.ts` reads the resolved policies of the
+boundaries rule and checks with the TypeScript checker that every specifier named for a lib or a
+package is an export of it. The checker reads the declarations, so a type such as `ClassProvider`
+counts as an export, as it does for the import it guards.
 
 A policy that names exports is an allowlist of names: `customer-claims.mjs` lists what customer-app
 takes from `@acme-libs/auth` and `@acme-libs/kernel`, so a new name is a decision. A namespace,

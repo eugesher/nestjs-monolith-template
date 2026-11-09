@@ -54,10 +54,8 @@ heap size after each spec file, so growth toward the 2 GB limit shows in the out
 worker process prints the VM Modules warning once. Jest prints the per-file lines only with its
 default reporter, which it replaces with a short summary when it detects an AI agent.
 
-**Imports are relative until the aliases exist.** A spec may import `@acme-libs/<lib>` only once
-`tsconfig.json` maps it; before that the alias does not resolve and the plugin treats it as an
-external package. Cases that are about aliases (`app-entry-points`, deep lib entry points) are added
-together with the aliases.
+**An alias must resolve.** A spec may import `@acme-libs/<lib>` only when `tsconfig.json` maps it;
+an alias that is not mapped does not resolve, and the plugin treats it as an external package.
 
 **The config does not depend on the working directory.** An editor runs ESLint from the nearest
 `package.json`, and `migrations/` and `scripts/` have their own (they run under plain `node` as ES

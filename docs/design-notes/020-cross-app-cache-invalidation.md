@@ -15,8 +15,8 @@ that several apps use is defined once. It works because every app points `REDIS_
 as the queues already require.
 
 **The read is cache-aside** (see `010-cache-aside.md`): `CatalogProductListUseCase` passes `compute`
-to `CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_PORT.wrap` under a key of the clamped
-page window, so windows that clamp to the same value share one entry.
+to `CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_LIB_PORT.handleWrap` under a key of the
+clamped page window, so windows that clamp to the same value share one entry.
 
 **A drop deletes every page by prefix.** One write may move rows across many pages and change the
 total of all of them, so the adapters call `handleDelByPrefix(CACHE_KEYS.catalogPrefix())` rather

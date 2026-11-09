@@ -22,11 +22,11 @@ kernel, because only the core-adapters read it (see `006-idempotency-keys.md` an
 `027-core-module-outcomes.md`). A feature names its own outcome in `outbound/enums`, and the
 core-adapter maps one into the other.
 
-**The kernel holds what a column or a token stores.** `ProductStatusEnum` is a column of a core
-entity read by all three apps, `IdempotencyStatusEnum` a column of `idempotency_key`,
-`PermissionCodeEnum` a claim of a token. A role is not an enum: the names live in `staff_role`, no
-code branches on one, and a new role needs no release. The health statuses are in the kernel because
-both the health lib and the health features of the apps name them.
+**The kernel holds what a column stores.** `ProductStatusEnum` is a column of a core entity read by
+all three apps, `IdempotencyStatusEnum` a column of `idempotency_key`, `PermissionCodeEnum` a column
+of `staff_role_permissions`. A role is not an enum: the names live in `staff_role`, no code branches
+on one, and a new role needs no release. The health statuses are in the kernel because both the
+health lib and the health features of the apps name them.
 
 **An enum is never copied between a lib and an app.** The app imports the kernel enum the lib
 answers with, so a new value reaches both at once.

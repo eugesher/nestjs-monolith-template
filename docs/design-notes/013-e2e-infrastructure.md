@@ -14,14 +14,14 @@ test infrastructure.
 
 ## Scripts
 
-| Script                                | What it does                                                          |
-| ------------------------------------- | --------------------------------------------------------------------- |
-| `test:e2e:infra:up`                   | builds and starts MySQL, Redis and the `node` container, attached     |
-| `test:e2e:infra:down`                 | removes the containers and their volumes                              |
-| `test:e2e:infra:reload`               | `down`, then `up`                                                     |
-| `test:e2e:infra:reseed`               | resets the data of running infrastructure, see below                  |
-| `test:e2e:seed`                       | loads the seed files into `DATABASE_URL`                              |
-| `test:e2e:staff`, `test:e2e:customer` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md` |
+| Script                                                      | What it does                                                          |
+| ----------------------------------------------------------- | --------------------------------------------------------------------- |
+| `test:e2e:infra:up`                                         | builds and starts MySQL, Redis and the `node` container, attached     |
+| `test:e2e:infra:down`                                       | removes the containers and their volumes                              |
+| `test:e2e:infra:reload`                                     | `down`, then `up`                                                     |
+| `test:e2e:infra:reseed`                                     | resets the data of running infrastructure, see below                  |
+| `test:e2e:seed`                                             | loads the seed files into `DATABASE_URL`                              |
+| `test:e2e:staff`, `test:e2e:customer`, `test:e2e:processor` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`: that
@@ -65,35 +65,36 @@ DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
 
 The rows of each table are in `test/infra/seed/data/<table>.sql`, and the e2e contexts sign their
 tokens for the seeded accounts (`apps/<app>/test/context/app-e2e.context.ts`). The password hashes
-are argon2id with the cost parameters of the app env examples. Enum-backed rows get stable ids: a
-value dropped from its enum leaves its id unused.
+are argon2id with the cost parameters of the app env examples.
 
 ### Id ranges
 
-Each feature takes its fixture ids from its own range, so a fixture added for one feature never
-shifts the rows another feature's tests read. A row created by a test gets the next `AUTO_INCREMENT`
-value after the highest seeded id, and tests find it through `MAX(id)` read before the call, never
-by a literal.
+Each table takes its fixture ids from its own range, so a fixture added to one table never shifts
+the rows another feature's tests read. Unrelated tables may use one range. A row created by a test
+gets the next `AUTO_INCREMENT` value after the highest seeded id, and tests find it through
+`MAX(id)` read before the call, never by a literal.
 
-| Feature     | Tables                   | Range                                                     |
-| ----------- | ------------------------ | --------------------------------------------------------- |
-| identity    | `staff_role`             | 1–99                                                      |
-| identity    | `staff_user`             | `00000000-0000-4000-8000-000000000001` to `…000000000099` |
-| identity    | `customer`               | `00000000-0000-4000-8000-000000000101` to `…000000000199` |
-| product     | `product`                | 100–199                                                   |
-| note        | `note`, `note_revision`  | 200–299                                                   |
-| reminder    | `reminder`               | 300–399                                                   |
-| ledger      | `ledger_entry`           | 400–499                                                   |
-| idempotency | `idempotency_key`        | 500–599                                                   |
-| order       | `order`, `order_product` | 600–699                                                   |
-| stock       | `product_stock`          | 700–799                                                   |
+| Feature  | Tables                   | Range   |
+| -------- | ------------------------ | ------- |
+| access   | `staff_role`             | 1–99    |
+| access   | `staff_user`             | 1–99    |
+| auth     | `customer`               | 101–199 |
+| product  | `product`                | 100–199 |
+| note     | `note`, `note_revision`  | 200–299 |
+| reminder | `reminder`               | 300–399 |
+| ledger   | `ledger_entry`           | 400–499 |
+| tag      | `tag`                    | 300–399 |
+| tag      | `subject_tag`            | 400–499 |
+| order    | `order`, `order_product` | 600–699 |
+| stock    | `product_stock`          | 700–799 |
 
 ## Images
 
 The app image is built from the root `Dockerfile` with the build argument `APP_NAME`: the same image
-recipe serves both deployables. The builder installs every dependency, builds the app and then keeps
-only the production dependencies with `yarn workspaces focus --all --production`. The runtime stage
-copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with `NODE_ENV=production`.
+recipe serves all three deployables. The builder installs every dependency, builds the app and then
+keeps only the production dependencies with `yarn workspaces focus --all --production`. The runtime
+stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with
+`NODE_ENV=production`.
 
 Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs all three
 apps with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the reference page.

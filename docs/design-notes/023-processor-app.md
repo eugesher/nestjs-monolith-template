@@ -24,22 +24,22 @@ app would serve the others through a shared Redis anyway; a third app says so.
 
 The app has the folders of an HTTP app and uses fewer of them:
 
-| Folder                | What it holds                                                                             |
-| --------------------- | ----------------------------------------------------------------------------------------- |
-| `src/main.ts`         | the same bootstrap as the other apps; it listens only for the health probes               |
-| `src/app/setup`       | config, ORM, queue and schedule; processor-app is the only app with `ScheduleSetupModule` |
-| `src/app/global/auth` | `AuthGlobalModule` over the core module `staff-auth`, as in staff-app                     |
-| `src/features/auth`   | `POST /auth/login` for the staff, over the same core module                               |
-| `src/common/shared`   | the registrations of the `ledger-record` and `product-stock-post-subtract` queues         |
-| `src/features/health` | `GET /health` and `GET /health/ready` for the orchestrator                                |
-| `src/features/queue`  | the failed jobs of the queues for the staff                                               |
-| `src/processors`      | the three processors                                                                      |
+| Folder                | What it holds                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------ |
+| `src/main.ts`         | the same bootstrap as the other apps; it listens for the health probes, the login and the queue routes |
+| `src/app/setup`       | config and schedule; processor-app is the only app with `ScheduleSetupModule`                          |
+| `src/app/global/auth` | `AuthGlobalModule` over the core module `staff-auth`, as in staff-app                                  |
+| `src/features/auth`   | `POST /auth/login` for the staff, over the same core module                                            |
+| `src/common/shared`   | the registrations of the `ledger-record` and `product-stock-post-subtract` queues                      |
+| `src/features/health` | `GET /health` and `GET /health/ready` for the orchestrator                                             |
+| `src/features/queue`  | the failed jobs of the queues for the staff                                                            |
+| `src/processors`      | the three processors                                                                                   |
 
 **HTTP serves the probes, the login and the queues.** `AuthGlobalModule` and the login reach the
 staff through the core module `staff-auth` (see `017-credentials-lib.md`). processor-app shares
 `JWT_SECRET` with staff-app, so a token of either app works in both, and lists the staff identity
-entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` and
-`APP_FILTER` are the ones of staff-app.
+entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` is
+the one of staff-app, and `APP_FILTER` is `HttpExceptionFilter` alone.
 
 | Route                                          | Permission     | What it does                                              |
 | ---------------------------------------------- | -------------- | --------------------------------------------------------- |

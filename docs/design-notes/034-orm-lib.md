@@ -37,8 +37,7 @@ repository is decided in the application.
 
 **The repository is read on every call.** A persistence host takes `orm.getRepository(<Entity>)` in
 a getter, never in its constructor, so every query joins the transaction open at that moment (see
-`026-transaction-port.md`). The wrapper is built anew on every call, as the old repository host
-built it; it holds no state of its own.
+`026-transaction-port.md`). The wrapper is built anew on every call and holds no state of its own.
 
 ## `OrmModule` mounts the transactions
 

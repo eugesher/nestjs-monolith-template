@@ -4,12 +4,15 @@ An entity that several apps map lives in `core/entities/src`, an entity of one a
 `apps/<app>/src/common/entities`, and the migrations in `migrations/`. Examples below use the tables
 of `core/entities/src/order` and `core/entities/src/product`.
 
-**Every key is `BIGINT UNSIGNED`.** A primary key is `BIGINT UNSIGNED AUTO_INCREMENT`
-(`@PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })`), and every column that references
-one has the same type, so a join never casts. The driver returns a `bigint` as a string, so an id is
-a `string` in TypeScript. The database issues the id on insert: the domain drafts a new row without
-an id (`AuthCustomerModel.register` returns `IAuthCustomerDraftOutput`), and the repository returns
-the stored model (`AuthRegisterRepository.insert`).
+**Every surrogate key is `BIGINT UNSIGNED`.** A surrogate primary key is
+`BIGINT UNSIGNED AUTO_INCREMENT` (`@PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })`),
+and every column that references one has the same type, so a join never casts. A link table has a
+composite key of its columns: `staff_user_roles (user_id, role_id)` and
+`staff_role_permissions (role_id, code)`, where `code` is a `VARCHAR(64)` holding a value of
+`PermissionCodeEnum`. The driver returns a `bigint` as a string, so an id is a `string` in
+TypeScript. The database issues the id on insert: the domain drafts a new row without an id
+(`AuthCustomerModel.createDraft` returns `IAuthCustomerDraftOutput`), and the repository returns the
+issued id (`AuthRegisterRepository.insert`).
 
 **A quantity is a sum of signed movements.** `product_stock` stores one row per movement, and the
 value is `SUM(quantity)` over the rows of a key. No column holds the current value, so no update can

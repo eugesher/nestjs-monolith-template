@@ -2,8 +2,9 @@
 
 staff-app, customer-app and processor-app are three deployables over one module graph: each has its
 own `main.ts`, its own `AppModule` and its own port, and all three read the same database and Redis.
-staff-app and customer-app serve HTTP; processor-app serves only the health probes and runs the
-queue processors and the schedules (see `023-processor-app.md`).
+staff-app and customer-app serve the HTTP API; processor-app serves the health probes, the staff
+login and the failed jobs of its queues, and runs the queue processors and the schedules (see
+`023-processor-app.md`).
 
 ## main.ts
 
@@ -63,9 +64,9 @@ e2e context built from `AppModule` without `main.ts` behaves like the running ap
 | `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
 | `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                                      |
 | `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
-| `AuthGlobalModule`                  | `app/global/auth`, not in processor-app              | the three global guards                                                                                 |
+| `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
-| `APP_PIPE`                          | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                                         |
+| `APP_PIPE`                          | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |
 | `APP_FILTER`                        | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                            |
 
 Every module in `app/setup/` is named `*SetupModule`.
@@ -92,9 +93,8 @@ context to every line, the `request completed` line of pino-http included.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has no
 `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
-ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module.
-processor-app has only `IdempotencyKey` and `LedgerEntry`, the tables of the purge and of the ledger
-append.
+ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module. The
+entity list of processor-app is in `023-processor-app.md`.
 
 ## Logs
 

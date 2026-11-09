@@ -75,9 +75,9 @@ from Redis.
 
 **`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
 the logger and the global prefix, and signs one access token for each seeded account the cases use
-with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, bob in customer-app.
-processor-app has no auth and signs nothing. Everything the cases read is a getter that throws
-before `init()`. The staff-app context also holds the Redis client, through
+with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, ann, bob and carol in
+customer-app, admin and viewer in processor-app. Everything the cases read is a getter that throws
+before `init()`. The contexts of staff-app and customer-app also hold the Redis client, through
 `@acme-libs/cache/testing`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
@@ -107,7 +107,8 @@ The Jest files outside the apps live in `jest/`:
 | `<app>.e2e-setup.js`        | the environment of one app under test, set before any module loads              |
 
 **The environment comes from `jest/<app>.e2e-setup.js` only.** It runs before any module loads and
-sets every variable the config schema of its app reads, and nothing else. A developer's `.env.local`
+sets the variables the config schema of its app requires and the ones the cases depend on, and no
+variable outside the schema; the others take the defaults of the schema. A developer's `.env.local`
 never leaks into a run: the variables of the process take precedence over the env files.
 
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
