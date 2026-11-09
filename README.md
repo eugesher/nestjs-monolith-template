@@ -93,3 +93,75 @@ yarn test:e2e:infra:reseed && yarn test:e2e:processor
 ```
 
 A local run and the e2e suites share the database, so a reset also drops what a local run wrote.
+
+## Run in production
+
+The root `docker-compose.yml` builds the images, starts MySQL and Redis, applies the migrations and
+starts the three apps. The apps and the migrations read the `.env` files of `env/`, mounted
+read-only into their containers.
+
+Create the env files:
+
+```bash
+cp env/apps/staff-app/.env.example env/apps/staff-app/.env
+```
+
+```bash
+cp env/apps/customer-app/.env.example env/apps/customer-app/.env
+```
+
+```bash
+cp env/apps/processor-app/.env.example env/apps/processor-app/.env
+```
+
+```bash
+cp env/migrations/.env.example env/migrations/.env
+```
+
+Replace these values in the three app files:
+
+| Variable                   | Value                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                 | `production`                                                                                      |
+| `API_USE_API_REFERENCE`    | `false`                                                                                           |
+| `DATABASE_URL`             | `mysql://acme:<MYSQL_PASSWORD>@mysql:3306/acme_db`                                                |
+| `REDIS_URL`                | `redis://redis:6379`                                                                              |
+| `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
+| `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
+
+In `env/migrations/.env`, set `DATABASE_URL` to the same value. Encode a special character of the
+password in the URL.
+
+Set the database passwords, then build and start everything:
+
+```bash
+export MYSQL_ROOT_PASSWORD=<root password>
+```
+
+```bash
+export MYSQL_PASSWORD=<password of the acme user>
+```
+
+```bash
+docker compose up --build --detach
+```
+
+The apps start once the `migrations` container has exited with code 0. Each app answers on
+`GET /api/health` at port 3000 (`customer-app`), 3001 (`staff-app`) or 3002 (`processor-app`). MySQL
+and Redis are published only on `127.0.0.1`.
+
+To build a single image, pass the app name, or the `migrations` target:
+
+```bash
+docker build --build-arg APP_NAME=staff-app --tag acme-staff-app .
+```
+
+```bash
+docker build --target migrations --tag acme-migrations .
+```
+
+Run an app image with its env file mounted:
+
+```bash
+docker run --volume "$PWD/env/apps/staff-app/.env:/app/env/apps/staff-app/.env:ro" --publish 3001:3001 acme-staff-app
+```

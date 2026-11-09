@@ -4,16 +4,16 @@ services:
   mysql:
     image: mysql:9.7.4
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: acme_db
       MYSQL_USER: acme
-      MYSQL_PASSWORD: acmepass
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
     ports:
-      - '3306:3306'
+      - '127.0.0.1:3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-proot']
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD"']
       interval: 5s
       timeout: 5s
       retries: 30
@@ -23,12 +23,30 @@ services:
   redis:
     image: redis:8.10.3-alpine
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - backend
+
+  migrations:
+    build:
+      context: .
+      target: migrations
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ./env/migrations/.env
+        target: /app/env/migrations/.env
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: 'no'
     networks:
       - backend
 
@@ -40,33 +58,19 @@ services:
     ports:
       - '3000:3000'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      OCC_RETRY_ATTEMPTS: 5
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
-      DATABASE_LOGGING: 'false'
-      REDIS_COMMAND_TIMEOUT_MS: 500
-      AUTH_ARGON2_MEMORY_COST: 19456
-      AUTH_ARGON2_TIME_COST: 2
-      AUTH_ARGON2_PARALLELISM: 1
-      LOG_LEVEL: info
-      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=compose
-      CACHE_TTL_MS_DEFAULT: 60000
-      JWT_EXPIRES_IN: 7d
-      OTEL_SERVICE_NAME: customer-app
+    volumes:
+      - type: bind
+        source: ./env/apps/customer-app/.env
+        target: /app/env/apps/customer-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - backend
 
@@ -78,33 +82,19 @@ services:
     ports:
       - '3001:3001'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      OCC_RETRY_ATTEMPTS: 5
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
-      DATABASE_LOGGING: 'false'
-      REDIS_COMMAND_TIMEOUT_MS: 500
-      AUTH_ARGON2_MEMORY_COST: 19456
-      AUTH_ARGON2_TIME_COST: 2
-      AUTH_ARGON2_PARALLELISM: 1
-      LOG_LEVEL: info
-      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=compose
-      CACHE_TTL_MS_DEFAULT: 60000
-      JWT_EXPIRES_IN: 30d
-      OTEL_SERVICE_NAME: staff-app
+    volumes:
+      - type: bind
+        source: ./env/apps/staff-app/.env
+        target: /app/env/apps/staff-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - backend
 
@@ -116,32 +106,19 @@ services:
     ports:
       - '3002:3002'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3002
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      IDEMPOTENCY_KEY_TTL_HOURS: 24
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
-      DATABASE_LOGGING: 'false'
-      REDIS_COMMAND_TIMEOUT_MS: 500
-      AUTH_ARGON2_MEMORY_COST: 19456
-      AUTH_ARGON2_TIME_COST: 2
-      AUTH_ARGON2_PARALLELISM: 1
-      LOG_LEVEL: info
-      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=compose
-      JWT_EXPIRES_IN: 30d
-      OTEL_SERVICE_NAME: processor-app
+    volumes:
+      - type: bind
+        source: ./env/apps/processor-app/.env
+        target: /app/env/apps/processor-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - backend
 

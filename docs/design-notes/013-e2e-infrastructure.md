@@ -3,15 +3,16 @@
 `test/infra` starts one MySQL and one Redis for everything: a local run of the apps, the migrations
 and the e2e suites. Only the config files differ: `.env` for a local run, a gitignored copy of
 `.env.example`, and `.env.test` for the suites, which is in the repository. The root
-`docker-compose.yml` runs the built images on its own host ports.
+`docker-compose.yml` is the production stack: it runs the built images over a MySQL and a Redis of
+its own, on the standard ports.
 
-|              | Root compose                          | `test/infra`                                    |
-| ------------ | ------------------------------------- | ----------------------------------------------- |
-| Compose file | `docker-compose.yml`                  | `test/infra/docker-compose.yml`                 |
-| Project      | `acme`                                | `acme-e2e`                                      |
-| MySQL        | `localhost:3306`, `acme` / `acmepass` | `localhost:3307`, `root` / `root`               |
-| Redis        | `localhost:6379`, no password         | `localhost:6380`, password `e2e-redis-password` |
-| Data         | a named volume, kept                  | an anonymous volume, rebuilt on every `up`      |
+|              | Root compose                                 | `test/infra`                                    |
+| ------------ | -------------------------------------------- | ----------------------------------------------- |
+| Compose file | `docker-compose.yml`                         | `test/infra/docker-compose.yml`                 |
+| Project      | `acme`                                       | `acme-e2e`                                      |
+| MySQL        | `127.0.0.1:3306`, `acme` / `$MYSQL_PASSWORD` | `localhost:3307`, `root` / `root`               |
+| Redis        | `127.0.0.1:6379`, no password                | `localhost:6380`, password `e2e-redis-password` |
+| Data         | a named volume, kept                         | an anonymous volume, rebuilt on every `up`      |
 
 ## Scripts
 
@@ -99,8 +100,12 @@ keeps only the production dependencies with `yarn workspaces focus --all --produ
 stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with
 `NODE_ENV=production`.
 
-Because the image has no dev dependencies, it has no `pino-pretty`: the root compose runs all three
-apps with `NODE_ENV=production`, JSON logs, and `API_USE_API_REFERENCE=true` for the reference page.
+The target `migrations` of the same `Dockerfile` holds `migrations/` and the production dependencies
+and runs `migration:run` once; the root compose starts the apps after it has exited with code 0.
+
+Because the image has no dev dependencies, it has no `pino-pretty`, so the image sets
+`NODE_ENV=production` and logs JSON. The root compose mounts `env/apps/<app>/.env` into each app and
+`env/migrations/.env` into the migrations, and `README.md` lists the values to set there.
 
 `docker-compose.observability.yml` adds Jaeger and an OpenTelemetry collector:
 

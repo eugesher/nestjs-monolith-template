@@ -43,9 +43,9 @@ between `env/migrations/.env` and `env/migrations/.env.test` the same way.
 
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
 the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
-bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads no
-file, and the environment comes from the container. The variables of the process always take
-precedence over the files.
+bundle in `dist/`, whatever the working directory. A built image holds `nest-cli.json` as that
+marker and gets `env/apps/<app>/.env` as a read-only mount, so the secrets stay out of its layers.
+The variables of the process always take precedence over the files.
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
 filters, the guards and the correlation context are all in `AppModule` or in modules it imports. An
