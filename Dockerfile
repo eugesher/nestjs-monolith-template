@@ -36,6 +36,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 RUN yarn workspaces focus --all --production
 
 COPY migrations/ migrations/
+COPY scripts/package.json scripts/
+COPY scripts/node/admin-create.ts scripts/node/
 
 USER node
 

@@ -136,27 +136,33 @@ Replace these values in the three app files:
 
 In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
 
-Set the passwords of the database and Redis, then build and start everything:
+Create the file with the passwords of the database and Redis, and fill in its three values:
 
 ```bash
-export MYSQL_ROOT_PASSWORD=<root password>
+cp env/compose/.env.example env/compose/.env
 ```
 
-```bash
-export MYSQL_PASSWORD=<password of the acme user>
-```
+Build and start everything. Every `docker compose` command of this stack takes this file:
 
 ```bash
-export REDIS_SERVER_PASSWORD=<password of Redis>
-```
-
-```bash
-docker compose up --build --detach
+docker compose --env-file env/compose/.env up --build --detach
 ```
 
 The apps start once the `migrations` container has exited with code 0. Each app answers on
 `GET /api/health` at port 3000 (`customer-app`), 3001 (`staff-app`) or 3002 (`processor-app`). MySQL
 and Redis are published only on `127.0.0.1`.
+
+Create the first administrator once, after the migrations have run. The command creates the user and
+the `admin` role with the `access-management` permission, and fails without changes if the email is
+taken. Add `ADMIN_EMAIL` and `ADMIN_PASSWORD`, of 12 characters or more, to `env/migrations/.env`,
+and run:
+
+```bash
+docker compose --env-file env/compose/.env run --rm migrations node ./scripts/node/admin-create.ts
+```
+
+Remove the two variables from the file afterwards. The administrator then creates the other roles
+and users through `/api/access` of `staff-app`.
 
 To build a single image, pass the app name, or the `migrations` target:
 

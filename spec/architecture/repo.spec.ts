@@ -95,17 +95,20 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['fs', 'path'])('a script MAY import %s', async (source) => {
-      await expect({
-        file: 'scripts/node/__fixture__.ts',
-        code: `import { x } from "${source}";`,
-      }).toPassArchitectureLint();
-    });
+    it.each(['argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'])(
+      'a script MAY import %s',
+      async (source) => {
+        await expect({
+          file: 'scripts/node/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toPassArchitectureLint();
+      },
+    );
 
     it('a script may NOT import a package outside its allowlist', async () => {
       await expect({
         file: 'scripts/node/__fixture__.ts',
-        code: 'import { DataSource } from "typeorm";',
+        code: 'import { Redis } from "ioredis";',
       }).toBreakRule('boundaries/dependencies');
     });
 

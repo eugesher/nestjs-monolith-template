@@ -97,11 +97,15 @@ stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user w
 `NODE_ENV=production`.
 
 The target `migrations` of the same `Dockerfile` holds `migrations/` and the production dependencies
-and runs `migration:run` once; the root compose starts the apps after it has exited with code 0.
+and runs `migration:run` once and also holds `scripts/node/admin-create.ts`, which creates the first
+administrator from `ADMIN_EMAIL` and `ADMIN_PASSWORD` of `env/migrations/.env`; the root compose
+starts the apps after it has exited with code 0.
 
 Because the image has no dev dependencies, it has no `pino-pretty`, so the image sets
-`NODE_ENV=production` and logs JSON. The root compose mounts `env/apps/<app>/.env` into each app and
-`env/migrations/.env` into the migrations, and `README.md` lists the values to set there.
+`NODE_ENV=production` and logs JSON. The root compose takes the passwords of MySQL and Redis from
+`env/compose/.env` through `--env-file`, so they stay out of the shell history. It mounts
+`env/apps/<app>/.env` into each app and `env/migrations/.env` into the migrations, and `README.md`
+lists the values to set there.
 
 `docker-compose.observability.yml` adds Jaeger and an OpenTelemetry collector:
 

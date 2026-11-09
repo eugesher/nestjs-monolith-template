@@ -15,6 +15,9 @@ export const repo = [
     ),
   ]),
   from('repo:migrations', [to('repo:migrations'), packages('dotenv', 'joi', 'path', 'typeorm')]),
-  from('repo:scripts', [to('repo:scripts'), packages('fs', 'path')]),
+  from('repo:scripts', [
+    to('repo:scripts'),
+    packages('argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'),
+  ]),
   from('repo:test', [to('repo:test'), packages('dotenv', 'fs', 'joi', 'path', 'typeorm')]),
 ];
