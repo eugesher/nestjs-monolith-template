@@ -7,8 +7,6 @@ PROJECT=acme-e2e
 DATABASE_NAME=acme_db
 REDIS_PASSWORD=e2e-redis-password
 
-export DATABASE_URL="mysql://root:root@127.0.0.1:3307/$DATABASE_NAME"
-
 echo "Recreating $DATABASE_NAME"
 docker exec -e MYSQL_PWD=root "$PROJECT-mysql-1" mysql -uroot \
   -e "DROP DATABASE IF EXISTS $DATABASE_NAME; CREATE DATABASE $DATABASE_NAME;"
@@ -19,7 +17,7 @@ docker exec -e REDISCLI_AUTH="$REDIS_PASSWORD" "$PROJECT-redis-1" redis-cli FLUS
 cd "$ROOT_DIR"
 
 echo "Migrating"
-yarn migration:run
+NODE_ENV=test yarn migration:run
 
 echo "Seeding"
 yarn test:e2e:seed

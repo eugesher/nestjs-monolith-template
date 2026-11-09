@@ -36,16 +36,12 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it(
-      'a seed script may NOT import dotenv — ' +
-        'the database comes from the environment of the process',
-      async () => {
-        await expect({
-          file: 'test/infra/seed/__fixture__.ts',
-          code: 'import dotenv from "dotenv";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('a seed script MAY import dotenv — it reads env/migrations/.env.test', async () => {
+      await expect({
+        file: 'test/infra/seed/__fixture__.ts',
+        code: 'import dotenv from "dotenv";',
+      }).toPassArchitectureLint();
+    });
 
     it.each(['../../../libs/toolkit/src', '../../../core/entities/src'])(
       'a seed script may NOT import project code (%s) — it runs under plain node',
@@ -99,17 +95,20 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['fs', 'path'])('a script MAY import %s', async (source) => {
-      await expect({
-        file: 'scripts/node/__fixture__.ts',
-        code: `import { x } from "${source}";`,
-      }).toPassArchitectureLint();
-    });
+    it.each(['argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'])(
+      'a script MAY import %s',
+      async (source) => {
+        await expect({
+          file: 'scripts/node/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toPassArchitectureLint();
+      },
+    );
 
     it('a script may NOT import a package outside its allowlist', async () => {
       await expect({
         file: 'scripts/node/__fixture__.ts',
-        code: 'import { DataSource } from "typeorm";',
+        code: 'import { Redis } from "ioredis";',
       }).toBreakRule('boundaries/dependencies');
     });
 

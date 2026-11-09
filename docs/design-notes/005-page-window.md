@@ -22,5 +22,5 @@ so it has no domain exception and no exception filter.
 **Ids of `bigint unsigned` are strings** from the row to the response, because they may exceed the
 safe integer range of a JavaScript number. Instants are ISO strings in UTC.
 
-**A mounted module registers its entities**, and the app's TypeORM entity list includes them,
-because a module needs its entity registered on the app's connection.
+**The app lists the entities of the modules it mounts** in `app/entities` and hands them to
+`OrmModule.forRoot`, because a repository reads only an entity registered on the connection.

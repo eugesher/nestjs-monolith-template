@@ -24,8 +24,8 @@ The part has the shape of `libs/cache` (see `010-cache-aside.md`):
 
 `forRoot(entities)` returns a global module that binds `OrmFacade` under `ORM_PORT` and imports the
 connection from the private `forRootAsync(entities)`, which returns `TypeOrmModule.forRootAsync`
-with the options built from `DATABASE_URL` and `DATABASE_LOGGING`: MySQL, no `synchronize`,
-`timezone: 'Z'`, `dateStrings: ['DATE']` (see `010-cache-aside.md`), `utf8mb4` and
+with the options built from the `DATABASE_*` variables and `DATABASE_LOGGING`: MySQL, no
+`synchronize`, `timezone: 'Z'`, `dateStrings: ['DATE']` (see `010-cache-aside.md`), `utf8mb4` and
 `SnakeNamingStrategy`.
 
 **The adapter answers the raw repository, the use case shapes it.** `OrmHostAdapter` answers
@@ -37,8 +37,7 @@ repository is decided in the application.
 
 **The repository is read on every call.** A persistence host takes `orm.getRepository(<Entity>)` in
 a getter, never in its constructor, so every query joins the transaction open at that moment (see
-`026-transaction-port.md`). The wrapper is built anew on every call, as the old repository host
-built it; it holds no state of its own.
+`026-transaction-port.md`). The wrapper is built anew on every call and holds no state of its own.
 
 ## `OrmModule` mounts the transactions
 

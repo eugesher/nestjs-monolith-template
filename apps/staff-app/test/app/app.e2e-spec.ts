@@ -45,9 +45,14 @@ describe('App', () => {
   });
 
   it('should migrate the database to the schema of every entity', async () => {
+    const config = ctx.moduleFixture.get(ConfigService);
     const dataSource = new DataSource({
       type: 'mysql',
-      url: ctx.moduleFixture.get(ConfigService).getOrThrow<string>('DATABASE_URL'),
+      host: config.getOrThrow<string>('DATABASE_HOST'),
+      port: config.getOrThrow<number>('DATABASE_PORT'),
+      username: config.getOrThrow<string>('DATABASE_USER'),
+      password: config.getOrThrow<string>('DATABASE_PASSWORD'),
+      database: config.getOrThrow<string>('DATABASE_NAME'),
       entities: Object.values(entities),
       namingStrategy: new SnakeNamingStrategy(),
     });

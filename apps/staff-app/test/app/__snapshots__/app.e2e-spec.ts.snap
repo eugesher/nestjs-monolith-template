@@ -466,17 +466,6 @@ exports[`App Auth GET /api/auth/me should refuse the token of a disabled user 1`
 }
 `;
 
-exports[`App Auth GET /api/auth/me should refuse the token of a staff user signed with the secret of customer-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
 exports[`App Auth GET /api/auth/me should take the roles from the database, not from the token claims 1`] = `
 {
   "response": {

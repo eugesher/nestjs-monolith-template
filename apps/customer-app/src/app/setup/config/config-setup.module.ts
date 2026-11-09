@@ -7,7 +7,6 @@ import { AppNameEnum } from '@acme-libs/kernel';
 
 export class ConfigSetupModule {
   public static async forRoot(): Promise<DynamicModule> {
-    const development = !EnvHelper.isProduction();
     const envFilePath = EnvHelper.appEnvFilePaths(AppNameEnum.CUSTOMER_APP);
     const options: ConfigModuleOptions = {
       isGlobal: true,
@@ -15,37 +14,56 @@ export class ConfigSetupModule {
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
 
-        PORT: Joi.number().port().required(),
-        API_PREFIX: Joi.string().default('api'),
-        API_USE_API_REFERENCE: Joi.boolean().default(development),
+        PORT: Joi.number().port().min(1).required(),
+        API_PREFIX: Joi.string()
+          .pattern(/^[a-z0-9-]+$/)
+          .required(),
+        API_USE_API_REFERENCE: Joi.boolean().required(),
 
-        DATABASE_URL: Joi.string().uri({ scheme: 'mysql' }).required(),
-        DATABASE_LOGGING: Joi.boolean().default(development),
+        DATABASE_HOST: Joi.string().hostname().required(),
+        DATABASE_PORT: Joi.number().port().min(1).required(),
+        DATABASE_USER: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
+        DATABASE_LOGGING: Joi.boolean().required(),
 
-        REDIS_URL: Joi.string().uri({ scheme: 'redis' }).required(),
-        REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().default(500),
-        CACHE_TTL_MS_DEFAULT: Joi.number().integer().positive().default(60_000),
+        REDIS_HOST: Joi.string().hostname().required(),
+        REDIS_PORT: Joi.number().port().min(1).required(),
+        REDIS_PASSWORD: Joi.string().required(),
+        REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
+        CACHE_TTL_MS_DEFAULT: Joi.number().integer().positive().required(),
 
-        OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(5),
-        LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
-        QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).default(3),
+        OCC_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
+        LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
+        QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
 
         JWT_SECRET: Joi.string().min(32).required(),
-        JWT_EXPIRES_IN: Joi.string().default('7d'),
-        AUTH_ARGON2_MEMORY_COST: Joi.number().integer().positive().default(19_456),
-        AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().default(2),
-        AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().default(1),
+        JWT_EXPIRES_IN: Joi.string()
+          .pattern(/^[1-9]\d*[smhdwy]$/)
+          .required(),
+        AUTH_ARGON2_MEMORY_COST: Joi.number()
+          .integer()
+          .min(
+            Joi.ref('AUTH_ARGON2_PARALLELISM', {
+              adjust: (parallelism: number) => parallelism * 8,
+            }),
+          )
+          .required(),
+        AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().required(),
+        AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().required(),
 
         LOG_LEVEL: Joi.string()
           .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace')
-          .optional(),
+          .required(),
 
-        OTEL_SDK_DISABLED: Joi.boolean().default(true),
-        OTEL_SERVICE_NAME: Joi.string().default(AppNameEnum.CUSTOMER_APP),
+        OTEL_SDK_DISABLED: Joi.boolean().required(),
+        OTEL_SERVICE_NAME: Joi.string().required(),
         OTEL_EXPORTER_OTLP_ENDPOINT: Joi.string()
           .uri({ scheme: ['http', 'https'] })
-          .default('http://localhost:4318/v1/traces'),
-        OTEL_RESOURCE_ATTRIBUTES: Joi.string().optional(),
+          .required(),
+        OTEL_RESOURCE_ATTRIBUTES: Joi.string()
+          .pattern(/^[^=,\s]+=[^=,\s]+(,[^=,\s]+=[^=,\s]+)*$/)
+          .required(),
       }),
     };
 

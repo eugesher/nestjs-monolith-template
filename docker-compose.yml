@@ -4,16 +4,16 @@ services:
   mysql:
     image: mysql:9.7.4
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: acme_db
       MYSQL_USER: acme
-      MYSQL_PASSWORD: acmepass
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
     ports:
-      - '3306:3306'
+      - '127.0.0.1:3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-proot']
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD"']
       interval: 5s
       timeout: 5s
       retries: 30
@@ -22,13 +22,34 @@ services:
 
   redis:
     image: redis:8.10.3-alpine
+    command: ['sh', '-c', 'exec redis-server --requirepass "$$REDISCLI_AUTH"']
+    environment:
+      REDISCLI_AUTH: ${REDIS_SERVER_PASSWORD:?set REDIS_SERVER_PASSWORD}
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - backend
+
+  migrations:
+    build:
+      context: .
+      target: migrations
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - type: bind
+        source: ./env/migrations/.env
+        target: /app/env/migrations/.env
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: 'no'
     networks:
       - backend
 
@@ -40,23 +61,19 @@ services:
     ports:
       - '3000:3000'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      OCC_RETRY_ATTEMPTS: 5
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+    volumes:
+      - type: bind
+        source: ./env/apps/customer-app/.env
+        target: /app/env/apps/customer-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - backend
 
@@ -68,23 +85,19 @@ services:
     ports:
       - '3001:3001'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      OCC_RETRY_ATTEMPTS: 5
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+    volumes:
+      - type: bind
+        source: ./env/apps/staff-app/.env
+        target: /app/env/apps/staff-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
     networks:
       - backend
 
@@ -96,23 +109,39 @@ services:
     ports:
       - '3002:3002'
     depends_on:
+      migrations:
+        condition: service_completed_successfully
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3002
-      API_PREFIX: api
-      API_USE_API_REFERENCE: 'true'
-      DATABASE_URL: mysql://acme:acmepass@mysql:3306/acme_db
-      REDIS_URL: redis://redis:6379
-      IDEMPOTENCY_KEY_TTL_HOURS: 24
-      LEDGER_RETRY_ATTEMPTS: 3
-      QUEUE_RETRY_ATTEMPTS: 3
-      JWT_SECRET: development-secret-do-not-use-in-prod-32
-      OTEL_SDK_DISABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+    volumes:
+      - type: bind
+        source: ./env/apps/processor-app/.env
+        target: /app/env/apps/processor-app/.env
+        read_only: true
+        bind:
+          create_host_path: false
+    networks:
+      - backend
+
+  jaeger:
+    image: jaegertracing/jaeger:2.22.0
+    ports:
+      - '127.0.0.1:16686:16686'
+    networks:
+      - backend
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.164.0
+    command: ['--config=/etc/otelcol-contrib/config.yaml']
+    volumes:
+      - ./otel-collector.config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - '127.0.0.1:4317:4317'
+      - '127.0.0.1:4318:4318'
+    depends_on:
+      - jaeger
     networks:
       - backend
 

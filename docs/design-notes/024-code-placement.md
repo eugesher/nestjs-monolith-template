@@ -11,15 +11,15 @@ Code lives as close to its callers as it can. A method of a facade decides where
 The rule counts callers per method, not per module. A core module whose every method serves two apps
 stays in core; a method of it that one app calls moves into that app, and the rest stays.
 
-## What lives where today
+## What lives where
 
-| Module               | Methods                                               | Callers                                                                            |
-| -------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| core `idempotency`   | `handleClaim`, `handleComplete`, `handleRelease`      | staff `product`, customer `order`                                                  |
-| core `product`       | `handleArchive`                                       | staff `product`, the processor `product-stock`                                     |
-| core `product-stock` | `handleLock`, `handleMove`                            | staff `product`, customer `order`, `handleLock` also the processor `product-stock` |
-| core `staff-auth`    | `handleFindSubject`, `handleFindByEmail`              | `app/global/auth` and `auth` of staff-app and of processor-app                     |
-| common `tag`         | `handleFind`, `handleReplace`, `handleFindSubjectIds` | staff `product`, staff `order`                                                     |
+| Module               | Methods                                               | Callers                                                                                  |
+| -------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| core `idempotency`   | `handleClaim`, `handleComplete`, `handleRelease`      | staff `product`, staff `product-stock`, customer `order`                                 |
+| core `product`       | `handleArchive`                                       | staff `product`, the processor `product-stock`                                           |
+| core `product-stock` | `handleLock`, `handleMove`                            | staff `product-stock`, customer `order`, `handleLock` also the processor `product-stock` |
+| core `staff-auth`    | `handleFindSubject`, `handleFindByEmail`              | `app/global/auth` and `auth` of staff-app and of processor-app                           |
+| common `tag`         | `handleFind`, `handleReplace`, `handleFindSubjectIds` | staff `product`, staff `order`                                                           |
 
 Everything else sits with its only caller, for example:
 
@@ -54,8 +54,7 @@ apart.
 
 ## Global modules have layers too
 
-A global module (`app/global/<m>`) used to hold only a module root and infrastructure. When it owns
-logic, it gets `application/` and `outbound/` like a feature: the facade calls a use case, the use
-case calls a repository port, and the repository lives in `infrastructure/persistence`. The lint
-categories `acme-app:app:global:application` and `acme-app:app:global:outbound` cover them (see
-`016-lint-allowlists.md`).
+When a global module (`app/global/<m>`) owns logic, it gets `application/` and `outbound/` like a
+feature: the facade calls a use case, the use case calls a repository port, and the repository lives
+in `infrastructure/persistence`. The lint categories `acme-app:app:global:application` and
+`acme-app:app:global:outbound` cover them (see `016-lint-allowlists.md`).

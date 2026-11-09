@@ -2,8 +2,9 @@
 
 staff-app, customer-app and processor-app are three deployables over one module graph: each has its
 own `main.ts`, its own `AppModule` and its own port, and all three read the same database and Redis.
-staff-app and customer-app serve HTTP; processor-app serves only the health probes and runs the
-queue processors and the schedules (see `023-processor-app.md`).
+staff-app and customer-app serve the HTTP API; processor-app serves the health probes, the staff
+login and the failed jobs of its queues, and runs the queue processors and the schedules (see
+`023-processor-app.md`).
 
 ## main.ts
 
@@ -12,6 +13,7 @@ queue processors and the schedules (see `023-processor-app.md`).
 1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
+   `yarn start:dev` and the built image pass `.env` to Node with `--env-file`, so both trace.
 2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
    failed start.
 3. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:
@@ -29,28 +31,31 @@ Each app has its own env file, and the migrations have theirs, all in `env/`:
 | `env/apps/staff-app/.env.example`     | staff-app                          | every variable of the staff-app schema     |
 | `env/apps/customer-app/.env.example`  | customer-app                       | every variable of the customer-app schema  |
 | `env/apps/processor-app/.env.example` | processor-app                      | every variable of the processor-app schema |
-| `env/migrations/.env.example`         | `migrations/config/data-source.ts` | `DATABASE_URL` only                        |
+| `env/migrations/.env.example`         | `migrations/config/data-source.ts` | the `DATABASE_*` variables only            |
 
-A variable with the same meaning has the same name in every app: `PORT`, `DATABASE_URL`, the JWT
-secrets. An example lists exactly the variables its schema reads, so an app starts with nothing but
-its own `.env.local` filled in.
+A variable with the same meaning has the same name in every app: `PORT`, the `DATABASE_*` variables,
+the JWT secrets. An example lists exactly the variables its schema reads and connects to the
+infrastructure of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a
+missing or invalid variable stops the app at boot, and a Redis without `REDIS_PASSWORD` is refused.
 
-`ConfigSetupModule` loads `env/apps/<app>/.env.local`, then `env/apps/<app>/.env`. Each `.env.local`
-sits next to its example.
+`ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
+`NODE_ENV=test`. Each file sits next to its example. `migrations/config/data-source.ts` chooses
+between `env/migrations/.env` and `env/migrations/.env.test` the same way.
 
 `EnvHelper.appEnvFilePaths` finds the paths from the repository root, the nearest directory up from
 the code that holds `nest-cli.json`, so the app reads the same files from the sources and from the
-bundle in `dist/`, whatever the working directory. A built image has no repository root: it reads no
-file, and the environment comes from the container. The variables of the process always take
-precedence over the files.
+bundle in `dist/`, whatever the working directory. A built image holds `nest-cli.json` as that
+marker and gets `env/apps/<app>/.env` as a read-only mount, so the secrets stay out of its layers.
+The variables of the process take precedence over `.env`; under `NODE_ENV=test` the `.env.test`
+files take precedence over them (see `014-e2e-suites.md`).
 
 **Request behavior is registered in DI, never in `main.ts`.** The validation pipe, the exception
 filters, the guards and the correlation context are all in `AppModule` or in modules it imports. An
 e2e context built from `AppModule` without `main.ts` behaves like the running app.
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
-`API_USE_API_REFERENCE` is true, which is the default outside production. It runs after
-`setGlobalPrefix`, so the document lists the prefixed paths.
+`API_USE_API_REFERENCE` is true. It runs after `setGlobalPrefix`, so the document lists the prefixed
+paths.
 
 ## AppModule
 
@@ -61,11 +66,11 @@ e2e context built from `AppModule` without `main.ts` behaves like the running ap
 | `LocalStorageSetupModule.forRoot()` | `libs/local-storage`                                 | the CLS context of every request under its correlation id                                               |
 | `OrmModule.forRoot(entities)`       | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
-| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                                      |
+| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
 | `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
-| `AuthGlobalModule`                  | `app/global/auth`, not in processor-app              | the three global guards                                                                                 |
+| `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
-| `APP_PIPE`                          | `StrictValidationPipe`, not in processor-app         | whitelist, forbid unknown properties, transform                                                         |
+| `APP_PIPE`                          | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |
 | `APP_FILTER`                        | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                            |
 
 Every module in `app/setup/` is named `*SetupModule`.
@@ -92,9 +97,8 @@ context to every line, the `request completed` line of pino-http included.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has no
 `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
-ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module.
-processor-app has only `IdempotencyKey` and `LedgerEntry`, the tables of the purge and of the ledger
-append.
+ledger. It has `IdempotencyKey`, because the `order` feature mounts the core idempotency module. The
+entity list of processor-app is in `023-processor-app.md`.
 
 ## Logs
 

@@ -6,8 +6,8 @@ import time
 from pathlib import Path
 
 ENV_DIR = Path(__file__).resolve().parents[2] / "env" / "apps"
-ENV_FILE = ENV_DIR / "customer-app" / ".env.local"
-STAFF_ENV_FILE = ENV_DIR / "staff-app" / ".env.local"
+ENV_FILE = ENV_DIR / "customer-app" / ".env"
+STAFF_ENV_FILE = ENV_DIR / "staff-app" / ".env"
 ANN_ID = "101"
 BOB_ID = "102"
 CAROL_ID = "103"

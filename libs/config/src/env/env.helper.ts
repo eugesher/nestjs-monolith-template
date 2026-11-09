@@ -17,7 +17,9 @@ export class EnvHelper {
 
     const directory = join(root, 'env', 'apps', app);
 
-    return [join(directory, '.env.local'), join(directory, '.env')];
+    const file = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+
+    return [join(directory, file)];
   }
 
   private static findRoot(directory: string): string | undefined {

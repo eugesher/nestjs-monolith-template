@@ -45,19 +45,18 @@ seeds, and processor-app for the requests that read the ledger records the other
 yarn test:e2e:infra:reload
 ```
 
-Start each app with the database and Redis of the e2e infrastructure. The variables of the shell
-take precedence over `env/apps/<app>/.env.local`:
+Start each app. `env/apps/<app>/.env` connects it to the e2e infrastructure:
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:staff-app
+yarn start:dev:staff-app
 ```
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:customer-app
+yarn start:dev:customer-app
 ```
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:processor-app
+yarn start:dev:processor-app
 ```
 
 The expected result in a description holds for fresh seeds and the first run. Write requests change
@@ -72,14 +71,14 @@ Bull queue alone. When a description checks cache keys, delete the `acme:*` keys
 Every request with authorization calls a function of `<collection>/scripts.py` in `setup`
 (`as_admin`, `as_editor` and `as_viewer` for staff, `as_bob` and `as_dora` for customers, and so
 on). The function signs an HS256 token of a seeded user (`sub`, `iat`) with `JWT_SECRET` from
-`env/apps/<app>/.env.local` and puts it into the variable `token`, as `ctx.jwt.sign` does in the
-e2e. This also covers tokens that no login issues:
+`env/apps/<app>/.env` and puts it into the variable `token`, as `ctx.jwt.sign` does in the e2e. This
+also covers tokens that no login issues:
 
 - the token of a disabled user (`as_disabled`, `as_dora`);
 - a token with forged role claims (`as_viewer_forged_claims`);
 - the token of a user of the other app (`as_customer`, `as_staff_user`);
 - a token signed with the `JWT_SECRET` of the other app (`as_editor_with_customer_secret`,
-  `as_ann_with_staff_secret`), which needs `.env.local` of both apps.
+  `as_ann_with_staff_secret`), which needs `.env` of both apps.
 
 `auth/login/01-editor` of staff-app and `auth/login/01-customer` of customer-app save the token they
 get into the variable `access_token`. The requests that send it say so in `Note:` or `User:`.

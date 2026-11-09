@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { readdirSync, readFileSync } from 'fs';
 import Joi from 'joi';
 import { basename, join } from 'path';
@@ -5,7 +6,11 @@ import { DataSource } from 'typeorm';
 import type { QueryRunner } from 'typeorm';
 
 interface ISeedEnv {
-  DATABASE_URL: string;
+  DATABASE_HOST: string;
+  DATABASE_PORT: number;
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
 }
 
 interface ISeedFile {
@@ -30,8 +35,18 @@ interface IForeignKey {
 }
 
 const readEnv = (): ISeedEnv => {
+  dotenv.config({
+    path: join(import.meta.dirname, '../../../env/migrations/.env.test'),
+    override: true,
+    quiet: true,
+  });
+
   const schema = Joi.object<ISeedEnv>({
-    DATABASE_URL: Joi.string().uri({ scheme: 'mysql' }).required(),
+    DATABASE_HOST: Joi.string().hostname().required(),
+    DATABASE_PORT: Joi.number().port().min(1).required(),
+    DATABASE_USER: Joi.string().required(),
+    DATABASE_PASSWORD: Joi.string().required(),
+    DATABASE_NAME: Joi.string().required(),
   }).unknown();
   const result = schema.validate(process.env);
 
@@ -142,7 +157,15 @@ const seed = async (runner: QueryRunner, files: ISeedFile[]): Promise<void> => {
 
 const env = readEnv();
 const files = readSeedFiles();
-const dataSource = new DataSource({ type: 'mysql', url: env.DATABASE_URL, timezone: 'Z' });
+const dataSource = new DataSource({
+  type: 'mysql',
+  host: env.DATABASE_HOST,
+  port: env.DATABASE_PORT,
+  username: env.DATABASE_USER,
+  password: env.DATABASE_PASSWORD,
+  database: env.DATABASE_NAME,
+  timezone: 'Z',
+});
 
 await dataSource.initialize();
 

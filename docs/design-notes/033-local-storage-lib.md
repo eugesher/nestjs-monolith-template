@@ -37,8 +37,8 @@ through `ClsModule.registerPlugins` and exports `TRANSACTION_PORT`. It passes th
 
 **The contract keeps its names.** The port is `ITransactionPort` / `TRANSACTION_PORT` of
 `@acme-libs/contracts/local-storage`, with `run` and `afterCommit`, not `<LIB>_LIB_PORT` with
-`handle*` methods as `libs/cache` and `libs/credentials` have: twelve use cases of the apps and the
-core call it, and the names say what they do there.
+`handle*` methods as `libs/cache` and `libs/credentials` have: fourteen use cases of the apps and
+the core call it, and the names say what they do there.
 
 ## What stays in `libs/database`
 

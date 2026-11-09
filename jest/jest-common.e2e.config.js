@@ -1,5 +1,6 @@
 process.env.TZ = 'America/New_York';
 
+const dotenv = require('dotenv');
 const path = require('path');
 const tsconfig = require('../tsconfig.json');
 
@@ -12,14 +13,20 @@ const moduleNameMapper = Object.fromEntries(
   ]),
 );
 
-module.exports = (app) => ({
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: path.join(repoRoot, 'apps', app),
-  testEnvironment: 'node',
-  setupFiles: ['reflect-metadata', path.join(repoRoot, 'jest', `${app}.e2e-setup.js`)],
-  testRegex: '\\.e2e-spec\\.ts$',
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
-  moduleNameMapper,
-});
+module.exports = (app) => {
+  const envFile = path.join(repoRoot, 'env', 'apps', app, '.env.test');
+
+  dotenv.config({ path: envFile, override: true, quiet: true });
+
+  return {
+    moduleFileExtensions: ['js', 'json', 'ts'],
+    rootDir: path.join(repoRoot, 'apps', app),
+    testEnvironment: 'node',
+    setupFiles: ['reflect-metadata'],
+    testRegex: '\\.e2e-spec\\.ts$',
+    transform: {
+      '^.+\\.ts$': 'ts-jest',
+    },
+    moduleNameMapper,
+  };
+};

@@ -31,12 +31,12 @@ constructor.
 
 **The type argument checks the binding.** `ClassProvider<IOrderIdempotencyPort>` makes the compiler
 check that `useClass` implements the port. A bare `{ provide, useClass }` in the module is a
-`ClassProvider<any>`, so a token bound to the wrong class failed only when Nest resolved it.
+`ClassProvider<any>`, so a token bound to the wrong class fails only when Nest resolves it.
 
 **The binding lives with the implementation.** The class imports the token from the same `outbound`
 barrel as its port, so the module root lists `X.provider` and does not import the token. Together
 with the config values of `infrastructure/config` (see `030-config-values.md`), this leaves the
-module root with no use of `outbound`, and lint no longer allows it.
+module root with no use of `outbound`, and lint does not allow it.
 
 **A decorated class may name itself in a static initializer.** TypeScript aliases a decorated class
 and sets the alias in a static block that runs before the other static fields, so `useClass` is the

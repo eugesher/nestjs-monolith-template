@@ -1,6 +1,6 @@
 # 017 — Credentials lib
 
-Password hashing and token signing are used by both HTTP apps, so they live in a lib.
+Password hashing and token signing are used by all three apps, so they live in a lib.
 
 The lib has the shape of `libs/health`: one port in `libs/contracts/src/credentials`,
 `CREDENTIALS_LIB_PORT`, implemented by `CredentialsLibFacade`. The facade hands each method to a use
@@ -10,7 +10,7 @@ case, and the use cases reach the libraries through ports of the lib's own `outb
 | ----------------------- | -------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
 | `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
 | `handleHashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
-| `verifyPassword`        | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
+| `handleVerifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
 
 **The lib reads the config of the app it runs in.** `CredentialsLibModule` takes the values from
 `ConfigService`, as `libs/cache` does, so the features bind no config tokens of their own, and each
@@ -20,10 +20,10 @@ app signs with its own secret.
 library, so a caller that hands it a wider object cannot widen the token.
 
 **Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`; the
-feature declares ports of its own (`AUTH_ACCESS_TOKEN_PORT`, `AUTH_PASSWORD_HASHER_PORT`) and
-implements them in `infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature
-imports `argon2` or `@nestjs/jwt` and the application never sees the lib. Example:
-`apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-password-hasher-lib.adapter.ts`.
+feature declares a port of its own (`AUTH_CREDENTIALS_PORT`) and implements it in
+`infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature imports `argon2` or
+`@nestjs/jwt` and the application never sees the lib. Example:
+`apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-credentials-lib.adapter.ts`.
 Verifying a token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
 
 ## One model per module over one table

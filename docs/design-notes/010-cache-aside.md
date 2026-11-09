@@ -44,7 +44,8 @@ OpenTelemetry through two ports of the lib's own `outbound`:
 
 **`CacheLibStoreAdapter` is the ioredis adapter.** It holds the JSON encoding, `PX` TTLs, the `SCAN`
 and `UNLINK` loop under the client's `keyPrefix`, and quits the client on shutdown.
-`CacheLibRedisClientProvider` builds the client from `REDIS_URL` and `REDIS_COMMAND_TIMEOUT_MS`.
+`CacheLibRedisClientProvider` builds the client from `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`
+and `REDIS_COMMAND_TIMEOUT_MS`.
 
 **`CacheLibTracerAdapter` is the OpenTelemetry adapter.** A use case names the span and its
 attributes, adds `cache.hit` or `cache.keys_unlinked` as it learns them, and the adapter records

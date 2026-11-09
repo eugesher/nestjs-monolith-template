@@ -12,8 +12,8 @@ concurrency on the first.
 
 ```ts
 interface INoteEditRepositoryPort {
-  update(command: INoteWriteUpdateCommand): Promise<boolean>;
-  appendRevision(revision: NoteRevisionModel): Promise<void>;
+  update(query: INoteEditUpdateQuery): Promise<boolean>;
+  appendRevision(query: INoteEditRevisionInsertQuery): Promise<void>;
 }
 ```
 

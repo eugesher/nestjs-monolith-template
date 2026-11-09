@@ -14,9 +14,11 @@ export class CacheLibRedisClientProvider {
   };
 
   private static create(config: ConfigService, logger: PinoLogger): Redis {
-    const url = config.getOrThrow<string>('REDIS_URL');
+    const host = config.getOrThrow<string>('REDIS_HOST');
+    const port = config.getOrThrow<number>('REDIS_PORT');
+    const password = config.getOrThrow<string>('REDIS_PASSWORD');
     const commandTimeout = config.getOrThrow<number>('REDIS_COMMAND_TIMEOUT_MS');
-    const redis = new Redis(url, { enableOfflineQueue: false, commandTimeout });
+    const redis = new Redis({ host, port, password, enableOfflineQueue: false, commandTimeout });
 
     logger.setContext(CacheLibRedisClientProvider.name);
     redis.on('error', (error: Error) => {
