@@ -123,20 +123,21 @@ cp env/migrations/.env.example env/migrations/.env
 
 Replace these values in the three app files:
 
-| Variable                   | Value                                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------- |
-| `NODE_ENV`                 | `production`                                                                                      |
-| `API_USE_API_REFERENCE`    | `false`                                                                                           |
-| `DATABASE_HOST`            | `mysql`                                                                                           |
-| `DATABASE_PORT`            | `3306`                                                                                            |
-| `DATABASE_USER`            | `acme`                                                                                            |
-| `DATABASE_PASSWORD`        | the value of `MYSQL_PASSWORD`                                                                     |
-| `REDIS_HOST`               | `redis`                                                                                           |
-| `REDIS_PORT`               | `6379`                                                                                            |
-| `REDIS_PASSWORD`           | the value of `REDIS_SERVER_PASSWORD`                                                              |
-| `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
-| `OTEL_SDK_DISABLED`        | `true`                                                                                            |
-| `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
+| Variable                      | Value                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                    | `production`                                                                                      |
+| `API_USE_API_REFERENCE`       | `false`                                                                                           |
+| `DATABASE_HOST`               | `mysql`                                                                                           |
+| `DATABASE_PORT`               | `3306`                                                                                            |
+| `DATABASE_USER`               | `acme`                                                                                            |
+| `DATABASE_PASSWORD`           | the value of `MYSQL_PASSWORD`                                                                     |
+| `REDIS_HOST`                  | `redis`                                                                                           |
+| `REDIS_PORT`                  | `6379`                                                                                            |
+| `REDIS_PASSWORD`              | the value of `REDIS_SERVER_PASSWORD`                                                              |
+| `JWT_SECRET`                  | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
+| `OTEL_SDK_DISABLED`           | `false`                                                                                           |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://otel-collector:4318`                                                                      |
+| `OTEL_RESOURCE_ATTRIBUTES`    | `deployment.environment=production`                                                               |
 
 In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
 
@@ -154,7 +155,8 @@ docker compose --env-file env/compose/.env up --build --detach
 
 The apps start once the `migrations` container has exited with code 0. Each app answers on
 `GET /api/health` at port 3000 (`customer-app`), 3001 (`staff-app`) or 3002 (`processor-app`). MySQL
-and Redis are published only on `127.0.0.1`.
+and Redis are published only on `127.0.0.1`, like Jaeger, whose traces are at
+<http://127.0.0.1:16686>.
 
 Create the first administrator once, after the migrations have run. The command creates the user and
 the `admin` role with the `access-management` permission, and fails without changes if the email is

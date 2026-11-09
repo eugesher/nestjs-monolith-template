@@ -13,7 +13,7 @@ login and the failed jobs of its queues, and runs the queue processors and the s
 1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
-   `yarn start:dev` passes `.env` to Node with `--env-file`, so a local run traces.
+   `yarn start:dev` and the built image pass `.env` to Node with `--env-file`, so both trace.
 2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
    failed start.
 3. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:

@@ -107,13 +107,9 @@ Because the image has no dev dependencies, it has no `pino-pretty`, so the image
 `env/apps/<app>/.env` into each app and `env/migrations/.env` into the migrations, and `README.md`
 lists the values to set there.
 
-`docker-compose.observability.yml` adds Jaeger and an OpenTelemetry collector:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.observability.yml up
-```
-
-The collector reads `opentelemetry-collector.config.yaml` and forwards the traces to Jaeger, whose
-UI is at `localhost:16686`. Tracing stays off until an app runs with `OTEL_SDK_DISABLED=false`.
-`test/infra` starts the same Jaeger and collector on `localhost:16687` and OTLP ports 4319 and 4320
-for a local run, whose `.env` turns tracing on; `.env.test` keeps it off.
+The root `docker-compose.yml` also runs Jaeger and an OpenTelemetry collector, published on
+`127.0.0.1` only. The collector reads `otel-collector.config.yaml` and forwards the traces to
+Jaeger, whose UI is at `localhost:16686`. An app traces when its `.env` sets
+`OTEL_SDK_DISABLED=false`. `test/infra` starts the same Jaeger and a collector with its own
+`test/infra/otel-collector.config.yaml` on `localhost:16687` and OTLP ports 4319 and 4320 for a
+local run, whose `.env` turns tracing on; `.env.test` keeps it off.

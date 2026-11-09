@@ -48,6 +48,7 @@ FROM node:24.22.1-alpine
 ARG APP_NAME
 
 ENV NODE_ENV=production
+ENV APP_NAME=${APP_NAME}
 
 WORKDIR /app
 
@@ -57,4 +58,4 @@ COPY --from=builder /app/dist/apps/${APP_NAME}/ ./dist/
 
 USER node
 
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "exec node --env-file-if-exists=env/apps/$APP_NAME/.env dist/main.js"]
