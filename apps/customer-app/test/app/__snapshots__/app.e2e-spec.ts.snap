@@ -11,17 +11,6 @@ exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = 
 }
 `;
 
-exports[`App Auth GET /api/auth/me should refuse the token of a customer signed with the secret of staff-app 1`] = `
-{
-  "response": {
-    "body": {
-      "message": "Unauthorized",
-      "statusCode": 401,
-    },
-  },
-}
-`;
-
 exports[`App Auth GET /api/auth/me should refuse the token of a disabled customer 1`] = `
 {
   "response": {

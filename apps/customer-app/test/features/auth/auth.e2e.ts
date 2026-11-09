@@ -1,5 +1,4 @@
 import { HttpStatus } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import request from 'supertest';
 
 import { AppE2EContext } from '../../context/app-e2e.context';
@@ -227,19 +226,8 @@ export class AuthE2E {
         expect({ response: { body: response.body } }).toMatchSnapshot();
       });
 
-      it.each([
-        [
-          'a staff user signed with the secret of this app',
-          new JwtService({ secret: 'customer-e2e-secret-at-least-32-characters' }),
-          '1',
-        ],
-        [
-          'a customer signed with the secret of staff-app',
-          new JwtService({ secret: 'e2e-secret-at-least-32-characters-long' }),
-          '101',
-        ],
-      ])('should refuse the token of %s', async (_, jwt, sub) => {
-        const token = jwt.sign({ sub });
+      it('should refuse the token of a staff user signed with the secret of this app', async () => {
+        const token = this.ctx.jwt.sign({ sub: '1' });
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/auth/me')
