@@ -68,6 +68,9 @@ With the infrastructure running, start the three apps in watch mode:
 yarn start:dev
 ```
 
+Traces of the local run are at <http://localhost:16687>: the infrastructure includes Jaeger and an
+OpenTelemetry collector.
+
 To start one app, use `yarn start:dev:staff-app`, `yarn start:dev:customer-app` or
 `yarn start:dev:processor-app`. To apply new migrations to the database of `env/migrations/.env`:
 
@@ -132,6 +135,7 @@ Replace these values in the three app files:
 | `REDIS_PORT`               | `6379`                                                                                            |
 | `REDIS_PASSWORD`           | the value of `REDIS_SERVER_PASSWORD`                                                              |
 | `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
+| `OTEL_SDK_DISABLED`        | `true`                                                                                            |
 | `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
 
 In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.

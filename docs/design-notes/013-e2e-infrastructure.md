@@ -115,3 +115,5 @@ docker compose -f docker-compose.yml -f docker-compose.observability.yml up
 
 The collector reads `opentelemetry-collector.config.yaml` and forwards the traces to Jaeger, whose
 UI is at `localhost:16686`. Tracing stays off until an app runs with `OTEL_SDK_DISABLED=false`.
+`test/infra` starts the same Jaeger and collector on `localhost:16687` and OTLP ports 4319 and 4320
+for a local run, whose `.env` turns tracing on; `.env.test` keeps it off.
