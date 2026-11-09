@@ -45,19 +45,18 @@ seeds, and processor-app for the requests that read the ledger records the other
 yarn test:e2e:infra:reload
 ```
 
-Start each app with the database and Redis of the e2e infrastructure. The variables of the shell
-take precedence over `env/apps/<app>/.env`:
+Start each app. `env/apps/<app>/.env` connects it to the e2e infrastructure:
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:staff-app
+yarn start:dev:staff-app
 ```
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:customer-app
+yarn start:dev:customer-app
 ```
 
 ```bash
-DATABASE_URL=mysql://root:root@127.0.0.1:3307/acme_db REDIS_URL=redis://:e2e-redis-password@127.0.0.1:6380 yarn start:dev:processor-app
+yarn start:dev:processor-app
 ```
 
 The expected result in a description holds for fresh seeds and the first run. Write requests change

@@ -30,12 +30,12 @@ Each app has its own env file, and the migrations have theirs, all in `env/`:
 | `env/apps/staff-app/.env.example`     | staff-app                          | every variable of the staff-app schema     |
 | `env/apps/customer-app/.env.example`  | customer-app                       | every variable of the customer-app schema  |
 | `env/apps/processor-app/.env.example` | processor-app                      | every variable of the processor-app schema |
-| `env/migrations/.env.example`         | `migrations/config/data-source.ts` | `DATABASE_URL` only                        |
+| `env/migrations/.env.example`         | `migrations/config/data-source.ts` | the `DATABASE_*` variables only            |
 
-A variable with the same meaning has the same name in every app: `PORT`, `DATABASE_URL`, the JWT
-secrets. An example lists exactly the variables its schema reads and connects to the infrastructure
-of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a missing or invalid
-variable stops the app at boot, and `REDIS_URL` must carry a password.
+A variable with the same meaning has the same name in every app: `PORT`, the `DATABASE_*` variables,
+the JWT secrets. An example lists exactly the variables its schema reads and connects to the
+infrastructure of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a
+missing or invalid variable stops the app at boot, and a Redis without `REDIS_PASSWORD` is refused.
 
 `ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
 `NODE_ENV=test`. Each file sits next to its example. `migrations/config/data-source.ts` chooses
@@ -64,7 +64,7 @@ paths.
 | `LocalStorageSetupModule.forRoot()` | `libs/local-storage`                                 | the CLS context of every request under its correlation id                                               |
 | `OrmModule.forRoot(entities)`       | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
 | `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
-| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to `REDIS_URL`, the job options of every queue                                      |
+| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
 | `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
 | `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |

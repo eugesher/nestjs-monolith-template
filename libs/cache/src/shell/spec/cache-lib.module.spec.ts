@@ -35,7 +35,12 @@ describe('CacheLibModule', () => {
           provide: ConfigService,
           useValue: {
             getOrThrow: (key: string) =>
-              ({ REDIS_URL: 'redis://127.0.0.1:1', REDIS_COMMAND_TIMEOUT_MS: 500 })[key],
+              ({
+                REDIS_HOST: '127.0.0.1',
+                REDIS_PORT: 1,
+                REDIS_PASSWORD: 'password',
+                REDIS_COMMAND_TIMEOUT_MS: 500,
+              })[key],
           },
         },
       ],

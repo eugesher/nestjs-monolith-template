@@ -90,5 +90,5 @@ comes after it waits (see `021-pessimistic-locking.md`).
 `yarn start:dev` starts the three apps. The root `docker-compose.yml` runs processor-app on port
 3002 from the same `Dockerfile`, with `APP_NAME=processor-app`.
 
-**Every app points `REDIS_URL` at one Redis.** The producers and the processor meet only in the
-queue: a producer with another Redis enqueues into a queue nobody reads.
+**Every app points `REDIS_HOST` and `REDIS_PORT` at one Redis.** The producers and the processor
+meet only in the queue: a producer with another Redis enqueues into a queue nobody reads.

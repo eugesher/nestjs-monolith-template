@@ -29,14 +29,22 @@ export class OrmModule {
     return TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService): TypeOrmModuleOptions => {
-        const url = config.getOrThrow<string>('DATABASE_URL');
+        const host = config.getOrThrow<string>('DATABASE_HOST');
+        const port = config.getOrThrow<number>('DATABASE_PORT');
+        const username = config.getOrThrow<string>('DATABASE_USER');
+        const password = config.getOrThrow<string>('DATABASE_PASSWORD');
+        const database = config.getOrThrow<string>('DATABASE_NAME');
         const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
         const namingStrategy = new SnakeNamingStrategy();
 
         return {
           entities,
           type: 'mysql',
-          url,
+          host,
+          port,
+          username,
+          password,
+          database,
           logging,
           synchronize: false,
           timezone: 'Z',

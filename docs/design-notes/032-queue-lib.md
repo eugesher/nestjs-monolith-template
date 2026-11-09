@@ -3,10 +3,10 @@
 All three apps connect Bull the same way, so the connection lives in a lib:
 `libs/queue/src/bull/bull-setup.module.ts`.
 
-| Method                          | Called by                                                                    | What it returns                                                       |
-| ------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `BullSetupModule.forRoot()`     | `AppModule` of each app                                                      | `BullModule.forRootAsync`: the connection to `REDIS_URL`, job options |
-| `BullSetupModule.registerQueue` | `common/shared` of each app, the shell of core `product` and `product-stock` | `BullModule.registerQueue({ name })`                                  |
+| Method                          | Called by                                                                    | What it returns                                                 |
+| ------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `BullSetupModule.forRoot()`     | `AppModule` of each app                                                      | `BullModule.forRootAsync`: the connection to Redis, job options |
+| `BullSetupModule.registerQueue` | `common/shared` of each app, the shell of core `product` and `product-stock` | `BullModule.registerQueue({ name })`                            |
 
 ```ts
 export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);
@@ -24,9 +24,9 @@ connection, the job options and the registration of a queue.
 
 ## The connection is per app, the job options are not
 
-`forRoot()` takes `REDIS_URL` from `ConfigService`, as `libs/cache` and `libs/credentials` do. The
-job options are the private constant `DEFAULT_JOB_OPTIONS` of `BullSetupModule`, listed in
-`008-queue-processor.md`. Several apps write to `ledger-record` and to
+`forRoot()` takes the `REDIS_*` variables from `ConfigService`, as `libs/cache` and
+`libs/credentials` do. The job options are the private constant `DEFAULT_JOB_OPTIONS` of
+`BullSetupModule`, listed in `008-queue-processor.md`. Several apps write to `ledger-record` and to
 `product-stock-post-subtract`; options read from the environment of each app would let their jobs
 retry differently, while the code of the lib is the same in every app.
 

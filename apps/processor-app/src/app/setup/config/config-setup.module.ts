@@ -20,16 +20,16 @@ export class ConfigSetupModule {
           .required(),
         API_USE_API_REFERENCE: Joi.boolean().required(),
 
-        DATABASE_URL: Joi.string()
-          .uri({ scheme: 'mysql' })
-          .pattern(/^mysql:\/\/[^/]+\/[^/?#]+/)
-          .required(),
+        DATABASE_HOST: Joi.string().hostname().required(),
+        DATABASE_PORT: Joi.number().port().min(1).required(),
+        DATABASE_USER: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
         DATABASE_LOGGING: Joi.boolean().required(),
 
-        REDIS_URL: Joi.string()
-          .uri({ scheme: 'redis' })
-          .pattern(/^redis:\/\/[^/@]*:[^/@]+@[^/]+/)
-          .required(),
+        REDIS_HOST: Joi.string().hostname().required(),
+        REDIS_PORT: Joi.number().port().min(1).required(),
+        REDIS_PASSWORD: Joi.string().required(),
         REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
 
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).required(),

@@ -21,8 +21,11 @@ export class BullSetupModule {
   }
 
   private static options(config: ConfigService): BullRootModuleOptions {
-    const url = config.getOrThrow<string>('REDIS_URL');
+    const host = config.getOrThrow<string>('REDIS_HOST');
+    const port = config.getOrThrow<number>('REDIS_PORT');
+    const password = config.getOrThrow<string>('REDIS_PASSWORD');
+    const redis = { host, port, password };
 
-    return { url, defaultJobOptions: BullSetupModule.DEFAULT_JOB_OPTIONS };
+    return { redis, defaultJobOptions: BullSetupModule.DEFAULT_JOB_OPTIONS };
   }
 }

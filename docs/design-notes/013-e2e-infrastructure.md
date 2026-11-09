@@ -22,7 +22,7 @@ its own, on the standard ports.
 | `test:e2e:infra:down`                                       | removes the containers and their volumes                              |
 | `test:e2e:infra:reload`                                     | `down`, then `up`                                                     |
 | `test:e2e:infra:reseed`                                     | resets the data of running infrastructure, see below                  |
-| `test:e2e:seed`                                             | loads the seed files into `DATABASE_URL`                              |
+| `test:e2e:seed`                                             | loads the seed files into the database of `env/migrations/.env.test`  |
 | `test:e2e:staff`, `test:e2e:customer`, `test:e2e:processor` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md` |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
@@ -57,12 +57,12 @@ fk_note_revision_note: 1 note_revision row(s) with (note_id) missing in note
 
 **The seed runs under plain `node`**, like the migrations: `test/` has its own `package.json` with
 `"type": "module"` and a `tsconfig.json` with `verbatimModuleSyntax`. It imports no project code,
-only `dotenv`, `fs`, `joi`, `path` and `typeorm`. It reads `DATABASE_URL` from
+only `dotenv`, `fs`, `joi`, `path` and `typeorm`. It reads the `DATABASE_*` variables from
 `env/migrations/.env.test`, and a variable of the process takes precedence. To seed another
 database:
 
 ```bash
-DATABASE_URL=mysql://acme:acmepass@localhost:3306/acme_db yarn test:e2e:seed
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=3306 DATABASE_USER=acme DATABASE_PASSWORD=<password> yarn test:e2e:seed
 ```
 
 ### Seeded accounts

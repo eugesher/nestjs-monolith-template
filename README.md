@@ -124,13 +124,17 @@ Replace these values in the three app files:
 | -------------------------- | ------------------------------------------------------------------------------------------------- |
 | `NODE_ENV`                 | `production`                                                                                      |
 | `API_USE_API_REFERENCE`    | `false`                                                                                           |
-| `DATABASE_URL`             | `mysql://acme:<MYSQL_PASSWORD>@mysql:3306/acme_db`                                                |
-| `REDIS_URL`                | `redis://:<REDIS_PASSWORD>@redis:6379`                                                            |
+| `DATABASE_HOST`            | `mysql`                                                                                           |
+| `DATABASE_PORT`            | `3306`                                                                                            |
+| `DATABASE_USER`            | `acme`                                                                                            |
+| `DATABASE_PASSWORD`        | the value of `MYSQL_PASSWORD`                                                                     |
+| `REDIS_HOST`               | `redis`                                                                                           |
+| `REDIS_PORT`               | `6379`                                                                                            |
+| `REDIS_PASSWORD`           | the value of `REDIS_PASSWORD`                                                                     |
 | `JWT_SECRET`               | 32 characters or more: one secret for `staff-app` and `processor-app`, another for `customer-app` |
 | `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=production`                                                               |
 
-In `env/migrations/.env`, set `DATABASE_URL` to the same value. Encode a special character of a
-password in its URL.
+In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
 
 Set the passwords of the database and Redis, then build and start everything:
 

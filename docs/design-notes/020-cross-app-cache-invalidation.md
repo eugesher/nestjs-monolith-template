@@ -11,8 +11,8 @@ definition.
 | a dropper in a core module | `core/modules/src/product/infrastructure/cache/product-core-catalog-cache.adapter.ts`                       |
 
 **The key lives in a lib contract.** `@acme-libs/contracts/cache` is read by every app, so a key
-that several apps use is defined once. It works because every app points `REDIS_URL` at one Redis,
-as the queues already require.
+that several apps use is defined once. It works because every app points `REDIS_HOST` and
+`REDIS_PORT` at one Redis, as the queues already require.
 
 **The read is cache-aside** (see `010-cache-aside.md`): `CatalogProductListUseCase` passes `compute`
 to `CATALOG_CACHE_PORT.read`, and the adapter calls `CACHE_LIB_PORT.handleWrap` under a key of the
