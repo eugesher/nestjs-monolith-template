@@ -4,7 +4,7 @@
 and the e2e suites. Only the config files differ: `.env` for a local run, a gitignored copy of
 `.env.example`, and `.env.test` for the suites, which is in the repository. The root
 `docker-compose.yml` is the production stack: it runs the built images over a MySQL and a Redis of
-its own, on the standard ports.
+its own, on the standard ports (see `036-production-stack.md`).
 
 |              | Root compose                                        | `test/infra`                                    |
 | ------------ | --------------------------------------------------- | ----------------------------------------------- |
@@ -88,28 +88,8 @@ gets the next `AUTO_INCREMENT` value after the highest seeded id, and tests find
 | order    | `order`, `order_product` | 600–699 |
 | stock    | `product_stock`          | 700–799 |
 
-## Images
+## Observability
 
-The app image is built from the root `Dockerfile` with the build argument `APP_NAME`: the same image
-recipe serves all three deployables. The builder installs every dependency, builds the app and then
-keeps only the production dependencies with `yarn workspaces focus --all --production`. The runtime
-stage copies `node_modules` and `dist/apps/<app>/` and runs as the `node` user with
-`NODE_ENV=production`.
-
-The target `migrations` of the same `Dockerfile` holds `migrations/` and the production dependencies
-and runs `migration:run` once and also holds `scripts/node/admin-create.ts`, which creates the first
-administrator from `ADMIN_EMAIL` and `ADMIN_PASSWORD` of `env/migrations/.env`; the root compose
-starts the apps after it has exited with code 0.
-
-Because the image has no dev dependencies, it has no `pino-pretty`, so the image sets
-`NODE_ENV=production` and logs JSON. The root compose takes the passwords of MySQL and Redis from
-`env/compose/.env` through `--env-file`, so they stay out of the shell history. It mounts
-`env/apps/<app>/.env` into each app and `env/migrations/.env` into the migrations, and `README.md`
-lists the values to set there.
-
-The root `docker-compose.yml` also runs Jaeger and an OpenTelemetry collector, published on
-`127.0.0.1` only. The collector reads `otel-collector.config.yaml` and forwards the traces to
-Jaeger, whose UI is at `localhost:16686`. An app traces when its `.env` sets
-`OTEL_SDK_DISABLED=false`. `test/infra` starts the same Jaeger and a collector with its own
-`test/infra/otel-collector.config.yaml` on `localhost:16687` and OTLP ports 4319 and 4320 for a
-local run, whose `.env` turns tracing on; `.env.test` keeps it off.
+`test/infra` also starts Jaeger and an OpenTelemetry collector with its own
+`test/infra/otel-collector.config.yaml`, on `localhost:16687` and OTLP ports 4319 and 4320. The
+`.env` of a local run turns tracing on; `.env.test` keeps it off.

@@ -88,7 +88,7 @@ comes after it waits (see `021-pessimistic-locking.md`).
 | `yarn test:e2e:processor`      | the e2e suite (see `014-e2e-suites.md`)         |
 
 `yarn start:dev` starts the three apps. The root `docker-compose.yml` runs processor-app on port
-3002 from the same `Dockerfile`, with `APP_NAME=processor-app`.
+3002 from the same `Dockerfile`, with `APP_NAME=processor-app` (see `036-production-stack.md`).
 
 **Every app points `REDIS_HOST` and `REDIS_PORT` at one Redis.** The producers and the processor
 meet only in the queue: a producer with another Redis enqueues into a queue nobody reads.
