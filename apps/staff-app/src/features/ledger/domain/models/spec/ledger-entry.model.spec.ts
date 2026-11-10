@@ -1,9 +1,9 @@
-import { LedgerViewMapper } from '../ledger-view.mapper';
+import { LedgerEntryModel } from '../ledger-entry.model';
 
-describe('LedgerViewMapper', () => {
-  describe('toListEntriesViewItem', () => {
-    it('maps a stored entry with its dates as ISO strings', () => {
-      const view = LedgerViewMapper.toListEntriesViewItem({
+describe('LedgerEntryModel', () => {
+  describe('toSnapshot', () => {
+    it('answers a stored entry with its dates as ISO strings', () => {
+      const entry = LedgerEntryModel.reconstitute({
         id: '7',
         operationKey: 'product-archived:12',
         subjectType: 'product',
@@ -15,7 +15,7 @@ describe('LedgerViewMapper', () => {
         recordedAt: new Date('2026-01-01T00:00:01.000Z'),
       });
 
-      expect(view).toEqual({
+      expect(entry.toSnapshot()).toEqual({
         id: '7',
         operationKey: 'product-archived:12',
         subjectType: 'product',

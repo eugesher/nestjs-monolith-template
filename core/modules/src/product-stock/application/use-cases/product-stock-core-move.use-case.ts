@@ -10,6 +10,7 @@ import {
   ProductStockCoreMovementKindEnum,
 } from '@acme-core/contracts/product-stock';
 
+import { ProductStockCoreOnHandModel } from '../../domain';
 import {
   IProductStockCorePostSubtractEnqueueCommand,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
@@ -18,7 +19,6 @@ import {
   type IProductStockCoreMoveRepositoryPort,
   type IProductStockCorePostSubtractPort,
 } from '../../outbound';
-import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
 @Injectable()
 export class ProductStockCoreMoveUseCase {
@@ -55,7 +55,8 @@ export class ProductStockCoreMoveUseCase {
     const inserted = await this.repository.insertMany(rows);
     const productStockIds = inserted.map((identifier) => String(identifier.id));
     const sums = await this.repository.sumStock(productIds);
-    const stock = ProductStockCoreOnHandMapper.toViews(productIds, sums);
+    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, sums });
+    const stock = onHand.toSnapshot();
 
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {
       const correlationId = CorrelationContextHelper.current(ProductStockCoreMoveUseCase.name);

@@ -16,8 +16,9 @@ capped, not rejected, and the response echoes the window it used.
 **The helper computes the offset.** `clampPageWindow` answers `{ page, limit, offset }`, and the
 repository passes `offset` and `limit` to the query as they are.
 
-**A read-only module has no domain.** `apps/staff-app/src/features/ledger` refuses nothing by code,
-so it has no domain exception and no exception filter.
+**A read-only module refuses nothing.** `apps/staff-app/src/features/ledger` has no domain exception
+and no exception filter. Its domain holds only the read model `LedgerEntryModel`: the use case
+rebuilds each record of the page and answers its snapshot (see `035-enums-and-response-dtos.md`).
 
 **Ids of `bigint unsigned` are strings** from the row to the response, because they may exceed the
 safe integer range of a JavaScript number. Instants are ISO strings in UTC.

@@ -48,7 +48,6 @@ describe('ProductPublishUseCase', () => {
         expect.any(Function),
       );
       expect(recordEvents).toHaveBeenCalledWith({
-        productId: '12',
         events: [expect.any(ProductPublishedEvent)],
       });
       expect(view).toEqual({

@@ -25,7 +25,7 @@ export class ProductPublishUseCase {
     const { product, events } = written;
 
     await this.catalogCache.invalidate();
-    await this.ledgerService.recordEvents({ productId, events });
+    await this.ledgerService.recordEvents({ events });
 
     const view = product.toSnapshot();
 

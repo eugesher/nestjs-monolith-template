@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs/ledger';
+import { SubjectLedgerService } from '@acme-libs/ledger';
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
 import { ProductStockAddedEvent } from '../../domain';
@@ -26,34 +26,14 @@ export class ProductStockLedgerService extends SubjectLedgerService {
   }
 
   public async recordEvents(command: IProductStockLedgerRecordEventsCommand): Promise<void> {
-    const { productId, productStockId, events } = command;
+    const { productStockId, events } = command;
     const correlationId = CorrelationContextHelper.current(ProductStockLedgerService.name);
     const added = events.filter((event) => event instanceof ProductStockAddedEvent);
 
     for (const event of added) {
-      const record = this.toRecord(productId, productStockId, event, correlationId);
+      const record = event.toLedgerRecord(productStockId, correlationId);
 
       await this.record(record);
     }
-  }
-
-  private toRecord(
-    productId: string,
-    productStockId: string,
-    event: ProductStockAddedEvent,
-    correlationId: string,
-  ): ISubjectLedgerRecord {
-    const { sku, quantity } = event;
-    const occurredAt = event.occurredAt.toISOString();
-
-    return {
-      operationKey: `product-restocked:${productStockId}`,
-      subjectType: 'product',
-      subjectId: productId,
-      action: 'ProductRestocked',
-      payload: { sku, quantity },
-      occurredAt,
-      correlationId,
-    };
   }
 }

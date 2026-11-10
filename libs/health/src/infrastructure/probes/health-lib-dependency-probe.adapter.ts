@@ -24,14 +24,14 @@ export class HealthLibDependencyProbeAdapter implements IHealthLibDependencyProb
 
   public async probeAll(): Promise<IHealthLibDependenciesView> {
     const [database, cache] = await Promise.all([
-      this.timed(() => this.dataSource.query('SELECT 1')),
-      this.timed(() => this.cache.handleGet(CACHE_KEYS.healthProbe())),
+      HealthLibDependencyProbeAdapter.timed(() => this.dataSource.query('SELECT 1')),
+      HealthLibDependencyProbeAdapter.timed(() => this.cache.handleGet(CACHE_KEYS.healthProbe())),
     ]);
 
     return { database, cache };
   }
 
-  private async timed(probe: () => Promise<unknown>): Promise<IHealthLibDependencyView> {
+  private static async timed(probe: () => Promise<unknown>): Promise<IHealthLibDependencyView> {
     const startedAt = Date.now();
     let timer: NodeJS.Timeout | undefined;
 

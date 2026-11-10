@@ -48,7 +48,6 @@ describe('ProductLedgerService', () => {
     it('leaves an update out of the ledger', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordEvents({
-          productId: '12',
           events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
         }),
       );
@@ -59,7 +58,6 @@ describe('ProductLedgerService', () => {
     it('enqueues a publication under the product and the version it produced', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordEvents({
-          productId: '12',
           events: [new ProductPublishedEvent('12', 'SKU-0001', 6, ProductStatusEnum.ARCHIVED)],
         }),
       );

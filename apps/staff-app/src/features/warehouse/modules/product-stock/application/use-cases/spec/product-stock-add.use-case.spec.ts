@@ -68,7 +68,6 @@ describe('ProductStockAddUseCase', () => {
       await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
 
       expect(recordEvents).toHaveBeenCalledWith({
-        productId: '12',
         productStockId: '700',
         events: [expect.any(ProductStockAddedEvent)],
       });

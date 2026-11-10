@@ -30,7 +30,6 @@ describe('ProductStockLedgerService', () => {
       async () => {
         await CorrelationContextHelper.run('corr-1', () =>
           service.recordEvents({
-            productId: '12',
             productStockId: '700',
             events: [new ProductStockAddedEvent('12', 'SKU-0001', 5)],
           }),
@@ -51,7 +50,6 @@ describe('ProductStockLedgerService', () => {
     it('enqueues nothing without an addition', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
         service.recordEvents({
-          productId: '12',
           productStockId: '700',
           events: [{ aggregateId: '12' } as DomainEvent<string>],
         }),
