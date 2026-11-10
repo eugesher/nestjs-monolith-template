@@ -57,7 +57,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 - a processor whose application reaches its domain, and the libs of the processor layers: the
   database contracts and the entities;
 - the libs a layer is meant to reach: the cache lib from the app root, the auth lib from a feature
-  root, the database contracts from the application of a common module;
+  root, the database contracts from the infrastructure of a common module;
 - a script, a migration or a seed script that imports its own support files.
 
 Removing one of them turns its spec red.

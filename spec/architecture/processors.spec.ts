@@ -288,6 +288,15 @@ describe('processors (processors/<module>) — modules entered by queues and sch
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('a processor may NOT reach its outbound — ports belong to the application', async () => {
+      await expect({
+        file:
+          'apps/__processors-fixture__/src/processors/ledger-record/presentation/' +
+          '__fixture__.ts',
+        code: 'import { x } from "../outbound";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it('a processor MAY take the DI names from @nestjs/common', async () => {
       await expect({
         file:
