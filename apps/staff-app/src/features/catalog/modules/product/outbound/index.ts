@@ -1,3 +1,4 @@
+export * from './enums/product-create-insert-outcome.enum';
 export * from './enums/product-idempotency-outcome.enum';
 export * from './enums/product-status-archive-outcome.enum';
 export * from './enums/product-tag-replace-outcome.enum';

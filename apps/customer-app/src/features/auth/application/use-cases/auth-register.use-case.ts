@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-
 import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraftOutput } from '../../domain';
 import {
   AUTH_CREDENTIALS_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
+  AuthRegisterCustomerInsertOutcomeEnum,
   type IAuthCredentialsPort,
   type IAuthRegisterRepositoryPort,
 } from '../../outbound';
@@ -42,14 +41,12 @@ export class AuthRegisterUseCase {
   }
 
   private async insert(draft: IAuthCustomerDraftOutput): Promise<string> {
-    try {
-      return await this.repository.insert(draft);
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new AuthEmailTakenException(draft.email);
-      }
+    const inserted = await this.repository.insert(draft);
 
-      throw error;
+    if (inserted.outcome === AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE) {
+      throw new AuthEmailTakenException(draft.email);
     }
+
+    return inserted.id;
   }
 }

@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-
 import {
   IProductDraftOutput,
   ProductIdempotencyKeyReusedException,
@@ -14,6 +12,7 @@ import {
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
   PRODUCT_TRANSACTION_PORT,
+  ProductCreateInsertOutcomeEnum,
   ProductIdempotencyOutcomeEnum,
   type IProductCreateRepositoryPort,
   type IProductIdempotencyPort,
@@ -84,21 +83,18 @@ export class ProductCreateUseCase {
   }
 
   private async persist(draft: IProductDraftOutput, idempotencyKey: string): Promise<IProductView> {
-    try {
-      const productId = await this.repository.insert(draft);
-      const record = await this.repository.findInserted(productId);
-      const created = ProductModel.reconstitute(record);
-      const view = created.toSnapshot();
+    const inserted = await this.repository.insert(draft);
 
-      await this.idempotency.complete({ key: idempotencyKey, response: view });
-
-      return view;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new ProductSkuTakenException(draft.sku);
-      }
-
-      throw error;
+    if (inserted.outcome === ProductCreateInsertOutcomeEnum.DUPLICATE) {
+      throw new ProductSkuTakenException(draft.sku);
     }
+
+    const record = await this.repository.findInserted(inserted.id);
+    const created = ProductModel.reconstitute(record);
+    const view = created.toSnapshot();
+
+    await this.idempotency.complete({ key: idempotencyKey, response: view });
+
+    return view;
   }
 }

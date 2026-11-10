@@ -1,3 +1,5 @@
+export * from './enums/user-register-staff-user-insert-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/user-credentials.port';

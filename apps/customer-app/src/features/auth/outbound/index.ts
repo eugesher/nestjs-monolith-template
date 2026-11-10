@@ -1,3 +1,5 @@
+export * from './enums/auth-register-customer-insert-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/auth-credentials.port';

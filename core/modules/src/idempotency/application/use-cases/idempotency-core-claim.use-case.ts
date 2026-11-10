@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { BodyFingerprintHelper, MysqlErrorHelper } from '@acme-libs/toolkit';
+import { BodyFingerprintHelper } from '@acme-libs/toolkit';
 import {
   IdempotencyCoreClaimOutcomeEnum,
   IIdempotencyCoreClaimCommand,
@@ -10,6 +10,7 @@ import {
 import { IdempotencyCoreKeyModel, IIdempotencyCoreKeyDraftOutput } from '../../domain';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
+  IdempotencyCoreClaimInsertOutcomeEnum,
   type IIdempotencyCoreClaimRepositoryPort,
 } from '../../outbound';
 
@@ -54,21 +55,13 @@ export class IdempotencyCoreClaimUseCase {
   private async insert(draft: IIdempotencyCoreKeyDraftOutput): Promise<boolean> {
     const { key, requestFingerprint, status, responseBody } = draft;
 
-    try {
-      await this.repository.insert({
-        idempotencyKey: key,
-        requestFingerprint,
-        status,
-        responseBody,
-      });
+    const outcome = await this.repository.insert({
+      idempotencyKey: key,
+      requestFingerprint,
+      status,
+      responseBody,
+    });
 
-      return true;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        return false;
-      }
-
-      throw error;
-    }
+    return outcome === IdempotencyCoreClaimInsertOutcomeEnum.INSERTED;
   }
 }

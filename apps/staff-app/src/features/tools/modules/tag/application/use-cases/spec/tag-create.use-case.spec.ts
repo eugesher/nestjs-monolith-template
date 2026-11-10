@@ -1,9 +1,9 @@
 import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { TagNameInvalidException, TagNameTakenException } from '../../../domain';
+import { TagCreateInsertOutcomeEnum } from '../../../outbound';
 import { TagCreateUseCase } from '../tag-create.use-case';
 
 describe('TagCreateUseCase', () => {
@@ -13,7 +13,9 @@ describe('TagCreateUseCase', () => {
   let useCase: TagCreateUseCase;
 
   beforeEach(() => {
-    insert = jest.fn().mockResolvedValue('303');
+    insert = jest
+      .fn()
+      .mockResolvedValue({ outcome: TagCreateInsertOutcomeEnum.INSERTED, id: '303' });
     findInserted = jest.fn().mockResolvedValue({
       id: '303',
       name: 'heavy',
@@ -49,8 +51,7 @@ describe('TagCreateUseCase', () => {
     });
 
     it('turns a duplicate key into TagNameTakenException', async () => {
-      insert.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      insert.mockResolvedValue({ outcome: TagCreateInsertOutcomeEnum.DUPLICATE });
 
       await expect(useCase.execute({ name: 'fragile' })).rejects.toThrow(TagNameTakenException);
       expect(findInserted).not.toHaveBeenCalled();

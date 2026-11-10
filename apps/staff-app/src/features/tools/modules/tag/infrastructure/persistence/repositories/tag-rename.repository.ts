@@ -1,11 +1,13 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   ITagRenameQuery,
   ITagRenameRepositoryPort,
   TAG_RENAME_REPOSITORY_PORT,
+  TagRenameUpdateOutcomeEnum,
 } from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
 
@@ -23,9 +25,19 @@ export class TagRenameRepository extends TagPersistenceHost implements ITagRenam
     super();
   }
 
-  public async update(query: ITagRenameQuery): Promise<void> {
+  public async update(query: ITagRenameQuery): Promise<TagRenameUpdateOutcomeEnum> {
     const { id, name } = query;
 
-    await this.tagRepository.update({ id }, { name });
+    try {
+      await this.tagRepository.update({ id }, { name });
+
+      return TagRenameUpdateOutcomeEnum.UPDATED;
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return TagRenameUpdateOutcomeEnum.DUPLICATE;
+      }
+
+      throw error;
+    }
   }
 }

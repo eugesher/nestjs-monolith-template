@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-
 import {
   AuthEmailTakenException,
   AuthRoleNotFoundException,
@@ -13,6 +11,7 @@ import {
   USER_CREDENTIALS_PORT,
   USER_REGISTER_REPOSITORY_PORT,
   USER_TRANSACTION_PORT,
+  UserRegisterStaffUserInsertOutcomeEnum,
   type IUserCredentialsPort,
   type IUserRegisterRepositoryPort,
   type IUserTransactionPort,
@@ -49,26 +48,24 @@ export class UserRegisterUseCase {
   private async insert(draft: IUserStaffUserDraftOutput): Promise<string> {
     const { email, passwordHash, status, roleIds } = draft;
 
-    try {
-      const id = await this.repository.insertUser({ email, passwordHash, status });
-      const storedRoles = await this.repository.findRoles(roleIds);
-      const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
+    const inserted = await this.repository.insertUser({ email, passwordHash, status });
 
-      if (missing !== undefined) {
-        throw new AuthRoleNotFoundException(missing);
-      }
-
-      const userRoles = storedRoles.map((role) => ({ userId: id, roleId: role.id }));
-
-      await this.repository.insertUserRoles(userRoles);
-
-      return id;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new AuthEmailTakenException(email);
-      }
-
-      throw error;
+    if (inserted.outcome === UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE) {
+      throw new AuthEmailTakenException(email);
     }
+
+    const { id } = inserted;
+    const storedRoles = await this.repository.findRoles(roleIds);
+    const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
+
+    if (missing !== undefined) {
+      throw new AuthRoleNotFoundException(missing);
+    }
+
+    const userRoles = storedRoles.map((role) => ({ userId: id, roleId: role.id }));
+
+    await this.repository.insertUserRoles(userRoles);
+
+    return id;
   }
 }

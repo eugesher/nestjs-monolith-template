@@ -1,7 +1,7 @@
-import { ITagCreateQuery, ITagCreateRecord } from '../interfaces';
+import { ITagCreateInsertRecord, ITagCreateQuery, ITagCreateRecord } from '../interfaces';
 
 export interface ITagCreateRepositoryPort {
-  insert(query: ITagCreateQuery): Promise<string>;
+  insert(query: ITagCreateQuery): Promise<ITagCreateInsertRecord>;
   findInserted(tagId: string): Promise<ITagCreateRecord>;
 }
 

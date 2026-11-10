@@ -2,9 +2,9 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { ILedgerAppendEntryDraftOutput } from '../../../domain';
+import { LedgerAppendEntryInsertOutcomeEnum } from '../../../outbound';
 import { LedgerAppendUseCase } from '../ledger-append.use-case';
 
 describe('LedgerAppendUseCase', () => {
@@ -14,7 +14,9 @@ describe('LedgerAppendUseCase', () => {
   let useCase: LedgerAppendUseCase;
 
   beforeEach(() => {
-    insert = jest.fn().mockResolvedValue('4210');
+    insert = jest
+      .fn()
+      .mockResolvedValue({ outcome: LedgerAppendEntryInsertOutcomeEnum.INSERTED, id: '4210' });
     findByOperationKey = jest.fn().mockResolvedValue({ id: '4210' });
     logger = makePinoLoggerMock();
     useCase = new LedgerAppendUseCase(
@@ -68,8 +70,7 @@ describe('LedgerAppendUseCase', () => {
     );
 
     it('logs a record the ledger already holds as already appended, without an error', async () => {
-      insert.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      insert.mockResolvedValue({ outcome: LedgerAppendEntryInsertOutcomeEnum.DUPLICATE });
 
       await CorrelationContextHelper.run('corr-2', () =>
         useCase.execute({

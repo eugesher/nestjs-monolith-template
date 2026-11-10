@@ -2,8 +2,8 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
+import { AuthRegisterCustomerInsertOutcomeEnum } from '../../../outbound';
 import { AuthLedgerService } from '../../services/auth-ledger.service';
 import { AuthRegisterUseCase } from '../auth-register.use-case';
 
@@ -21,7 +21,9 @@ describe('AuthRegisterUseCase', () => {
   beforeEach(() => {
     recordRegistered = jest.fn().mockResolvedValue(undefined);
     repository = {
-      insert: jest.fn().mockResolvedValue('105'),
+      insert: jest
+        .fn()
+        .mockResolvedValue({ outcome: AuthRegisterCustomerInsertOutcomeEnum.INSERTED, id: '105' }),
     };
     credentials = {
       issueAccessToken: jest.fn(),
@@ -76,8 +78,9 @@ describe('AuthRegisterUseCase', () => {
   });
 
   it('refuses a duplicate email of the repository as taken without logging a sign-up', async () => {
-    repository.insert.mockRejectedValue(new Error('Duplicate entry'));
-    jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+    repository.insert.mockResolvedValue({
+      outcome: AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE,
+    });
 
     const register = useCase.execute({
       email: 'ann@example.com',

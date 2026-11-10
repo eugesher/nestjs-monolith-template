@@ -1,7 +1,9 @@
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
-import { IIdempotencyCoreClaimInsertQuery } from '../../../outbound';
+import {
+  IdempotencyCoreClaimInsertOutcomeEnum,
+  IIdempotencyCoreClaimInsertQuery,
+} from '../../../outbound';
 import { IdempotencyCoreClaimUseCase } from '../idempotency-core-claim.use-case';
 
 describe('IdempotencyCoreClaimUseCase', () => {
@@ -9,7 +11,10 @@ describe('IdempotencyCoreClaimUseCase', () => {
   let useCase: IdempotencyCoreClaimUseCase;
 
   beforeEach(() => {
-    repository = { insert: jest.fn().mockResolvedValue(undefined), findByKey: jest.fn() };
+    repository = {
+      insert: jest.fn().mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.INSERTED),
+      findByKey: jest.fn(),
+    };
     useCase = new IdempotencyCoreClaimUseCase(repository);
   });
 
@@ -33,8 +38,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
     });
 
     it('replays the stored response of a completed key with the same body', async () => {
-      repository.insert.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
       repository.findByKey.mockResolvedValue({
         id: '7',
         requestFingerprint: '3cb0b58ca4059f9bd12b3a2586f5b6a27ce031d03f37b2031f01bfe8910c8727',
@@ -49,8 +53,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
     });
 
     it('answers in-flight while the first request with the same body still runs', async () => {
-      repository.insert.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
       repository.findByKey.mockResolvedValue({
         id: '7',
         requestFingerprint: '3cb0b58ca4059f9bd12b3a2586f5b6a27ce031d03f37b2031f01bfe8910c8727',
@@ -73,8 +76,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
     });
 
     it('answers mismatch when the key was used with another body', async () => {
-      repository.insert.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
       repository.findByKey.mockResolvedValue({
         id: '7',
         requestFingerprint: '2c06d97387e13f416a552edbb480d44fed3f91e1ca2133c16b567fee8bffb2f4',
@@ -90,8 +92,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
     it(
       'answers in-flight when the holder released ' + 'the key between the insert and the read',
       async () => {
-        repository.insert.mockRejectedValue(new Error('Duplicate entry'));
-        jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+        repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
         repository.findByKey.mockResolvedValue(null);
 
         const claim = await useCase.execute({ key: 'key-1', body: { sku: 'A-1', name: 'Lamp' } });

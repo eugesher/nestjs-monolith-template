@@ -1,3 +1,5 @@
+export * from './enums/role-create-staff-role-insert-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/role-create-repository.port';

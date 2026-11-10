@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-
 import { TagModel, TagNameTakenException } from '../../domain';
-import { TAG_RENAME_REPOSITORY_PORT, type ITagRenameRepositoryPort } from '../../outbound';
+import {
+  TAG_RENAME_REPOSITORY_PORT,
+  TagRenameUpdateOutcomeEnum,
+  type ITagRenameRepositoryPort,
+} from '../../outbound';
 import { ITagRenameCommand, ITagView } from '../interfaces';
 import { TagAccessService } from '../services/tag-access.service';
 
@@ -41,14 +43,10 @@ export class TagRenameUseCase {
   private async update(tag: TagModel): Promise<void> {
     const { id, name } = tag;
 
-    try {
-      await this.repository.update({ id, name });
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new TagNameTakenException(name);
-      }
+    const outcome = await this.repository.update({ id, name });
 
-      throw error;
+    if (outcome === TagRenameUpdateOutcomeEnum.DUPLICATE) {
+      throw new TagNameTakenException(name);
     }
   }
 }

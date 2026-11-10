@@ -1,7 +1,11 @@
-import { ILedgerAppendEntryInsertQuery, ILedgerAppendEntryRecord } from '../interfaces';
+import {
+  ILedgerAppendEntryInsertQuery,
+  ILedgerAppendEntryInsertRecord,
+  ILedgerAppendEntryRecord,
+} from '../interfaces';
 
 export interface ILedgerAppendRepositoryPort {
-  insert(record: ILedgerAppendEntryInsertQuery): Promise<string>;
+  insert(record: ILedgerAppendEntryInsertQuery): Promise<ILedgerAppendEntryInsertRecord>;
   findByOperationKey(operationKey: string): Promise<ILedgerAppendEntryRecord>;
 }
 
