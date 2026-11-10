@@ -25,8 +25,9 @@ use case, so the rule of one repository per consumer holds.
 without caching when Redis fails, so an adapter has no single-flight and no fallback of its own. It
 logs nothing either: the cache lib logs its failures.
 
-**The TTL is a token of the module**, bound to `CACHE_TTL_MS_DEFAULT` in `infrastructure/config`
-(see `030-config-values.md`).
+**The TTL is a token of the module**, bound to `CACHE_TTL_MS_DEFAULT` in `infrastructure/config`.
+The use case injects it and passes it as `ttlMs` of the read command, and the adapter hands it to
+`handleWrap` (see `030-config-values.md`).
 
 ## The cache lib
 

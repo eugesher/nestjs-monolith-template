@@ -1,12 +1,15 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IProductCreateInsertQuery,
+  IProductCreateInsertRecord,
   IProductCreateRecord,
   IProductCreateRepositoryPort,
   PRODUCT_CREATE_REPOSITORY_PORT,
+  ProductCreateInsertOutcomeEnum,
 } from '../../../outbound';
 import { ProductPersistenceHost } from '../host/product-persistence.host';
 
@@ -31,8 +34,18 @@ export class ProductCreateRepository
     return await this.createProductBuilder().forExistsBySku(sku).getExists();
   }
 
-  public async insert(query: IProductCreateInsertQuery): Promise<string> {
-    return await this.productRepository.insertOne(query);
+  public async insert(query: IProductCreateInsertQuery): Promise<IProductCreateInsertRecord> {
+    try {
+      const id = await this.productRepository.insertOne(query);
+
+      return { outcome: ProductCreateInsertOutcomeEnum.INSERTED, id };
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return { outcome: ProductCreateInsertOutcomeEnum.DUPLICATE };
+      }
+
+      throw error;
+    }
   }
 
   public async findInserted(productId: string): Promise<IProductCreateRecord> {

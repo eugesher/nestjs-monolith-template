@@ -8,6 +8,7 @@ describe('SubjectLedgerService', () => {
     constructor(
       protected readonly queue: ISubjectLedgerPort,
       protected readonly retryAttempts: number,
+      protected readonly timeoutMs: number,
       protected readonly logger: ISubjectLedgerLogger,
     ) {
       super();
@@ -25,7 +26,7 @@ describe('SubjectLedgerService', () => {
   beforeEach(() => {
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
-    service = new ItemLedgerService({ enqueue }, 2, logger);
+    service = new ItemLedgerService({ enqueue }, 2, 500, logger);
   });
 
   describe('record', () => {
@@ -42,13 +43,16 @@ describe('SubjectLedgerService', () => {
 
       expect(enqueue).toHaveBeenCalledTimes(1);
       expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'item-opened:7',
-        subjectType: 'item',
-        subjectId: '7',
-        action: 'ItemOpened',
-        payload: { name: 'Lamp' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        record: {
+          operationKey: 'item-opened:7',
+          subjectType: 'item',
+          subjectId: '7',
+          action: 'ItemOpened',
+          payload: { name: 'Lamp' },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        },
+        timeoutMs: 500,
       });
       expect(logger.info).toHaveBeenCalledWith(
         { subjectType: 'item', subjectId: '7', operationKey: 'item-opened:7' },

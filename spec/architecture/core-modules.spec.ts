@@ -289,12 +289,24 @@ describe('core modules', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it('application MAY take the transaction port and the logger', async () => {
+    it('application MAY take the logger', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
-        code:
-          'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";\n' +
-          'import { PinoLogger } from "nestjs-pino";',
+        code: 'import { PinoLogger } from "nestjs-pino";',
+      }).toPassArchitectureLint();
+    });
+
+    it('application may NOT take the transaction port, the transaction adapter of the module wraps it', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
+        code: 'import { TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('infrastructure/persistence/transaction MAY take the transaction port', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/persistence/transaction/__fixture__.ts',
+        code: 'import { ITransactionPort, TRANSACTION_PORT } from "@acme-libs/contracts/local-storage";',
       }).toPassArchitectureLint();
     });
 

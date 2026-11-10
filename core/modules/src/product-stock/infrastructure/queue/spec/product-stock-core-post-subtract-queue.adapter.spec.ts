@@ -10,10 +10,9 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
 
   beforeEach(() => {
     add = jest.fn().mockResolvedValue({ id: '1' });
-    adapter = new ProductStockCorePostSubtractQueueAdapter(
-      { add } as unknown as Queue<IProductStockPostSubtractPayload>,
-      500,
-    );
+    adapter = new ProductStockCorePostSubtractQueueAdapter({
+      add,
+    } as unknown as Queue<IProductStockPostSubtractPayload>);
   });
 
   afterEach(() => {
@@ -22,7 +21,11 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
 
   describe('enqueue', () => {
     it('adds the products with the correlation id as one job', async () => {
-      await adapter.enqueue({ productIds: ['100', '106'], correlationId: 'corr-1' });
+      await adapter.enqueue({
+        productIds: ['100', '106'],
+        correlationId: 'corr-1',
+        timeoutMs: 500,
+      });
 
       expect(add).toHaveBeenCalledWith({ productIds: ['100', '106'], correlationId: 'corr-1' });
     });
@@ -30,7 +33,11 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
     it('passes a failing add through', async () => {
       add.mockRejectedValue(new Error('redis is down'));
 
-      const enqueueing = adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+      const enqueueing = adapter.enqueue({
+        productIds: ['100'],
+        correlationId: 'corr-1',
+        timeoutMs: 500,
+      });
 
       await expect(enqueueing).rejects.toThrow('redis is down');
     });
@@ -39,7 +46,11 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
       jest.useFakeTimers();
       add.mockReturnValue(new Promise(() => undefined));
 
-      const enqueueing = adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+      const enqueueing = adapter.enqueue({
+        productIds: ['100'],
+        correlationId: 'corr-1',
+        timeoutMs: 500,
+      });
 
       jest.advanceTimersByTime(500);
 
@@ -49,7 +60,7 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
     it('clears the timer once the add settles', async () => {
       jest.useFakeTimers();
 
-      await adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1' });
+      await adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1', timeoutMs: 500 });
 
       expect(jest.getTimerCount()).toBe(0);
     });

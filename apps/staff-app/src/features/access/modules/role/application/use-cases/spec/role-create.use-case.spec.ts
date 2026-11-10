@@ -2,8 +2,8 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum, PermissionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
+import { RoleCreateStaffRoleInsertOutcomeEnum } from '../../../outbound';
 import { RoleCreateUseCase } from '../role-create.use-case';
 
 describe('RoleCreateUseCase', () => {
@@ -16,7 +16,9 @@ describe('RoleCreateUseCase', () => {
   beforeEach(() => {
     outcomes = [];
     repository = {
-      insertRole: jest.fn().mockResolvedValue('7'),
+      insertRole: jest
+        .fn()
+        .mockResolvedValue({ outcome: RoleCreateStaffRoleInsertOutcomeEnum.INSERTED, id: '7' }),
       insertRolePermissions: jest.fn().mockResolvedValue(undefined),
     };
     transaction = {
@@ -71,8 +73,9 @@ describe('RoleCreateUseCase', () => {
   });
 
   it('refuses a taken name and rolls the transaction back', async () => {
-    repository.insertRole.mockRejectedValue(new Error('Duplicate entry'));
-    jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+    repository.insertRole.mockResolvedValue({
+      outcome: RoleCreateStaffRoleInsertOutcomeEnum.DUPLICATE,
+    });
 
     const create = useCase.execute({ name: 'admin', permissionCodes: [] });
 

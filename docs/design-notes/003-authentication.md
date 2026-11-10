@@ -31,12 +31,21 @@ checks the password and signs the token itself (see `024-code-placement.md`).
 
 ## A unique index instead of a lookup
 
-`AuthRegisterUseCase` of customer-app inserts at once through its repository and turns the
-duplicate-key error of the driver into a domain error with `MysqlErrorHelper.isDuplicateKey`
-(`libs/toolkit/src/database/mysql-error.helper.ts`). A lookup and an insert are two statements: two
-concurrent requests would both pass the lookup, and the loser would hit the index as a 500.
+`AuthRegisterUseCase` of customer-app inserts at once through its repository and turns a `DUPLICATE`
+outcome of the insert into a domain error. A lookup and an insert are two statements: two concurrent
+requests would both pass the lookup, and the loser would hit the index as a 500.
 `UserRegisterUseCase` of staff-app does the same, and the e2e of both apps sends two such requests
 at once and expects one 201 and one 409.
+
+**The repository reports the duplicate, the use case decides.** A write that a unique index may
+refuse answers an outcome of its port, `<Port><Subject><Method>OutcomeEnum` in `outbound/enums`:
+`INSERTED` with the id, or `UPDATED`, or `DUPLICATE`. The repository catches the duplicate-key error
+of the driver with `MysqlErrorHelper.isDuplicateKey`
+(`libs/toolkit/src/database/mysql-error.helper.ts`) around that one statement and passes any other
+error through, so the application never sees an error of the driver, and a duplicate of a later
+statement of the same transaction stays an error instead of passing for a taken name. A use case
+throws its own exception for the outcome (`AuthEmailTakenException`, `TagNameTakenException`) or
+takes another branch (see `004-append-only-journal.md` and `006-idempotency-keys.md`).
 
 ## The feature filter delegates
 

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { Maybe, PaginationHelper } from '@acme-libs/toolkit';
 
+import { OrderSummaryModel } from '../../domain';
 import {
   ORDER_GET_MANY_REPOSITORY_PORT,
   ORDER_TAG_PORT,
@@ -9,7 +10,6 @@ import {
   type IOrderTagPort,
 } from '../../outbound';
 import { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
-import { OrderViewMapper } from '../mappers/order-view.mapper';
 
 @Injectable()
 export class OrderGetManyUseCase {
@@ -29,8 +29,12 @@ export class OrderGetManyUseCase {
       return PaginationHelper.toPage([], 0, pageWindow);
     }
 
-    const [orders, total] = await this.repository.list({ ...pageWindow, orderIds });
-    const data = orders.map((order) => OrderViewMapper.toGetManyViewItem(order));
+    const [records, total] = await this.repository.list({ ...pageWindow, orderIds });
+    const data = records.map((record) => {
+      const order = OrderSummaryModel.reconstitute(record);
+
+      return order.toSnapshot();
+    });
 
     return PaginationHelper.toPage(data, total, pageWindow);
   }

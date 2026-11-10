@@ -13,6 +13,7 @@ import {
   ProductStockIdempotencyCoreAdapter,
   ProductStockLedgerQueueAdapter,
   ProductStockMovementCoreAdapter,
+  ProductStockTransactionAdapter,
 } from './infrastructure';
 import { ProductStockController } from './presentation';
 
@@ -27,6 +28,7 @@ import { ProductStockController } from './presentation';
     ProductStockIdempotencyCoreAdapter.provider,
     ProductStockMovementCoreAdapter.provider,
     ProductStockLedgerQueueAdapter.provider,
+    ProductStockTransactionAdapter.provider,
     ProductStockConfigRedisCommandTimeoutMsProvider,
     ProductStockConfigLedgerRetryAttemptsProvider,
   ],

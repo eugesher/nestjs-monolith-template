@@ -1,3 +1,5 @@
+export * from './enums/idempotency-core-claim-insert-outcome.enum';
+
 export * from './interfaces';
 
 export * from './ports/idempotency-core-claim-repository.port';

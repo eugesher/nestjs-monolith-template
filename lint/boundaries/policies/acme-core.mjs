@@ -30,7 +30,6 @@ export const acmeCore = [
     layer('application'),
     ownContracts,
     baseLibs('ledger', 'observability'),
-    libContracts('local-storage'),
     packages('nestjs-pino'),
   ]),
   from('acme-core:modules:infrastructure', [
@@ -40,7 +39,7 @@ export const acmeCore = [
     layer('infrastructure:config'),
     to('acme-core:entities'),
     baseLibs(),
-    libContracts('cache', 'database'),
+    libContracts('cache', 'database', 'local-storage'),
     packages('@nestjs/common', 'typeorm'),
   ]),
   from('acme-core:modules:infrastructure:queue', [

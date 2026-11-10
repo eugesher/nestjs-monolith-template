@@ -27,7 +27,8 @@ into the body it claims, as
 
 **The insert is the lock.** `claim` inserts an in-flight row against the UNIQUE index on the key
 before the caller does any work. Of two simultaneous requests with the same key, exactly one insert
-succeeds. A "have I seen this key?" read before the write would let both through.
+succeeds; the repository answers `DUPLICATE` to the other (see `003-authentication.md`). A "have I
+seen this key?" read before the write would let both through.
 
 **The module fingerprints the body.** The caller passes the logical body, never a hash.
 `BodyFingerprintHelper` hashes it canonically: object keys are sorted at every depth and array order

@@ -14,7 +14,7 @@ describe('OrderLedgerService', () => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new OrderLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
+    service = new OrderLedgerService({ enqueue }, 2, 500, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -35,13 +35,16 @@ describe('OrderLedgerService', () => {
 
         expect(enqueue).toHaveBeenCalledTimes(1);
         expect(enqueue).toHaveBeenCalledWith({
-          operationKey: 'order-placed:610',
-          subjectType: 'order',
-          subjectId: '610',
-          action: 'OrderPlaced',
-          payload: { customerId: 'customer-1', productIds: ['100', '100'] },
-          occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          record: {
+            operationKey: 'order-placed:610',
+            subjectType: 'order',
+            subjectId: '610',
+            action: 'OrderPlaced',
+            payload: { customerId: 'customer-1', productIds: ['100', '100'] },
+            occurredAt: '2026-01-05T08:00:00.000Z',
+            correlationId: 'corr-1',
+          },
+          timeoutMs: 500,
         });
       },
     );

@@ -8,16 +8,17 @@ describe('ReminderGetSummaryUseCase', () => {
   beforeEach(() => {
     summarize = jest.fn().mockResolvedValue({ pending: '2', nextDueOn: '2026-11-05' });
     read = jest.fn().mockResolvedValue({ pending: 3, nextDueOn: '2026-11-01' });
-    useCase = new ReminderGetSummaryUseCase({ summarize }, { read, invalidate: jest.fn() });
+    useCase = new ReminderGetSummaryUseCase({ summarize }, { read, invalidate: jest.fn() }, 60_000);
   });
 
   describe('execute', () => {
     it('answers the summary the port read for the owner', async () => {
       const summary = await useCase.execute({ ownerId: 'owner-1' });
-      const [query] = read.mock.calls[0] as [{ ownerId: string; compute: unknown }];
+      const [query] = read.mock.calls[0] as [{ ownerId: string; ttlMs: number; compute: unknown }];
 
       expect(read).toHaveBeenCalledTimes(1);
       expect(query.ownerId).toBe('owner-1');
+      expect(query.ttlMs).toBe(60_000);
       expect(query.compute).toBeInstanceOf(Function);
       expect(summary).toEqual({ pending: 3, nextDueOn: '2026-11-01' });
       expect(summarize).not.toHaveBeenCalled();

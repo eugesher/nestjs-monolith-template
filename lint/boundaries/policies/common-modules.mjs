@@ -27,7 +27,6 @@ export const commonModules = [
     layer('application'),
     appContracts,
     baseLibs('observability'),
-    libContracts('local-storage'),
     packages('nestjs-pino'),
   ]),
   from('acme-app:common:modules:infrastructure', [
@@ -38,7 +37,7 @@ export const commonModules = [
     to('acme-core:entities'),
     to('acme-app:common:entities', own('app')),
     baseLibs(),
-    libContracts('database'),
+    libContracts('database', 'local-storage'),
     packages('typeorm'),
   ]),
   fromSpec('acme-app:common:modules:infrastructure:core-adapters'),

@@ -3,10 +3,7 @@ import { ISubjectLedgerQueue } from '../subject-ledger-queue.interface';
 
 describe('SubjectLedgerQueueAdapter', () => {
   class ItemLedgerQueueAdapter extends SubjectLedgerQueueAdapter {
-    constructor(
-      protected readonly queue: ISubjectLedgerQueue,
-      protected readonly timeoutMs: number,
-    ) {
+    constructor(protected readonly queue: ISubjectLedgerQueue) {
       super();
     }
   }
@@ -16,7 +13,7 @@ describe('SubjectLedgerQueueAdapter', () => {
 
   beforeEach(() => {
     add = jest.fn().mockResolvedValue({ id: '1' });
-    adapter = new ItemLedgerQueueAdapter({ add }, 500);
+    adapter = new ItemLedgerQueueAdapter({ add });
   });
 
   afterEach(() => {
@@ -36,7 +33,7 @@ describe('SubjectLedgerQueueAdapter', () => {
         extra: 'dropped',
       };
 
-      await adapter.enqueue(record);
+      await adapter.enqueue({ record, timeoutMs: 500 });
 
       expect(add).toHaveBeenCalledTimes(1);
       expect(add).toHaveBeenCalledWith({
@@ -54,13 +51,16 @@ describe('SubjectLedgerQueueAdapter', () => {
       add.mockRejectedValue(new Error('redis is down'));
 
       const enqueueing = adapter.enqueue({
-        operationKey: 'item-opened:7',
-        subjectType: 'item',
-        subjectId: '7',
-        action: 'ItemOpened',
-        payload: {},
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        record: {
+          operationKey: 'item-opened:7',
+          subjectType: 'item',
+          subjectId: '7',
+          action: 'ItemOpened',
+          payload: {},
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        },
+        timeoutMs: 500,
       });
 
       await expect(enqueueing).rejects.toThrow('redis is down');
@@ -71,13 +71,16 @@ describe('SubjectLedgerQueueAdapter', () => {
       add.mockReturnValue(new Promise(() => undefined));
 
       const enqueueing = adapter.enqueue({
-        operationKey: 'item-opened:7',
-        subjectType: 'item',
-        subjectId: '7',
-        action: 'ItemOpened',
-        payload: {},
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        record: {
+          operationKey: 'item-opened:7',
+          subjectType: 'item',
+          subjectId: '7',
+          action: 'ItemOpened',
+          payload: {},
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        },
+        timeoutMs: 500,
       });
 
       jest.advanceTimersByTime(500);
@@ -89,13 +92,16 @@ describe('SubjectLedgerQueueAdapter', () => {
       jest.useFakeTimers();
 
       await adapter.enqueue({
-        operationKey: 'item-opened:7',
-        subjectType: 'item',
-        subjectId: '7',
-        action: 'ItemOpened',
-        payload: {},
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        record: {
+          operationKey: 'item-opened:7',
+          subjectType: 'item',
+          subjectId: '7',
+          action: 'ItemOpened',
+          payload: {},
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        },
+        timeoutMs: 500,
       });
 
       expect(jest.getTimerCount()).toBe(0);

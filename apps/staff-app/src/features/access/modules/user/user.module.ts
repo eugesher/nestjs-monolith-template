@@ -8,6 +8,7 @@ import {
   UserCredentialsLibAdapter,
   UserReassignRolesRepository,
   UserRegisterRepository,
+  UserTransactionAdapter,
 } from './infrastructure';
 import { UserController } from './presentation';
 
@@ -21,6 +22,7 @@ import { UserController } from './presentation';
     UserReassignRolesRepository.provider,
     UserRegisterRepository.provider,
     UserCredentialsLibAdapter.provider,
+    UserTransactionAdapter.provider,
   ],
 })
 export class UserModule {}

@@ -7,6 +7,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
   AUTH_LEDGER_RECORD_PORT,
   AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IAuthLedgerRecordPort,
 } from '../../outbound';
 import { IAuthLedgerRecordRegisteredCommand } from '../interfaces';
@@ -18,6 +19,8 @@ export class AuthLedgerService extends SubjectLedgerService {
     protected readonly queue: IAuthLedgerRecordPort,
     @Inject(AUTH_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
+    @Inject(AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    protected readonly timeoutMs: number,
     @InjectPinoLogger(AuthLedgerService.name)
     protected readonly logger: PinoLogger,
   ) {

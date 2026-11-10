@@ -39,6 +39,7 @@ words = [
     "sku",
     "supertest",
     "tck",
+    "tlds",
     "tls",
     "tsc",
     "typeorm",

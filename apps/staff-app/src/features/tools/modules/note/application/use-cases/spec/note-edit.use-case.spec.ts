@@ -57,7 +57,7 @@ describe('NoteEditUseCase', () => {
       accessService,
       new NoteWriteService(accessService, 3, logger as unknown as PinoLogger),
       { update, appendRevision },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });

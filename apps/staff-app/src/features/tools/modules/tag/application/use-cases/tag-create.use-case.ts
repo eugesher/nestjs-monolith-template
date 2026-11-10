@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-
 import { TagModel, TagNameTakenException } from '../../domain';
-import { TAG_CREATE_REPOSITORY_PORT, type ITagCreateRepositoryPort } from '../../outbound';
+import {
+  TAG_CREATE_REPOSITORY_PORT,
+  TagCreateInsertOutcomeEnum,
+  type ITagCreateRepositoryPort,
+} from '../../outbound';
 import { ITagCreateCommand, ITagView } from '../interfaces';
 
 @Injectable()
@@ -30,14 +32,12 @@ export class TagCreateUseCase {
   }
 
   private async insert(name: string): Promise<string> {
-    try {
-      return await this.repository.insert({ name });
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new TagNameTakenException(name);
-      }
+    const inserted = await this.repository.insert({ name });
 
-      throw error;
+    if (inserted.outcome === TagCreateInsertOutcomeEnum.DUPLICATE) {
+      throw new TagNameTakenException(name);
     }
+
+    return inserted.id;
   }
 }

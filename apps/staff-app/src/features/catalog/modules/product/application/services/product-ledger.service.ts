@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { ISubjectLedgerRecord, SubjectLedgerService } from '@acme-libs/ledger';
+import { SubjectLedgerService } from '@acme-libs/ledger';
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { DomainEvent, Maybe } from '@acme-libs/toolkit';
 
 import { ProductPublishedEvent } from '../../domain';
 import {
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IProductLedgerRecordPort,
 } from '../../outbound';
 import {
@@ -23,6 +23,8 @@ export class ProductLedgerService extends SubjectLedgerService {
     protected readonly queue: IProductLedgerRecordPort,
     @Inject(PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
+    @Inject(PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    protected readonly timeoutMs: number,
     @InjectPinoLogger(ProductLedgerService.name)
     protected readonly logger: PinoLogger,
   ) {
@@ -46,38 +48,14 @@ export class ProductLedgerService extends SubjectLedgerService {
   }
 
   public async recordEvents(command: IProductLedgerRecordEventsCommand): Promise<void> {
-    const { productId, events } = command;
+    const { events } = command;
     const correlationId = CorrelationContextHelper.current(ProductLedgerService.name);
+    const published = events.filter((event) => event instanceof ProductPublishedEvent);
 
-    for (const event of events) {
-      const record = this.toRecord(productId, event, correlationId);
+    for (const event of published) {
+      const record = event.toLedgerRecord(correlationId);
 
-      if (record) {
-        await this.record(record);
-      }
+      await this.record(record);
     }
-  }
-
-  private toRecord(
-    productId: string,
-    event: DomainEvent<string>,
-    correlationId: string,
-  ): Maybe<ISubjectLedgerRecord> {
-    if (event instanceof ProductPublishedEvent) {
-      const { sku, version, previousStatus } = event;
-      const occurredAt = event.occurredAt.toISOString();
-
-      return {
-        operationKey: `product-published:${productId}:${version}`,
-        subjectType: 'product',
-        subjectId: productId,
-        action: 'ProductPublished',
-        payload: { sku, previousStatus },
-        occurredAt,
-        correlationId,
-      };
-    }
-
-    return undefined;
   }
 }

@@ -1,10 +1,13 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   AUTH_REGISTER_REPOSITORY_PORT,
+  AuthRegisterCustomerInsertOutcomeEnum,
   IAuthRegisterCustomerInsertQuery,
+  IAuthRegisterCustomerInsertRecord,
   IAuthRegisterRepositoryPort,
 } from '../../../outbound';
 import { AuthPersistenceHost } from '../host/auth-persistence.host';
@@ -26,7 +29,19 @@ export class AuthRegisterRepository
     super();
   }
 
-  public async insert(query: IAuthRegisterCustomerInsertQuery): Promise<string> {
-    return await this.customerRepository.insertOne(query);
+  public async insert(
+    query: IAuthRegisterCustomerInsertQuery,
+  ): Promise<IAuthRegisterCustomerInsertRecord> {
+    try {
+      const id = await this.customerRepository.insertOne(query);
+
+      return { outcome: AuthRegisterCustomerInsertOutcomeEnum.INSERTED, id };
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return { outcome: AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE };
+      }
+
+      throw error;
+    }
   }
 }

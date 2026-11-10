@@ -5,11 +5,11 @@ import {
   IProductStockCoreOnHandView,
 } from '@acme-core/contracts/product-stock';
 
+import { ProductStockCoreOnHandModel } from '../../domain';
 import {
   PRODUCT_STOCK_CORE_LOCK_REPOSITORY_PORT,
   type IProductStockCoreLockRepositoryPort,
 } from '../../outbound';
-import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
 @Injectable()
 export class ProductStockCoreLockUseCase {
@@ -25,7 +25,8 @@ export class ProductStockCoreLockUseCase {
     const locked = await this.repository.lockProducts(productIds);
     const lockedIds = locked.map((product) => product.id);
     const sums = await this.repository.sumStock(lockedIds);
+    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds: lockedIds, sums });
 
-    return ProductStockCoreOnHandMapper.toViews(lockedIds, sums);
+    return onHand.toSnapshot();
   }
 }

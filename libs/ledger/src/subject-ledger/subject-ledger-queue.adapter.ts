@@ -1,19 +1,19 @@
+import { ISubjectLedgerEnqueueCommand } from './subject-ledger-enqueue-command.interface';
 import { ISubjectLedgerQueue } from './subject-ledger-queue.interface';
-import { ISubjectLedgerRecord } from './subject-ledger-record.interface';
 
 export abstract class SubjectLedgerQueueAdapter {
   protected abstract readonly queue: ISubjectLedgerQueue;
-  protected abstract readonly timeoutMs: number;
 
-  public async enqueue(record: ISubjectLedgerRecord): Promise<void> {
+  public async enqueue(command: ISubjectLedgerEnqueueCommand): Promise<void> {
+    const { record, timeoutMs } = command;
     const { operationKey, subjectType, subjectId, action, payload, occurredAt, correlationId } =
       record;
     let timer: NodeJS.Timeout | undefined;
 
     const timeout = new Promise<never>((_, reject) => {
       timer = setTimeout(
-        () => reject(new Error(`Enqueue timed out after ${this.timeoutMs} ms`)),
-        this.timeoutMs,
+        () => reject(new Error(`Enqueue timed out after ${timeoutMs} ms`)),
+        timeoutMs,
       );
     });
 

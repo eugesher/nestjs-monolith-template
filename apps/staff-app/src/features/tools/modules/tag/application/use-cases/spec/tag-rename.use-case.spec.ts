@@ -1,9 +1,9 @@
 import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import { TagModel, TagNameInvalidException, TagNameTakenException } from '../../../domain';
+import { TagRenameUpdateOutcomeEnum } from '../../../outbound';
 import { TagAccessService } from '../../services/tag-access.service';
 import { TagRenameUseCase } from '../tag-rename.use-case';
 
@@ -32,7 +32,7 @@ describe('TagRenameUseCase', () => {
           updatedAt: new Date('2026-01-02T00:00:00.000Z'),
         }),
       );
-    update = jest.fn().mockResolvedValue(undefined);
+    update = jest.fn().mockResolvedValue(TagRenameUpdateOutcomeEnum.UPDATED);
     logger = makePinoLoggerMock();
     useCase = new TagRenameUseCase(
       { load } as unknown as TagAccessService,
@@ -80,8 +80,7 @@ describe('TagRenameUseCase', () => {
     });
 
     it('turns a duplicate key into TagNameTakenException', async () => {
-      update.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      update.mockResolvedValue(TagRenameUpdateOutcomeEnum.DUPLICATE);
 
       await expect(useCase.execute({ tagId: '300', name: 'promo' })).rejects.toThrow(
         TagNameTakenException,

@@ -7,6 +7,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
   PRODUCT_CORE_LEDGER_RECORD_PORT,
   PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IProductCoreLedgerRecordPort,
 } from '../../outbound';
 import { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
@@ -18,6 +19,8 @@ export class ProductCoreLedgerService extends SubjectLedgerService {
     protected readonly queue: IProductCoreLedgerRecordPort,
     @Inject(PRODUCT_CORE_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
+    @Inject(PRODUCT_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    protected readonly timeoutMs: number,
     @InjectPinoLogger(ProductCoreLedgerService.name)
     protected readonly logger: PinoLogger,
   ) {

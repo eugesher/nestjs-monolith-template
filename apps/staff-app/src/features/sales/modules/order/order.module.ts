@@ -15,6 +15,7 @@ import {
   OrderGetTagsRepository,
   OrderReplaceTagsRepository,
   OrderTagCommonAdapter,
+  OrderTransactionAdapter,
 } from './infrastructure';
 import { OrderController } from './presentation';
 
@@ -32,6 +33,7 @@ import { OrderController } from './presentation';
     OrderGetTagsRepository.provider,
     OrderReplaceTagsRepository.provider,
     OrderTagCommonAdapter.provider,
+    OrderTransactionAdapter.provider,
   ],
 })
 export class OrderModule {}

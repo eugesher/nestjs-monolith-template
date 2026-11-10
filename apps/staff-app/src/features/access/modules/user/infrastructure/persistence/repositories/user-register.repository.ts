@@ -1,13 +1,16 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IUserRegisterRepositoryPort,
   IUserRegisterStaffRoleRecord,
   IUserRegisterStaffUserInsertQuery,
+  IUserRegisterStaffUserInsertRecord,
   IUserRegisterStaffUserRoleInsertQuery,
   USER_REGISTER_REPOSITORY_PORT,
+  UserRegisterStaffUserInsertOutcomeEnum,
 } from '../../../outbound';
 import { UserPersistenceHost } from '../host/user-persistence.host';
 
@@ -28,8 +31,20 @@ export class UserRegisterRepository
     super();
   }
 
-  public async insertUser(query: IUserRegisterStaffUserInsertQuery): Promise<string> {
-    return await this.staffUserRepository.insertOne(query);
+  public async insertUser(
+    query: IUserRegisterStaffUserInsertQuery,
+  ): Promise<IUserRegisterStaffUserInsertRecord> {
+    try {
+      const id = await this.staffUserRepository.insertOne(query);
+
+      return { outcome: UserRegisterStaffUserInsertOutcomeEnum.INSERTED, id };
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return { outcome: UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE };
+      }
+
+      throw error;
+    }
   }
 
   public async findRoles(ids: string[]): Promise<IUserRegisterStaffRoleRecord[]> {

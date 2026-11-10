@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import { AuthRoleNameTakenException, IRoleDraftOutput, RoleModel } from '../../domain';
-import { ROLE_CREATE_REPOSITORY_PORT, type IRoleCreateRepositoryPort } from '../../outbound';
+import {
+  ROLE_CREATE_REPOSITORY_PORT,
+  ROLE_TRANSACTION_PORT,
+  RoleCreateStaffRoleInsertOutcomeEnum,
+  type IRoleCreateRepositoryPort,
+  type IRoleTransactionPort,
+} from '../../outbound';
 import { IRoleCreateCommand, IRoleView } from '../interfaces';
 
 @Injectable()
@@ -13,8 +16,8 @@ export class RoleCreateUseCase {
   constructor(
     @Inject(ROLE_CREATE_REPOSITORY_PORT)
     private readonly repository: IRoleCreateRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(ROLE_TRANSACTION_PORT)
+    private readonly transaction: IRoleTransactionPort,
     @InjectPinoLogger(RoleCreateUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -32,19 +35,17 @@ export class RoleCreateUseCase {
   private async insert(draft: IRoleDraftOutput): Promise<string> {
     const { name, permissionCodes } = draft;
 
-    try {
-      const id = await this.repository.insertRole({ name });
-      const rolePermissions = permissionCodes.map((code) => ({ roleId: id, code }));
+    const inserted = await this.repository.insertRole({ name });
 
-      await this.repository.insertRolePermissions(rolePermissions);
-
-      return id;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new AuthRoleNameTakenException(name);
-      }
-
-      throw error;
+    if (inserted.outcome === RoleCreateStaffRoleInsertOutcomeEnum.DUPLICATE) {
+      throw new AuthRoleNameTakenException(name);
     }
+
+    const { id } = inserted;
+    const rolePermissions = permissionCodes.map((code) => ({ roleId: id, code }));
+
+    await this.repository.insertRolePermissions(rolePermissions);
+
+    return id;
   }
 }

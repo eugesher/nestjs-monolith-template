@@ -7,6 +7,7 @@ import { ISubjectLedgerRecord } from './subject-ledger-record.interface';
 export abstract class SubjectLedgerService {
   protected abstract readonly queue: ISubjectLedgerPort;
   protected abstract readonly retryAttempts: number;
+  protected abstract readonly timeoutMs: number;
   protected abstract readonly logger: ISubjectLedgerLogger;
 
   protected async record(record: ISubjectLedgerRecord): Promise<void> {
@@ -27,7 +28,7 @@ export abstract class SubjectLedgerService {
   private async enqueueOne(record: ISubjectLedgerRecord): Promise<void> {
     const { operationKey, subjectType, subjectId } = record;
 
-    await this.queue.enqueue(record);
+    await this.queue.enqueue({ record, timeoutMs: this.timeoutMs });
 
     this.logger.info({ subjectType, subjectId, operationKey }, 'Ledger record enqueued');
   }

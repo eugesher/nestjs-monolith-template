@@ -34,7 +34,7 @@ describe('TagCommonReplaceUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new TagCommonReplaceUseCase(
       { lockTags, findLinked, link, unlink },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });

@@ -3,22 +3,24 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 import {
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,
   ProductStockCoreMovementKindEnum,
 } from '@acme-core/contracts/product-stock';
 
+import { ProductStockCoreOnHandModel } from '../../domain';
 import {
   IProductStockCorePostSubtractEnqueueCommand,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
+  PRODUCT_STOCK_CORE_TRANSACTION_PORT,
   type IProductStockCoreMoveRepositoryPort,
   type IProductStockCorePostSubtractPort,
+  type IProductStockCoreTransactionPort,
 } from '../../outbound';
-import { ProductStockCoreOnHandMapper } from '../mappers/product-stock-core-on-hand.mapper';
 
 @Injectable()
 export class ProductStockCoreMoveUseCase {
@@ -32,10 +34,12 @@ export class ProductStockCoreMoveUseCase {
     private readonly repository: IProductStockCoreMoveRepositoryPort,
     @Inject(PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT)
     private readonly postSubtract: IProductStockCorePostSubtractPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(PRODUCT_STOCK_CORE_TRANSACTION_PORT)
+    private readonly transaction: IProductStockCoreTransactionPort,
     @Inject(PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN)
     private readonly postSubtractRetryAttempts: number,
+    @Inject(PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    private readonly postSubtractTimeoutMs: number,
     @InjectPinoLogger(ProductStockCoreMoveUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -55,12 +59,19 @@ export class ProductStockCoreMoveUseCase {
     const inserted = await this.repository.insertMany(rows);
     const productStockIds = inserted.map((identifier) => String(identifier.id));
     const sums = await this.repository.sumStock(productIds);
-    const stock = ProductStockCoreOnHandMapper.toViews(productIds, sums);
+    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, sums });
+    const stock = onHand.toSnapshot();
 
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {
       const correlationId = CorrelationContextHelper.current(ProductStockCoreMoveUseCase.name);
 
-      this.transaction.afterCommit(() => this.announceSubtract({ productIds, correlationId }));
+      this.transaction.afterCommit(() =>
+        this.announceSubtract({
+          productIds,
+          correlationId,
+          timeoutMs: this.postSubtractTimeoutMs,
+        }),
+      );
     }
 
     return { productStockIds, stock };

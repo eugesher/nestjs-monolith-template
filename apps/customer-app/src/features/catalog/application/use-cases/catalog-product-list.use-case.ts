@@ -4,6 +4,7 @@ import { IPageRequest, PaginationHelper } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
+  CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN,
   CATALOG_PRODUCT_LIST_REPOSITORY_PORT,
   type ICatalogCachePort,
   type ICatalogProductListRepositoryPort,
@@ -17,6 +18,8 @@ export class CatalogProductListUseCase {
     private readonly repository: ICatalogProductListRepositoryPort,
     @Inject(CATALOG_CACHE_PORT)
     private readonly cache: ICatalogCachePort,
+    @Inject(CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN)
+    private readonly cacheTtlMs: number,
   ) {}
 
   public async execute(command: ICatalogProductListCommand): Promise<ICatalogProductListView> {
@@ -25,6 +28,7 @@ export class CatalogProductListUseCase {
 
     return await this.cache.read({
       ...pageWindow,
+      ttlMs: this.cacheTtlMs,
       compute: () => this.listPage(pageWindow),
     });
   }

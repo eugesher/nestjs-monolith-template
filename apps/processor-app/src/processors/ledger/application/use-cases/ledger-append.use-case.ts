@@ -2,14 +2,17 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
 import {
   ILedgerAppendEntryDraftOutput,
   LedgerAppendEntryModel,
   LedgerAppendHelper,
 } from '../../domain';
-import { LEDGER_APPEND_REPOSITORY_PORT, type ILedgerAppendRepositoryPort } from '../../outbound';
+import {
+  LEDGER_APPEND_REPOSITORY_PORT,
+  LedgerAppendEntryInsertOutcomeEnum,
+  type ILedgerAppendRepositoryPort,
+} from '../../outbound';
 import { ILedgerAppendCommand, ILedgerAppendOutcomeView } from '../interfaces';
 
 @Injectable()
@@ -45,18 +48,14 @@ export class LedgerAppendUseCase {
   }
 
   private async append(draft: ILedgerAppendEntryDraftOutput): Promise<ILedgerAppendOutcomeView> {
-    try {
-      const id = await this.repository.insert(draft);
+    const inserted = await this.repository.insert(draft);
 
-      return { id, appended: true };
-    } catch (error) {
-      if (!MysqlErrorHelper.isDuplicateKey(error)) {
-        throw error;
-      }
-
-      const existing = await this.repository.findByOperationKey(draft.operationKey);
-
-      return { id: existing.id, appended: false };
+    if (inserted.outcome === LedgerAppendEntryInsertOutcomeEnum.INSERTED) {
+      return { id: inserted.id, appended: true };
     }
+
+    const existing = await this.repository.findByOperationKey(draft.operationKey);
+
+    return { id: existing.id, appended: false };
   }
 }

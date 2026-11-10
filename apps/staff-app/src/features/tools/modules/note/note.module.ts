@@ -20,6 +20,7 @@ import {
   NoteGetManyRepository,
   NoteGetRevisionsRepository,
   NoteResolveRepository,
+  NoteTransactionAdapter,
 } from './infrastructure';
 import { NoteController } from './presentation';
 
@@ -41,6 +42,7 @@ import { NoteController } from './presentation';
     NoteGetManyRepository.provider,
     NoteGetRevisionsRepository.provider,
     NoteResolveRepository.provider,
+    NoteTransactionAdapter.provider,
     NoteConfigOccRetryAttemptsProvider,
   ],
 })

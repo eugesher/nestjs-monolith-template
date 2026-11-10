@@ -310,18 +310,21 @@ describe('libs by layer', () => {
 
   it.each([
     [
-      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
-      '../../../../../../../libs',
+      'apps/__layers-fixture__/src/features/product/infrastructure/persistence/transaction/__fixture__.ts',
+      '../../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/processors/purge/application/services/__fixture__.ts',
-      '../../../../../../../libs',
+      'apps/__layers-fixture__/src/processors/purge/infrastructure/persistence/transaction/__fixture__.ts',
+      '../../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/transaction/__fixture__.ts',
+      '../../../../../../../../../libs',
+    ],
+    [
+      'core/modules/src/__ledger-fixture__/infrastructure/persistence/transaction/__fixture__.ts',
       '../../../../../../../libs',
     ],
-    ['core/modules/src/__ledger-fixture__/application/__fixture__.ts', '../../../../../libs'],
   ])('%s MAY reach the transaction port in the local-storage contracts', async (file, libs) => {
     await expect({
       file,
@@ -342,9 +345,22 @@ describe('libs by layer', () => {
       'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
       '../../../../../../../libs',
     ],
+    [
+      'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/processors/purge/application/services/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    [
+      'apps/__layers-fixture__/src/common/modules/idempotency/application/__fixture__.ts',
+      '../../../../../../../libs',
+    ],
+    ['core/modules/src/__ledger-fixture__/application/__fixture__.ts', '../../../../../libs'],
     ['core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts', '../../../../../libs'],
   ])(
-    '%s may NOT reach the local-storage contracts, transactions are run by the application',
+    '%s may NOT reach the local-storage contracts, the transaction adapter of the module wraps them',
     async (file, libs) => {
       await expect({
         file,

@@ -34,7 +34,7 @@ describe('OrderReplaceTagsUseCase', () => {
     useCase = new OrderReplaceTagsUseCase(
       { lockById },
       { find: jest.fn(), replace, findOrderIds: jest.fn() },
-      { run, afterCommit: jest.fn() },
+      { run },
     );
   });
 

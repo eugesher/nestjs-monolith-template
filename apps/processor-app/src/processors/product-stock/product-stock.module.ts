@@ -8,6 +8,7 @@ import {
   ProductStockArchiveCoreAdapter,
   ProductStockOnHandCoreAdapter,
   ProductStockPostSubtractRepository,
+  ProductStockTransactionAdapter,
 } from './infrastructure';
 import { ProductStockPostSubtractProcessor } from './presentation';
 
@@ -19,6 +20,7 @@ import { ProductStockPostSubtractProcessor } from './presentation';
     ProductStockPostSubtractRepository.provider,
     ProductStockOnHandCoreAdapter.provider,
     ProductStockArchiveCoreAdapter.provider,
+    ProductStockTransactionAdapter.provider,
   ],
 })
 export class ProductStockModule {}

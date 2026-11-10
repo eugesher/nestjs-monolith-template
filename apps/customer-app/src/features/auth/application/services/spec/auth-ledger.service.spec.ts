@@ -14,7 +14,7 @@ describe('AuthLedgerService', () => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new AuthLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
+    service = new AuthLedgerService({ enqueue }, 2, 500, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -32,13 +32,16 @@ describe('AuthLedgerService', () => {
 
         expect(enqueue).toHaveBeenCalledTimes(1);
         expect(enqueue).toHaveBeenCalledWith({
-          operationKey: 'customer-registered:customer-1',
-          subjectType: 'customer',
-          subjectId: 'customer-1',
-          action: 'CustomerRegistered',
-          payload: { email: 'eve@example.com' },
-          occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          record: {
+            operationKey: 'customer-registered:customer-1',
+            subjectType: 'customer',
+            subjectId: 'customer-1',
+            action: 'CustomerRegistered',
+            payload: { email: 'eve@example.com' },
+            occurredAt: '2026-01-05T08:00:00.000Z',
+            correlationId: 'corr-1',
+          },
+          timeoutMs: 500,
         });
       },
     );

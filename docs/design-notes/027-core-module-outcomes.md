@@ -20,9 +20,9 @@ processor asks only whether the product was archived,
 `outcome === ProductCoreArchiveOutcomeEnum.ARCHIVED`, and every other value is a no for it, a new
 one included.
 
-**The use case opens or joins a transaction.** `ProductCoreArchiveUseCase` runs in
-`TRANSACTION_PORT.run`, so it joins the transaction of a caller that has one and opens its own
-otherwise. It locks the row before it reads it (see `021-pessimistic-locking.md`), compares
+**The use case opens or joins a transaction.** `ProductCoreArchiveUseCase` runs in `run` of
+`PRODUCT_CORE_TRANSACTION_PORT`, so it joins the transaction of a caller that has one and opens its
+own otherwise. It locks the row before it reads it (see `021-pessimistic-locking.md`), compares
 `expectedVersion` for the `If-Match` of a caller, writes, and announces the write in `afterCommit`:
 it drops a cache (see `020-cross-app-cache-invalidation.md`) and enqueues a ledger record (see
 `022-enqueue-after-commit.md`).

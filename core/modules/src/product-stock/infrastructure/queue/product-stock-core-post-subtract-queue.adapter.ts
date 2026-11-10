@@ -1,5 +1,5 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Injectable } from '@nestjs/common';
 import type { Queue } from 'bull';
 
 import {
@@ -11,7 +11,6 @@ import {
   IProductStockCorePostSubtractEnqueueCommand,
   IProductStockCorePostSubtractPort,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
-  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../outbound';
 
 @Injectable()
@@ -24,18 +23,16 @@ export class ProductStockCorePostSubtractQueueAdapter implements IProductStockCo
   constructor(
     @InjectQueue(PRODUCT_STOCK_POST_SUBTRACT_QUEUE)
     private readonly queue: Queue<IProductStockPostSubtractPayload>,
-    @Inject(PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
-    private readonly timeoutMs: number,
   ) {}
 
   public async enqueue(command: IProductStockCorePostSubtractEnqueueCommand): Promise<void> {
-    const { productIds, correlationId } = command;
+    const { productIds, correlationId, timeoutMs } = command;
     let timer: NodeJS.Timeout | undefined;
 
     const timeout = new Promise<never>((_, reject) => {
       timer = setTimeout(
-        () => reject(new Error(`Enqueue timed out after ${this.timeoutMs} ms`)),
-        this.timeoutMs,
+        () => reject(new Error(`Enqueue timed out after ${timeoutMs} ms`)),
+        timeoutMs,
       );
     });
 

@@ -33,9 +33,12 @@ test: each e2e suite compiles the whole `AppModule`, so every provider of a conf
 property with `getOrThrow` (see `014-e2e-suites.md`).
 
 **The token belongs to the consumer.** The outbound layer declares the token, as it declares a port,
-and the adapter or use case that needs the value injects it. Nothing outside `infrastructure/config`
-knows which variable of `.env` feeds the token. The token is named after the module and the property
-(see `029-naming.md`).
+and only the application layer injects it. A use case or a service that calls a port hands the value
+over in the command of the port: `ttlMs` of a cache read, `timeoutMs` of an enqueue. An adapter
+takes no config value of its own, so one piece of infrastructure never feeds another, and the spec
+of the use case shows which value reaches the port. Nothing outside `infrastructure/config` knows
+which variable of `.env` feeds the token. The token is named after the module and the property (see
+`029-naming.md`).
 
 **One file per module binds its values.** `infrastructure/config/<module>-config.provider.ts`
 exports one constant per value, `<Module>Config<Property>Provider`, and the barrel of

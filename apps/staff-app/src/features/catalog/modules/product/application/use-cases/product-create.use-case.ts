@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import {
   IProductDraftOutput,
   ProductIdempotencyKeyReusedException,
@@ -14,9 +11,12 @@ import {
 import {
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
+  PRODUCT_TRANSACTION_PORT,
+  ProductCreateInsertOutcomeEnum,
   ProductIdempotencyOutcomeEnum,
   type IProductCreateRepositoryPort,
   type IProductIdempotencyPort,
+  type IProductTransactionPort,
 } from '../../outbound';
 import { IProductCreateCommand, IProductView } from '../interfaces';
 import { ProductLedgerService } from '../services/product-ledger.service';
@@ -29,8 +29,8 @@ export class ProductCreateUseCase {
     private readonly repository: IProductCreateRepositoryPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(PRODUCT_TRANSACTION_PORT)
+    private readonly transaction: IProductTransactionPort,
     @InjectPinoLogger(ProductCreateUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -83,21 +83,18 @@ export class ProductCreateUseCase {
   }
 
   private async persist(draft: IProductDraftOutput, idempotencyKey: string): Promise<IProductView> {
-    try {
-      const productId = await this.repository.insert(draft);
-      const record = await this.repository.findInserted(productId);
-      const created = ProductModel.reconstitute(record);
-      const view = created.toSnapshot();
+    const inserted = await this.repository.insert(draft);
 
-      await this.idempotency.complete({ key: idempotencyKey, response: view });
-
-      return view;
-    } catch (error) {
-      if (MysqlErrorHelper.isDuplicateKey(error)) {
-        throw new ProductSkuTakenException(draft.sku);
-      }
-
-      throw error;
+    if (inserted.outcome === ProductCreateInsertOutcomeEnum.DUPLICATE) {
+      throw new ProductSkuTakenException(draft.sku);
     }
+
+    const record = await this.repository.findInserted(inserted.id);
+    const created = ProductModel.reconstitute(record);
+    const view = created.toSnapshot();
+
+    await this.idempotency.complete({ key: idempotencyKey, response: view });
+
+    return view;
   }
 }

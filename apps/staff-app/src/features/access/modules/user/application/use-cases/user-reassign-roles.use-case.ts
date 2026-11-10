@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import { AuthRoleNotFoundException, AuthUserNotFoundException } from '../../domain';
 import {
   USER_REASSIGN_ROLES_REPOSITORY_PORT,
+  USER_TRANSACTION_PORT,
   type IUserReassignRolesRepositoryPort,
+  type IUserTransactionPort,
 } from '../../outbound';
 import { IUserReassignRolesCommand, IUserReassignRolesView } from '../interfaces';
 
@@ -15,8 +15,8 @@ export class UserReassignRolesUseCase {
   constructor(
     @Inject(USER_REASSIGN_ROLES_REPOSITORY_PORT)
     private readonly repository: IUserReassignRolesRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(USER_TRANSACTION_PORT)
+    private readonly transaction: IUserTransactionPort,
     @InjectPinoLogger(UserReassignRolesUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

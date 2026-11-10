@@ -13,6 +13,7 @@ import {
   ProductStockCoreLockRepository,
   ProductStockCoreMoveRepository,
   ProductStockCorePostSubtractQueueAdapter,
+  ProductStockCoreTransactionAdapter,
 } from '../infrastructure';
 import { ProductStockCoreFacade } from './product-stock-core.facade';
 
@@ -26,6 +27,7 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
     ProductStockCoreLockRepository.provider,
     ProductStockCoreMoveRepository.provider,
     ProductStockCorePostSubtractQueueAdapter.provider,
+    ProductStockCoreTransactionAdapter.provider,
     ProductStockCoreConfigRedisCommandTimeoutMsProvider,
     ProductStockCoreConfigQueueRetryAttemptsProvider,
   ],

@@ -1,5 +1,5 @@
-import { ISubjectLedgerRecord } from './subject-ledger-record.interface';
+import { ISubjectLedgerEnqueueCommand } from './subject-ledger-enqueue-command.interface';
 
 export interface ISubjectLedgerPort {
-  enqueue(record: ISubjectLedgerRecord): Promise<void>;
+  enqueue(command: ISubjectLedgerEnqueueCommand): Promise<void>;
 }

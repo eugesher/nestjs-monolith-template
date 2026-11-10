@@ -1,10 +1,11 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
+import { MysqlErrorHelper, Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
+  IdempotencyCoreClaimInsertOutcomeEnum,
   IIdempotencyCoreClaimInsertQuery,
   IIdempotencyCoreClaimRecord,
   IIdempotencyCoreClaimRepositoryPort,
@@ -28,8 +29,20 @@ export class IdempotencyCoreClaimRepository
     super();
   }
 
-  public async insert(query: IIdempotencyCoreClaimInsertQuery): Promise<void> {
-    await this.idempotencyKeyRepository.insert(query);
+  public async insert(
+    query: IIdempotencyCoreClaimInsertQuery,
+  ): Promise<IdempotencyCoreClaimInsertOutcomeEnum> {
+    try {
+      await this.idempotencyKeyRepository.insert(query);
+
+      return IdempotencyCoreClaimInsertOutcomeEnum.INSERTED;
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE;
+      }
+
+      throw error;
+    }
   }
 
   public async findByKey(key: string): Promise<Nullable<IIdempotencyCoreClaimRecord>> {

@@ -8,7 +8,7 @@ describe('CatalogProductListUseCase', () => {
   beforeEach(() => {
     list = jest.fn();
     read = jest.fn((query: { compute: () => Promise<unknown> }) => query.compute());
-    useCase = new CatalogProductListUseCase({ list }, { read });
+    useCase = new CatalogProductListUseCase({ list }, { read }, 60_000);
   });
 
   describe('execute', () => {
@@ -17,11 +17,12 @@ describe('CatalogProductListUseCase', () => {
 
       await useCase.execute({ page: 2, limit: 10 });
 
-      const [query] = read.mock.calls[0] as [{ page: number; limit: number }];
+      const [query] = read.mock.calls[0] as [{ page: number; limit: number; ttlMs: number }];
 
       expect(read).toHaveBeenCalledTimes(1);
       expect(query.page).toBe(2);
       expect(query.limit).toBe(10);
+      expect(query.ttlMs).toBe(60_000);
     });
 
     it('computes a miss with the repository page of the same window', async () => {

@@ -1,12 +1,15 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IRoleCreateRepositoryPort,
   IRoleCreateRolePermissionInsertQuery,
   IRoleCreateStaffRoleInsertQuery,
+  IRoleCreateStaffRoleInsertRecord,
   ROLE_CREATE_REPOSITORY_PORT,
+  RoleCreateStaffRoleInsertOutcomeEnum,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 
@@ -24,8 +27,20 @@ export class RoleCreateRepository extends RolePersistenceHost implements IRoleCr
     super();
   }
 
-  public async insertRole(query: IRoleCreateStaffRoleInsertQuery): Promise<string> {
-    return await this.staffRoleRepository.insertOne(query);
+  public async insertRole(
+    query: IRoleCreateStaffRoleInsertQuery,
+  ): Promise<IRoleCreateStaffRoleInsertRecord> {
+    try {
+      const id = await this.staffRoleRepository.insertOne(query);
+
+      return { outcome: RoleCreateStaffRoleInsertOutcomeEnum.INSERTED, id };
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return { outcome: RoleCreateStaffRoleInsertOutcomeEnum.DUPLICATE };
+      }
+
+      throw error;
+    }
   }
 
   public async insertRolePermissions(

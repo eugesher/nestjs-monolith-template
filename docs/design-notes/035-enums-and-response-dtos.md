@@ -59,16 +59,17 @@ OpenAPI document lists the values and the client can generate the same enum.
 
 ## Domain interfaces
 
-The interfaces of a domain lie in two folders, by the side of the model they are on:
+The interfaces of a domain lie in two folders, by the side of the model or the event they are on:
 
-| Folder                       | Kind        | What it is                                                    |
-| ---------------------------- | ----------- | ------------------------------------------------------------- |
-| `domain/interfaces/inputs/`  | `record`    | the row a model is rebuilt from, `Model.reconstitute(record)` |
-|                              | `candidate` | the data a new row is checked against, `Model.createDraft`    |
-|                              | `changes`   | the edits a model takes, `ProductModel.update(changes)`       |
-| `domain/interfaces/outputs/` | `draft`     | the row `createDraft` answers for an insert                   |
-|                              | `snapshot`  | the state a model answers with `toSnapshot()`                 |
-|                              | `changes`   | the diff a model answers, `TagCommonSubjectTagsModel.replace` |
+| Folder                       | Kind            | What it is                                                                 |
+| ---------------------------- | --------------- | -------------------------------------------------------------------------- |
+| `domain/interfaces/inputs/`  | `record`        | the row a model is rebuilt from, `Model.reconstitute(record)`              |
+|                              | `candidate`     | the data a new row is checked against, `Model.createDraft`                 |
+|                              | `changes`       | the edits a model takes, `ProductModel.update(changes)`                    |
+| `domain/interfaces/outputs/` | `draft`         | the row `createDraft` answers for an insert                                |
+|                              | `snapshot`      | the state a model answers with `toSnapshot()`                              |
+|                              | `changes`       | the diff a model answers, `TagCommonSubjectTagsModel.replace`              |
+|                              | `ledger-record` | the ledger record an event answers, `ProductPublishedEvent.toLedgerRecord` |
 
 The direction is the type of the file and the kind ends its name: `product-record.input.ts` holds
 `IProductRecordInput`, `auth-customer-draft.output.ts` holds `IAuthCustomerDraftOutput`, and
@@ -76,3 +77,23 @@ The direction is the type of the file and the kind ends its name: `product-recor
 `product-changes.input.ts`. A part of an input or an output without a kind of its own takes the
 direction alone: `order-stock.input.ts` is a field of `IOrderCandidateInput`,
 `order-product.output.ts` an element of `IOrderSnapshotOutput`.
+
+## Read models
+
+A read answers what a model makes of the record, never the record mapped in the application layer:
+the use case calls `Model.reconstitute(record)` and answers `toSnapshot()`, for one row and for each
+row of a page alike (`TagGetManyUseCase`). A module that only reads has a domain for that alone:
+`LedgerEntryModel` in `apps/staff-app/src/features/ledger`, `ProductStockCoreOnHandModel` in
+`core/modules/src/product-stock`.
+
+**A read model is a plain class.** It records no events and takes no changes, so it does not extend
+`AggregateRoot`, like `StaffAuthCoreSubjectModel`.
+
+**A record with fewer columns gets a model of its own.** A page of orders carries no products, so
+`OrderSummaryModel` rebuilds it, not `OrderModel`, whose record requires them. Both live in the
+domain of the order, the summary with `order-summary-record.input.ts` and
+`order-summary-snapshot.output.ts`.
+
+**A model may be rebuilt from several rows.** `ProductStockCoreOnHandModel.reconstitute` takes the
+ids of the products and the sums of their stock rows as one record and answers the stock of every
+product in the order of the ids, zero for a product without rows.

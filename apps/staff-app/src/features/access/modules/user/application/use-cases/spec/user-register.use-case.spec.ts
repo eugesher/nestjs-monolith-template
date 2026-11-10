@@ -2,8 +2,8 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
+import { UserRegisterStaffUserInsertOutcomeEnum } from '../../../outbound';
 import { UserRegisterUseCase } from '../user-register.use-case';
 
 describe('UserRegisterUseCase', () => {
@@ -20,7 +20,10 @@ describe('UserRegisterUseCase', () => {
       insertUser: jest.fn(() => {
         outcomes.push('insert');
 
-        return Promise.resolve('5');
+        return Promise.resolve({
+          outcome: UserRegisterStaffUserInsertOutcomeEnum.INSERTED,
+          id: '5',
+        });
       }),
       findRoles: jest.fn().mockResolvedValue([{ id: '2' }]),
       insertUserRoles: jest.fn().mockResolvedValue(undefined),
@@ -115,8 +118,9 @@ describe('UserRegisterUseCase', () => {
   it(
     'refuses a duplicate email of the repository ' + 'as taken and rolls the transaction back',
     async () => {
-      repository.insertUser.mockRejectedValue(new Error('Duplicate entry'));
-      jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+      repository.insertUser.mockResolvedValue({
+        outcome: UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE,
+      });
 
       const register = useCase.execute({
         email: 'editor@example.com',

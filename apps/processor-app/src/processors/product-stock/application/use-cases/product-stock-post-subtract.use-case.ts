@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,
   PRODUCT_STOCK_ON_HAND_PORT,
   PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
+  PRODUCT_STOCK_TRANSACTION_PORT,
   type IProductStockArchivePort,
   type IProductStockOnHandPort,
   type IProductStockPostSubtractRepositoryPort,
+  type IProductStockTransactionPort,
 } from '../../outbound';
 import { IProductStockPostSubtractCommand } from '../interfaces';
 
@@ -22,8 +22,8 @@ export class ProductStockPostSubtractUseCase {
     private readonly onHand: IProductStockOnHandPort,
     @Inject(PRODUCT_STOCK_ARCHIVE_PORT)
     private readonly archive: IProductStockArchivePort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(PRODUCT_STOCK_TRANSACTION_PORT)
+    private readonly transaction: IProductStockTransactionPort,
     @InjectPinoLogger(ProductStockPostSubtractUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

@@ -23,10 +23,10 @@ another.
 `Error`: it is a programming mistake of a producer, not a refusal a client sees.
 
 **The operation key makes the append idempotent.** Every record carries an `operationKey` with a
-UNIQUE index. `LedgerAppendUseCase` catches exactly the duplicate-key error, reads the id of the
-existing row through `LedgerAppendRepository` and answers `{ id, appended: false }`, so a job
-delivered twice gets one row and no exception. Any other database error passes through, and Bull
-retries the job.
+UNIQUE index. `LedgerAppendRepository.insert` answers `DUPLICATE` for exactly the duplicate-key
+error, and `LedgerAppendUseCase` then reads the id of the existing row and answers
+`{ id, appended: false }`, so a job delivered twice gets one row and no exception. Any other
+database error passes through, and Bull retries the job.
 
 **A key names one occurrence.** A producer that can record the same kind of record twice for one
 subject puts what tells the occurrences apart into the key, such as a version or a row id (see

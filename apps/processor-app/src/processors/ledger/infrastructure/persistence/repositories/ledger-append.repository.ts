@@ -1,14 +1,17 @@
 import { ClassProvider, Inject, Injectable } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 import { LedgerEntry } from '@acme-core/entities';
 
 import {
   ILedgerAppendEntryInsertQuery,
+  ILedgerAppendEntryInsertRecord,
   ILedgerAppendEntryRecord,
   ILedgerAppendRepositoryPort,
   LEDGER_APPEND_REPOSITORY_PORT,
+  LedgerAppendEntryInsertOutcomeEnum,
 } from '../../../outbound';
 import { LedgerPersistenceHost } from '../host/ledger-persistence.host';
 
@@ -29,10 +32,22 @@ export class LedgerAppendRepository
     super();
   }
 
-  public async insert(record: ILedgerAppendEntryInsertQuery): Promise<string> {
+  public async insert(
+    record: ILedgerAppendEntryInsertQuery,
+  ): Promise<ILedgerAppendEntryInsertRecord> {
     const payload = record.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
 
-    return await this.ledgerEntryRepository.insertOne({ ...record, payload });
+    try {
+      const id = await this.ledgerEntryRepository.insertOne({ ...record, payload });
+
+      return { outcome: LedgerAppendEntryInsertOutcomeEnum.INSERTED, id };
+    } catch (error) {
+      if (MysqlErrorHelper.isDuplicateKey(error)) {
+        return { outcome: LedgerAppendEntryInsertOutcomeEnum.DUPLICATE };
+      }
+
+      throw error;
+    }
   }
 
   public async findByOperationKey(operationKey: string): Promise<ILedgerAppendEntryRecord> {

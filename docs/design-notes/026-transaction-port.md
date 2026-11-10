@@ -1,7 +1,8 @@
 # 026 — Transaction port
 
-The application layer opens a transaction through `TRANSACTION_PORT` of
-`@acme-libs/contracts/local-storage`, never through TypeORM or `@nestjs-cls/transactional`:
+The application layer opens a transaction through the transaction port of its own module, never
+through TypeORM, `@nestjs-cls/transactional` or the lib contract. The port wraps `TRANSACTION_PORT`
+of `@acme-libs/contracts/local-storage`:
 
 ```ts
 interface ITransactionPort {
@@ -15,6 +16,23 @@ interface ITransactionPort {
 `012-app-bootstrap.md`). The facade hands `run` and `afterCommit` to two use cases, which reach
 `TransactionHost` and `ClsService` through the ports of the lib's own `outbound`
 (`LocalStorageTransactionHostAdapter`, `LocalStorageTransactionContextAdapter`).
+
+## The port of the module
+
+| Part     | Example                                                                                                              |
+| -------- | -------------------------------------------------------------------------------------------------------------------- |
+| port     | `apps/staff-app/src/features/access/modules/role/outbound/ports/role-transaction.port.ts`                            |
+| adapter  | `apps/staff-app/src/features/access/modules/role/infrastructure/persistence/transaction/role-transaction.adapter.ts` |
+| use case | `apps/staff-app/src/features/access/modules/role/application/use-cases/role-create.use-case.ts`                      |
+
+Each module that writes in a transaction declares `<MODULE>_TRANSACTION_PORT` in `outbound` and
+implements it in `infrastructure/persistence/transaction/<module>-transaction.adapter.ts`, which
+hands every call to `TRANSACTION_PORT`. Only infrastructure may import
+`@acme-libs/contracts/local-storage`, so a use case knows no lib.
+
+**The port carries `afterCommit` only when the module needs it.** The core modules that write inside
+a transaction of someone else declare it (see below); every other port has `run` alone, so a use
+case that owns its transaction cannot register a hook, and the mock of its spec has `run` alone too.
 
 ## `run`
 

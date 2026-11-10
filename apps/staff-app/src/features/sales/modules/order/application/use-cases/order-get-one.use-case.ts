@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { OrderNotFoundException } from '../../domain';
+import { OrderModel, OrderNotFoundException } from '../../domain';
 import { ORDER_GET_ONE_REPOSITORY_PORT, type IOrderGetOneRepositoryPort } from '../../outbound';
 import { IOrderGetOneCommand, IOrderGetOneView } from '../interfaces';
-import { OrderViewMapper } from '../mappers/order-view.mapper';
 
 @Injectable()
 export class OrderGetOneUseCase {
@@ -14,12 +13,14 @@ export class OrderGetOneUseCase {
 
   public async execute(command: IOrderGetOneCommand): Promise<IOrderGetOneView> {
     const { orderId } = command;
-    const order = await this.repository.findById(orderId);
+    const record = await this.repository.findById(orderId);
 
-    if (!order) {
+    if (!record) {
       throw new OrderNotFoundException(orderId);
     }
 
-    return OrderViewMapper.toGetOneView(order);
+    const order = OrderModel.reconstitute(record);
+
+    return order.toSnapshot();
   }
 }

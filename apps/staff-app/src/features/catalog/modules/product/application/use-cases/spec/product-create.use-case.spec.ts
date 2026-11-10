@@ -2,8 +2,8 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
-import { MysqlErrorHelper } from '@acme-libs/toolkit';
 
+import { ProductCreateInsertOutcomeEnum } from '../../../outbound';
 import { ProductLedgerService } from '../../services/product-ledger.service';
 import { ProductCreateUseCase } from '../product-create.use-case';
 
@@ -21,7 +21,9 @@ describe('ProductCreateUseCase', () => {
 
   beforeEach(() => {
     existsBySku = jest.fn().mockResolvedValue(false);
-    insert = jest.fn().mockResolvedValue('12');
+    insert = jest
+      .fn()
+      .mockResolvedValue({ outcome: ProductCreateInsertOutcomeEnum.INSERTED, id: '12' });
     findInserted = jest.fn().mockResolvedValue({
       id: '12',
       sku: 'SKU-0001',
@@ -41,7 +43,7 @@ describe('ProductCreateUseCase', () => {
       { recordCreated } as unknown as ProductLedgerService,
       { existsBySku, insert, findInserted },
       { claim, complete, release },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });
@@ -178,8 +180,7 @@ describe('ProductCreateUseCase', () => {
     it(
       'refuses a sku taken by a concurrent insert ' + 'with PRODUCT_SKU_TAKEN and releases the key',
       async () => {
-        insert.mockRejectedValue(new Error('Duplicate entry'));
-        jest.spyOn(MysqlErrorHelper, 'isDuplicateKey').mockReturnValue(true);
+        insert.mockResolvedValue({ outcome: ProductCreateInsertOutcomeEnum.DUPLICATE });
 
         await expect(
           useCase.execute({

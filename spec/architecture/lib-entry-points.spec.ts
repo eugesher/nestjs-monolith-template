@@ -197,10 +197,10 @@ describe('lib entry points', () => {
   );
 
   it.each([
-    'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-    'apps/processor-app/src/processors/purge/application/services/__fixture__.ts',
-    'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
+    'apps/staff-app/src/features/product/infrastructure/persistence/transaction/__fixture__.ts',
+    'apps/processor-app/src/processors/purge/infrastructure/persistence/transaction/__fixture__.ts',
+    'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/transaction/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/persistence/transaction/__fixture__.ts',
   ])('%s MAY import the transaction port by its alias', async (file) => {
     await expect({
       file,
@@ -211,10 +211,14 @@ describe('lib entry points', () => {
   it.each([
     'apps/staff-app/src/features/product/domain/__fixture__.ts',
     'apps/staff-app/src/features/product/outbound/__fixture__.ts',
+    'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/processor-app/src/processors/purge/application/services/__fixture__.ts',
+    'apps/staff-app/src/common/modules/idempotency/application/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
     'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
     'apps/staff-app/src/app/setup/config/__fixture__.ts',
   ])(
-    '%s may NOT import the transaction port by its alias, transactions are run by the application',
+    '%s may NOT import the transaction port by its alias, the transaction adapter of the module wraps it',
     async (file) => {
       await expect({
         file,

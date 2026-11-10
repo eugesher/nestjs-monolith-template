@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import { AuthRoleNotFoundException, RoleModel } from '../../domain';
 import {
   ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT,
+  ROLE_TRANSACTION_PORT,
   type IRoleReassignPermissionsRepositoryPort,
+  type IRoleTransactionPort,
 } from '../../outbound';
 import { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
 
@@ -15,8 +15,8 @@ export class RoleReassignPermissionsUseCase {
   constructor(
     @Inject(ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT)
     private readonly repository: IRoleReassignPermissionsRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(ROLE_TRANSACTION_PORT)
+    private readonly transaction: IRoleTransactionPort,
     @InjectPinoLogger(RoleReassignPermissionsUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

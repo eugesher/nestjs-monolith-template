@@ -7,4 +7,5 @@ export * from './ports/note-get-many-repository.port';
 export * from './ports/note-get-revisions-repository.port';
 export * from './ports/note-resolve-repository.port';
 
+export * from './ports/note-transaction.port';
 export * from './tokens/note-occ-retry-attempts.token';
