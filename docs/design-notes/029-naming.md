@@ -2,18 +2,21 @@
 
 A name says who or where; the action lives in the method or in the port.
 
-| Element                            | Name                                                                            | Example                                                            |
-| ---------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts`     | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`                    |
-| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                           | `IdempotencyCoreFacade`                                            |
-| facade method                      | `handle<Action>`                                                                | `handleClaim`, `handleSignAccessToken`                             |
-| use case held by a facade          | `<action>`, without the context                                                 | `claim: IdempotencyCoreClaimUseCase`                               |
-| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`                | `OrderExceptionCodeEnum`                                           |
-| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`          | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort`      |
-| commands of a service              | `I<Context><Service><Method>Command`, one file `<context>-<service>.command.ts` | `IProductLedgerRecordEventsCommand` in `product-ledger.command.ts` |
-| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                     | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                             |
-| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                        | `OrderIdempotencyCoreAdapter.provider`                             |
-| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`               | `OrderConfigRedisCommandTimeoutMsProvider`                         |
+| Element                            | Name                                                                                    | Example                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts`             | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`                    |
+| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                                   | `IdempotencyCoreFacade`                                            |
+| facade method                      | `handle<Action>`                                                                        | `handleClaim`, `handleSignAccessToken`                             |
+| use case held by a facade          | `<action>`, without the context                                                         | `claim: IdempotencyCoreClaimUseCase`                               |
+| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`                        | `OrderExceptionCodeEnum`                                           |
+| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`                  | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort`      |
+| transaction port of a module       | `I<Module>TransactionPort`, `<MODULE>_TRANSACTION_PORT`, `<module>-transaction.port.ts` | `IRoleTransactionPort`, `ROLE_TRANSACTION_PORT`                    |
+| transaction adapter                | `<Module>TransactionAdapter`, `persistence/transaction/<module>-transaction.adapter.ts` | `RoleTransactionAdapter`                                           |
+| outcome of a repository write      | `<Port><Subject><Method>OutcomeEnum`, `<port>-<subject>-<method>-outcome.enum.ts`       | `RoleCreateStaffRoleInsertOutcomeEnum`                             |
+| commands of a service              | `I<Context><Service><Method>Command`, one file `<context>-<service>.command.ts`         | `IProductLedgerRecordEventsCommand` in `product-ledger.command.ts` |
+| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                             | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                             |
+| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                                | `OrderIdempotencyCoreAdapter.provider`                             |
+| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`                       | `OrderConfigRedisCommandTimeoutMsProvider`                         |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
