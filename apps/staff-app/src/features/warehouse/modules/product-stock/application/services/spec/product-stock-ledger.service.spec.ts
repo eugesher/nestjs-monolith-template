@@ -16,7 +16,7 @@ describe('ProductStockLedgerService', () => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new ProductStockLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
+    service = new ProductStockLedgerService({ enqueue }, 2, 500, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -36,13 +36,16 @@ describe('ProductStockLedgerService', () => {
         );
 
         expect(enqueue).toHaveBeenCalledWith({
-          operationKey: 'product-restocked:700',
-          subjectType: 'product',
-          subjectId: '12',
-          action: 'ProductRestocked',
-          payload: { sku: 'SKU-0001', quantity: 5 },
-          occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          record: {
+            operationKey: 'product-restocked:700',
+            subjectType: 'product',
+            subjectId: '12',
+            action: 'ProductRestocked',
+            payload: { sku: 'SKU-0001', quantity: 5 },
+            occurredAt: '2026-01-05T08:00:00.000Z',
+            correlationId: 'corr-1',
+          },
+          timeoutMs: 500,
         });
       },
     );

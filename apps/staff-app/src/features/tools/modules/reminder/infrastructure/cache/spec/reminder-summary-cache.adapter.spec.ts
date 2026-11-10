@@ -10,7 +10,7 @@ describe('ReminderSummaryCacheAdapter', () => {
   beforeEach(() => {
     handleWrap = jest.fn();
     handleDelByPrefix = jest.fn();
-    adapter = new ReminderSummaryCacheAdapter(60_000, {
+    adapter = new ReminderSummaryCacheAdapter({
       handleWrap,
       handleDelByPrefix,
     } as unknown as ICacheLibPort);
@@ -21,7 +21,7 @@ describe('ReminderSummaryCacheAdapter', () => {
       const compute = jest.fn();
       handleWrap.mockResolvedValue({ pending: 2, nextDueOn: '2026-06-01' });
 
-      const summary = await adapter.read({ ownerId: 'user-1', compute });
+      const summary = await adapter.read({ ownerId: 'user-1', ttlMs: 60_000, compute });
 
       expect(summary).toEqual({ pending: 2, nextDueOn: '2026-06-01' });
       expect(handleWrap).toHaveBeenCalledWith({

@@ -4,7 +4,6 @@ import { CACHE_KEYS, CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contr
 
 import {
   CATALOG_CACHE_PORT,
-  CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN,
   ICatalogCachePort,
   ICatalogCacheProductListReadCommand,
   ICatalogCacheProductListView,
@@ -18,8 +17,6 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
   };
 
   constructor(
-    @Inject(CATALOG_CACHE_TTL_MS_DEFAULT_TOKEN)
-    private readonly ttlMs: number,
     @Inject(CACHE_LIB_PORT)
     private readonly cache: ICacheLibPort,
   ) {}
@@ -27,9 +24,9 @@ export class CatalogCacheAdapter implements ICatalogCachePort {
   public async read(
     command: ICatalogCacheProductListReadCommand,
   ): Promise<ICatalogCacheProductListView> {
-    const { page, limit, compute } = command;
+    const { page, limit, ttlMs, compute } = command;
     const key = CACHE_KEYS.catalogPage(page, limit);
 
-    return await this.cache.handleWrap({ key, ttlMs: this.ttlMs, compute });
+    return await this.cache.handleWrap({ key, ttlMs, compute });
   }
 }

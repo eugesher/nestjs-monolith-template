@@ -8,6 +8,7 @@ import { ProductPublishedEvent } from '../../domain';
 import {
   PRODUCT_LEDGER_RECORD_PORT,
   PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IProductLedgerRecordPort,
 } from '../../outbound';
 import {
@@ -22,6 +23,8 @@ export class ProductLedgerService extends SubjectLedgerService {
     protected readonly queue: IProductLedgerRecordPort,
     @Inject(PRODUCT_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
+    @Inject(PRODUCT_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    protected readonly timeoutMs: number,
     @InjectPinoLogger(ProductLedgerService.name)
     protected readonly logger: PinoLogger,
   ) {

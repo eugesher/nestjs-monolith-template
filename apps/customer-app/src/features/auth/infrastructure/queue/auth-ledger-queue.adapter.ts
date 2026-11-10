@@ -1,15 +1,11 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { ClassProvider, Injectable } from '@nestjs/common';
 import { type Queue } from 'bull';
 
 import { SubjectLedgerQueueAdapter } from '@acme-libs/ledger';
 import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
 
-import {
-  AUTH_LEDGER_RECORD_PORT,
-  AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  IAuthLedgerRecordPort,
-} from '../../outbound';
+import { AUTH_LEDGER_RECORD_PORT, IAuthLedgerRecordPort } from '../../outbound';
 
 @Injectable()
 export class AuthLedgerQueueAdapter
@@ -24,8 +20,6 @@ export class AuthLedgerQueueAdapter
   constructor(
     @InjectQueue(LEDGER_RECORD_QUEUE)
     protected readonly queue: Queue<ILedgerRecordProcessorPayload>,
-    @Inject(AUTH_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
-    protected readonly timeoutMs: number,
   ) {
     super();
   }

@@ -8,7 +8,7 @@ describe('CatalogCacheAdapter', () => {
 
   beforeEach(() => {
     handleWrap = jest.fn();
-    adapter = new CatalogCacheAdapter(60_000, { handleWrap } as unknown as ICacheLibPort);
+    adapter = new CatalogCacheAdapter({ handleWrap } as unknown as ICacheLibPort);
   });
 
   describe('read', () => {
@@ -16,7 +16,7 @@ describe('CatalogCacheAdapter', () => {
       const compute = jest.fn();
       handleWrap.mockResolvedValue({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
 
-      const page = await adapter.read({ page: 2, limit: 10, compute });
+      const page = await adapter.read({ page: 2, limit: 10, ttlMs: 60_000, compute });
 
       expect(page).toEqual({ page: 2, count: 0, pageCount: 0, total: 0, data: [] });
       expect(handleWrap).toHaveBeenCalledWith({

@@ -26,8 +26,9 @@ services there (`ProductStockAddUseCase`, `OrderPlaceUseCase`).
 ## Deadline and retries
 
 **An enqueue has a deadline.** While Redis is down, Bull keeps the command in the offline queue of
-its client and `add` never settles. The adapter races `add` against `REDIS_COMMAND_TIMEOUT_MS` and
-throws when it runs out. Every ledger adapter extends `SubjectLedgerQueueAdapter`
+its client and `add` never settles. The adapter races `add` against the `timeoutMs` of the command
+and throws when it runs out; the caller reads it from `REDIS_COMMAND_TIMEOUT_MS`. Every ledger
+adapter extends `SubjectLedgerQueueAdapter`
 (`libs/ledger/src/subject-ledger/subject-ledger-queue.adapter.ts`), which holds the race and the
 fields of the job.
 
@@ -35,9 +36,9 @@ fields of the job.
 (`libs/toolkit/src/resilience/replay-retry.helper.ts`), `QUEUE_RETRY_ATTEMPTS` or
 `LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. A ledger service
 extends `SubjectLedgerService` (`libs/ledger/src/subject-ledger/subject-ledger.service.ts`): it
-builds the record and hands it to `record`, which retries and logs under the subject and the
-operation key. A timed-out `add` may still reach Redis once it is back, so a processor must tolerate
-a duplicate job.
+builds the record and hands it to `record`, which enqueues it with the `timeoutMs` of the service,
+retries and logs under the subject and the operation key. A timed-out `add` may still reach Redis
+once it is back, so a processor must tolerate a duplicate job.
 
 ## Where the queue is declared
 

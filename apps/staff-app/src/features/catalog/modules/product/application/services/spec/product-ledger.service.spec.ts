@@ -16,7 +16,7 @@ describe('ProductLedgerService', () => {
     jest.useFakeTimers({ now: new Date('2026-01-05T08:00:00.000Z') });
     enqueue = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
-    service = new ProductLedgerService({ enqueue }, 2, logger as unknown as PinoLogger);
+    service = new ProductLedgerService({ enqueue }, 2, 500, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -32,13 +32,16 @@ describe('ProductLedgerService', () => {
         );
 
         expect(enqueue).toHaveBeenCalledWith({
-          operationKey: 'product-created:12',
-          subjectType: 'product',
-          subjectId: '12',
-          action: 'ProductCreated',
-          payload: { sku: 'SKU-0001', name: 'Lamp' },
-          occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          record: {
+            operationKey: 'product-created:12',
+            subjectType: 'product',
+            subjectId: '12',
+            action: 'ProductCreated',
+            payload: { sku: 'SKU-0001', name: 'Lamp' },
+            occurredAt: '2026-01-05T08:00:00.000Z',
+            correlationId: 'corr-1',
+          },
+          timeoutMs: 500,
         });
       },
     );
@@ -63,13 +66,16 @@ describe('ProductLedgerService', () => {
       );
 
       expect(enqueue).toHaveBeenCalledWith({
-        operationKey: 'product-published:12:6',
-        subjectType: 'product',
-        subjectId: '12',
-        action: 'ProductPublished',
-        payload: { sku: 'SKU-0001', previousStatus: 'archived' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        record: {
+          operationKey: 'product-published:12:6',
+          subjectType: 'product',
+          subjectId: '12',
+          action: 'ProductPublished',
+          payload: { sku: 'SKU-0001', previousStatus: 'archived' },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'corr-1',
+        },
+        timeoutMs: 500,
       });
     });
   });

@@ -9,7 +9,7 @@ describe('CatalogController', () => {
   beforeEach(() => {
     list = jest.fn();
     read = jest.fn((query: { compute: () => Promise<unknown> }) => query.compute());
-    controller = new CatalogController(new CatalogProductListUseCase({ list }, { read }));
+    controller = new CatalogController(new CatalogProductListUseCase({ list }, { read }, 60_000));
   });
 
   describe('handleProductList', () => {

@@ -16,6 +16,7 @@ import {
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IProductStockCoreMoveRepositoryPort,
   type IProductStockCorePostSubtractPort,
 } from '../../outbound';
@@ -36,6 +37,8 @@ export class ProductStockCoreMoveUseCase {
     private readonly transaction: ITransactionPort,
     @Inject(PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN)
     private readonly postSubtractRetryAttempts: number,
+    @Inject(PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    private readonly postSubtractTimeoutMs: number,
     @InjectPinoLogger(ProductStockCoreMoveUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -61,7 +64,13 @@ export class ProductStockCoreMoveUseCase {
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {
       const correlationId = CorrelationContextHelper.current(ProductStockCoreMoveUseCase.name);
 
-      this.transaction.afterCommit(() => this.announceSubtract({ productIds, correlationId }));
+      this.transaction.afterCommit(() =>
+        this.announceSubtract({
+          productIds,
+          correlationId,
+          timeoutMs: this.postSubtractTimeoutMs,
+        }),
+      );
     }
 
     return { productStockIds, stock };

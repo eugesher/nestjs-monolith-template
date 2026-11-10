@@ -30,6 +30,7 @@ describe('ProductStockCoreMoveUseCase', () => {
       { enqueue },
       { run: jest.fn(), afterCommit },
       2,
+      500,
       logger as unknown as PinoLogger,
     );
   });
@@ -113,7 +114,11 @@ describe('ProductStockCoreMoveUseCase', () => {
 
         await hook();
 
-        expect(enqueue).toHaveBeenCalledWith({ productIds: ['100'], correlationId: 'corr-1' });
+        expect(enqueue).toHaveBeenCalledWith({
+          productIds: ['100'],
+          correlationId: 'corr-1',
+          timeoutMs: 500,
+        });
       },
     );
 

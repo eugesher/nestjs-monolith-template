@@ -6,7 +6,6 @@ import {
   IReminderSummaryPort,
   IReminderSummaryReadCommand,
   IReminderSummarySnapshotView,
-  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
   REMINDER_SUMMARY_PORT,
 } from '../../outbound';
 
@@ -18,17 +17,15 @@ export class ReminderSummaryCacheAdapter implements IReminderSummaryPort {
   };
 
   constructor(
-    @Inject(REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN)
-    private readonly ttlMs: number,
     @Inject(CACHE_LIB_PORT)
     private readonly cache: ICacheLibPort,
   ) {}
 
   public async read(command: IReminderSummaryReadCommand): Promise<IReminderSummarySnapshotView> {
-    const { ownerId, compute } = command;
+    const { ownerId, ttlMs, compute } = command;
     const key = CACHE_KEYS.reminderSummary(ownerId);
 
-    return await this.cache.handleWrap({ key, ttlMs: this.ttlMs, compute });
+    return await this.cache.handleWrap({ key, ttlMs, compute });
   }
 
   public async invalidate(ownerId: string): Promise<void> {

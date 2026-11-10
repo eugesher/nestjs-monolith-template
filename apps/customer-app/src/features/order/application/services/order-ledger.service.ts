@@ -7,6 +7,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
   ORDER_LEDGER_RECORD_PORT,
   ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
+  ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   type IOrderLedgerRecordPort,
 } from '../../outbound';
 import { IOrderLedgerRecordPlacedCommand } from '../interfaces';
@@ -18,6 +19,8 @@ export class OrderLedgerService extends SubjectLedgerService {
     protected readonly queue: IOrderLedgerRecordPort,
     @Inject(ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN)
     protected readonly retryAttempts: number,
+    @Inject(ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
+    protected readonly timeoutMs: number,
     @InjectPinoLogger(OrderLedgerService.name)
     protected readonly logger: PinoLogger,
   ) {

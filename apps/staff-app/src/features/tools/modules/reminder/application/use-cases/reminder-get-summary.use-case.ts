@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
+  REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN,
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
   REMINDER_SUMMARY_PORT,
   type IReminderGetSummaryRepositoryPort,
@@ -15,6 +16,8 @@ export class ReminderGetSummaryUseCase {
     private readonly repository: IReminderGetSummaryRepositoryPort,
     @Inject(REMINDER_SUMMARY_PORT)
     private readonly summary: IReminderSummaryPort,
+    @Inject(REMINDER_CACHE_TTL_MS_DEFAULT_TOKEN)
+    private readonly summaryTtlMs: number,
   ) {}
 
   public async execute(command: IReminderGetSummaryCommand): Promise<IReminderGetSummaryView> {
@@ -22,6 +25,7 @@ export class ReminderGetSummaryUseCase {
 
     return await this.summary.read({
       ownerId,
+      ttlMs: this.summaryTtlMs,
       compute: () => this.summarize(ownerId),
     });
   }
