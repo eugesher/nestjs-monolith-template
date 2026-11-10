@@ -34,7 +34,7 @@ describe('ProductReplaceTagsUseCase', () => {
     useCase = new ProductReplaceTagsUseCase(
       { lockById },
       { find: jest.fn(), replace, findProductIds: jest.fn() },
-      { run, afterCommit: jest.fn() },
+      { run },
     );
   });
 

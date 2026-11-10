@@ -2,10 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { NoteRevisionModel } from '../../domain';
-import { NOTE_EDIT_REPOSITORY_PORT, type INoteEditRepositoryPort } from '../../outbound';
+import {
+  NOTE_EDIT_REPOSITORY_PORT,
+  NOTE_TRANSACTION_PORT,
+  type INoteEditRepositoryPort,
+  type INoteTransactionPort,
+} from '../../outbound';
 import {
   INoteEditCommand,
   INoteEditOutcomeView,
@@ -22,8 +26,8 @@ export class NoteEditUseCase {
     private readonly writeService: NoteWriteService,
     @Inject(NOTE_EDIT_REPOSITORY_PORT)
     private readonly repository: INoteEditRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(NOTE_TRANSACTION_PORT)
+    private readonly transaction: INoteTransactionPort,
     @InjectPinoLogger(NoteEditUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

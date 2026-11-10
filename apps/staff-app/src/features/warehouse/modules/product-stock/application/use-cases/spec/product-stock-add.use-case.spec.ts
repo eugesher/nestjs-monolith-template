@@ -33,7 +33,7 @@ describe('ProductStockAddUseCase', () => {
       { findById },
       { lock, add },
       { claim, complete, release },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });

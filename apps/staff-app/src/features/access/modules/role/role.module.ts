@@ -7,6 +7,7 @@ import {
   RoleCreateRepository,
   RoleListRepository,
   RoleReassignPermissionsRepository,
+  RoleTransactionAdapter,
 } from './infrastructure';
 import { RoleController } from './presentation';
 
@@ -20,6 +21,7 @@ import { RoleController } from './presentation';
     RoleListRepository.provider,
     RoleCreateRepository.provider,
     RoleReassignPermissionsRepository.provider,
+    RoleTransactionAdapter.provider,
   ],
 })
 export class RoleModule {}

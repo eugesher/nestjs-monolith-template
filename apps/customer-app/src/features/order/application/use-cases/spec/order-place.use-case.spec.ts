@@ -49,7 +49,7 @@ describe('OrderPlaceUseCase', () => {
       { findActiveProducts, insertOrder, insertOrderProducts, findPlaced },
       { lock, withdraw },
       { claim, complete, release },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });

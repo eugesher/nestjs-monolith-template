@@ -11,6 +11,7 @@ import {
   TagCommonFindRepository,
   TagCommonFindSubjectIdsRepository,
   TagCommonReplaceRepository,
+  TagCommonTransactionAdapter,
 } from '../infrastructure';
 import { TagCommonFacade } from './tag-common.facade';
 
@@ -24,6 +25,7 @@ import { TagCommonFacade } from './tag-common.facade';
     TagCommonFindRepository.provider,
     TagCommonFindSubjectIdsRepository.provider,
     TagCommonReplaceRepository.provider,
+    TagCommonTransactionAdapter.provider,
   ],
 })
 export class TagCommonModule {}

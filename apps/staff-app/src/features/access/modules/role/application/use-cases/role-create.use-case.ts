@@ -2,10 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { AuthRoleNameTakenException, IRoleDraftOutput, RoleModel } from '../../domain';
-import { ROLE_CREATE_REPOSITORY_PORT, type IRoleCreateRepositoryPort } from '../../outbound';
+import {
+  ROLE_CREATE_REPOSITORY_PORT,
+  ROLE_TRANSACTION_PORT,
+  type IRoleCreateRepositoryPort,
+  type IRoleTransactionPort,
+} from '../../outbound';
 import { IRoleCreateCommand, IRoleView } from '../interfaces';
 
 @Injectable()
@@ -13,8 +17,8 @@ export class RoleCreateUseCase {
   constructor(
     @Inject(ROLE_CREATE_REPOSITORY_PORT)
     private readonly repository: IRoleCreateRepositoryPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(ROLE_TRANSACTION_PORT)
+    private readonly transaction: IRoleTransactionPort,
     @InjectPinoLogger(RoleCreateUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

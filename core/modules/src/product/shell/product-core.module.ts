@@ -11,6 +11,7 @@ import {
   ProductCoreConfigLedgerRetryAttemptsProvider,
   ProductCoreConfigRedisCommandTimeoutMsProvider,
   ProductCoreLedgerQueueAdapter,
+  ProductCoreTransactionAdapter,
 } from '../infrastructure';
 import { ProductCoreFacade } from './product-core.facade';
 
@@ -24,6 +25,7 @@ import { ProductCoreFacade } from './product-core.facade';
     ProductCoreArchiveRepository.provider,
     ProductCoreLedgerQueueAdapter.provider,
     ProductCoreCatalogCacheAdapter.provider,
+    ProductCoreTransactionAdapter.provider,
     ProductCoreConfigRedisCommandTimeoutMsProvider,
     ProductCoreConfigLedgerRetryAttemptsProvider,
   ],

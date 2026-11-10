@@ -41,7 +41,6 @@ const areaPolicies = (area, sharedFacing) => {
       layer('application'),
       ...sharedFacing.application,
       baseLibs('observability'),
-      libContracts('local-storage'),
       packages('nestjs-pino'),
     ]),
     from(`${prefix}:infrastructure`, [
@@ -55,7 +54,7 @@ const areaPolicies = (area, sharedFacing) => {
       to('acme-core:entities'),
       to('acme-app:common:entities', own('app')),
       baseLibs(),
-      libContracts('cache', 'database'),
+      libContracts('cache', 'database', 'local-storage'),
       ...sharedFacing.infrastructure,
     ]),
     fromSpec(`${prefix}:infrastructure:core-adapters`),

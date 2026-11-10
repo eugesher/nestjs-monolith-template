@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
-
 import {
   OrderIdempotencyKeyReusedException,
   OrderIdempotentRequestInFlightException,
@@ -12,10 +10,12 @@ import {
   ORDER_IDEMPOTENCY_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
+  ORDER_TRANSACTION_PORT,
   OrderIdempotencyOutcomeEnum,
   type IOrderIdempotencyPort,
   type IOrderPlaceRepositoryPort,
   type IOrderProductStockPort,
+  type IOrderTransactionPort,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
 import { OrderLedgerService } from '../services/order-ledger.service';
@@ -30,8 +30,8 @@ export class OrderPlaceUseCase {
     private readonly productStock: IOrderProductStockPort,
     @Inject(ORDER_IDEMPOTENCY_PORT)
     private readonly idempotency: IOrderIdempotencyPort,
-    @Inject(TRANSACTION_PORT)
-    private readonly transaction: ITransactionPort,
+    @Inject(ORDER_TRANSACTION_PORT)
+    private readonly transaction: IOrderTransactionPort,
     @InjectPinoLogger(OrderPlaceUseCase.name)
     private readonly logger: PinoLogger,
   ) {}

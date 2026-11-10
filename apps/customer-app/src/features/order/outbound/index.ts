@@ -9,5 +9,6 @@ export * from './ports/order-ledger-record.port';
 export * from './ports/order-place-repository.port';
 export * from './ports/order-product-stock.port';
 
+export * from './ports/order-transaction.port';
 export * from './tokens/order-ledger-retry-attempts.token';
 export * from './tokens/order-redis-command-timeout-ms.token';

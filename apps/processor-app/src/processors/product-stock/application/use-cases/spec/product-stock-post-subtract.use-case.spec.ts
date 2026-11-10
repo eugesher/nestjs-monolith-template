@@ -51,7 +51,7 @@ describe('ProductStockPostSubtractUseCase', () => {
       { findActive },
       { lock },
       { archive },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });

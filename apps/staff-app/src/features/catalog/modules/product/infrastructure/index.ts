@@ -13,4 +13,5 @@ export * from './persistence/repositories/product-get-many.repository';
 export * from './persistence/repositories/product-replace-tags.repository';
 export * from './persistence/repositories/product-write.repository';
 
+export * from './persistence/transaction/product-transaction.adapter';
 export * from './queue/product-ledger-queue.adapter';

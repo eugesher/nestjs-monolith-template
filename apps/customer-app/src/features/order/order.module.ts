@@ -20,6 +20,7 @@ import {
   OrderLedgerQueueAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
+  OrderTransactionAdapter,
 } from './infrastructure';
 import { OrderController } from './presentation';
 
@@ -37,6 +38,7 @@ import { OrderController } from './presentation';
     OrderIdempotencyCoreAdapter.provider,
     OrderLedgerQueueAdapter.provider,
     OrderProductStockCoreAdapter.provider,
+    OrderTransactionAdapter.provider,
     OrderConfigRedisCommandTimeoutMsProvider,
     OrderConfigLedgerRetryAttemptsProvider,
     HttpExceptionFilter,

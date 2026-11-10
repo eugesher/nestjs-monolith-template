@@ -55,11 +55,11 @@ import `libs/local-storage`.
 
 ## Who sees the lib
 
-| Importer                               | Uses                                      |
-| -------------------------------------- | ----------------------------------------- |
-| `app.module.ts`                        | `LocalStorageSetupModule.forRoot()`       |
-| `OrmModule` of `libs/database`         | `LocalStorageTransactionModule.forRoot()` |
-| `application` of the apps and the core | `TRANSACTION_PORT` from the contracts     |
+| Importer                                  | Uses                                                              |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| `app.module.ts`                           | `LocalStorageSetupModule.forRoot()`                               |
+| `OrmModule` of `libs/database`            | `LocalStorageTransactionModule.forRoot()`                         |
+| `infrastructure` of the apps and the core | `TRANSACTION_PORT` from the contracts, in the transaction adapter |
 
 No other layer or lib imports the lib or its contracts. The lib itself sees `libs/observability` and
 the packages of CLS, the TypeORM adapter, `http` and `nestjs-pino` (see `016-lint-allowlists.md`).

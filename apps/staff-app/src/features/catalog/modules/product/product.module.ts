@@ -32,6 +32,7 @@ import {
   ProductReplaceTagsRepository,
   ProductStatusCoreAdapter,
   ProductTagCommonAdapter,
+  ProductTransactionAdapter,
   ProductWriteRepository,
 } from './infrastructure';
 import { ProductController } from './presentation';
@@ -62,6 +63,7 @@ import { ProductController } from './presentation';
     ProductIdempotencyCoreAdapter.provider,
     ProductLedgerQueueAdapter.provider,
     ProductCatalogCacheAdapter.provider,
+    ProductTransactionAdapter.provider,
     ProductConfigOccRetryAttemptsProvider,
     ProductConfigRedisCommandTimeoutMsProvider,
     ProductConfigLedgerRetryAttemptsProvider,

@@ -41,7 +41,7 @@ describe('ProductCreateUseCase', () => {
       { recordCreated } as unknown as ProductLedgerService,
       { existsBySku, insert, findInserted },
       { claim, complete, release },
-      { run, afterCommit: jest.fn() },
+      { run },
       logger as unknown as PinoLogger,
     );
   });
