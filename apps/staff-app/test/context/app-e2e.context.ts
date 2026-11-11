@@ -2,8 +2,8 @@ import { getQueueToken } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import type { Redis } from 'ioredis';
 
-import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/testing/cache';
-import { E2EContext } from '@acme-libs/testing/e2e/e2e.context';
+import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/testing';
+import { E2EContext } from '@acme-libs/testing';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,

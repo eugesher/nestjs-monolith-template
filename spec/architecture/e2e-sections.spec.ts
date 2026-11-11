@@ -38,8 +38,8 @@ describe('e2e sections', () => {
     await expect({
       file: 'apps/customer-app/test/context/__fixture__.ts',
       code:
-        'import { E2EContext } from "@acme-libs/testing/e2e/e2e.context";\n' +
-        'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing/cache";',
+        'import { E2EContext } from "@acme-libs/testing";\n' +
+        'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing";',
     }).toPassArchitectureLint();
   });
 

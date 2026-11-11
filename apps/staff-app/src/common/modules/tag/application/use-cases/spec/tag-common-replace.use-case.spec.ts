@@ -1,6 +1,6 @@
 import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 import { TagCommonSubjectTypeEnum } from '@acme-staff/contracts/tag';
 
 import { TagCommonReplaceUseCase } from '../tag-common-replace.use-case';

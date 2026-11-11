@@ -75,15 +75,10 @@ jobs:
           cache: yarn
       - run: yarn install --immutable
       - run: docker compose -f "$E2E_COMPOSE_FILE" up --detach --wait mysql redis
-      - run: yarn test:e2e:infra:reseed
-      - run: yarn test:e2e:staff:run
-      - run: yarn test:e2e:infra:reseed
-      - run: yarn test:e2e:customer:run
-      - run: yarn test:e2e:infra:reseed
-      - run: yarn test:e2e:processor:run
-      - run: yarn test:e2e:infra:reseed
-      - run: yarn test:e2e:system:staff:run
-      - run: yarn test:e2e:infra:reseed
-      - run: yarn test:e2e:system:customer:run
+      - run: yarn test:e2e:staff
+      - run: yarn test:e2e:customer
+      - run: yarn test:e2e:processor
+      - run: yarn test:e2e:system:staff
+      - run: yarn test:e2e:system:customer
       - if: always()
         run: docker compose -f "$E2E_COMPOSE_FILE" down --remove-orphans --volumes

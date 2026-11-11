@@ -23,14 +23,15 @@ validation error.
 | File                       | Read by                                               |
 | -------------------------- | ----------------------------------------------------- |
 | `env/apps/<app>/.env`      | the app, on `yarn start:dev`                          |
-| `env/apps/<app>/.env.test` | the e2e suite of the app                              |
+| `env/apps/<app>/.env.test` | the e2e and system suites of the app                  |
 | `env/migrations/.env`      | `yarn migration:*`                                    |
 | `env/migrations/.env.test` | the migrations and the seed of the e2e infrastructure |
 
 ## Infrastructure
 
-Start MySQL and Redis in a terminal of their own. The command stays attached, and the `node`
-container exits with code 0 once the migrations and the seed have run:
+Start MySQL and Redis. The command prints the logs of every container and returns once the `node`
+container has run the migrations and the seed and exited with code 0; a failed seed fails the
+command. The containers keep running in the background:
 
 ```bash
 yarn test:e2e:infra:up
@@ -80,20 +81,23 @@ yarn migration:run
 
 ## Run the e2e tests
 
-With the infrastructure running, reset its data and run a suite. Every suite needs its own reset,
-because the cases write to the fixtures:
+Rebuild the infrastructure and run every suite one after another, as CI does, with one report at the
+end:
 
 ```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:staff
+yarn test:e2e
 ```
 
-```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:customer
-```
+With the infrastructure running, `yarn test:e2e:run` runs the same suites without the rebuild. To
+run one suite, use its script: it resets the data first, because the cases write to the fixtures:
 
 ```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:processor
+yarn test:e2e:staff
 ```
+
+The suites are `test:e2e:staff`, `test:e2e:customer`, `test:e2e:processor`, and the system suites
+`test:e2e:system:staff` and `test:e2e:system:customer`, which start an API app together with
+`processor-app`. Each has a `:run` variant, such as `test:e2e:staff:run`, that skips the reset.
 
 A local run and the e2e suites share the database, so a reset also drops what a local run wrote.
 

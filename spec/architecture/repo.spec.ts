@@ -113,8 +113,7 @@ describe('repo', () => {
       await expect({
         file: 'test/system/apps/staff-app/context/__fixture__.ts',
         code:
-          'import { x } from "@acme-libs/testing/e2e/e2e.context";\n' +
-          'import { y } from "@acme-libs/testing/cache";',
+          'import { x } from "@acme-libs/testing";\n' + 'import { y } from "@acme-libs/testing";',
       }).toPassArchitectureLint();
     });
 

@@ -76,6 +76,7 @@
       "@acme-libs/openapi/*": ["./libs/openapi/src/*"],
       "@acme-libs/queue": ["./libs/queue/src"],
       "@acme-libs/queue/*": ["./libs/queue/src/*"],
+      "@acme-libs/testing": ["./libs/testing/src"],
       "@acme-libs/testing/*": ["./libs/testing/src/*"],
       "@acme-libs/toolkit": ["./libs/toolkit/src"],
       "@acme-libs/toolkit/*": ["./libs/toolkit/src/*"]

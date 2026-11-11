@@ -1,6 +1,6 @@
 import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { NoteCreateUseCase } from '../note-create.use-case';
 import type { INoteDraftOutput } from '../../../domain';

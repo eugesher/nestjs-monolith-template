@@ -65,6 +65,7 @@ describe('lib entry points', () => {
       '@acme-libs/openapi/*',
       '@acme-libs/queue',
       '@acme-libs/queue/*',
+      '@acme-libs/testing',
       '@acme-libs/testing/*',
       '@acme-libs/toolkit',
       '@acme-libs/toolkit/*',
@@ -93,9 +94,7 @@ describe('lib entry points', () => {
     '@acme-libs/observability/tracer',
     '@acme-libs/openapi',
     '@acme-libs/queue',
-    '@acme-libs/testing/cache',
-    '@acme-libs/testing/e2e/e2e.context',
-    '@acme-libs/testing/observability',
+    '@acme-libs/testing',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -175,8 +174,8 @@ describe('lib entry points', () => {
   ])('%s may NOT import test helpers outside specs', async (file) => {
     await expect({
       file,
-      code: 'import { makePinoLoggerMock } from "@acme-libs/testing/observability";',
-    }).toBreakRule('no-restricted-imports');
+      code: 'import { makePinoLoggerMock } from "@acme-libs/testing";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
@@ -186,7 +185,7 @@ describe('lib entry points', () => {
   ])('the spec %s MAY import test helpers', async (file) => {
     await expect({
       file,
-      code: 'import { makePinoLoggerMock } from "@acme-libs/testing/observability";',
+      code: 'import { makePinoLoggerMock } from "@acme-libs/testing";',
     }).toPassArchitectureLint();
   });
 
@@ -291,14 +290,14 @@ describe('lib entry points', () => {
   it('the Redis client token may NOT be imported outside specs', async () => {
     await expect({
       file: 'apps/staff-app/src/app/__fixture__.ts',
-      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing/cache";',
-    }).toBreakRule('no-restricted-imports');
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('an e2e spec MAY take the Redis client token', async () => {
     await expect({
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
-      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing/cache";',
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing";',
     }).toPassArchitectureLint();
   });
 

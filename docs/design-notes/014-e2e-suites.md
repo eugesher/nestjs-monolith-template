@@ -12,10 +12,10 @@ processor-app next to them (see System suites below).
 yarn test:e2e
 ```
 
-`test:e2e` rebuilds the infrastructure in the background and runs `test:e2e:run`: the five suites
-one after another, each after a reseed, as CI does, then one report with the tests, failures,
-snapshots and seconds of each suite (`scripts/node/e2e-run.ts`). It runs every suite even after a
-failure and exits with 1 if one failed.
+`test:e2e` rebuilds the infrastructure with `test:e2e:infra:reload` and runs `test:e2e:run`: the
+five suites one after another, each after a reseed, as CI does, then one report with the tests,
+failures, snapshots and seconds of each suite (`scripts/node/e2e-run.ts`). It runs every suite even
+after a failure and exits with 1 if one failed.
 
 ```bash
 yarn test:e2e:staff
@@ -87,7 +87,7 @@ the constructor, calls `super.init()` and adds its own. It signs one access toke
 account the cases use: admin, editor and viewer in staff-app, ann, bob and carol in customer-app,
 admin and viewer in processor-app. Everything the cases read is a getter that throws before
 `init()`. The contexts of staff-app and customer-app also hold the Redis client, through
-`@acme-libs/testing/cache`.
+`@acme-libs/testing`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
 records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes

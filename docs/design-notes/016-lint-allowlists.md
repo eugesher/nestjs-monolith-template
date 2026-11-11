@@ -188,9 +188,9 @@ may reach `naming` and `orm/application` may reach `repository`.
 
 ### The testing lib is for tests only
 
-`libs/testing` holds the test helpers: `e2e/e2e.context.ts`, the Redis token of `cache/` and the
-logger mock of `observability/`. Any `*.spec.ts` may import it, through a policy that matches the
-path, and so may the e2e code and `test/system`. It has no root: every import names a path inside
-it, and outside specs and e2e code `libs-deep-imports.mjs` refuses a deep import, so production code
-cannot reach it. The lib reaches the `outbound` of the cache lib for the Redis token and nothing
+`libs/testing` holds the test helpers behind one barrel, `@acme-libs/testing`: `E2EContext` of
+`e2e/e2e.context.ts`, the Redis token of `cache/` and the logger mock of
+`observability/pino-logger.mock.ts`. Any `*.spec.ts` may import it, through a policy that matches
+the path, and so may the e2e code and `test/system`; no layer of production code lists it, so lint
+refuses it there. The lib reaches the `outbound` of the cache lib for the Redis token and nothing
 else of another lib.

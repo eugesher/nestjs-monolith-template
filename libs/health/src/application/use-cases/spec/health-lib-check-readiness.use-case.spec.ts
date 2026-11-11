@@ -1,7 +1,7 @@
 import type { PinoLogger } from 'nestjs-pino';
 
 import { AppNameEnum, HealthDependencyStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { HealthLibCheckReadinessUseCase } from '../health-lib-check-readiness.use-case';
 

@@ -1,8 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
 import type { Redis } from 'ioredis';
 
-import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/testing/cache';
-import { E2EContext } from '@acme-libs/testing/e2e/e2e.context';
+import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/testing';
+import { E2EContext } from '@acme-libs/testing';
 import { AppModule as ProcessorAppModule } from '@acme-processor/app/app.module';
 import { AppModule } from '@acme-staff/app/app.module';
 import type { Maybe } from '@acme-libs/toolkit';

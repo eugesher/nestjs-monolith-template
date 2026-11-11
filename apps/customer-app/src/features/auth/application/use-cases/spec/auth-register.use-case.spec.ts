@@ -1,7 +1,7 @@
 import type { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { AuthRegisterCustomerInsertOutcomeEnum } from '../../../outbound';
 import { AuthRegisterUseCase } from '../auth-register.use-case';

@@ -1,6 +1,6 @@
 import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { ProductStockAddedEvent } from '../../../domain';
 import { ProductStockAddUseCase } from '../product-stock-add.use-case';

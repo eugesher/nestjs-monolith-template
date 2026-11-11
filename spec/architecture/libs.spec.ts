@@ -119,14 +119,21 @@ describe('libs', () => {
   it('a lib may NOT import the testing lib outside its specs', async () => {
     await expect({
       file: 'libs/ledger/src/application/__fixture__.ts',
-      code: 'import { x } from "../../../testing/src/observability";',
+      code: 'import { x } from "../../../testing/src";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a feature may NOT import the testing lib outside its specs', async () => {
+    await expect({
+      file: 'apps/__libs-fixture__/src/features/product/application/__fixture__.ts',
+      code: 'import { x } from "@acme-libs/testing";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it('a spec of any layer MAY import the testing lib', async () => {
     await expect({
       file: 'libs/ledger/src/application/spec/__fixture__.spec.ts',
-      code: 'import { x } from "../../../../testing/src/observability";',
+      code: 'import { x } from "../../../../testing/src";',
     }).toPassArchitectureLint();
   });
 

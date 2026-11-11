@@ -1,7 +1,7 @@
 import type { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 import { ProductStockCoreMovementKindEnum } from '@acme-core/contracts/product-stock';
 
 import { ProductStockCoreMoveUseCase } from '../product-stock-core-move.use-case';
