@@ -74,10 +74,10 @@ lint → typecheck → build → unit → e2e
 - `lint` runs `yarn lint:all` and `yarn format:check`, which checks every file Prettier knows
   outside `.gitignore`;
 - `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
-- `e2e` starts MySQL and Redis of `test/infra` and reseeds before each suite, as `014-e2e-suites.md`
-  requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`, so the `node`
-  service of the compose file is not built. The compose file and the suites read the `.env.test`
-  files of the repository.
+- `e2e` starts MySQL and Redis of `test/infra` and runs the three app suites, then the two system
+  suites, with a reseed before each, as `014-e2e-suites.md` requires. The seeding runs on the runner
+  through `yarn test:e2e:infra:reseed`, so the `node` service of the compose file is not built. The
+  compose file and the suites read the `.env.test` files of the repository.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.
 

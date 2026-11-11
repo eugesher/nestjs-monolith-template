@@ -1,0 +1,217 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`App Catalog Product POST /api/catalog/products should create a draft and append its ledger entry under the correlation id 1`] = `
+{
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "system-create-key",
+        "request_fingerprint": "ada84541ce1421e476e6537286b71ef98d9f760768c0338cb8e1fd5062c446bc",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "ledger_entry": [
+      {
+        "action": "ProductCreated",
+        "correlation_id": "system-product-create",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": Any<String>,
+        "payload": {
+          "name": "Created product",
+          "sku": "SYS-0001",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": Any<String>,
+        "subject_type": "product",
+      },
+    ],
+    "product": [
+      {
+        "created_at": Any<Date>,
+        "deleted_at": null,
+        "id": Any<String>,
+        "name": "Created product",
+        "sku": "SYS-0001",
+        "status": "draft",
+        "updated_at": Any<Date>,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "name": "Created product",
+      "sku": "SYS-0001",
+      "status": "draft",
+      "updatedAt": Any<String>,
+      "version": 1,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should archive through core, drop the cached catalog and append its ledger entry 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductArchived",
+        "correlation_id": "system-product-archive",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": "product-archived:103:2",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0004",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "103",
+        "subject_type": "product",
+      },
+    ],
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "103",
+        "name": "Product to archive",
+        "sku": "SKU-0004",
+        "status": "archived",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "103",
+      "name": "Product to archive",
+      "sku": "SKU-0004",
+      "status": "archived",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should publish a draft, drop the cached catalog and append its ledger entry 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "ledger_entry": [
+      {
+        "action": "ProductPublished",
+        "correlation_id": "system-product-publish",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": "product-published:101:2",
+        "payload": {
+          "previousStatus": "draft",
+          "sku": "SKU-0002",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "101",
+        "subject_type": "product",
+      },
+    ],
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "101",
+        "name": "Seeded draft product",
+        "sku": "SKU-0002",
+        "status": "active",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "id": "101",
+      "name": "Seeded draft product",
+      "sku": "SKU-0002",
+      "status": "active",
+      "updatedAt": Any<String>,
+      "version": 2,
+    },
+  },
+}
+`;
+
+exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId/add should add the units and append the ledger entry of the stock row 1`] = `
+{
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "system-restock-key",
+        "request_fingerprint": "f221eaac047dc3cc80d8c9ee9d9c752481cb15973ff880c71519f4158a3ec24e",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "ledger_entry": [
+      {
+        "action": "ProductRestocked",
+        "correlation_id": "system-product-restock",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": Any<String>,
+        "payload": {
+          "quantity": 5,
+          "sku": "SKU-0007",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "106",
+        "subject_type": "product",
+      },
+    ],
+    "product_stock": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "701",
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 1,
+      },
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "id": "703",
+        "order_product_id": "601",
+        "product_id": "106",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": null,
+        "product_id": "106",
+        "quantity": 5,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "productId": "106",
+      "quantity": 5,
+    },
+  },
+}
+`;

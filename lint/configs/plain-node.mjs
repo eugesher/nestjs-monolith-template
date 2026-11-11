@@ -5,6 +5,7 @@ const message = 'runs under plain node as an ES module';
 
 export const plainNode = {
   files: ['migrations/**/*.ts', 'scripts/**/*.ts', 'test/**/*.ts'],
+  ignores: ['test/system/**'],
   rules: {
     'no-restricted-globals': [
       'error',

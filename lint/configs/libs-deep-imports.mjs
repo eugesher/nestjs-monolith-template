@@ -3,7 +3,7 @@ const message =
 
 export const libsDeepImports = {
   files: ['apps/**/*.ts', 'core/**/*.ts', 'libs/**/*.ts'],
-  ignores: ['**/*.spec.ts', '**/*.e2e-spec.ts', 'apps/*/test/**/*.ts'],
+  ignores: ['**/*.spec.ts', '**/*.e2e-spec.ts', 'apps/*/test/**/*.ts', 'test/system/**/*.ts'],
   rules: {
     'no-restricted-imports': [
       'error',

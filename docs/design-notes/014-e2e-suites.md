@@ -3,7 +3,8 @@
 Each app has one e2e suite that boots its `AppModule` against the infrastructure of
 `013-e2e-infrastructure.md`. The suites keep only what unit specs cannot show: SQL, transactions,
 the wiring of guards, pipes, filters and middleware, the cache, idempotency and the ledger record
-queue. Logic stays in the unit specs.
+queue. Logic stays in the unit specs. staff-app and customer-app also have a system suite that boots
+processor-app next to them (see System suites below).
 
 ## Running
 
@@ -17,6 +18,14 @@ yarn test:e2e:infra:reseed && yarn test:e2e:customer
 
 ```bash
 yarn test:e2e:infra:reseed && yarn test:e2e:processor
+```
+
+```bash
+yarn test:e2e:infra:reseed && yarn test:e2e:system:staff
+```
+
+```bash
+yarn test:e2e:infra:reseed && yarn test:e2e:system:customer
 ```
 
 Each suite starts from a reseed: the cases write the fixtures, and a second run on the same data
@@ -101,9 +110,9 @@ seeded staff users.
 
 The Jest files outside the apps live in `jest/`:
 
-| File                        | What it does                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| `jest-common.e2e.config.js` | the Jest config of one app: aliases from `tsconfig.json`, `TZ=America/New_York` |
+| File                        | What it does                                                                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `jest-common.e2e.config.js` | the Jest config of a suite: its app, its root (`apps/<app>` unless given), aliases from `tsconfig.json`, `TZ=America/New_York` |
 
 **The environment comes from `env/apps/<app>/.env.test`.** The scripts set `NODE_ENV=test`, and
 `EnvHelper.appEnvFilePaths` picks that file, which is in the repository. `jest-common.e2e.config.js`
@@ -150,6 +159,27 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 The cases are the methods of the section classes: `apps/<app>/test/features/**/*.e2e.ts` and
 `apps/processor-app/test/processors/**/*.e2e.ts`, mounted by `apps/<app>/test/app/app.e2e-spec.ts`.
 The snapshots in `apps/<app>/test/app/__snapshots__` hold what each case asserts.
+
+## System suites
+
+`test/system/apps/<app>` starts an API app and processor-app in one process on the same MySQL and
+Redis. It has the layout of `apps/<app>/test`: the entry `app/app-system.e2e-spec.ts`,
+`context/app-e2e.context.ts` and the classes of `features/`. An app suite reads the waiting job and
+stops there, a processor suite adds the job by hand, so neither proves that what a producer writes
+is what the processor reads. A system suite covers that seam and nothing else: one case per producer
+of a queue, checked like an app case, with the result of the job in place of the job.
+
+**A job is awaited by its result.** `pollUntil(read, isDone)` waits first and reads after, 30
+attempts 500 ms apart, and answers the last read, so a job that never lands fails on the snapshot. A
+chain of jobs is awaited by its last row: the order case waits for the two ledger entries under one
+correlation id, `OrderPlaced` and `ProductArchived` of the sold-out product.
+
+**The apps share one environment.** Jest loads the `.env.test` of the API app, and processor-app
+adds the variables only it has from its own file. The two differ in `PORT` and `JWT_SECRET`, and no
+system case calls processor-app over HTTP.
+
+**`test/system` is not plain node.** It compiles project code, so it has its own `tsconfig.json`
+over the root one and the lint category `repo:system`. `test/infra` keeps running under plain node.
 
 ## Lint
 

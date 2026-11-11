@@ -62,9 +62,10 @@ default reporter, which it replaces with a short summary when it detects an AI a
 an alias that is not mapped does not resolve, and the plugin treats it as an external package.
 
 **The config does not depend on the working directory.** An editor runs ESLint from the nearest
-`package.json`, and `migrations/` and `scripts/` have their own (they run under plain `node` as ES
-modules). Both `eslint-plugin-boundaries` and the `typescript-eslint` project service default to
-`process.cwd()`, so from a sub-folder every file pattern misses and the project service finds no
-`tsconfig.json`. `boundaries/root-path` and `tsconfigRootDir` are pinned to the repository root, and
-`repo.spec.ts` lints from `migrations/` and `apps/staff-app/` in a child process to keep it that
-way: an in-process `new ESLint({ cwd })` does not change `process.cwd()` and would pass either way.
+`package.json`, and `migrations/`, `scripts/` and `test/infra/` have their own (they run under plain
+`node` as ES modules). Both `eslint-plugin-boundaries` and the `typescript-eslint` project service
+default to `process.cwd()`, so from a sub-folder every file pattern misses and the project service
+finds no `tsconfig.json`. `boundaries/root-path` and `tsconfigRootDir` are pinned to the repository
+root, and `repo.spec.ts` lints from `migrations/` and `apps/staff-app/` in a child process to keep
+it that way: an in-process `new ESLint({ cwd })` does not change `process.cwd()` and would pass
+either way.

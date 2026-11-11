@@ -14,6 +14,7 @@ describe('repo', () => {
       'migrations/config/data-source.ts',
       'scripts/node/support/script-args.ts',
       'test/infra/seed/support/seed-rows.ts',
+      'test/system/apps/staff-app/context/__context-fixture__.ts',
     ]);
   });
 
@@ -83,6 +84,57 @@ describe('repo', () => {
       await expect({
         file: 'migrations/snapshots/__fixture__.ts',
         code: 'import { Module } from "@nestjs/common";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+  });
+
+  describe('system tests (repo:system)', () => {
+    it('a system test MAY mount the app modules and its own context', async () => {
+      await expect({
+        file: 'test/system/apps/staff-app/app/__fixture__.ts',
+        code:
+          'import { x } from "@acme-staff/app/app.module";\n' +
+          'import { y } from "@acme-processor/app/app.module";\n' +
+          'import { z } from "../context/__context-fixture__";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each([
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/jwt',
+      '@nestjs/testing',
+      'nestjs-pino',
+      'supertest',
+      'typeorm',
+    ])('a system test MAY import %s', async (source) => {
+      await expect({
+        file: 'test/system/apps/staff-app/app/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toPassArchitectureLint();
+    });
+
+    it('a system test MAY read the redis token of the cache lib', async () => {
+      await expect({
+        file: 'test/system/apps/staff-app/context/__fixture__.ts',
+        code: 'import { x } from "@acme-libs/cache/testing";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['@acme-staff/features', '@acme-core/modules/product'])(
+      'a system test may NOT reach %s — it enters an app through its AppModule',
+      async (source) => {
+        await expect({
+          file: 'test/system/apps/staff-app/app/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('a seed script may NOT reach the app modules', async () => {
+      await expect({
+        file: 'test/infra/seed/__fixture__.ts',
+        code: 'import { x } from "@acme-staff/app/app.module";',
       }).toBreakRule('boundaries/dependencies');
     });
   });

@@ -1,4 +1,4 @@
-import { from, packages, to } from './selectors.mjs';
+import { baseLibs, from, packages, to } from './selectors.mjs';
 
 export const repo = [
   from('repo:spec', [
@@ -18,6 +18,21 @@ export const repo = [
   from('repo:scripts', [
     to('repo:scripts'),
     packages('argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'),
+  ]),
+  from('repo:system', [
+    to('repo:system'),
+    to('acme-app:app:module'),
+    baseLibs('cache'),
+    packages(
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/jwt',
+      '@nestjs/testing',
+      'ioredis',
+      'nestjs-pino',
+      'supertest',
+      'typeorm',
+    ),
   ]),
   from('repo:test', [to('repo:test'), packages('dotenv', 'fs', 'joi', 'path', 'typeorm')]),
 ];

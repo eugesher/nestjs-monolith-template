@@ -13,14 +13,14 @@ const moduleNameMapper = Object.fromEntries(
   ]),
 );
 
-module.exports = (app) => {
+module.exports = (app, root = path.join('apps', app)) => {
   const envFile = path.join(repoRoot, 'env', 'apps', app, '.env.test');
 
   dotenv.config({ path: envFile, override: true, quiet: true });
 
   return {
     moduleFileExtensions: ['js', 'json', 'ts'],
-    rootDir: path.join(repoRoot, 'apps', app),
+    rootDir: path.join(repoRoot, root),
     testEnvironment: 'node',
     setupFiles: ['reflect-metadata'],
     testRegex: '\\.e2e-spec\\.ts$',

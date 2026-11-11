@@ -1,8 +1,6 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "verbatimModuleSyntax": true,
-    "erasableSyntaxOnly": true,
     "noEmit": true,
     "incremental": false
   },
