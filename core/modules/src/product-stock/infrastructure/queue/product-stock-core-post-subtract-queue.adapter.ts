@@ -1,16 +1,16 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import type { Queue } from 'bull';
 
 import {
-  IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
+  type IProductStockPostSubtractPayload,
 } from '@acme-core/contracts/product-stock';
 
 import {
-  IProductStockCorePostSubtractEnqueueCommand,
-  IProductStockCorePostSubtractPort,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
+  type IProductStockCorePostSubtractEnqueueCommand,
+  type IProductStockCorePostSubtractPort,
 } from '../../outbound';
 
 @Injectable()

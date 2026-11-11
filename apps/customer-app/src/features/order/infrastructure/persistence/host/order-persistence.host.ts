@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Order, OrderProduct, Product } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { OrderPersistenceProductBuilder } from '../builders/order-persistence-product.builder';
 import { OrderPersistenceBuilder } from '../builders/order-persistence.builder';

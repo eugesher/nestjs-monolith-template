@@ -1,13 +1,13 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
-import { NoteRevisionModel } from '../../../domain';
-import { INoteEditUpdateQuery } from '../../../outbound';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteWriteService } from '../../services/note-write.service';
 import { NoteEditUseCase } from '../note-edit.use-case';
+import type { NoteRevisionModel } from '../../../domain';
+import type { INoteEditUpdateQuery } from '../../../outbound';
 
 describe('NoteEditUseCase', () => {
   let findOwned: jest.Mock;

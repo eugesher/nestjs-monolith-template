@@ -1,4 +1,4 @@
-import { EntityManager, QueryRunner, Repository } from 'typeorm';
+import { Repository, type EntityManager, type QueryRunner } from 'typeorm';
 
 import { HostedRepository } from '../../../../repository/hosted.repository';
 import { OrmGetRepositoryUseCase } from '../orm-get-repository.use-case';

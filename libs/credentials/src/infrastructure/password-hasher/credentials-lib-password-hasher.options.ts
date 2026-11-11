@@ -1,5 +1,5 @@
-import { ConfigService } from '@nestjs/config';
-import { argon2id, HashOptions } from 'argon2';
+import { argon2id, type HashOptions } from 'argon2';
+import type { ConfigService } from '@nestjs/config';
 
 export class CredentialsLibPasswordHasherOptions implements HashOptions {
   public readonly type = argon2id;

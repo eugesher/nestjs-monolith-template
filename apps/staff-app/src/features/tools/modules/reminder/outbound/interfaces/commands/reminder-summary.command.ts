@@ -1,4 +1,4 @@
-import { IReminderSummarySnapshotView } from '../views/reminder-summary.view';
+import type { IReminderSummarySnapshotView } from '../views/reminder-summary.view';
 
 export interface IReminderSummaryReadCommand {
   ownerId: string;

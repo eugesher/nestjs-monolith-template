@@ -1,13 +1,13 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IProductCoreArchiveRecord,
-  IProductCoreArchiveRepositoryPort,
-  IProductCoreArchiveUpdateQuery,
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
+  type IProductCoreArchiveRecord,
+  type IProductCoreArchiveRepositoryPort,
+  type IProductCoreArchiveUpdateQuery,
 } from '../../../outbound';
 import { ProductCorePersistenceHost } from '../host/product-core-persistence.host';
 

@@ -1,8 +1,11 @@
 import { OnQueueFailed, Process, Processor } from '@nestjs/bull';
-import { type Job } from 'bull';
+import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import {
+  LEDGER_RECORD_QUEUE,
+  type ILedgerRecordProcessorPayload,
+} from '@acme-libs/contracts/ledger';
 
 import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../application';
 

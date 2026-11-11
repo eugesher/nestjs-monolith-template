@@ -1,11 +1,11 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import {
-  ILocalStorageTransactionContextPort,
   LOCAL_STORAGE_TRANSACTION_CONTEXT_PORT,
+  type ILocalStorageTransactionContextPort,
 } from '../../outbound';
 
 @Injectable()

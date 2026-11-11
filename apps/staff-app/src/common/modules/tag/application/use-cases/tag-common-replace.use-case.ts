@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
-  ITagCommonReplaceCommand,
-  ITagCommonReplaceView,
   TagCommonReplaceOutcomeEnum,
+  type ITagCommonReplaceCommand,
+  type ITagCommonReplaceView,
 } from '@acme-staff/contracts/tag';
 
 import { TagCommonSubjectTagsModel } from '../../domain';

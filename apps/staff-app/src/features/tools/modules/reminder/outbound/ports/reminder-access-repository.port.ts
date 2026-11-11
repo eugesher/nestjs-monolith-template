@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IReminderAccessFindOwnedQuery, IReminderAccessRecord } from '../interfaces';
+import type { IReminderAccessFindOwnedQuery, IReminderAccessRecord } from '../interfaces';
 
 export interface IReminderAccessRepositoryPort {
   findOwned(query: IReminderAccessFindOwnedQuery): Promise<Nullable<IReminderAccessRecord>>;

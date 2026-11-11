@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IProductStockAddProductRecord } from '../interfaces';
+import type { IProductStockAddProductRecord } from '../interfaces';
 
 export interface IProductStockAddRepositoryPort {
   findById(productId: string): Promise<Nullable<IProductStockAddProductRecord>>;

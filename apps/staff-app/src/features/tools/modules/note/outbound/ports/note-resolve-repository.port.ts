@@ -1,4 +1,4 @@
-import { INoteResolveUpdateQuery } from '../interfaces';
+import type { INoteResolveUpdateQuery } from '../interfaces';
 
 export interface INoteResolveRepositoryPort {
   update(query: INoteResolveUpdateQuery): Promise<boolean>;

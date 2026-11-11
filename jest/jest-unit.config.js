@@ -30,7 +30,7 @@ module.exports = {
     '{apps,core,libs}/**/*.ts',
     '!**/*.spec.ts',
     '!apps/*/test/**',
-    '!libs/*/src/testing/**',
+    '!libs/testing/**',
     '!**/index.ts',
     '!**/*.{port,token,enum,entity,dto,view,type,interface,const,command,query,record,input,output}.ts',
     '!**/*.module.ts',

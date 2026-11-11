@@ -1,5 +1,5 @@
-import { AuthLoginUseCase } from '../../../application';
 import { AuthController } from '../auth.controller';
+import type { AuthLoginUseCase } from '../../../application';
 
 describe('AuthController', () => {
   let login: jest.Mock;

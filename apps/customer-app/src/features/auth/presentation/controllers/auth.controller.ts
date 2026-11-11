@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseFilters } from '@
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, Public } from '@acme-libs/auth';
-import { type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { AuthLoginUseCase, AuthRegisterUseCase } from '../../application';
 import {

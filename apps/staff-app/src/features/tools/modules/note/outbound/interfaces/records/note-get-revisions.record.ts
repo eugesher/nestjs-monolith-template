@@ -1,4 +1,4 @@
-import { NoteRevision } from '@acme-staff/common/entities';
+import type { NoteRevision } from '@acme-staff/common/entities';
 
 export type INoteGetRevisionsRecord = [
   Pick<

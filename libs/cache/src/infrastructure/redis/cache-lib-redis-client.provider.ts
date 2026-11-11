@@ -1,7 +1,7 @@
-import { FactoryProvider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 import { PinoLogger } from 'nestjs-pino';
+import type { FactoryProvider } from '@nestjs/common';
 
 import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '../../outbound';
 

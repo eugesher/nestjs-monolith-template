@@ -1,4 +1,4 @@
-import { ProductStatusEnum } from '@acme-libs/kernel';
+import type { ProductStatusEnum } from '@acme-libs/kernel';
 
 export interface IProductCoreRecordInput {
   id: string;

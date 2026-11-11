@@ -1,40 +1,43 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
   ProductNotFoundException,
+  ProductStockAddedEvent,
   ProductStockModel,
 } from '../../domain';
 import {
   PRODUCT_STOCK_ADD_REPOSITORY_PORT,
   PRODUCT_STOCK_IDEMPOTENCY_PORT,
+  PRODUCT_STOCK_LEDGER_PORT,
   PRODUCT_STOCK_MOVEMENT_PORT,
   PRODUCT_STOCK_TRANSACTION_PORT,
   ProductStockIdempotencyOutcomeEnum,
   type IProductStockAddRepositoryPort,
   type IProductStockIdempotencyPort,
+  type IProductStockLedgerPort,
   type IProductStockMovementPort,
   type IProductStockTransactionPort,
 } from '../../outbound';
-import {
+import type {
   IProductStockAddCommand,
   IProductStockAddView,
   IProductStockAddWriteView,
 } from '../interfaces';
-import { ProductStockLedgerService } from '../services/product-stock-ledger.service';
 
 @Injectable()
 export class ProductStockAddUseCase {
   constructor(
-    private readonly ledgerService: ProductStockLedgerService,
     @Inject(PRODUCT_STOCK_ADD_REPOSITORY_PORT)
     private readonly repository: IProductStockAddRepositoryPort,
     @Inject(PRODUCT_STOCK_MOVEMENT_PORT)
     private readonly movement: IProductStockMovementPort,
     @Inject(PRODUCT_STOCK_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductStockIdempotencyPort,
+    @Inject(PRODUCT_STOCK_LEDGER_PORT)
+    private readonly ledger: IProductStockLedgerPort,
     @Inject(PRODUCT_STOCK_TRANSACTION_PORT)
     private readonly transaction: IProductStockTransactionPort,
     @InjectPinoLogger(ProductStockAddUseCase.name)
@@ -65,8 +68,9 @@ export class ProductStockAddUseCase {
     try {
       const written = await this.transaction.run(() => this.persist(command));
       const { stock, productStockId, events } = written;
+      const added = events.filter((event) => event instanceof ProductStockAddedEvent);
 
-      await this.ledgerService.recordEvents({ productStockId, events });
+      await this.ledger.recordEvents({ productStockId, events: added });
 
       this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
 

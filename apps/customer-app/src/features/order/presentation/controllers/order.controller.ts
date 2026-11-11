@@ -9,7 +9,7 @@ import {
 
 import { CurrentUser } from '@acme-libs/auth';
 import { IdempotencyKey } from '@acme-libs/http';
-import { type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from '../../application';
 import {

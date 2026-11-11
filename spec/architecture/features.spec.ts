@@ -97,6 +97,15 @@ describe('features', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
+    it('presentation may NOT reach its outbound — ports belong to the application', async () => {
+      await expect({
+        file:
+          'apps/__features-fixture__/src/features/product/presentation/controllers/' +
+          '__fixture__.ts',
+        code: 'import { x } from "../../outbound";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
     it.each(['records', 'queries'])(
       'outbound/interfaces/%s MAY reach the entities — they mirror what persistence reads',
       async (folder) => {

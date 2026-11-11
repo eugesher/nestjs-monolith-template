@@ -1,3 +1,3 @@
-import { Order } from '@acme-core/entities';
+import type { Order } from '@acme-core/entities';
 
 export type IOrderGetTagsRecord = Pick<Order, 'id'>;

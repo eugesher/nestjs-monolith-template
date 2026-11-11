@@ -3,23 +3,23 @@
 A module reads a configuration value through a token of its own, and only `infrastructure/config`
 binds that token to the configuration.
 
-| Part     | Example                                                                                     |
-| -------- | ------------------------------------------------------------------------------------------- |
-| schema   | `apps/customer-app/src/app/setup/config/config-setup.module.ts`                             |
-| token    | `apps/customer-app/src/features/order/outbound/tokens/order-ledger-retry-attempts.token.ts` |
-| provider | `apps/customer-app/src/features/order/infrastructure/config/order-config.provider.ts`       |
-| lib      | `ConfigValueProvider` in `libs/config/src/provider/config-value.provider.ts`                |
-| module   | `apps/customer-app/src/features/order/order.module.ts`                                      |
+| Part     | Example                                                                                                   |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| schema   | `apps/staff-app/src/app/setup/config/config-setup.module.ts`                                              |
+| token    | `apps/staff-app/src/features/catalog/modules/product/outbound/tokens/product-occ-retry-attempts.token.ts` |
+| provider | `apps/staff-app/src/features/catalog/modules/product/infrastructure/config/product-config.provider.ts`    |
+| lib      | `ConfigValueProvider` in `libs/config/src/provider/config-value.provider.ts`                              |
+| module   | `apps/staff-app/src/features/catalog/modules/product/product.module.ts`                                   |
 
 ```ts
-export const OrderConfigLedgerRetryAttemptsProvider = ConfigValueProvider.provide({
-  injectionToken: ORDER_LEDGER_RETRY_ATTEMPTS_TOKEN,
-  configProperty: 'LEDGER_RETRY_ATTEMPTS',
+export const ProductConfigOccRetryAttemptsProvider = ConfigValueProvider.provide({
+  injectionToken: PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN,
+  configProperty: 'OCC_RETRY_ATTEMPTS',
 });
 ```
 
 **The schema validates, the provider binds.** `ConfigSetupModule` of each app checks and converts
-every variable with Joi, so `LEDGER_RETRY_ATTEMPTS` is already a number when it reaches
+every variable with Joi, so `OCC_RETRY_ATTEMPTS` is already a number when it reaches
 `ConfigService`. `ConfigValueProvider.provide` answers a plain `FactoryProvider` that reads the
 property with `getOrThrow`.
 

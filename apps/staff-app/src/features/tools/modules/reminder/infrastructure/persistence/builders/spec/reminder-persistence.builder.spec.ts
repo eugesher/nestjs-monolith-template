@@ -1,4 +1,4 @@
-import { DataSource, SelectQueryBuilder } from 'typeorm';
+import { DataSource, type SelectQueryBuilder } from 'typeorm';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 import { Reminder } from '@acme-staff/common/entities';

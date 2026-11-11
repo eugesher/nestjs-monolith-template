@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { AuthRoleNotFoundException, RoleModel } from '../../domain';
 import {
@@ -8,7 +8,7 @@ import {
   type IRoleReassignPermissionsRepositoryPort,
   type IRoleTransactionPort,
 } from '../../outbound';
-import { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
+import type { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
 
 @Injectable()
 export class RoleReassignPermissionsUseCase {

@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 import { LessThan } from 'typeorm';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
   IDEMPOTENCY_PURGE_REPOSITORY_PORT,
-  IIdempotencyPurgeRecord,
-  IIdempotencyPurgeRepositoryPort,
+  type IIdempotencyPurgeRecord,
+  type IIdempotencyPurgeRepositoryPort,
 } from '../../../outbound';
 import { IdempotencyPersistenceHost } from '../host/idempotency-persistence.host';
 

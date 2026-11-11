@@ -1,11 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IProductWriteRepositoryPort,
-  IProductWriteUpdateQuery,
   PRODUCT_WRITE_REPOSITORY_PORT,
+  type IProductWriteRepositoryPort,
+  type IProductWriteUpdateQuery,
 } from '../../../outbound';
 import { ProductBaseRepository } from './base/product-base.repository';
 

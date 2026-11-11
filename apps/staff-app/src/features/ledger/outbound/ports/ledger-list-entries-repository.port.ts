@@ -1,4 +1,4 @@
-import { ILedgerListEntriesQuery, ILedgerListEntriesRecord } from '../interfaces';
+import type { ILedgerListEntriesQuery, ILedgerListEntriesRecord } from '../interfaces';
 
 export interface ILedgerListEntriesRepositoryPort {
   list(query: ILedgerListEntriesQuery): Promise<ILedgerListEntriesRecord>;

@@ -1,7 +1,7 @@
-import { AppE2EContext } from '../../context/app-e2e.context';
 import { PermissionE2E } from './modules/permission.e2e';
 import { RoleE2E } from './modules/role.e2e';
 import { UserE2E } from './modules/user.e2e';
+import type { AppE2EContext } from '../../context/app-e2e.context';
 
 export class AccessE2E {
   private constructor(

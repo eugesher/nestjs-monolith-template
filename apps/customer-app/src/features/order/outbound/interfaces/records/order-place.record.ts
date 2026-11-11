@@ -1,4 +1,4 @@
-import { Order, OrderProduct, Product } from '@acme-core/entities';
+import type { Order, OrderProduct, Product } from '@acme-core/entities';
 
 export type IOrderPlaceProductRecord = Pick<Product, 'id'>;
 

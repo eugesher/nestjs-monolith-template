@@ -1,4 +1,4 @@
-import {
+import type {
   IProductStockCoreLockCommand,
   IProductStockCoreMoveCommand,
   IProductStockCoreMoveView,

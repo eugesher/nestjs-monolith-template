@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { SubjectTag, Tag } from '@acme-staff/common/entities';
+import { SubjectTag, type Tag } from '@acme-staff/common/entities';
 
-import { ITagCommonFindQuery } from '../../../outbound';
+import type { ITagCommonFindQuery } from '../../../outbound';
 
 export class TagCommonPersistenceBuilder extends SelectQueryBuilder<Tag> {
   private readonly subjectTagAlias = SubjectTag.name;

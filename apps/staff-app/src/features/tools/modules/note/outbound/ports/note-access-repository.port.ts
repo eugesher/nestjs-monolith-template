@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { INoteAccessFindOwnedQuery, INoteAccessRecord } from '../interfaces';
+import type { INoteAccessFindOwnedQuery, INoteAccessRecord } from '../interfaces';
 
 export interface INoteAccessRepositoryPort {
   findOwned(query: INoteAccessFindOwnedQuery): Promise<Nullable<INoteAccessRecord>>;

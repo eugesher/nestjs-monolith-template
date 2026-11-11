@@ -1,4 +1,4 @@
-import { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
 
 export interface ICredentialsLibAccessTokenPort {
   sign(command: ICredentialsLibSignAccessTokenCommand): Promise<string>;

@@ -1,18 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
-import { PRODUCT_CATALOG_CACHE_PORT, type IProductCatalogCachePort } from '../../outbound';
-import { IProductPublishCommand, IProductView } from '../interfaces';
-import { ProductLedgerService } from '../services/product-ledger.service';
+import { ProductPublishedEvent } from '../../domain';
+import {
+  PRODUCT_CATALOG_CACHE_PORT,
+  PRODUCT_LEDGER_PORT,
+  type IProductCatalogCachePort,
+  type IProductLedgerPort,
+} from '../../outbound';
 import { ProductWriteService } from '../services/product-write.service';
+import type { IProductPublishCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductPublishUseCase {
   constructor(
     private readonly writeService: ProductWriteService,
-    private readonly ledgerService: ProductLedgerService,
     @Inject(PRODUCT_CATALOG_CACHE_PORT)
     private readonly catalogCache: IProductCatalogCachePort,
+    @Inject(PRODUCT_LEDGER_PORT)
+    private readonly ledger: IProductLedgerPort,
     @InjectPinoLogger(ProductPublishUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -23,9 +29,10 @@ export class ProductPublishUseCase {
       product.publish(),
     );
     const { product, events } = written;
+    const published = events.filter((event) => event instanceof ProductPublishedEvent);
 
     await this.catalogCache.invalidate();
-    await this.ledgerService.recordEvents({ events });
+    await this.ledger.recordEvents({ events: published });
 
     const view = product.toSnapshot();
 

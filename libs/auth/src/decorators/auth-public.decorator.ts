@@ -1,4 +1,4 @@
-import { CustomDecorator, SetMetadata } from '@nestjs/common';
+import { SetMetadata, type CustomDecorator } from '@nestjs/common';
 
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
 

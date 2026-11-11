@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
-import { Maybe } from '@acme-libs/toolkit';
-import { ICacheLibWrapCommand } from '@acme-libs/contracts/cache';
+import type { Maybe } from '@acme-libs/toolkit';
+import type { ICacheLibWrapCommand } from '@acme-libs/contracts/cache';
 
 import {
   CACHE_LIB_STORE_PORT,
   CACHE_LIB_TRACER_PORT,
-  ICacheLibTracerSpanCommand,
   type ICacheLibStorePort,
   type ICacheLibTracerPort,
+  type ICacheLibTracerSpanCommand,
 } from '../../outbound';
 
 @Injectable()

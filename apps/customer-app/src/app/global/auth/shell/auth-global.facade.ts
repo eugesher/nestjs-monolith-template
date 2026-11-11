@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
-import {
+import type { Nullable } from '@acme-libs/toolkit';
+import type {
   IAuthCurrentUserView,
   IAuthJwtPayloadCommand,
   IAuthUserValidatorPort,

@@ -1,5 +1,4 @@
 export * from './services/product-access.service';
-export * from './services/product-ledger.service';
 export * from './services/product-write.service';
 
 export * from './use-cases/product-archive.use-case';

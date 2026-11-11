@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
+import type {
   ICredentialsLibPort,
   ICredentialsLibSignAccessTokenCommand,
   ICredentialsLibVerifyPasswordCommand,

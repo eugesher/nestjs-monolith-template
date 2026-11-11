@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
-import {
+import type { Maybe } from '@acme-libs/toolkit';
+import type {
   ICacheLibPort,
   ICacheLibSetCommand,
   ICacheLibWrapCommand,

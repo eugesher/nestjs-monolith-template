@@ -3,7 +3,7 @@ import { UserStatusEnum } from '@acme-libs/kernel';
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
 import { AuthUserInactiveException } from '../exceptions/auth-user-inactive.exception';
-import {
+import type {
   IAuthCustomerCandidateInput,
   IAuthCustomerDraftOutput,
   IAuthCustomerRecordInput,

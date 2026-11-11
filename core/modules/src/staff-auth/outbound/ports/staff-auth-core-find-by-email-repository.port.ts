@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IStaffAuthCoreFindByEmailStaffUserRecord } from '../interfaces';
+import type { IStaffAuthCoreFindByEmailStaffUserRecord } from '../interfaces';
 
 export interface IStaffAuthCoreFindByEmailRepositoryPort {
   findByEmail(email: string): Promise<Nullable<IStaffAuthCoreFindByEmailStaffUserRecord>>;

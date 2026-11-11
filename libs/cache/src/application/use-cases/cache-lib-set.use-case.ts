@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ICacheLibSetCommand } from '@acme-libs/contracts/cache';
+import type { ICacheLibSetCommand } from '@acme-libs/contracts/cache';
 
 import {
   CACHE_LIB_STORE_PORT,

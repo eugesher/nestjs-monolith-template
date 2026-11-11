@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Customer } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { AuthGlobalPersistenceCustomerBuilder } from '../builders/auth-global-persistence-customer.builder';
 

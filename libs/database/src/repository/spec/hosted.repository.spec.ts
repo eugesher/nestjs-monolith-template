@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import type { EntityManager } from 'typeorm';
 
 import { HostedRepository } from '../hosted.repository';
 

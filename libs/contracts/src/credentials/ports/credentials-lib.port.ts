@@ -1,4 +1,4 @@
-import {
+import type {
   ICredentialsLibSignAccessTokenCommand,
   ICredentialsLibVerifyPasswordCommand,
 } from '../interfaces';

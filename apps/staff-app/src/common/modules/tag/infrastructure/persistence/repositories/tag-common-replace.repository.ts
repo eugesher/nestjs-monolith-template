@@ -1,16 +1,16 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  ITagCommonReplaceFindLinkedQuery,
-  ITagCommonReplaceLinkQuery,
-  ITagCommonReplaceRepositoryPort,
-  ITagCommonReplaceSubjectTagRecord,
-  ITagCommonReplaceTagRecord,
-  ITagCommonReplaceUnlinkQuery,
   TAG_COMMON_REPLACE_REPOSITORY_PORT,
+  type ITagCommonReplaceFindLinkedQuery,
+  type ITagCommonReplaceLinkQuery,
+  type ITagCommonReplaceRepositoryPort,
+  type ITagCommonReplaceSubjectTagRecord,
+  type ITagCommonReplaceTagRecord,
+  type ITagCommonReplaceUnlinkQuery,
 } from '../../../outbound';
 import { TagCommonPersistenceHost } from '../host/tag-common-persistence.host';
 

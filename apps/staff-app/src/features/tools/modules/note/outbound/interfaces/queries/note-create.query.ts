@@ -1,4 +1,4 @@
-import { Note } from '@acme-staff/common/entities';
+import type { Note } from '@acme-staff/common/entities';
 
 export type INoteCreateInsertQuery = Pick<
   Note,

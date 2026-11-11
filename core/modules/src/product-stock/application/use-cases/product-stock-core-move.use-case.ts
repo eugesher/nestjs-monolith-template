@@ -1,23 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
 import {
-  IProductStockCoreMoveCommand,
-  IProductStockCoreMoveView,
   ProductStockCoreMovementKindEnum,
+  type IProductStockCoreMoveCommand,
+  type IProductStockCoreMoveView,
 } from '@acme-core/contracts/product-stock';
 
 import { ProductStockCoreOnHandModel } from '../../domain';
 import {
-  IProductStockCorePostSubtractEnqueueCommand,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
   PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   PRODUCT_STOCK_CORE_TRANSACTION_PORT,
   type IProductStockCoreMoveRepositoryPort,
+  type IProductStockCorePostSubtractEnqueueCommand,
   type IProductStockCorePostSubtractPort,
   type IProductStockCoreTransactionPort,
 } from '../../outbound';

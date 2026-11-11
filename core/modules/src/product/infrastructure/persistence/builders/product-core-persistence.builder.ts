@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { Product } from '@acme-core/entities';
+import type { Product } from '@acme-core/entities';
 
 export class ProductCorePersistenceBuilder extends SelectQueryBuilder<Product> {
   public forLockById(productId: string): this {

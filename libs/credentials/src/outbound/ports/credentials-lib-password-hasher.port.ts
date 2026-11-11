@@ -1,4 +1,4 @@
-import { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
 
 export interface ICredentialsLibPasswordHasherPort {
   hash(password: string): Promise<string>;

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Maybe, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type Maybe } from '@acme-libs/toolkit';
 
 import { OrderSummaryModel } from '../../domain';
 import {
@@ -9,7 +9,7 @@ import {
   type IOrderGetManyRepositoryPort,
   type IOrderTagPort,
 } from '../../outbound';
-import { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
+import type { IOrderGetManyCommand, IOrderGetManyView } from '../interfaces';
 
 @Injectable()
 export class OrderGetManyUseCase {

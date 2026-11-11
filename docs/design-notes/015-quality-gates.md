@@ -25,7 +25,7 @@ a threshold.
 | `shell/*.facade.ts`                                                                             | each method hands the call to a use case                        |
 | `libs/observability/src/tracer/index.ts`                                                        | a side-effect entry; its logic is in `helpers/tracer.helper.ts` |
 | `libs/openapi/src/api-reference/api-reference.ts`                                               | mounts the reference page                                       |
-| `libs/*/src/testing/**`, `apps/*/test/**`                                                       | test code                                                       |
+| `libs/testing/**`, `apps/*/test/**`                                                             | test code                                                       |
 
 **The thresholds** are 95% for statements, branches, functions and lines, twice over:
 
@@ -74,10 +74,11 @@ lint → typecheck → build → unit → e2e
 - `lint` runs `yarn lint:all` and `yarn format:check`, which checks every file Prettier knows
   outside `.gitignore`;
 - `unit` runs `yarn test:unit:coverage`: CI is where the thresholds are enforced, no hook runs them;
-- `e2e` starts MySQL and Redis of `test/infra` and reseeds before each suite, as `014-e2e-suites.md`
-  requires. The seeding runs on the runner through `yarn test:e2e:infra:reseed`, so the `node`
-  service of the compose file is not built. The compose file and the suites read the `.env.test`
-  files of the repository.
+- `e2e` runs `yarn test:e2e`, the command of a local run: it starts `test/infra` with
+  `test:e2e:infra:reload` and runs the three app suites, then the two system suites, each after a
+  reseed, as `014-e2e-suites.md` requires. The step fails if one suite failed, and the report at the
+  end of its log names the suite. The compose file and the suites read the `.env.test` files of the
+  repository.
 
 Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.
 
@@ -123,3 +124,18 @@ apart by the decorator, not by the number of lines.
 `controllers`, `providers`: what the module takes and shows comes before how it is built. The rule
 applies to an object whose keys are all among these six, the argument of `@Module` and the object a
 `forRoot` returns alike, and leaves every other object as it is written.
+
+## Type imports
+
+`lint/configs/type-imports.mjs` marks every import that has no runtime use. An import of types only
+is `import type { … }`, enforced by `no-import-type-side-effects`; a mixed import marks each type
+inline. `consistent-type-imports` checks this, but with `emitDecoratorMetadata` it skips every file
+with a decorator, because a class in a decorated constructor is read at runtime by Nest. The rule
+`acme/type-imports-in-decorated-files` (`lint/rules`) covers those files: it asks the type checker
+whether the imported symbol has a value, so an interface or a type alias takes `type`. A class takes
+`type` too when every use of it is a type that no decorator metadata reads: Nest reads the metadata
+of a constructor parameter only when the parameter names no token, so a class behind
+`@Inject(<token>)`, `@InjectPinoLogger`, `@InjectQueue` or `@InjectRepository` is a type, as
+`PinoLogger` in every use case. A class in a constructor parameter without a token, in a decorated
+property or in the signature of a decorated method stays a value import: DI, Swagger,
+`ValidationPipe` and TypeORM read it there.

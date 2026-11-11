@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, Maybe, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPage, type Maybe } from '@acme-libs/toolkit';
 
 import { ProductModel } from '../../domain';
 import {
@@ -9,7 +9,7 @@ import {
   type IProductGetManyRepositoryPort,
   type IProductTagPort,
 } from '../../outbound';
-import { IProductGetManyCommand, IProductView } from '../interfaces';
+import type { IProductGetManyCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductGetManyUseCase {

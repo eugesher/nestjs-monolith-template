@@ -1,4 +1,4 @@
-import { ITagCommonFindSubjectIdsQuery, ITagCommonFindSubjectIdsRecord } from '../interfaces';
+import type { ITagCommonFindSubjectIdsQuery, ITagCommonFindSubjectIdsRecord } from '../interfaces';
 
 export interface ITagCommonFindSubjectIdsRepositoryPort {
   list(query: ITagCommonFindSubjectIdsQuery): Promise<ITagCommonFindSubjectIdsRecord[]>;

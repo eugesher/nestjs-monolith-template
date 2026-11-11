@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { LedgerEntry } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { LedgerPersistenceLedgerEntryBuilder } from '../builders/ledger-persistence-ledger-entry.builder';
 

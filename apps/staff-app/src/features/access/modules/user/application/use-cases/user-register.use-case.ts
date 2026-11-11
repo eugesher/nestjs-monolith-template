@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
   AuthEmailTakenException,
   AuthRoleNotFoundException,
-  IUserStaffUserDraftOutput,
   UserStaffUserModel,
+  type IUserStaffUserDraftOutput,
 } from '../../domain';
 import {
   USER_CREDENTIALS_PORT,
@@ -16,7 +16,7 @@ import {
   type IUserRegisterRepositoryPort,
   type IUserTransactionPort,
 } from '../../outbound';
-import { IUserRegisterCommand, IUserRegisterView } from '../interfaces';
+import type { IUserRegisterCommand, IUserRegisterView } from '../interfaces';
 
 @Injectable()
 export class UserRegisterUseCase {

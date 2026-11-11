@@ -1,7 +1,7 @@
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import {
+import type {
   IIdempotencyCoreKeyCandidateInput,
   IIdempotencyCoreKeyDraftOutput,
   IIdempotencyCoreKeyRecordInput,

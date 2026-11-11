@@ -10,8 +10,8 @@ import {
   ProductStatusArchiveOutcomeEnum,
   type IProductStatusPort,
 } from '../../outbound';
-import { IProductArchiveCommand, IProductView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';
+import type { IProductArchiveCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductArchiveUseCase {

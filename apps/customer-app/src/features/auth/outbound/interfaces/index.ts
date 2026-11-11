@@ -1,4 +1,5 @@
 export * from './commands/auth-credentials.command';
+export * from './commands/auth-ledger.command';
 
 export * from './queries/auth-register.query';
 

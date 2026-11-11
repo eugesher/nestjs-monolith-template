@@ -1,13 +1,13 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  ITagRenameQuery,
-  ITagRenameRepositoryPort,
   TAG_RENAME_REPOSITORY_PORT,
   TagRenameUpdateOutcomeEnum,
+  type ITagRenameQuery,
+  type ITagRenameRepositoryPort,
 } from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
 

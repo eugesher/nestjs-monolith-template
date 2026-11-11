@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { StaffRole, StaffRolePermission } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { RolePersistenceStaffRoleBuilder } from '../builders/role-persistence-staff-role.builder';
 

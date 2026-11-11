@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
-import { ITagDeleteRepositoryPort, TAG_DELETE_REPOSITORY_PORT } from '../../../outbound';
+import { TAG_DELETE_REPOSITORY_PORT, type ITagDeleteRepositoryPort } from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
 
 @Injectable()

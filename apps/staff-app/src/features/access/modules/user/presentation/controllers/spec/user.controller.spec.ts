@@ -1,5 +1,5 @@
-import { UserReassignRolesUseCase, UserRegisterUseCase } from '../../../application';
 import { UserController } from '../user.controller';
+import type { UserReassignRolesUseCase, UserRegisterUseCase } from '../../../application';
 
 describe('UserController', () => {
   let register: jest.Mock;

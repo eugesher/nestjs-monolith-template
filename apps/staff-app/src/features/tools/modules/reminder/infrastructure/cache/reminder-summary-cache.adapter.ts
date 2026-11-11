@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { CACHE_KEYS, CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import {
-  IReminderSummaryPort,
-  IReminderSummaryReadCommand,
-  IReminderSummarySnapshotView,
   REMINDER_SUMMARY_PORT,
+  type IReminderSummaryPort,
+  type IReminderSummaryReadCommand,
+  type IReminderSummarySnapshotView,
 } from '../../outbound';
 
 @Injectable()

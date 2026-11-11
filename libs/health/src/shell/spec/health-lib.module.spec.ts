@@ -1,11 +1,11 @@
-import { Global, INestApplicationContext, Module } from '@nestjs/common';
+import { Global, Module, type INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { AppNameEnum } from '@acme-libs/kernel';
 import { CACHE_LIB_PORT } from '@acme-libs/contracts/cache';
-import { HEALTH_LIB_PORT, IHealthLibPort } from '@acme-libs/contracts/health';
+import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
 import { HealthLibModule } from '../health-lib.module';
 

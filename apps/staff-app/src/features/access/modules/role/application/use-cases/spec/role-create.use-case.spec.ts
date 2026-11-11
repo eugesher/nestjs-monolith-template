@@ -1,7 +1,7 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum, PermissionCodeEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { RoleCreateStaffRoleInsertOutcomeEnum } from '../../../outbound';
 import { RoleCreateUseCase } from '../role-create.use-case';

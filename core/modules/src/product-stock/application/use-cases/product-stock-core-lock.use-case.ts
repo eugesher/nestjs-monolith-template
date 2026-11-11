@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import {
+import type {
   IProductStockCoreLockCommand,
   IProductStockCoreOnHandView,
 } from '@acme-core/contracts/product-stock';

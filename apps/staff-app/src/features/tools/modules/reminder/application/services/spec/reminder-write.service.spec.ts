@@ -1,12 +1,12 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { ReminderModel } from '../../../domain';
-import { IReminderWriteUpdateQuery } from '../../../outbound';
-import { ReminderAccessService } from '../reminder-access.service';
 import { ReminderWriteService } from '../reminder-write.service';
+import type { IReminderWriteUpdateQuery } from '../../../outbound';
+import type { ReminderAccessService } from '../reminder-access.service';
 
 describe('ReminderWriteService', () => {
   let loadOwned: jest.Mock;

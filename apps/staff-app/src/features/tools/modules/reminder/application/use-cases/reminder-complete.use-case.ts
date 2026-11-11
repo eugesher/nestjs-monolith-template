@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { REMINDER_SUMMARY_PORT, type IReminderSummaryPort } from '../../outbound';
-import { IReminderCompleteCommand, IReminderView } from '../interfaces';
 import { ReminderWriteService } from '../services/reminder-write.service';
+import type { IReminderCompleteCommand, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderCompleteUseCase {

@@ -1,7 +1,7 @@
 import { SelectQueryBuilder } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
-import { StaffRole, StaffRolePermission, StaffUser, StaffUserRole } from '@acme-core/entities';
+import { StaffRole, StaffRolePermission, StaffUserRole, type StaffUser } from '@acme-core/entities';
 
 export class StaffAuthCorePersistenceStaffUserBuilder extends SelectQueryBuilder<StaffUser> {
   private readonly staffUserRoleAlias = StaffUserRole.name;

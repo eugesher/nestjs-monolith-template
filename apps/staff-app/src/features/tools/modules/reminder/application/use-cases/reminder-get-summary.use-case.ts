@@ -7,7 +7,7 @@ import {
   type IReminderGetSummaryRepositoryPort,
   type IReminderSummaryPort,
 } from '../../outbound';
-import { IReminderGetSummaryCommand, IReminderGetSummaryView } from '../interfaces';
+import type { IReminderGetSummaryCommand, IReminderGetSummaryView } from '../interfaces';
 
 @Injectable()
 export class ReminderGetSummaryUseCase {

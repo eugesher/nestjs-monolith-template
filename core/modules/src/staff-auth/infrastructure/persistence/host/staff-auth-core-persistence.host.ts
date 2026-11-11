@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { StaffUser } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { StaffAuthCorePersistenceStaffUserBuilder } from '../builders/staff-auth-core-persistence-staff-user.builder';
 

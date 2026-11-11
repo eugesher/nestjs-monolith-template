@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import { AUTH_GLOBAL_SUBJECT_PORT, type IAuthGlobalSubjectPort } from '../../outbound';
-import { IAuthGlobalValidateSubjectCommand, IAuthGlobalValidateSubjectView } from '../interfaces';
+import type {
+  IAuthGlobalValidateSubjectCommand,
+  IAuthGlobalValidateSubjectView,
+} from '../interfaces';
 
 @Injectable()
 export class AuthGlobalValidateSubjectUseCase {

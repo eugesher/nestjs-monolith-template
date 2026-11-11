@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { TagModel, TagNotFoundException } from '../../domain';
 import { TAG_ACCESS_REPOSITORY_PORT, type ITagAccessRepositoryPort } from '../../outbound';
-import { ITagAccessLoadCommand } from '../interfaces';
+import type { ITagAccessLoadCommand } from '../interfaces';
 
 @Injectable()
 export class TagAccessService {

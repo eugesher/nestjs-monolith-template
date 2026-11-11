@@ -1,4 +1,4 @@
-import { IProductStockOnHandLockCommand, IProductStockOnHandView } from '../interfaces';
+import type { IProductStockOnHandLockCommand, IProductStockOnHandView } from '../interfaces';
 
 export interface IProductStockOnHandPort {
   lock(command: IProductStockOnHandLockCommand): Promise<IProductStockOnHandView[]>;

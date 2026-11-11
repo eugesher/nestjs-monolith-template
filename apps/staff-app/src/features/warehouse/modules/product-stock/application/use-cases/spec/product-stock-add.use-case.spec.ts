@@ -1,9 +1,8 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { ProductStockAddedEvent } from '../../../domain';
-import { ProductStockLedgerService } from '../../services/product-stock-ledger.service';
 import { ProductStockAddUseCase } from '../product-stock-add.use-case';
 
 describe('ProductStockAddUseCase', () => {
@@ -29,10 +28,10 @@ describe('ProductStockAddUseCase', () => {
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductStockAddUseCase(
-      { recordEvents } as unknown as ProductStockLedgerService,
       { findById },
       { lock, add },
       { claim, complete, release },
+      { recordEvents },
       { run },
       logger as unknown as PinoLogger,
     );

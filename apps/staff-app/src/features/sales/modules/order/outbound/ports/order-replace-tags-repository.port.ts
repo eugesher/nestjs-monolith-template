@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IOrderReplaceTagsRecord } from '../interfaces';
+import type { IOrderReplaceTagsRecord } from '../interfaces';
 
 export interface IOrderReplaceTagsRepositoryPort {
   lockById(orderId: string): Promise<Nullable<IOrderReplaceTagsRecord>>;

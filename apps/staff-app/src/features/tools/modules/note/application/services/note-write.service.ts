@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
-import { NoteModel, NoteVersionMismatchException } from '../../domain';
+import { NoteVersionMismatchException, type NoteModel } from '../../domain';
 import { NOTE_OCC_RETRY_ATTEMPTS_TOKEN } from '../../outbound';
 import { NoteWriteConflictError } from '../errors/note-write-conflict.error';
-import { INoteWriteReloadCommand, INoteWriteRunCommand } from '../interfaces';
 import { NoteAccessService } from './note-access.service';
+import type { INoteWriteReloadCommand, INoteWriteRunCommand } from '../interfaces';
 
 @Injectable()
 export class NoteWriteService {

@@ -2,21 +2,21 @@
 
 A name says who or where; the action lives in the method or in the port.
 
-| Element                            | Name                                                                                    | Example                                                            |
-| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts`             | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`                    |
-| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                                   | `IdempotencyCoreFacade`                                            |
-| facade method                      | `handle<Action>`                                                                        | `handleClaim`, `handleSignAccessToken`                             |
-| use case held by a facade          | `<action>`, without the context                                                         | `claim: IdempotencyCoreClaimUseCase`                               |
-| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`                        | `OrderExceptionCodeEnum`                                           |
-| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`                  | `OrderLedgerQueueAdapter` implements `IOrderLedgerRecordPort`      |
-| transaction port of a module       | `I<Module>TransactionPort`, `<MODULE>_TRANSACTION_PORT`, `<module>-transaction.port.ts` | `IRoleTransactionPort`, `ROLE_TRANSACTION_PORT`                    |
-| transaction adapter                | `<Module>TransactionAdapter`, `persistence/transaction/<module>-transaction.adapter.ts` | `RoleTransactionAdapter`                                           |
-| outcome of a repository write      | `<Port><Subject><Method>OutcomeEnum`, `<port>-<subject>-<method>-outcome.enum.ts`       | `RoleCreateStaffRoleInsertOutcomeEnum`                             |
-| commands of a service              | `I<Context><Service><Method>Command`, one file `<context>-<service>.command.ts`         | `IProductLedgerRecordEventsCommand` in `product-ledger.command.ts` |
-| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                             | `ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`                             |
-| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                                | `OrderIdempotencyCoreAdapter.provider`                             |
-| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`                       | `OrderConfigRedisCommandTimeoutMsProvider`                         |
+| Element                            | Name                                                                                    | Example                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| port of a core or lib module       | `I<Module><Layer>Port`, `<MODULE>_<LAYER>_PORT`, `<module>-<layer>.port.ts`             | `IIdempotencyCorePort`, `IDEMPOTENCY_CORE_PORT`            |
+| facade of that module              | `<Module><Layer>Facade`, `<module>-<layer>.facade.ts`                                   | `IdempotencyCoreFacade`                                    |
+| facade method                      | `handle<Action>`                                                                        | `handleClaim`, `handleSignAccessToken`                     |
+| use case held by a facade          | `<action>`, without the context                                                         | `claim: IdempotencyCoreClaimUseCase`                       |
+| domain exception codes             | `<Context>ExceptionCodeEnum`, `<context>-exception-code.enum.ts`                        | `OrderExceptionCodeEnum`                                   |
+| queue adapter                      | `<Context><Target>QueueAdapter`, `<context>-<target>-queue.adapter.ts`                  | `ProductStockCorePostSubtractQueueAdapter`                 |
+| transaction port of a module       | `I<Module>TransactionPort`, `<MODULE>_TRANSACTION_PORT`, `<module>-transaction.port.ts` | `IRoleTransactionPort`, `ROLE_TRANSACTION_PORT`            |
+| transaction adapter                | `<Module>TransactionAdapter`, `persistence/transaction/<module>-transaction.adapter.ts` | `RoleTransactionAdapter`                                   |
+| outcome of a repository write      | `<Port><Subject><Method>OutcomeEnum`, `<port>-<subject>-<method>-outcome.enum.ts`       | `RoleCreateStaffRoleInsertOutcomeEnum`                     |
+| commands of a service              | `I<Context><Service><Method>Command`, one file `<context>-<service>.command.ts`         | `IProductAccessLoadCommand` in `product-access.command.ts` |
+| token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                             | `PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN`                         |
+| binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                                | `OrderIdempotencyCoreAdapter.provider`                     |
+| provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`                       | `ProductConfigOccRetryAttemptsProvider`                    |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
@@ -36,30 +36,33 @@ method and the use case name the action differently, each keeps its own: `handle
 so the enum takes the word `Exception`, not `Error`. `IdentityExceptionCodeEnum` in `libs/kernel`
 serves the identity exceptions of several apps the same way.
 
-**A queue adapter is named by where it sends, the port by what it does.** The adapter is transport
-to a target, the ledger here, so `OrderLedgerQueueAdapter` drops the action. The outbound port it
-implements keeps the action: `IOrderLedgerRecordPort`, `ORDER_LEDGER_RECORD_PORT`. A target with a
-compound name keeps it whole: `ProductStockCorePostSubtractQueueAdapter` sends to the post-subtract
-queue.
+**A queue adapter is named by where it sends.** The adapter is transport to a target, so a target
+with a compound name keeps it whole: `ProductStockCorePostSubtractQueueAdapter` sends to the
+post-subtract queue.
+
+**A lib adapter is named by the port and the lib.** `OrderLedgerLibAdapter` implements
+`IOrderLedgerPort`, `ORDER_LEDGER_PORT`, in
+`infrastructure/lib-adapters/order-ledger-lib.adapter.ts`, as `AuthCredentialsLibAdapter` implements
+`IAuthCredentialsPort`.
 
 **The commands of a service live in one file named after the service.** A service of
 `application/services` takes its commands from
 `application/interfaces/commands/<context>-<service>.command.ts`, next to
 `<context>-<service>.service.ts`. Each command is named after the service and the method that takes
-it, `I<Context><Service><Method>Command`, as the command of a port is named after the port and its
-method: `IProductLedgerRecordCreatedCommand` for `recordCreated` and
-`IProductLedgerRecordEventsCommand` for `recordEvents` share `product-ledger.command.ts`. A use case
-keeps one command file of its own, `<context>-<verb>.command.ts`.
+it, `I<Context><Service><Method>Command`. A port follows the same rule in `outbound/interfaces`:
+`IProductLedgerRecordCreatedCommand` for `recordCreated` and `IProductLedgerRecordEventsCommand` for
+`recordEvents` share `outbound/interfaces/commands/product-ledger.command.ts`. A use case keeps one
+command file of its own, `<context>-<verb>.command.ts`.
 
 **A config token is the module, the property and `_TOKEN`.** A token that carries a value read with
 `ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration property
-it reads and the suffix `_TOKEN`: the order module reads `REDIS_COMMAND_TIMEOUT_MS` into
-`ORDER_REDIS_COMMAND_TIMEOUT_MS_TOKEN`, the product-stock core module reads `QUEUE_RETRY_ATTEMPTS`
-into `PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from,
-not what the module does with it, so a reader finds the variable of `.env` by the name alone. A
-module that reads one property for two purposes injects the one token in both places; a purpose that
-needs a value of its own needs a property of its own, and with it a token of its own, so two tokens
-never share a name. A property that already starts with the module name is not repeated:
+it reads and the suffix `_TOKEN`: the product module reads `OCC_RETRY_ATTEMPTS` into
+`PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN`, the product-stock core module reads `QUEUE_RETRY_ATTEMPTS` into
+`PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from, not
+what the module does with it, so a reader finds the variable of `.env` by the name alone. A module
+that reads one property for two purposes injects the one token in both places; a purpose that needs
+a value of its own needs a property of its own, and with it a token of its own, so two tokens never
+share a name. A property that already starts with the module name is not repeated:
 `IDEMPOTENCY_KEY_TTL_HOURS` becomes `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`. The suffix sets the token
 apart from the `_PORT` tokens in the same `outbound` barrel. The description of the `Symbol` repeats
 the constant, and the file drops the suffix: `order-redis-command-timeout-ms.token.ts`.

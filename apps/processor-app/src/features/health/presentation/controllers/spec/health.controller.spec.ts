@@ -1,5 +1,5 @@
-import { HealthLivenessUseCase, HealthReadinessUseCase } from '../../../application';
 import { HealthController } from '../health.controller';
+import type { HealthLivenessUseCase, HealthReadinessUseCase } from '../../../application';
 
 describe('HealthController', () => {
   let liveness: jest.Mock;

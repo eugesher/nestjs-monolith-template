@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { IOrderTransactionPort, ORDER_TRANSACTION_PORT } from '../../../outbound';
+import { ORDER_TRANSACTION_PORT, type IOrderTransactionPort } from '../../../outbound';
 
 @Injectable()
 export class OrderTransactionAdapter implements IOrderTransactionPort {

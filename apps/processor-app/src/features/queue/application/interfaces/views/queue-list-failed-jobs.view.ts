@@ -1,4 +1,4 @@
-import { IPage, Nullable } from '@acme-libs/toolkit';
+import type { IPage, Nullable } from '@acme-libs/toolkit';
 
 export type IQueueListFailedJobsView = IPage<{
   id: string | number;

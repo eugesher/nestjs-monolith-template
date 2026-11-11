@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import {
   HEALTH_STATUS_PORT,
-  IHealthStatusReadinessView,
   type IHealthStatusPort,
+  type IHealthStatusReadinessView,
 } from '../../outbound';
 
 @Injectable()

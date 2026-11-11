@@ -1,5 +1,5 @@
-import { AuthLoginUseCase, AuthRegisterUseCase } from '../../../application';
 import { AuthController } from '../auth.controller';
+import type { AuthLoginUseCase, AuthRegisterUseCase } from '../../../application';
 
 describe('AuthController', () => {
   let register: jest.Mock;

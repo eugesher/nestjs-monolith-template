@@ -1,4 +1,4 @@
-import { AuthLoginUseCase, AuthMeUseCase } from '../../../application';
+import { AuthMeUseCase, type AuthLoginUseCase } from '../../../application';
 import { AuthController } from '../auth.controller';
 
 describe('AuthController', () => {

@@ -1,33 +1,27 @@
 import { Module } from '@nestjs/common';
 
-import { BullSetupModule } from '@acme-libs/queue';
-import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import { LedgerLibModule } from '@acme-libs/ledger';
 import { PRODUCT_CORE_PORT } from '@acme-core/contracts/product';
 
-import { ProductCoreArchiveUseCase, ProductCoreLedgerService } from '../application';
+import { ProductCoreArchiveUseCase } from '../application';
 import {
   ProductCoreArchiveRepository,
   ProductCoreCatalogCacheAdapter,
-  ProductCoreConfigLedgerRetryAttemptsProvider,
-  ProductCoreConfigRedisCommandTimeoutMsProvider,
-  ProductCoreLedgerQueueAdapter,
+  ProductCoreLedgerLibAdapter,
   ProductCoreTransactionAdapter,
 } from '../infrastructure';
 import { ProductCoreFacade } from './product-core.facade';
 
 @Module({
-  imports: [BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE)],
+  imports: [LedgerLibModule],
   exports: [PRODUCT_CORE_PORT],
   providers: [
     { provide: PRODUCT_CORE_PORT, useClass: ProductCoreFacade },
     ProductCoreArchiveUseCase,
-    ProductCoreLedgerService,
     ProductCoreArchiveRepository.provider,
-    ProductCoreLedgerQueueAdapter.provider,
     ProductCoreCatalogCacheAdapter.provider,
+    ProductCoreLedgerLibAdapter.provider,
     ProductCoreTransactionAdapter.provider,
-    ProductCoreConfigRedisCommandTimeoutMsProvider,
-    ProductCoreConfigLedgerRetryAttemptsProvider,
   ],
 })
 export class ProductCoreModule {}

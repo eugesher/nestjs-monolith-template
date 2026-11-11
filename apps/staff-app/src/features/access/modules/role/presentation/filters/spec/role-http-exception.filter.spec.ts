@@ -1,6 +1,6 @@
-import { ArgumentsHost, HttpException } from '@nestjs/common';
+import { HttpException, type ArgumentsHost } from '@nestjs/common';
 
-import { HttpExceptionFilter } from '@acme-libs/http';
+import type { HttpExceptionFilter } from '@acme-libs/http';
 
 import { AuthRoleNameTakenException, AuthRoleNotFoundException } from '../../../domain';
 import { RoleHttpExceptionFilter } from '../role-http-exception.filter';

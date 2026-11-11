@@ -1,4 +1,4 @@
-import { NoteModel } from '../../../domain';
+import type { NoteModel } from '../../../domain';
 
 export interface INoteEditSaveCommand {
   noteId: string;

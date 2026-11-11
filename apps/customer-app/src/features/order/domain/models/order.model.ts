@@ -3,7 +3,7 @@ import { AggregateRoot } from '@acme-libs/toolkit';
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
 import { OrderStockInsufficientException } from '../exceptions/order-stock-insufficient.exception';
-import {
+import type {
   IOrderActiveProductInput,
   IOrderCandidateInput,
   IOrderDraftOutput,

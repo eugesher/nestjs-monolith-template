@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,
@@ -11,7 +11,7 @@ import {
   type IProductStockPostSubtractRepositoryPort,
   type IProductStockTransactionPort,
 } from '../../outbound';
-import { IProductStockPostSubtractCommand } from '../interfaces';
+import type { IProductStockPostSubtractCommand } from '../interfaces';
 
 @Injectable()
 export class ProductStockPostSubtractUseCase {

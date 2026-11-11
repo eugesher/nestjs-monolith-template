@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { Tag } from '@acme-staff/common/entities';
+import type { Tag } from '@acme-staff/common/entities';
 
-import { ITagGetManyQuery } from '../../../outbound';
+import type { ITagGetManyQuery } from '../../../outbound';
 
 export class TagPersistenceBuilder extends SelectQueryBuilder<Tag> {
   public forById(tagId: string): this {

@@ -1,11 +1,11 @@
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import {
+import { RoleController } from '../role.controller';
+import type {
   RoleCreateUseCase,
   RoleListUseCase,
   RoleReassignPermissionsUseCase,
 } from '../../../application';
-import { RoleController } from '../role.controller';
 
 describe('RoleController', () => {
   let list: jest.Mock;

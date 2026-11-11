@@ -3,16 +3,16 @@
 The `ledger_entry` table is an append-only journal. Every app writes to it through one queue, and
 one processor appends.
 
-| Part           | Example                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
-| queue contract | `core/contracts/src/ledger/queues/ledger-record.queue.ts`                                            |
-| a producer     | `apps/staff-app/src/features/catalog/modules/product/application/services/product-ledger.service.ts` |
-| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-processor.md`)                            |
-| a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                      |
+| Part           | Example                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------- |
+| queue contract | `libs/contracts/src/ledger/queues/ledger-record.queue.ts`                                                       |
+| a producer     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/lib-adapters/product-ledger-lib.adapter.ts` |
+| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-processor.md`)                                       |
+| a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                                 |
 
 **Producers enqueue, one processor appends.** No HTTP app writes the table, so the append has one
 caller and lives in the processor (see `024-code-placement.md`). The queue contract lives in
-`@acme-core/contracts/ledger`, because every app writes to the queue and an app may not import
+`@acme-libs/contracts/ledger`, because every app writes to the queue and an app may not import
 another.
 
 ## Append is the only verb
@@ -30,7 +30,7 @@ database error passes through, and Bull retries the job.
 
 **A key names one occurrence.** A producer that can record the same kind of record twice for one
 subject puts what tells the occurrences apart into the key, such as a version or a row id (see
-`ProductLedgerService`).
+`ProductLedgerLibAdapter`).
 
 The rejected insert still consumes an auto-increment value, so ids may have gaps.
 

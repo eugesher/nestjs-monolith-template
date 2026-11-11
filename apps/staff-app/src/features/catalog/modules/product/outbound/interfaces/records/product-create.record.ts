@@ -1,6 +1,6 @@
-import { Product } from '@acme-core/entities';
+import type { Product } from '@acme-core/entities';
 
-import { ProductCreateInsertOutcomeEnum } from '../../enums/product-create-insert-outcome.enum';
+import type { ProductCreateInsertOutcomeEnum } from '../../enums/product-create-insert-outcome.enum';
 
 export type IProductCreateRecord = Pick<
   Product,

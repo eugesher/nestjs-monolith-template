@@ -1,4 +1,4 @@
-import { StaffRole, StaffRolePermission } from '@acme-core/entities';
+import type { StaffRole, StaffRolePermission } from '@acme-core/entities';
 
 export type IRoleCreateStaffRoleInsertQuery = Pick<StaffRole, 'name'>;
 

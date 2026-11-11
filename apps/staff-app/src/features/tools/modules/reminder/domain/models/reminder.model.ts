@@ -6,7 +6,7 @@ import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invali
 import { ReminderDueOnInvalidException } from '../exceptions/reminder-due-on-invalid.exception';
 import { ReminderTitleInvalidException } from '../exceptions/reminder-title-invalid.exception';
 import { ReminderVersionInvalidException } from '../exceptions/reminder-version-invalid.exception';
-import {
+import type {
   IReminderCandidateInput,
   IReminderDraftOutput,
   IReminderRecordInput,

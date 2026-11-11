@@ -1,6 +1,6 @@
 import { DomainEvent } from '@acme-libs/toolkit';
 
-import { IProductStockLedgerRecordOutput } from '../interfaces';
+import type { IProductStockLedgerRecordOutput } from '../interfaces';
 
 export class ProductStockAddedEvent extends DomainEvent<string> {
   constructor(

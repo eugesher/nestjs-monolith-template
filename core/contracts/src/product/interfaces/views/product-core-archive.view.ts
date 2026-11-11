@@ -1,6 +1,6 @@
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
-import { ProductCoreArchiveOutcomeEnum } from '../../enums/product-core-archive-outcome.enum';
+import type { ProductCoreArchiveOutcomeEnum } from '../../enums/product-core-archive-outcome.enum';
 
 export interface IProductCoreArchiveView {
   outcome: ProductCoreArchiveOutcomeEnum;

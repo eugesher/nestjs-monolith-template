@@ -1,4 +1,4 @@
-import { IReplayRetryOptions } from './replay-retry-options.interface';
+import type { IReplayRetryOptions } from './replay-retry-options.interface';
 
 export class ReplayRetryHelper {
   public static async retryThenLogForReplay(

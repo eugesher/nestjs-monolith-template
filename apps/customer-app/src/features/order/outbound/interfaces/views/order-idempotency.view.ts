@@ -1,4 +1,4 @@
-import { OrderIdempotencyOutcomeEnum } from '../../enums/order-idempotency-outcome.enum';
+import type { OrderIdempotencyOutcomeEnum } from '../../enums/order-idempotency-outcome.enum';
 
 export interface IOrderIdempotencyOutcomeView {
   outcome: Exclude<OrderIdempotencyOutcomeEnum, OrderIdempotencyOutcomeEnum.REPLAY>;

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { TagModel, TagNameTakenException } from '../../domain';
 import {
@@ -7,7 +7,7 @@ import {
   TagCreateInsertOutcomeEnum,
   type ITagCreateRepositoryPort,
 } from '../../outbound';
-import { ITagCreateCommand, ITagView } from '../interfaces';
+import type { ITagCreateCommand, ITagView } from '../interfaces';
 
 @Injectable()
 export class TagCreateUseCase {

@@ -1,4 +1,4 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
@@ -6,9 +6,9 @@ import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 import {
   AUTH_REGISTER_REPOSITORY_PORT,
   AuthRegisterCustomerInsertOutcomeEnum,
-  IAuthRegisterCustomerInsertQuery,
-  IAuthRegisterCustomerInsertRecord,
-  IAuthRegisterRepositoryPort,
+  type IAuthRegisterCustomerInsertQuery,
+  type IAuthRegisterCustomerInsertRecord,
+  type IAuthRegisterRepositoryPort,
 } from '../../../outbound';
 import { AuthPersistenceHost } from '../host/auth-persistence.host';
 

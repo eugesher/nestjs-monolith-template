@@ -1,4 +1,4 @@
-import { IHealthStatusLivenessView, IHealthStatusReadinessView } from '../interfaces';
+import type { IHealthStatusLivenessView, IHealthStatusReadinessView } from '../interfaces';
 
 export interface IHealthStatusPort {
   liveness(): IHealthStatusLivenessView;

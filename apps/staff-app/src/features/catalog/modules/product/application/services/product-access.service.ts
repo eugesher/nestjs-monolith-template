@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { ProductModel, ProductNotFoundException } from '../../domain';
 import { PRODUCT_ACCESS_REPOSITORY_PORT, type IProductAccessRepositoryPort } from '../../outbound';
-import { IProductAccessLoadCommand } from '../interfaces';
+import type { IProductAccessLoadCommand } from '../interfaces';
 
 @Injectable()
 export class ProductAccessService {

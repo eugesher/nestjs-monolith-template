@@ -1,4 +1,4 @@
-import { ProductStockIdempotencyOutcomeEnum } from '../../enums/product-stock-idempotency-outcome.enum';
+import type { ProductStockIdempotencyOutcomeEnum } from '../../enums/product-stock-idempotency-outcome.enum';
 
 export interface IProductStockIdempotencyOutcomeView {
   outcome: Exclude<ProductStockIdempotencyOutcomeEnum, ProductStockIdempotencyOutcomeEnum.REPLAY>;

@@ -4,7 +4,7 @@ import { PaginationHelper } from '@acme-libs/toolkit';
 
 import { QueueNotFoundException } from '../../domain';
 import { QUEUE_REGISTRY_PORT, type IQueueRegistryPort } from '../../outbound';
-import { IQueueListFailedJobsCommand, IQueueListFailedJobsView } from '../interfaces';
+import type { IQueueListFailedJobsCommand, IQueueListFailedJobsView } from '../interfaces';
 
 @Injectable()
 export class QueueListFailedJobsUseCase {

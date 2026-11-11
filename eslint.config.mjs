@@ -13,6 +13,7 @@ import {
   plainNode,
   specs,
   style,
+  typeImports,
   typescript,
 } from './lint/index.mjs';
 
@@ -32,6 +33,7 @@ export default defineConfig(
   eslintPluginPrettierRecommended,
   style,
   typescript,
+  typeImports,
   boundaries,
   classes,
   specs,

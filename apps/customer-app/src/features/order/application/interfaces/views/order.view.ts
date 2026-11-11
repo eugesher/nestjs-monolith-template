@@ -1,4 +1,4 @@
-import { IOrderProductView } from './order-product.view';
+import type { IOrderProductView } from './order-product.view';
 
 export interface IOrderView {
   id: string;

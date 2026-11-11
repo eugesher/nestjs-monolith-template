@@ -1,4 +1,4 @@
-import { Reminder } from '@acme-staff/common/entities';
+import type { Reminder } from '@acme-staff/common/entities';
 
 export interface IReminderWriteUpdateQuery extends Pick<
   Reminder,

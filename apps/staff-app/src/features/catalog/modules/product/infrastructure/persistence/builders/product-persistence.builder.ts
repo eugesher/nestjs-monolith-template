@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { Product } from '@acme-core/entities';
+import type { Product } from '@acme-core/entities';
 
-import { IProductGetManyListQuery } from '../../../outbound';
+import type { IProductGetManyListQuery } from '../../../outbound';
 
 export class ProductPersistenceBuilder extends SelectQueryBuilder<Product> {
   public forById(productId: string): this {

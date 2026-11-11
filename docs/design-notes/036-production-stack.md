@@ -75,4 +75,4 @@ loads the file (see `012-app-bootstrap.md`).
 
 The collector reads `otel-collector.config.yaml` and forwards the traces to Jaeger. That file has no
 `debug` exporter, so spans stay out of the logs of the collector;
-`test/infra/otel-collector.config.yaml` has one for a local run.
+`test/infra/docker/otel-collector.config.yaml` has one for a local run.

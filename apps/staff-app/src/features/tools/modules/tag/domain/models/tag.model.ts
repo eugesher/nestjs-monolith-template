@@ -1,7 +1,7 @@
 import { AggregateRoot } from '@acme-libs/toolkit';
 
 import { TagNameInvalidException } from '../exceptions/tag-name-invalid.exception';
-import {
+import type {
   ITagCandidateInput,
   ITagDraftOutput,
   ITagRecordInput,

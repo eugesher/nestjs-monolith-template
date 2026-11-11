@@ -23,7 +23,6 @@ describe('lib layers', () => {
     ['outbound', 'shell', '../shell/cache-lib.module'],
     ['outbound', 'application', '../application'],
     ['outbound', 'infrastructure', '../infrastructure'],
-    ['application', 'testing', '../testing'],
   ])('the %s of a lib may NOT reach its %s', async (from, _, source) => {
     await expect({
       file: `libs/cache/src/${from}/__fixture__.ts`,

@@ -1,23 +1,16 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
+import { LedgerLibModule } from '@acme-libs/ledger';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
-import { LedgerQueueSetupModule } from '@acme-customer/common/shared';
 
+import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from './application';
 import {
-  OrderGetManyUseCase,
-  OrderGetOneUseCase,
-  OrderLedgerService,
-  OrderPlaceUseCase,
-} from './application';
-import {
-  OrderConfigLedgerRetryAttemptsProvider,
-  OrderConfigRedisCommandTimeoutMsProvider,
   OrderGetManyRepository,
   OrderGetOneRepository,
   OrderIdempotencyCoreAdapter,
-  OrderLedgerQueueAdapter,
+  OrderLedgerLibAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
   OrderTransactionAdapter,
@@ -25,22 +18,19 @@ import {
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [LedgerQueueSetupModule, IdempotencyCoreModule, ProductStockCoreModule],
+  imports: [LedgerLibModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
     OrderGetManyUseCase,
     OrderGetOneUseCase,
     OrderPlaceUseCase,
-    OrderLedgerService,
     OrderGetManyRepository.provider,
     OrderGetOneRepository.provider,
     OrderPlaceRepository.provider,
     OrderIdempotencyCoreAdapter.provider,
-    OrderLedgerQueueAdapter.provider,
+    OrderLedgerLibAdapter.provider,
     OrderProductStockCoreAdapter.provider,
     OrderTransactionAdapter.provider,
-    OrderConfigRedisCommandTimeoutMsProvider,
-    OrderConfigLedgerRetryAttemptsProvider,
     HttpExceptionFilter,
   ],
 })

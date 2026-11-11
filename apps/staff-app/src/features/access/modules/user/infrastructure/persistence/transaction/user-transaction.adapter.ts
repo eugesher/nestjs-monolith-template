@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { IUserTransactionPort, USER_TRANSACTION_PORT } from '../../../outbound';
+import { USER_TRANSACTION_PORT, type IUserTransactionPort } from '../../../outbound';
 
 @Injectable()
 export class UserTransactionAdapter implements IUserTransactionPort {

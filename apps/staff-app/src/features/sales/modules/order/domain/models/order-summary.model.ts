@@ -1,4 +1,4 @@
-import { IOrderSummaryRecordInput, IOrderSummarySnapshotOutput } from '../interfaces';
+import type { IOrderSummaryRecordInput, IOrderSummarySnapshotOutput } from '../interfaces';
 
 export class OrderSummaryModel {
   private constructor(

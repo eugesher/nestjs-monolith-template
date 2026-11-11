@@ -1,6 +1,6 @@
-import { BullModule, BullRootModuleOptions } from '@nestjs/bull';
-import { DynamicModule } from '@nestjs/common';
+import { BullModule, type BullRootModuleOptions } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
+import type { DynamicModule } from '@nestjs/common';
 
 export class BullSetupModule {
   private static readonly DEFAULT_JOB_OPTIONS: BullRootModuleOptions['defaultJobOptions'] = {

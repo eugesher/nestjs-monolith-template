@@ -1,16 +1,16 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IUserRegisterRepositoryPort,
-  IUserRegisterStaffRoleRecord,
-  IUserRegisterStaffUserInsertQuery,
-  IUserRegisterStaffUserInsertRecord,
-  IUserRegisterStaffUserRoleInsertQuery,
   USER_REGISTER_REPOSITORY_PORT,
   UserRegisterStaffUserInsertOutcomeEnum,
+  type IUserRegisterRepositoryPort,
+  type IUserRegisterStaffRoleRecord,
+  type IUserRegisterStaffUserInsertQuery,
+  type IUserRegisterStaffUserInsertRecord,
+  type IUserRegisterStaffUserRoleInsertQuery,
 } from '../../../outbound';
 import { UserPersistenceHost } from '../host/user-persistence.host';
 

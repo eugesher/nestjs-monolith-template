@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
 
 import {
   CREDENTIALS_LIB_PASSWORD_HASHER_PORT,

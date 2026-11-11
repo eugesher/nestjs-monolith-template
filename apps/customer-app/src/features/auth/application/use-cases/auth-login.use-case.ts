@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { AuthCustomerModel, AuthInvalidCredentialsException } from '../../domain';
 import {
@@ -8,7 +8,7 @@ import {
   type IAuthCredentialsPort,
   type IAuthLoginRepositoryPort,
 } from '../../outbound';
-import { IAuthLoginCommand, IAuthLoginView } from '../interfaces';
+import type { IAuthLoginCommand, IAuthLoginView } from '../interfaces';
 
 @Injectable()
 export class AuthLoginUseCase {

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { AuthRoleNotFoundException, AuthUserNotFoundException } from '../../domain';
 import {
@@ -8,7 +8,7 @@ import {
   type IUserReassignRolesRepositoryPort,
   type IUserTransactionPort,
 } from '../../outbound';
-import { IUserReassignRolesCommand, IUserReassignRolesView } from '../interfaces';
+import type { IUserReassignRolesCommand, IUserReassignRolesView } from '../interfaces';
 
 @Injectable()
 export class UserReassignRolesUseCase {

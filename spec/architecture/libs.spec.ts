@@ -26,6 +26,7 @@ describe('libs', () => {
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
+      'libs/contracts/src/ledger/index.ts',
       'libs/contracts/src/local-storage/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
@@ -69,11 +70,12 @@ describe('libs', () => {
     ['database', ['kernel', 'toolkit', 'local-storage']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'observability']],
-    ['ledger', ['kernel', 'toolkit']],
+    ['ledger', ['kernel', 'toolkit', 'config', 'queue']],
     ['local-storage', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
     ['queue', ['kernel', 'toolkit']],
+    ['testing', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {
     const libs = [
       'auth',
@@ -107,6 +109,34 @@ describe('libs', () => {
     }
   });
 
+  it('the testing lib MAY reach the outbound of the cache lib for its redis token', async () => {
+    await expect({
+      file: 'libs/testing/src/cache/__fixture__.ts',
+      code: 'import { x } from "../../../cache/src/outbound";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a lib may NOT import the testing lib outside its specs', async () => {
+    await expect({
+      file: 'libs/ledger/src/application/__fixture__.ts',
+      code: 'import { x } from "../../../testing/src";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a feature may NOT import the testing lib outside its specs', async () => {
+    await expect({
+      file: 'apps/__libs-fixture__/src/features/product/application/__fixture__.ts',
+      code: 'import { x } from "@acme-libs/testing";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a spec of any layer MAY import the testing lib', async () => {
+    await expect({
+      file: 'libs/ledger/src/application/spec/__fixture__.spec.ts',
+      code: 'import { x } from "../../../../testing/src";',
+    }).toPassArchitectureLint();
+  });
+
   it.each([
     ['auth', ['auth']],
     ['cache', ['cache']],
@@ -116,14 +146,23 @@ describe('libs', () => {
     ['health', ['cache', 'health']],
     ['http', []],
     ['kernel', []],
-    ['ledger', []],
+    ['ledger', ['ledger']],
     ['local-storage', ['local-storage']],
     ['observability', []],
     ['openapi', []],
     ['queue', []],
+    ['testing', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'];
+    const contracts = [
+      'auth',
+      'cache',
+      'credentials',
+      'database',
+      'health',
+      'ledger',
+      'local-storage',
+    ];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {

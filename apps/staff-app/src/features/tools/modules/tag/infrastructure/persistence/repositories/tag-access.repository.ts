@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import {
-  ITagAccessRecord,
-  ITagAccessRepositoryPort,
   TAG_ACCESS_REPOSITORY_PORT,
+  type ITagAccessRecord,
+  type ITagAccessRepositoryPort,
 } from '../../../outbound';
 import { TagPersistenceHost } from '../host/tag-persistence.host';
 

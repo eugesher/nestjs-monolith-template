@@ -1,5 +1,5 @@
-import { QueueFailedJobService } from '../../services/queue-failed-job.service';
 import { QueueDeleteFailedJobUseCase } from '../queue-delete-failed-job.use-case';
+import type { QueueFailedJobService } from '../../services/queue-failed-job.service';
 
 describe('QueueDeleteFailedJobUseCase', () => {
   let ensure: jest.Mock;

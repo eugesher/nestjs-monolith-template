@@ -1,4 +1,4 @@
-import { StaffRole, StaffRolePermission, StaffUser } from '@acme-core/entities';
+import type { StaffRole, StaffRolePermission, StaffUser } from '@acme-core/entities';
 
 export type IStaffAuthCoreFindSubjectStaffUserRecord = Pick<StaffUser, 'id' | 'email'> & {
   userRoles: {

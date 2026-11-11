@@ -1,11 +1,16 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  type CanActivate,
+  type ExecutionContext,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { PermissionCodeEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import type { PermissionCodeEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import { AuthMetadataKeyEnum } from '../enums/auth-metadata-key.enum';
-import { IAuthRequest } from '../interfaces/auth-request.interface';
+import type { IAuthRequest } from '../interfaces/auth-request.interface';
 
 @Injectable()
 export class AuthPermissionGuard implements CanActivate {

@@ -33,10 +33,27 @@ export const acmeLibs = [
       'observability',
       'openapi',
       'queue',
+      'testing',
     ],
     [baseLibs()],
   ),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
+  fromLib('testing', [
+    to('acme-libs', { lib: 'cache', file: 'outbound/**' }),
+    packages(
+      '@nestjs/common',
+      '@nestjs/config',
+      '@nestjs/jwt',
+      '@nestjs/testing',
+      'nestjs-pino',
+      'typeorm',
+    ),
+  ]),
+  { from: { file: { path: '**/*.spec.ts' } }, allow: [libs('testing')] },
+  fromLib('ledger', [
+    libs('config', 'queue'),
+    packages('@nestjs/bull', '@nestjs/common', 'bull', 'nestjs-pino'),
+  ]),
   fromLib('credentials', [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt', 'argon2'),
   ]),

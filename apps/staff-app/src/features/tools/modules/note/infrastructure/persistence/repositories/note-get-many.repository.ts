@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  INoteGetManyListQuery,
-  INoteGetManyRecord,
-  INoteGetManyRepositoryPort,
   NOTE_GET_MANY_REPOSITORY_PORT,
+  type INoteGetManyListQuery,
+  type INoteGetManyRecord,
+  type INoteGetManyRepositoryPort,
 } from '../../../outbound';
 import { NotePersistenceHost } from '../host/note-persistence.host';
 

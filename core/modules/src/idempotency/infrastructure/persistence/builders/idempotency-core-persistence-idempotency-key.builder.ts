@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { IdempotencyKey } from '@acme-core/entities';
+import type { IdempotencyKey } from '@acme-core/entities';
 
 export class IdempotencyCorePersistenceIdempotencyKeyBuilder extends SelectQueryBuilder<IdempotencyKey> {
   public forByKey(key: string): this {

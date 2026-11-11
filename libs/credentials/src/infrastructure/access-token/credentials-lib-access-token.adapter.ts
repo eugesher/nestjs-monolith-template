@@ -1,9 +1,12 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
 
-import { CREDENTIALS_LIB_ACCESS_TOKEN_PORT, ICredentialsLibAccessTokenPort } from '../../outbound';
+import {
+  CREDENTIALS_LIB_ACCESS_TOKEN_PORT,
+  type ICredentialsLibAccessTokenPort,
+} from '../../outbound';
 
 @Injectable()
 export class CredentialsLibAccessTokenAdapter implements ICredentialsLibAccessTokenPort {

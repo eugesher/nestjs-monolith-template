@@ -1,4 +1,4 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import {
   IDEMPOTENCY_CORE_PORT,
@@ -7,14 +7,14 @@ import {
 } from '@acme-core/contracts/idempotency';
 
 import {
-  IProductIdempotencyClaimCommand,
-  IProductIdempotencyCompleteCommand,
-  IProductIdempotencyOutcomeView,
-  IProductIdempotencyPort,
-  IProductIdempotencyReleaseCommand,
-  IProductIdempotencyReplayView,
   PRODUCT_IDEMPOTENCY_PORT,
   ProductIdempotencyOutcomeEnum,
+  type IProductIdempotencyClaimCommand,
+  type IProductIdempotencyCompleteCommand,
+  type IProductIdempotencyOutcomeView,
+  type IProductIdempotencyPort,
+  type IProductIdempotencyReleaseCommand,
+  type IProductIdempotencyReplayView,
 } from '../../outbound';
 
 @Injectable()

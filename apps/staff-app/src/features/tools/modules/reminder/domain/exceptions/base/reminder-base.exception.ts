@@ -1,6 +1,6 @@
-import { DomainException, Maybe } from '@acme-libs/toolkit';
+import { DomainException, type Maybe } from '@acme-libs/toolkit';
 
-import { ReminderExceptionCodeEnum } from '../../enums/reminder-exception-code.enum';
+import type { ReminderExceptionCodeEnum } from '../../enums/reminder-exception-code.enum';
 
 export abstract class ReminderBaseException extends DomainException {
   public abstract override readonly code: ReminderExceptionCodeEnum;

@@ -7,7 +7,7 @@ import {
   type IOrderGetTagsRepositoryPort,
   type IOrderTagPort,
 } from '../../outbound';
-import { IOrderGetTagsCommand, IOrderTagsView } from '../interfaces';
+import type { IOrderGetTagsCommand, IOrderTagsView } from '../interfaces';
 
 @Injectable()
 export class OrderGetTagsUseCase {

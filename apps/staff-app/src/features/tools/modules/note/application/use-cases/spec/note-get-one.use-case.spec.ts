@@ -1,6 +1,6 @@
 import { NoteModel } from '../../../domain';
-import { NoteAccessService } from '../../services/note-access.service';
 import { NoteGetOneUseCase } from '../note-get-one.use-case';
+import type { NoteAccessService } from '../../services/note-access.service';
 
 describe('NoteGetOneUseCase', () => {
   let loadOwned: jest.Mock;

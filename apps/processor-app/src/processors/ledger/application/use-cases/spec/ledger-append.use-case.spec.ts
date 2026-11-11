@@ -1,11 +1,11 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
-import { ILedgerAppendEntryDraftOutput } from '../../../domain';
 import { LedgerAppendEntryInsertOutcomeEnum } from '../../../outbound';
 import { LedgerAppendUseCase } from '../ledger-append.use-case';
+import type { ILedgerAppendEntryDraftOutput } from '../../../domain';
 
 describe('LedgerAppendUseCase', () => {
   let insert: jest.Mock;

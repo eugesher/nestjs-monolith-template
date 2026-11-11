@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { OccRetryHelper } from '@acme-libs/toolkit';
 
@@ -15,8 +15,8 @@ import {
   type IProductWriteRepositoryPort,
 } from '../../outbound';
 import { ProductWriteConflictError } from '../errors/product-write-conflict.error';
-import { IProductWriteCommand, IProductWriteView } from '../interfaces';
 import { ProductAccessService } from './product-access.service';
+import type { IProductWriteCommand, IProductWriteView } from '../interfaces';
 
 @Injectable()
 export class ProductWriteService {

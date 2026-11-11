@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { StaffRole, StaffRolePermission } from '@acme-core/entities';
+import { StaffRolePermission, type StaffRole } from '@acme-core/entities';
 
 export class RolePersistenceStaffRoleBuilder extends SelectQueryBuilder<StaffRole> {
   private readonly staffRolePermissionAlias = StaffRolePermission.name;

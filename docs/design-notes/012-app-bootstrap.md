@@ -115,7 +115,8 @@ alias resolves any path under `app/`; lint decides which of them a file may impo
 
 Lint gives `app.module.ts` its own category, `acme-app:app:module`:
 
-- only `main.ts` and `test/` of the same app may import it;
+- only `main.ts` and `test/` of the same app may import it, and the system suites of `test/system`,
+  which boot an API app next to processor-app (see `014-e2e-suites.md`);
 - `main.ts` sees nothing else of the app: not `setup/`, not `global/`;
 - it may import `@nestjs/core` for `APP_PIPE` and `APP_FILTER`, and the rest of `app/` may not.
 

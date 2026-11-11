@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`App Auth POST /api/auth/register should create a customer and append the ledger entry of the registration 1`] = `
+{
+  "db": {
+    "customer": [
+      {
+        "created_at": Any<Date>,
+        "email": "eve@example.com",
+        "id": Any<String>,
+        "password_hash": Any<String>,
+        "status": "active",
+      },
+    ],
+    "ledger_entry": [
+      {
+        "action": "CustomerRegistered",
+        "correlation_id": "system-customer-register",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": Any<String>,
+        "payload": {
+          "email": "eve@example.com",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": Any<String>,
+        "subject_type": "customer",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "email": "eve@example.com",
+      "id": Any<String>,
+    },
+  },
+}
+`;
+
+exports[`App Order POST /api/orders should place the order, append its ledger entry and archive the sold-out product with its own entry under the correlation id 1`] = `
+{
+  "cache": {
+    "keys": [],
+  },
+  "db": {
+    "idempotency_key": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "idempotency_key": "system-order-key",
+        "request_fingerprint": "9c0497ef6d26891972b3c82f4b5cd6d435ce240a0e8f2bbc2cf95a49e0772422",
+        "response_body": Any<String>,
+        "status": "completed",
+      },
+    ],
+    "ledger_entry": [
+      {
+        "action": "OrderPlaced",
+        "correlation_id": "system-order-place",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": Any<String>,
+        "payload": {
+          "customerId": "101",
+          "productIds": [
+            "103",
+            "103",
+            "103",
+          ],
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": Any<String>,
+        "subject_type": "order",
+      },
+      {
+        "action": "ProductArchived",
+        "correlation_id": "system-order-place",
+        "id": Any<String>,
+        "occurred_at": Any<Date>,
+        "operation_key": "product-archived:103:2",
+        "payload": {
+          "previousStatus": "active",
+          "sku": "SKU-0004",
+        },
+        "recorded_at": Any<Date>,
+        "subject_id": "103",
+        "subject_type": "product",
+      },
+    ],
+    "order": [
+      {
+        "created_at": Any<Date>,
+        "customer_id": "101",
+        "id": Any<String>,
+      },
+    ],
+    "order_product": [
+      {
+        "id": Any<String>,
+        "order_id": Any<String>,
+        "product_id": "103",
+      },
+      {
+        "id": Any<String>,
+        "order_id": Any<String>,
+        "product_id": "103",
+      },
+      {
+        "id": Any<String>,
+        "order_id": Any<String>,
+        "product_id": "103",
+      },
+    ],
+    "product": [
+      {
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "103",
+        "name": "Product to archive",
+        "sku": "SKU-0004",
+        "status": "archived",
+        "updated_at": Any<Date>,
+        "version": 2,
+      },
+    ],
+    "product_stock": [
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": Any<String>,
+        "product_id": "103",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": Any<String>,
+        "product_id": "103",
+        "quantity": -1,
+      },
+      {
+        "created_at": Any<Date>,
+        "id": Any<String>,
+        "order_product_id": Any<String>,
+        "product_id": "103",
+        "quantity": -1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "products": [
+        {
+          "id": Any<String>,
+          "name": "Product to archive",
+          "productId": "103",
+          "sku": "SKU-0004",
+        },
+        {
+          "id": Any<String>,
+          "name": "Product to archive",
+          "productId": "103",
+          "sku": "SKU-0004",
+        },
+        {
+          "id": Any<String>,
+          "name": "Product to archive",
+          "productId": "103",
+          "sku": "SKU-0004",
+        },
+      ],
+    },
+  },
+}
+`;

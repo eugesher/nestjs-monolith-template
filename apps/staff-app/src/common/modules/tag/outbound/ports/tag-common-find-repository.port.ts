@@ -1,4 +1,4 @@
-import { ITagCommonFindQuery, ITagCommonFindRecord } from '../interfaces';
+import type { ITagCommonFindQuery, ITagCommonFindRecord } from '../interfaces';
 
 export interface ITagCommonFindRepositoryPort {
   list(query: ITagCommonFindQuery): Promise<ITagCommonFindRecord[]>;

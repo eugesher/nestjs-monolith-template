@@ -1,4 +1,4 @@
-import { ITagGetManyQuery, ITagGetManyRecord } from '../interfaces';
+import type { ITagGetManyQuery, ITagGetManyRecord } from '../interfaces';
 
 export interface ITagGetManyRepositoryPort {
   list(query: ITagGetManyQuery): Promise<ITagGetManyRecord>;

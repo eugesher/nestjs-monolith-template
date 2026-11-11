@@ -1,34 +1,36 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
-  IProductDraftOutput,
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
   ProductModel,
   ProductSkuTakenException,
+  type IProductDraftOutput,
 } from '../../domain';
 import {
   PRODUCT_CREATE_REPOSITORY_PORT,
   PRODUCT_IDEMPOTENCY_PORT,
+  PRODUCT_LEDGER_PORT,
   PRODUCT_TRANSACTION_PORT,
   ProductCreateInsertOutcomeEnum,
   ProductIdempotencyOutcomeEnum,
   type IProductCreateRepositoryPort,
   type IProductIdempotencyPort,
+  type IProductLedgerPort,
   type IProductTransactionPort,
 } from '../../outbound';
-import { IProductCreateCommand, IProductView } from '../interfaces';
-import { ProductLedgerService } from '../services/product-ledger.service';
+import type { IProductCreateCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductCreateUseCase {
   constructor(
-    private readonly ledgerService: ProductLedgerService,
     @Inject(PRODUCT_CREATE_REPOSITORY_PORT)
     private readonly repository: IProductCreateRepositoryPort,
     @Inject(PRODUCT_IDEMPOTENCY_PORT)
     private readonly idempotency: IProductIdempotencyPort,
+    @Inject(PRODUCT_LEDGER_PORT)
+    private readonly ledger: IProductLedgerPort,
     @Inject(PRODUCT_TRANSACTION_PORT)
     private readonly transaction: IProductTransactionPort,
     @InjectPinoLogger(ProductCreateUseCase.name)
@@ -66,7 +68,7 @@ export class ProductCreateUseCase {
       const draft = ProductModel.createDraft({ sku, name });
       const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
 
-      await this.ledgerService.recordCreated({
+      await this.ledger.recordCreated({
         productId: view.id,
         sku: view.sku,
         name: view.name,

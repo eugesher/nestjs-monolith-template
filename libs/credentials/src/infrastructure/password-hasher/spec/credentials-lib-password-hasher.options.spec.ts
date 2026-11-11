@@ -1,5 +1,5 @@
-import { ConfigService } from '@nestjs/config';
 import { argon2id } from 'argon2';
+import type { ConfigService } from '@nestjs/config';
 
 import { CredentialsLibPasswordHasherOptions } from '../credentials-lib-password-hasher.options';
 

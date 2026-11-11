@@ -5,7 +5,7 @@ import {
   REMINDER_ACCESS_REPOSITORY_PORT,
   type IReminderAccessRepositoryPort,
 } from '../../outbound';
-import { IReminderAccessLoadOwnedCommand } from '../interfaces';
+import type { IReminderAccessLoadOwnedCommand } from '../interfaces';
 
 @Injectable()
 export class ReminderAccessService {

@@ -1,4 +1,4 @@
-import { StaffUser, StaffUserRole } from '@acme-core/entities';
+import type { StaffUser, StaffUserRole } from '@acme-core/entities';
 
 export type IUserRegisterStaffUserInsertQuery = Pick<
   StaffUser,

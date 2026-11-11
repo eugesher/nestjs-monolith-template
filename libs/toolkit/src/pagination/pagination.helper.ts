@@ -1,6 +1,6 @@
-import { IPageRequest } from './page-request.interface';
-import { IPageWindowOptions } from './page-window-options.interface';
-import { IPage } from './page.interface';
+import type { IPageRequest } from './page-request.interface';
+import type { IPageWindowOptions } from './page-window-options.interface';
+import type { IPage } from './page.interface';
 
 export class PaginationHelper {
   public static clampPageWindow(

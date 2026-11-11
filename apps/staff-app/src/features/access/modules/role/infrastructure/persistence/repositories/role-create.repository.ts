@@ -1,15 +1,15 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IRoleCreateRepositoryPort,
-  IRoleCreateRolePermissionInsertQuery,
-  IRoleCreateStaffRoleInsertQuery,
-  IRoleCreateStaffRoleInsertRecord,
   ROLE_CREATE_REPOSITORY_PORT,
   RoleCreateStaffRoleInsertOutcomeEnum,
+  type IRoleCreateRepositoryPort,
+  type IRoleCreateRolePermissionInsertQuery,
+  type IRoleCreateStaffRoleInsertQuery,
+  type IRoleCreateStaffRoleInsertRecord,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 

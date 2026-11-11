@@ -1,6 +1,6 @@
-import { DomainException, Maybe } from '@acme-libs/toolkit';
+import { DomainException, type Maybe } from '@acme-libs/toolkit';
 
-import { ProductExceptionCodeEnum } from '../../enums/product-exception-code.enum';
+import type { ProductExceptionCodeEnum } from '../../enums/product-exception-code.enum';
 
 export abstract class ProductBaseException extends DomainException {
   public abstract override readonly code: ProductExceptionCodeEnum;

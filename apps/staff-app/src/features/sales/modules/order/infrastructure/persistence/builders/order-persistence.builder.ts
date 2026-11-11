@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { Order, OrderProduct, Product } from '@acme-core/entities';
+import { OrderProduct, Product, type Order } from '@acme-core/entities';
 
-import { IOrderGetManyListQuery } from '../../../outbound';
+import type { IOrderGetManyListQuery } from '../../../outbound';
 
 export class OrderPersistenceBuilder extends SelectQueryBuilder<Order> {
   private readonly orderProductAlias = OrderProduct.name;

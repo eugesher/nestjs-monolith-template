@@ -1,5 +1,5 @@
-import { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 import { CacheLibSetUseCase } from '../cache-lib-set.use-case';
+import type { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 
 describe('CacheLibSetUseCase', () => {
   let set: jest.Mock;

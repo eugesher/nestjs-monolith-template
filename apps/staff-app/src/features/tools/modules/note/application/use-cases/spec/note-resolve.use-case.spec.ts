@@ -1,11 +1,11 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
-import { INoteResolveUpdateQuery } from '../../../outbound';
 import { NoteAccessService } from '../../services/note-access.service';
 import { NoteWriteService } from '../../services/note-write.service';
 import { NoteResolveUseCase } from '../note-resolve.use-case';
+import type { INoteResolveUpdateQuery } from '../../../outbound';
 
 describe('NoteResolveUseCase', () => {
   let findOwned: jest.Mock;

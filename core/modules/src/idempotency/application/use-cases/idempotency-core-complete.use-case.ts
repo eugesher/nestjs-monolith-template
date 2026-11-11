@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IIdempotencyCoreCompleteCommand } from '@acme-core/contracts/idempotency';
+import type { IIdempotencyCoreCompleteCommand } from '@acme-core/contracts/idempotency';
 
 import {
   IDEMPOTENCY_CORE_COMPLETE_REPOSITORY_PORT,

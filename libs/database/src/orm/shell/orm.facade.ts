@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EntityTarget, ObjectLiteral } from 'typeorm';
+import type { EntityTarget, ObjectLiteral } from 'typeorm';
 
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { OrmGetRepositoryUseCase } from '../application';
 

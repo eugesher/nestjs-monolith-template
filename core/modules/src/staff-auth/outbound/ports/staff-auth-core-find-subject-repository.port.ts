@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IStaffAuthCoreFindSubjectStaffUserRecord } from '../interfaces';
+import type { IStaffAuthCoreFindSubjectStaffUserRecord } from '../interfaces';
 
 export interface IStaffAuthCoreFindSubjectRepositoryPort {
   findActiveById(id: string): Promise<Nullable<IStaffAuthCoreFindSubjectStaffUserRecord>>;

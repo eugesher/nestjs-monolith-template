@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { NoteModel, NoteNotFoundException } from '../../domain';
 import { NOTE_ACCESS_REPOSITORY_PORT, type INoteAccessRepositoryPort } from '../../outbound';
-import { INoteAccessLoadOwnedCommand } from '../interfaces';
+import type { INoteAccessLoadOwnedCommand } from '../interfaces';
 
 @Injectable()
 export class NoteAccessService {

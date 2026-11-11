@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPage } from '@acme-libs/toolkit';
 
 import { TagModel } from '../../domain';
 import { TAG_GET_MANY_REPOSITORY_PORT, type ITagGetManyRepositoryPort } from '../../outbound';
-import { ITagGetManyCommand, ITagView } from '../interfaces';
+import type { ITagGetManyCommand, ITagView } from '../interfaces';
 
 @Injectable()
 export class TagGetManyUseCase {

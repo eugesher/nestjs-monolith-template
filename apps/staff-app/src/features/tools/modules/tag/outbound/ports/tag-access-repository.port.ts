@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { ITagAccessRecord } from '../interfaces';
+import type { ITagAccessRecord } from '../interfaces';
 
 export interface ITagAccessRepositoryPort {
   findById(tagId: string): Promise<Nullable<ITagAccessRecord>>;

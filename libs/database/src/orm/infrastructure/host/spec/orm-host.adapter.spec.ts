@@ -1,6 +1,6 @@
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import type { TransactionHost } from '@nestjs-cls/transactional';
+import type { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+import type { EntityManager, Repository } from 'typeorm';
 
 import { OrmHostAdapter } from '../orm-host.adapter';
 

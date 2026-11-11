@@ -1,9 +1,8 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
-import { ProductCoreLedgerService } from '../../services/product-core-ledger.service';
 import { ProductCoreArchiveUseCase } from '../product-core-archive.use-case';
 
 describe('ProductCoreArchiveUseCase', () => {
@@ -44,9 +43,9 @@ describe('ProductCoreArchiveUseCase', () => {
     afterCommit = jest.fn((hook: () => Promise<void>) => hooks.push(hook));
     logger = makePinoLoggerMock();
     useCase = new ProductCoreArchiveUseCase(
-      { recordArchived } as unknown as ProductCoreLedgerService,
       { lockById, update },
       { invalidate },
+      { recordArchived },
       { run, afterCommit },
       logger as unknown as PinoLogger,
     );

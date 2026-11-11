@@ -2,7 +2,7 @@ import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 
 import {
   IdempotencyCoreClaimInsertOutcomeEnum,
-  IIdempotencyCoreClaimInsertQuery,
+  type IIdempotencyCoreClaimInsertQuery,
 } from '../../../outbound';
 import { IdempotencyCoreClaimUseCase } from '../idempotency-core-claim.use-case';
 

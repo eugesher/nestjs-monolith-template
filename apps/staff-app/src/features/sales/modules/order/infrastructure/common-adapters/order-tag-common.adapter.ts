@@ -1,4 +1,4 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import {
   TAG_COMMON_PORT,
@@ -8,14 +8,14 @@ import {
 } from '@acme-staff/contracts/tag';
 
 import {
-  IOrderTagFindCommand,
-  IOrderTagFindOrderIdsCommand,
-  IOrderTagFindView,
-  IOrderTagPort,
-  IOrderTagReplaceCommand,
-  IOrderTagReplaceView,
   ORDER_TAG_PORT,
   OrderTagReplaceOutcomeEnum,
+  type IOrderTagFindCommand,
+  type IOrderTagFindOrderIdsCommand,
+  type IOrderTagFindView,
+  type IOrderTagPort,
+  type IOrderTagReplaceCommand,
+  type IOrderTagReplaceView,
 } from '../../outbound';
 
 @Injectable()

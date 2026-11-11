@@ -22,6 +22,7 @@ describe('lib entry points', () => {
       'observability',
       'openapi',
       'queue',
+      'testing',
       'toolkit',
     ]);
   });
@@ -64,6 +65,8 @@ describe('lib entry points', () => {
       '@acme-libs/openapi/*',
       '@acme-libs/queue',
       '@acme-libs/queue/*',
+      '@acme-libs/testing',
+      '@acme-libs/testing/*',
       '@acme-libs/toolkit',
       '@acme-libs/toolkit/*',
     ]);
@@ -72,13 +75,13 @@ describe('lib entry points', () => {
   it.each([
     '@acme-libs/auth',
     '@acme-libs/cache',
-    '@acme-libs/cache/testing',
     '@acme-libs/config',
     '@acme-libs/contracts/auth',
     '@acme-libs/contracts/cache',
     '@acme-libs/contracts/credentials',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
+    '@acme-libs/contracts/ledger',
     '@acme-libs/contracts/local-storage',
     '@acme-libs/credentials',
     '@acme-libs/database',
@@ -88,10 +91,10 @@ describe('lib entry points', () => {
     '@acme-libs/ledger',
     '@acme-libs/local-storage',
     '@acme-libs/observability',
-    '@acme-libs/observability/testing',
     '@acme-libs/observability/tracer',
     '@acme-libs/openapi',
     '@acme-libs/queue',
+    '@acme-libs/testing',
     '@acme-libs/toolkit',
   ])('%s resolves', (source) => {
     expect(source).toResolve();
@@ -171,8 +174,8 @@ describe('lib entry points', () => {
   ])('%s may NOT import test helpers outside specs', async (file) => {
     await expect({
       file,
-      code: 'import { makePinoLoggerMock } from "@acme-libs/observability/testing";',
-    }).toBreakRule('no-restricted-imports');
+      code: 'import { makePinoLoggerMock } from "@acme-libs/testing";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
@@ -182,7 +185,7 @@ describe('lib entry points', () => {
   ])('the spec %s MAY import test helpers', async (file) => {
     await expect({
       file,
-      code: 'import { makePinoLoggerMock } from "@acme-libs/observability/testing";',
+      code: 'import { makePinoLoggerMock } from "@acme-libs/testing";',
     }).toPassArchitectureLint();
   });
 
@@ -287,14 +290,14 @@ describe('lib entry points', () => {
   it('the Redis client token may NOT be imported outside specs', async () => {
     await expect({
       file: 'apps/staff-app/src/app/__fixture__.ts',
-      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
-    }).toBreakRule('no-restricted-imports');
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('an e2e spec MAY take the Redis client token', async () => {
     await expect({
       file: 'apps/staff-app/test/app/__fixture__.e2e-spec.ts',
-      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
+      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing";',
     }).toPassArchitectureLint();
   });
 

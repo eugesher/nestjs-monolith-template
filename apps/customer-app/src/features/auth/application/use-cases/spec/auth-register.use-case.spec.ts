@@ -1,10 +1,9 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { IdentityExceptionCodeEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { AuthRegisterCustomerInsertOutcomeEnum } from '../../../outbound';
-import { AuthLedgerService } from '../../services/auth-ledger.service';
 import { AuthRegisterUseCase } from '../auth-register.use-case';
 
 describe('AuthRegisterUseCase', () => {
@@ -32,9 +31,9 @@ describe('AuthRegisterUseCase', () => {
     };
     logger = makePinoLoggerMock();
     useCase = new AuthRegisterUseCase(
-      { recordRegistered } as unknown as AuthLedgerService,
       repository,
       credentials,
+      { recordRegistered },
       logger as unknown as PinoLogger,
     );
   });

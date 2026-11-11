@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { ReminderModel } from '../../domain';
 import {
@@ -8,7 +8,7 @@ import {
   type IReminderCreateRepositoryPort,
   type IReminderSummaryPort,
 } from '../../outbound';
-import { IReminderCreateCommand, IReminderView } from '../interfaces';
+import type { IReminderCreateCommand, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderCreateUseCase {

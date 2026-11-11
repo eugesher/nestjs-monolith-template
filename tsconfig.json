@@ -24,8 +24,6 @@
     "paths": {
       "@acme-customer/app": ["./apps/customer-app/src/app"],
       "@acme-customer/app/*": ["./apps/customer-app/src/app/*"],
-      "@acme-customer/common": ["./apps/customer-app/src/common"],
-      "@acme-customer/common/*": ["./apps/customer-app/src/common/*"],
       "@acme-customer/features": ["./apps/customer-app/src/features"],
       "@acme-customer/features/*": ["./apps/customer-app/src/features/*"],
       "@acme-processor/app": ["./apps/processor-app/src/app"],
@@ -78,6 +76,8 @@
       "@acme-libs/openapi/*": ["./libs/openapi/src/*"],
       "@acme-libs/queue": ["./libs/queue/src"],
       "@acme-libs/queue/*": ["./libs/queue/src/*"],
+      "@acme-libs/testing": ["./libs/testing/src"],
+      "@acme-libs/testing/*": ["./libs/testing/src/*"],
       "@acme-libs/toolkit": ["./libs/toolkit/src"],
       "@acme-libs/toolkit/*": ["./libs/toolkit/src/*"]
     }

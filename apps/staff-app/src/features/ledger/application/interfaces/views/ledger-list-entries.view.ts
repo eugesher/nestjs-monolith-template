@@ -1,4 +1,4 @@
-import { IPage } from '@acme-libs/toolkit';
+import type { IPage } from '@acme-libs/toolkit';
 
 export type ILedgerListEntriesView = IPage<{
   id: string;

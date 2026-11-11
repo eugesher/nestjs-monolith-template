@@ -1,4 +1,4 @@
-import { ArgumentsHost, ConflictException } from '@nestjs/common';
+import { ConflictException, type ArgumentsHost } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { QueryFailedError } from 'typeorm';
 

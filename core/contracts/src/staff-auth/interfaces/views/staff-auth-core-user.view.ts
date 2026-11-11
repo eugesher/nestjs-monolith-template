@@ -1,4 +1,4 @@
-import { UserStatusEnum } from '@acme-libs/kernel';
+import type { UserStatusEnum } from '@acme-libs/kernel';
 
 export interface IStaffAuthCoreUserView {
   id: string;

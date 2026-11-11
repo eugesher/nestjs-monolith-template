@@ -1,13 +1,13 @@
 import {
-  ArgumentsHost,
   BadRequestException,
   NotFoundException,
   ServiceUnavailableException,
+  type ArgumentsHost,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import { PinoLogger } from 'nestjs-pino';
+import type { HttpAdapterHost } from '@nestjs/core';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { HttpExceptionFilter } from '../http-exception.filter';
 

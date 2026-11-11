@@ -1,4 +1,4 @@
-import { ProductStock } from '@acme-core/entities';
+import type { ProductStock } from '@acme-core/entities';
 
 export type IProductStockCoreMoveInsertQuery = Pick<
   ProductStock,

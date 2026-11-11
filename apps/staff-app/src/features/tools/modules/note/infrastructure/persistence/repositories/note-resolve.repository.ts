@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
-import { INoteResolveRepositoryPort, NOTE_RESOLVE_REPOSITORY_PORT } from '../../../outbound';
+import { NOTE_RESOLVE_REPOSITORY_PORT, type INoteResolveRepositoryPort } from '../../../outbound';
 import { NoteBaseRepository } from './base/note-base.repository';
 
 @Injectable()

@@ -1,4 +1,5 @@
-import {
+import { ProductController } from '../product.controller';
+import type {
   ProductArchiveUseCase,
   ProductCreateUseCase,
   ProductGetManyUseCase,
@@ -8,7 +9,6 @@ import {
   ProductReplaceTagsUseCase,
   ProductUpdateUseCase,
 } from '../../../application';
-import { ProductController } from '../product.controller';
 
 describe('ProductController', () => {
   let create: jest.Mock;

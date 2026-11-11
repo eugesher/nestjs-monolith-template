@@ -1,4 +1,4 @@
-import { IdempotencyKey } from '@acme-core/entities';
+import type { IdempotencyKey } from '@acme-core/entities';
 
 export type IIdempotencyCoreClaimInsertQuery = Pick<
   IdempotencyKey,

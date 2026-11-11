@@ -1,11 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IProductStockPostSubtractProductRecord,
-  IProductStockPostSubtractRepositoryPort,
   PRODUCT_STOCK_POST_SUBTRACT_REPOSITORY_PORT,
+  type IProductStockPostSubtractProductRecord,
+  type IProductStockPostSubtractRepositoryPort,
 } from '../../../outbound';
 import { ProductStockPersistenceHost } from '../host/product-stock-persistence.host';
 

@@ -1,10 +1,10 @@
-import { Job } from 'bull';
+import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
+import type { IProductStockPostSubtractPayload } from '@acme-core/contracts/product-stock';
 
-import { ProductStockPostSubtractUseCase } from '../../../application';
 import { ProductStockPostSubtractProcessor } from '../product-stock-post-subtract.processor';
+import type { ProductStockPostSubtractUseCase } from '../../../application';
 
 describe('ProductStockPostSubtractProcessor', () => {
   let correlationIds: string[];

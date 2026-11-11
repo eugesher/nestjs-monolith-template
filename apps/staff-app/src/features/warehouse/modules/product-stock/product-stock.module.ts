@@ -1,36 +1,31 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
+import { LedgerLibModule } from '@acme-libs/ledger';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
-import { LedgerQueueSetupModule } from '@acme-staff/common/shared';
 
-import { ProductStockAddUseCase, ProductStockLedgerService } from './application';
+import { ProductStockAddUseCase } from './application';
 import {
   ProductStockAddRepository,
-  ProductStockConfigLedgerRetryAttemptsProvider,
-  ProductStockConfigRedisCommandTimeoutMsProvider,
   ProductStockIdempotencyCoreAdapter,
-  ProductStockLedgerQueueAdapter,
+  ProductStockLedgerLibAdapter,
   ProductStockMovementCoreAdapter,
   ProductStockTransactionAdapter,
 } from './infrastructure';
 import { ProductStockController } from './presentation';
 
 @Module({
-  imports: [LedgerQueueSetupModule, IdempotencyCoreModule, ProductStockCoreModule],
+  imports: [LedgerLibModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [ProductStockController],
   providers: [
     HttpExceptionFilter,
     ProductStockAddUseCase,
-    ProductStockLedgerService,
     ProductStockAddRepository.provider,
     ProductStockIdempotencyCoreAdapter.provider,
     ProductStockMovementCoreAdapter.provider,
-    ProductStockLedgerQueueAdapter.provider,
+    ProductStockLedgerLibAdapter.provider,
     ProductStockTransactionAdapter.provider,
-    ProductStockConfigRedisCommandTimeoutMsProvider,
-    ProductStockConfigLedgerRetryAttemptsProvider,
   ],
 })
 export class ProductStockModule {}

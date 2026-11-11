@@ -1,10 +1,10 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+import type { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
 import {
-  ILocalStorageTransactionHostPort,
   LOCAL_STORAGE_TRANSACTION_HOST_PORT,
+  type ILocalStorageTransactionHostPort,
 } from '../../outbound';
 
 @Injectable()

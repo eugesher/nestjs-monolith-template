@@ -1,6 +1,6 @@
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
-import { IReminderGetSummaryRecord } from '../interfaces';
+import type { IReminderGetSummaryRecord } from '../interfaces';
 
 export interface IReminderGetSummaryRepositoryPort {
   summarize(ownerId: string): Promise<Maybe<IReminderGetSummaryRecord>>;

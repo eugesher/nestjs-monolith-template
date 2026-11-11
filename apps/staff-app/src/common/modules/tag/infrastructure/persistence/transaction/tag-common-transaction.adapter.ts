@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { ITagCommonTransactionPort, TAG_COMMON_TRANSACTION_PORT } from '../../../outbound';
+import { TAG_COMMON_TRANSACTION_PORT, type ITagCommonTransactionPort } from '../../../outbound';
 
 @Injectable()
 export class TagCommonTransactionAdapter implements ITagCommonTransactionPort {

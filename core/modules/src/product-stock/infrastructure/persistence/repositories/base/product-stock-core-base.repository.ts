@@ -1,8 +1,8 @@
-import {
+import { ProductStockCorePersistenceHost } from '../../host/product-stock-core-persistence.host';
+import type {
   IProductStockCoreLockProductRecord,
   IProductStockCoreLockSumRecord,
 } from '../../../../outbound';
-import { ProductStockCorePersistenceHost } from '../../host/product-stock-core-persistence.host';
 
 export abstract class ProductStockCoreBaseRepository extends ProductStockCorePersistenceHost {
   public async lockProducts(productIds: string[]): Promise<IProductStockCoreLockProductRecord[]> {

@@ -7,8 +7,8 @@ import {
   NOTE_GET_REVISIONS_REPOSITORY_PORT,
   type INoteGetRevisionsRepositoryPort,
 } from '../../outbound';
-import { INoteGetRevisionsCommand, INoteGetRevisionsView } from '../interfaces';
 import { NoteAccessService } from '../services/note-access.service';
+import type { INoteGetRevisionsCommand, INoteGetRevisionsView } from '../interfaces';
 
 @Injectable()
 export class NoteGetRevisionsUseCase {

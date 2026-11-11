@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Tag } from '@acme-staff/common/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { TagPersistenceBuilder } from '../builders/tag-persistence.builder';
 

@@ -1,7 +1,7 @@
-import { DynamicModule } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
+import type { DynamicModule } from '@nestjs/common';
 
-import { AppNameEnum } from '@acme-libs/kernel';
+import type { AppNameEnum } from '@acme-libs/kernel';
 
 import { LoggerSetupConfig } from './config/logger-setup.config';
 

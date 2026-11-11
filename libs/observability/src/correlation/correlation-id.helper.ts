@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'http';
 
 import { CORRELATION_ID_HEADER } from './correlation-id-header.const';
 

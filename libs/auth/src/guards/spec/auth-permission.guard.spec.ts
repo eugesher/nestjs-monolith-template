@@ -1,5 +1,5 @@
-import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { ForbiddenException, type ExecutionContext } from '@nestjs/common';
+import type { Reflector } from '@nestjs/core';
 
 import { AuthPermissionGuard } from '../auth-permission.guard';
 

@@ -1,4 +1,7 @@
-import { IProductStockCoreLockProductRecord, IProductStockCoreLockSumRecord } from '../interfaces';
+import type {
+  IProductStockCoreLockProductRecord,
+  IProductStockCoreLockSumRecord,
+} from '../interfaces';
 
 export interface IProductStockCoreLockRepositoryPort {
   lockProducts(productIds: string[]): Promise<IProductStockCoreLockProductRecord[]>;
