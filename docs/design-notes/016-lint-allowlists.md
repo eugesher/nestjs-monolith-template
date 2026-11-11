@@ -47,7 +47,7 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
 - the e2e code that reaches app contracts, the queue contracts `@acme-libs/contracts/ledger` and
-  `@acme-core/contracts/product-stock`, and the test helpers of the observability lib;
+  `@acme-core/contracts/product-stock`, and the testing lib;
 - a feature queue adapter and a processor that reach app contracts: a queue between the modules of
   one app keeps its contract in the app, while a queue written by more than one app keeps it in core
   or in the lib that writes it, `product-stock-post-subtract` in
@@ -185,3 +185,12 @@ capture; the files outside the layers may reach the whole lib:
 A shell spec may also read the tokens of `outbound` it overrides. In `libs/database`, `orm/shell`
 may reach `naming` and `orm/application` may reach `repository`.
 `spec/architecture/lib-layers.spec.ts` holds a case per edge.
+
+### The testing lib is for tests only
+
+`libs/testing` holds the test helpers: `e2e/e2e.context.ts`, the Redis token of `cache/` and the
+logger mock of `observability/`. Any `*.spec.ts` may import it, through a policy that matches the
+path, and so may the e2e code and `test/system`. It has no root: every import names a path inside
+it, and outside specs and e2e code `libs-deep-imports.mjs` refuses a deep import, so production code
+cannot reach it. The lib reaches the `outbound` of the cache lib for the Redis token and nothing
+else of another lib.

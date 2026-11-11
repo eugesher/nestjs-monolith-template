@@ -1,6 +1,6 @@
 import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
 
 import { TagModel } from '../../../domain';
 import { TagDeleteUseCase } from '../tag-delete.use-case';

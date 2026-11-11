@@ -14,23 +14,17 @@ describe('e2e sections', () => {
     },
   );
 
-  it.each([
-    '@nestjs/common',
-    '@nestjs/config',
-    '@nestjs/jwt',
-    '@nestjs/testing',
-    'ioredis',
-    'nestjs-pino',
-    'supertest',
-    'typeorm',
-  ])('the e2e code MAY import %s', async (source) => {
-    await expect({
-      file: 'apps/customer-app/test/context/__fixture__.ts',
-      code: `import { x } from "${source}";`,
-    }).toPassArchitectureLint();
-  });
+  it.each(['@nestjs/bull', '@nestjs/common', '@nestjs/config', 'ioredis', 'supertest', 'typeorm'])(
+    'the e2e code MAY import %s',
+    async (source) => {
+      await expect({
+        file: 'apps/customer-app/test/context/__fixture__.ts',
+        code: `import { x } from "${source}";`,
+      }).toPassArchitectureLint();
+    },
+  );
 
-  it.each(['argon2', '@nestjs/core', '@nestjs/typeorm'])(
+  it.each(['argon2', '@nestjs/core', '@nestjs/typeorm', '@nestjs/testing', 'nestjs-pino'])(
     'the e2e code may NOT import %s',
     async (source) => {
       await expect({
@@ -40,10 +34,12 @@ describe('e2e sections', () => {
     },
   );
 
-  it('the e2e context MAY use the test entry points of libs', async () => {
+  it('the e2e context MAY use the testing lib', async () => {
     await expect({
       file: 'apps/customer-app/test/context/__fixture__.ts',
-      code: 'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/cache/testing";',
+      code:
+        'import { E2EContext } from "@acme-libs/testing/e2e/e2e.context";\n' +
+        'import { CACHE_LIB_REDIS_CLIENT_TOKEN } from "@acme-libs/testing/cache";',
     }).toPassArchitectureLint();
   });
 

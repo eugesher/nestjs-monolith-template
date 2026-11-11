@@ -16,15 +16,18 @@ its own, on the standard ports (see `036-production-stack.md`).
 
 ## Scripts
 
-| Script                                                      | What it does                                                               |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `test:e2e:infra:up`                                         | builds and starts MySQL, Redis and the `node` container, attached          |
-| `test:e2e:infra:down`                                       | removes the containers and their volumes                                   |
-| `test:e2e:infra:reload`                                     | `down`, then `up`                                                          |
-| `test:e2e:infra:reseed`                                     | resets the data of running infrastructure, see below                       |
-| `test:e2e:seed`                                             | loads the seed files into the database of `env/migrations/.env.test`       |
-| `test:e2e:staff`, `test:e2e:customer`, `test:e2e:processor` | the e2e suite of one app, `--runInBand --ci`, see `014-e2e-suites.md`      |
-| `test:e2e:system:staff`, `test:e2e:system:customer`         | the system suite of an API app with processor-app, see `014-e2e-suites.md` |
+| Script                                                      | What it does                                                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `test:e2e:infra:up`                                         | builds and starts MySQL, Redis and the `node` container, attached                         |
+| `test:e2e:infra:down`                                       | removes the containers and their volumes                                                  |
+| `test:e2e:infra:reload`                                     | `down`, then `up`                                                                         |
+| `test:e2e:infra:reseed`                                     | resets the data of running infrastructure, see below                                      |
+| `test:e2e:seed`                                             | loads the seed files into the database of `env/migrations/.env.test`                      |
+| `test:e2e`                                                  | `down`, then `up` in the background until the `node` container exits, then `test:e2e:run` |
+| `test:e2e:run`                                              | the five suites one after another, each after a reseed, and one report                    |
+| `test:e2e:staff`, `test:e2e:customer`, `test:e2e:processor` | `reseed`, then the e2e suite of one app, see `014-e2e-suites.md`                          |
+| `test:e2e:system:staff`, `test:e2e:system:customer`         | `reseed`, then the system suite of an API app with processor-app                          |
+| `test:e2e:<suite>:run`                                      | the Jest run of one suite alone, `--runInBand --ci`                                       |
 
 **`up` is attached.** The containers live as long as the command. The `node` container waits for
 healthy MySQL and Redis, runs `migration:run` and `test:e2e:seed`, and stops with `Exited (0)`: that

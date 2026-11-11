@@ -1,7 +1,7 @@
 import type { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
 
 import { ProductModel, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
 import { ProductPublishUseCase } from '../product-publish.use-case';

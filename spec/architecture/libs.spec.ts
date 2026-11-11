@@ -75,6 +75,7 @@ describe('libs', () => {
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
     ['queue', ['kernel', 'toolkit']],
+    ['testing', ['kernel', 'toolkit']],
   ])('%s may import only %j of the other libs', async (from, allowed) => {
     const libs = [
       'auth',
@@ -108,6 +109,27 @@ describe('libs', () => {
     }
   });
 
+  it('the testing lib MAY reach the outbound of the cache lib for its redis token', async () => {
+    await expect({
+      file: 'libs/testing/src/cache/__fixture__.ts',
+      code: 'import { x } from "../../../cache/src/outbound";',
+    }).toPassArchitectureLint();
+  });
+
+  it('a lib may NOT import the testing lib outside its specs', async () => {
+    await expect({
+      file: 'libs/ledger/src/application/__fixture__.ts',
+      code: 'import { x } from "../../../testing/src/observability";',
+    }).toBreakRule('boundaries/dependencies');
+  });
+
+  it('a spec of any layer MAY import the testing lib', async () => {
+    await expect({
+      file: 'libs/ledger/src/application/spec/__fixture__.spec.ts',
+      code: 'import { x } from "../../../../testing/src/observability";',
+    }).toPassArchitectureLint();
+  });
+
   it.each([
     ['auth', ['auth']],
     ['cache', ['cache']],
@@ -122,6 +144,7 @@ describe('libs', () => {
     ['observability', []],
     ['openapi', []],
     ['queue', []],
+    ['testing', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
     const contracts = [

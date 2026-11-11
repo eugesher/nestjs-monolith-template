@@ -17,22 +17,13 @@ export const repo = [
   from('repo:migrations', [to('repo:migrations'), packages('dotenv', 'joi', 'path', 'typeorm')]),
   from('repo:scripts', [
     to('repo:scripts'),
-    packages('argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'),
+    packages('argon2', 'child_process', 'dotenv', 'fs', 'joi', 'os', 'path', 'typeorm'),
   ]),
   from('repo:system', [
     to('repo:system'),
     to('acme-app:app:module'),
-    baseLibs('cache'),
-    packages(
-      '@nestjs/common',
-      '@nestjs/config',
-      '@nestjs/jwt',
-      '@nestjs/testing',
-      'ioredis',
-      'nestjs-pino',
-      'supertest',
-      'typeorm',
-    ),
+    baseLibs('testing'),
+    packages('@nestjs/common', 'ioredis', 'supertest'),
   ]),
   from('repo:test', [to('repo:test'), packages('dotenv', 'fs', 'joi', 'path', 'typeorm')]),
 ];

@@ -9,24 +9,20 @@ processor-app next to them (see System suites below).
 ## Running
 
 ```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:staff
+yarn test:e2e
 ```
 
-```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:customer
-```
+`test:e2e` rebuilds the infrastructure in the background and runs `test:e2e:run`: the five suites
+one after another, each after a reseed, as CI does, then one report with the tests, failures,
+snapshots and seconds of each suite (`scripts/node/e2e-run.ts`). It runs every suite even after a
+failure and exits with 1 if one failed.
 
 ```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:processor
+yarn test:e2e:staff
 ```
 
-```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:system:staff
-```
-
-```bash
-yarn test:e2e:infra:reseed && yarn test:e2e:system:customer
-```
+`test:e2e:<suite>` is `test:e2e:infra:reseed` and then `test:e2e:<suite>:run`, the Jest run alone.
+The suites are `staff`, `customer`, `processor`, `system:staff` and `system:customer`.
 
 Each suite starts from a reseed: the cases write the fixtures, and a second run on the same data
 fails. Every script passes `--ci`, so a run never writes a snapshot; a new or changed snapshot is
@@ -82,12 +78,16 @@ method wraps the `describe` of that endpoint. `ProductE2E.of(ctx)` builds it ove
 feature that needs a hook before each case has `hooks()`, as `ReminderE2E` deletes the `acme:` keys
 from Redis.
 
-**`AppE2EContext` mirrors `main.ts`.** `init()` compiles `AppModule` with `@nestjs/testing`, sets
-the logger and the global prefix, and signs one access token for each seeded account the cases use
-with `JWT_SECRET` from the config: admin, editor and viewer in staff-app, ann, bob and carol in
-customer-app, admin and viewer in processor-app. Everything the cases read is a getter that throws
-before `init()`. The contexts of staff-app and customer-app also hold the Redis client, through
-`@acme-libs/cache/testing`.
+**`AppE2EContext` mirrors `main.ts`.** Each context extends `E2EContext` of
+`libs/testing/src/e2e/e2e.context.ts`, which holds only what all five contexts use: `init()`
+compiles the `AppModule` it is given with `@nestjs/testing`, sets the logger and the global prefix,
+builds a `JwtService` with `JWT_SECRET` from the config and spies on the root logger; `close()` and
+`takeRootWarnings()` round it off. The class is not abstract: a context passes its `AppModule` to
+the constructor, calls `super.init()` and adds its own. It signs one access token for each seeded
+account the cases use: admin, editor and viewer in staff-app, ann, bob and carol in customer-app,
+admin and viewer in processor-app. Everything the cases read is a getter that throws before
+`init()`. The contexts of staff-app and customer-app also hold the Redis client, through
+`@acme-libs/testing/cache`.
 
 **A reminder case clears the keys of the app, not the database.** The Bull queue of the ledger
 records lives in the same Redis, so `FLUSHDB` would drop its jobs and counters. `hooks()` deletes
@@ -179,15 +179,18 @@ adds the variables only it has from its own file. The two differ in `PORT` and `
 system case calls processor-app over HTTP.
 
 **`test/system` is not plain node.** It compiles project code, so it has its own `tsconfig.json`
-over the root one and the lint category `repo:system`. `test/infra` keeps running under plain node.
+over the root one and the lint category `repo:system`: it sees its own files, the `AppModule` of
+every app, the libs `kernel`, `toolkit` and `testing`, and the packages `@nestjs/common`, `ioredis`
+and `supertest`. `test/infra` keeps running under plain node.
 
 ## Lint
 
 `apps/*/test/**` is the category `acme-app:test`. It sees its own app's tests, its `AppModule`, its
 contracts, the contracts of core, `@acme-libs/contracts/ledger`, `@acme-core/entities`, the libs
-`kernel`, `toolkit`, `database`, `cache` and `observability`, and the packages `@nestjs/common`,
-`@nestjs/config`, `@nestjs/jwt`, `@nestjs/testing`, `ioredis`, `nestjs-pino`, `supertest` and
-`typeorm`. `spec/architecture/e2e-sections.spec.ts` checks these edges.
+`kernel`, `toolkit`, `database` and `testing`, and the packages `@nestjs/bull`, `@nestjs/common`,
+`@nestjs/config`, `@nestjs/schedule`, `bull`, `ioredis`, `supertest` and `typeorm`.
+`@nestjs/testing` and `nestjs-pino` stay in the testing lib.
+`spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`
 (`lint/configs/e2e.mjs`): a response body and a query result are untyped by nature, and the snapshot

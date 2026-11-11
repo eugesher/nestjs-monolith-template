@@ -1,6 +1,6 @@
 import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing/observability';
 
 import { CacheLibWrapUseCase } from '../cache-lib-wrap.use-case';
 import type { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';

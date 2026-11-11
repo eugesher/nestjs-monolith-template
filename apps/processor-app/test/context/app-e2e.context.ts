@@ -1,13 +1,8 @@
 import { getQueueToken } from '@nestjs/bull';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { Test, type TestingModule } from '@nestjs/testing';
-import { Logger, PinoLogger } from 'nestjs-pino';
-import { DataSource } from 'typeorm';
-import type { INestApplication } from '@nestjs/common';
 import type { Queue } from 'bull';
 
+import { E2EContext } from '@acme-libs/testing/e2e/e2e.context';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
@@ -20,29 +15,13 @@ import { AppModule } from '@acme-processor/app/app.module';
 import type { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
-  app: INestApplication;
-  moduleFixture: TestingModule;
-  dataSource: DataSource;
   ledgerRecordQueue: Queue<ILedgerRecordProcessorPayload>;
   postSubtractQueue: Queue<IProductStockPostSubtractPayload>;
   adminToken: string;
   viewerToken: string;
-  rootLoggerWarn: jest.SpiedFunction<PinoLogger['warn']>;
 }
 
-export class AppE2EContext {
-  public get app(): INestApplication {
-    return this.started.app;
-  }
-
-  public get moduleFixture(): TestingModule {
-    return this.started.moduleFixture;
-  }
-
-  public get dataSource(): DataSource {
-    return this.started.dataSource;
-  }
-
+export class AppE2EContext extends E2EContext {
   public get ledgerRecordQueue(): Queue<ILedgerRecordProcessorPayload> {
     return this.started.ledgerRecordQueue;
   }
@@ -72,45 +51,23 @@ export class AppE2EContext {
     return this.state;
   }
 
-  public async init(): Promise<void> {
-    const moduleFixture = await Test.createTestingModule({ imports: [AppModule] }).compile();
-    const dataSource = moduleFixture.get(DataSource);
-    const ledgerRecordQueue = moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
-      getQueueToken(LEDGER_RECORD_QUEUE),
-    );
-    const postSubtractQueue = moduleFixture.get<Queue<IProductStockPostSubtractPayload>>(
-      getQueueToken(PRODUCT_STOCK_POST_SUBTRACT_QUEUE),
-    );
-    const config = moduleFixture.get(ConfigService);
-    const prefix = config.getOrThrow<string>('API_PREFIX');
-    const secret = config.getOrThrow<string>('JWT_SECRET');
-    const jwt = new JwtService({ secret });
-    const app = moduleFixture.createNestApplication({ bufferLogs: true });
-    const appLogger = app.get(Logger);
-
-    app.useLogger(appLogger);
-    app.setGlobalPrefix(prefix);
-
-    await app.init();
-
-    const adminToken = jwt.sign({ sub: '1' });
-    const viewerToken = jwt.sign({ sub: '3' });
-    const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
-
-    this.state = {
-      app,
-      moduleFixture,
-      dataSource,
-      ledgerRecordQueue,
-      postSubtractQueue,
-      adminToken,
-      viewerToken,
-      rootLoggerWarn,
-    };
+  constructor() {
+    super(AppModule);
   }
 
-  public async close(): Promise<void> {
-    await this.app.close();
+  public override async init(): Promise<void> {
+    await super.init();
+
+    const ledgerRecordQueue = this.moduleFixture.get<Queue<ILedgerRecordProcessorPayload>>(
+      getQueueToken(LEDGER_RECORD_QUEUE),
+    );
+    const postSubtractQueue = this.moduleFixture.get<Queue<IProductStockPostSubtractPayload>>(
+      getQueueToken(PRODUCT_STOCK_POST_SUBTRACT_QUEUE),
+    );
+    const adminToken = this.jwt.sign({ sub: '1' });
+    const viewerToken = this.jwt.sign({ sub: '3' });
+
+    this.state = { ledgerRecordQueue, postSubtractQueue, adminToken, viewerToken };
   }
 
   public fireSchedule(name: string): void {
@@ -145,14 +102,5 @@ export class AppE2EContext {
 
       return counts.waiting + counts.active + counts.delayed === 0;
     });
-  }
-
-  public takeRootWarnings(): unknown[][] {
-    const { calls, contexts } = this.started.rootLoggerWarn.mock;
-    const warnings = calls.filter((_, index) => contexts[index] === PinoLogger.root);
-
-    this.started.rootLoggerWarn.mockClear();
-
-    return warnings;
   }
 }

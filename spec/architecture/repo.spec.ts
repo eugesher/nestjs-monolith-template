@@ -99,27 +99,34 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each([
-      '@nestjs/common',
-      '@nestjs/config',
-      '@nestjs/jwt',
-      '@nestjs/testing',
-      'nestjs-pino',
-      'supertest',
-      'typeorm',
-    ])('a system test MAY import %s', async (source) => {
+    it.each(['@nestjs/common', 'ioredis', 'supertest'])(
+      'a system test MAY import %s',
+      async (source) => {
+        await expect({
+          file: 'test/system/apps/staff-app/app/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toPassArchitectureLint();
+      },
+    );
+
+    it('a system test MAY use the testing lib', async () => {
       await expect({
-        file: 'test/system/apps/staff-app/app/__fixture__.ts',
-        code: `import { x } from "${source}";`,
+        file: 'test/system/apps/staff-app/context/__fixture__.ts',
+        code:
+          'import { x } from "@acme-libs/testing/e2e/e2e.context";\n' +
+          'import { y } from "@acme-libs/testing/cache";',
       }).toPassArchitectureLint();
     });
 
-    it('a system test MAY read the redis token of the cache lib', async () => {
-      await expect({
-        file: 'test/system/apps/staff-app/context/__fixture__.ts',
-        code: 'import { x } from "@acme-libs/cache/testing";',
-      }).toPassArchitectureLint();
-    });
+    it.each(['@nestjs/testing', 'typeorm'])(
+      'a system test may NOT import %s — the testing lib boots the apps',
+      async (source) => {
+        await expect({
+          file: 'test/system/apps/staff-app/app/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
 
     it.each(['@acme-staff/features', '@acme-core/modules/product'])(
       'a system test may NOT reach %s — it enters an app through its AppModule',
@@ -147,7 +154,7 @@ describe('repo', () => {
       }).toPassArchitectureLint();
     });
 
-    it.each(['argon2', 'dotenv', 'fs', 'joi', 'path', 'typeorm'])(
+    it.each(['argon2', 'child_process', 'dotenv', 'fs', 'joi', 'os', 'path', 'typeorm'])(
       'a script MAY import %s',
       async (source) => {
         await expect({
