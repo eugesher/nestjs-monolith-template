@@ -8,7 +8,6 @@ permissions:
 
 env:
   NODE_VERSION: '24'
-  E2E_COMPOSE_FILE: test/infra/docker/docker-compose.yml
 
 jobs:
   lint:
@@ -74,11 +73,4 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: yarn
       - run: yarn install --immutable
-      - run: docker compose -f "$E2E_COMPOSE_FILE" up --detach --wait mysql redis
-      - run: yarn test:e2e:staff
-      - run: yarn test:e2e:customer
-      - run: yarn test:e2e:processor
-      - run: yarn test:e2e:system:staff
-      - run: yarn test:e2e:system:customer
-      - if: always()
-        run: docker compose -f "$E2E_COMPOSE_FILE" down --remove-orphans --volumes
+      - run: yarn test:e2e

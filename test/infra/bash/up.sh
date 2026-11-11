@@ -6,8 +6,18 @@ COMPOSE_FILE="$INFRA_DIR/docker/docker-compose.yml"
 
 docker compose -f "$COMPOSE_FILE" up --renew-anon-volumes --detach
 
+set -m
 docker compose -f "$COMPOSE_FILE" logs --follow &
 LOGS_PID=$!
-trap 'kill "$LOGS_PID" 2>/dev/null || true' EXIT
+set +m
+
+stop_logs() {
+  kill -TERM -- "-$LOGS_PID" 2>/dev/null || true
+  wait "$LOGS_PID" 2>/dev/null || true
+}
+
+trap stop_logs EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 docker compose -f "$COMPOSE_FILE" up --detach --wait
