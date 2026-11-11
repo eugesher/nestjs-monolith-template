@@ -14,8 +14,8 @@ import {
   type IReminderWriteRepositoryPort,
 } from '../../outbound';
 import { ReminderWriteConflictError } from '../errors/reminder-write-conflict.error';
-import { IReminderWriteCommand } from '../interfaces';
 import { ReminderAccessService } from './reminder-access.service';
+import type { IReminderWriteCommand } from '../interfaces';
 
 @Injectable()
 export class ReminderWriteService {

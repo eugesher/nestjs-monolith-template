@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { QUEUE_REGISTRY_PORT, type IQueueRegistryPort } from '../../outbound';
-import { IQueueDeleteFailedJobCommand } from '../interfaces';
 import { QueueFailedJobService } from '../services/queue-failed-job.service';
+import type { IQueueDeleteFailedJobCommand } from '../interfaces';
 
 @Injectable()
 export class QueueDeleteFailedJobUseCase {

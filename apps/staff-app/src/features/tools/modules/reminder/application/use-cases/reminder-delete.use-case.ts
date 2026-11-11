@@ -7,8 +7,8 @@ import {
   type IReminderDeleteRepositoryPort,
   type IReminderSummaryPort,
 } from '../../outbound';
-import { IReminderDeleteCommand } from '../interfaces';
 import { ReminderAccessService } from '../services/reminder-access.service';
+import type { IReminderDeleteCommand } from '../interfaces';
 
 @Injectable()
 export class ReminderDeleteUseCase {

@@ -1,9 +1,9 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
-import { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
+import type { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+import type { EntityTarget, ObjectLiteral, Repository } from 'typeorm';
 
-import { IOrmHostPort, ORM_HOST_PORT } from '../../outbound';
+import { ORM_HOST_PORT, type IOrmHostPort } from '../../outbound';
 
 @Injectable()
 export class OrmHostAdapter implements IOrmHostPort {

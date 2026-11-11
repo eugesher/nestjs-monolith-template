@@ -1,8 +1,8 @@
-import {
+import { StaffAuthCoreFacade } from '../staff-auth-core.facade';
+import type {
   StaffAuthCoreFindByEmailUseCase,
   StaffAuthCoreFindSubjectUseCase,
 } from '../../application';
-import { StaffAuthCoreFacade } from '../staff-auth-core.facade';
 
 describe('StaffAuthCoreFacade', () => {
   let findSubject: jest.Mock;

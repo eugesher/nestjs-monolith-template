@@ -1,6 +1,6 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { TagNameInvalidException, TagNameTakenException } from '../../../domain';
 import { TagCreateInsertOutcomeEnum } from '../../../outbound';

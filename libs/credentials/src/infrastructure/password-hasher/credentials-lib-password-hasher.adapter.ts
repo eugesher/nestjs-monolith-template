@@ -1,12 +1,12 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { hash, verify } from 'argon2';
 
-import { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibVerifyPasswordCommand } from '@acme-libs/contracts/credentials';
 
 import {
   CREDENTIALS_LIB_PASSWORD_HASHER_PORT,
-  ICredentialsLibPasswordHasherPort,
+  type ICredentialsLibPasswordHasherPort,
 } from '../../outbound';
 import { CredentialsLibPasswordHasherOptions } from './credentials-lib-password-hasher.options';
 

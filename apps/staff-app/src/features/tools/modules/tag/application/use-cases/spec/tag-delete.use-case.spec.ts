@@ -1,10 +1,10 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { TagModel } from '../../../domain';
-import { TagAccessService } from '../../services/tag-access.service';
 import { TagDeleteUseCase } from '../tag-delete.use-case';
+import type { TagAccessService } from '../../services/tag-access.service';
 
 describe('TagDeleteUseCase', () => {
   let load: jest.Mock;

@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Reminder } from '@acme-staff/common/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { ReminderPersistenceBuilder } from '../builders/reminder-persistence.builder';
 

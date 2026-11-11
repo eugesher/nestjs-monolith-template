@@ -1,10 +1,10 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { IReminderDraftOutput } from '../../../domain';
 import { ReminderCreateUseCase } from '../reminder-create.use-case';
+import type { IReminderDraftOutput } from '../../../domain';
 
 describe('ReminderCreateUseCase', () => {
   let insert: jest.Mock;

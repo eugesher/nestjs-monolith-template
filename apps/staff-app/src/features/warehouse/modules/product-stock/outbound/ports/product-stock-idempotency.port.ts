@@ -1,4 +1,4 @@
-import {
+import type {
   IProductStockIdempotencyClaimCommand,
   IProductStockIdempotencyCompleteCommand,
   IProductStockIdempotencyOutcomeView,

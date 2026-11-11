@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { IdempotencyKey } from '@acme-core/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 export abstract class IdempotencyPersistenceHost {
   protected abstract readonly orm: IOrmPort;

@@ -15,6 +15,10 @@ config: type-aware rules would otherwise fail to parse the fixture. Only the arc
 counted (`boundaries/*`, `no-restricted-globals`, `no-restricted-imports`, `no-restricted-syntax`);
 style findings in a one-line fixture are noise.
 
+**Type imports need the types.** `spec/architecture/type-imports.spec.ts` does not use these
+matchers: its rules ask the type checker. It scaffolds a file inside the root project and lints it
+with the plain config (see `015-quality-gates.md`).
+
 **An unresolved import throws.** `eslint-plugin-boundaries` classifies the TARGET of an import by
 resolving it. An import that does not resolve has no target, so the plugin reports nothing, and a
 negative case would pass for the wrong reason. `toBreakRule` and `toPassArchitectureLint` resolve

@@ -1,4 +1,4 @@
-import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
+import { DefaultNamingStrategy, type NamingStrategyInterface } from 'typeorm';
 
 export class SnakeNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
   public override tableName(className: string, customName: string | undefined): string {

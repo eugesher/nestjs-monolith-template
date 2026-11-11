@@ -1,8 +1,11 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { SubjectTag } from '@acme-staff/common/entities';
+import type { SubjectTag } from '@acme-staff/common/entities';
 
-import { ITagCommonFindSubjectIdsQuery, ITagCommonReplaceFindLinkedQuery } from '../../../outbound';
+import type {
+  ITagCommonFindSubjectIdsQuery,
+  ITagCommonReplaceFindLinkedQuery,
+} from '../../../outbound';
 
 export class TagCommonPersistenceSubjectTagBuilder extends SelectQueryBuilder<SubjectTag> {
   public forList(query: ITagCommonFindSubjectIdsQuery): this {

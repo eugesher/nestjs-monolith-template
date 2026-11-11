@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import {
+import type {
   IQueueRegistryFailedJobsView,
   IQueueRegistryFindFailedJobsCommand,
   IQueueRegistryJobCommand,

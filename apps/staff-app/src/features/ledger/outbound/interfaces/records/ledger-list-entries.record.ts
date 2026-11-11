@@ -1,4 +1,4 @@
-import { LedgerEntry } from '@acme-core/entities';
+import type { LedgerEntry } from '@acme-core/entities';
 
 export type ILedgerListEntriesRecordItem = Pick<
   LedgerEntry,

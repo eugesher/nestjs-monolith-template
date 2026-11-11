@@ -1,7 +1,7 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IdempotencyCoreClaimInsertOutcomeEnum } from '../enums/idempotency-core-claim-insert-outcome.enum';
-import { IIdempotencyCoreClaimInsertQuery, IIdempotencyCoreClaimRecord } from '../interfaces';
+import type { IdempotencyCoreClaimInsertOutcomeEnum } from '../enums/idempotency-core-claim-insert-outcome.enum';
+import type { IIdempotencyCoreClaimInsertQuery, IIdempotencyCoreClaimRecord } from '../interfaces';
 
 export interface IIdempotencyCoreClaimRepositoryPort {
   insert(query: IIdempotencyCoreClaimInsertQuery): Promise<IdempotencyCoreClaimInsertOutcomeEnum>;

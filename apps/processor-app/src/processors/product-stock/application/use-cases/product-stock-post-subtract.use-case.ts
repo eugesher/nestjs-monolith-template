@@ -11,7 +11,7 @@ import {
   type IProductStockPostSubtractRepositoryPort,
   type IProductStockTransactionPort,
 } from '../../outbound';
-import { IProductStockPostSubtractCommand } from '../interfaces';
+import type { IProductStockPostSubtractCommand } from '../interfaces';
 
 @Injectable()
 export class ProductStockPostSubtractUseCase {

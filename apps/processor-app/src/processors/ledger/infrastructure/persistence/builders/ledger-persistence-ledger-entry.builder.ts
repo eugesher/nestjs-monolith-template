@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { LedgerEntry } from '@acme-core/entities';
+import type { LedgerEntry } from '@acme-core/entities';
 
 export class LedgerPersistenceLedgerEntryBuilder extends SelectQueryBuilder<LedgerEntry> {
   public forByOperationKey(operationKey: string): this {

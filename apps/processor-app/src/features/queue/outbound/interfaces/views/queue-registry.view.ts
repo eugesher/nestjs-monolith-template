@@ -1,4 +1,4 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
 export interface IQueueRegistryJobCountsView {
   name: string;

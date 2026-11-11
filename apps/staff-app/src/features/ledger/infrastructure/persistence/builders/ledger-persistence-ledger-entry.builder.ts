@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { LedgerEntry } from '@acme-core/entities';
+import type { LedgerEntry } from '@acme-core/entities';
 
-import { ILedgerListEntriesQuery } from '../../../outbound';
+import type { ILedgerListEntriesQuery } from '../../../outbound';
 
 export class LedgerPersistenceLedgerEntryBuilder extends SelectQueryBuilder<LedgerEntry> {
   public forList(query: ILedgerListEntriesQuery): this {

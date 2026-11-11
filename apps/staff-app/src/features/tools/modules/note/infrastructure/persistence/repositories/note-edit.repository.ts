@@ -1,11 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  INoteEditRepositoryPort,
-  INoteEditRevisionInsertQuery,
   NOTE_EDIT_REPOSITORY_PORT,
+  type INoteEditRepositoryPort,
+  type INoteEditRevisionInsertQuery,
 } from '../../../outbound';
 import { NoteBaseRepository } from './base/note-base.repository';
 

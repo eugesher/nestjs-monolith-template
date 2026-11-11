@@ -1,4 +1,4 @@
-import { IReminderCreateInsertQuery, IReminderCreateRecord } from '../interfaces';
+import type { IReminderCreateInsertQuery, IReminderCreateRecord } from '../interfaces';
 
 export interface IReminderCreateRepositoryPort {
   insert(query: IReminderCreateInsertQuery): Promise<string>;

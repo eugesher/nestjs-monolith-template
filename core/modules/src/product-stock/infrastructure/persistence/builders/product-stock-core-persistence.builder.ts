@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { ProductStock } from '@acme-core/entities';
+import type { ProductStock } from '@acme-core/entities';
 
 export class ProductStockCorePersistenceBuilder extends SelectQueryBuilder<ProductStock> {
   public forSumStock(productIds: string[]): this {

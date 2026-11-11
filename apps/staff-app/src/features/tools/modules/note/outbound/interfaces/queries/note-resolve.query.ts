@@ -1,4 +1,4 @@
-import { Note } from '@acme-staff/common/entities';
+import type { Note } from '@acme-staff/common/entities';
 
 export interface INoteResolveUpdateQuery extends Pick<
   Note,

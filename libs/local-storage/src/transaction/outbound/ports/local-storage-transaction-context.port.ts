@@ -1,4 +1,4 @@
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 export interface ILocalStorageTransactionContextPort {
   run<T>(work: () => Promise<T>): Promise<T>;

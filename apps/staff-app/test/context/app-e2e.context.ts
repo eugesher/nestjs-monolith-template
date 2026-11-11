@@ -1,17 +1,20 @@
 import { getQueueToken } from '@nestjs/bull';
-import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Queue } from 'bull';
-import { Redis } from 'ioredis';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
+import type { INestApplication } from '@nestjs/common';
+import type { Queue } from 'bull';
+import type { Redis } from 'ioredis';
 
 import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/cache/testing';
-import { Maybe } from '@acme-libs/toolkit';
-import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
+import {
+  LEDGER_RECORD_QUEUE,
+  type ILedgerRecordProcessorPayload,
+} from '@acme-libs/contracts/ledger';
 import { AppModule } from '@acme-staff/app/app.module';
+import type { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
   app: INestApplication;

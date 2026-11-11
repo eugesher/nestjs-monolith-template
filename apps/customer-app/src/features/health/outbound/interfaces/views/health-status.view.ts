@@ -1,9 +1,9 @@
-import {
+import type {
   HealthDependencyStatusEnum,
   HealthLivenessStatusEnum,
   HealthReadinessStatusEnum,
 } from '@acme-libs/kernel';
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
 export interface IHealthStatusLivenessView {
   status: HealthLivenessStatusEnum;

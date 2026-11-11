@@ -10,14 +10,14 @@ import {
   type INoteEditRepositoryPort,
   type INoteTransactionPort,
 } from '../../outbound';
-import {
+import { NoteAccessService } from '../services/note-access.service';
+import { NoteWriteService } from '../services/note-write.service';
+import type {
   INoteEditCommand,
   INoteEditOutcomeView,
   INoteEditSaveCommand,
   INoteView,
 } from '../interfaces';
-import { NoteAccessService } from '../services/note-access.service';
-import { NoteWriteService } from '../services/note-write.service';
 
 @Injectable()
 export class NoteEditUseCase {

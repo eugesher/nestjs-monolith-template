@@ -1,9 +1,9 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 import { CacheLibDelByPrefixUseCase } from '../cache-lib-del-by-prefix.use-case';
+import type { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 
 describe('CacheLibDelByPrefixUseCase', () => {
   let unlinkByPrefix: jest.Mock;

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPageRequest, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPageRequest } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
@@ -9,7 +9,7 @@ import {
   type ICatalogCachePort,
   type ICatalogProductListRepositoryPort,
 } from '../../outbound';
-import { ICatalogProductListCommand, ICatalogProductListView } from '../interfaces';
+import type { ICatalogProductListCommand, ICatalogProductListView } from '../interfaces';
 
 @Injectable()
 export class CatalogProductListUseCase {

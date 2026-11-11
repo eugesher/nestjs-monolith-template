@@ -1,6 +1,6 @@
-import { DynamicModule } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
+import type { DynamicModule } from '@nestjs/common';
 
 import { LocalStorageTransactionModule } from '@acme-libs/local-storage';
 import { ORM_PORT } from '@acme-libs/contracts/database';

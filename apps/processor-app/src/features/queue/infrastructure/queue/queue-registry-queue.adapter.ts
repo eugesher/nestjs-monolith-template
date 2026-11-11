@@ -1,18 +1,18 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ClassProvider, Injectable } from '@nestjs/common';
-import { type Queue } from 'bull';
+import { Injectable, type ClassProvider } from '@nestjs/common';
+import type { Queue } from 'bull';
 
-import { Nullable } from '@acme-libs/toolkit';
 import { LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
 import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from '@acme-core/contracts/product-stock';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IQueueRegistryFailedJobsView,
-  IQueueRegistryFindFailedJobsCommand,
-  IQueueRegistryJobCommand,
-  IQueueRegistryJobCountsView,
-  IQueueRegistryPort,
   QUEUE_REGISTRY_PORT,
+  type IQueueRegistryFailedJobsView,
+  type IQueueRegistryFindFailedJobsCommand,
+  type IQueueRegistryJobCommand,
+  type IQueueRegistryJobCountsView,
+  type IQueueRegistryPort,
 } from '../../outbound';
 
 @Injectable()

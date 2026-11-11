@@ -1,4 +1,4 @@
-import { IProductStockPostSubtractProductRecord } from '../interfaces';
+import type { IProductStockPostSubtractProductRecord } from '../interfaces';
 
 export interface IProductStockPostSubtractRepositoryPort {
   findActive(productIds: string[]): Promise<IProductStockPostSubtractProductRecord[]>;

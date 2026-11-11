@@ -1,15 +1,15 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { MysqlErrorHelper } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IProductCreateInsertQuery,
-  IProductCreateInsertRecord,
-  IProductCreateRecord,
-  IProductCreateRepositoryPort,
   PRODUCT_CREATE_REPOSITORY_PORT,
   ProductCreateInsertOutcomeEnum,
+  type IProductCreateInsertQuery,
+  type IProductCreateInsertRecord,
+  type IProductCreateRecord,
+  type IProductCreateRepositoryPort,
 } from '../../../outbound';
 import { ProductPersistenceHost } from '../host/product-persistence.host';
 

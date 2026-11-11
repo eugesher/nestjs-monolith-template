@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthGlobalSubjectFindSubjectCommand, IAuthGlobalSubjectView } from '../interfaces';
+import type { IAuthGlobalSubjectFindSubjectCommand, IAuthGlobalSubjectView } from '../interfaces';
 
 export interface IAuthGlobalSubjectPort {
   findSubject(

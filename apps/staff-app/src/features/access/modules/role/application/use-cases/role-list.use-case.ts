@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { RoleModel } from '../../domain';
 import { ROLE_LIST_REPOSITORY_PORT, type IRoleListRepositoryPort } from '../../outbound';
-import { IRoleView } from '../interfaces';
+import type { IRoleView } from '../interfaces';
 
 @Injectable()
 export class RoleListUseCase {

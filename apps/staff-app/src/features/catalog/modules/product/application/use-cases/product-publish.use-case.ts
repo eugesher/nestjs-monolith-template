@@ -8,8 +8,8 @@ import {
   type IProductCatalogCachePort,
   type IProductLedgerPort,
 } from '../../outbound';
-import { IProductPublishCommand, IProductView } from '../interfaces';
 import { ProductWriteService } from '../services/product-write.service';
+import type { IProductPublishCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductPublishUseCase {

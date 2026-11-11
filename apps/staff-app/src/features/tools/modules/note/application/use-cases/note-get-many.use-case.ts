@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPage } from '@acme-libs/toolkit';
 
 import { NoteModel, NoteSubjectInvalidException } from '../../domain';
 import { NOTE_GET_MANY_REPOSITORY_PORT, type INoteGetManyRepositoryPort } from '../../outbound';
-import { INoteGetManyCommand, INoteView } from '../interfaces';
+import type { INoteGetManyCommand, INoteView } from '../interfaces';
 
 @Injectable()
 export class NoteGetManyUseCase {

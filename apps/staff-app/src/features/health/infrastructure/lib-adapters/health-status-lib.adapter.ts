@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { HEALTH_LIB_PORT, type IHealthLibPort } from '@acme-libs/contracts/health';
 
 import {
   HEALTH_STATUS_PORT,
-  IHealthStatusLivenessView,
-  IHealthStatusPort,
-  IHealthStatusReadinessView,
+  type IHealthStatusLivenessView,
+  type IHealthStatusPort,
+  type IHealthStatusReadinessView,
 } from '../../outbound';
 
 @Injectable()

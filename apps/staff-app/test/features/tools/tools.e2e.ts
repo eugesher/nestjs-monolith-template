@@ -1,7 +1,7 @@
-import { AppE2EContext } from '../../context/app-e2e.context';
 import { NoteE2E } from './modules/note.e2e';
 import { ReminderE2E } from './modules/reminder.e2e';
 import { TagE2E } from './modules/tag.e2e';
+import type { AppE2EContext } from '../../context/app-e2e.context';
 
 export class ToolsE2E {
   private constructor(

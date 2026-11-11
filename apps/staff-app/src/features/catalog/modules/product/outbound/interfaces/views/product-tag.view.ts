@@ -1,4 +1,4 @@
-import { ProductTagReplaceOutcomeEnum } from '../../enums/product-tag-replace-outcome.enum';
+import type { ProductTagReplaceOutcomeEnum } from '../../enums/product-tag-replace-outcome.enum';
 
 export interface IProductTagFindView {
   id: string;

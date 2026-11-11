@@ -1,4 +1,4 @@
-import { IIdempotencyPurgeRecord } from '../interfaces';
+import type { IIdempotencyPurgeRecord } from '../interfaces';
 
 export interface IIdempotencyPurgeRepositoryPort {
   deleteCreatedBefore(cutoff: Date): Promise<IIdempotencyPurgeRecord>;

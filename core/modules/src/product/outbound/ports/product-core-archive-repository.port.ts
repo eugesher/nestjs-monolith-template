@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IProductCoreArchiveRecord, IProductCoreArchiveUpdateQuery } from '../interfaces';
+import type { IProductCoreArchiveRecord, IProductCoreArchiveUpdateQuery } from '../interfaces';
 
 export interface IProductCoreArchiveRepositoryPort {
   lockById(productId: string): Promise<Nullable<IProductCoreArchiveRecord>>;

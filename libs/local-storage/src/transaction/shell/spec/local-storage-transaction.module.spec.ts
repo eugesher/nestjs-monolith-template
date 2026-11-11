@@ -1,12 +1,12 @@
-import { Global, INestApplicationContext, Module } from '@nestjs/common';
+import { Global, Module, type INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { ClsModule } from 'nestjs-cls';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, type EntityManager } from 'typeorm';
+import type { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
-import { ITransactionPort, TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
+import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import { LocalStorageTransactionModule } from '../local-storage-transaction.module';
 

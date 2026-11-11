@@ -1,8 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
-import { IReminderDeleteRepositoryPort, REMINDER_DELETE_REPOSITORY_PORT } from '../../../outbound';
+import {
+  REMINDER_DELETE_REPOSITORY_PORT,
+  type IReminderDeleteRepositoryPort,
+} from '../../../outbound';
 import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 
 @Injectable()

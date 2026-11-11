@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
-import {
+import type { Nullable } from '@acme-libs/toolkit';
+import type {
   IStaffAuthCoreFindSubjectCommand,
   IStaffAuthCoreSubjectView,
 } from '@acme-core/contracts/staff-auth';

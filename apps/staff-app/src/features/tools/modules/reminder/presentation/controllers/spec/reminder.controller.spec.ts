@@ -1,6 +1,7 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
-import {
+import { ReminderController } from '../reminder.controller';
+import type {
   ReminderCompleteUseCase,
   ReminderCreateUseCase,
   ReminderDeleteUseCase,
@@ -8,7 +9,6 @@ import {
   ReminderGetSummaryUseCase,
   ReminderRescheduleUseCase,
 } from '../../../application';
-import { ReminderController } from '../reminder.controller';
 
 describe('ReminderController', () => {
   let create: jest.Mock;

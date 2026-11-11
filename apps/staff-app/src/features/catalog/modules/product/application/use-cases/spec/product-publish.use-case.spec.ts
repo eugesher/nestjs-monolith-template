@@ -1,12 +1,12 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductModel, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
-import { IProductLedgerPort } from '../../../outbound';
-import { ProductWriteService } from '../../services/product-write.service';
 import { ProductPublishUseCase } from '../product-publish.use-case';
+import type { IProductLedgerPort } from '../../../outbound';
+import type { ProductWriteService } from '../../services/product-write.service';
 
 describe('ProductPublishUseCase', () => {
   let write: jest.Mock;

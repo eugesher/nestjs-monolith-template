@@ -1,4 +1,4 @@
-import { IOrderProductOutput, IOrderRecordInput, IOrderSnapshotOutput } from '../interfaces';
+import type { IOrderProductOutput, IOrderRecordInput, IOrderSnapshotOutput } from '../interfaces';
 
 export class OrderModel {
   private constructor(

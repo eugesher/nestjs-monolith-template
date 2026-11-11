@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { TRANSACTION_PORT, type ITransactionPort } from '@acme-libs/contracts/local-storage';
 
-import { IRoleTransactionPort, ROLE_TRANSACTION_PORT } from '../../../outbound';
+import { ROLE_TRANSACTION_PORT, type IRoleTransactionPort } from '../../../outbound';
 
 @Injectable()
 export class RoleTransactionAdapter implements IRoleTransactionPort {

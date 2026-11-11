@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ITransactionPort } from '@acme-libs/contracts/local-storage';
+import type { ITransactionPort } from '@acme-libs/contracts/local-storage';
 
 import {
   LocalStorageTransactionAfterCommitUseCase,

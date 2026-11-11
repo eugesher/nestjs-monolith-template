@@ -1,11 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IRoleListRecord,
-  IRoleListRepositoryPort,
   ROLE_LIST_REPOSITORY_PORT,
+  type IRoleListRecord,
+  type IRoleListRepositoryPort,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 

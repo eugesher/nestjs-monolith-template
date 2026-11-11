@@ -1,10 +1,10 @@
-import { Global, INestApplicationContext, Module } from '@nestjs/common';
+import { Global, Module, type INestApplicationContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { Redis } from 'ioredis';
 import { LoggerModule, PinoLogger } from 'nestjs-pino';
+import type { Redis } from 'ioredis';
 
-import { CACHE_LIB_PORT, ICacheLibPort } from '@acme-libs/contracts/cache';
+import { CACHE_LIB_PORT, type ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '../../outbound';
 import { CacheLibModule } from '../cache-lib.module';

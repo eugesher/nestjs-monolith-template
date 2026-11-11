@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 import { LEDGER_LIB_PORT, type ILedgerLibPort } from '@acme-libs/contracts/ledger';
 
 import {
-  IProductStockLedgerPort,
-  IProductStockLedgerRecordEventsCommand,
   PRODUCT_STOCK_LEDGER_PORT,
+  type IProductStockLedgerPort,
+  type IProductStockLedgerRecordEventsCommand,
 } from '../../outbound';
 
 @Injectable()

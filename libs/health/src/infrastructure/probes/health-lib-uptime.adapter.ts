@@ -1,6 +1,6 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 
-import { HEALTH_LIB_UPTIME_PORT, IHealthLibUptimePort } from '../../outbound';
+import { HEALTH_LIB_UPTIME_PORT, type IHealthLibUptimePort } from '../../outbound';
 
 @Injectable()
 export class HealthLibUptimeAdapter implements IHealthLibUptimePort {

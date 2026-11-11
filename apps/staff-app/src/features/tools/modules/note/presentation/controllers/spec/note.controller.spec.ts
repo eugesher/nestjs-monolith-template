@@ -1,4 +1,5 @@
-import {
+import { NoteController } from '../note.controller';
+import type {
   NoteCreateUseCase,
   NoteEditUseCase,
   NoteGetManyUseCase,
@@ -6,7 +7,6 @@ import {
   NoteGetRevisionsUseCase,
   NoteResolveUseCase,
 } from '../../../application';
-import { NoteController } from '../note.controller';
 
 describe('NoteController', () => {
   let create: jest.Mock;

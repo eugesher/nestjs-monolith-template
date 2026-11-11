@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IOrderGetTagsRecord } from '../interfaces';
+import type { IOrderGetTagsRecord } from '../interfaces';
 
 export interface IOrderGetTagsRepositoryPort {
   findExisting(orderId: string): Promise<Nullable<IOrderGetTagsRecord>>;

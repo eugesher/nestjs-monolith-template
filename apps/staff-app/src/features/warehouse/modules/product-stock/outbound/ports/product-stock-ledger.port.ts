@@ -1,4 +1,4 @@
-import { IProductStockLedgerRecordEventsCommand } from '../interfaces';
+import type { IProductStockLedgerRecordEventsCommand } from '../interfaces';
 
 export interface IProductStockLedgerPort {
   recordEvents(command: IProductStockLedgerRecordEventsCommand): Promise<void>;

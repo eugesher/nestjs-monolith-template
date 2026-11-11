@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { SubjectTag, Tag } from '@acme-staff/common/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { TagCommonPersistenceSubjectTagBuilder } from '../builders/tag-common-persistence-subject-tag.builder';
 import { TagCommonPersistenceBuilder } from '../builders/tag-common-persistence.builder';

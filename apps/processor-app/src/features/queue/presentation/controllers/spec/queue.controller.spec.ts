@@ -1,10 +1,10 @@
-import {
+import { QueueController } from '../queue.controller';
+import type {
   QueueDeleteFailedJobUseCase,
   QueueListFailedJobsUseCase,
   QueueListUseCase,
   QueueRetryFailedJobUseCase,
 } from '../../../application';
-import { QueueController } from '../queue.controller';
 
 describe('QueueController', () => {
   let list: jest.Mock;

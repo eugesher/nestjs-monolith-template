@@ -1,4 +1,4 @@
-import { IOrderProductOutput } from './order-product.output';
+import type { IOrderProductOutput } from './order-product.output';
 
 export interface IOrderSnapshotOutput {
   id: string;

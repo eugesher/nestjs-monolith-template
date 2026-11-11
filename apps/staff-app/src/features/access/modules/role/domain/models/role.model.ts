@@ -1,6 +1,6 @@
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import type { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import {
+import type {
   IRoleCandidateInput,
   IRoleDraftOutput,
   IRoleRecordInput,

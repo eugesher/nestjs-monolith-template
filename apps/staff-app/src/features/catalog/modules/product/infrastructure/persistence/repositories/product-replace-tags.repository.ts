@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IProductReplaceTagsRecord,
-  IProductReplaceTagsRepositoryPort,
   PRODUCT_REPLACE_TAGS_REPOSITORY_PORT,
+  type IProductReplaceTagsRecord,
+  type IProductReplaceTagsRepositoryPort,
 } from '../../../outbound';
 import { ProductPersistenceHost } from '../host/product-persistence.host';
 

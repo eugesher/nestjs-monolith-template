@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 
-import { IPermissionListView } from '../interfaces';
+import type { IPermissionListView } from '../interfaces';
 
 @Injectable()
 export class PermissionListUseCase {

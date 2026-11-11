@@ -1,4 +1,4 @@
-import { ProductIdempotencyOutcomeEnum } from '../../enums/product-idempotency-outcome.enum';
+import type { ProductIdempotencyOutcomeEnum } from '../../enums/product-idempotency-outcome.enum';
 
 export interface IProductIdempotencyOutcomeView {
   outcome: Exclude<ProductIdempotencyOutcomeEnum, ProductIdempotencyOutcomeEnum.REPLAY>;

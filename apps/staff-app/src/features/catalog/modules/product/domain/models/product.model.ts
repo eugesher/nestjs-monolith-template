@@ -6,7 +6,7 @@ import { ProductUpdatedEvent } from '../events/product-updated.event';
 import { ProductNameInvalidException } from '../exceptions/product-name-invalid.exception';
 import { ProductSkuInvalidException } from '../exceptions/product-sku-invalid.exception';
 import { ProductVersionInvalidException } from '../exceptions/product-version-invalid.exception';
-import {
+import type {
   IProductCandidateInput,
   IProductChangesInput,
   IProductDraftOutput,

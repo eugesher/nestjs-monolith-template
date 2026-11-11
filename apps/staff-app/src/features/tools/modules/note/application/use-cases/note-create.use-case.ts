@@ -3,7 +3,7 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { NoteModel } from '../../domain';
 import { NOTE_CREATE_REPOSITORY_PORT, type INoteCreateRepositoryPort } from '../../outbound';
-import { INoteCreateCommand, INoteView } from '../interfaces';
+import type { INoteCreateCommand, INoteView } from '../interfaces';
 
 @Injectable()
 export class NoteCreateUseCase {

@@ -1,4 +1,4 @@
-import {
+import type {
   IProductStockCoreOnHandRecordInput,
   IProductStockCoreOnHandSnapshotOutput,
 } from '../interfaces';

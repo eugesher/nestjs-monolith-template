@@ -1,20 +1,23 @@
 import { getQueueToken } from '@nestjs/bull';
-import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Queue } from 'bull';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
+import type { INestApplication } from '@nestjs/common';
+import type { Queue } from 'bull';
 
-import { Maybe } from '@acme-libs/toolkit';
-import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
 import {
-  IProductStockPostSubtractPayload,
+  LEDGER_RECORD_QUEUE,
+  type ILedgerRecordProcessorPayload,
+} from '@acme-libs/contracts/ledger';
+import {
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
+  type IProductStockPostSubtractPayload,
 } from '@acme-core/contracts/product-stock';
 import { AppModule } from '@acme-processor/app/app.module';
+import type { Maybe } from '@acme-libs/toolkit';
 
 interface IAppE2EState {
   app: INestApplication;

@@ -7,7 +7,7 @@ import {
   TagCreateInsertOutcomeEnum,
   type ITagCreateRepositoryPort,
 } from '../../outbound';
-import { ITagCreateCommand, ITagView } from '../interfaces';
+import type { ITagCreateCommand, ITagView } from '../interfaces';
 
 @Injectable()
 export class TagCreateUseCase {

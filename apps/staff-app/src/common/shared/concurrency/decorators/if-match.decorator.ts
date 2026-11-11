@@ -1,6 +1,6 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import { IfMatchHelper } from '../helpers/if-match.helper';
 

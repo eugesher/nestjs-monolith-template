@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import {
   HEALTH_STATUS_PORT,
-  IHealthStatusLivenessView,
+  type IHealthStatusLivenessView,
   type IHealthStatusPort,
 } from '../../outbound';
 

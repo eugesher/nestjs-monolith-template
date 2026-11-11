@@ -1,4 +1,4 @@
-import { Note, NoteRevision } from '@acme-staff/common/entities';
+import type { Note, NoteRevision } from '@acme-staff/common/entities';
 
 export interface INoteEditUpdateQuery extends Pick<Note, 'id' | 'body' | 'resolved' | 'version'> {
   versionAsRead: number;

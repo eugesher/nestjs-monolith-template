@@ -1,13 +1,13 @@
 import { RequestMethod } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 import { ClsServiceManager } from 'nestjs-cls';
-import { Params } from 'nestjs-pino';
 import { levels } from 'pino';
-import { Options } from 'pino-http';
+import type { Params } from 'nestjs-pino';
+import type { Options } from 'pino-http';
 
 import { EnvHelper } from '@acme-libs/config';
-import { AppNameEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import type { AppNameEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 

@@ -1,14 +1,14 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  IOrderPlaceInsertQuery,
-  IOrderPlaceOrderProductInsertQuery,
-  IOrderPlaceProductRecord,
-  IOrderPlaceRecord,
-  IOrderPlaceRepositoryPort,
   ORDER_PLACE_REPOSITORY_PORT,
+  type IOrderPlaceInsertQuery,
+  type IOrderPlaceOrderProductInsertQuery,
+  type IOrderPlaceProductRecord,
+  type IOrderPlaceRecord,
+  type IOrderPlaceRepositoryPort,
 } from '../../../outbound';
 import { OrderPersistenceHost } from '../host/order-persistence.host';
 

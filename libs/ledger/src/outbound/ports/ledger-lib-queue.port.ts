@@ -1,4 +1,4 @@
-import { ILedgerLibQueueAddCommand } from '../interfaces';
+import type { ILedgerLibQueueAddCommand } from '../interfaces';
 
 export interface ILedgerLibQueuePort {
   add(command: ILedgerLibQueueAddCommand): Promise<void>;

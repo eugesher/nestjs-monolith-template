@@ -1,4 +1,4 @@
-import { ProductPublishedEvent } from '../../../domain';
+import type { ProductPublishedEvent } from '../../../domain';
 
 export interface IProductLedgerRecordEventsCommand {
   events: ProductPublishedEvent[];

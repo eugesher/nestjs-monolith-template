@@ -1,4 +1,4 @@
-import { ILedgerLibEnqueueCommand } from '@acme-libs/contracts/ledger';
+import type { ILedgerLibEnqueueCommand } from '@acme-libs/contracts/ledger';
 
 export interface ILedgerLibQueueAddCommand {
   record: ILedgerLibEnqueueCommand;

@@ -1,4 +1,4 @@
-import { IHealthLibDependenciesView } from '@acme-libs/contracts/health';
+import type { IHealthLibDependenciesView } from '@acme-libs/contracts/health';
 
 export interface IHealthLibDependencyProbePort {
   probeAll(): Promise<IHealthLibDependenciesView>;

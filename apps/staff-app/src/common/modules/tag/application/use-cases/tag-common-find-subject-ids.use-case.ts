@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ITagCommonFindSubjectIdsCommand } from '@acme-staff/contracts/tag';
+import type { ITagCommonFindSubjectIdsCommand } from '@acme-staff/contracts/tag';
 
 import {
   TAG_COMMON_FIND_SUBJECT_IDS_REPOSITORY_PORT,

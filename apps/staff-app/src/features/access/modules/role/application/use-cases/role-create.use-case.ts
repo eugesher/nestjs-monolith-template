@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { AuthRoleNameTakenException, IRoleDraftOutput, RoleModel } from '../../domain';
+import { AuthRoleNameTakenException, RoleModel, type IRoleDraftOutput } from '../../domain';
 import {
   ROLE_CREATE_REPOSITORY_PORT,
   ROLE_TRANSACTION_PORT,
@@ -9,7 +9,7 @@ import {
   type IRoleCreateRepositoryPort,
   type IRoleTransactionPort,
 } from '../../outbound';
-import { IRoleCreateCommand, IRoleView } from '../interfaces';
+import type { IRoleCreateCommand, IRoleView } from '../interfaces';
 
 @Injectable()
 export class RoleCreateUseCase {

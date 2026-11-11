@@ -1,4 +1,4 @@
-import { StaffUser } from '@acme-core/entities';
+import type { StaffUser } from '@acme-core/entities';
 
 export type IStaffAuthCoreFindByEmailStaffUserRecord = Pick<
   StaffUser,

@@ -1,6 +1,6 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
 
-import { IProductCoreRecordInput } from '../interfaces';
+import type { IProductCoreRecordInput } from '../interfaces';
 
 export class ProductCoreModel {
   public get status(): ProductStatusEnum {

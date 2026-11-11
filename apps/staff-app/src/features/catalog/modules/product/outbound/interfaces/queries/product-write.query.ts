@@ -1,4 +1,4 @@
-import { Product } from '@acme-core/entities';
+import type { Product } from '@acme-core/entities';
 
 export interface IProductWriteUpdateQuery extends Pick<
   Product,

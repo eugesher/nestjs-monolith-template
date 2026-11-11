@@ -1,7 +1,7 @@
 import { IdentityExceptionCodeEnum, UserStatusEnum } from '@acme-libs/kernel';
 
-import { IAuthCustomerDraftOutput } from '../../interfaces';
 import { AuthCustomerModel } from '../auth-customer.model';
+import type { IAuthCustomerDraftOutput } from '../../interfaces';
 
 describe('AuthCustomerModel', () => {
   describe('createDraft', () => {

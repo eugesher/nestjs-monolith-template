@@ -1,4 +1,4 @@
-import { Product } from '@acme-core/entities';
+import type { Product } from '@acme-core/entities';
 
 export type IProductStockCoreLockProductRecord = Pick<Product, 'id'>;
 

@@ -1,13 +1,13 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
-import { Nullable } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
+import type { Nullable } from '@acme-libs/toolkit';
 
 import {
-  IRoleReassignPermissionsRepositoryPort,
-  IRoleReassignPermissionsRolePermissionInsertQuery,
-  IRoleReassignPermissionsRoleRecord,
   ROLE_REASSIGN_PERMISSIONS_REPOSITORY_PORT,
+  type IRoleReassignPermissionsRepositoryPort,
+  type IRoleReassignPermissionsRolePermissionInsertQuery,
+  type IRoleReassignPermissionsRoleRecord,
 } from '../../../outbound';
 import { RolePersistenceHost } from '../host/role-persistence.host';
 

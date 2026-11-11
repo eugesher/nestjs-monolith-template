@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { Note } from '@acme-staff/common/entities';
+import type { Note } from '@acme-staff/common/entities';
 
-import { INoteAccessFindOwnedQuery, INoteGetManyListQuery } from '../../../outbound';
+import type { INoteAccessFindOwnedQuery, INoteGetManyListQuery } from '../../../outbound';
 
 export class NotePersistenceBuilder extends SelectQueryBuilder<Note> {
   public forOwned(query: INoteAccessFindOwnedQuery): this {

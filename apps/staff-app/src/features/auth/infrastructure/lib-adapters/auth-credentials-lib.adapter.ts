@@ -1,11 +1,11 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
 import {
   AUTH_CREDENTIALS_PORT,
-  IAuthCredentialsPort,
-  IAuthCredentialsVerifyPasswordCommand,
+  type IAuthCredentialsPort,
+  type IAuthCredentialsVerifyPasswordCommand,
 } from '../../outbound';
 
 @Injectable()

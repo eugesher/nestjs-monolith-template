@@ -21,7 +21,7 @@ import {
   type IProductStockMovementPort,
   type IProductStockTransactionPort,
 } from '../../outbound';
-import {
+import type {
   IProductStockAddCommand,
   IProductStockAddView,
   IProductStockAddWriteView,

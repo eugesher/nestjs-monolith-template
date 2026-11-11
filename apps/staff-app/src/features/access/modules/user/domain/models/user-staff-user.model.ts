@@ -2,7 +2,7 @@ import { UserStatusEnum } from '@acme-libs/kernel';
 
 import { AuthEmailInvalidException } from '../exceptions/auth-email-invalid.exception';
 import { AuthPasswordTooWeakException } from '../exceptions/auth-password-too-weak.exception';
-import { IUserStaffUserCandidateInput, IUserStaffUserDraftOutput } from '../interfaces';
+import type { IUserStaffUserCandidateInput, IUserStaffUserDraftOutput } from '../interfaces';
 
 export class UserStaffUserModel {
   private static readonly EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

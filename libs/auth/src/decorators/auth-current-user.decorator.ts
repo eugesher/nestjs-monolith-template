@@ -1,9 +1,9 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
-import { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import type { Maybe } from '@acme-libs/toolkit';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
-import { IAuthRequest } from '../interfaces/auth-request.interface';
+import type { IAuthRequest } from '../interfaces/auth-request.interface';
 
 export const CurrentUser = createParamDecorator(
   (_data: unknown, context: ExecutionContext): Maybe<IAuthCurrentUserView> =>

@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { NoteRevision } from '@acme-staff/common/entities';
+import type { NoteRevision } from '@acme-staff/common/entities';
 
-import { INoteGetRevisionsListForNoteQuery } from '../../../outbound';
+import type { INoteGetRevisionsListForNoteQuery } from '../../../outbound';
 
 export class NotePersistenceNoteRevisionBuilder extends SelectQueryBuilder<NoteRevision> {
   public forListForNote(query: INoteGetRevisionsListForNoteQuery): this {

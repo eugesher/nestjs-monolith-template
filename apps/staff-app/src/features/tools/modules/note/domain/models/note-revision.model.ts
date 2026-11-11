@@ -1,5 +1,5 @@
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import {
+import type {
   INoteRevisionCandidateInput,
   INoteRevisionDraftOutput,
   INoteRevisionRecordInput,

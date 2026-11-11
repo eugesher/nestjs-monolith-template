@@ -1,4 +1,4 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import {
   PRODUCT_CORE_PORT,
@@ -7,11 +7,11 @@ import {
 } from '@acme-core/contracts/product';
 
 import {
-  IProductStatusArchiveCommand,
-  IProductStatusArchiveView,
-  IProductStatusPort,
   PRODUCT_STATUS_PORT,
   ProductStatusArchiveOutcomeEnum,
+  type IProductStatusArchiveCommand,
+  type IProductStatusArchiveView,
+  type IProductStatusPort,
 } from '../../outbound';
 
 @Injectable()

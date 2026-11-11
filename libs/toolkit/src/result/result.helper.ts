@@ -1,4 +1,4 @@
-import { Result } from './result.type';
+import type { Result } from './result.type';
 
 export class ResultHelper {
   public static ok<T>(value: T): Result<T, never> {

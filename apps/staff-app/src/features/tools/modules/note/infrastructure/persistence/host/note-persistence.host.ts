@@ -1,5 +1,5 @@
-import { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 import { Note, NoteRevision } from '@acme-staff/common/entities';
+import type { IHostedRepository, IOrmPort } from '@acme-libs/contracts/database';
 
 import { NotePersistenceNoteRevisionBuilder } from '../builders/note-persistence-note-revision.builder';
 import { NotePersistenceBuilder } from '../builders/note-persistence.builder';

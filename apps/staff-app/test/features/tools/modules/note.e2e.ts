@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
-import { AppE2EContext } from '../../../context/app-e2e.context';
+import type { AppE2EContext } from '../../../context/app-e2e.context';
 
 export class NoteE2E {
   private constructor(private readonly ctx: AppE2EContext) {}

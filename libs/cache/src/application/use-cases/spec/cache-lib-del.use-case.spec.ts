@@ -1,5 +1,5 @@
-import { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 import { CacheLibDelUseCase } from '../cache-lib-del.use-case';
+import type { ICacheLibTracerPort, ICacheLibTracerSpanCommand } from '../../../outbound';
 
 describe('CacheLibDelUseCase', () => {
   let del: jest.Mock;

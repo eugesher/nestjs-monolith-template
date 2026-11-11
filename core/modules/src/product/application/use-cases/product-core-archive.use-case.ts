@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
-  IProductCoreArchiveCommand,
-  IProductCoreArchiveView,
   ProductCoreArchiveOutcomeEnum,
+  type IProductCoreArchiveCommand,
+  type IProductCoreArchiveView,
 } from '@acme-core/contracts/product';
 
 import { ProductCoreModel } from '../../domain';

@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import {
-  IReminderGetSummaryRecord,
-  IReminderGetSummaryRepositoryPort,
   REMINDER_GET_SUMMARY_REPOSITORY_PORT,
+  type IReminderGetSummaryRecord,
+  type IReminderGetSummaryRepositoryPort,
 } from '../../../outbound';
 import { ReminderPersistenceHost } from '../host/reminder-persistence.host';
 

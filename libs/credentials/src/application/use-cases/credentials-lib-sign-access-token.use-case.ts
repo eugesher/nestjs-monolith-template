@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
+import type { ICredentialsLibSignAccessTokenCommand } from '@acme-libs/contracts/credentials';
 
 import {
   CREDENTIALS_LIB_ACCESS_TOKEN_PORT,

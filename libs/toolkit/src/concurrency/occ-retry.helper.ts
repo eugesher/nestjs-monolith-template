@@ -1,4 +1,4 @@
-import { IOccRetryPolicy } from './occ-retry-policy.interface';
+import type { IOccRetryPolicy } from './occ-retry-policy.interface';
 
 export class OccRetryHelper {
   public static async run<T, TConflict>(

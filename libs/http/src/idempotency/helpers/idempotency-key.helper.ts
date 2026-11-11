@@ -1,6 +1,6 @@
 import { BadRequestException, HttpStatus } from '@nestjs/common';
 
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 export class IdempotencyKeyHelper {
   private static readonly MAX_LENGTH = 128;

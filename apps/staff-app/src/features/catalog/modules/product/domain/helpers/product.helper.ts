@@ -1,7 +1,7 @@
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import { ProductVersionMismatchException } from '../exceptions/product-version-mismatch.exception';
-import { ProductModel } from '../models/product.model';
+import type { ProductModel } from '../models/product.model';
 
 export class ProductHelper {
   public static assertExpectedVersion(product: ProductModel, expectedVersion: Maybe<number>): void {

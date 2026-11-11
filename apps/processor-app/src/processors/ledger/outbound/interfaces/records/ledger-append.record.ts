@@ -1,6 +1,6 @@
-import { LedgerEntry } from '@acme-core/entities';
+import type { LedgerEntry } from '@acme-core/entities';
 
-import { LedgerAppendEntryInsertOutcomeEnum } from '../../enums/ledger-append-entry-insert-outcome.enum';
+import type { LedgerAppendEntryInsertOutcomeEnum } from '../../enums/ledger-append-entry-insert-outcome.enum';
 
 export type ILedgerAppendEntryRecord = Pick<LedgerEntry, 'id'>;
 

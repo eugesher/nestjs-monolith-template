@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IReminderWriteRecord, IReminderWriteUpdateQuery } from '../interfaces';
+import type { IReminderWriteRecord, IReminderWriteUpdateQuery } from '../interfaces';
 
 export interface IReminderWriteRepositoryPort {
   findById(reminderId: string): Promise<Nullable<IReminderWriteRecord>>;

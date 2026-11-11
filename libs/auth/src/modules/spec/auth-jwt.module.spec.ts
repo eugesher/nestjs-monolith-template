@@ -1,10 +1,10 @@
-import { Controller, Get, Global, INestApplication, Module } from '@nestjs/common';
+import { Controller, Get, Global, Module, type INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { type Maybe } from '@acme-libs/toolkit';
-import { AUTH_USER_VALIDATOR_PORT, IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import { AUTH_USER_VALIDATOR_PORT, type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import { CurrentUser } from '../../decorators/auth-current-user.decorator';
 import { Public } from '../../decorators/auth-public.decorator';

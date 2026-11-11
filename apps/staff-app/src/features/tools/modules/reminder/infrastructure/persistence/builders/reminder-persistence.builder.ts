@@ -1,9 +1,9 @@
 import { SelectQueryBuilder } from 'typeorm';
 
 import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { Reminder } from '@acme-staff/common/entities';
+import type { Reminder } from '@acme-staff/common/entities';
 
-import { IReminderAccessFindOwnedQuery, IReminderGetManyListQuery } from '../../../outbound';
+import type { IReminderAccessFindOwnedQuery, IReminderGetManyListQuery } from '../../../outbound';
 
 export class ReminderPersistenceBuilder extends SelectQueryBuilder<Reminder> {
   public forOwned(query: IReminderAccessFindOwnedQuery): this {

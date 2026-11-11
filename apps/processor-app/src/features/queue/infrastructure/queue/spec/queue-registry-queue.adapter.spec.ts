@@ -1,4 +1,4 @@
-import { Queue } from 'bull';
+import type { Queue } from 'bull';
 
 import { QueueRegistryQueueAdapter } from '../queue-registry-queue.adapter';
 

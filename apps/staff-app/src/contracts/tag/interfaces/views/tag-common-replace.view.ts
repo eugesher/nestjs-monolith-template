@@ -1,5 +1,5 @@
-import { TagCommonReplaceOutcomeEnum } from '../../enums/tag-common-replace-outcome.enum';
-import { ITagCommonTagView } from './tag-common-tag.view';
+import type { TagCommonReplaceOutcomeEnum } from '../../enums/tag-common-replace-outcome.enum';
+import type { ITagCommonTagView } from './tag-common-tag.view';
 
 export interface ITagCommonReplaceView {
   outcome: TagCommonReplaceOutcomeEnum;

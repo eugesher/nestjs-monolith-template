@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthCurrentUserView, IAuthJwtPayloadCommand } from '../interfaces';
+import type { IAuthCurrentUserView, IAuthJwtPayloadCommand } from '../interfaces';
 
 export interface IAuthUserValidatorPort {
   handleValidate(command: IAuthJwtPayloadCommand): Promise<Nullable<IAuthCurrentUserView>>;

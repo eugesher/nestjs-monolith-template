@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthIdentityFindByEmailCommand, IAuthIdentityUserView } from '../interfaces';
+import type { IAuthIdentityFindByEmailCommand, IAuthIdentityUserView } from '../interfaces';
 
 export interface IAuthIdentityPort {
   findByEmail(command: IAuthIdentityFindByEmailCommand): Promise<Nullable<IAuthIdentityUserView>>;

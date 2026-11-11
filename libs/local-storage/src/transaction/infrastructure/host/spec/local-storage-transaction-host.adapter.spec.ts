@@ -1,5 +1,5 @@
-import { TransactionHost } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+import type { TransactionHost } from '@nestjs-cls/transactional';
+import type { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
 import { LocalStorageTransactionHostAdapter } from '../local-storage-transaction-host.adapter';
 

@@ -1,4 +1,4 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import {
   PRODUCT_STOCK_CORE_PORT,
@@ -7,11 +7,11 @@ import {
 } from '@acme-core/contracts/product-stock';
 
 import {
-  IOrderProductStockLockCommand,
-  IOrderProductStockPort,
-  IOrderProductStockView,
-  IOrderProductStockWithdrawCommand,
   ORDER_PRODUCT_STOCK_PORT,
+  type IOrderProductStockLockCommand,
+  type IOrderProductStockPort,
+  type IOrderProductStockView,
+  type IOrderProductStockWithdrawCommand,
 } from '../../outbound';
 
 @Injectable()

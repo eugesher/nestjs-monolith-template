@@ -1,6 +1,6 @@
-import { DomainEvent } from '@acme-libs/toolkit';
+import type { DomainEvent } from '@acme-libs/toolkit';
 
-import { ProductModel } from '../../../domain';
+import type { ProductModel } from '../../../domain';
 
 export interface IProductWriteView {
   product: ProductModel;

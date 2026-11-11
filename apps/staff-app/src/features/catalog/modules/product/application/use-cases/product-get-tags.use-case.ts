@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { PRODUCT_TAG_PORT, type IProductTagPort } from '../../outbound';
-import { IProductGetTagsCommand, IProductTagsView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';
+import type { IProductGetTagsCommand, IProductTagsView } from '../interfaces';
 
 @Injectable()
 export class ProductGetTagsUseCase {

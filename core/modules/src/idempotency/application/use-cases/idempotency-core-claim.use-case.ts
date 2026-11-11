@@ -3,11 +3,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BodyFingerprintHelper } from '@acme-libs/toolkit';
 import {
   IdempotencyCoreClaimOutcomeEnum,
-  IIdempotencyCoreClaimCommand,
-  IIdempotencyCoreClaimView,
+  type IIdempotencyCoreClaimCommand,
+  type IIdempotencyCoreClaimView,
 } from '@acme-core/contracts/idempotency';
 
-import { IdempotencyCoreKeyModel, IIdempotencyCoreKeyDraftOutput } from '../../domain';
+import { IdempotencyCoreKeyModel, type IIdempotencyCoreKeyDraftOutput } from '../../domain';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
   IdempotencyCoreClaimInsertOutcomeEnum,

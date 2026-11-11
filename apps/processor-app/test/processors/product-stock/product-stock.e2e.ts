@@ -1,4 +1,4 @@
-import { AppE2EContext } from '../../context/app-e2e.context';
+import type { AppE2EContext } from '../../context/app-e2e.context';
 
 export class ProductStockE2E {
   private constructor(private readonly ctx: AppE2EContext) {}

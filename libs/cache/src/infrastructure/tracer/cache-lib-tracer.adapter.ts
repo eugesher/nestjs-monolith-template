@@ -1,10 +1,10 @@
-import { ClassProvider, Injectable } from '@nestjs/common';
+import { Injectable, type ClassProvider } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 
 import {
   CACHE_LIB_TRACER_PORT,
-  ICacheLibTracerPort,
-  ICacheLibTracerSpanCommand,
+  type ICacheLibTracerPort,
+  type ICacheLibTracerSpanCommand,
 } from '../../outbound';
 
 @Injectable()

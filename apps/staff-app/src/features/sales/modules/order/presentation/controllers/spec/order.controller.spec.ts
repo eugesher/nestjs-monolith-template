@@ -1,10 +1,10 @@
-import {
+import { OrderController } from '../order.controller';
+import type {
   OrderGetManyUseCase,
   OrderGetOneUseCase,
   OrderGetTagsUseCase,
   OrderReplaceTagsUseCase,
 } from '../../../application';
-import { OrderController } from '../order.controller';
 
 describe('OrderController', () => {
   let getMany: jest.Mock;

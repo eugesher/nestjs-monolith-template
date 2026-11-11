@@ -1,5 +1,5 @@
-import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { Maybe } from '@acme-libs/toolkit';
+import type { ReminderStatusEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
 
 export interface IReminderGetManyListQuery {
   page: number;

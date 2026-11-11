@@ -8,7 +8,7 @@ import {
   type IRoleReassignPermissionsRepositoryPort,
   type IRoleTransactionPort,
 } from '../../outbound';
-import { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
+import type { IRoleReassignPermissionsCommand, IRoleView } from '../interfaces';
 
 @Injectable()
 export class RoleReassignPermissionsUseCase {

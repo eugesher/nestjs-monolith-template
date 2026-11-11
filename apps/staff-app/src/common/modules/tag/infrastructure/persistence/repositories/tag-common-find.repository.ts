@@ -1,12 +1,12 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
-  ITagCommonFindQuery,
-  ITagCommonFindRecord,
-  ITagCommonFindRepositoryPort,
   TAG_COMMON_FIND_REPOSITORY_PORT,
+  type ITagCommonFindQuery,
+  type ITagCommonFindRecord,
+  type ITagCommonFindRepositoryPort,
 } from '../../../outbound';
 import { TagCommonPersistenceHost } from '../host/tag-common-persistence.host';
 

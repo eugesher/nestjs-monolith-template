@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { TagModel, TagNameTakenException } from '../../domain';
+import { TagNameTakenException, type TagModel } from '../../domain';
 import {
   TAG_RENAME_REPOSITORY_PORT,
   TagRenameUpdateOutcomeEnum,
   type ITagRenameRepositoryPort,
 } from '../../outbound';
-import { ITagRenameCommand, ITagView } from '../interfaces';
 import { TagAccessService } from '../services/tag-access.service';
+import type { ITagRenameCommand, ITagView } from '../interfaces';
 
 @Injectable()
 export class TagRenameUseCase {

@@ -1,6 +1,6 @@
-import { Nullable } from '@acme-libs/toolkit';
+import type { Nullable } from '@acme-libs/toolkit';
 
-import { IAuthGlobalValidateSubjectCustomerRecord } from '../interfaces';
+import type { IAuthGlobalValidateSubjectCustomerRecord } from '../interfaces';
 
 export interface IAuthGlobalValidateSubjectRepositoryPort {
   findActiveById(id: string): Promise<Nullable<IAuthGlobalValidateSubjectCustomerRecord>>;

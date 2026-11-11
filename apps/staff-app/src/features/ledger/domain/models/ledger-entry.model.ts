@@ -1,4 +1,4 @@
-import { ILedgerEntryRecordInput, ILedgerEntrySnapshotOutput } from '../interfaces';
+import type { ILedgerEntryRecordInput, ILedgerEntrySnapshotOutput } from '../interfaces';
 
 export class LedgerEntryModel {
   private constructor(

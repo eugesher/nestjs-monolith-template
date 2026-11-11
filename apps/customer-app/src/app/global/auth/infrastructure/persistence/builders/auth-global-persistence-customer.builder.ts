@@ -1,7 +1,7 @@
 import { SelectQueryBuilder } from 'typeorm';
 
 import { UserStatusEnum } from '@acme-libs/kernel';
-import { Customer } from '@acme-core/entities';
+import type { Customer } from '@acme-core/entities';
 
 export class AuthGlobalPersistenceCustomerBuilder extends SelectQueryBuilder<Customer> {
   public forActiveById(id: string): this {

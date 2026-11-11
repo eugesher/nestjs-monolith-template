@@ -1,4 +1,4 @@
-import { Span, trace, Tracer } from '@opentelemetry/api';
+import { trace, type Span, type Tracer } from '@opentelemetry/api';
 
 import { CacheLibTracerAdapter } from '../cache-lib-tracer.adapter';
 

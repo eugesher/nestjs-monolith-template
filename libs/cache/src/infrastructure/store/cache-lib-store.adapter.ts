@@ -1,13 +1,13 @@
-import { ClassProvider, Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider, type OnApplicationShutdown } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 import {
   CACHE_LIB_REDIS_CLIENT_TOKEN,
   CACHE_LIB_STORE_PORT,
-  ICacheLibStorePort,
-  ICacheLibStoreSetCommand,
+  type ICacheLibStorePort,
+  type ICacheLibStoreSetCommand,
 } from '../../outbound';
 
 @Injectable()

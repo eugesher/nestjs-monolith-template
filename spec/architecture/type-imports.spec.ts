@@ -1,0 +1,88 @@
+import { ESLint } from 'eslint';
+import * as path from 'path';
+
+import { Scaffold } from '../support/scaffold';
+
+describe('type imports', () => {
+  const file = path.resolve(__dirname, '../../libs/ledger/src/__type-imports-fixture__.ts');
+  const rulesOf = async (code: string): Promise<(string | null)[]> => {
+    const [result] = await eslint.lintText(code, { filePath: file });
+
+    return result.messages.map((message) => message.ruleId);
+  };
+
+  let scaffold: Scaffold;
+  let eslint: ESLint;
+
+  beforeAll(() => {
+    scaffold = Scaffold.create(['libs/ledger/src/__type-imports-fixture__.ts']);
+    eslint = new ESLint({ cwd: path.resolve(__dirname, '../..') });
+  });
+
+  afterAll(() => {
+    scaffold.remove();
+  });
+
+  it('a decorated file may NOT import an interface without type', async () => {
+    const rules = await rulesOf(
+      'import { Injectable } from "@nestjs/common";\n' +
+        'import { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n' +
+        '@Injectable()\n' +
+        'export class Item {\n' +
+        '  public read(port: ILedgerLibPort): ILedgerLibPort {\n' +
+        '    return port;\n' +
+        '  }\n' +
+        '}\n',
+    );
+
+    expect(rules).toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
+  it('a decorated file MAY import an interface with type', async () => {
+    const rules = await rulesOf(
+      'import { Injectable } from "@nestjs/common";\n' +
+        'import type { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n' +
+        '@Injectable()\n' +
+        'export class Item {\n' +
+        '  public read(port: ILedgerLibPort): ILedgerLibPort {\n' +
+        '    return port;\n' +
+        '  }\n' +
+        '}\n',
+    );
+
+    expect(rules).not.toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
+  it('a decorated file keeps a class of a constructor as a value import', async () => {
+    const rules = await rulesOf(
+      'import { Injectable } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        '@Injectable()\n' +
+        'export class Item {\n' +
+        '  constructor(public readonly config: ConfigService) {}\n' +
+        '}\n',
+    );
+
+    expect(rules).not.toContain('acme/type-imports-in-decorated-files');
+    expect(rules).not.toContain('@typescript-eslint/consistent-type-imports');
+  }, 120000);
+
+  it('a file without decorators may NOT import a type without type', async () => {
+    const rules = await rulesOf(
+      'import { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n' +
+        'export const read = (port: ILedgerLibPort): ILedgerLibPort => port;\n',
+    );
+
+    expect(rules).toContain('@typescript-eslint/consistent-type-imports');
+    expect(rules).not.toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
+  it('an import of types only may NOT keep type inside the braces', async () => {
+    const rules = await rulesOf(
+      'import { type ILedgerLibPort } from "@acme-libs/contracts/ledger";\n' +
+        'export const read = (port: ILedgerLibPort): ILedgerLibPort => port;\n',
+    );
+
+    expect(rules).toContain('@typescript-eslint/no-import-type-side-effects');
+  }, 120000);
+});

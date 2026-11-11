@@ -1,4 +1,4 @@
-import { OrderTagReplaceOutcomeEnum } from '../../enums/order-tag-replace-outcome.enum';
+import type { OrderTagReplaceOutcomeEnum } from '../../enums/order-tag-replace-outcome.enum';
 
 export interface IOrderTagFindView {
   id: string;

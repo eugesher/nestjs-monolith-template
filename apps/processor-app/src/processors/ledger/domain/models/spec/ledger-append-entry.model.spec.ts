@@ -1,5 +1,5 @@
-import { ILedgerAppendEntryDraftOutput } from '../../interfaces';
 import { LedgerAppendEntryModel } from '../ledger-append-entry.model';
+import type { ILedgerAppendEntryDraftOutput } from '../../interfaces';
 
 describe('LedgerAppendEntryModel', () => {
   describe('createDraft', () => {

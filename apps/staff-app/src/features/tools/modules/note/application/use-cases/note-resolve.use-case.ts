@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { NoteModel } from '../../domain';
 import { NOTE_RESOLVE_REPOSITORY_PORT, type INoteResolveRepositoryPort } from '../../outbound';
-import { INoteResolveCommand, INoteView } from '../interfaces';
 import { NoteAccessService } from '../services/note-access.service';
 import { NoteWriteService } from '../services/note-write.service';
+import type { NoteModel } from '../../domain';
+import type { INoteResolveCommand, INoteView } from '../interfaces';
 
 @Injectable()
 export class NoteResolveUseCase {

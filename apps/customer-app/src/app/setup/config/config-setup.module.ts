@@ -1,6 +1,6 @@
-import { DynamicModule } from '@nestjs/common';
-import { ConfigModule, ConfigModuleOptions } from '@nestjs/config';
+import { ConfigModule, type ConfigModuleOptions } from '@nestjs/config';
 import Joi from 'joi';
+import type { DynamicModule } from '@nestjs/common';
 
 import { EnvHelper } from '@acme-libs/config';
 import { AppNameEnum } from '@acme-libs/kernel';

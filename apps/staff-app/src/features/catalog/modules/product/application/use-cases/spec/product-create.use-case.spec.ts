@@ -1,11 +1,11 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductCreateInsertOutcomeEnum } from '../../../outbound';
-import { IProductLedgerPort } from '../../../outbound';
 import { ProductCreateUseCase } from '../product-create.use-case';
+import type { IProductLedgerPort } from '../../../outbound';
 
 describe('ProductCreateUseCase', () => {
   let existsBySku: jest.Mock;

@@ -1,4 +1,4 @@
-import { ICacheLibPort } from '@acme-libs/contracts/cache';
+import type { ICacheLibPort } from '@acme-libs/contracts/cache';
 
 import { ReminderSummaryCacheAdapter } from '../reminder-summary-cache.adapter';
 

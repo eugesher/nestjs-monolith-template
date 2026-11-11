@@ -1,11 +1,11 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { TagModel, TagNameInvalidException, TagNameTakenException } from '../../../domain';
 import { TagRenameUpdateOutcomeEnum } from '../../../outbound';
-import { TagAccessService } from '../../services/tag-access.service';
 import { TagRenameUseCase } from '../tag-rename.use-case';
+import type { TagAccessService } from '../../services/tag-access.service';
 
 describe('TagRenameUseCase', () => {
   let load: jest.Mock;

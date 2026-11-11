@@ -1,6 +1,6 @@
-import { ValueProvider } from '@nestjs/common';
+import type { ValueProvider } from '@nestjs/common';
 
-import { AppNameEnum } from '@acme-libs/kernel';
+import type { AppNameEnum } from '@acme-libs/kernel';
 
 import { HEALTH_LIB_APP_NAME_TOKEN } from '../../outbound';
 

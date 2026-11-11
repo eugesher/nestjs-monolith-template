@@ -1,4 +1,7 @@
-import { IAuthRegisterCustomerInsertQuery, IAuthRegisterCustomerInsertRecord } from '../interfaces';
+import type {
+  IAuthRegisterCustomerInsertQuery,
+  IAuthRegisterCustomerInsertRecord,
+} from '../interfaces';
 
 export interface IAuthRegisterRepositoryPort {
   insert(query: IAuthRegisterCustomerInsertQuery): Promise<IAuthRegisterCustomerInsertRecord>;

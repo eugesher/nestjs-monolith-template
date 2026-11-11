@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { IProductGetOneCommand, IProductView } from '../interfaces';
 import { ProductAccessService } from '../services/product-access.service';
+import type { IProductGetOneCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductGetOneUseCase {

@@ -1,5 +1,5 @@
-import { QueueFailedJobService } from '../../services/queue-failed-job.service';
 import { QueueRetryFailedJobUseCase } from '../queue-retry-failed-job.use-case';
+import type { QueueFailedJobService } from '../../services/queue-failed-job.service';
 
 describe('QueueRetryFailedJobUseCase', () => {
   let ensure: jest.Mock;

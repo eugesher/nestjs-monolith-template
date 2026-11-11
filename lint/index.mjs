@@ -8,4 +8,5 @@ export { modules } from './configs/modules.mjs';
 export { plainNode } from './configs/plain-node.mjs';
 export { specs } from './configs/specs.mjs';
 export { style } from './configs/style.mjs';
+export { typeImports } from './configs/type-imports.mjs';
 export { typescript } from './configs/typescript.mjs';

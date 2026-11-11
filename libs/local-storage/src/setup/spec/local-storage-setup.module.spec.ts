@@ -1,4 +1,4 @@
-import { ClsModule, ClsModuleOptions, ClsServiceManager } from 'nestjs-cls';
+import { ClsModule, ClsServiceManager, type ClsModuleOptions } from 'nestjs-cls';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 

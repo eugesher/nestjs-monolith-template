@@ -1,4 +1,4 @@
-import { IOrderLedgerRecordPlacedCommand } from '../interfaces';
+import type { IOrderLedgerRecordPlacedCommand } from '../interfaces';
 
 export interface IOrderLedgerPort {
   recordPlaced(command: IOrderLedgerRecordPlacedCommand): Promise<void>;

@@ -8,7 +8,7 @@ import {
   type IUserReassignRolesRepositoryPort,
   type IUserTransactionPort,
 } from '../../outbound';
-import { IUserReassignRolesCommand, IUserReassignRolesView } from '../interfaces';
+import type { IUserReassignRolesCommand, IUserReassignRolesView } from '../interfaces';
 
 @Injectable()
 export class UserReassignRolesUseCase {

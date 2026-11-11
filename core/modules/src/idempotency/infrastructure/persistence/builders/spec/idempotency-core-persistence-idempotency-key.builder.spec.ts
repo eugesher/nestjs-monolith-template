@@ -1,4 +1,4 @@
-import { DataSource, SelectQueryBuilder } from 'typeorm';
+import { DataSource, type SelectQueryBuilder } from 'typeorm';
 
 import { IdempotencyKey } from '@acme-core/entities';
 

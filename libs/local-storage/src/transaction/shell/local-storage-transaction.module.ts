@@ -1,8 +1,8 @@
-import { DynamicModule } from '@nestjs/common';
 import { ClsPluginTransactional } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { ClsModule } from 'nestjs-cls';
 import { DataSource } from 'typeorm';
+import type { DynamicModule } from '@nestjs/common';
 
 import { TRANSACTION_PORT } from '@acme-libs/contracts/local-storage';
 

@@ -1,7 +1,7 @@
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { IProductLedgerRecordEventsCommand } from '../../../outbound';
 import { ProductLedgerLibAdapter } from '../product-ledger-lib.adapter';
+import type { IProductLedgerRecordEventsCommand } from '../../../outbound';
 
 describe('ProductLedgerLibAdapter', () => {
   let handleEnqueue: jest.Mock;

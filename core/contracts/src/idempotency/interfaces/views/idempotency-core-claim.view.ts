@@ -1,4 +1,4 @@
-import { IdempotencyCoreClaimOutcomeEnum } from '../../enums/idempotency-core-claim-outcome.enum';
+import type { IdempotencyCoreClaimOutcomeEnum } from '../../enums/idempotency-core-claim-outcome.enum';
 
 export interface IIdempotencyCoreClaimView {
   outcome: IdempotencyCoreClaimOutcomeEnum;

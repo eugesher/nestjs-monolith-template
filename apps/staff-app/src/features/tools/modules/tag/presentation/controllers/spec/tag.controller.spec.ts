@@ -1,10 +1,10 @@
-import {
+import { TagController } from '../tag.controller';
+import type {
   TagCreateUseCase,
   TagDeleteUseCase,
   TagGetManyUseCase,
   TagRenameUseCase,
 } from '../../../application';
-import { TagController } from '../tag.controller';
 
 describe('TagController', () => {
   let create: jest.Mock;

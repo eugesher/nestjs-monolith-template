@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
-import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraftOutput } from '../../domain';
+import {
+  AuthCustomerModel,
+  AuthEmailTakenException,
+  type IAuthCustomerDraftOutput,
+} from '../../domain';
 import {
   AUTH_CREDENTIALS_PORT,
   AUTH_LEDGER_PORT,
@@ -11,7 +15,7 @@ import {
   type IAuthLedgerPort,
   type IAuthRegisterRepositoryPort,
 } from '../../outbound';
-import { IAuthRegisterCommand, IAuthRegisterView } from '../interfaces';
+import type { IAuthRegisterCommand, IAuthRegisterView } from '../interfaces';
 
 @Injectable()
 export class AuthRegisterUseCase {

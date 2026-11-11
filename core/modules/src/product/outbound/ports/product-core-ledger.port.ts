@@ -1,4 +1,4 @@
-import { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
+import type { IProductCoreLedgerRecordArchivedCommand } from '../interfaces';
 
 export interface IProductCoreLedgerPort {
   recordArchived(command: IProductCoreLedgerRecordArchivedCommand): Promise<void>;

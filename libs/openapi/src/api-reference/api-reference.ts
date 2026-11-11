@@ -1,7 +1,7 @@
-import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import type { INestApplication } from '@nestjs/common';
 
 import { AppNameEnum } from '@acme-libs/kernel';
 

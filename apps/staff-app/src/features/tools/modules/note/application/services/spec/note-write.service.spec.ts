@@ -1,11 +1,11 @@
-import { PinoLogger } from 'nestjs-pino';
+import type { PinoLogger } from 'nestjs-pino';
 
-import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { NoteModel } from '../../../domain';
 import { NoteWriteConflictError } from '../../errors/note-write-conflict.error';
-import { NoteAccessService } from '../note-access.service';
 import { NoteWriteService } from '../note-write.service';
+import type { NoteAccessService } from '../note-access.service';
 
 describe('NoteWriteService', () => {
   let loadOwned: jest.Mock;

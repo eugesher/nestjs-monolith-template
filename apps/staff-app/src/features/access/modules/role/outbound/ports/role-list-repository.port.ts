@@ -1,4 +1,4 @@
-import { IRoleListRecord } from '../interfaces';
+import type { IRoleListRecord } from '../interfaces';
 
 export interface IRoleListRepositoryPort {
   list(): Promise<IRoleListRecord[]>;

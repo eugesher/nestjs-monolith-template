@@ -1,5 +1,9 @@
-import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from '../../../application';
 import { OrderController } from '../order.controller';
+import type {
+  OrderGetManyUseCase,
+  OrderGetOneUseCase,
+  OrderPlaceUseCase,
+} from '../../../application';
 
 describe('OrderController', () => {
   let place: jest.Mock;

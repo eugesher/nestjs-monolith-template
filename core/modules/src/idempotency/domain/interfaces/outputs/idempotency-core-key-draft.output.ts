@@ -1,5 +1,5 @@
-import { IdempotencyStatusEnum } from '@acme-libs/kernel';
-import { Nullable } from '@acme-libs/toolkit';
+import type { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import type { Nullable } from '@acme-libs/toolkit';
 
 export interface IIdempotencyCoreKeyDraftOutput {
   key: string;

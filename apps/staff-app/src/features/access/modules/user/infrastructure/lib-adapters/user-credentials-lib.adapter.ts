@@ -1,8 +1,8 @@
-import { ClassProvider, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 
 import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
-import { IUserCredentialsPort, USER_CREDENTIALS_PORT } from '../../outbound';
+import { USER_CREDENTIALS_PORT, type IUserCredentialsPort } from '../../outbound';
 
 @Injectable()
 export class UserCredentialsLibAdapter implements IUserCredentialsPort {

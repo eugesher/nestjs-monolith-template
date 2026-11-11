@@ -1,13 +1,16 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ClassProvider, Injectable } from '@nestjs/common';
-import { type Queue } from 'bull';
-
-import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
+import { Injectable, type ClassProvider } from '@nestjs/common';
+import type { Queue } from 'bull';
 
 import {
-  ILedgerLibQueueAddCommand,
-  ILedgerLibQueuePort,
+  LEDGER_RECORD_QUEUE,
+  type ILedgerRecordProcessorPayload,
+} from '@acme-libs/contracts/ledger';
+
+import {
   LEDGER_LIB_QUEUE_PORT,
+  type ILedgerLibQueueAddCommand,
+  type ILedgerLibQueuePort,
 } from '../../outbound';
 
 @Injectable()

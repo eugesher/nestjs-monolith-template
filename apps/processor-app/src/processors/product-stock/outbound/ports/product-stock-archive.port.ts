@@ -1,4 +1,4 @@
-import { IProductStockArchiveCommand, IProductStockArchiveView } from '../interfaces';
+import type { IProductStockArchiveCommand, IProductStockArchiveView } from '../interfaces';
 
 export interface IProductStockArchivePort {
   archive(command: IProductStockArchiveCommand): Promise<IProductStockArchiveView>;

@@ -123,3 +123,13 @@ apart by the decorator, not by the number of lines.
 `controllers`, `providers`: what the module takes and shows comes before how it is built. The rule
 applies to an object whose keys are all among these six, the argument of `@Module` and the object a
 `forRoot` returns alike, and leaves every other object as it is written.
+
+## Type imports
+
+`lint/configs/type-imports.mjs` marks every import that has no runtime use. An import of types only
+is `import type { … }`, enforced by `no-import-type-side-effects`; a mixed import marks each type
+inline. `consistent-type-imports` checks this, but with `emitDecoratorMetadata` it skips every file
+with a decorator, because a class in a decorated constructor is read at runtime by Nest. The rule
+`acme/type-imports-in-decorated-files` (`lint/rules`) covers those files: it asks the type checker
+whether the imported symbol has a value, so an interface or a type alias takes `type` and a class
+stays a value import. A class used only as a type in a decorated file is left unchecked.

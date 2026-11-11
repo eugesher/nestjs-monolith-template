@@ -4,7 +4,7 @@ import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.except
 import { NoteResolvedException } from '../exceptions/note-resolved.exception';
 import { NoteSubjectInvalidException } from '../exceptions/note-subject-invalid.exception';
 import { NoteVersionInvalidException } from '../exceptions/note-version-invalid.exception';
-import {
+import type {
   INoteCandidateInput,
   INoteDraftOutput,
   INoteRecordInput,

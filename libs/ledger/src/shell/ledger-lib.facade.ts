@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ILedgerLibEnqueueCommand, ILedgerLibPort } from '@acme-libs/contracts/ledger';
+import type { ILedgerLibEnqueueCommand, ILedgerLibPort } from '@acme-libs/contracts/ledger';
 
 import { LedgerLibEnqueueUseCase } from '../application';
 

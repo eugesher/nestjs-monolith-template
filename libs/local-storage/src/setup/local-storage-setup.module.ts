@@ -1,6 +1,6 @@
-import { DynamicModule } from '@nestjs/common';
-import { IncomingMessage, ServerResponse } from 'http';
-import { CLS_ID, ClsModule, ClsModuleOptions, ClsService } from 'nestjs-cls';
+import { CLS_ID, ClsModule, type ClsModuleOptions, type ClsService } from 'nestjs-cls';
+import type { DynamicModule } from '@nestjs/common';
+import type { IncomingMessage, ServerResponse } from 'http';
 
 import { CorrelationIdHelper } from '@acme-libs/observability';
 

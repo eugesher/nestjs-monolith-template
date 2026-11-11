@@ -8,7 +8,7 @@ import {
   type IReminderCreateRepositoryPort,
   type IReminderSummaryPort,
 } from '../../outbound';
-import { IReminderCreateCommand, IReminderView } from '../interfaces';
+import type { IReminderCreateCommand, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderCreateUseCase {

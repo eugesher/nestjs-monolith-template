@@ -1,6 +1,6 @@
-import { Tag } from '@acme-staff/common/entities';
+import type { Tag } from '@acme-staff/common/entities';
 
-import { TagCreateInsertOutcomeEnum } from '../../enums/tag-create-insert-outcome.enum';
+import type { TagCreateInsertOutcomeEnum } from '../../enums/tag-create-insert-outcome.enum';
 
 export type ITagCreateRecord = Pick<Tag, 'id' | 'name' | 'createdAt' | 'updatedAt'>;
 

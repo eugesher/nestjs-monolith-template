@@ -1,4 +1,4 @@
-import { IProductStockCorePostSubtractEnqueueCommand } from '../interfaces';
+import type { IProductStockCorePostSubtractEnqueueCommand } from '../interfaces';
 
 export interface IProductStockCorePostSubtractPort {
   enqueue(command: IProductStockCorePostSubtractEnqueueCommand): Promise<void>;

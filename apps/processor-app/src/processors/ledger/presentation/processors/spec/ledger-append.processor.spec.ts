@@ -1,10 +1,10 @@
-import { Job } from 'bull';
+import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import { ILedgerRecordProcessorPayload } from '@acme-libs/contracts/ledger';
+import type { ILedgerRecordProcessorPayload } from '@acme-libs/contracts/ledger';
 
-import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../../application';
 import { LedgerAppendProcessor } from '../ledger-append.processor';
+import type { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../../application';
 
 describe('LedgerAppendProcessor', () => {
   let correlationIds: string[];

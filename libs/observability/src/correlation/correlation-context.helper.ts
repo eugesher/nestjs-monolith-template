@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { CLS_ID, ClsServiceManager } from 'nestjs-cls';
 import { PinoLogger } from 'nestjs-pino';
 
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
 export class CorrelationContextHelper {
   public static async run<T>(inbound: Maybe<string>, callback: () => Promise<T>): Promise<T> {

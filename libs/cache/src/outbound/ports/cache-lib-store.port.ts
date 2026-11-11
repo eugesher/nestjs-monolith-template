@@ -1,6 +1,6 @@
-import { Maybe } from '@acme-libs/toolkit';
+import type { Maybe } from '@acme-libs/toolkit';
 
-import { ICacheLibStoreSetCommand } from '../interfaces';
+import type { ICacheLibStoreSetCommand } from '../interfaces';
 
 export interface ICacheLibStorePort {
   get<T>(key: string): Promise<Maybe<T>>;

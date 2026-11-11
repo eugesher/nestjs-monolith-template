@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import { ReplayRetryHelper } from '@acme-libs/toolkit';
-import { ILedgerLibEnqueueCommand } from '@acme-libs/contracts/ledger';
+import type { ILedgerLibEnqueueCommand } from '@acme-libs/contracts/ledger';
 
 import {
   LEDGER_LIB_QUEUE_PORT,

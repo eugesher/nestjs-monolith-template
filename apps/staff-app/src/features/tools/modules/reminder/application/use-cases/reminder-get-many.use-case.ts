@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { IPage, PaginationHelper } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPage } from '@acme-libs/toolkit';
 
 import { ReminderModel } from '../../domain';
 import {
   REMINDER_GET_MANY_REPOSITORY_PORT,
   type IReminderGetManyRepositoryPort,
 } from '../../outbound';
-import { IReminderGetManyCommand, IReminderView } from '../interfaces';
+import type { IReminderGetManyCommand, IReminderView } from '../interfaces';
 
 @Injectable()
 export class ReminderGetManyUseCase {

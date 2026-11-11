@@ -1,5 +1,5 @@
-import { ProductStockAddUseCase } from '../../../application';
 import { ProductStockController } from '../product-stock.controller';
+import type { ProductStockAddUseCase } from '../../../application';
 
 describe('ProductStockController', () => {
   let add: jest.Mock;

@@ -1,4 +1,4 @@
-import { IProductStockCoreSumInput } from './product-stock-core-sum.input';
+import type { IProductStockCoreSumInput } from './product-stock-core-sum.input';
 
 export interface IProductStockCoreOnHandRecordInput {
   productIds: string[];

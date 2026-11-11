@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
-  IProductDraftOutput,
   ProductIdempotencyKeyReusedException,
   ProductIdempotentRequestInFlightException,
   ProductModel,
   ProductSkuTakenException,
+  type IProductDraftOutput,
 } from '../../domain';
 import {
   PRODUCT_CREATE_REPOSITORY_PORT,
@@ -20,7 +20,7 @@ import {
   type IProductLedgerPort,
   type IProductTransactionPort,
 } from '../../outbound';
-import { IProductCreateCommand, IProductView } from '../interfaces';
+import type { IProductCreateCommand, IProductView } from '../interfaces';
 
 @Injectable()
 export class ProductCreateUseCase {
