@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import type { ILedgerAppendReportFailureCommand } from '../interfaces';
 

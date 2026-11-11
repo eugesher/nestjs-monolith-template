@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { AppNameEnum, HealthLivenessStatusEnum } from '@acme-libs/kernel';
+import { HealthLivenessStatusEnum, type AppNameEnum } from '@acme-libs/kernel';
 import type { IHealthLibLivenessView } from '@acme-libs/contracts/health';
 
 import {

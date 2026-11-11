@@ -1,5 +1,5 @@
 import { Inject, Injectable, type ClassProvider, type OnApplicationShutdown } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 
 import type { Maybe } from '@acme-libs/toolkit';
 

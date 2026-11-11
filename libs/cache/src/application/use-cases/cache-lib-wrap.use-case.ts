@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import type { Maybe } from '@acme-libs/toolkit';
 import type { ICacheLibWrapCommand } from '@acme-libs/contracts/cache';

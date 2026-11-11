@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import {
   PRODUCT_STOCK_ARCHIVE_PORT,

@@ -131,5 +131,10 @@ is `import type { … }`, enforced by `no-import-type-side-effects`; a mixed imp
 inline. `consistent-type-imports` checks this, but with `emitDecoratorMetadata` it skips every file
 with a decorator, because a class in a decorated constructor is read at runtime by Nest. The rule
 `acme/type-imports-in-decorated-files` (`lint/rules`) covers those files: it asks the type checker
-whether the imported symbol has a value, so an interface or a type alias takes `type` and a class
-stays a value import. A class used only as a type in a decorated file is left unchecked.
+whether the imported symbol has a value, so an interface or a type alias takes `type`. A class takes
+`type` too when every use of it is a type that no decorator metadata reads: Nest reads the metadata
+of a constructor parameter only when the parameter names no token, so a class behind
+`@Inject(<token>)`, `@InjectPinoLogger`, `@InjectQueue` or `@InjectRepository` is a type, as
+`PinoLogger` in every use case. A class in a constructor parameter without a token, in a decorated
+property or in the signature of a decorated method stays a value import: DI, Swagger,
+`ValidationPipe` and TypeORM read it there.

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { REMINDER_SUMMARY_PORT, type IReminderSummaryPort } from '../../outbound';
 import { ReminderWriteService } from '../services/reminder-write.service';

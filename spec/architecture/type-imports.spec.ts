@@ -67,6 +67,45 @@ describe('type imports', () => {
     expect(rules).not.toContain('@typescript-eslint/consistent-type-imports');
   }, 120000);
 
+  it('a decorated file may NOT import a class that only a parameter injected by a token uses', async () => {
+    const rules = await rulesOf(
+      'import { Inject, Injectable } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        '@Injectable()\n' +
+        'export class Item {\n' +
+        '  constructor(@Inject("CONFIG") public readonly config: ConfigService) {}\n' +
+        '}\n',
+    );
+
+    expect(rules).toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
+  it('a decorated file keeps a class of a parameter injected by @Inject() without a token', async () => {
+    const rules = await rulesOf(
+      'import { Inject, Injectable } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        '@Injectable()\n' +
+        'export class Item {\n' +
+        '  constructor(@Inject() public readonly config: ConfigService) {}\n' +
+        '}\n',
+    );
+
+    expect(rules).not.toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
+  it('a decorated file keeps a class that the metadata of a decorated property reads', async () => {
+    const rules = await rulesOf(
+      'import { Inject } from "@nestjs/common";\n' +
+        'import { ConfigService } from "@nestjs/config";\n' +
+        'export class Item {\n' +
+        '  @Inject("CONFIG")\n' +
+        '  public readonly config!: ConfigService;\n' +
+        '}\n',
+    );
+
+    expect(rules).not.toContain('acme/type-imports-in-decorated-files');
+  }, 120000);
+
   it('a file without decorators may NOT import a type without type', async () => {
     const rules = await rulesOf(
       'import { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n' +
