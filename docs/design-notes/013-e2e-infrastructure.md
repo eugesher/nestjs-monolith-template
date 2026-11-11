@@ -31,10 +31,13 @@ its own, on the standard ports (see `036-production-stack.md`).
 
 **`up` starts the infrastructure and nothing else.** `test/infra/bash/up.sh` starts the containers
 detached, prints the logs of every container, and returns once `docker compose up --wait` sees MySQL
-and Redis healthy; the logs stop with it. MySQL creates an empty `acme_db`, and the containers keep
-running until `down`. `up` builds no image and runs no code of the project, as in CI, so it is ready
-in seconds. The data comes later: a suite reseeds before it runs, and a local run migrates and seeds
-once (see the README).
+and Redis healthy; the logs stop with it. The logs run in a process group of their own and the
+script stops the whole group, on a normal exit, on Ctrl+C and on SIGTERM: while it writes to a
+terminal, `docker compose logs` ignores a signal sent to its own process, and would keep printing
+after the prompt returns. MySQL creates an empty `acme_db`, and the containers keep running until
+`down`. `up` builds no image and runs no code of the project, so it is ready in seconds; CI runs it
+through `yarn test:e2e` as a local run does. The data comes later: a suite reseeds before it runs,
+and a local run migrates and seeds once (see the README).
 
 **`reseed` resets running infrastructure in seconds.** It drops and creates `acme_db`, flushes Redis
 with its password, runs the migrations and the seed from the host with `env/migrations/.env.test`.

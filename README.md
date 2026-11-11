@@ -90,8 +90,8 @@ yarn migration:run
 
 ## Run the e2e tests
 
-Rebuild the infrastructure and run every suite one after another, as CI does, with one report at the
-end:
+Rebuild the infrastructure and run every suite one after another, with one report at the end. CI
+runs the same command:
 
 ```bash
 yarn test:e2e
