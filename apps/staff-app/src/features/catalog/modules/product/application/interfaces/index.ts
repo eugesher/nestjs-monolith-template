@@ -4,7 +4,6 @@ export * from './commands/product-create.command';
 export * from './commands/product-get-many.command';
 export * from './commands/product-get-one.command';
 export * from './commands/product-get-tags.command';
-export * from './commands/product-ledger.command';
 export * from './commands/product-publish.command';
 export * from './commands/product-replace-tags.command';
 export * from './commands/product-update.command';

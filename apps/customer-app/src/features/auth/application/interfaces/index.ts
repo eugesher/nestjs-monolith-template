@@ -1,4 +1,3 @@
-export * from './commands/auth-ledger.command';
 export * from './commands/auth-login.command';
 export * from './commands/auth-register.command';
 

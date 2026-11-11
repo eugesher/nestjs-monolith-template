@@ -9,7 +9,7 @@ import { Logger, PinoLogger } from 'nestjs-pino';
 import { DataSource } from 'typeorm';
 
 import { Maybe } from '@acme-libs/toolkit';
-import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import { ILedgerRecordProcessorPayload, LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
 import {
   IProductStockPostSubtractPayload,
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,

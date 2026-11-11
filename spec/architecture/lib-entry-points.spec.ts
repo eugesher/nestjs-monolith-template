@@ -79,6 +79,7 @@ describe('lib entry points', () => {
     '@acme-libs/contracts/credentials',
     '@acme-libs/contracts/database',
     '@acme-libs/contracts/health',
+    '@acme-libs/contracts/ledger',
     '@acme-libs/contracts/local-storage',
     '@acme-libs/credentials',
     '@acme-libs/database',

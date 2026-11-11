@@ -2,7 +2,6 @@ import { PinoLogger } from 'nestjs-pino';
 
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { OrderLedgerService } from '../../services/order-ledger.service';
 import { OrderPlaceUseCase } from '../order-place.use-case';
 
 describe('OrderPlaceUseCase', () => {
@@ -45,10 +44,10 @@ describe('OrderPlaceUseCase', () => {
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new OrderPlaceUseCase(
-      { recordPlaced } as unknown as OrderLedgerService,
       { findActiveProducts, insertOrder, insertOrderProducts, findPlaced },
       { lock, withdraw },
       { claim, complete, release },
+      { recordPlaced },
       { run },
       logger as unknown as PinoLogger,
     );

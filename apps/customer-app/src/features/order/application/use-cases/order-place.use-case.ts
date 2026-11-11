@@ -8,28 +8,30 @@ import {
 } from '../../domain';
 import {
   ORDER_IDEMPOTENCY_PORT,
+  ORDER_LEDGER_PORT,
   ORDER_PLACE_REPOSITORY_PORT,
   ORDER_PRODUCT_STOCK_PORT,
   ORDER_TRANSACTION_PORT,
   OrderIdempotencyOutcomeEnum,
   type IOrderIdempotencyPort,
+  type IOrderLedgerPort,
   type IOrderPlaceRepositoryPort,
   type IOrderProductStockPort,
   type IOrderTransactionPort,
 } from '../../outbound';
 import { IOrderPlaceCommand, IOrderView } from '../interfaces';
-import { OrderLedgerService } from '../services/order-ledger.service';
 
 @Injectable()
 export class OrderPlaceUseCase {
   constructor(
-    private readonly ledgerService: OrderLedgerService,
     @Inject(ORDER_PLACE_REPOSITORY_PORT)
     private readonly repository: IOrderPlaceRepositoryPort,
     @Inject(ORDER_PRODUCT_STOCK_PORT)
     private readonly productStock: IOrderProductStockPort,
     @Inject(ORDER_IDEMPOTENCY_PORT)
     private readonly idempotency: IOrderIdempotencyPort,
+    @Inject(ORDER_LEDGER_PORT)
+    private readonly ledger: IOrderLedgerPort,
     @Inject(ORDER_TRANSACTION_PORT)
     private readonly transaction: IOrderTransactionPort,
     @InjectPinoLogger(OrderPlaceUseCase.name)
@@ -61,7 +63,7 @@ export class OrderPlaceUseCase {
       const view = await this.transaction.run(() => this.persist(command));
       const placedProductIds = view.products.map((product) => product.productId);
 
-      await this.ledgerService.recordPlaced({
+      await this.ledger.recordPlaced({
         orderId: view.id,
         customerId,
         productIds: placedProductIds,

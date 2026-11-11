@@ -1,4 +1,5 @@
 export * from './commands/product-stock-idempotency.command';
+export * from './commands/product-stock-ledger.command';
 export * from './commands/product-stock-movement.command';
 
 export * from './records/product-stock-add.record';

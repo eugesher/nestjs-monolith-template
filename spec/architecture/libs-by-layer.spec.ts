@@ -98,17 +98,37 @@ describe('libs by layer', () => {
   });
 
   it.each([
-    'apps/__layers-fixture__/src/features/product/outbound/ports/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/product/application/services/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/product/infrastructure/queue/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/outbound/ports/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/application/services/__fixture__.ts',
-    'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
-  ])('%s MAY reach the ledger lib', async (file) => {
+    'apps/__layers-fixture__/src/features/product/product.module.ts',
+    'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+  ])('%s MAY mount the ledger lib', async (file) => {
     await expect({
       file,
-      code: 'import { SubjectLedgerService } from "@acme-libs/ledger";',
+      code: 'import { LedgerLibModule } from "@acme-libs/ledger";',
     }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/__layers-fixture__/src/features/product/infrastructure/lib-adapters/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
+  ])('%s MAY reach the ledger contracts', async (file) => {
+    await expect({
+      file,
+      code: 'import { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";',
+    }).toPassArchitectureLint();
+  });
+
+  it.each([
+    'apps/__layers-fixture__/src/features/product/outbound/ports/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/outbound/ports/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
+  ])('%s may NOT reach the ledger contracts — a lib adapter does', async (file) => {
+    await expect({
+      file,
+      code: 'import { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([
@@ -121,10 +141,15 @@ describe('libs by layer', () => {
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/infrastructure/persistence/repositories/__fixture__.ts',
     'core/contracts/src/__ledger-fixture__/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/outbound/ports/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/application/use-cases/__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/lib-adapters/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
+    'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
   ])('%s may NOT reach the ledger lib', async (file) => {
     await expect({
       file,
-      code: 'import { SubjectLedgerService } from "@acme-libs/ledger";',
+      code: 'import { LedgerLibModule } from "@acme-libs/ledger";',
     }).toBreakRule('boundaries/dependencies');
   });
 

@@ -109,6 +109,15 @@
         "tsConfigPath": "libs/contracts/tsconfig.lib.json"
       }
     },
+    "contracts-ledger": {
+      "type": "library",
+      "root": "libs/contracts/src/ledger",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src/ledger",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
     "contracts-local-storage": {
       "type": "library",
       "root": "libs/contracts/src/local-storage",
@@ -123,15 +132,6 @@
       "root": "core/contracts/src/idempotency",
       "entryFile": "index",
       "sourceRoot": "core/contracts/src/idempotency",
-      "compilerOptions": {
-        "tsConfigPath": "core/contracts/tsconfig.lib.json"
-      }
-    },
-    "core-contracts-ledger": {
-      "type": "library",
-      "root": "core/contracts/src/ledger",
-      "entryFile": "index",
-      "sourceRoot": "core/contracts/src/ledger",
       "compilerOptions": {
         "tsConfigPath": "core/contracts/tsconfig.lib.json"
       }

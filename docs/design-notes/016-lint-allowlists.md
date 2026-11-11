@@ -25,7 +25,7 @@ common-module spec imports the kernel; both are code the lint checks.
 `baseLibs(...names)` is `libs('kernel', 'toolkit', ...names)`. The kernel is the vocabulary and the
 toolkit is the technique of every layer, so each layer gets both whether or not one of its files
 imports them. The names after them are what the layer adds: `baseLibs('observability')` for an
-application layer, `baseLibs('ledger', 'observability')` for the application of a core module.
+application layer, `baseLibs('ledger', 'queue')` for the module root of a core module.
 
 `main.ts` and the core entities are the exceptions: they list their libs one by one.
 
@@ -46,12 +46,12 @@ Some edges are part of the documented shape of the template and have a `MAY` cas
   contracts;
 - shared code that reaches the contracts of its namesake, the http lib, the cache contracts and
   `nestjs-pino`;
-- the e2e code that reaches app contracts, the queue contracts of core (`ledger`, `product-stock`)
-  and the test helpers of the observability lib;
+- the e2e code that reaches app contracts, the queue contracts `@acme-libs/contracts/ledger` and
+  `@acme-core/contracts/product-stock`, and the test helpers of the observability lib;
 - a feature queue adapter and a processor that reach app contracts: a queue between the modules of
-  one app keeps its contract in the app, while a queue written by more than one app keeps it in
-  core, `ledger-record` in `@acme-core/contracts/ledger` and `product-stock-post-subtract` in
-  `@acme-core/contracts/product-stock`;
+  one app keeps its contract in the app, while a queue written by more than one app keeps it in core
+  or in the lib that writes it, `product-stock-post-subtract` in
+  `@acme-core/contracts/product-stock` and `ledger-record` in `@acme-libs/contracts/ledger`;
 - the core-adapters and common-adapters of a common module, and a common module root that mounts a
   core module, another common module or a shared barrel;
 - a processor whose application reaches its domain, and the libs of the processor layers: the
@@ -84,12 +84,13 @@ module, though only feature core-adapters reach the domain.
 
 ### `acme-core.mjs` — a core module that writes to a queue or a cache
 
-A core module announces what it wrote after the commit (see `026-transaction-port.md`), so three
+A core module announces what it wrote after the commit (see `026-transaction-port.md`), so four
 edges exist for it:
 
 - **`infrastructure/queue`**, a category of its own, holds the queue adapters. It takes
-  `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`), its own contracts and
-  the contracts of `ledger`, whose queue every module that writes ledger records shares.
+  `InjectQueue` and the `Queue` type and nothing else of Bull (`queue.mjs`) and its own contracts.
+- **`infrastructure/lib-adapters`**, a category of its own, holds the adapter of the ledger. It
+  takes `@acme-libs/contracts/ledger` and the observability lib.
 - **The module root registers the queues it writes to** with `BullSetupModule.registerQueue` of
   `libs/queue` and takes nothing of Bull itself. A core module is mounted by features of several
   apps, so the queue comes with it rather than with the `common/shared` of each app.
@@ -106,13 +107,16 @@ Code lives with its only caller (see `024-code-placement.md`), so the edges foll
 - **A lib port is reached through a lib adapter.** A feature declares a port of its own in
   `outbound` and implements it in `infrastructure/lib-adapters` on top of the port of the lib, as
   `core-adapters` and `common-adapters` do for core and common modules. Only `lib-adapters` may take
-  `@acme-libs/contracts/credentials` and `@acme-libs/contracts/health`; the application and the
-  presentation may not. The types of `@acme-libs/contracts/auth` stay direct.
-- **A feature and a core module write to the ledger.** Their outbound, application and
-  `infrastructure/queue` may import `@acme-libs/ledger`: the port aliases `ISubjectLedgerPort`, the
-  ledger service extends `SubjectLedgerService`, the queue adapter extends
-  `SubjectLedgerQueueAdapter`. No processor and no common module writes a ledger record, so neither
-  may. The lib itself sees only the base libs.
+  `@acme-libs/contracts/credentials`, `@acme-libs/contracts/health` and
+  `@acme-libs/contracts/ledger`; the application and the presentation may not. The types of
+  `@acme-libs/contracts/auth` stay direct.
+- **A feature and a core module write to the ledger.** Their module root mounts `LedgerLibModule` of
+  `@acme-libs/ledger`, and their `infrastructure/lib-adapters` takes `LEDGER_LIB_PORT` from
+  `@acme-libs/contracts/ledger` and `CorrelationContextHelper` from the observability lib. No other
+  layer reaches the lib. No processor and no common module writes a ledger record, so neither may.
+  What reads the queue also takes `@acme-libs/contracts/ledger`: the presentation of a processor,
+  the queue registry of processor-app in `infrastructure/queue`, `common/shared` and the e2e code.
+  The lib itself sees the base libs, `libs/config` and `libs/queue`.
 - **A processor and a global module read tables.** Their infrastructure may import `typeorm`,
   `@acme-libs/contracts/database` and `@nestjs/common`, as feature infrastructure does.
 - **No module touches `@nestjs-cls`.** A repository injects `ORM_PORT` of

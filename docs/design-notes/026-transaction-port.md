@@ -83,8 +83,8 @@ ledger records are (see `007-optimistic-concurrency.md`).
 
 A use case that opens the transaction itself already knows when it has committed: the line after
 `await transaction.run(...)` runs after the commit, and the feature use cases call `invalidate()`
-and their ledger services there. `afterCommit` is for an effect declared deeper, in a module that
-runs inside a transaction someone else opened and cannot tell when it commits. The core modules are
+and their ledger ports there. `afterCommit` is for an effect declared deeper, in a module that runs
+inside a transaction someone else opened and cannot tell when it commits. The core modules are
 those:
 
 | Module               | Write                | After the commit                                                 |

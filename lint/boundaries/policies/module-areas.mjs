@@ -108,19 +108,26 @@ const areaPolicies = (area, sharedFacing) => {
 
 export const moduleAreas = [
   ...areaPolicies('features', {
-    outbound: [libs('ledger')],
-    application: [libs('ledger'), packages('@nestjs/common')],
+    outbound: [],
+    application: [packages('@nestjs/common')],
     infrastructure: [packages('@nestjs/common', 'typeorm')],
     commonAdapters: [packages('@nestjs/common')],
-    libAdapters: [libContracts('credentials', 'health'), packages('@nestjs/common')],
-    queue: [libs('ledger'), packages('@nestjs/bull', '@nestjs/common', 'bull')],
+    libAdapters: [
+      libContracts('credentials', 'health', 'ledger'),
+      libs('observability'),
+      packages('@nestjs/common'),
+    ],
+    queue: [libContracts('ledger'), packages('@nestjs/bull', '@nestjs/common', 'bull')],
     presentation: [
       to('acme-app:common:shared:index', own('app')),
       libContracts('auth'),
       baseLibs('auth', 'http'),
       packages('@nestjs/common', '@nestjs/swagger', 'class-transformer', 'class-validator'),
     ],
-    module: [baseLibs('auth', 'credentials', 'health', 'http'), packages('@nestjs/common')],
+    module: [
+      baseLibs('auth', 'credentials', 'health', 'http', 'ledger'),
+      packages('@nestjs/common'),
+    ],
   }),
   ...areaPolicies('processors', {
     outbound: [],
@@ -132,6 +139,7 @@ export const moduleAreas = [
     presentation: [
       to('acme-app:contracts', own('app')),
       to('acme-core:contracts'),
+      libContracts('ledger'),
       baseLibs('observability'),
       packages('@nestjs/bull', '@nestjs/schedule', 'bull'),
     ],

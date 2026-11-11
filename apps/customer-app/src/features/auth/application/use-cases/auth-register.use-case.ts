@@ -4,22 +4,24 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { AuthCustomerModel, AuthEmailTakenException, IAuthCustomerDraftOutput } from '../../domain';
 import {
   AUTH_CREDENTIALS_PORT,
+  AUTH_LEDGER_PORT,
   AUTH_REGISTER_REPOSITORY_PORT,
   AuthRegisterCustomerInsertOutcomeEnum,
   type IAuthCredentialsPort,
+  type IAuthLedgerPort,
   type IAuthRegisterRepositoryPort,
 } from '../../outbound';
 import { IAuthRegisterCommand, IAuthRegisterView } from '../interfaces';
-import { AuthLedgerService } from '../services/auth-ledger.service';
 
 @Injectable()
 export class AuthRegisterUseCase {
   constructor(
-    private readonly ledgerService: AuthLedgerService,
     @Inject(AUTH_REGISTER_REPOSITORY_PORT)
     private readonly repository: IAuthRegisterRepositoryPort,
     @Inject(AUTH_CREDENTIALS_PORT)
     private readonly credentials: IAuthCredentialsPort,
+    @Inject(AUTH_LEDGER_PORT)
+    private readonly ledger: IAuthLedgerPort,
     @InjectPinoLogger(AuthRegisterUseCase.name)
     private readonly logger: PinoLogger,
   ) {}
@@ -35,7 +37,7 @@ export class AuthRegisterUseCase {
 
     this.logger.info({ customerId: id }, 'Customer registered');
 
-    await this.ledgerService.recordRegistered({ customerId: id, email: draft.email });
+    await this.ledger.recordRegistered({ customerId: id, email: draft.email });
 
     return { id, email: draft.email };
   }

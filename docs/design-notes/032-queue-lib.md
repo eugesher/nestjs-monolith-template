@@ -3,10 +3,10 @@
 All three apps connect Bull the same way, so the connection lives in a lib:
 `libs/queue/src/bull/bull-setup.module.ts`.
 
-| Method                          | Called by                                                                    | What it returns                                                 |
-| ------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `BullSetupModule.forRoot()`     | `AppModule` of each app                                                      | `BullModule.forRootAsync`: the connection to Redis, job options |
-| `BullSetupModule.registerQueue` | `common/shared` of each app, the shell of core `product` and `product-stock` | `BullModule.registerQueue({ name })`                            |
+| Method                          | Called by                                                                 | What it returns                                                 |
+| ------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `BullSetupModule.forRoot()`     | `AppModule` of each app                                                   | `BullModule.forRootAsync`: the connection to Redis, job options |
+| `BullSetupModule.registerQueue` | `common/shared` of processor-app, `LedgerLibModule`, core `product-stock` | `BullModule.registerQueue({ name })`                            |
 
 ```ts
 export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);
@@ -41,8 +41,9 @@ whole. With the name alone, every queue of every app enqueues with the options o
 | `app.module.ts`            | `forRoot()`     |
 | `common/shared` of an app  | `registerQueue` |
 | the shell of a core module | `registerQueue` |
+| the shell of `libs/ledger` | `registerQueue` |
 
-No other layer imports `libs/queue`, and none of the three above imports `@nestjs/bull`: the package
+No other layer imports `libs/queue`, and none of the four above imports `@nestjs/bull`: the package
 is left to the lib, to the queue adapters of `infrastructure/queue` and to the presentation of the
 processors. The lib itself sees `@nestjs/bull`, `@nestjs/common` and `@nestjs/config` (see
 `016-lint-allowlists.md`).

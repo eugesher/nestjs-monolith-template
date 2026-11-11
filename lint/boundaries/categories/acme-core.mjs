@@ -12,6 +12,11 @@ export const acmeCore = [
     'core/modules/src/*/infrastructure/config/**',
     ['module'],
   ],
+  [
+    'acme-core:modules:infrastructure:lib-adapters',
+    'core/modules/src/*/infrastructure/lib-adapters/**',
+    ['module'],
+  ],
   ['acme-core:modules:infrastructure', 'core/modules/src/*/infrastructure/**', ['module']],
   ['acme-core:modules:shell:facade', 'core/modules/src/*/shell/*.facade.ts', ['module']],
   ['acme-core:modules:shell', 'core/modules/src/*/shell/**', ['module']],

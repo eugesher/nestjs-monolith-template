@@ -18,12 +18,12 @@ The job type `ILedgerRecordProcessorPayload` carries the whole record, and the p
 as it is, so a new producer needs no change here. The producers do not process the queue:
 processor-app does (see `023-processor-app.md`), and the apps reach the queue through one Redis.
 
-The queue name and the job type live in `@acme-core/contracts/ledger`, because an app may not import
-another. Each app registers the queue in its `common/shared/ledger`, and the core product module
-registers it once more for the archives it records, every time with
-`BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE)`. Bull applies the job options of the producer,
-so every producer enqueues with the same `attempts` and `backoff` because `registerQueue` takes the
-name alone and every queue gets the fixed job options of `BullSetupModule.forRoot()`.
+The queue name and the job type live in `@acme-libs/contracts/ledger`, because an app may not import
+another. `LedgerLibModule` registers the queue for the producers and processor-app registers it in
+its `common/shared/ledger`, both with `BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE)`. Bull
+applies the job options of the producer, so every producer enqueues with the same `attempts` and
+`backoff` because `registerQueue` takes the name alone and every queue gets the fixed job options of
+`BullSetupModule.forRoot()`.
 
 ## Job options
 

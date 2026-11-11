@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
+import { LedgerLibModule } from '@acme-libs/ledger';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
 import { ProductCoreModule } from '@acme-core/modules/product';
 import { TagCommonModule } from '@acme-staff/common/modules';
-import { LedgerQueueSetupModule } from '@acme-staff/common/shared';
 
 import {
   ProductAccessService,
@@ -13,7 +13,6 @@ import {
   ProductGetManyUseCase,
   ProductGetOneUseCase,
   ProductGetTagsUseCase,
-  ProductLedgerService,
   ProductPublishUseCase,
   ProductReplaceTagsUseCase,
   ProductUpdateUseCase,
@@ -22,13 +21,11 @@ import {
 import {
   ProductAccessRepository,
   ProductCatalogCacheAdapter,
-  ProductConfigLedgerRetryAttemptsProvider,
   ProductConfigOccRetryAttemptsProvider,
-  ProductConfigRedisCommandTimeoutMsProvider,
   ProductCreateRepository,
   ProductGetManyRepository,
   ProductIdempotencyCoreAdapter,
-  ProductLedgerQueueAdapter,
+  ProductLedgerLibAdapter,
   ProductReplaceTagsRepository,
   ProductStatusCoreAdapter,
   ProductTagCommonAdapter,
@@ -38,7 +35,7 @@ import {
 import { ProductController } from './presentation';
 
 @Module({
-  imports: [LedgerQueueSetupModule, TagCommonModule, IdempotencyCoreModule, ProductCoreModule],
+  imports: [LedgerLibModule, TagCommonModule, IdempotencyCoreModule, ProductCoreModule],
   controllers: [ProductController],
   providers: [
     HttpExceptionFilter,
@@ -52,7 +49,6 @@ import { ProductController } from './presentation';
     ProductReplaceTagsUseCase,
     ProductAccessService,
     ProductWriteService,
-    ProductLedgerService,
     ProductAccessRepository.provider,
     ProductCreateRepository.provider,
     ProductGetManyRepository.provider,
@@ -61,12 +57,10 @@ import { ProductController } from './presentation';
     ProductTagCommonAdapter.provider,
     ProductStatusCoreAdapter.provider,
     ProductIdempotencyCoreAdapter.provider,
-    ProductLedgerQueueAdapter.provider,
     ProductCatalogCacheAdapter.provider,
+    ProductLedgerLibAdapter.provider,
     ProductTransactionAdapter.provider,
     ProductConfigOccRetryAttemptsProvider,
-    ProductConfigRedisCommandTimeoutMsProvider,
-    ProductConfigLedgerRetryAttemptsProvider,
   ],
 })
 export class ProductModule {}

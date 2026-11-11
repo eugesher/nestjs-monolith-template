@@ -24,8 +24,6 @@
     "paths": {
       "@acme-customer/app": ["./apps/customer-app/src/app"],
       "@acme-customer/app/*": ["./apps/customer-app/src/app/*"],
-      "@acme-customer/common": ["./apps/customer-app/src/common"],
-      "@acme-customer/common/*": ["./apps/customer-app/src/common/*"],
       "@acme-customer/features": ["./apps/customer-app/src/features"],
       "@acme-customer/features/*": ["./apps/customer-app/src/features/*"],
       "@acme-processor/app": ["./apps/processor-app/src/app"],

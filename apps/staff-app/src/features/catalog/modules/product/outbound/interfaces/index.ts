@@ -1,4 +1,5 @@
 export * from './commands/product-idempotency.command';
+export * from './commands/product-ledger.command';
 export * from './commands/product-status.command';
 export * from './commands/product-tag.command';
 

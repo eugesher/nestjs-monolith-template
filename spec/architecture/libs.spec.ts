@@ -26,6 +26,7 @@ describe('libs', () => {
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
+      'libs/contracts/src/ledger/index.ts',
       'libs/contracts/src/local-storage/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
@@ -69,7 +70,7 @@ describe('libs', () => {
     ['database', ['kernel', 'toolkit', 'local-storage']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'observability']],
-    ['ledger', ['kernel', 'toolkit']],
+    ['ledger', ['kernel', 'toolkit', 'config', 'queue']],
     ['local-storage', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
@@ -116,14 +117,22 @@ describe('libs', () => {
     ['health', ['cache', 'health']],
     ['http', []],
     ['kernel', []],
-    ['ledger', []],
+    ['ledger', ['ledger']],
     ['local-storage', ['local-storage']],
     ['observability', []],
     ['openapi', []],
     ['queue', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'];
+    const contracts = [
+      'auth',
+      'cache',
+      'credentials',
+      'database',
+      'health',
+      'ledger',
+      'local-storage',
+    ];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {

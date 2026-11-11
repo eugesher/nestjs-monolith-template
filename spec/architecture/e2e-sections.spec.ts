@@ -47,12 +47,12 @@ describe('e2e sections', () => {
     }).toPassArchitectureLint();
   });
 
-  it.each(['ledger', 'product-stock'])(
-    'the e2e context MAY read the queue contract of the core module %s',
-    async (module) => {
+  it.each(['@acme-libs/contracts/ledger', '@acme-core/contracts/product-stock'])(
+    'the e2e context MAY read the queue contract %s',
+    async (source) => {
       await expect({
         file: 'apps/processor-app/test/context/__fixture__.ts',
-        code: `import { x } from "@acme-core/contracts/${module}";`,
+        code: `import { x } from "${source}";`,
       }).toPassArchitectureLint();
     },
   );

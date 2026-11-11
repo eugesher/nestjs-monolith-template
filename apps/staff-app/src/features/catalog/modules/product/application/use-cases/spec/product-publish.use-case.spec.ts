@@ -3,8 +3,8 @@ import { PinoLogger } from 'nestjs-pino';
 import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
-import { ProductModel, ProductPublishedEvent } from '../../../domain';
-import { ProductLedgerService } from '../../services/product-ledger.service';
+import { ProductModel, ProductPublishedEvent, ProductUpdatedEvent } from '../../../domain';
+import { IProductLedgerPort } from '../../../outbound';
 import { ProductWriteService } from '../../services/product-write.service';
 import { ProductPublishUseCase } from '../product-publish.use-case';
 
@@ -33,8 +33,8 @@ describe('ProductPublishUseCase', () => {
     logger = makePinoLoggerMock();
     useCase = new ProductPublishUseCase(
       { write } as unknown as ProductWriteService,
-      { recordEvents } as unknown as ProductLedgerService,
       { invalidate },
+      { recordEvents } as unknown as IProductLedgerPort,
       logger as unknown as PinoLogger,
     );
   });
@@ -60,6 +60,19 @@ describe('ProductPublishUseCase', () => {
         updatedAt: '2026-01-03T00:00:00.000Z',
       });
       expect(logger.info).toHaveBeenCalledWith({ productId: '12' }, 'Product published');
+    });
+
+    it('leaves an update out of the ledger', async () => {
+      const { product } = (await write()) as { product: ProductModel };
+
+      write.mockResolvedValue({
+        product,
+        events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
+      });
+
+      await useCase.execute({ productId: '12', expectedVersion: 1 });
+
+      expect(recordEvents).toHaveBeenCalledWith({ events: [] });
     });
 
     it('invalidates the customer catalog after the write and before the ledger', async () => {

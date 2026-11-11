@@ -37,6 +37,11 @@ export const acmeLibs = [
     [baseLibs()],
   ),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
+  fromLib('ledger', [
+    libs('config', 'queue'),
+    to('acme-libs', { lib: 'observability', file: 'testing/**' }),
+    packages('@nestjs/bull', '@nestjs/common', 'bull', 'nestjs-pino'),
+  ]),
   fromLib('credentials', [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt', 'argon2'),
   ]),

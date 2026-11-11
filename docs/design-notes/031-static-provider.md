@@ -42,8 +42,7 @@ module root with no use of `outbound`, and lint does not allow it.
 and sets the alias in a static block that runs before the other static fields, so `useClass` is the
 class and not `undefined`. The SWC build of rspack defines `provider` right after the class and
 before the decorators run. `@Injectable()` returns the class it decorates, so the metadata of DI
-lands on the object that `useClass` holds. A subclass, such as a queue adapter that extends
-`SubjectLedgerQueueAdapter`, declares a field of its own; the base classes have none.
+lands on the object that `useClass` holds.
 
 ## Where the scheme stops
 

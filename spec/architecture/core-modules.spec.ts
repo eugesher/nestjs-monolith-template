@@ -9,6 +9,8 @@ describe('core modules', () => {
       'core/modules/src/__ledger-fixture__/index.ts',
       'core/modules/src/__ledger-fixture__/shell/ledger.module.ts',
       'core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts',
+      'core/modules/src/__ledger-fixture__/domain/index.ts',
+      'core/modules/src/__ledger-fixture__/outbound/index.ts',
       'core/modules/src/__ledger-fixture__/application/index.ts',
       'core/modules/src/__ledger-fixture__/infrastructure/index.ts',
       'core/modules/src/__ledger-fixture__/infrastructure/cache/ledger-core-cache.adapter.ts',
@@ -325,14 +327,14 @@ describe('core modules', () => {
     });
 
     it(
-      'a queue adapter MAY take InjectQueue, ' + 'the Queue type and the ledger queue contract',
+      'a queue adapter MAY take InjectQueue, ' + 'the Queue type and the queue contract',
       async () => {
         await expect({
           file: 'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
           code:
             'import { InjectQueue } from "@nestjs/bull";\n' +
             'import type { Queue } from "bull";\n' +
-            'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
+            'import { X_QUEUE } from "../../../../../contracts/src/__ledger-fixture__";',
         }).toPassArchitectureLint();
       },
     );
@@ -349,8 +351,33 @@ describe('core modules', () => {
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
         code:
           'import { BullSetupModule } from "@acme-libs/queue";\n' +
-          'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
+          'import { X_QUEUE } from "../../../../contracts/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
+    });
+
+    it('the module root MAY mount the ledger lib', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+        code: 'import { LedgerLibModule } from "@acme-libs/ledger";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a lib adapter MAY take the ledger contract and the correlation helper', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
+        code:
+          'import { Injectable } from "@nestjs/common";\n' +
+          'import { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";\n' +
+          'import { CorrelationContextHelper } from "@acme-libs/observability";\n' +
+          'import { y } from "../../outbound";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a lib adapter may NOT reach domain', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
+        code: 'import { x } from "../../domain";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it.each([

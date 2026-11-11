@@ -4,7 +4,7 @@ import { ProductStatusEnum } from '@acme-libs/kernel';
 import { makePinoLoggerMock, PinoLoggerMock } from '@acme-libs/observability/testing';
 
 import { ProductCreateInsertOutcomeEnum } from '../../../outbound';
-import { ProductLedgerService } from '../../services/product-ledger.service';
+import { IProductLedgerPort } from '../../../outbound';
 import { ProductCreateUseCase } from '../product-create.use-case';
 
 describe('ProductCreateUseCase', () => {
@@ -40,9 +40,9 @@ describe('ProductCreateUseCase', () => {
     run = jest.fn().mockImplementation((work: () => Promise<unknown>) => work());
     logger = makePinoLoggerMock();
     useCase = new ProductCreateUseCase(
-      { recordCreated } as unknown as ProductLedgerService,
       { existsBySku, insert, findInserted },
       { claim, complete, release },
+      { recordCreated } as unknown as IProductLedgerPort,
       { run },
       logger as unknown as PinoLogger,
     );

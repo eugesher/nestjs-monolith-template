@@ -11,21 +11,23 @@ import { ProductCoreModel } from '../../domain';
 import {
   PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT,
   PRODUCT_CORE_CATALOG_CACHE_PORT,
+  PRODUCT_CORE_LEDGER_PORT,
   PRODUCT_CORE_TRANSACTION_PORT,
   type IProductCoreArchiveRepositoryPort,
   type IProductCoreCatalogCachePort,
+  type IProductCoreLedgerPort,
   type IProductCoreTransactionPort,
 } from '../../outbound';
-import { ProductCoreLedgerService } from '../services/product-core-ledger.service';
 
 @Injectable()
 export class ProductCoreArchiveUseCase {
   constructor(
-    private readonly ledgerService: ProductCoreLedgerService,
     @Inject(PRODUCT_CORE_ARCHIVE_REPOSITORY_PORT)
     private readonly repository: IProductCoreArchiveRepositoryPort,
     @Inject(PRODUCT_CORE_CATALOG_CACHE_PORT)
     private readonly catalogCache: IProductCoreCatalogCachePort,
+    @Inject(PRODUCT_CORE_LEDGER_PORT)
+    private readonly ledger: IProductCoreLedgerPort,
     @Inject(PRODUCT_CORE_TRANSACTION_PORT)
     private readonly transaction: IProductCoreTransactionPort,
     @InjectPinoLogger(ProductCoreArchiveUseCase.name)
@@ -84,7 +86,7 @@ export class ProductCoreArchiveUseCase {
     const archived = { productId: id, sku, version, previousStatus };
 
     this.transaction.afterCommit(() => this.catalogCache.invalidate());
-    this.transaction.afterCommit(() => this.ledgerService.recordArchived(archived));
+    this.transaction.afterCommit(() => this.ledger.recordArchived(archived));
 
     return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: version };
   }

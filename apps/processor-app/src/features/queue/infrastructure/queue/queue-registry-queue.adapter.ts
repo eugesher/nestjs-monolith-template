@@ -3,7 +3,7 @@ import { ClassProvider, Injectable } from '@nestjs/common';
 import { type Queue } from 'bull';
 
 import { Nullable } from '@acme-libs/toolkit';
-import { LEDGER_RECORD_QUEUE } from '@acme-core/contracts/ledger';
+import { LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledger';
 import { PRODUCT_STOCK_POST_SUBTRACT_QUEUE } from '@acme-core/contracts/product-stock';
 
 import {
