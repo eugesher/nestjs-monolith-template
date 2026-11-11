@@ -29,9 +29,8 @@ validation error.
 
 ## Infrastructure
 
-Start MySQL and Redis. The command prints the logs of every container and returns once the `node`
-container has run the migrations and the seed and exited with code 0; a failed seed fails the
-command. The containers keep running in the background:
+Start MySQL and Redis. The command prints the logs of every container and returns once they are
+ready, with an empty database. The containers keep running in the background:
 
 ```bash
 yarn test:e2e:infra:up
@@ -63,7 +62,17 @@ cp env/apps/processor-app/.env.example env/apps/processor-app/.env
 cp env/migrations/.env.example env/migrations/.env
 ```
 
-With the infrastructure running, start the three apps in watch mode:
+With the infrastructure running, create the schema and load the seed data once:
+
+```bash
+yarn migration:run
+```
+
+```bash
+yarn test:e2e:infra:seed
+```
+
+Then start the three apps in watch mode:
 
 ```bash
 yarn start:dev

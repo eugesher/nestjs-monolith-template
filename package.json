@@ -41,7 +41,7 @@
     "test:e2e:infra:down": "docker compose -f ./test/infra/docker/docker-compose.yml down --remove-orphans --volumes",
     "test:e2e:infra:reload": "yarn test:e2e:infra:down && yarn test:e2e:infra:up",
     "test:e2e:infra:reseed": "bash ./test/infra/bash/reseed.sh",
-    "test:e2e:seed": "node ./test/infra/seed/index.ts",
+    "test:e2e:infra:seed": "node ./test/infra/seed/index.ts",
     "migration:cli": "node ./node_modules/typeorm/cli.js -d ./migrations/config/data-source.ts",
     "migration:create": "node ./scripts/node/migration-create.ts",
     "migration:run": "yarn migration:cli migration:run",

@@ -20,4 +20,4 @@ echo "Migrating"
 NODE_ENV=test yarn migration:run
 
 echo "Seeding"
-yarn test:e2e:seed
+yarn test:e2e:infra:seed

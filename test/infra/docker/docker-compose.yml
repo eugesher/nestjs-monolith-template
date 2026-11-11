@@ -42,17 +42,3 @@ services:
       - '4320:4318'
     depends_on:
       - jaeger
-
-  node:
-    build:
-      context: ../../..
-      dockerfile: test/infra/docker/Dockerfile.node
-    command: sh -c "yarn migration:run && yarn test:e2e:seed"
-    network_mode: host
-    env_file: ../../../env/migrations/.env.test
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: 'no'
