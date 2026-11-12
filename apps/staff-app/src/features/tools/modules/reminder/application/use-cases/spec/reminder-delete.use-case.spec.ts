@@ -41,9 +41,10 @@ describe('ReminderDeleteUseCase', () => {
 
   describe('execute', () => {
     it('deletes an owned reminder, then invalidates the summary', async () => {
-      const result = await useCase.execute({ reminderId: '7', ownerId: 'owner-1' });
+      await expect(
+        useCase.execute({ reminderId: '7', ownerId: 'owner-1' }),
+      ).resolves.toBeUndefined();
 
-      expect(result).toBeUndefined();
       expect(loadOwned).toHaveBeenCalledWith({ reminderId: '7', ownerId: 'owner-1' });
       expect(softDelete).toHaveBeenCalledWith('7');
       expect(invalidate).toHaveBeenCalledWith('owner-1');

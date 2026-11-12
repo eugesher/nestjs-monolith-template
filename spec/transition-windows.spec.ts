@@ -17,9 +17,7 @@ describe('transition windows', () => {
     expect(
       overdue.map(
         (w) =>
-          `\n  [${w.id}] (${w.reference}, owner: ${w.owner}) came due on ${w.reviewBy}.` +
-          `\n    OWED:      ${w.what}` +
-          `\n    CONDITION: ${w.condition}`,
+          `\n  [${w.id}] (${w.reference}, owner: ${w.owner}) came due on ${w.reviewBy}.\n    OWED:      ${w.what}\n    CONDITION: ${w.condition}`,
       ),
     ).toEqual([]);
   });

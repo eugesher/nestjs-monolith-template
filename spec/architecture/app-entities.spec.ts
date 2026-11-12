@@ -7,9 +7,7 @@ describe('app entities (@acme-<app>/common/entities)', () => {
 
   it('a repository may NOT reach a deep path into the entities of its app', async () => {
     await expect({
-      file:
-        'apps/staff-app/src/features/product/infrastructure/persistence/repositories/' +
-        '__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
       code: 'import { Note } from "@acme-staff/common/entities/note/note.entity";',
     }).toBreakRule('no-restricted-imports');
   });
@@ -18,8 +16,7 @@ describe('app entities (@acme-<app>/common/entities)', () => {
     'apps/staff-app/src/app/entities/index.ts',
     'apps/staff-app/src/app/global/auth/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
-    'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/' +
-      '__fixture__.ts',
+    'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/__fixture__.ts',
   ])('%s MAY import the entities of its app', async (file) => {
     await expect({
       file,
@@ -56,19 +53,12 @@ describe('app entities (@acme-<app>/common/entities)', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it(
-    'an app entity MAY import typeorm, ' + 'the kernel lib, the core entities and its siblings',
-    async () => {
-      await expect({
-        file: 'apps/staff-app/src/common/entities/note/__fixture__.ts',
-        code:
-          'import { Entity } from "typeorm";\n' +
-          'import { ReminderStatusEnum } from "@acme-libs/kernel";\n' +
-          'import { Product } from "@acme-core/entities";\n' +
-          'import { NoteRevision } from "./note-revision.entity";',
-      }).toPassArchitectureLint();
-    },
-  );
+  it('an app entity MAY import typeorm, the kernel lib, the core entities and its siblings', async () => {
+    await expect({
+      file: 'apps/staff-app/src/common/entities/note/__fixture__.ts',
+      code: 'import { Entity } from "typeorm";\nimport { ReminderStatusEnum } from "@acme-libs/kernel";\nimport { Product } from "@acme-core/entities";\nimport { NoteRevision } from "./note-revision.entity";',
+    }).toPassArchitectureLint();
+  });
 
   it.each([
     '@nestjs/common',

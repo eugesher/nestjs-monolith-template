@@ -63,47 +63,43 @@ describe('NoteEditUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'saves the note and appends its revision in ' +
-        'one transaction, then answers the stored note',
-      async () => {
-        const view = await CorrelationContextHelper.run('corr-1', () =>
-          useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-1' }),
-        );
-        const [command] = update.mock.calls[0] as [INoteEditUpdateQuery];
-        const [revision] = appendRevision.mock.calls[0] as [NoteRevisionModel];
+    it('saves the note and appends its revision in one transaction, then answers the stored note', async () => {
+      const view = await CorrelationContextHelper.run('corr-1', () =>
+        useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-1' }),
+      );
+      const [command] = update.mock.calls[0] as [INoteEditUpdateQuery];
+      const [revision] = appendRevision.mock.calls[0] as [NoteRevisionModel];
 
-        expect(run).toHaveBeenCalledTimes(1);
-        expect(command.versionAsRead).toBe(2);
-        expect(command.body).toBe('Supplier confirmed');
-        expect(command.version).toBe(3);
-        expect(revision).toEqual({
-          id: undefined,
-          noteId: '7',
-          noteVersion: 3,
-          bodyBefore: 'Check the supplier',
-          bodyAfter: 'Supplier confirmed',
-          editorId: 'admin-1',
-          correlationId: 'corr-1',
-          recordedAt: undefined,
-        });
-        expect(view).toEqual({
-          id: '7',
-          subjectType: 'product',
-          subjectId: '42',
-          body: 'Supplier confirmed',
-          authorId: 'admin-1',
-          resolved: false,
-          version: 3,
-          createdAt: '2026-01-01T00:00:00.000Z',
-          updatedAt: '2026-01-03T00:00:00.000Z',
-        });
-        expect(logger.info).toHaveBeenCalledWith(
-          { noteId: '7', editorId: 'admin-1', version: 3, edited: true },
-          'Note edited',
-        );
-      },
-    );
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(command.versionAsRead).toBe(2);
+      expect(command.body).toBe('Supplier confirmed');
+      expect(command.version).toBe(3);
+      expect(revision).toEqual({
+        id: undefined,
+        noteId: '7',
+        noteVersion: 3,
+        bodyBefore: 'Check the supplier',
+        bodyAfter: 'Supplier confirmed',
+        editorId: 'admin-1',
+        correlationId: 'corr-1',
+        recordedAt: undefined,
+      });
+      expect(view).toEqual({
+        id: '7',
+        subjectType: 'product',
+        subjectId: '42',
+        body: 'Supplier confirmed',
+        authorId: 'admin-1',
+        resolved: false,
+        version: 3,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-03T00:00:00.000Z',
+      });
+      expect(logger.info).toHaveBeenCalledWith(
+        { noteId: '7', editorId: 'admin-1', version: 3, edited: true },
+        'Note edited',
+      );
+    });
 
     it('reads before the transaction and reads the stored note after it', async () => {
       await CorrelationContextHelper.run('corr-1', () =>
@@ -138,56 +134,49 @@ describe('NoteEditUseCase', () => {
       );
     });
 
-    it(
-      'fails the transaction when the revision cannot ' +
-        'be appended, so the note update rolls back',
-      async () => {
-        appendRevision.mockRejectedValue(new Error('deadlock'));
+    it('fails the transaction when the revision cannot be appended, so the note update rolls back', async () => {
+      appendRevision.mockRejectedValue(new Error('deadlock'));
 
-        await expect(
-          CorrelationContextHelper.run('corr-1', () =>
-            useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
-          ),
-        ).rejects.toThrow('deadlock');
-        await expect(run.mock.results[0].value).rejects.toThrow('deadlock');
-        expect(update).toHaveBeenCalledTimes(1);
-        expect(run).toHaveBeenCalledTimes(1);
-        expect(findOwned).toHaveBeenCalledTimes(1);
-        expect(logger.info).not.toHaveBeenCalled();
-      },
-    );
-
-    it(
-      'appends no revision for a lost race and ' + 'retries the whole edit with a fresh read',
-      async () => {
-        update.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
-        findOwned.mockReset().mockImplementation(() =>
-          Promise.resolve({
-            id: '7',
-            subjectType: 'product',
-            subjectId: '42',
-            body: 'Check the supplier',
-            authorId: 'admin-1',
-            resolved: false,
-            version: 2,
-            createdAt: new Date('2026-01-01T00:00:00.000Z'),
-            updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-          }),
-        );
-
-        await CorrelationContextHelper.run('corr-1', () =>
+      await expect(
+        CorrelationContextHelper.run('corr-1', () =>
           useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
-        );
+        ),
+      ).rejects.toThrow('deadlock');
+      await expect(run.mock.results[0].value).rejects.toThrow('deadlock');
+      expect(update).toHaveBeenCalledTimes(1);
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(findOwned).toHaveBeenCalledTimes(1);
+      expect(logger.info).not.toHaveBeenCalled();
+    });
 
-        expect(run).toHaveBeenCalledTimes(2);
-        expect(update).toHaveBeenCalledTimes(2);
-        expect(appendRevision).toHaveBeenCalledTimes(1);
-        expect(logger.info).toHaveBeenCalledWith(
-          { noteId: '7', currentVersion: 2, attempt: 1, maxAttempts: 3 },
-          'Note write conflict — retrying with a fresh read',
-        );
-      },
-    );
+    it('appends no revision for a lost race and retries the whole edit with a fresh read', async () => {
+      update.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+      findOwned.mockReset().mockImplementation(() =>
+        Promise.resolve({
+          id: '7',
+          subjectType: 'product',
+          subjectId: '42',
+          body: 'Check the supplier',
+          authorId: 'admin-1',
+          resolved: false,
+          version: 2,
+          createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+        }),
+      );
+
+      await CorrelationContextHelper.run('corr-1', () =>
+        useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
+      );
+
+      expect(run).toHaveBeenCalledTimes(2);
+      expect(update).toHaveBeenCalledTimes(2);
+      expect(appendRevision).toHaveBeenCalledTimes(1);
+      expect(logger.info).toHaveBeenCalledWith(
+        { noteId: '7', currentVersion: 2, attempt: 1, maxAttempts: 3 },
+        'Note write conflict — retrying with a fresh read',
+      );
+    });
 
     it('refuses with VERSION_MISMATCH once every attempt lost the race', async () => {
       update.mockResolvedValue(false);

@@ -5,12 +5,12 @@ describe('AggregateRoot', () => {
   describe('pullDomainEvents', () => {
     it('drains the recorded events exactly once', () => {
       class ItemOpenedEvent extends DomainEvent {
-        constructor(aggregateId: number) {
+        public constructor(aggregateId: number) {
           super(aggregateId);
         }
       }
       class ItemAggregate extends AggregateRoot<number> {
-        constructor(id: number) {
+        public constructor(id: number) {
           super(id);
         }
 

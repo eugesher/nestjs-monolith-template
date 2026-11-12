@@ -31,8 +31,7 @@ describe('unused edges', () => {
   describe('bootstrap', () => {
     it.each([
       [
-        'main may NOT import @nestjs/common: ' +
-          'the app module binds the global pipes and filters as providers',
+        'main may NOT import @nestjs/common: the app module binds the global pipes and filters as providers',
         'apps/__unused-fixture__/src/main.ts',
         '@nestjs/common',
       ],
@@ -46,8 +45,7 @@ describe('unused edges', () => {
   describe('app root', () => {
     it.each([
       [
-        'the app module may NOT reach a shared barrel: ' +
-          'shared code is used by the modules it mounts',
+        'the app module may NOT reach a shared barrel: shared code is used by the modules it mounts',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '../common/shared/concurrency',
       ],
@@ -72,14 +70,12 @@ describe('unused edges', () => {
         '../../../../libs/contracts/src/database',
       ],
       [
-        'the app module may NOT import @nestjs-cls/transactional: ' +
-          'the local-storage lib configures it',
+        'the app module may NOT import @nestjs-cls/transactional: the local-storage lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '@nestjs-cls/transactional',
       ],
       [
-        'the app module may NOT import @nestjs-cls/transactional-adapter-typeorm: ' +
-          'the local-storage lib configures it',
+        'the app module may NOT import @nestjs-cls/transactional-adapter-typeorm: the local-storage lib configures it',
         'apps/__unused-fixture__/src/app/app.module.ts',
         '@nestjs-cls/transactional-adapter-typeorm',
       ],
@@ -119,8 +115,7 @@ describe('unused edges', () => {
         '../../../common/shared/concurrency',
       ],
       [
-        'a setup module may NOT reach the http lib: ' +
-          'the app module binds the global pipes and filters',
+        'a setup module may NOT reach the http lib: the app module binds the global pipes and filters',
         'apps/__unused-fixture__/src/app/setup/config/__fixture__.ts',
         '../../../../../../libs/http/src',
       ],
@@ -135,28 +130,23 @@ describe('unused edges', () => {
       );
     });
 
-    it(
-      'the app module may NOT import ScheduleModule: ' + 'the schedule setup module configures it',
-      async () => {
-        await expect({
-          file: 'apps/__unused-fixture__/src/app/app.module.ts',
-          code: 'import { ScheduleModule } from "@nestjs/schedule";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('the app module may NOT import ScheduleModule: the schedule setup module configures it', async () => {
+      await expect({
+        file: 'apps/__unused-fixture__/src/app/app.module.ts',
+        code: 'import { ScheduleModule } from "@nestjs/schedule";',
+      }).toBreakRule('boundaries/dependencies');
+    });
   });
 
   describe('global modules', () => {
     it.each([
       [
-        'the root of a global module may NOT reach the observability lib: ' +
-          'it wires providers and logs nothing',
+        'the root of a global module may NOT reach the observability lib: it wires providers and logs nothing',
         'apps/__unused-fixture__/src/app/global/auth/shell/__fixture__.ts',
         '../../../../../../../libs/observability/src',
       ],
       [
-        'global infrastructure may NOT reach the contracts of ' +
-          'its namesake lib: a core-adapter implements the lib port',
+        'global infrastructure may NOT reach the contracts of its namesake lib: a core-adapter implements the lib port',
         'apps/__unused-fixture__/src/app/global/auth/infrastructure/__fixture__.ts',
         '../../../../../../../libs/contracts/src/auth',
       ],
@@ -180,8 +170,7 @@ describe('unused edges', () => {
         '../../src/app/setup/config/config-setup.module.ts',
       ],
       [
-        'the e2e code may NOT reach the contracts of a lib: ' +
-          'it reads Redis through the test entry point of the cache lib',
+        'the e2e code may NOT reach the contracts of a lib: it reads Redis through the test entry point of the cache lib',
         'apps/__unused-fixture__/test/context/__fixture__.ts',
         '../../../../libs/contracts/src/cache',
       ],
@@ -210,8 +199,7 @@ describe('unused edges', () => {
         '@nestjs/bull',
       ],
       [
-        'feature presentation may NOT reach the observability lib: ' +
-          'the middleware of the app sets the correlation id',
+        'feature presentation may NOT reach the observability lib: the middleware of the app sets the correlation id',
         'apps/__unused-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
         '../../../../../../../libs/observability/src',
       ],
@@ -230,23 +218,18 @@ describe('unused edges', () => {
   describe('common modules', () => {
     it.each([
       [
-        'common outbound may NOT reach the contracts of its module: ' +
-          'a port speaks the module types, the contracts serve consumers',
+        'common outbound may NOT reach the contracts of its module: a port speaks the module types, the contracts serve consumers',
         'apps/__unused-fixture__/src/common/modules/idempotency/outbound/__fixture__.ts',
         '../../../../contracts/idempotency',
       ],
       [
-        'common infrastructure may NOT reach the contracts ' +
-          'of its module: it implements outbound ports',
-        'apps/__unused-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
-          '__fixture__.ts',
+        'common infrastructure may NOT reach the contracts of its module: it implements outbound ports',
+        'apps/__unused-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
         '../../../../../contracts/idempotency',
       ],
       [
-        'common infrastructure may NOT reach the contracts of a lib: ' +
-          'only feature infrastructure caches',
-        'apps/__unused-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
-          '__fixture__.ts',
+        'common infrastructure may NOT reach the contracts of a lib: only feature infrastructure caches',
+        'apps/__unused-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
         '../../../../../../../../libs/contracts/src/cache',
       ],
       [
@@ -260,8 +243,7 @@ describe('unused edges', () => {
         '../../../../../../../libs/observability/src',
       ],
       [
-        'the common module root may NOT reach its domain: ' +
-          'it wires providers, and the domain has none',
+        'the common module root may NOT reach its domain: it wires providers, and the domain has none',
         'apps/__unused-fixture__/src/common/modules/idempotency/shell/__fixture__.ts',
         '../domain',
       ],
@@ -275,20 +257,17 @@ describe('unused edges', () => {
   describe('core modules', () => {
     it.each([
       [
-        'core outbound may NOT reach the contracts of its module: ' +
-          'a port speaks the module types, the contracts serve consumers',
+        'core outbound may NOT reach the contracts of its module: a port speaks the module types, the contracts serve consumers',
         'core/modules/src/__unused-fixture__/outbound/__fixture__.ts',
         '../../../../contracts/src/__unused-fixture__',
       ],
       [
-        'core infrastructure may NOT reach the contracts ' +
-          'of its module: it implements outbound ports',
+        'core infrastructure may NOT reach the contracts of its module: it implements outbound ports',
         'core/modules/src/__unused-fixture__/infrastructure/persistence/__fixture__.ts',
         '../../../../../contracts/src/__unused-fixture__',
       ],
       [
-        'core infrastructure may NOT reach the auth ' +
-          'contracts of a lib: a core module guards no route',
+        'core infrastructure may NOT reach the auth contracts of a lib: a core module guards no route',
         'core/modules/src/__unused-fixture__/infrastructure/persistence/__fixture__.ts',
         '../../../../../../libs/contracts/src/auth',
       ],
@@ -303,8 +282,7 @@ describe('unused edges', () => {
         '../../../../../libs/observability/src',
       ],
       [
-        'the core module root may NOT reach its domain: ' +
-          'it wires providers, and the domain has none',
+        'the core module root may NOT reach its domain: it wires providers, and the domain has none',
         'core/modules/src/__unused-fixture__/shell/__fixture__.ts',
         '../domain',
       ],

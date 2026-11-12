@@ -129,12 +129,10 @@ describe('ReminderController', () => {
     it('deletes the reminder of the path as the caller', async () => {
       remove.mockResolvedValue(undefined);
 
-      const response = await controller.handleDelete(
-        { reminderId: '31' },
-        { id: 'staff-1', email: 'ann@example.com' },
-      );
+      await expect(
+        controller.handleDelete({ reminderId: '31' }, { id: 'staff-1', email: 'ann@example.com' }),
+      ).resolves.toBeUndefined();
 
-      expect(response).toBeUndefined();
       expect(remove).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'staff-1' });
     });
   });

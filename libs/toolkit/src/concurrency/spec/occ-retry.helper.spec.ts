@@ -107,28 +107,25 @@ describe('OccRetryHelper', () => {
       expect(onExhausted).toHaveBeenCalledWith(new RangeError('version 9'), 3);
     });
 
-    it(
-      'surfaces the conflict at once when the ' + 'budget is one attempt (the If-Match posture)',
-      async () => {
-        const attempt = jest.fn().mockRejectedValue(new RangeError('version 2'));
+    it('surfaces the conflict at once when the budget is one attempt (the If-Match posture)', async () => {
+      const attempt = jest.fn().mockRejectedValue(new RangeError('version 2'));
 
-        const run = OccRetryHelper.run(attempt, {
-          subject: 'Item',
-          logger,
-          maxAttempts: 1,
-          isConflict: (error: unknown): error is RangeError => error instanceof RangeError,
-          retryContext: () => ({}),
-          exhaustedContext: () => ({}),
-          onExhausted: (): never => {
-            throw new Error('EXHAUSTED');
-          },
-        });
+      const run = OccRetryHelper.run(attempt, {
+        subject: 'Item',
+        logger,
+        maxAttempts: 1,
+        isConflict: (error: unknown): error is RangeError => error instanceof RangeError,
+        retryContext: () => ({}),
+        exhaustedContext: () => ({}),
+        onExhausted: (): never => {
+          throw new Error('EXHAUSTED');
+        },
+      });
 
-        await expect(run).rejects.toThrow('EXHAUSTED');
-        expect(attempt).toHaveBeenCalledTimes(1);
-        expect(logger.info).not.toHaveBeenCalled();
-      },
-    );
+      await expect(run).rejects.toThrow('EXHAUSTED');
+      expect(attempt).toHaveBeenCalledTimes(1);
+      expect(logger.info).not.toHaveBeenCalled();
+    });
 
     it('fails loudly when onExhausted returns instead of throwing', async () => {
       const attempt = jest.fn().mockRejectedValue(new RangeError('version 2'));

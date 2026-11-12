@@ -23,18 +23,14 @@ describe('nested features (<module>/modules/<submodule>)', () => {
 
   it('a submodule domain is framework-free like any domain', async () => {
     await expect({
-      file:
-        'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/domain/' +
-        '__fixture__.ts',
+      file: 'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/domain/__fixture__.ts',
       code: 'import { x } from "@nestjs/common";',
     }).toBreakRule('boundaries/dependencies');
   });
 
   it('a submodule application may NOT reach its presentation like any application', async () => {
     await expect({
-      file:
-        'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/application/' +
-        '__fixture__.ts',
+      file: 'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/application/__fixture__.ts',
       code: 'import { x } from "../presentation";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -97,9 +93,7 @@ describe('nested features (<module>/modules/<submodule>)', () => {
 
   it('isolated: a submodule may NOT reach its parent', async () => {
     await expect({
-      file:
-        'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/presentation/' +
-        '__fixture__.ts',
+      file: 'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/presentation/__fixture__.ts',
       code: 'import { x } from "../../../ledger.module";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -113,9 +107,7 @@ describe('nested features (<module>/modules/<submodule>)', () => {
 
   it('isolated: a submodule may NOT reach a top-level module', async () => {
     await expect({
-      file:
-        'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/presentation/' +
-        '__fixture__.ts',
+      file: 'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/presentation/__fixture__.ts',
       code: 'import { x } from "../../../../note/application";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -150,9 +142,7 @@ describe('nested features (<module>/modules/<submodule>)', () => {
 
   it('a second nesting level is an unknown file', async () => {
     await expect({
-      file:
-        'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/modules/deeper/' +
-        'presentation/__fixture__.ts',
+      file: 'apps/__nested-fixture__/src/features/ledger/modules/ledger-export/modules/deeper/presentation/__fixture__.ts',
       code: 'export const orphan = 1;',
     }).toBreakRule('boundaries/no-unknown-files');
   });

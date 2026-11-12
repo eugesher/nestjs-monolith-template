@@ -7,9 +7,7 @@ describe('core entities (@acme-core/entities)', () => {
 
   it('a repository may NOT reach a deep path into the entities', async () => {
     await expect({
-      file:
-        'apps/staff-app/src/features/product/infrastructure/persistence/repositories/' +
-        '__fixture__.ts',
+      file: 'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
       code: 'import { Product } from "@acme-core/entities/product/product.entity";',
     }).toBreakRule('no-restricted-imports');
   });
@@ -17,8 +15,7 @@ describe('core entities (@acme-core/entities)', () => {
   it.each([
     'apps/staff-app/src/app/entities/index.ts',
     'apps/staff-app/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
-    'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/' +
-      '__fixture__.ts',
+    'apps/staff-app/src/common/modules/idempotency/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/processor-app/src/processors/purge/infrastructure/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/infrastructure/persistence/__fixture__.ts',
   ])('%s MAY import the entities', async (file) => {
@@ -53,9 +50,7 @@ describe('core entities (@acme-core/entities)', () => {
   it('an entity MAY import typeorm and the kernel lib', async () => {
     await expect({
       file: 'core/entities/src/product/__fixture__.ts',
-      code:
-        'import { Entity } from "typeorm";\n' +
-        'import { ProductStatusEnum } from "@acme-libs/kernel";',
+      code: 'import { Entity } from "typeorm";\nimport { ProductStatusEnum } from "@acme-libs/kernel";',
     }).toPassArchitectureLint();
   });
 

@@ -49,16 +49,12 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it(
-    'main may NOT reach common even through its barrel — ' +
-      'request behaviour is registered in DI',
-    async () => {
-      await expect({
-        file: 'apps/__shared-fixture__/src/main.ts',
-        code: 'import { x } from "./common/shared";',
-      }).toBreakRule('boundaries/dependencies');
-    },
-  );
+  it('main may NOT reach common even through its barrel — request behaviour is registered in DI', async () => {
+    await expect({
+      file: 'apps/__shared-fixture__/src/main.ts',
+      code: 'import { x } from "./common/shared";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 
   it('main may NOT take a deep path into common', async () => {
     await expect({
@@ -119,10 +115,7 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
   it('contracts MAY reach contracts and the kernel and toolkit libs', async () => {
     await expect({
       file: 'apps/__shared-fixture__/src/contracts/auth/ports/__fixture__.ts',
-      code:
-        'import { x } from "..";\n' +
-        'import { y } from "../../../../../../libs/kernel/src";\n' +
-        'import { z } from "../../../../../../libs/toolkit/src";',
+      code: 'import { x } from "..";\nimport { y } from "../../../../../../libs/kernel/src";\nimport { z } from "../../../../../../libs/toolkit/src";',
     }).toPassArchitectureLint();
   });
 
@@ -149,9 +142,7 @@ describe('app shared code (common/shared) — barrels and contracts', () => {
 
   it('another app may NOT reach this app common', async () => {
     await expect({
-      file:
-        'apps/__shared-other-fixture__/src/features/health/presentation/controllers/' +
-        '__fixture__.ts',
+      file: 'apps/__shared-other-fixture__/src/features/health/presentation/controllers/__fixture__.ts',
       code: 'import { x } from "../../../../../../__shared-fixture__/src/common/shared";',
     }).toBreakRule('boundaries/dependencies');
   });

@@ -67,9 +67,8 @@ describe('TagController', () => {
     it('deletes the tag of the path', async () => {
       remove.mockResolvedValue(undefined);
 
-      const response = await controller.handleDelete({ tagId: '300' });
+      await expect(controller.handleDelete({ tagId: '300' })).resolves.toBeUndefined();
 
-      expect(response).toBeUndefined();
       expect(remove).toHaveBeenCalledWith({ tagId: '300' });
     });
   });

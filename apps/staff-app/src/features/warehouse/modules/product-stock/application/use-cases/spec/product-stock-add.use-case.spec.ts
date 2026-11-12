@@ -38,30 +38,26 @@ describe('ProductStockAddUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'claims the key, locks the product, ' +
-        'writes the movement and completes the key in one transaction',
-      async () => {
-        const view = await useCase.execute({
-          productId: '12',
-          quantity: 5,
-          idempotencyKey: 'key-1',
-        });
+    it('claims the key, locks the product, writes the movement and completes the key in one transaction', async () => {
+      const view = await useCase.execute({
+        productId: '12',
+        quantity: 5,
+        idempotencyKey: 'key-1',
+      });
 
-        expect(claim).toHaveBeenCalledWith({
-          key: 'key-1',
-          body: { productId: '12', quantity: 5 },
-        });
-        expect(lock).toHaveBeenCalledWith({ productId: '12' });
-        expect(findById).toHaveBeenCalledWith('12');
-        expect(lock.mock.invocationCallOrder[0]).toBeLessThan(findById.mock.invocationCallOrder[0]);
-        expect(add).toHaveBeenCalledWith({ productId: '12', quantity: 5 });
-        expect(view).toEqual({ productId: '12', quantity: 15 });
-        expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
-        expect(run).toHaveBeenCalledTimes(1);
-        expect(release).not.toHaveBeenCalled();
-      },
-    );
+      expect(claim).toHaveBeenCalledWith({
+        key: 'key-1',
+        body: { productId: '12', quantity: 5 },
+      });
+      expect(lock).toHaveBeenCalledWith({ productId: '12' });
+      expect(findById).toHaveBeenCalledWith('12');
+      expect(lock.mock.invocationCallOrder[0]).toBeLessThan(findById.mock.invocationCallOrder[0]);
+      expect(add).toHaveBeenCalledWith({ productId: '12', quantity: 5 });
+      expect(view).toEqual({ productId: '12', quantity: 15 });
+      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(release).not.toHaveBeenCalled();
+    });
 
     it('enqueues the ledger record under the stock row after the commit and logs it', async () => {
       await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });

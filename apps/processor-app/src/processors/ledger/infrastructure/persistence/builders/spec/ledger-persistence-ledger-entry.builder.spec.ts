@@ -31,9 +31,7 @@ describe('LedgerPersistenceLedgerEntryBuilder', () => {
       builder.forByOperationKey('op-1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `LedgerEntry`.`id` AS `LedgerEntry_id` ' +
-          'FROM `ledger_entry` `LedgerEntry` ' +
-          'WHERE `LedgerEntry`.`operationKey` = ?',
+        'SELECT `LedgerEntry`.`id` AS `LedgerEntry_id` FROM `ledger_entry` `LedgerEntry` WHERE `LedgerEntry`.`operationKey` = ?',
         ['op-1'],
       ]);
     });

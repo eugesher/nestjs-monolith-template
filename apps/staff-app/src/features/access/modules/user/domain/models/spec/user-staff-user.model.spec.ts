@@ -5,24 +5,20 @@ import type { IUserStaffUserDraftOutput } from '../../interfaces';
 
 describe('UserStaffUserModel', () => {
   describe('createDraft', () => {
-    it(
-      'drafts an active user with a normalized email, ' +
-        'unique roles and no id until it is stored',
-      () => {
-        const draft = UserStaffUserModel.createDraft({
-          email: '  Editor@Example.COM ',
-          passwordHash: 'hash',
-          roleIds: ['2', '2', '3'],
-        });
+    it('drafts an active user with a normalized email, unique roles and no id until it is stored', () => {
+      const draft = UserStaffUserModel.createDraft({
+        email: '  Editor@Example.COM ',
+        passwordHash: 'hash',
+        roleIds: ['2', '2', '3'],
+      });
 
-        expect(draft).toEqual({
-          email: 'editor@example.com',
-          passwordHash: 'hash',
-          status: UserStatusEnum.ACTIVE,
-          roleIds: ['2', '3'],
-        });
-      },
-    );
+      expect(draft).toEqual({
+        email: 'editor@example.com',
+        passwordHash: 'hash',
+        status: UserStatusEnum.ACTIVE,
+        roleIds: ['2', '3'],
+      });
+    });
 
     it.each(['editor', 'editor@', '@example.com', 'editor@example', 'ed itor@example.com'])(
       'rejects the malformed email %s',

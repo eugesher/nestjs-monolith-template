@@ -140,9 +140,7 @@ describe('lib entry points', () => {
   ])('%s MAY import the framework-free libs by their aliases', async (file) => {
     await expect({
       file,
-      code:
-        'import { AppNameEnum } from "@acme-libs/kernel";\n' +
-        'import { Entity } from "@acme-libs/toolkit";',
+      code: 'import { AppNameEnum } from "@acme-libs/kernel";\nimport { Entity } from "@acme-libs/toolkit";',
     }).toPassArchitectureLint();
   });
 
@@ -237,15 +235,12 @@ describe('lib entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it(
-    'application may NOT import the local-storage lib root, ' + 'it takes the transaction port',
-    async () => {
-      await expect({
-        file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
-        code: 'import { LocalStorageTransactionModule } from "@acme-libs/local-storage";',
-      }).toBreakRule('boundaries/dependencies');
-    },
-  );
+  it('application may NOT import the local-storage lib root, it takes the transaction port', async () => {
+    await expect({
+      file: 'apps/staff-app/src/features/product/application/use-cases/__fixture__.ts',
+      code: 'import { LocalStorageTransactionModule } from "@acme-libs/local-storage";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 
   it.each([
     'apps/staff-app/src/common/shared/auth/__fixture__.ts',
@@ -261,8 +256,7 @@ describe('lib entry points', () => {
     'apps/staff-app/src/features/reminder/application/use-cases/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
   ])(
-    '%s may NOT import the cache contracts by their alias, ' +
-      'the application reads through its own port',
+    '%s may NOT import the cache contracts by their alias, the application reads through its own port',
     async (file) => {
       await expect({
         file,
@@ -301,28 +295,19 @@ describe('lib entry points', () => {
     }).toPassArchitectureLint();
   });
 
-  it(
-    'the health probes MAY import the cache contracts ' +
-      'and their own contracts by their aliases',
-    async () => {
-      await expect({
-        file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
-        code:
-          'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";\n' +
-          'import { IHealthLibDependencyView } from "@acme-libs/contracts/health";',
-      }).toPassArchitectureLint();
-    },
-  );
+  it('the health probes MAY import the cache contracts and their own contracts by their aliases', async () => {
+    await expect({
+      file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+      code: 'import { CACHE_KEYS, CACHE_LIB_PORT } from "@acme-libs/contracts/cache";\nimport { IHealthLibDependencyView } from "@acme-libs/contracts/health";',
+    }).toPassArchitectureLint();
+  });
 
-  it(
-    'the health lib may NOT import the cache lib root, ' + 'it probes through the cache port',
-    async () => {
-      await expect({
-        file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
-        code: 'import { CacheLibModule } from "@acme-libs/cache";',
-      }).toBreakRule('boundaries/dependencies');
-    },
-  );
+  it('the health lib may NOT import the cache lib root, it probes through the cache port', async () => {
+    await expect({
+      file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
+      code: 'import { CacheLibModule } from "@acme-libs/cache";',
+    }).toBreakRule('boundaries/dependencies');
+  });
 
   it('a controller may NOT import the health lib root, only a module wires it', async () => {
     await expect({

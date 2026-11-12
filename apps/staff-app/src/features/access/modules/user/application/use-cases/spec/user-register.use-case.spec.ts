@@ -115,27 +115,24 @@ describe('UserRegisterUseCase', () => {
     expect(transaction.run).not.toHaveBeenCalled();
   });
 
-  it(
-    'refuses a duplicate email of the repository ' + 'as taken and rolls the transaction back',
-    async () => {
-      repository.insertUser.mockResolvedValue({
-        outcome: UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE,
-      });
+  it('refuses a duplicate email of the repository as taken and rolls the transaction back', async () => {
+    repository.insertUser.mockResolvedValue({
+      outcome: UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE,
+    });
 
-      const register = useCase.execute({
-        email: 'editor@example.com',
-        password: 'correct-horse-battery',
-        roleIds: [],
-      });
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'correct-horse-battery',
+      roleIds: [],
+    });
 
-      await expect(register).rejects.toMatchObject({
-        code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
-        message: 'Email editor@example.com is already registered',
-      });
-      expect(outcomes).toEqual(['begin']);
-      expect(logger.info).not.toHaveBeenCalled();
-    },
-  );
+    await expect(register).rejects.toMatchObject({
+      code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
+      message: 'Email editor@example.com is already registered',
+    });
+    expect(outcomes).toEqual(['begin']);
+    expect(logger.info).not.toHaveBeenCalled();
+  });
 
   it('passes a failing insert through as is and rolls the transaction back', async () => {
     repository.insertUser.mockRejectedValue(new Error('deadlock'));

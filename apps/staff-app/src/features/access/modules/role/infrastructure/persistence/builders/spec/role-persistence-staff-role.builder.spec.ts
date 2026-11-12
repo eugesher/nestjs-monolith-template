@@ -31,13 +31,7 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       builder.forList();
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
-          '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
-          '`StaffRolePermission`.`code` AS `StaffRolePermission_code` ' +
-          'FROM `staff_role` `StaffRole` ' +
-          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
-          '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'ORDER BY `StaffRole_id` ASC',
+        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, `StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, `StaffRolePermission`.`code` AS `StaffRolePermission_code` FROM `staff_role` `StaffRole` LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON `StaffRolePermission`.`role_id`=`StaffRole`.`id` ORDER BY `StaffRole_id` ASC',
         [],
       ]);
     });
@@ -57,13 +51,7 @@ describe('RolePersistenceStaffRoleBuilder', () => {
       builder.forById('2');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
-          '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
-          '`StaffRolePermission`.`code` AS `StaffRolePermission_code` ' +
-          'FROM `staff_role` `StaffRole` ' +
-          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
-          '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'WHERE `StaffRole`.`id` = ?',
+        'SELECT `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, `StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, `StaffRolePermission`.`code` AS `StaffRolePermission_code` FROM `staff_role` `StaffRole` LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON `StaffRolePermission`.`role_id`=`StaffRole`.`id` WHERE `StaffRole`.`id` = ?',
         ['2'],
       ]);
     });

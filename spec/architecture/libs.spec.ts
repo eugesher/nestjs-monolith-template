@@ -47,9 +47,7 @@ describe('libs', () => {
   it('a lib may NOT reach apps', async () => {
     await expect({
       file: 'libs/observability/src/__fixture__.ts',
-      code:
-        'import { x } from ' +
-        '"../../../apps/__libs-fixture__/src/features/product/product.module";',
+      code: 'import { x } from "../../../apps/__libs-fixture__/src/features/product/product.module";',
     }).toBreakRule('boundaries/dependencies');
   });
 
@@ -179,16 +177,12 @@ describe('libs', () => {
     }
   });
 
-  it(
-    'the contracts of database MAY import typeorm — ' +
-      'the repository host port returns its Repository',
-    async () => {
-      await expect({
-        file: 'libs/contracts/src/database/__fixture__.ts',
-        code: 'import type { Repository } from "typeorm";',
-      }).toPassArchitectureLint();
-    },
-  );
+  it('the contracts of database MAY import typeorm — the repository host port returns its Repository', async () => {
+    await expect({
+      file: 'libs/contracts/src/database/__fixture__.ts',
+      code: 'import type { Repository } from "typeorm";',
+    }).toPassArchitectureLint();
+  });
 
   it.each(['auth', 'cache', 'credentials', 'health'])(
     'the contracts of %s may NOT import typeorm',
@@ -267,9 +261,7 @@ describe('libs', () => {
   it('the config lib MAY import the Nest config packages it wraps', async () => {
     await expect({
       file: 'libs/config/src/provider/__fixture__.ts',
-      code:
-        'import { Provider } from "@nestjs/common";\n' +
-        'import { ConfigService } from "@nestjs/config";',
+      code: 'import { Provider } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";',
     }).toPassArchitectureLint();
   });
 
@@ -294,19 +286,12 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it(
-    'the observability lib MAY import the logging, ' + 'tracing and async context packages',
-    async () => {
-      await expect({
-        file: 'libs/observability/src/correlation/__fixture__.ts',
-        code:
-          'import { trace } from "@opentelemetry/api";\n' +
-          'import { NodeSDK } from "@opentelemetry/sdk-node";\n' +
-          'import { ClsServiceManager } from "nestjs-cls";\n' +
-          'import { PinoLogger } from "nestjs-pino";',
-      }).toPassArchitectureLint();
-    },
-  );
+  it('the observability lib MAY import the logging, tracing and async context packages', async () => {
+    await expect({
+      file: 'libs/observability/src/correlation/__fixture__.ts',
+      code: 'import { trace } from "@opentelemetry/api";\nimport { NodeSDK } from "@opentelemetry/sdk-node";\nimport { ClsServiceManager } from "nestjs-cls";\nimport { PinoLogger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
 
   it.each(['@nestjs-cls/transactional', '@nestjs-cls/transactional-adapter-typeorm'])(
     'the observability lib may NOT import %s — the local-storage lib owns transactions',
@@ -318,18 +303,12 @@ describe('libs', () => {
     },
   );
 
-  it(
-    'the local-storage lib MAY import the transaction, ' + 'async context and logging packages',
-    async () => {
-      await expect({
-        file: 'libs/local-storage/src/cls/__fixture__.ts',
-        code:
-          'import { TransactionHost } from "@nestjs-cls/transactional";\n' +
-          'import { ClsService } from "nestjs-cls";\n' +
-          'import { PinoLogger } from "nestjs-pino";',
-      }).toPassArchitectureLint();
-    },
-  );
+  it('the local-storage lib MAY import the transaction, async context and logging packages', async () => {
+    await expect({
+      file: 'libs/local-storage/src/cls/__fixture__.ts',
+      code: 'import { TransactionHost } from "@nestjs-cls/transactional";\nimport { ClsService } from "nestjs-cls";\nimport { PinoLogger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
 
   it.each(['nestjs-cls', 'nestjs-pino'])(
     'the database lib may NOT import %s — the local-storage lib owns the async context',
@@ -344,10 +323,7 @@ describe('libs', () => {
   it('the health lib MAY import the packages its probes and use cases need', async () => {
     await expect({
       file: 'libs/health/src/infrastructure/probes/__fixture__.ts',
-      code:
-        'import { Injectable } from "@nestjs/common";\n' +
-        'import { PinoLogger } from "nestjs-pino";\n' +
-        'import { DataSource } from "typeorm";',
+      code: 'import { Injectable } from "@nestjs/common";\nimport { PinoLogger } from "nestjs-pino";\nimport { DataSource } from "typeorm";',
     }).toPassArchitectureLint();
   });
 
@@ -364,11 +340,7 @@ describe('libs', () => {
   it('the auth lib MAY import the Nest packages its guards and token check need', async () => {
     await expect({
       file: 'libs/auth/src/guards/__fixture__.ts',
-      code:
-        'import { Injectable } from "@nestjs/common";\n' +
-        'import { ConfigService } from "@nestjs/config";\n' +
-        'import { Reflector } from "@nestjs/core";\n' +
-        'import { JwtService } from "@nestjs/jwt";',
+      code: 'import { Injectable } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";\nimport { Reflector } from "@nestjs/core";\nimport { JwtService } from "@nestjs/jwt";',
     }).toPassArchitectureLint();
   });
 
@@ -385,10 +357,7 @@ describe('libs', () => {
   it('the queue lib MAY import the packages Bull setup needs', async () => {
     await expect({
       file: 'libs/queue/src/bull/__fixture__.ts',
-      code:
-        'import { BullModule } from "@nestjs/bull";\n' +
-        'import { DynamicModule } from "@nestjs/common";\n' +
-        'import { ConfigService } from "@nestjs/config";',
+      code: 'import { BullModule } from "@nestjs/bull";\nimport { DynamicModule } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";',
     }).toPassArchitectureLint();
   });
 
@@ -402,11 +371,7 @@ describe('libs', () => {
   it('the credentials lib MAY import the packages hashing and signing need', async () => {
     await expect({
       file: 'libs/credentials/src/infrastructure/password-hasher/__fixture__.ts',
-      code:
-        'import { Injectable } from "@nestjs/common";\n' +
-        'import { ConfigService } from "@nestjs/config";\n' +
-        'import { JwtService } from "@nestjs/jwt";\n' +
-        'import { hash } from "argon2";',
+      code: 'import { Injectable } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";\nimport { JwtService } from "@nestjs/jwt";\nimport { hash } from "argon2";',
     }).toPassArchitectureLint();
   });
 

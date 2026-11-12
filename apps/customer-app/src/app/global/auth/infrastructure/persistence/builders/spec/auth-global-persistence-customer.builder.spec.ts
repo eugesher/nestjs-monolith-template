@@ -31,9 +31,7 @@ describe('AuthGlobalPersistenceCustomerBuilder', () => {
       builder.forActiveById('1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Customer`.`id` AS `Customer_id`, `Customer`.`email` AS `Customer_email` ' +
-          'FROM `customer` `Customer` ' +
-          'WHERE `Customer`.`id` = ? AND `Customer`.`status` = ?',
+        'SELECT `Customer`.`id` AS `Customer_id`, `Customer`.`email` AS `Customer_email` FROM `customer` `Customer` WHERE `Customer`.`id` = ? AND `Customer`.`status` = ?',
         ['1', 'active'],
       ]);
     });

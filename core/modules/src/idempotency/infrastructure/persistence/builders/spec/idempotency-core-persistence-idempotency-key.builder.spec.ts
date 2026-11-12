@@ -31,12 +31,7 @@ describe('IdempotencyCorePersistenceIdempotencyKeyBuilder', () => {
       builder.forByKey('key-1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `IdempotencyKey`.`id` AS `IdempotencyKey_id`, ' +
-          '`IdempotencyKey`.`requestFingerprint` AS `IdempotencyKey_requestFingerprint`, ' +
-          '`IdempotencyKey`.`status` AS `IdempotencyKey_status`, ' +
-          '`IdempotencyKey`.`responseBody` AS `IdempotencyKey_responseBody` ' +
-          'FROM `idempotency_key` `IdempotencyKey` ' +
-          'WHERE `IdempotencyKey`.`idempotencyKey` = ?',
+        'SELECT `IdempotencyKey`.`id` AS `IdempotencyKey_id`, `IdempotencyKey`.`requestFingerprint` AS `IdempotencyKey_requestFingerprint`, `IdempotencyKey`.`status` AS `IdempotencyKey_status`, `IdempotencyKey`.`responseBody` AS `IdempotencyKey_responseBody` FROM `idempotency_key` `IdempotencyKey` WHERE `IdempotencyKey`.`idempotencyKey` = ?',
         ['key-1'],
       ]);
     });

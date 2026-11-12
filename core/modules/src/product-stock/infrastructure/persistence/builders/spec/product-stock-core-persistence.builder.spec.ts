@@ -31,12 +31,7 @@ describe('ProductStockCorePersistenceBuilder', () => {
       builder.forSumStock(['100', '101']);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `ProductStock`.`productId` AS `productId`, ' +
-          'SUM(`ProductStock`.`quantity`) AS `quantity` ' +
-          'FROM `product_stock` `ProductStock` ' +
-          'WHERE `ProductStock`.`productId` IN (?, ?) ' +
-          'GROUP BY `ProductStock`.`productId` ' +
-          'LOCK IN SHARE MODE',
+        'SELECT `ProductStock`.`productId` AS `productId`, SUM(`ProductStock`.`quantity`) AS `quantity` FROM `product_stock` `ProductStock` WHERE `ProductStock`.`productId` IN (?, ?) GROUP BY `ProductStock`.`productId` LOCK IN SHARE MODE',
         ['100', '101'],
       ]);
     });

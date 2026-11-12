@@ -32,9 +32,8 @@ describe('TagDeleteUseCase', () => {
 
   describe('execute', () => {
     it('deletes an existing tag', async () => {
-      const result = await useCase.execute({ tagId: '300' });
+      await expect(useCase.execute({ tagId: '300' })).resolves.toBeUndefined();
 
-      expect(result).toBeUndefined();
       expect(load).toHaveBeenCalledWith({ tagId: '300' });
       expect(remove).toHaveBeenCalledWith('300');
       expect(logger.info).toHaveBeenCalledWith({ tagId: '300' }, 'Tag deleted');

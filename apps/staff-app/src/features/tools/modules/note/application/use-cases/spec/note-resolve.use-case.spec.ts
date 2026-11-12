@@ -56,21 +56,18 @@ describe('NoteResolveUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'saves the resolved note against the ' + 'version as read and answers the stored note',
-      async () => {
-        const view = await useCase.execute({ noteId: '7', authorId: 'admin-1' });
-        const [command] = update.mock.calls[0] as [INoteResolveUpdateQuery];
+    it('saves the resolved note against the version as read and answers the stored note', async () => {
+      const view = await useCase.execute({ noteId: '7', authorId: 'admin-1' });
+      const [command] = update.mock.calls[0] as [INoteResolveUpdateQuery];
 
-        expect(command.versionAsRead).toBe(2);
-        expect(command.resolved).toBe(true);
-        expect(command.version).toBe(3);
-        expect(view.resolved).toBe(true);
-        expect(view.version).toBe(3);
-        expect(view.updatedAt).toBe('2026-01-03T00:00:00.000Z');
-        expect(logger.info).toHaveBeenCalledWith({ noteId: '7', version: 3 }, 'Note resolved');
-      },
-    );
+      expect(command.versionAsRead).toBe(2);
+      expect(command.resolved).toBe(true);
+      expect(command.version).toBe(3);
+      expect(view.resolved).toBe(true);
+      expect(view.version).toBe(3);
+      expect(view.updatedAt).toBe('2026-01-03T00:00:00.000Z');
+      expect(logger.info).toHaveBeenCalledWith({ noteId: '7', version: 3 }, 'Note resolved');
+    });
 
     it('retries a lost race with a fresh read', async () => {
       update.mockResolvedValueOnce(false).mockResolvedValueOnce(true);

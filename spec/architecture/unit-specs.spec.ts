@@ -6,18 +6,12 @@ describe('unit specs', () => {
 
   beforeAll(() => {
     scaffold = Scaffold.create([
-      'apps/__specs-fixture__/src/features/product/infrastructure/core-adapters/' +
-        'product-ledger-core.adapter.ts',
-      'apps/__specs-fixture__/src/features/product/infrastructure/common-adapters/' +
-        'product-idempotency-common.adapter.ts',
-      'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/core-adapters/' +
-        'catalog-events-ledger-core.adapter.ts',
-      'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/common-adapters/' +
-        'catalog-events-idempotency-common.adapter.ts',
-      'apps/__specs-fixture__/src/common/modules/idempotency/infrastructure/core-adapters/' +
-        'idempotency-common-identity-core.adapter.ts',
-      'apps/__specs-fixture__/src/common/modules/idempotency/infrastructure/common-adapters/' +
-        'idempotency-common-audit-common.adapter.ts',
+      'apps/__specs-fixture__/src/features/product/infrastructure/core-adapters/product-ledger-core.adapter.ts',
+      'apps/__specs-fixture__/src/features/product/infrastructure/common-adapters/product-idempotency-common.adapter.ts',
+      'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/core-adapters/catalog-events-ledger-core.adapter.ts',
+      'apps/__specs-fixture__/src/processors/catalog-events/infrastructure/common-adapters/catalog-events-idempotency-common.adapter.ts',
+      'apps/__specs-fixture__/src/common/modules/idempotency/infrastructure/core-adapters/idempotency-common-identity-core.adapter.ts',
+      'apps/__specs-fixture__/src/common/modules/idempotency/infrastructure/common-adapters/idempotency-common-audit-common.adapter.ts',
     ]);
   });
 
