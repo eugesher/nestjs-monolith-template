@@ -54,8 +54,8 @@ attempt, not a new round. The ledger deduplicates on the operation key, so retry
 that did append writes nothing.
 
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
-`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_RETRY_ATTEMPTS` of the ledger lib and
-`QUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and tracing, and `JWT_SECRET`,
+`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_ENQUEUE_RETRY_ATTEMPTS` of the ledger lib and
+`ENQUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and tracing, and `JWT_SECRET`,
 `JWT_EXPIRES_IN` and the argon2 costs for the staff login. No cache TTL.
 
 **The entity list holds `IdempotencyKey`, `LedgerEntry`, `Product` and `ProductStock`**, the tables

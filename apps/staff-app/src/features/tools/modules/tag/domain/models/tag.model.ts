@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { TagNameInvalidException } from '../exceptions/tag-name-invalid.exception';
 import type {
@@ -8,7 +8,7 @@ import type {
   ITagSnapshotOutput,
 } from '../interfaces';
 
-export class TagModel extends AggregateRoot<string> {
+export class TagModel extends AggregateRootBase<string> {
   public get name(): string {
     return this.currentName;
   }

@@ -30,8 +30,8 @@ export class ConfigSchema {
     REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
   };
   public static readonly QUEUE: Joi.SchemaMap = {
-    LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
-    QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
+    LEDGER_ENQUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
+    ENQUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
   };
   public static readonly AUTH: Joi.SchemaMap = {
     JWT_SECRET: Joi.string().min(32).required(),

@@ -1,11 +1,11 @@
-export abstract class ValueObject<TProps extends Record<string, unknown>> {
+export abstract class ValueObjectBase<TProps extends Record<string, unknown>> {
   protected readonly props: TProps;
 
   protected constructor(props: TProps) {
     this.props = Object.freeze({ ...props });
   }
 
-  public equals(other?: ValueObject<TProps>): boolean {
+  public equals(other?: ValueObjectBase<TProps>): boolean {
     if (other == null) {
       return false;
     }

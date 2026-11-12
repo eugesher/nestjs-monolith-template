@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-export abstract class DomainEvent<TAggregateId = number> {
+export abstract class DomainEventBase<TAggregateId = number> {
   public readonly id: string;
   public readonly occurredAt: Date;
   public readonly aggregateId: TAggregateId;

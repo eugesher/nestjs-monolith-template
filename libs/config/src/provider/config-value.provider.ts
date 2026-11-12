@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import type { FactoryProvider } from '@nestjs/common';
 
 import type { IConfigValueProperties } from './interfaces/config-value-properties.interface';
-import type { IConfigValueProvideOptions } from './interfaces/config-value.interface';
+import type { IConfigValueProvideOptions } from './interfaces/config-value-provide.options';
 
 export class ConfigValueProvider {
   public static provide<Property extends keyof IConfigValueProperties>(

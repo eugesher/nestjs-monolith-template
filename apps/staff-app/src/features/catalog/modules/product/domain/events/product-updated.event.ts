@@ -1,8 +1,8 @@
-import { DomainEvent } from '@acme-libs/toolkit';
+import { DomainEventBase } from '@acme-libs/toolkit';
 
 import type { IProductChangesInput } from '../interfaces';
 
-export class ProductUpdatedEvent extends DomainEvent<string> {
+export class ProductUpdatedEvent extends DomainEventBase<string> {
   constructor(
     productId: string,
     public readonly changes: IProductChangesInput,

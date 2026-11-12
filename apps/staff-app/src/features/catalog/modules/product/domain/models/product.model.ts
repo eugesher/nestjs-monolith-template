@@ -1,5 +1,5 @@
 import { ProductStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { ProductPublishedEvent } from '../events/product-published.event';
 import { ProductUpdatedEvent } from '../events/product-updated.event';
@@ -14,7 +14,7 @@ import type {
   IProductSnapshotOutput,
 } from '../interfaces';
 
-export class ProductModel extends AggregateRoot<string> {
+export class ProductModel extends AggregateRootBase<string> {
   public get name(): string {
     return this.currentName;
   }

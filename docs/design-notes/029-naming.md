@@ -17,6 +17,8 @@ A name says who or where; the action lives in the method or in the port.
 | token of a config value            | `<MODULE>_<PROPERTY>_TOKEN`, `<module>-<property>.token.ts`                             | `PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN`                         |
 | binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                                | `OrderIdempotencyCoreAdapter.provider`                     |
 | provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`                       | `ProductConfigOccRetryAttemptsProvider`                    |
+| abstract base class                | `<Name>Base`, `<name>.base.ts`                                                          | `AggregateRootBase`                                        |
+| type file of a lib without layers  | role suffix where the type has one, else `.interface.ts` or `.type.ts`                  | `page-window.options.ts`, `page.interface.ts`              |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
@@ -57,12 +59,25 @@ command file of its own, `<context>-<verb>.command.ts`.
 **A config token is the module, the property and `_TOKEN`.** A token that carries a value read with
 `ConfigValueProvider.provide` takes the prefix of its module, the name of the configuration property
 it reads and the suffix `_TOKEN`: the product module reads `OCC_RETRY_ATTEMPTS` into
-`PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN`, the product-stock core module reads `QUEUE_RETRY_ATTEMPTS` into
-`PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from, not
-what the module does with it, so a reader finds the variable of `.env` by the name alone. A module
-that reads one property for two purposes injects the one token in both places; a purpose that needs
-a value of its own needs a property of its own, and with it a token of its own, so two tokens never
-share a name. A property that already starts with the module name is not repeated:
+`PRODUCT_OCC_RETRY_ATTEMPTS_TOKEN`, the product-stock core module reads `ENQUEUE_RETRY_ATTEMPTS`
+into `PRODUCT_STOCK_CORE_ENQUEUE_RETRY_ATTEMPTS_TOKEN`. The token names where the value comes from,
+not what the module does with it, so a reader finds the variable of `.env` by the name alone. A
+module that reads one property for two purposes injects the one token in both places; a purpose that
+needs a value of its own needs a property of its own, and with it a token of its own, so two tokens
+never share a name. A property that already starts with the module name is not repeated:
 `IDEMPOTENCY_KEY_TTL_HOURS` becomes `IDEMPOTENCY_KEY_TTL_HOURS_TOKEN`. The suffix sets the token
 apart from the `_PORT` tokens in the same `outbound` barrel. The description of the `Symbol` repeats
 the constant, and the file drops the suffix: `order-redis-command-timeout-ms.token.ts`.
+
+**A base class carries `Base`.** An abstract class that others extend ends its name with `Base`, as
+its file ends with `.base.ts`: `AggregateRootBase` in `libs/toolkit/src/ddd/aggregate-root.base.ts`.
+The suffix also keeps `EntityBase` apart from the `Entity` decorator of TypeORM. A base exception
+keeps the word in front of `Exception`: `QueueBaseException` in `queue-base.exception.ts`.
+
+**A lib without layers names a type file by its role where the type has one.** Modules and layered
+libs name an interface file by its role: `.command`, `.view`, `.options`. The types of
+`libs/toolkit`, `libs/config`, `libs/auth` and `libs/contracts/src/database` serve a helper, a
+provider or a guard rather than a use case. The options of a helper take `.options.ts`
+(`page-window.options.ts`, `replay-retry.options.ts`, `config-value-provide.options.ts`); a type
+with no such role keeps the suffix of its syntax, `.interface.ts` or `.type.ts`
+(`page.interface.ts`, `hosted-repository.interface.ts`, `result.type.ts`).
