@@ -149,10 +149,10 @@ entity list of processor-app is in `023-processor-app.md`.
 
 ## Logs
 
-Outside production, the `info` lines of `InstanceLoader`, `NestFactory`, `NestApplication`,
-`RouterExplorer` and `RoutesResolver` are dropped by a pino `logMethod` hook in `LoggerSetupConfig`:
-a start prints `listening` instead of one line per module and route. Their warnings and errors still
-pass, and production keeps everything.
+`LoggerSetupConfig` sends the logs through `pino-pretty` only when `NODE_ENV` is `development`.
+Production, the e2e runs with `NODE_ENV=test` and a process without `NODE_ENV` log JSON lines, so
+`pino-pretty`, a dev dependency, is never loaded outside a local start. Every line of Nest itself
+passes, including one line per module and route at start.
 
 ## Entry points
 

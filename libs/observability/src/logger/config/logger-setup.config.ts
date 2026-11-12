@@ -1,7 +1,6 @@
 import { RequestMethod } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 import { ClsServiceManager } from 'nestjs-cls';
-import { levels } from 'pino';
 import type { Params } from 'nestjs-pino';
 import type { Options } from 'pino-http';
 
@@ -14,14 +13,6 @@ import { CorrelationIdHelper } from '../../correlation/correlation-id.helper';
 export class LoggerSetupConfig implements Params {
   public readonly pinoHttp: Options;
   public readonly forRoutes: NonNullable<Params['forRoutes']>;
-
-  private static readonly NOISY_CONTEXTS = new Set<unknown>([
-    'InstanceLoader',
-    'NestFactory',
-    'NestApplication',
-    'RouterExplorer',
-    'RoutesResolver',
-  ]);
 
   constructor(appName: AppNameEnum) {
     const isProduction = EnvHelper.isProduction();
@@ -50,20 +41,10 @@ export class LoggerSetupConfig implements Params {
         paths: ['req.headers.authorization', 'req.headers.cookie', 'res.headers["set-cookie"]'],
         remove: true,
       },
-      hooks: {
-        logMethod(args, method, level) {
-          const noisy = !isProduction && LoggerSetupConfig.isNoisy(args[0], level);
-
-          if (!noisy) {
-            method.apply(this, args);
-          }
-        },
-      },
     };
 
-    this.pinoHttp = isProduction
-      ? baseOptions
-      : {
+    this.pinoHttp = EnvHelper.isDevelopment()
+      ? {
           ...baseOptions,
           transport: {
             target: 'pino-pretty',
@@ -75,16 +56,7 @@ export class LoggerSetupConfig implements Params {
               ignore: 'pid,hostname,app,context',
             },
           },
-        };
-  }
-
-  private static isNoisy(first: unknown, level: number): boolean {
-    if (level !== levels.values.info || typeof first !== 'object' || first === null) {
-      return false;
-    }
-
-    const { context } = first as { context?: unknown };
-
-    return LoggerSetupConfig.NOISY_CONTEXTS.has(context);
+        }
+      : baseOptions;
   }
 }
