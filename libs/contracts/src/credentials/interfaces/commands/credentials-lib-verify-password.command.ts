@@ -1,4 +1,6 @@
+import type { Nullable } from '@acme-libs/toolkit';
+
 export interface ICredentialsLibVerifyPasswordCommand {
-  passwordHash: string;
+  passwordHash: Nullable<string>;
   password: string;
 }

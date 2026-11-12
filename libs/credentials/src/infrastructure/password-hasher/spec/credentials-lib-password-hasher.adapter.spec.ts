@@ -1,6 +1,14 @@
+import { verify } from 'argon2';
 import type { ConfigService } from '@nestjs/config';
+import type * as Argon2 from 'argon2';
 
 import { CredentialsLibPasswordHasherAdapter } from '../credentials-lib-password-hasher.adapter';
+
+jest.mock('argon2', () => {
+  const actual = jest.requireActual<typeof Argon2>('argon2');
+
+  return { ...actual, verify: jest.fn(actual.verify) };
+});
 
 describe('CredentialsLibPasswordHasherAdapter', () => {
   let adapter: CredentialsLibPasswordHasherAdapter;
@@ -56,6 +64,25 @@ describe('CredentialsLibPasswordHasherAdapter', () => {
       const valid = await adapter.verify({
         passwordHash: 'not-a-hash',
         password: 'correct-horse-battery',
+      });
+
+      expect(valid).toBe(false);
+    });
+
+    it('checks a missing hash against a dummy hash with the configured costs', async () => {
+      const valid = await adapter.verify({ passwordHash: null, password: 'correct-horse-battery' });
+
+      expect(valid).toBe(false);
+      expect(verify).toHaveBeenLastCalledWith(
+        expect.stringMatching(/^\$argon2id\$v=19\$m=1024,t=2,p=1\$/),
+        'correct-horse-battery',
+      );
+    });
+
+    it('rejects a missing hash even for the password of the dummy hash', async () => {
+      const valid = await adapter.verify({
+        passwordHash: null,
+        password: 'dummy-password-of-an-unknown-user',
       });
 
       expect(valid).toBe(false);

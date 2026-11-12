@@ -28,6 +28,12 @@ wait in order. A call that waits longer than `AUTH_ARGON2_QUEUE_TIMEOUT_MS` leav
 semaphore lives in the adapter, so every caller of the lib shares one per process: login,
 registration and the users that staff-app creates.
 
+**A missing hash is checked against a dummy one.** `verify` takes `passwordHash: null` for a user
+that does not exist. The adapter hashes a fixed dummy password with the same `AUTH_ARGON2_*` costs
+when it is built and verifies the password against that hash, through the semaphore like any other
+check, and answers `false` whatever the result. The caller pays one argon2id either way, so a login
+for an unknown email takes as long as one with a wrong password.
+
 **Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`; the
 feature declares a port of its own (`AUTH_CREDENTIALS_PORT`) and implements it in
 `infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature imports `argon2` or
