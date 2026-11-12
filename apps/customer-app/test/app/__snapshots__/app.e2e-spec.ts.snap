@@ -345,6 +345,16 @@ exports[`App Catalog GET /api/products should refuse a limit of zero with 400 fr
 }
 `;
 
+exports[`App Health GET /api/health should answer the preflight of an origin of HTTP_CORS_ORIGINS 1`] = `
+{
+  "headers": {
+    "access-control-allow-methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "access-control-allow-origin": "https://app.example.test",
+    "access-control-expose-headers": "x-correlation-id,Retry-After,Retry-After-auth",
+  },
+}
+`;
+
 exports[`App Health GET /api/health should report liveness and mint a correlation id 1`] = `
 {
   "response": {
@@ -353,6 +363,18 @@ exports[`App Health GET /api/health should report liveness and mint a correlatio
       "status": "ok",
       "uptimeSeconds": Any<Number>,
     },
+  },
+}
+`;
+
+exports[`App Health GET /api/health should set the security headers of helmet 1`] = `
+{
+  "headers": {
+    "content-security-policy": "default-src 'none';frame-ancestors 'none'",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-powered-by": undefined,
   },
 }
 `;

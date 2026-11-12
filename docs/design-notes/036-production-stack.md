@@ -60,6 +60,9 @@ way, and a value too high lets a client choose its own address with the header.
 `ThrottleSetupModule` sets `trust proxy` when the app starts, so `main.ts` and the e2e contexts need
 no call of their own.
 
+**`HTTP_CORS_ORIGINS` is empty in the examples.** No browser client of another origin calls the apps
+until its origin is listed (see `037-http-edge.md`).
+
 ## First administrator
 
 `scripts/node/admin-create.ts` runs once from the `migrations` image, after the migrations:

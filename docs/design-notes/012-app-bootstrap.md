@@ -55,7 +55,7 @@ e2e context built from `AppModule` without `main.ts` behaves like the running ap
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
 `API_USE_API_REFERENCE` is true. It runs after `setGlobalPrefix`, so the document lists the prefixed
-paths.
+paths. The page carries a security policy of its own (see `037-http-edge.md`).
 
 ## AppModule
 
@@ -68,6 +68,7 @@ paths.
 | `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
 | `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
 | `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
+| `HttpSecuritySetupModule.forRoot()` | `libs/http`                                          | the security headers of `helmet` and CORS from `HTTP_CORS_ORIGINS` (see `037-http-edge.md`)             |
 | `ThrottleSetupModule.forRoot()`     | `libs/http`                                          | the global request limits over Redis and `trust proxy` (see `003-authentication.md`)                    |
 | `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |

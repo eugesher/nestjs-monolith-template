@@ -55,6 +55,10 @@ export class ConfigSetupModule {
         AUTH_ARGON2_QUEUE_TIMEOUT_MS: Joi.number().integer().positive().required(),
 
         HTTP_TRUST_PROXY_HOPS: Joi.number().integer().min(0).required(),
+        HTTP_CORS_ORIGINS: Joi.string()
+          .allow('')
+          .pattern(/^https?:\/\/[^\s,/]+(,https?:\/\/[^\s,/]+)*$/)
+          .required(),
         THROTTLE_TTL_MS: Joi.number().integer().positive().required(),
         THROTTLE_LIMIT: Joi.number().integer().positive().required(),
         THROTTLE_AUTH_TTL_MS: Joi.number().integer().positive().required(),
