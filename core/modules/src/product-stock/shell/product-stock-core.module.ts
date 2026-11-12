@@ -8,7 +8,7 @@ import {
 
 import { ProductStockCoreLockUseCase, ProductStockCoreMoveUseCase } from '../application';
 import {
-  ProductStockCoreConfigQueueRetryAttemptsProvider,
+  ProductStockCoreConfigEnqueueRetryAttemptsProvider,
   ProductStockCoreConfigRedisCommandTimeoutMsProvider,
   ProductStockCoreLockRepository,
   ProductStockCoreMoveRepository,
@@ -29,7 +29,7 @@ import { ProductStockCoreFacade } from './product-stock-core.facade';
     ProductStockCorePostSubtractQueueAdapter.provider,
     ProductStockCoreTransactionAdapter.provider,
     ProductStockCoreConfigRedisCommandTimeoutMsProvider,
-    ProductStockCoreConfigQueueRetryAttemptsProvider,
+    ProductStockCoreConfigEnqueueRetryAttemptsProvider,
   ],
 })
 export class ProductStockCoreModule {}

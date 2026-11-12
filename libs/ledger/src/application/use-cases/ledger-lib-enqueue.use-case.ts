@@ -5,9 +5,9 @@ import { ReplayRetryHelper } from '@acme-libs/toolkit';
 import type { ILedgerLibEnqueueCommand } from '@acme-libs/contracts/ledger';
 
 import {
+  LEDGER_LIB_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
   LEDGER_LIB_QUEUE_PORT,
   LEDGER_LIB_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  LEDGER_LIB_RETRY_ATTEMPTS_TOKEN,
   type ILedgerLibQueuePort,
 } from '../../outbound';
 
@@ -16,8 +16,8 @@ export class LedgerLibEnqueueUseCase {
   constructor(
     @Inject(LEDGER_LIB_QUEUE_PORT)
     private readonly queue: ILedgerLibQueuePort,
-    @Inject(LEDGER_LIB_RETRY_ATTEMPTS_TOKEN)
-    private readonly retryAttempts: number,
+    @Inject(LEDGER_LIB_ENQUEUE_RETRY_ATTEMPTS_TOKEN)
+    private readonly enqueueRetryAttempts: number,
     @Inject(LEDGER_LIB_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
     private readonly timeoutMs: number,
     @InjectPinoLogger(LedgerLibEnqueueUseCase.name)
@@ -29,7 +29,7 @@ export class LedgerLibEnqueueUseCase {
     const context = { subjectType, subjectId, operationKey };
 
     await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(command), {
-      maxAttempts: this.retryAttempts,
+      maxAttempts: this.enqueueRetryAttempts,
       logger: this.logger,
       correlationId,
       label: 'Ledger enqueue',

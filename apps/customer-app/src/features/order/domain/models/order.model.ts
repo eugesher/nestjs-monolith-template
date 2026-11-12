@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { OrderEmptyException } from '../exceptions/order-empty.exception';
 import { OrderProductNotFoundException } from '../exceptions/order-product-not-found.exception';
@@ -14,7 +14,7 @@ import type {
   IOrderStockInput,
 } from '../interfaces';
 
-export class OrderModel extends AggregateRoot<string> {
+export class OrderModel extends AggregateRootBase<string> {
   private constructor(
     id: string,
     public readonly products: readonly IOrderProductOutput[],

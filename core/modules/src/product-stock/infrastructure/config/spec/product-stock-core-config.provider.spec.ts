@@ -1,9 +1,9 @@
 import {
-  PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
+  PRODUCT_STOCK_CORE_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
 } from '../../../outbound';
 import {
-  ProductStockCoreConfigQueueRetryAttemptsProvider,
+  ProductStockCoreConfigEnqueueRetryAttemptsProvider,
   ProductStockCoreConfigRedisCommandTimeoutMsProvider,
 } from '../product-stock-core-config.provider';
 
@@ -26,15 +26,15 @@ describe('product stock core config providers', () => {
     });
   });
 
-  describe('ProductStockCoreConfigQueueRetryAttemptsProvider', () => {
-    it('provides QUEUE_RETRY_ATTEMPTS under the product stock core token', () => {
-      const value = ProductStockCoreConfigQueueRetryAttemptsProvider.useFactory({ getOrThrow });
+  describe('ProductStockCoreConfigEnqueueRetryAttemptsProvider', () => {
+    it('provides ENQUEUE_RETRY_ATTEMPTS under the product stock core token', () => {
+      const value = ProductStockCoreConfigEnqueueRetryAttemptsProvider.useFactory({ getOrThrow });
 
-      expect(ProductStockCoreConfigQueueRetryAttemptsProvider.provide).toBe(
-        PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
+      expect(ProductStockCoreConfigEnqueueRetryAttemptsProvider.provide).toBe(
+        PRODUCT_STOCK_CORE_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
       );
       expect(value).toBe(7);
-      expect(getOrThrow).toHaveBeenCalledWith('QUEUE_RETRY_ATTEMPTS');
+      expect(getOrThrow).toHaveBeenCalledWith('ENQUEUE_RETRY_ATTEMPTS');
     });
   });
 });

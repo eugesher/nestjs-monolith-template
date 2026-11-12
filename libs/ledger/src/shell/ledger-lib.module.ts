@@ -5,8 +5,8 @@ import { LEDGER_LIB_PORT, LEDGER_RECORD_QUEUE } from '@acme-libs/contracts/ledge
 
 import { LedgerLibEnqueueUseCase } from '../application';
 import {
+  LedgerLibConfigEnqueueRetryAttemptsProvider,
   LedgerLibConfigRedisCommandTimeoutMsProvider,
-  LedgerLibConfigRetryAttemptsProvider,
   LedgerLibQueueAdapter,
 } from '../infrastructure';
 import { LedgerLibFacade } from './ledger-lib.facade';
@@ -19,7 +19,7 @@ import { LedgerLibFacade } from './ledger-lib.facade';
     LedgerLibEnqueueUseCase,
     LedgerLibQueueAdapter.provider,
     LedgerLibConfigRedisCommandTimeoutMsProvider,
-    LedgerLibConfigRetryAttemptsProvider,
+    LedgerLibConfigEnqueueRetryAttemptsProvider,
   ],
 })
 export class LedgerLibModule {}

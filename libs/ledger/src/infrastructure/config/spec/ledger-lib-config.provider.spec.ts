@@ -1,10 +1,10 @@
 import {
+  LEDGER_LIB_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
   LEDGER_LIB_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
-  LEDGER_LIB_RETRY_ATTEMPTS_TOKEN,
 } from '../../../outbound';
 import {
+  LedgerLibConfigEnqueueRetryAttemptsProvider,
   LedgerLibConfigRedisCommandTimeoutMsProvider,
-  LedgerLibConfigRetryAttemptsProvider,
 } from '../ledger-lib-config.provider';
 
 describe('ledger lib config providers', () => {
@@ -26,13 +26,15 @@ describe('ledger lib config providers', () => {
     });
   });
 
-  describe('LedgerLibConfigRetryAttemptsProvider', () => {
-    it('provides LEDGER_RETRY_ATTEMPTS under the ledger lib token', () => {
-      const value = LedgerLibConfigRetryAttemptsProvider.useFactory({ getOrThrow });
+  describe('LedgerLibConfigEnqueueRetryAttemptsProvider', () => {
+    it('provides LEDGER_ENQUEUE_RETRY_ATTEMPTS under the ledger lib token', () => {
+      const value = LedgerLibConfigEnqueueRetryAttemptsProvider.useFactory({ getOrThrow });
 
-      expect(LedgerLibConfigRetryAttemptsProvider.provide).toBe(LEDGER_LIB_RETRY_ATTEMPTS_TOKEN);
+      expect(LedgerLibConfigEnqueueRetryAttemptsProvider.provide).toBe(
+        LEDGER_LIB_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
+      );
       expect(value).toBe(7);
-      expect(getOrThrow).toHaveBeenCalledWith('LEDGER_RETRY_ATTEMPTS');
+      expect(getOrThrow).toHaveBeenCalledWith('LEDGER_ENQUEUE_RETRY_ATTEMPTS');
     });
   });
 });

@@ -1,10 +1,10 @@
-import { Entity } from './entity.base';
-import type { DomainEvent } from './domain-event.base';
+import { EntityBase } from './entity.base';
+import type { DomainEventBase } from './domain-event.base';
 
-export abstract class AggregateRoot<TId> extends Entity<TId> {
-  private domainEvents: DomainEvent<TId>[] = [];
+export abstract class AggregateRootBase<TId> extends EntityBase<TId> {
+  private domainEvents: DomainEventBase<TId>[] = [];
 
-  public pullDomainEvents(): DomainEvent<TId>[] {
+  public pullDomainEvents(): DomainEventBase<TId>[] {
     const events = this.domainEvents;
 
     this.domainEvents = [];
@@ -12,7 +12,7 @@ export abstract class AggregateRoot<TId> extends Entity<TId> {
     return events;
   }
 
-  protected addDomainEvent(event: DomainEvent<TId>): void {
+  protected addDomainEvent(event: DomainEventBase<TId>): void {
     this.domainEvents.push(event);
   }
 }

@@ -1,9 +1,9 @@
-import { DomainEvent } from '@acme-libs/toolkit';
+import { DomainEventBase } from '@acme-libs/toolkit';
 import type { ProductStatusEnum } from '@acme-libs/kernel';
 
 import type { IProductLedgerRecordOutput } from '../interfaces';
 
-export class ProductPublishedEvent extends DomainEvent<string> {
+export class ProductPublishedEvent extends DomainEventBase<string> {
   constructor(
     productId: string,
     public readonly sku: string,

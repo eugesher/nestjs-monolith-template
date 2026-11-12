@@ -1,5 +1,5 @@
 import { ReminderStatusEnum } from '@acme-libs/kernel';
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { ReminderAlreadyDoneException } from '../exceptions/reminder-already-done.exception';
 import { ReminderBodyInvalidException } from '../exceptions/reminder-body-invalid.exception';
@@ -13,7 +13,7 @@ import type {
   IReminderSnapshotOutput,
 } from '../interfaces';
 
-export class ReminderModel extends AggregateRoot<string> {
+export class ReminderModel extends AggregateRootBase<string> {
   public get dueOn(): string {
     return this.currentDueOn;
   }

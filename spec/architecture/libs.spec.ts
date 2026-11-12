@@ -234,7 +234,7 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('the toolkit lib MAY import crypto (DomainEvent ids, BodyFingerprintHelper)', async () => {
+  it('the toolkit lib MAY import crypto (DomainEventBase ids, BodyFingerprintHelper)', async () => {
     await expect({
       file: 'libs/toolkit/src/__fixture__.ts',
       code: 'import { createHash, randomUUID } from "crypto";',

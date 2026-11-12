@@ -1,4 +1,4 @@
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { NoteBodyInvalidException } from '../exceptions/note-body-invalid.exception';
 import { NoteResolvedException } from '../exceptions/note-resolved.exception';
@@ -11,7 +11,7 @@ import type {
   INoteSnapshotOutput,
 } from '../interfaces';
 
-export class NoteModel extends AggregateRoot<string> {
+export class NoteModel extends AggregateRootBase<string> {
   public get body(): string {
     return this.currentBody;
   }

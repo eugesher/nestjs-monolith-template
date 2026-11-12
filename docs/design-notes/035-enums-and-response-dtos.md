@@ -87,7 +87,7 @@ row of a page alike (`TagGetManyUseCase`). A module that only reads has a domain
 `core/modules/src/product-stock`.
 
 **A read model is a plain class.** It records no events and takes no changes, so it does not extend
-`AggregateRoot`, like `StaffAuthCoreSubjectModel`.
+`AggregateRootBase`, like `StaffAuthCoreSubjectModel`.
 
 **A record with fewer columns gets a model of its own.** A page of orders carries no products, so
 `OrderSummaryModel` rebuilds it, not `OrderModel`, whose record requires them. Both live in the

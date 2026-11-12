@@ -11,9 +11,9 @@ import {
 
 import { ProductStockCoreOnHandModel } from '../../domain';
 import {
+  PRODUCT_STOCK_CORE_ENQUEUE_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_CORE_MOVE_REPOSITORY_PORT,
   PRODUCT_STOCK_CORE_POST_SUBTRACT_PORT,
-  PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN,
   PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN,
   PRODUCT_STOCK_CORE_TRANSACTION_PORT,
   type IProductStockCoreMoveRepositoryPort,
@@ -36,7 +36,7 @@ export class ProductStockCoreMoveUseCase {
     private readonly postSubtract: IProductStockCorePostSubtractPort,
     @Inject(PRODUCT_STOCK_CORE_TRANSACTION_PORT)
     private readonly transaction: IProductStockCoreTransactionPort,
-    @Inject(PRODUCT_STOCK_CORE_QUEUE_RETRY_ATTEMPTS_TOKEN)
+    @Inject(PRODUCT_STOCK_CORE_ENQUEUE_RETRY_ATTEMPTS_TOKEN)
     private readonly postSubtractRetryAttempts: number,
     @Inject(PRODUCT_STOCK_CORE_REDIS_COMMAND_TIMEOUT_MS_TOKEN)
     private readonly postSubtractTimeoutMs: number,

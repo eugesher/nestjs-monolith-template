@@ -1,9 +1,9 @@
-import { ValueObject } from '../value-object.base';
+import { ValueObjectBase } from '../value-object.base';
 
-describe('ValueObject', () => {
+describe('ValueObjectBase', () => {
   describe('equals', () => {
     it('is true for equal props of the same concrete subtype', () => {
-      class MoneyValue extends ValueObject<{ amount: number; currency: string }> {
+      class MoneyValue extends ValueObjectBase<{ amount: number; currency: string }> {
         constructor(amount: number, currency: string) {
           super({ amount, currency });
         }
@@ -15,7 +15,7 @@ describe('ValueObject', () => {
     });
 
     it('is false for other props', () => {
-      class MoneyValue extends ValueObject<{ amount: number; currency: string }> {
+      class MoneyValue extends ValueObjectBase<{ amount: number; currency: string }> {
         constructor(amount: number, currency: string) {
           super({ amount, currency });
         }
@@ -27,12 +27,12 @@ describe('ValueObject', () => {
     });
 
     it('is false for equal props of another subtype', () => {
-      class MoneyValue extends ValueObject<{ amount: number }> {
+      class MoneyValue extends ValueObjectBase<{ amount: number }> {
         constructor(amount: number) {
           super({ amount });
         }
       }
-      class WeightValue extends ValueObject<{ amount: number }> {
+      class WeightValue extends ValueObjectBase<{ amount: number }> {
         constructor(amount: number) {
           super({ amount });
         }
@@ -44,7 +44,7 @@ describe('ValueObject', () => {
     });
 
     it('is false for a missing value', () => {
-      class MoneyValue extends ValueObject<{ amount: number }> {
+      class MoneyValue extends ValueObjectBase<{ amount: number }> {
         constructor(amount: number) {
           super({ amount });
         }
@@ -57,7 +57,7 @@ describe('ValueObject', () => {
   });
 
   it('freezes its props', () => {
-    class MoneyValue extends ValueObject<{ amount: number }> {
+    class MoneyValue extends ValueObjectBase<{ amount: number }> {
       public get frozen(): boolean {
         return Object.isFrozen(this.props);
       }

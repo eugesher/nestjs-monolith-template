@@ -1,10 +1,10 @@
-import { AggregateRoot } from '@acme-libs/toolkit';
+import { AggregateRootBase } from '@acme-libs/toolkit';
 
 import { ProductStockAddedEvent } from '../events/product-stock-added.event';
 import { ProductQuantityInvalidException } from '../exceptions/product-quantity-invalid.exception';
 import type { IProductStockRecordInput } from '../interfaces';
 
-export class ProductStockModel extends AggregateRoot<string> {
+export class ProductStockModel extends AggregateRootBase<string> {
   private static readonly ADD_MAX_QUANTITY = 100_000;
 
   private constructor(

@@ -24,12 +24,12 @@ every variable with Joi, so `OCC_RETRY_ATTEMPTS` is already a number when it rea
 property with `getOrThrow`.
 
 **The lib lists the properties a module may read.** `IConfigValueProperties` of `libs/config` maps
-each of them to the type its Joi schema produces, `LEDGER_RETRY_ATTEMPTS: number`. `configProperty`
-takes only a key of that map, so a misspelled property fails the typecheck, and the provider takes
-its type from the map instead of a type argument at each call. The map follows the schemas by hand,
-in one place: a property a module starts to read is added to the map and to the schema of every app
-that mounts the module, to a fragment of `ConfigSchema` when every app reads it (see
-`012-app-bootstrap.md`). A property missing from the schema of an app fails that app before its
+each of them to the type its Joi schema produces, `LEDGER_ENQUEUE_RETRY_ATTEMPTS: number`.
+`configProperty` takes only a key of that map, so a misspelled property fails the typecheck, and the
+provider takes its type from the map instead of a type argument at each call. The map follows the
+schemas by hand, in one place: a property a module starts to read is added to the map and to the
+schema of every app that mounts the module, to a fragment of `ConfigSchema` when every app reads it
+(see `012-app-bootstrap.md`). A property missing from the schema of an app fails that app before its
 first test: each e2e suite compiles the whole `AppModule`, so every provider of a config value reads
 its property with `getOrThrow` (see `014-e2e-suites.md`).
 

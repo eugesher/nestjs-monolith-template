@@ -1,5 +1,5 @@
 import type { IPageRequest } from './page-request.interface';
-import type { IPageWindowOptions } from './page-window-options.interface';
+import type { IPageWindowOptions } from './page-window.options';
 import type { IPage } from './page.interface';
 
 export class PaginationHelper {
