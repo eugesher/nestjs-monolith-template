@@ -25,17 +25,15 @@ export class AuthLoginUseCase {
     const { email, password } = command;
     const normalized = AuthCustomerModel.normalizeEmail(email);
     const record = await this.repository.findByEmail(normalized);
+    const customer = record ? AuthCustomerModel.reconstitute(record) : null;
+    const passwordHash = customer?.passwordHash ?? null;
+    const valid = await this.credentials.verifyPassword({ passwordHash, password });
 
-    if (!record) {
+    if (!customer) {
       this.logger.warn({ email: normalized }, 'Login failed: unknown email');
 
       throw new AuthInvalidCredentialsException();
     }
-
-    const customer = AuthCustomerModel.reconstitute(record);
-
-    const { passwordHash } = customer;
-    const valid = await this.credentials.verifyPassword({ passwordHash, password });
 
     if (!valid) {
       this.logger.warn({ customerId: customer.id }, 'Login failed: wrong password');

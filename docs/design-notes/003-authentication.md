@@ -24,6 +24,13 @@ feature keeps the plain `Auth` prefix.
 **Login lives in the feature.** No other module logs anyone in, so the use case reads the user,
 checks the password and signs the token itself (see `024-code-placement.md`).
 
+**An unknown email costs as much as a wrong password.** `AuthLoginUseCase` checks the password
+before it looks at whether the user was found, and passes `passwordHash: null` for an unknown email;
+the lib then runs argon2id against a dummy hash (see `017-credentials-lib.md`). Both cases answer
+the same 401 after one hash, so the response time does not tell whether an address is registered.
+The registration of customer-app still answers 409 to a taken email: hiding it needs a confirmation
+by mail, and the route is under the `auth` limit below.
+
 **A route that only echoes the guard has no use case.** `handleMe` of customer-app copies
 `@CurrentUser()` into the response DTO: `AuthJwtGuard` has already re-read the user. In staff-app
 `AuthMeUseCase` asks the core module `staff-auth` through `AUTH_IDENTITY_PORT` and

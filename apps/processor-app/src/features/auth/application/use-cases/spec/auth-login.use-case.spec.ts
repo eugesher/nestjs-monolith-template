@@ -43,7 +43,7 @@ describe('AuthLoginUseCase', () => {
     expect(logger.info).toHaveBeenCalledWith({ userId: 'user-1' }, 'User logged in');
   });
 
-  it('rejects an unknown email with the same error as a wrong password', async () => {
+  it('rejects an unknown email after the same password check and with the same error as a wrong password', async () => {
     identity.findByEmail.mockResolvedValue(null);
 
     const login = useCase.execute({ email: 'ghost@example.com', password: 'correct-horse' });
@@ -52,7 +52,10 @@ describe('AuthLoginUseCase', () => {
       code: IdentityExceptionCodeEnum.AUTH_INVALID_CREDENTIALS,
       message: 'Invalid credentials',
     });
-    expect(credentials.verifyPassword).not.toHaveBeenCalled();
+    expect(credentials.verifyPassword).toHaveBeenCalledWith({
+      passwordHash: null,
+      password: 'correct-horse',
+    });
     expect(logger.warn).toHaveBeenCalledWith(
       { email: 'ghost@example.com' },
       'Login failed: unknown email',

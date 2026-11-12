@@ -18,12 +18,16 @@ export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPassw
     useClass: CredentialsLibPasswordHasherAdapter,
   };
 
+  private static readonly DUMMY_PASSWORD = 'dummy-password-of-an-unknown-user';
+
   private readonly options: CredentialsLibPasswordHasherOptions;
   private readonly semaphore: CredentialsLibPasswordHasherSemaphore;
+  private readonly dummyHash: Promise<string>;
 
   constructor(config: ConfigService) {
     this.options = new CredentialsLibPasswordHasherOptions(config);
     this.semaphore = new CredentialsLibPasswordHasherSemaphore(config);
+    this.dummyHash = hash(CredentialsLibPasswordHasherAdapter.DUMMY_PASSWORD, this.options);
   }
 
   public async hash(password: string): Promise<string> {
@@ -36,9 +40,12 @@ export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPassw
 
   private async verifyHash(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean> {
     const { passwordHash, password } = command;
+    const checkedHash = passwordHash ?? (await this.dummyHash);
 
     try {
-      return await verify(passwordHash, password);
+      const valid = await verify(checkedHash, password);
+
+      return valid && passwordHash !== null;
     } catch {
       return false;
     }
