@@ -200,5 +200,19 @@ describe('OrderPlaceUseCase', () => {
       expect(release).toHaveBeenCalledWith({ customerId: 'customer-1', key: 'key-1' });
       expect(recordPlaced).not.toHaveBeenCalled();
     });
+
+    it('keeps the completed key when the ledger fails after the commit and rethrows', async () => {
+      recordPlaced.mockRejectedValue(new Error('ledger down'));
+
+      await expect(
+        useCase.execute({
+          customerId: 'customer-1',
+          productIds: ['100'],
+          idempotencyKey: 'key-1',
+        }),
+      ).rejects.toThrow('ledger down');
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(release).not.toHaveBeenCalled();
+    });
   });
 });

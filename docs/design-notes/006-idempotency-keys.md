@@ -77,6 +77,7 @@ The key model refuses an empty key and a key longer than the 128-character colum
 ## In one transaction with the write
 
 The caller completes the key as the last write of its own transaction (see
-`product-create.use-case.ts`), so the stored answer and the write commit together. Any failure after
-the claim releases the key, so an honest retry can take it again. A failure after the commit, such
-as an enqueue, leaves a completed key that `release` does not delete, so the retry is a replay.
+`product-create.use-case.ts`), so the stored answer and the write commit together. The caller's
+`try` holds only the work up to the commit: a failure there releases the key, so an honest retry can
+take it again. The ledger record and the log come after the `try`, so a failure after the commit
+never calls `release` and leaves the completed key, and the retry is a replay.

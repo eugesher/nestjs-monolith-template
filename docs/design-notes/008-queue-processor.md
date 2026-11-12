@@ -56,6 +56,13 @@ it: at `warn` while attempts are left, at `error` after the last one. A job that
 stays in the failed set of the queue until someone returns it to the queue or deletes it through
 `/queues` (see `023-processor-app.md`).
 
+**The job is trusted.** The producers are the apps of the template, and they build the job from the
+type of the contract, so the processor does not validate it. A job of another shape, such as one an
+older release left in Redis, throws inside the use case, uses up its attempts and stays in the
+failed set with the `error` line of the failure handler. A change to the shape of a job keeps the
+processor reading the old shape until the queue holds none. The same holds for the
+`product-stock-post-subtract` queue (see `023-processor-app.md`).
+
 A retry of a job that did append is harmless: the ledger answers `appended: false` for a known key.
 A producer adds the job under its operation key, so a retried enqueue leaves one job while the first
 one is in the queue (see `022-enqueue-after-commit.md`), and the ledger catches the rest.

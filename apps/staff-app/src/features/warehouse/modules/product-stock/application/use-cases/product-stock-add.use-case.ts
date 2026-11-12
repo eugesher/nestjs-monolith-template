@@ -66,16 +66,22 @@ export class ProductStockAddUseCase {
       throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 
+    const written = await this.write(command);
+    const { stock, productStockId, events } = written;
+    const added = events.filter((event) => event instanceof ProductStockAddedEvent);
+
+    await this.ledger.recordEvents({ productStockId, events: added });
+
+    this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
+
+    return stock;
+  }
+
+  private async write(command: IProductStockAddCommand): Promise<IProductStockAddWriteView> {
+    const { staffUserId, idempotencyKey } = command;
+
     try {
-      const written = await this.transaction.run(() => this.persist(command));
-      const { stock, productStockId, events } = written;
-      const added = events.filter((event) => event instanceof ProductStockAddedEvent);
-
-      await this.ledger.recordEvents({ productStockId, events: added });
-
-      this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
-
-      return stock;
+      return await this.transaction.run(() => this.persist(command));
     } catch (error) {
       await this.idempotency.release({ staffUserId, key: idempotencyKey });
 
