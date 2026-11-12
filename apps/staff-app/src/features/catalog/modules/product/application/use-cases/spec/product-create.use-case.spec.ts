@@ -212,5 +212,20 @@ describe('ProductCreateUseCase', () => {
       expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
       expect(recordCreated).not.toHaveBeenCalled();
     });
+
+    it('keeps the completed key when the ledger fails after the commit and rethrows', async () => {
+      recordCreated.mockRejectedValue(new Error('ledger down'));
+
+      await expect(
+        useCase.execute({
+          sku: 'SKU-0001',
+          name: 'Lamp',
+          staffUserId: 'staff-1',
+          idempotencyKey: 'key-1',
+        }),
+      ).rejects.toThrow('ledger down');
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(release).not.toHaveBeenCalled();
+    });
   });
 });

@@ -38,6 +38,12 @@ middleware has opened a context for it. `handleTick` runs the use case inside
 `CorrelationContextHelper.run` with no inbound id, which mints a new id for every tick. Everything
 the tick logs carries it, and nothing logs the root warning about a missing context.
 
+**Every replica purges.** processor-app scales with its queues (see `023-processor-app.md`), and
+`@Cron` fires in every replica, so each tick runs one purge per replica. That is harmless: a purge
+deletes by its cutoffs, so a concurrent one waits on the same row locks and then finds the rows
+gone. A deadlock between two of them fails one purge, which logs its warning, and the next tick
+retries. The guard below covers only the ticks of its own replica.
+
 **The cadence is a constant.** A decorator argument is evaluated when the class is defined, before
 DI can resolve a configured value. A configured cadence would need `SchedulerRegistry` and an
 interval that `onModuleDestroy` removes, or the timer would keep the process alive.

@@ -80,6 +80,11 @@ comes after it waits (see `021-pessimistic-locking.md`).
 
 **A replay writes nothing**, because the rows the first run changed are no longer picked.
 
+**A failed check is logged as a failed ledger record is.** Every failed attempt reaches
+`@OnQueueFailed`, and `ProductStockPostSubtractReportFailureUseCase` logs it with the product ids:
+at `warn` while attempts are left, at `error` after the last one. A sold-out product the check did
+not archive then shows in the logs, not only among the failed jobs of `/queues`.
+
 ## Running
 
 | Script                         | What it does                                    |

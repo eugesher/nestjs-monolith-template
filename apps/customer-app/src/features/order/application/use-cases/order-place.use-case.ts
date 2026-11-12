@@ -60,22 +60,28 @@ export class OrderPlaceUseCase {
       throw new OrderIdempotencyKeyReusedException(idempotencyKey);
     }
 
+    const view = await this.write(command);
+    const placedProductIds = view.products.map((product) => product.productId);
+
+    await this.ledger.recordPlaced({
+      orderId: view.id,
+      customerId,
+      productIds: placedProductIds,
+    });
+
+    this.logger.info(
+      { orderId: view.id, customerId, units: placedProductIds.length },
+      'Order placed',
+    );
+
+    return view;
+  }
+
+  private async write(command: IOrderPlaceCommand): Promise<IOrderView> {
+    const { customerId, idempotencyKey } = command;
+
     try {
-      const view = await this.transaction.run(() => this.persist(command));
-      const placedProductIds = view.products.map((product) => product.productId);
-
-      await this.ledger.recordPlaced({
-        orderId: view.id,
-        customerId,
-        productIds: placedProductIds,
-      });
-
-      this.logger.info(
-        { orderId: view.id, customerId, units: placedProductIds.length },
-        'Order placed',
-      );
-
-      return view;
+      return await this.transaction.run(() => this.persist(command));
     } catch (error) {
       await this.idempotency.release({ customerId, key: idempotencyKey });
 
