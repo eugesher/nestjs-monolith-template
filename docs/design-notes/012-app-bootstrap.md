@@ -73,13 +73,28 @@ paths. The page carries a security policy of its own (see `037-http-edge.md`).
 | `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
 | `APP_PIPE`                          | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |
-| `APP_FILTER`                        | `HttpExceptionFilter`, `DuplicateKeyExceptionFilter` | the error body and its log; processor-app has only the first                                            |
+| `APP_FILTER`                        | `HttpExceptionFilter`                                | the error body and its log                                                                              |
 
 Every module in `app/setup/` is named `*SetupModule`.
 
-**The two global filters catch disjoint types**, `HttpException` and `QueryFailedError`, so their
-order does not matter. A feature filter on a controller catches the domain exceptions of that
-feature first and hands the response to `HttpExceptionFilter`.
+**One global filter answers every error.** `HttpExceptionFilter` of `libs/http` carries `@Catch()`
+with no type:
+
+| Error                                                      | Status and body                                  |
+| ---------------------------------------------------------- | ------------------------------------------------ |
+| `HttpException`                                            | its own                                          |
+| `QueryFailedError` of a duplicate key (`MysqlErrorHelper`) | 409 `Resource already exists`                    |
+| any other                                                  | 500 `Internal Server Error`, without its message |
+
+A repository maps every expected duplicate to an outcome of its port (see `003-authentication.md`),
+so the 409 of the filter answers an unexpected one, such as the last guard of
+`011-multi-table-transaction.md`. One line `Response with error` logs the method, the URL, the
+status, the masked request body and the response, as a warning below 500 and as an error from 500,
+with the caught error under `err` when it is not an `HttpException`. The client finds the
+correlation id in the `x-correlation-id` header of every response, not in the body. Nest maps a 4xx
+error of the body parser to an `HttpException` before any filter runs. A feature filter on a
+controller catches the domain exceptions of that feature first and hands the response to
+`HttpExceptionFilter`.
 
 **One CLS context carries the correlation id, the transaction and the logs.**
 `LocalStorageSetupModule` of `libs/local-storage` is the root `ClsModule` of the app. Its middleware

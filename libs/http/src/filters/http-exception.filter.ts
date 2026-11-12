@@ -1,12 +1,22 @@
-import { Catch, HttpException, type ArgumentsHost, type ExceptionFilter } from '@nestjs/common';
+import {
+  Catch,
+  ConflictException,
+  HttpException,
+  InternalServerErrorException,
+  type ArgumentsHost,
+  type ExceptionFilter,
+} from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
+import { MysqlErrorHelper } from '@acme-libs/toolkit';
+
 import { RequestBodyHelper } from './request-body.helper';
 
-@Catch(HttpException)
-export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
+@Catch()
+export class HttpExceptionFilter implements ExceptionFilter {
   private static readonly SERVER_ERROR_STATUS = 500;
+  private static readonly DUPLICATE_KEY_MESSAGE = 'Resource already exists';
 
   constructor(
     private readonly adapterHost: HttpAdapterHost,
@@ -14,18 +24,21 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
     private readonly logger: PinoLogger,
   ) {}
 
-  public catch(exception: HttpException, host: ArgumentsHost): void {
+  public catch(exception: unknown, host: ArgumentsHost): void {
     const { httpAdapter } = this.adapterHost;
     const http = host.switchToHttp();
     const request = http.getRequest<{ body?: unknown }>();
-    const status = exception.getStatus();
-    const response = exception.getResponse();
+    const answered = HttpExceptionFilter.toHttpException(exception);
+    const status = answered.getStatus();
+    const response = answered.getResponse();
+    const cause = answered === exception ? {} : { err: exception };
     const details = {
       method: httpAdapter.getRequestMethod(request) as string,
       url: httpAdapter.getRequestUrl(request) as string,
       status,
       request: RequestBodyHelper.mask(request.body),
       response,
+      ...cause,
     };
 
     if (status >= HttpExceptionFilter.SERVER_ERROR_STATUS) {
@@ -35,5 +48,17 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
     }
 
     httpAdapter.reply(http.getResponse(), response, status);
+  }
+
+  private static toHttpException(exception: unknown): HttpException {
+    if (exception instanceof HttpException) {
+      return exception;
+    }
+
+    if (MysqlErrorHelper.isDuplicateKey(exception)) {
+      return new ConflictException(HttpExceptionFilter.DUPLICATE_KEY_MESSAGE);
+    }
+
+    return new InternalServerErrorException();
   }
 }

@@ -13,11 +13,11 @@ import {
 import { NoteHttpExceptionFilter } from '../note-http-exception.filter';
 
 describe('NoteHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: NoteHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new NoteHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

@@ -14,11 +14,11 @@ import {
 import { ReminderHttpExceptionFilter } from '../reminder-http-exception.filter';
 
 describe('ReminderHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: ReminderHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new ReminderHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

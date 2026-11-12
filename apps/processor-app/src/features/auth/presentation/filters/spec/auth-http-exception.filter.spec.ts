@@ -6,11 +6,11 @@ import { AuthInvalidCredentialsException, AuthUserInactiveException } from '../.
 import { AuthHttpExceptionFilter } from '../auth-http-exception.filter';
 
 describe('AuthHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: AuthHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new AuthHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 
