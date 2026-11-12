@@ -243,21 +243,26 @@ describe('core modules', () => {
       },
     );
 
-    it.each([
-      [
-        'application/use-cases',
-        'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
-      ],
-      ['shell', 'import { CredentialsLibModule } from "@acme-libs/credentials";'],
-    ])(
-      '%s may NOT reach the credentials — sign-in belongs to the auth modules of each app',
-      async (layer, code) => {
-        await expect({
-          file: `core/modules/src/__ledger-fixture__/${layer}/__fixture__.ts`,
-          code,
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('application may NOT reach the credentials contract — the lib adapter talks to it', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/application/use-cases/__fixture__.ts',
+        code: 'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('the module root MAY mount the credentials lib for the staff login', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+        code: 'import { CredentialsLibModule } from "@acme-libs/credentials";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a lib adapter MAY take the credentials contract', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
+        code: 'import { CREDENTIALS_LIB_PORT } from "@acme-libs/contracts/credentials";',
+      }).toPassArchitectureLint();
+    });
 
     it.each([
       ['domain', 'argon2'],

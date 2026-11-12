@@ -1,9 +1,7 @@
-import type { Nullable } from '@acme-libs/toolkit';
-
-import type { IAuthIdentityFindByEmailCommand, IAuthIdentityUserView } from '../interfaces';
+import type { IAuthIdentityLoginCommand, IAuthIdentityLoginView } from '../interfaces';
 
 export interface IAuthIdentityPort {
-  findByEmail(command: IAuthIdentityFindByEmailCommand): Promise<Nullable<IAuthIdentityUserView>>;
+  login(command: IAuthIdentityLoginCommand): Promise<IAuthIdentityLoginView>;
 }
 
 export const AUTH_IDENTITY_PORT = Symbol('AUTH_IDENTITY_PORT');

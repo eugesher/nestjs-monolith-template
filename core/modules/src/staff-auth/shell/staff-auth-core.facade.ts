@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common';
 
 import type { Nullable } from '@acme-libs/toolkit';
 import type {
-  IStaffAuthCoreFindByEmailCommand,
   IStaffAuthCoreFindSubjectCommand,
+  IStaffAuthCoreLoginCommand,
+  IStaffAuthCoreLoginView,
   IStaffAuthCorePort,
   IStaffAuthCoreSubjectView,
-  IStaffAuthCoreUserView,
 } from '@acme-core/contracts/staff-auth';
 
-import { StaffAuthCoreFindByEmailUseCase, StaffAuthCoreFindSubjectUseCase } from '../application';
+import { StaffAuthCoreFindSubjectUseCase, StaffAuthCoreLoginUseCase } from '../application';
 
 @Injectable()
 export class StaffAuthCoreFacade implements IStaffAuthCorePort {
   constructor(
     private readonly findSubject: StaffAuthCoreFindSubjectUseCase,
-    private readonly findByEmail: StaffAuthCoreFindByEmailUseCase,
+    private readonly login: StaffAuthCoreLoginUseCase,
   ) {}
 
   public async handleFindSubject(
@@ -24,9 +24,7 @@ export class StaffAuthCoreFacade implements IStaffAuthCorePort {
     return await this.findSubject.execute(command);
   }
 
-  public async handleFindByEmail(
-    command: IStaffAuthCoreFindByEmailCommand,
-  ): Promise<Nullable<IStaffAuthCoreUserView>> {
-    return await this.findByEmail.execute(command);
+  public async handleLogin(command: IStaffAuthCoreLoginCommand): Promise<IStaffAuthCoreLoginView> {
+    return await this.login.execute(command);
   }
 }

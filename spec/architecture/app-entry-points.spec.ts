@@ -148,11 +148,11 @@ describe('app entry points', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('main MAY take the Nest logger from nestjs-pino', async () => {
+  it('main may NOT take the Nest logger from nestjs-pino: the bootstrap lib sets it', async () => {
     await expect({
       file: 'apps/customer-app/src/main.ts',
       code: 'import { Logger } from "nestjs-pino";',
-    }).toPassArchitectureLint();
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it.each([

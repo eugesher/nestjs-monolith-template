@@ -13,16 +13,17 @@ export class ApiReference {
     [AppNameEnum.STAFF_APP]: {
       title: 'ACME staff API',
       description:
-        'The back-office surface: identity administration, the product catalog, the audit log, and the notes and reminders of each staff user.',
+        'The back-office surface: staff users, roles and permissions, the product catalog, sales orders, warehouse stock, the ledger, and the notes, reminders and tags of the staff.',
     },
     [AppNameEnum.CUSTOMER_APP]: {
       title: 'ACME customer API',
-      description: 'The customer-facing surface: sign-up and sign-in.',
+      description:
+        'The customer-facing surface: sign-up and sign-in, the product catalog, and the orders of the signed-in customer.',
     },
     [AppNameEnum.PROCESSOR_APP]: {
       title: 'ACME processor app',
       description:
-        'The background worker: health probes only; its work comes from queues and schedules.',
+        'The background worker: the staff login and the failed jobs of its queues; the rest of its work comes from queues and schedules.',
     },
   };
   private static readonly SCRIPT_HOST = 'https://cdn.jsdelivr.net';

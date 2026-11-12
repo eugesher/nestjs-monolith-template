@@ -21,10 +21,15 @@ feature keeps the plain `Auth` prefix.
 | infrastructure | `infrastructure/persistence/repositories/auth-login.repository.ts`, `infrastructure/lib-adapters/auth-credentials-lib.adapter.ts` |
 | domain         | `domain/models/`, `domain/exceptions/base/auth-base.exception.ts`                                                                 |
 
-**Login lives in the feature.** No other module logs anyone in, so the use case reads the user,
-checks the password and signs the token itself (see `024-code-placement.md`).
+**A customer logs in inside the feature, the staff inside core.** No other module of customer-app
+logs anyone in, so its `AuthLoginUseCase` reads the customer, checks the password and signs the
+token itself. The staff log in to staff-app and to processor-app, so their login lives in the core
+module `staff-auth` as `StaffAuthCoreLoginUseCase` (see `024-code-placement.md` and
+`017-credentials-lib.md`). It answers an outcome, and `AuthLoginUseCase` of each app turns
+`invalid-credentials` and `user-inactive` into the exceptions of its feature (see
+`027-core-module-outcomes.md`), so the two apps answer a login the same way.
 
-**An unknown email costs as much as a wrong password.** `AuthLoginUseCase` checks the password
+**An unknown email costs as much as a wrong password.** Each login use case checks the password
 before it looks at whether the user was found, and passes `passwordHash: null` for an unknown email;
 the lib then runs argon2id against a dummy hash (see `017-credentials-lib.md`). Both cases answer
 the same 401 after one hash, so the response time does not tell whether an address is registered.

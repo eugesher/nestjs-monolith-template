@@ -1,20 +1,21 @@
 import { StaffAuthCoreFacade } from '../staff-auth-core.facade';
-import type {
-  StaffAuthCoreFindByEmailUseCase,
-  StaffAuthCoreFindSubjectUseCase,
-} from '../../application';
+import type { StaffAuthCoreFindSubjectUseCase, StaffAuthCoreLoginUseCase } from '../../application';
 
 describe('StaffAuthCoreFacade', () => {
   let findSubject: jest.Mock;
-  let findByEmail: jest.Mock;
+  let login: jest.Mock;
   let facade: StaffAuthCoreFacade;
 
   beforeEach(() => {
     findSubject = jest.fn().mockResolvedValue(null);
-    findByEmail = jest.fn().mockResolvedValue(null);
+    login = jest.fn().mockResolvedValue({
+      outcome: 'logged-in',
+      userId: 'user-1',
+      accessToken: 'access-token',
+    });
     facade = new StaffAuthCoreFacade(
       { execute: findSubject } as unknown as StaffAuthCoreFindSubjectUseCase,
-      { execute: findByEmail } as unknown as StaffAuthCoreFindByEmailUseCase,
+      { execute: login } as unknown as StaffAuthCoreLoginUseCase,
     );
   });
 
@@ -27,12 +28,15 @@ describe('StaffAuthCoreFacade', () => {
     });
   });
 
-  describe('handleFindByEmail', () => {
-    it('hands the command to the find by email use case', async () => {
-      const user = await facade.handleFindByEmail({ email: 'admin@example.com' });
+  describe('handleLogin', () => {
+    it('hands the command to the login use case', async () => {
+      const view = await facade.handleLogin({
+        email: 'admin@example.com',
+        password: 'correct-horse',
+      });
 
-      expect(user).toBeNull();
-      expect(findByEmail).toHaveBeenCalledWith({ email: 'admin@example.com' });
+      expect(view).toEqual({ outcome: 'logged-in', userId: 'user-1', accessToken: 'access-token' });
+      expect(login).toHaveBeenCalledWith({ email: 'admin@example.com', password: 'correct-horse' });
     });
   });
 });

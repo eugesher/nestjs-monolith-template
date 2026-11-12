@@ -3,12 +3,20 @@ import type { IPageWindowOptions } from './page-window-options.interface';
 import type { IPage } from './page.interface';
 
 export class PaginationHelper {
+  public static readonly MAX_PAGE = 1000;
+  public static readonly MAX_LIMIT = 100;
+
   public static clampPageWindow(
     page: number | undefined,
     limit: number | undefined,
     options: IPageWindowOptions = {},
   ): IPageRequest {
-    const { defaultPage = 1, defaultLimit = 20, maxLimit = 100, maxPage = 1000 } = options;
+    const {
+      defaultPage = 1,
+      defaultLimit = 20,
+      maxLimit = PaginationHelper.MAX_LIMIT,
+      maxPage = PaginationHelper.MAX_PAGE,
+    } = options;
     const flooredPage = Math.floor(page ?? 0);
     const flooredLimit = Math.floor(limit ?? 0);
     const clampedPage = flooredPage > 0 ? Math.min(flooredPage, maxPage) : defaultPage;

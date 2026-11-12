@@ -1,19 +1,3 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsPositive } from 'class-validator';
+import { PageQueryDto } from '@acme-libs/http';
 
-export class TagGetManyQueryDto {
-  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public page?: number;
-
-  @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public limit?: number;
-}
+export class TagGetManyQueryDto extends PageQueryDto {}

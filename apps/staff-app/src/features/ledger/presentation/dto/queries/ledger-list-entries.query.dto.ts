@@ -1,22 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
-export class LedgerListEntriesQueryDto {
-  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public page?: number;
+import { PageQueryDto } from '@acme-libs/http';
 
-  @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public limit?: number;
-
+export class LedgerListEntriesQueryDto extends PageQueryDto {
   @ApiPropertyOptional({ example: 'product' })
   @IsOptional()
   @IsString()

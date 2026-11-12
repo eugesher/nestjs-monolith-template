@@ -1,4 +1,6 @@
-import type { UserStatusEnum } from '@acme-libs/kernel';
+import type { Maybe } from '@acme-libs/toolkit';
+
+import type { AuthIdentityLoginOutcomeEnum } from '../../enums/auth-identity-login-outcome.enum';
 
 export interface IAuthIdentitySubjectView {
   id: string;
@@ -6,8 +8,8 @@ export interface IAuthIdentitySubjectView {
   roles: string[];
 }
 
-export interface IAuthIdentityUserView {
-  id: string;
-  passwordHash: string;
-  status: UserStatusEnum;
+export interface IAuthIdentityLoginView {
+  outcome: AuthIdentityLoginOutcomeEnum;
+  userId: Maybe<string>;
+  accessToken: Maybe<string>;
 }

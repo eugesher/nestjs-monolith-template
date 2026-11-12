@@ -1,24 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
+import { PageQueryDto } from '@acme-libs/http';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
-export class ReminderGetManyQueryDto {
-  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public page?: number;
-
-  @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public limit?: number;
-
+export class ReminderGetManyQueryDto extends PageQueryDto {
   @ApiPropertyOptional({ enum: ReminderStatusEnum })
   @IsOptional()
   @IsEnum(ReminderStatusEnum)
