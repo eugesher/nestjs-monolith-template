@@ -6,6 +6,7 @@ import { OrmModule } from '@acme-libs/database';
 import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
+  HttpSecuritySetupModule,
   StrictValidationPipe,
   ThrottleSetupModule,
 } from '@acme-libs/http';
@@ -36,6 +37,7 @@ import { ConfigSetupModule } from './setup';
     OrmModule.forRoot(entities),
     BullSetupModule.forRoot(),
     CacheLibModule,
+    HttpSecuritySetupModule.forRoot(),
     ThrottleSetupModule.forRoot(),
     AuthGlobalModule,
     HealthModule,

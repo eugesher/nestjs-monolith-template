@@ -162,6 +162,10 @@ Replace these values in the three app files:
 Behind a load balancer or a reverse proxy, also set `HTTP_TRUST_PROXY_HOPS` to the number of proxies
 in front of the apps: the request limits count per client address.
 
+For a browser client served from another origin, list that origin in `HTTP_CORS_ORIGINS`, for
+example `https://app.example.com`, or several separated by commas. Left empty, a browser refuses
+every call from another origin.
+
 In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
 
 Create the file with the passwords of the database and Redis, and fill in its three values:

@@ -127,6 +127,10 @@ a `:run` repeated within the window stays under them. The case that spends the a
 second address is still served. A repeated run finds that address blocked already, and the case
 asserts only the last call, so it passes either way.
 
+**`.env.test` allows one browser origin.** `HTTP_CORS_ORIGINS=https://app.example.test` lets the
+health suite of each app check the preflight of an allowed origin and the missing header for any
+other (see `037-http-edge.md`).
+
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
 `Date` come back a day early, so the reminder cases catch it.
 

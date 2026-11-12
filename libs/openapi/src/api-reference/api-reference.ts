@@ -1,7 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { randomBytes } from 'crypto';
+import helmet, { type HelmetOptions } from 'helmet';
 import type { INestApplication } from '@nestjs/common';
+import type { IncomingMessage, ServerResponse } from 'http';
 
 import { AppNameEnum } from '@acme-libs/kernel';
 
@@ -22,6 +25,8 @@ export class ApiReference {
         'The background worker: health probes only; its work comes from queues and schedules.',
     },
   };
+  private static readonly SCRIPT_HOST = 'https://cdn.jsdelivr.net';
+  private static readonly FONT_HOST = 'https://fonts.scalar.com';
 
   public static setup(app: INestApplication, appName: AppNameEnum, port: number): void {
     const config = app.get(ConfigService);
@@ -39,8 +44,43 @@ export class ApiReference {
       .addServer(`http://localhost:${port}`, 'Local')
       .build();
     const document = SwaggerModule.createDocument(app, options);
-    const reference = apiReference({ content: document });
+    const nonces = new WeakMap<ServerResponse, string>();
+    const assignNonce = (_req: IncomingMessage, res: ServerResponse, next: () => void): void => {
+      nonces.set(res, randomBytes(16).toString('base64'));
+      next();
+    };
+    const helmetOptions = ApiReference.helmetOptions(nonces);
+    const headers = helmet(helmetOptions);
+    const render = (req: IncomingMessage, res: ServerResponse): void => {
+      const nonce = nonces.get(res);
+      const reference = apiReference({ content: document, nonce });
 
-    app.use(`/${prefix}/reference`, reference);
+      reference(req, res);
+    };
+
+    app.use(`/${prefix}/reference`, assignNonce, headers, render);
+  }
+
+  private static helmetOptions(nonces: WeakMap<ServerResponse, string>): HelmetOptions {
+    const nonce = (_req: IncomingMessage, res: ServerResponse): string =>
+      `'nonce-${nonces.get(res)}'`;
+
+    return {
+      contentSecurityPolicy: {
+        useDefaults: false,
+        directives: {
+          defaultSrc: ["'none'"],
+          scriptSrc: ["'self'", ApiReference.SCRIPT_HOST, nonce],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          fontSrc: ["'self'", ApiReference.FONT_HOST],
+          imgSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          baseUri: ["'none'"],
+          formAction: ["'none'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+      frameguard: { action: 'deny' },
+    };
   }
 }

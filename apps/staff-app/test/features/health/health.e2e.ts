@@ -52,6 +52,46 @@ export class HealthE2E {
           ],
         ]);
       });
+      it('should set the security headers of helmet', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/health')
+          .expect(HttpStatus.OK);
+
+        expect({
+          headers: {
+            'content-security-policy': response.headers['content-security-policy'],
+            'strict-transport-security': response.headers['strict-transport-security'],
+            'x-content-type-options': response.headers['x-content-type-options'],
+            'x-frame-options': response.headers['x-frame-options'],
+            'x-powered-by': response.headers['x-powered-by'],
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should answer the preflight of an origin of HTTP_CORS_ORIGINS', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .options('/api/health')
+          .set('origin', 'https://app.example.test')
+          .set('access-control-request-method', 'GET')
+          .expect(HttpStatus.NO_CONTENT);
+
+        expect({
+          headers: {
+            'access-control-allow-origin': response.headers['access-control-allow-origin'],
+            'access-control-allow-methods': response.headers['access-control-allow-methods'],
+            'access-control-expose-headers': response.headers['access-control-expose-headers'],
+          },
+        }).toMatchSnapshot();
+      });
+
+      it('should not allow an origin outside HTTP_CORS_ORIGINS', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/health')
+          .set('origin', 'https://evil.example.test')
+          .expect(HttpStatus.OK);
+
+        expect(response.headers['access-control-allow-origin']).toBeUndefined();
+      });
     });
   }
 
