@@ -6,11 +6,11 @@ import { AuthRoleNameTakenException, AuthRoleNotFoundException } from '../../../
 import { RoleHttpExceptionFilter } from '../role-http-exception.filter';
 
 describe('RoleHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: RoleHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new RoleHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

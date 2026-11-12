@@ -4,7 +4,6 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { CacheLibModule } from '@acme-libs/cache';
 import { OrmModule } from '@acme-libs/database';
 import {
-  DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
   HttpSecuritySetupModule,
   StrictValidationPipe,
@@ -39,7 +38,6 @@ import { ConfigSetupModule } from './setup';
   providers: [
     { provide: APP_PIPE, useClass: StrictValidationPipe },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
-    { provide: APP_FILTER, useClass: DuplicateKeyExceptionFilter },
   ],
 })
 export class AppModule {}

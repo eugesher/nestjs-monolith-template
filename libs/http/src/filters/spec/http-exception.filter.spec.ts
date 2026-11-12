@@ -4,6 +4,7 @@ import {
   ServiceUnavailableException,
   type ArgumentsHost,
 } from '@nestjs/common';
+import { QueryFailedError } from 'typeorm';
 import type { HttpAdapterHost } from '@nestjs/core';
 import type { PinoLogger } from 'nestjs-pino';
 
@@ -82,5 +83,69 @@ describe('HttpExceptionFilter', () => {
       'Response with error',
     );
     expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('answers a duplicate key with 409 and logs it as a warning with the query failure', () => {
+    const driverError = Object.assign(new Error('Duplicate entry'), { errno: 1062 });
+    const exception = new QueryFailedError('INSERT', [], driverError);
+
+    filter.catch(exception, host);
+
+    expect(reply).toHaveBeenCalledWith(
+      'response',
+      { statusCode: 409, message: 'Resource already exists', error: 'Conflict' },
+      409,
+    );
+    expect(logger.warn).toHaveBeenCalledWith(
+      {
+        method: 'POST',
+        url: '/api/items',
+        status: 409,
+        request: { title: 'Lamp', password: '[REDACTED]' },
+        response: { statusCode: 409, message: 'Resource already exists', error: 'Conflict' },
+        err: exception,
+      },
+      'Response with error',
+    );
+  });
+
+  it('answers another query failure with 500 and logs it as an error with the failure', () => {
+    const driverError = Object.assign(new Error('Deadlock'), { errno: 1213 });
+    const exception = new QueryFailedError('UPDATE', [], driverError);
+
+    filter.catch(exception, host);
+
+    expect(reply).toHaveBeenCalledWith(
+      'response',
+      { statusCode: 500, message: 'Internal Server Error' },
+      500,
+    );
+    expect(logger.error).toHaveBeenCalledWith(
+      {
+        method: 'POST',
+        url: '/api/items',
+        status: 500,
+        request: { title: 'Lamp', password: '[REDACTED]' },
+        response: { statusCode: 500, message: 'Internal Server Error' },
+        err: exception,
+      },
+      'Response with error',
+    );
+  });
+
+  it('answers an unknown error with 500 without its message', () => {
+    const exception = new Error('connect ECONNREFUSED 10.0.0.7:3306');
+
+    filter.catch(exception, host);
+
+    expect(reply).toHaveBeenCalledWith(
+      'response',
+      { statusCode: 500, message: 'Internal Server Error' },
+      500,
+    );
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 500, err: exception }),
+      'Response with error',
+    );
   });
 });

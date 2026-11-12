@@ -1,4 +1,3 @@
-export * from './filters/duplicate-key-exception.filter';
 export * from './filters/http-exception.filter';
 export * from './idempotency/decorators/idempotency-key.decorator';
 export * from './security/http-security-setup.module';

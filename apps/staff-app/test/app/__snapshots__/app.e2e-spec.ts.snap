@@ -2091,6 +2091,33 @@ exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the r
 }
 `;
 
+exports[`App Tools Note PATCH /api/tools/notes/:noteId should answer 500 and roll the note back when the revision table is missing 1`] = `
+{
+  "db": {
+    "note": [
+      {
+        "author_id": "1",
+        "body": "Edited while a revision is taken.",
+        "created_at": 2026-01-01T00:00:00.000Z,
+        "deleted_at": null,
+        "id": "203",
+        "resolved": 0,
+        "subject_id": "T-1",
+        "subject_type": "ticket",
+        "updated_at": 2026-01-01T00:00:00.000Z,
+        "version": 1,
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "message": "Internal Server Error",
+      "statusCode": 500,
+    },
+  },
+}
+`;
+
 exports[`App Tools Note PATCH /api/tools/notes/:noteId should hide the note of another staff user with 404 and write nothing 1`] = `
 {
   "db": {

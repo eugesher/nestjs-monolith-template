@@ -257,6 +257,25 @@ export class NoteE2E {
         }
       });
 
+      it('should answer 500 and roll the note back when the revision table is missing', async () => {
+        await this.ctx.dataSource.query('RENAME TABLE note_revision TO note_revision_moved');
+
+        try {
+          const response = await request(this.ctx.app.getHttpServer())
+            .patch('/api/tools/notes/203')
+            .auth(this.ctx.adminToken, { type: 'bearer' })
+            .send({ body: 'This edit fails on the revision.' })
+            .expect(HttpStatus.INTERNAL_SERVER_ERROR);
+
+          expect({
+            response: { body: response.body },
+            db: { note: await this.ctx.dataSource.query('SELECT * FROM note WHERE id = 203') },
+          }).toMatchSnapshot();
+        } finally {
+          await this.ctx.dataSource.query('RENAME TABLE note_revision_moved TO note_revision');
+        }
+      });
+
       it('should hide the note of another staff user with 404 and write nothing', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/tools/notes/204')

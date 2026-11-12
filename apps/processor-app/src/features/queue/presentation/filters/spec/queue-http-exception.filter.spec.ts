@@ -10,11 +10,11 @@ import {
 import { QueueHttpExceptionFilter } from '../queue-http-exception.filter';
 
 describe('QueueHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: QueueHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new QueueHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

@@ -11,11 +11,11 @@ import {
 import { ProductStockHttpExceptionFilter } from '../product-stock-http-exception.filter';
 
 describe('ProductStockHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: ProductStockHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new ProductStockHttpExceptionFilter(
       httpExceptionFilter as unknown as HttpExceptionFilter,
     );

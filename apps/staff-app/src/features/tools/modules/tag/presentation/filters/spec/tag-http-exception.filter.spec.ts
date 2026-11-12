@@ -10,11 +10,11 @@ import {
 import { TagHttpExceptionFilter } from '../tag-http-exception.filter';
 
 describe('TagHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: TagHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new TagHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

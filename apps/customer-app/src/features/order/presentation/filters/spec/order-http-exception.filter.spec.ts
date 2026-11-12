@@ -13,11 +13,11 @@ import {
 import { OrderHttpExceptionFilter } from '../order-http-exception.filter';
 
 describe('OrderHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: OrderHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new OrderHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 

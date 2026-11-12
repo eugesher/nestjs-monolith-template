@@ -12,11 +12,11 @@ import {
 import { UserHttpExceptionFilter } from '../user-http-exception.filter';
 
 describe('UserHttpExceptionFilter', () => {
-  let httpExceptionFilter: jest.Mocked<Pick<HttpExceptionFilter, 'catch'>>;
+  let httpExceptionFilter: { catch: jest.Mock<void, [HttpException, ArgumentsHost]> };
   let filter: UserHttpExceptionFilter;
 
   beforeEach(() => {
-    httpExceptionFilter = { catch: jest.fn() };
+    httpExceptionFilter = { catch: jest.fn() as jest.Mock<void, [HttpException, ArgumentsHost]> };
     filter = new UserHttpExceptionFilter(httpExceptionFilter as unknown as HttpExceptionFilter);
   });
 
