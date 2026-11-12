@@ -6,11 +6,11 @@ The lib has the shape of `libs/health`: one port in `libs/contracts/src/credenti
 `CREDENTIALS_LIB_PORT`, implemented by `CredentialsLibFacade`. The facade hands each method to a use
 case, and the use cases reach the libraries through ports of the lib's own `outbound`:
 
-| Facade method           | Use case                               | Adapter                               | Reads                                                                         |
-| ----------------------- | -------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
-| `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                |
-| `handleHashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST` |
-| `handleVerifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | —                                                                             |
+| Facade method           | Use case                               | Adapter                               | Reads                                                                                                                                        |
+| ----------------------- | -------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                                                                               |
+| `handleHashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST`, `AUTH_ARGON2_MAX_CONCURRENCY`, `AUTH_ARGON2_QUEUE_TIMEOUT_MS` |
+| `handleVerifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MAX_CONCURRENCY`, `AUTH_ARGON2_QUEUE_TIMEOUT_MS`                                                                                |
 
 **The lib reads the config of the app it runs in.** `CredentialsLibModule` takes the values from
 `ConfigService`, as `libs/cache` does, so the features bind no config tokens of their own, and each
@@ -18,6 +18,15 @@ app signs with its own secret.
 
 **The signer signs the subject alone.** `signAccessToken({ sub })` passes only `sub` to the JWT
 library, so a caller that hands it a wider object cannot widen the token.
+
+**The hasher runs a bounded number of hashes at once.** Each argon2id hash holds
+`AUTH_ARGON2_MEMORY_COST` KiB, so a flood of logins from many addresses would grow the memory of the
+process with every request. `CredentialsLibPasswordHasherAdapter` runs `hash` and `verify` through
+`CredentialsLibPasswordHasherSemaphore`: at most `AUTH_ARGON2_MAX_CONCURRENCY` at a time, the others
+wait in order. A call that waits longer than `AUTH_ARGON2_QUEUE_TIMEOUT_MS` leaves the queue with a
+`ServiceUnavailableException`, a `503` that the shared `HttpExceptionFilter` logs as an error. The
+semaphore lives in the adapter, so every caller of the lib shares one per process: login,
+registration and the users that staff-app creates.
 
 **Features reach the lib through lib adapters.** The module root imports `CredentialsLibModule`; the
 feature declares a port of its own (`AUTH_CREDENTIALS_PORT`) and implements it in

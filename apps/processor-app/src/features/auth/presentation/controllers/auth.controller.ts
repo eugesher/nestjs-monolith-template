@@ -2,6 +2,7 @@ import { Body, Controller, HttpCode, HttpStatus, Post, UseFilters } from '@nestj
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { Public } from '@acme-libs/auth';
+import { AuthThrottle } from '@acme-libs/http';
 
 import { AuthLoginUseCase } from '../../application';
 import { AuthAccessTokenResponseDto, AuthLoginRequestDto } from '../dto';
@@ -15,6 +16,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @AuthThrottle()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange staff credentials for an access token' })
   @ApiOkResponse({ type: AuthAccessTokenResponseDto })

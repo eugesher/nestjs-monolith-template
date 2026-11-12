@@ -51,6 +51,14 @@ export class ConfigSetupModule {
           .required(),
         AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().required(),
         AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().required(),
+        AUTH_ARGON2_MAX_CONCURRENCY: Joi.number().integer().positive().required(),
+        AUTH_ARGON2_QUEUE_TIMEOUT_MS: Joi.number().integer().positive().required(),
+
+        HTTP_TRUST_PROXY_HOPS: Joi.number().integer().min(0).required(),
+        THROTTLE_TTL_MS: Joi.number().integer().positive().required(),
+        THROTTLE_LIMIT: Joi.number().integer().positive().required(),
+        THROTTLE_AUTH_TTL_MS: Joi.number().integer().positive().required(),
+        THROTTLE_AUTH_LIMIT: Joi.number().integer().positive().required(),
 
         LOG_LEVEL: Joi.string()
           .valid('fatal', 'error', 'warn', 'info', 'debug', 'trace')

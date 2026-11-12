@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseFilters } from '@
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, Public } from '@acme-libs/auth';
+import { AuthThrottle } from '@acme-libs/http';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { AuthLoginUseCase, AuthRegisterUseCase } from '../../application';
@@ -25,6 +26,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
+  @AuthThrottle()
   @ApiOperation({ summary: 'Sign up as a customer; log in afterwards for a token' })
   @ApiCreatedResponse({ type: AuthRegisterResponseDto })
   public async handleRegister(
@@ -35,6 +37,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @AuthThrottle()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange credentials for an access token' })
   @ApiOkResponse({ type: AuthAccessTokenResponseDto })

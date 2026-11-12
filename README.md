@@ -159,6 +159,9 @@ Replace these values in the three app files:
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://otel-collector:4318`                                                                      |
 | `OTEL_RESOURCE_ATTRIBUTES`    | `deployment.environment=production`                                                               |
 
+Behind a load balancer or a reverse proxy, also set `HTTP_TRUST_PROXY_HOPS` to the number of proxies
+in front of the apps: the request limits count per client address.
+
 In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
 
 Create the file with the passwords of the database and Redis, and fill in its three values:

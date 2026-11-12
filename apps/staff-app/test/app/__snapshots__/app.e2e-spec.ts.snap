@@ -357,6 +357,42 @@ exports[`App Access User POST /api/access/users should refuse a taken email in a
 }
 `;
 
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for a role that is not stored and change nothing 1`] = `
+{
+  "db": {
+    "staff_user_roles": [
+      {
+        "role_id": "2",
+        "user_id": "4",
+      },
+      {
+        "role_id": "3",
+        "user_id": "4",
+      },
+    ],
+  },
+  "response": {
+    "body": {
+      "code": "AUTH_ROLE_NOT_FOUND",
+      "message": "Role 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
+exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for an unknown user 1`] = `
+{
+  "response": {
+    "body": {
+      "code": "AUTH_USER_NOT_FOUND",
+      "message": "User 99 was not found",
+      "statusCode": 404,
+    },
+  },
+}
+`;
+
 exports[`App Access User PUT /api/access/users/:userId/roles should clear the roles with an empty list and answer 200 1`] = `
 {
   "db": {
@@ -392,42 +428,6 @@ exports[`App Access User PUT /api/access/users/:userId/roles should reassign the
         "2",
         "3",
       ],
-    },
-  },
-}
-`;
-
-exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for a role that is not stored and change nothing 1`] = `
-{
-  "db": {
-    "staff_user_roles": [
-      {
-        "role_id": "2",
-        "user_id": "4",
-      },
-      {
-        "role_id": "3",
-        "user_id": "4",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "AUTH_ROLE_NOT_FOUND",
-      "message": "Role 99 was not found",
-      "statusCode": 404,
-    },
-  },
-}
-`;
-
-exports[`App Access User PUT /api/access/users/:userId/roles should answer 404 for an unknown user 1`] = `
-{
-  "response": {
-    "body": {
-      "code": "AUTH_USER_NOT_FOUND",
-      "message": "User 99 was not found",
-      "statusCode": 404,
     },
   },
 }
@@ -481,6 +481,25 @@ exports[`App Auth GET /api/auth/me should take the roles from the database, not 
     "error": "Forbidden",
     "message": "Insufficient permissions",
     "statusCode": 403,
+  },
+}
+`;
+
+exports[`App Auth POST /api/auth/login should answer 429 to an address that spends the auth limit and keep serving another address 1`] = `
+{
+  "blocked": {
+    "body": {
+      "message": "Too many requests",
+      "statusCode": 429,
+    },
+    "retryAfter": StringMatching /\\^\\\\d\\+\\$/,
+  },
+  "other": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
   },
 }
 `;

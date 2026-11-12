@@ -64,3 +64,40 @@ the controller runs. The token carries only `sub`, `iat` and `exp`, and its life
 
 **The lifetime does not delay revocation.** The guard re-reads the user on every request (see
 `002-global-auth-guards.md`), so a change to the account applies to the next call.
+
+## Limits on the public routes
+
+Login and registration are public and each runs argon2id, so they carry the tightest limits of the
+app.
+
+**Every route has a limit per address, the credential routes a second one.** `ThrottleSetupModule`
+of `libs/http` mounts `ThrottleGuard`, a subclass of the `ThrottlerGuard` of `@nestjs/throttler`, as
+a global guard with two throttlers: `default` from `THROTTLE_TTL_MS` and `THROTTLE_LIMIT` on every
+route, and `auth` from `THROTTLE_AUTH_TTL_MS` and `THROTTLE_AUTH_LIMIT` on the routes marked
+`@AuthThrottle()`: login in the three apps and registration in customer-app. A request over a limit
+gets `429` with `{ statusCode, message: 'Too many requests' }` and a `Retry-After` header,
+`Retry-After-auth` for the second throttler. The guard counts per route and per client address; the
+address is `req.ip`, so behind a proxy it needs `HTTP_TRUST_PROXY_HOPS` (see
+`036-production-stack.md`).
+
+**The guard throws an object body.** The `ThrottlerException` of the package carries a string, and
+`HttpExceptionFilter` replies with `getResponse()` as it is, so the client would get plain text.
+`ThrottleGuard` overrides `throwThrottlingException` with an `HttpException` whose response is the
+object above.
+
+**The counters live in Redis, so the replicas of an app share them.** `ThrottleRedisStorage`
+increments a key `throttle:<hash>` and sets its expiry with the first hit, in one Lua script: a
+fixed window, and a hit over the limit is refused until the window ends. The package's own storage
+is in memory, so each replica would allow the limit again. `ThrottleSetupModule` hands the storage
+to `ThrottlerModule.forRootAsync` through its own `ThrottleStorageModule`: the storage stays a
+provider of Nest, so it reads `ConfigService` and closes its Redis connection on shutdown, where an
+instance built inside `useFactory` would never see `onApplicationShutdown`.
+
+**A Redis outage lifts the limits instead of failing the requests.** The client has no offline queue
+and a command timeout, as the cache has; a failed increment logs a warning and lets the request
+through, so an outage of Redis does not take login down with it.
+
+**The number of hashes at once is bounded too.** A limit per address does not stop a flood from many
+addresses, and every hash holds `AUTH_ARGON2_MEMORY_COST` KiB while it runs. The password hasher of
+`libs/credentials` therefore runs at most `AUTH_ARGON2_MAX_CONCURRENCY` hashes at a time (see
+`017-credentials-lib.md`).

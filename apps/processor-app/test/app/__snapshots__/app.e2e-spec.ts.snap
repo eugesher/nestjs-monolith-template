@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`App Auth POST /api/auth/login should answer 429 to an address that spends the auth limit and keep serving another address 1`] = `
+{
+  "blocked": {
+    "body": {
+      "message": "Too many requests",
+      "statusCode": 429,
+    },
+    "retryAfter": StringMatching /\\^\\\\d\\+\\$/,
+  },
+  "other": {
+    "body": {
+      "code": "AUTH_INVALID_CREDENTIALS",
+      "message": "Invalid credentials",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Auth POST /api/auth/login should issue an access token that opens the routes the user holds a permission for 1`] = `
 {
   "queues": [

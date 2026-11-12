@@ -52,6 +52,14 @@ app reads, so a value exported for compose cannot override the setting of a proc
 Redis healthcheck authenticates through `REDISCLI_AUTH`, the same variable the server takes its
 password from, so the healthcheck command carries no password.
 
+**`HTTP_TRUST_PROXY_HOPS` is the number of proxies in front of an app.** The request limits count
+per client address (see `003-authentication.md`), and Express takes that address from
+`X-Forwarded-For` only for as many hops as it trusts. The stack publishes the apps directly, so the
+examples set `0`; behind a load balancer or an ingress the value is the number of proxies on the
+way, and a value too high lets a client choose its own address with the header.
+`ThrottleSetupModule` sets `trust proxy` when the app starts, so `main.ts` and the e2e contexts need
+no call of their own.
+
 ## First administrator
 
 `scripts/node/admin-create.ts` runs once from the `migrations` image, after the migrations:
