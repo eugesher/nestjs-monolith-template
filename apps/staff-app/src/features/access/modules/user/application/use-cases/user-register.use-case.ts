@@ -51,7 +51,7 @@ export class UserRegisterUseCase {
     const inserted = await this.repository.insertUser({ email, passwordHash, status });
 
     if (inserted.outcome === UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE) {
-      throw new AuthEmailTakenException(email);
+      throw new AuthEmailTakenException();
     }
 
     const { id } = inserted;

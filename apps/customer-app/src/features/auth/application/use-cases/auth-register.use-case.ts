@@ -41,7 +41,7 @@ export class AuthRegisterUseCase {
 
     this.logger.info({ customerId: id }, 'Customer registered');
 
-    await this.ledger.recordRegistered({ customerId: id, email: draft.email });
+    await this.ledger.recordRegistered({ customerId: id });
 
     return { id, email: draft.email };
   }
@@ -50,7 +50,7 @@ export class AuthRegisterUseCase {
     const inserted = await this.repository.insert(draft);
 
     if (inserted.outcome === AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE) {
-      throw new AuthEmailTakenException(draft.email);
+      throw new AuthEmailTakenException();
     }
 
     return inserted.id;

@@ -2,6 +2,7 @@ import { Redis } from 'ioredis';
 import type { ConfigService } from '@nestjs/config';
 import type { PinoLogger } from 'nestjs-pino';
 
+import { TlsHelper } from '@acme-libs/config';
 import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import { ThrottleRedisStorage } from '../throttle-redis.storage';
@@ -35,12 +36,17 @@ describe('ThrottleRedisStorage', () => {
       REDIS_PORT: 6380,
       REDIS_PASSWORD: 'password',
       REDIS_COMMAND_TIMEOUT_MS: 500,
+      REDIS_TLS_CA: '',
     };
     const config = {
       getOrThrow: jest.fn((key: string) => values[key]),
     } as unknown as ConfigService;
 
     storage = new ThrottleRedisStorage(config, logger as unknown as PinoLogger);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('connects with REDIS_*, fails fast while disconnected and bounds every command', () => {
@@ -51,6 +57,30 @@ describe('ThrottleRedisStorage', () => {
       enableOfflineQueue: false,
       commandTimeout: 500,
     });
+  });
+
+  it('connects over TLS with the certificate authority of REDIS_TLS_CA', () => {
+    const options = jest
+      .spyOn(TlsHelper, 'options')
+      .mockReturnValue({ ca: '-----BEGIN CERTIFICATE-----' });
+
+    const values: Record<string, string | number> = {
+      REDIS_HOST: 'redis.example.com',
+      REDIS_PORT: 6380,
+      REDIS_PASSWORD: 'password',
+      REDIS_COMMAND_TIMEOUT_MS: 500,
+      REDIS_TLS_CA: '/run/secrets/redis-ca.pem',
+    };
+    const config = {
+      getOrThrow: jest.fn((key: string) => values[key]),
+    } as unknown as ConfigService;
+
+    storage = new ThrottleRedisStorage(config, logger as unknown as PinoLogger);
+
+    expect(options).toHaveBeenCalledWith('/run/secrets/redis-ca.pem');
+    expect(Redis).toHaveBeenLastCalledWith(
+      expect.objectContaining({ tls: { ca: '-----BEGIN CERTIFICATE-----' } }),
+    );
   });
 
   it('logs a Redis connection error as a warning', () => {

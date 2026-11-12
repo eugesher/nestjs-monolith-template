@@ -4,6 +4,8 @@ import { Redis } from 'ioredis';
 import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 import type { ThrottlerStorage } from '@nestjs/throttler';
 
+import { TlsHelper } from '@acme-libs/config';
+
 @Injectable()
 export class ThrottleRedisStorage implements ThrottlerStorage, OnApplicationShutdown {
   private static readonly KEY_PREFIX = 'throttle:';
@@ -24,8 +26,17 @@ export class ThrottleRedisStorage implements ThrottlerStorage, OnApplicationShut
     const port = config.getOrThrow<number>('REDIS_PORT');
     const password = config.getOrThrow<string>('REDIS_PASSWORD');
     const commandTimeout = config.getOrThrow<number>('REDIS_COMMAND_TIMEOUT_MS');
+    const caPath = config.getOrThrow<string>('REDIS_TLS_CA');
+    const tls = TlsHelper.options(caPath);
 
-    this.redis = new Redis({ host, port, password, enableOfflineQueue: false, commandTimeout });
+    this.redis = new Redis({
+      host,
+      port,
+      password,
+      tls,
+      enableOfflineQueue: false,
+      commandTimeout,
+    });
     this.redis.on('error', (error: Error) => {
       this.logger.warn(
         { err: error },

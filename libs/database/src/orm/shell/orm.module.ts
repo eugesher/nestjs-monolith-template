@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import type { DynamicModule } from '@nestjs/common';
 
+import { TlsHelper } from '@acme-libs/config';
 import { LocalStorageTransactionModule } from '@acme-libs/local-storage';
 import { ORM_PORT } from '@acme-libs/contracts/database';
 
@@ -35,6 +36,8 @@ export class OrmModule {
         const password = config.getOrThrow<string>('DATABASE_PASSWORD');
         const database = config.getOrThrow<string>('DATABASE_NAME');
         const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
+        const caPath = config.getOrThrow<string>('DATABASE_SSL_CA');
+        const ssl = TlsHelper.options(caPath);
         const namingStrategy = new SnakeNamingStrategy();
 
         return {
@@ -45,6 +48,7 @@ export class OrmModule {
           username,
           password,
           database,
+          ssl,
           logging,
           synchronize: false,
           timezone: 'Z',

@@ -24,9 +24,9 @@ The part has the shape of `libs/cache` (see `010-cache-aside.md`):
 
 `forRoot(entities)` returns a global module that binds `OrmFacade` under `ORM_PORT` and imports the
 connection from the private `forRootAsync(entities)`, which returns `TypeOrmModule.forRootAsync`
-with the options built from the `DATABASE_*` variables and `DATABASE_LOGGING`: MySQL, no
-`synchronize`, `timezone: 'Z'`, `dateStrings: ['DATE']` (see `010-cache-aside.md`), `utf8mb4` and
-`SnakeNamingStrategy`.
+with the options built from the `DATABASE_*` variables, `DATABASE_LOGGING` and `DATABASE_SSL_CA`:
+MySQL, no `synchronize`, `timezone: 'Z'`, `dateStrings: ['DATE']` (see `010-cache-aside.md`),
+`utf8mb4` and `SnakeNamingStrategy`.
 
 **The adapter answers the raw repository, the use case shapes it.** `OrmHostAdapter` answers
 `TransactionHost.tx.getRepository(entity)`, the TypeORM repository bound to the manager and the

@@ -31,6 +31,10 @@ the same 401 after one hash, so the response time does not tell whether an addre
 The registration of customer-app still answers 409 to a taken email: hiding it needs a confirmation
 by mail, and the route is under the `auth` limit below.
 
+**No address reaches the logs.** The warning `Login failed: unknown email` carries no email, so a
+guessing run does not leave a list of addresses in the logs. `AuthEmailTakenException` answers
+`Email is already registered` without the address, because the shared filter logs the response.
+
 **A route that only echoes the guard has no use case.** `handleMe` of customer-app copies
 `@CurrentUser()` into the response DTO: `AuthJwtGuard` has already re-read the user. In staff-app
 `AuthMeUseCase` asks the core module `staff-auth` through `AUTH_IDENTITY_PORT` and
@@ -58,8 +62,9 @@ takes another branch (see `004-append-only-journal.md` and `006-idempotency-keys
 
 `AuthHttpExceptionFilter` turns the code of `AuthBaseException` into an `HttpException` with the
 body `{ statusCode, message, code }` and hands it to the shared `HttpExceptionFilter` of
-`libs/http`. Logging, and masking of `password` in the logged request, stay in one place. The
-feature module provides `HttpExceptionFilter` so that Nest can inject it into the feature filter.
+`libs/http`. Logging, and masking of `password` and `email` in the logged request, stay in one
+place. The feature module provides `HttpExceptionFilter` so that Nest can inject it into the feature
+filter.
 
 ## One token per audience
 

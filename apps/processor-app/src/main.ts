@@ -22,7 +22,7 @@ const bootstrap = async (): Promise<void> => {
   app.setGlobalPrefix(prefix);
   app.enableShutdownHooks();
 
-  ApiReference.setup(app, AppNameEnum.PROCESSOR_APP, port);
+  ApiReference.setup(app, AppNameEnum.PROCESSOR_APP);
 
   await app.listen(port);
 

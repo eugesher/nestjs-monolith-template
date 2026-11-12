@@ -128,7 +128,7 @@ describe('UserRegisterUseCase', () => {
 
     await expect(register).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
-      message: 'Email editor@example.com is already registered',
+      message: 'Email is already registered',
     });
     expect(outcomes).toEqual(['begin']);
     expect(logger.info).not.toHaveBeenCalled();

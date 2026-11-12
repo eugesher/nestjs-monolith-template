@@ -1,5 +1,6 @@
 import argon2 from 'argon2';
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
 import Joi from 'joi';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
@@ -11,6 +12,10 @@ interface IAdminEnv {
   DATABASE_USER: string;
   DATABASE_PASSWORD: string;
   DATABASE_NAME: string;
+  DATABASE_SSL_CA: string;
+  AUTH_ARGON2_MEMORY_COST: number;
+  AUTH_ARGON2_TIME_COST: number;
+  AUTH_ARGON2_PARALLELISM: number;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD: string;
 }
@@ -34,6 +39,17 @@ const readEnv = (): IAdminEnv => {
     DATABASE_USER: Joi.string().required(),
     DATABASE_PASSWORD: Joi.string().required(),
     DATABASE_NAME: Joi.string().required(),
+    DATABASE_SSL_CA: Joi.string().allow('').required(),
+    AUTH_ARGON2_MEMORY_COST: Joi.number()
+      .integer()
+      .min(
+        Joi.ref('AUTH_ARGON2_PARALLELISM', {
+          adjust: (parallelism: number) => parallelism * 8,
+        }),
+      )
+      .required(),
+    AUTH_ARGON2_TIME_COST: Joi.number().integer().positive().required(),
+    AUTH_ARGON2_PARALLELISM: Joi.number().integer().positive().required(),
     ADMIN_EMAIL: Joi.string().trim().lowercase().email({ tlds: false }).max(255).required(),
     ADMIN_PASSWORD: Joi.string().min(12).required(),
   }).unknown();
@@ -73,10 +89,12 @@ const createAdmin = async (
 const run = async (env: IAdminEnv): Promise<void> => {
   const passwordHash = await argon2.hash(env.ADMIN_PASSWORD, {
     type: argon2.argon2id,
-    memoryCost: 19_456,
-    timeCost: 2,
-    parallelism: 1,
+    memoryCost: env.AUTH_ARGON2_MEMORY_COST,
+    timeCost: env.AUTH_ARGON2_TIME_COST,
+    parallelism: env.AUTH_ARGON2_PARALLELISM,
   });
+  const ssl =
+    env.DATABASE_SSL_CA === '' ? undefined : { ca: readFileSync(env.DATABASE_SSL_CA, 'utf8') };
   const dataSource = new DataSource({
     type: 'mysql',
     host: env.DATABASE_HOST,
@@ -84,6 +102,7 @@ const run = async (env: IAdminEnv): Promise<void> => {
     username: env.DATABASE_USER,
     password: env.DATABASE_PASSWORD,
     database: env.DATABASE_NAME,
+    ssl,
     timezone: 'Z',
   });
 

@@ -18,7 +18,9 @@ export class ConfigSetupModule {
         API_PREFIX: Joi.string()
           .pattern(/^[a-z0-9-]+$/)
           .required(),
-        API_USE_API_REFERENCE: Joi.boolean().required(),
+        API_USE_API_REFERENCE: Joi.boolean()
+          .when('NODE_ENV', { is: 'production', then: Joi.valid(false) })
+          .required(),
 
         DATABASE_HOST: Joi.string().hostname().required(),
         DATABASE_PORT: Joi.number().port().min(1).required(),
@@ -26,10 +28,12 @@ export class ConfigSetupModule {
         DATABASE_PASSWORD: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         DATABASE_LOGGING: Joi.boolean().required(),
+        DATABASE_SSL_CA: Joi.string().allow('').required(),
 
         REDIS_HOST: Joi.string().hostname().required(),
         REDIS_PORT: Joi.number().port().min(1).required(),
         REDIS_PASSWORD: Joi.string().required(),
+        REDIS_TLS_CA: Joi.string().allow('').required(),
         REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
 
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).required(),

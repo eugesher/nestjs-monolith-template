@@ -311,7 +311,7 @@ exports[`App Access User POST /api/access/users should let one of two simultaneo
   "refused": {
     "body": {
       "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email race-viewer@example.com is already registered",
+      "message": "Email is already registered",
       "statusCode": 409,
     },
   },
@@ -350,7 +350,7 @@ exports[`App Access User POST /api/access/users should refuse a taken email in a
   "response": {
     "body": {
       "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email editor@example.com is already registered",
+      "message": "Email is already registered",
       "statusCode": 409,
     },
   },

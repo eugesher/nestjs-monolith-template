@@ -40,6 +40,7 @@ describe('CacheLibModule', () => {
                 REDIS_PORT: 1,
                 REDIS_PASSWORD: 'password',
                 REDIS_COMMAND_TIMEOUT_MS: 500,
+                REDIS_TLS_CA: '',
               })[key],
           },
         },

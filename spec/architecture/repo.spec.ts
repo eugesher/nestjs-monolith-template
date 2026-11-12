@@ -70,7 +70,7 @@ describe('repo', () => {
       }).toBreakRule('boundaries/dependencies');
     });
 
-    it.each(['dotenv', 'joi', 'path', 'typeorm'])(
+    it.each(['dotenv', 'fs', 'joi', 'path', 'typeorm'])(
       'the migrations config MAY import %s',
       async (source) => {
         await expect({

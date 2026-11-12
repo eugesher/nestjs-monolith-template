@@ -29,6 +29,7 @@ describe('ThrottleSetupModule', () => {
                 REDIS_PORT: 1,
                 REDIS_PASSWORD: 'password',
                 REDIS_COMMAND_TIMEOUT_MS: 500,
+                REDIS_TLS_CA: '',
                 HTTP_TRUST_PROXY_HOPS: 1,
                 THROTTLE_TTL_MS: 60000,
                 THROTTLE_LIMIT: 300,

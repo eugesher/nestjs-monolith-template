@@ -34,7 +34,7 @@ describe('UserHttpExceptionFilter', () => {
     ['AUTH_PASSWORD_TOO_WEAK', 400, new AuthPasswordTooWeakException(12, 'domain message')],
     ['AUTH_USER_NOT_FOUND', 404, new AuthUserNotFoundException('1', 'domain message')],
     ['AUTH_ROLE_NOT_FOUND', 404, new AuthRoleNotFoundException('admin', 'domain message')],
-    ['AUTH_EMAIL_TAKEN', 409, new AuthEmailTakenException('ann@example.com', 'domain message')],
+    ['AUTH_EMAIL_TAKEN', 409, new AuthEmailTakenException('domain message')],
   ])(
     'maps %s to %i with the code and the domain message in the body',
     (code, status, exception) => {

@@ -52,6 +52,18 @@ app reads, so a value exported for compose cannot override the setting of a proc
 Redis healthcheck authenticates through `REDISCLI_AUTH`, the same variable the server takes its
 password from, so the healthcheck command carries no password.
 
+**TLS is on when a CA path is set.** `DATABASE_SSL_CA` and `REDIS_TLS_CA` hold the path of the
+certificate authority file inside the container; empty, the clients connect without TLS, as on the
+`backend` network of the stack. `TlsHelper` of `libs/config` reads the file for the four clients of
+the libs: the ORM, Bull, the cache and the request limits. The migrations data source and
+`admin-create.ts` read `DATABASE_SSL_CA` of `env/migrations/.env` themselves, since they import no
+lib. A path that cannot be read stops the process at boot. The certificate of the server is always
+verified against that authority.
+
+**The apps need no DDL.** The stack runs the apps and the migrations as one MySQL user, `acme`, with
+every privilege on the database. On a managed database the apps take a user with `SELECT`, `INSERT`,
+`UPDATE` and `DELETE` only, and `env/migrations/.env` takes another one that may change the schema.
+
 **`HTTP_TRUST_PROXY_HOPS` is the number of proxies in front of an app.** The request limits count
 per client address (see `003-authentication.md`), and Express takes that address from
 `X-Forwarded-For` only for as many hops as it trusts. The stack publishes the apps directly, so the
@@ -72,8 +84,11 @@ until its origin is listed (see `037-http-edge.md`).
   first account can grant access and nothing else until it gives itself more;
 - it writes in one transaction, so an email already taken fails without changes.
 
-The two variables are removed from the file afterwards. The script hashes the password with the cost
-parameters of the app env examples.
+The two variables are removed from the file afterwards. The script hashes the password with
+`AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_TIME_COST` and `AUTH_ARGON2_PARALLELISM` of the same file,
+validated by the rules of the apps. The migrations image mounts no env file of an app, so these
+values repeat those of `staff-app`; a hash made with lower costs would stay weaker than the others
+until the administrator changes the password.
 
 ## Tracing
 
