@@ -18,7 +18,7 @@ describe('LedgerLibQueueAdapter', () => {
   });
 
   describe('add', () => {
-    it('adds only the fields of the record as one job', async () => {
+    it('adds only the fields of the record as one job under the operation key', async () => {
       const record = {
         operationKey: 'item-opened:7',
         subjectType: 'item',
@@ -33,15 +33,18 @@ describe('LedgerLibQueueAdapter', () => {
       await adapter.add({ record, timeoutMs: 500 });
 
       expect(add).toHaveBeenCalledTimes(1);
-      expect(add).toHaveBeenCalledWith({
-        operationKey: 'item-opened:7',
-        subjectType: 'item',
-        subjectId: '7',
-        action: 'ItemOpened',
-        payload: { name: 'Lamp' },
-        occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
-      });
+      expect(add).toHaveBeenCalledWith(
+        {
+          operationKey: 'item-opened:7',
+          subjectType: 'item',
+          subjectId: '7',
+          action: 'ItemOpened',
+          payload: { name: 'Lamp' },
+          occurredAt: '2026-01-05T08:00:00.000Z',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
+        },
+        { jobId: 'item-opened:7' },
+      );
     });
 
     it('passes a failing add through', async () => {

@@ -40,15 +40,10 @@ export class LedgerLibQueueAdapter implements ILedgerLibQueuePort {
 
     try {
       await Promise.race([
-        this.queue.add({
-          operationKey,
-          subjectType,
-          subjectId,
-          action,
-          payload,
-          occurredAt,
-          correlationId,
-        }),
+        this.queue.add(
+          { operationKey, subjectType, subjectId, action, payload, occurredAt, correlationId },
+          { jobId: operationKey },
+        ),
         timeout,
       ]);
     } finally {

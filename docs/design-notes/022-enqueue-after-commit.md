@@ -31,13 +31,22 @@ and throws when it runs out; the caller reads it from `REDIS_COMMAND_TIMEOUT_MS`
 
 **The write stays committed.** The caller retries the enqueue through `ReplayRetryHelper`
 (`libs/toolkit/src/resilience/replay-retry.helper.ts`), `QUEUE_RETRY_ATTEMPTS` or
-`LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. A timed-out `add` may
-still reach Redis once it is back, so a processor must tolerate a duplicate job.
+`LEDGER_RETRY_ATTEMPTS` times, and then logs the job at `error` for a replay. The race does not
+cancel `add`: a timed-out command stays in the offline queue of the client and may still reach Redis
+once it is back, so the log says the record may be absent, and a processor must tolerate a duplicate
+job.
+
+**A ledger job is named by its operation key.** `LedgerLibQueueAdapter` adds the job with
+`jobId: operationKey`, and Bull adds no job under an id it already holds, so the retries of one
+record leave one job in the queue. The id is free again once the job is recorded, because
+`removeOnComplete` drops it, while a job that ran out of attempts keeps its id in the failed set: it
+is replayed through `/queues`, not enqueued again. The post-subtract queue has no such key, and its
+processor writes nothing on a replay.
 
 **The ledger is a lib with a facade.** `LedgerLibModule` (`libs/ledger`) exposes `LEDGER_LIB_PORT`
 with one method, `handleEnqueue`. `LedgerLibEnqueueUseCase` reads the retry attempts and the timeout
 from the configuration, retries and logs under the subject and the operation key;
-`LedgerLibQueueAdapter` holds the race and the fields of the job.
+`LedgerLibQueueAdapter` holds the race, the fields of the job and its id.
 
 **A module records through its lib adapter.** A module declares `<MODULE>_LEDGER_PORT` with the
 facts it records, such as `recordPlaced`, and implements it in

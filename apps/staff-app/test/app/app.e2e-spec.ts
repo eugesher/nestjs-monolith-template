@@ -91,6 +91,7 @@ describe('App', () => {
 
   describe('Ledger', () => {
     ledgerE2E.handleList();
+    ledgerE2E.handleEnqueue();
   });
 
   describe('Tools', () => {
