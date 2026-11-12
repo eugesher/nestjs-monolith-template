@@ -28,6 +28,12 @@ with the options built from the `DATABASE_*` variables, `DATABASE_LOGGING` and `
 MySQL, no `synchronize`, `timezone: 'Z'`, `dateStrings: ['DATE']` (see `010-cache-aside.md`),
 `utf8mb4` and `SnakeNamingStrategy`.
 
+**The pool is bounded twice.** `DATABASE_POOL_SIZE` becomes `poolSize`, the `connectionLimit` of the
+mysql2 pool. `DATABASE_POOL_QUEUE_LIMIT` becomes `extra.queueLimit`, the number of queries that may
+wait for a free connection; mysql2 has no timeout for that wait, so the limit is what keeps a query
+from waiting forever. A query past the limit fails at once with `Queue limit reached.` and the
+request answers 500. `0` lifts the limit, as mysql2 does by default.
+
 **The adapter answers the raw repository, the use case shapes it.** `OrmHostAdapter` answers
 `TransactionHost.tx.getRepository(entity)`, the TypeORM repository bound to the manager and the
 query runner of the current transaction, or of no transaction outside `TRANSACTION_PORT.run`.

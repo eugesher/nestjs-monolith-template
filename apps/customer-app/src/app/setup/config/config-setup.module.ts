@@ -29,6 +29,8 @@ export class ConfigSetupModule {
         DATABASE_NAME: Joi.string().required(),
         DATABASE_LOGGING: Joi.boolean().required(),
         DATABASE_SSL_CA: Joi.string().allow('').required(),
+        DATABASE_POOL_SIZE: Joi.number().integer().positive().required(),
+        DATABASE_POOL_QUEUE_LIMIT: Joi.number().integer().min(0).required(),
 
         REDIS_HOST: Joi.string().hostname().required(),
         REDIS_PORT: Joi.number().port().min(1).required(),

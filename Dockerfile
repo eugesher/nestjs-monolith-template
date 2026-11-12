@@ -58,4 +58,7 @@ COPY --from=builder /app/dist/apps/${APP_NAME}/ ./dist/
 
 USER node
 
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
+  CMD node --env-file-if-exists=env/apps/$APP_NAME/.env -e "fetch('http://127.0.0.1:' + process.env.PORT + '/' + process.env.API_PREFIX + '/health').then((response) => process.exit(response.ok ? 0 : 1), () => process.exit(1))"
+
 CMD ["sh", "-c", "exec node --env-file-if-exists=env/apps/$APP_NAME/.env dist/main.js"]

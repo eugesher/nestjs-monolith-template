@@ -37,6 +37,8 @@ export class OrmModule {
         const database = config.getOrThrow<string>('DATABASE_NAME');
         const logging = config.getOrThrow<boolean>('DATABASE_LOGGING');
         const caPath = config.getOrThrow<string>('DATABASE_SSL_CA');
+        const poolSize = config.getOrThrow<number>('DATABASE_POOL_SIZE');
+        const queueLimit = config.getOrThrow<number>('DATABASE_POOL_QUEUE_LIMIT');
         const ssl = TlsHelper.options(caPath);
         const namingStrategy = new SnakeNamingStrategy();
 
@@ -55,6 +57,8 @@ export class OrmModule {
           dateStrings: ['DATE'],
           charset: 'utf8mb4',
           namingStrategy,
+          poolSize,
+          extra: { queueLimit },
         };
       },
     });

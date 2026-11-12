@@ -5,7 +5,7 @@ import { IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
 import { ReminderStatusEnum } from '@acme-libs/kernel';
 
 export class ReminderGetManyQueryDto {
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

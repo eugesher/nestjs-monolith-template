@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 
 export class NoteGetManyQueryDto {
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

@@ -35,15 +35,21 @@ describe('PaginationHelper', () => {
       expect(pageWindow).toEqual({ page: 1, limit: 100, offset: 0 });
     });
 
+    it('caps an oversized page number so the offset stays a plain integer', () => {
+      const pageWindow = PaginationHelper.clampPageWindow(1e20, 100);
+
+      expect(pageWindow).toEqual({ page: 1000, limit: 100, offset: 99_900 });
+    });
+
     it('takes the defaults and the cap from the options', () => {
       const absent = PaginationHelper.clampPageWindow(undefined, undefined, {
         defaultPage: 2,
         defaultLimit: 5,
       });
-      const oversized = PaginationHelper.clampPageWindow(1, 10_000, { maxLimit: 50 });
+      const oversized = PaginationHelper.clampPageWindow(10, 10_000, { maxLimit: 50, maxPage: 3 });
 
       expect(absent).toEqual({ page: 2, limit: 5, offset: 5 });
-      expect(oversized).toEqual({ page: 1, limit: 50, offset: 0 });
+      expect(oversized).toEqual({ page: 3, limit: 50, offset: 100 });
     });
   });
 
