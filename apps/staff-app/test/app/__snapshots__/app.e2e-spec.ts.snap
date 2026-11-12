@@ -524,7 +524,7 @@ exports[`App Auth POST /api/auth/login should issue an access token of the subje
     "iat",
     "sub",
   ],
-  "lifetime": 2592000,
+  "lifetime": 43200,
   "me": {
     "email": "editor@example.com",
     "id": "2",

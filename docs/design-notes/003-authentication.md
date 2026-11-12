@@ -71,8 +71,12 @@ JWT guard would answer 401 before the controller runs. The token carries only `s
 and `exp`, and its lifetime is `JWT_EXPIRES_IN`. Signing lives in `libs/credentials` (see
 `017-credentials-lib.md`).
 
-**The lifetime does not delay revocation.** The guard re-reads the user on every request (see
-`002-global-auth-guards.md`), so a change to the account applies to the next call.
+**A disabled account stops at once, a token of an active one only at expiry.** The guard re-reads
+the user on every request (see `002-global-auth-guards.md`), so a disabled account or a changed role
+applies to the next call. Nothing revokes the token of an active user: there is no logout and no
+list of issued tokens, so a leaked token works until `exp`. The lifetime bounds that window, and it
+is short where the token carries the most power: `12h` in staff-app and processor-app, a working day
+without a second login, and `7d` in customer-app.
 
 ## Limits on the public routes
 
