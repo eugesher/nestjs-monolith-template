@@ -57,6 +57,8 @@ stays in the failed set of the queue until someone returns it to the queue or de
 `/queues` (see `023-processor-app.md`).
 
 A retry of a job that did append is harmless: the ledger answers `appended: false` for a known key.
+A producer adds the job under its operation key, so a retried enqueue leaves one job while the first
+one is in the queue (see `022-enqueue-after-commit.md`), and the ledger catches the rest.
 
 ## Logs
 

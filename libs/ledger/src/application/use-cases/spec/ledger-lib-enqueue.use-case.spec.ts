@@ -97,7 +97,7 @@ describe('LedgerLibEnqueueUseCase', () => {
           subjectId: '7',
           operationKey: 'item-opened:7',
         },
-        'Ledger enqueue failed permanently: the record is absent from the queue and the ledger, replay this record',
+        'Ledger enqueue failed permanently: the record may be absent from the queue and the ledger, replay this record',
       );
     });
   });
