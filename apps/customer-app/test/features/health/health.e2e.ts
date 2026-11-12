@@ -36,7 +36,7 @@ export class HealthE2E {
         );
       });
 
-      it('should replace an inbound correlation id that is not a UUID', async () => {
+      it('should replace an inbound correlation id that is not a UUID and warn on the root logger', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/health')
           .set('x-correlation-id', 'e2e-correlation-id')
@@ -45,6 +45,12 @@ export class HealthE2E {
         expect(response.headers['x-correlation-id']).toMatch(
           /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
         );
+        expect(this.ctx.takeRootWarnings()).toEqual([
+          [
+            { correlationId: response.headers['x-correlation-id'], inboundLength: 18 },
+            'Invalid inbound correlationId: not a UUID, a new correlationId is minted',
+          ],
+        ]);
       });
     });
   }

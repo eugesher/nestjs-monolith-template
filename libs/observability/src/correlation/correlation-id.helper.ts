@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto';
+import { PinoLogger } from 'nestjs-pino';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 import type { Maybe } from '@acme-libs/toolkit';
@@ -24,8 +25,21 @@ export class CorrelationIdHelper {
   }
 
   public static fromInbound(inbound: Maybe<string>): string {
-    const isUuid = inbound !== undefined && CorrelationIdHelper.UUID_PATTERN.test(inbound);
+    if (inbound === undefined || inbound === '') {
+      return randomUUID();
+    }
 
-    return isUuid ? inbound : randomUUID();
+    if (CorrelationIdHelper.UUID_PATTERN.test(inbound)) {
+      return inbound;
+    }
+
+    const minted = randomUUID();
+
+    (PinoLogger.root as Maybe<typeof PinoLogger.root>)?.warn(
+      { correlationId: minted, inboundLength: inbound.length },
+      'Invalid inbound correlationId: not a UUID, a new correlationId is minted',
+    );
+
+    return minted;
   }
 }

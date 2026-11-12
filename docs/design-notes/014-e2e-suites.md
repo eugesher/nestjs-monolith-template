@@ -133,7 +133,8 @@ afterEach(() => {
 ```
 
 A warning on the root logger means a correlation context was lost: `CorrelationContextHelper` logs
-one when it has to mint an id outside a request.
+one when it has to mint an id outside a request. `CorrelationIdHelper` logs one for an inbound id
+that is not a UUID, so the health case that sends one takes the warning and checks it.
 
 **A spy on `PinoLogger.root.warn` also sees the request loggers.** pino builds a child logger with
 `Object.create(parent)`, so the request logger inherits the spied method of the root. The context

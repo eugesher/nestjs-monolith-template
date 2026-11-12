@@ -99,9 +99,11 @@ context to every line, the `request completed` line of pino-http included.
 `VARCHAR(64)` columns, and MySQL runs with `STRICT_TRANS_TABLES`: a longer header would fail the
 insert of a note revision with a 500, and a ledger job would fail on every attempt.
 `CorrelationIdHelper.fromInbound` takes a UUID of any version and creates a new one for anything
-else. `resolve` calls it for the header, and `CorrelationContextHelper.run` for the id of a job, so
-a job queued before the check gets a valid id too. A client that sends another format loses the
-end-to-end correlation but not the request.
+else. A missing or empty id is replaced silently; any other value logs a warning on the root logger
+with the new id and the length of the value, never the value itself. `resolve` calls it for the
+header, and `CorrelationContextHelper.run` for the id of a job, so a job queued before the check
+gets a valid id too. A client that sends another format loses the end-to-end correlation but not the
+request.
 
 The entity list of each app holds exactly the entities of the modules it mounts. customer-app has no
 `Reminder` and no `LedgerEntry`: it writes to the ledger through the queue and mounts no core
