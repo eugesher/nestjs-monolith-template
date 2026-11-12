@@ -34,6 +34,10 @@ subject puts what tells the occurrences apart into the key, such as a version or
 
 The rejected insert still consumes an auto-increment value, so ids may have gaps.
 
+**A payload carries no personal data.** No row is ever deleted, so an address written once would
+stay for good. `AuthLedgerLibAdapter` records `CustomerRegistered` with the customer id as the
+subject and an empty payload; the email stays in the `customer` table.
+
 ## Time and correlation
 
 **An instant must carry its zone.** `LedgerAppendHelper.parseInstant` refuses `2026-01-01T00:00:00`,

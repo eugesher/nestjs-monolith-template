@@ -1,15 +1,21 @@
 export class RequestBodyHelper {
-  private static readonly SECRET_FIELDS = new Set(['password', 'currentPassword', 'newPassword']);
+  private static readonly MASKED_FIELDS = new Set(['password', 'email']);
   private static readonly MASK = '[REDACTED]';
 
   public static mask(body: unknown): unknown {
-    if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+    if (Array.isArray(body)) {
+      return body.map((item) => RequestBodyHelper.mask(item));
+    }
+
+    if (typeof body !== 'object' || body === null) {
       return body;
     }
 
     const entries = Object.entries(body as Record<string, unknown>).map(([field, value]) => [
       field,
-      RequestBodyHelper.SECRET_FIELDS.has(field) ? RequestBodyHelper.MASK : value,
+      RequestBodyHelper.MASKED_FIELDS.has(field)
+        ? RequestBodyHelper.MASK
+        : RequestBodyHelper.mask(value),
     ]);
 
     return Object.fromEntries(entries);

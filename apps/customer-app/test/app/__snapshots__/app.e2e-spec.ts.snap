@@ -153,9 +153,7 @@ exports[`App Auth POST /api/auth/register should create a customer who logs in a
       "correlationId": "e2e00000-0000-4000-8000-000000000002",
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
-      "payload": {
-        "email": "eve@example.com",
-      },
+      "payload": {},
       "subjectId": Any<String>,
       "subjectType": "customer",
     },
@@ -185,7 +183,7 @@ exports[`App Auth POST /api/auth/register should let one of two simultaneous sig
   "refused": {
     "body": {
       "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email gina@example.com is already registered",
+      "message": "Email is already registered",
       "statusCode": 409,
     },
   },
@@ -243,7 +241,7 @@ exports[`App Auth POST /api/auth/register should refuse a taken email in another
   "response": {
     "body": {
       "code": "AUTH_EMAIL_TAKEN",
-      "message": "Email ann@example.com is already registered",
+      "message": "Email is already registered",
       "statusCode": 409,
     },
   },

@@ -58,7 +58,7 @@ export const acmeLibs = [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt', 'argon2'),
   ]),
   fromLib('cache', [
-    libs('observability'),
+    libs('config', 'observability'),
     packages(
       '@nestjs/common',
       '@nestjs/config',
@@ -74,7 +74,7 @@ export const acmeLibs = [
     packages('@nestjs/common', '@nestjs/core', 'nestjs-pino', 'typeorm'),
   ]),
   fromLib('http', [
-    libs('observability'),
+    libs('config', 'observability'),
     packages(
       '@nestjs/common',
       '@nestjs/config',
@@ -90,7 +90,7 @@ export const acmeLibs = [
       'typeorm',
     ),
   ]),
-  fromLib('queue', [packages('@nestjs/bull', '@nestjs/common', '@nestjs/config')]),
+  fromLib('queue', [libs('config'), packages('@nestjs/bull', '@nestjs/common', '@nestjs/config')]),
   fromLib('openapi', [
     packages(
       '@nestjs/common',
@@ -105,7 +105,7 @@ export const acmeLibs = [
   fromLib('observability', [libs('config')]),
   fromLib('config', [packages('@nestjs/common', '@nestjs/config', 'fs', 'path')]),
   fromLib('database', [
-    libs('local-storage'),
+    libs('config', 'local-storage'),
     packages(
       '@nestjs-cls/transactional',
       '@nestjs-cls/transactional-adapter-typeorm',

@@ -14,7 +14,10 @@ export const repo = [
       'typescript-eslint',
     ),
   ]),
-  from('repo:migrations', [to('repo:migrations'), packages('dotenv', 'joi', 'path', 'typeorm')]),
+  from('repo:migrations', [
+    to('repo:migrations'),
+    packages('dotenv', 'fs', 'joi', 'path', 'typeorm'),
+  ]),
   from('repo:scripts', [
     to('repo:scripts'),
     packages('argon2', 'child_process', 'dotenv', 'fs', 'joi', 'os', 'path', 'typeorm'),

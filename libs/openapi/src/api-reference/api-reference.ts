@@ -28,7 +28,7 @@ export class ApiReference {
   private static readonly SCRIPT_HOST = 'https://cdn.jsdelivr.net';
   private static readonly FONT_HOST = 'https://fonts.scalar.com';
 
-  public static setup(app: INestApplication, appName: AppNameEnum, port: number): void {
+  public static setup(app: INestApplication, appName: AppNameEnum): void {
     const config = app.get(ConfigService);
 
     if (!config.getOrThrow<boolean>('API_USE_API_REFERENCE')) {
@@ -41,7 +41,6 @@ export class ApiReference {
       .setTitle(title)
       .setDescription(description)
       .addBearerAuth()
-      .addServer(`http://localhost:${port}`, 'Local')
       .build();
     const document = SwaggerModule.createDocument(app, options);
     const nonces = new WeakMap<ServerResponse, string>();

@@ -57,10 +57,7 @@ describe('AuthLoginUseCase', () => {
       passwordHash: null,
       password: 'correct-horse',
     });
-    expect(logger.warn).toHaveBeenCalledWith(
-      { email: 'ghost@example.com' },
-      'Login failed: unknown email',
-    );
+    expect(logger.warn).toHaveBeenCalledWith('Login failed: unknown email');
   });
 
   it('rejects a wrong password', async () => {

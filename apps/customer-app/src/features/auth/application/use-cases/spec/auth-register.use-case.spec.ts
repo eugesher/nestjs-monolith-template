@@ -88,7 +88,7 @@ describe('AuthRegisterUseCase', () => {
 
     await expect(register).rejects.toMatchObject({
       code: IdentityExceptionCodeEnum.AUTH_EMAIL_TAKEN,
-      message: 'Email ann@example.com is already registered',
+      message: 'Email is already registered',
     });
     expect(logger.info).not.toHaveBeenCalled();
   });
@@ -96,10 +96,7 @@ describe('AuthRegisterUseCase', () => {
   it('records the registered customer in the ledger', async () => {
     await useCase.execute({ email: 'Eve@Example.com', password: 'correct-horse-battery' });
 
-    expect(recordRegistered).toHaveBeenCalledWith({
-      customerId: '105',
-      email: 'eve@example.com',
-    });
+    expect(recordRegistered).toHaveBeenCalledWith({ customerId: '105' });
   });
 
   it('records nothing when the customer is refused', async () => {

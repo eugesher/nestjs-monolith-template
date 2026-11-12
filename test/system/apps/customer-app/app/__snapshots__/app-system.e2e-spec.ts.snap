@@ -19,9 +19,7 @@ exports[`App Auth POST /api/auth/register should create a customer and append th
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": Any<String>,
-        "payload": {
-          "email": "eve@example.com",
-        },
+        "payload": {},
         "recorded_at": Any<Date>,
         "subject_id": Any<String>,
         "subject_type": "customer",

@@ -159,6 +159,16 @@ Replace these values in the three app files:
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://otel-collector:4318`                                                                      |
 | `OTEL_RESOURCE_ATTRIBUTES`    | `deployment.environment=production`                                                               |
 
+For a managed MySQL or Redis that requires TLS, mount the file of its certificate authority into the
+containers and set its path in `DATABASE_SSL_CA` or `REDIS_TLS_CA`, also in `env/migrations/.env`
+for the database. Give the apps a MySQL user with `SELECT`, `INSERT`, `UPDATE` and `DELETE` on the
+database, and `env/migrations/.env` a user that may change the schema:
+
+```sql
+CREATE USER 'acme_app'@'%' IDENTIFIED BY '<password>';
+GRANT SELECT, INSERT, UPDATE, DELETE ON acme_db.* TO 'acme_app'@'%';
+```
+
 Behind a load balancer or a reverse proxy, also set `HTTP_TRUST_PROXY_HOPS` to the number of proxies
 in front of the apps: the request limits count per client address.
 
@@ -166,7 +176,8 @@ For a browser client served from another origin, list that origin in `HTTP_CORS_
 example `https://app.example.com`, or several separated by commas. Left empty, a browser refuses
 every call from another origin.
 
-In `env/migrations/.env`, set the `DATABASE_*` variables to the same values.
+In `env/migrations/.env`, set the `DATABASE_*` and `AUTH_ARGON2_*` variables to the same values as
+in `env/apps/staff-app/.env`.
 
 Create the file with the passwords of the database and Redis, and fill in its three values:
 

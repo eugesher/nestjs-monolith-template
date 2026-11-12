@@ -30,7 +30,7 @@ export class AuthLoginUseCase {
     const valid = await this.credentials.verifyPassword({ passwordHash, password });
 
     if (!user) {
-      this.logger.warn({ email: normalized }, 'Login failed: unknown email');
+      this.logger.warn('Login failed: unknown email');
 
       throw new AuthInvalidCredentialsException();
     }

@@ -55,7 +55,9 @@ e2e context built from `AppModule` without `main.ts` behaves like the running ap
 
 `ApiReference.setup` builds the OpenAPI document and serves it at `/<prefix>/reference` when
 `API_USE_API_REFERENCE` is true. It runs after `setGlobalPrefix`, so the document lists the prefixed
-paths. The page carries a security policy of its own (see `037-http-edge.md`).
+paths. The page carries a security policy of its own (see `037-http-edge.md`). The config schema
+accepts only `false` with `NODE_ENV=production`, so a production process never serves the schema of
+its API. The document lists no server, so the page calls the origin it is served from.
 
 ## AppModule
 
@@ -89,12 +91,13 @@ with no type:
 A repository maps every expected duplicate to an outcome of its port (see `003-authentication.md`),
 so the 409 of the filter answers an unexpected one, such as the last guard of
 `011-multi-table-transaction.md`. One line `Response with error` logs the method, the URL, the
-status, the masked request body and the response, as a warning below 500 and as an error from 500,
-with the caught error under `err` when it is not an `HttpException`. The client finds the
-correlation id in the `x-correlation-id` header of every response, not in the body. Nest maps a 4xx
-error of the body parser to an `HttpException` before any filter runs. A feature filter on a
-controller catches the domain exceptions of that feature first and hands the response to
-`HttpExceptionFilter`.
+status, the request body and the response, as a warning below 500 and as an error from 500, with the
+caught error under `err` when it is not an `HttpException`. `RequestBodyHelper` masks every
+`password` and `email` field of the body at any depth, inside arrays too, because the body is logged
+before validation and may hold fields no DTO declares. The client finds the correlation id in the
+`x-correlation-id` header of every response, not in the body. Nest maps a 4xx error of the body
+parser to an `HttpException` before any filter runs. A feature filter on a controller catches the
+domain exceptions of that feature first and hands the response to `HttpExceptionFilter`.
 
 **One CLS context carries the correlation id, the transaction and the logs.**
 `LocalStorageSetupModule` of `libs/local-storage` is the root `ClsModule` of the app. Its middleware

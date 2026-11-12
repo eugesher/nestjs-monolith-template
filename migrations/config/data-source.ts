@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
 import Joi from 'joi';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
@@ -9,6 +10,7 @@ interface IMigrationEnv {
   DATABASE_USER: string;
   DATABASE_PASSWORD: string;
   DATABASE_NAME: string;
+  DATABASE_SSL_CA: string;
 }
 
 const directory = join(import.meta.dirname, '../../env/migrations');
@@ -23,6 +25,7 @@ const schema = Joi.object<IMigrationEnv>({
   DATABASE_USER: Joi.string().required(),
   DATABASE_PASSWORD: Joi.string().required(),
   DATABASE_NAME: Joi.string().required(),
+  DATABASE_SSL_CA: Joi.string().allow('').required(),
 }).unknown();
 const result = schema.validate(process.env);
 
@@ -33,6 +36,8 @@ if (result.error) {
 const env: IMigrationEnv = result.value;
 
 const migrations = join(import.meta.dirname, '../snapshots/*.ts');
+const ssl =
+  env.DATABASE_SSL_CA === '' ? undefined : { ca: readFileSync(env.DATABASE_SSL_CA, 'utf8') };
 
 export default new DataSource({
   type: 'mysql',
@@ -41,6 +46,7 @@ export default new DataSource({
   username: env.DATABASE_USER,
   password: env.DATABASE_PASSWORD,
   database: env.DATABASE_NAME,
+  ssl,
   timezone: 'Z',
   migrations: [migrations],
 });

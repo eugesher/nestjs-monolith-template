@@ -22,7 +22,7 @@ export class AuthLedgerLibAdapter implements IAuthLedgerPort {
   ) {}
 
   public async recordRegistered(command: IAuthLedgerRecordRegisteredCommand): Promise<void> {
-    const { customerId, email } = command;
+    const { customerId } = command;
     const occurredAt = new Date().toISOString();
     const correlationId = CorrelationContextHelper.current(AuthLedgerLibAdapter.name);
 
@@ -31,7 +31,7 @@ export class AuthLedgerLibAdapter implements IAuthLedgerPort {
       subjectType: 'customer',
       subjectId: customerId,
       action: 'CustomerRegistered',
-      payload: { email },
+      payload: {},
       occurredAt,
       correlationId,
     });
