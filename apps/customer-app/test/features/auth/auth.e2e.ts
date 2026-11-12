@@ -15,7 +15,7 @@ export class AuthE2E {
       it('should create a customer who logs in and enqueue the ledger record of the registration with the email under the correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/register')
-          .set('x-correlation-id', 'e2e-customer-register')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000002')
           .send({ email: 'Eve@Example.com', password: 'eve-password-please-change' })
           .expect(HttpStatus.CREATED);
 

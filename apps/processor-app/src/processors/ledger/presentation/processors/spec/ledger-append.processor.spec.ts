@@ -38,7 +38,7 @@ describe('LedgerAppendProcessor', () => {
           action: 'ProductCreated',
           payload: { sku: 'SKU-0001' },
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
       } as unknown as Job<ILedgerRecordProcessorPayload>);
 
@@ -50,7 +50,7 @@ describe('LedgerAppendProcessor', () => {
         payload: { sku: 'SKU-0001' },
         occurredAt: '2026-01-05T08:00:00.000Z',
       });
-      expect(correlationIds).toEqual(['corr-1']);
+      expect(correlationIds).toEqual(['c0ffee00-0000-4000-8000-000000000001']);
     });
 
     it('passes a failing append through, so Bull retries the job', async () => {
@@ -64,7 +64,7 @@ describe('LedgerAppendProcessor', () => {
           action: 'ProductCreated',
           payload: {},
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
       } as unknown as Job<ILedgerRecordProcessorPayload>);
 
@@ -83,7 +83,7 @@ describe('LedgerAppendProcessor', () => {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-05T08:00:00.000Z',
-            correlationId: 'corr-1',
+            correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           },
           attemptsMade: 2,
           opts: { attempts: 3 },
@@ -97,7 +97,7 @@ describe('LedgerAppendProcessor', () => {
         attempts: 3,
         error: new Error('deadlock'),
       });
-      expect(correlationIds).toEqual(['corr-1']);
+      expect(correlationIds).toEqual(['c0ffee00-0000-4000-8000-000000000001']);
     });
 
     it('treats a job without attempts as a single attempt', async () => {
@@ -110,7 +110,7 @@ describe('LedgerAppendProcessor', () => {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-05T08:00:00.000Z',
-            correlationId: 'corr-1',
+            correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           },
           attemptsMade: 1,
           opts: {},

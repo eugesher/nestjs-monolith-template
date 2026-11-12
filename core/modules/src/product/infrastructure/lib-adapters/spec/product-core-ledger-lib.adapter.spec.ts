@@ -19,7 +19,7 @@ describe('ProductCoreLedgerLibAdapter', () => {
 
   describe('recordArchived', () => {
     it('enqueues the archive under the product and the version it produced', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         adapter.recordArchived({
           productId: '12',
           sku: 'SKU-0001',
@@ -36,7 +36,7 @@ describe('ProductCoreLedgerLibAdapter', () => {
         action: 'ProductArchived',
         payload: { sku: 'SKU-0001', previousStatus: 'active' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
   });

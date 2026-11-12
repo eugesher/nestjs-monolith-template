@@ -52,12 +52,12 @@ describe('LedgerPersistenceLedgerEntryBuilder', () => {
         offset: 0,
         subjectType: 'order',
         subjectId: '600',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `LedgerEntry`.`id` AS `LedgerEntry_id`, `LedgerEntry`.`operationKey` AS `LedgerEntry_operationKey`, `LedgerEntry`.`subjectType` AS `LedgerEntry_subjectType`, `LedgerEntry`.`subjectId` AS `LedgerEntry_subjectId`, `LedgerEntry`.`action` AS `LedgerEntry_action`, `LedgerEntry`.`payload` AS `LedgerEntry_payload`, `LedgerEntry`.`correlationId` AS `LedgerEntry_correlationId`, `LedgerEntry`.`occurredAt` AS `LedgerEntry_occurredAt`, `LedgerEntry`.`recordedAt` AS `LedgerEntry_recordedAt` FROM `ledger_entry` `LedgerEntry` WHERE `LedgerEntry`.`subjectType` = ? AND `LedgerEntry`.`subjectId` = ? AND `LedgerEntry`.`correlationId` = ? ORDER BY `LedgerEntry_id` DESC LIMIT 20 OFFSET 0',
-        ['order', '600', 'corr-1'],
+        ['order', '600', 'c0ffee00-0000-4000-8000-000000000001'],
       ]);
     });
 

@@ -15,7 +15,7 @@ export class AuthE2E {
       it('should create a customer and append the ledger entry of the registration', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/auth/register')
-          .set('x-correlation-id', 'system-customer-register')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000023')
           .send({ email: 'Eve@Example.com', password: 'eve-password-please-change' })
           .expect(HttpStatus.CREATED);
 
@@ -28,7 +28,7 @@ export class AuthE2E {
             ledger_entry: await this.ctx.pollUntil<Record<string, unknown>[]>(
               () =>
                 this.ctx.dataSource.query('SELECT * FROM ledger_entry WHERE correlation_id = ?', [
-                  'system-customer-register',
+                  'e2e00000-0000-4000-8000-000000000023',
                 ]),
               (rows) => rows.length >= 1,
             ),

@@ -26,11 +26,11 @@ describe('ProductStockPostSubtractProcessor', () => {
   describe('handleRecord', () => {
     it('checks the products of the job under the correlation id of the subtraction', async () => {
       await processor.handleRecord({
-        data: { productIds: ['100', '106'], correlationId: 'corr-1' },
+        data: { productIds: ['100', '106'], correlationId: 'c0ffee00-0000-4000-8000-000000000001' },
       } as Job<IProductStockPostSubtractPayload>);
 
       expect(execute).toHaveBeenCalledWith({ productIds: ['100', '106'] });
-      expect(correlationIds).toEqual(['corr-1']);
+      expect(correlationIds).toEqual(['c0ffee00-0000-4000-8000-000000000001']);
     });
   });
 });

@@ -28,10 +28,23 @@ export class HealthE2E {
       it('should echo an inbound correlation id', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/health')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000001')
+          .expect(HttpStatus.OK);
+
+        expect(response.headers['x-correlation-id']).toEqual(
+          'e2e00000-0000-4000-8000-000000000001',
+        );
+      });
+
+      it('should replace an inbound correlation id that is not a UUID', async () => {
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/health')
           .set('x-correlation-id', 'e2e-correlation-id')
           .expect(HttpStatus.OK);
 
-        expect(response.headers['x-correlation-id']).toEqual('e2e-correlation-id');
+        expect(response.headers['x-correlation-id']).toMatch(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+        );
       });
     });
   }

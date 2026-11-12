@@ -925,7 +925,7 @@ exports[`App Catalog Product POST /api/catalog/products should create a draft, r
   "ledger_record_queue": [
     {
       "action": "ProductCreated",
-      "correlationId": "e2e-product-create",
+      "correlationId": "e2e00000-0000-4000-8000-000000000014",
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
       "payload": {
@@ -1059,7 +1059,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should
   "ledger_record_queue": [
     {
       "action": "ProductArchived",
-      "correlationId": "e2e-product-archive",
+      "correlationId": "e2e00000-0000-4000-8000-000000000015",
       "occurredAt": Any<String>,
       "operationKey": "product-archived:103:2",
       "payload": {
@@ -1176,7 +1176,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
   "ledger_record_queue": [
     {
       "action": "ProductPublished",
-      "correlationId": "e2e-product-publish",
+      "correlationId": "e2e00000-0000-4000-8000-000000000016",
       "occurredAt": Any<String>,
       "operationKey": "product-published:101:2",
       "payload": {
@@ -1220,7 +1220,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
   "ledger_record_queue": [
     {
       "action": "ProductPublished",
-      "correlationId": "e2e-product-republish",
+      "correlationId": "e2e00000-0000-4000-8000-000000000017",
       "occurredAt": Any<String>,
       "operationKey": "product-published:105:3",
       "payload": {
@@ -1432,7 +1432,7 @@ exports[`App Ledger GET /api/ledger should list the entries of one subject 1`] =
       "data": [
         {
           "action": "ProductCreated",
-          "correlationId": "seed-correlation-id",
+          "correlationId": "5eed0000-0000-4000-8000-000000000001",
           "id": "400",
           "occurredAt": "2026-01-01T00:00:00.000Z",
           "operationKey": "product-created:100",
@@ -2020,7 +2020,7 @@ exports[`App Tools Note GET /api/tools/notes/:noteId/revisions should list the r
         {
           "bodyAfter": "Already handled.",
           "bodyBefore": "Handled soon.",
-          "correlationId": "seed-correlation-id",
+          "correlationId": "5eed0000-0000-4000-8000-000000000001",
           "editorId": "1",
           "id": "200",
           "noteId": "202",
@@ -2086,7 +2086,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should refuse to edit a r
       {
         "body_after": "Already handled.",
         "body_before": "Handled soon.",
-        "correlation_id": "seed-correlation-id",
+        "correlation_id": "5eed0000-0000-4000-8000-000000000001",
         "editor_id": "1",
         "id": "200",
         "note_id": "202",
@@ -2126,7 +2126,7 @@ exports[`App Tools Note PATCH /api/tools/notes/:noteId should rewrite the body a
       {
         "body_after": "Customer called twice; refunded manually.",
         "body_before": "Customer called about this.",
-        "correlation_id": "e2e-note-edit",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000018",
         "editor_id": "1",
         "id": Any<String>,
         "note_id": "200",
@@ -2986,7 +2986,7 @@ exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId
   "ledger_record_queue": [
     {
       "action": "ProductRestocked",
-      "correlationId": "e2e-product-restock",
+      "correlationId": "e2e00000-0000-4000-8000-000000000013",
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
       "payload": {

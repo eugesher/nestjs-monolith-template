@@ -24,7 +24,7 @@ describe('LedgerLibEnqueueUseCase', () => {
         action: 'ItemOpened',
         payload: { name: 'Lamp' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(add).toHaveBeenCalledTimes(1);
@@ -36,7 +36,7 @@ describe('LedgerLibEnqueueUseCase', () => {
           action: 'ItemOpened',
           payload: { name: 'Lamp' },
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
         timeoutMs: 500,
       });
@@ -56,14 +56,14 @@ describe('LedgerLibEnqueueUseCase', () => {
         action: 'ItemOpened',
         payload: {},
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(add).toHaveBeenCalledTimes(2);
       expect(logger.warn).toHaveBeenCalledWith(
         {
           err: new Error('redis is down'),
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           attempt: 1,
           subjectType: 'item',
           subjectId: '7',
@@ -84,7 +84,7 @@ describe('LedgerLibEnqueueUseCase', () => {
         action: 'ItemOpened',
         payload: {},
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(add).toHaveBeenCalledTimes(2);
@@ -92,7 +92,7 @@ describe('LedgerLibEnqueueUseCase', () => {
       expect(logger.error).toHaveBeenCalledWith(
         {
           err: new Error('redis is down'),
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           subjectType: 'item',
           subjectId: '7',
           operationKey: 'item-opened:7',

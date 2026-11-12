@@ -18,7 +18,7 @@ export class OrderE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/orders')
           .set('Idempotency-Key', 'system-order-key')
-          .set('x-correlation-id', 'system-order-place')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000024')
           .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ productIds: ['103', '103', '103'] })
           .expect(HttpStatus.CREATED);
@@ -27,7 +27,7 @@ export class OrderE2E {
           () =>
             this.ctx.dataSource.query(
               'SELECT * FROM ledger_entry WHERE correlation_id = ? ORDER BY action',
-              ['system-order-place'],
+              ['e2e00000-0000-4000-8000-000000000024'],
             ),
           (rows) => rows.length >= 2,
         );

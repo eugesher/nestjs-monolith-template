@@ -64,7 +64,7 @@ describe('NoteEditUseCase', () => {
 
   describe('execute', () => {
     it('saves the note and appends its revision in one transaction, then answers the stored note', async () => {
-      const view = await CorrelationContextHelper.run('corr-1', () =>
+      const view = await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({ noteId: '7', body: ' Supplier confirmed ', editorId: 'admin-1' }),
       );
       const [command] = update.mock.calls[0] as [INoteEditUpdateQuery];
@@ -81,7 +81,7 @@ describe('NoteEditUseCase', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-1',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         recordedAt: undefined,
       });
       expect(view).toEqual({
@@ -102,7 +102,7 @@ describe('NoteEditUseCase', () => {
     });
 
     it('reads before the transaction and reads the stored note after it', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       );
 
@@ -138,7 +138,7 @@ describe('NoteEditUseCase', () => {
       appendRevision.mockRejectedValue(new Error('deadlock'));
 
       await expect(
-        CorrelationContextHelper.run('corr-1', () =>
+        CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
           useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
         ),
       ).rejects.toThrow('deadlock');
@@ -165,7 +165,7 @@ describe('NoteEditUseCase', () => {
         }),
       );
 
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({ noteId: '7', body: 'Supplier confirmed', editorId: 'admin-1' }),
       );
 

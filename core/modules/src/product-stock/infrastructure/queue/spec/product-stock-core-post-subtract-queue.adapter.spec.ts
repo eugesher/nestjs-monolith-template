@@ -23,11 +23,14 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
     it('adds the products with the correlation id as one job', async () => {
       await adapter.enqueue({
         productIds: ['100', '106'],
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         timeoutMs: 500,
       });
 
-      expect(add).toHaveBeenCalledWith({ productIds: ['100', '106'], correlationId: 'corr-1' });
+      expect(add).toHaveBeenCalledWith({
+        productIds: ['100', '106'],
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
+      });
     });
 
     it('passes a failing add through', async () => {
@@ -35,7 +38,7 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
 
       const enqueueing = adapter.enqueue({
         productIds: ['100'],
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         timeoutMs: 500,
       });
 
@@ -48,7 +51,7 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
 
       const enqueueing = adapter.enqueue({
         productIds: ['100'],
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         timeoutMs: 500,
       });
 
@@ -60,7 +63,11 @@ describe('ProductStockCorePostSubtractQueueAdapter', () => {
     it('clears the timer once the add settles', async () => {
       jest.useFakeTimers();
 
-      await adapter.enqueue({ productIds: ['100'], correlationId: 'corr-1', timeoutMs: 500 });
+      await adapter.enqueue({
+        productIds: ['100'],
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
+        timeoutMs: 500,
+      });
 
       expect(jest.getTimerCount()).toBe(0);
     });

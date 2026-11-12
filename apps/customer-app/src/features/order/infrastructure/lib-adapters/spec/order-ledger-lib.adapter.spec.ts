@@ -18,7 +18,7 @@ describe('OrderLedgerLibAdapter', () => {
 
   describe('recordPlaced', () => {
     it('enqueues the placed order under the operation key and correlation id', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         adapter.recordPlaced({
           orderId: '610',
           customerId: 'customer-1',
@@ -34,7 +34,7 @@ describe('OrderLedgerLibAdapter', () => {
         action: 'OrderPlaced',
         payload: { customerId: 'customer-1', productIds: ['100', '100'] },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
   });

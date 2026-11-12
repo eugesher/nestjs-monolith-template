@@ -12,7 +12,7 @@ export class ProductStockE2E {
       it('should archive a published product without stock and record the archive in the ledger under the correlation id', async () => {
         await this.ctx.postSubtractQueue.add({
           productIds: ['106'],
-          correlationId: 'e2e-processor-out-of-stock',
+          correlationId: 'e2e00000-0000-4000-8000-000000000004',
         });
 
         await this.ctx.waitForPostSubtractQueue();
@@ -34,7 +34,7 @@ export class ProductStockE2E {
       it('should leave a published product with stock and a draft without stock as they are', async () => {
         await this.ctx.postSubtractQueue.add({
           productIds: ['100', '102'],
-          correlationId: 'e2e-processor-in-stock',
+          correlationId: 'e2e00000-0000-4000-8000-000000000005',
         });
 
         await this.ctx.waitForPostSubtractQueue();
@@ -47,7 +47,7 @@ export class ProductStockE2E {
             ),
             ledger_entry: await this.ctx.dataSource.query(
               'SELECT operation_key FROM ledger_entry WHERE correlation_id = ?',
-              ['e2e-processor-in-stock'],
+              ['e2e00000-0000-4000-8000-000000000005'],
             ),
           },
         }).toMatchSnapshot();

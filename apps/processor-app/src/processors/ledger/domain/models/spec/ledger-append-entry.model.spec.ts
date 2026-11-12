@@ -10,7 +10,7 @@ describe('LedgerAppendEntryModel', () => {
         subjectId: '12',
         action: ' ProductArchived ',
         payload: { previousStatus: 'active' },
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
       });
 
@@ -20,7 +20,7 @@ describe('LedgerAppendEntryModel', () => {
         subjectId: '12',
         action: 'ProductArchived',
         payload: { previousStatus: 'active' },
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
       });
     });
@@ -55,7 +55,7 @@ describe('LedgerAppendEntryModel', () => {
           subjectId: '12',
           action,
           payload: {},
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           occurredAt: new Date(occurredAt),
         });
 

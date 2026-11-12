@@ -17,7 +17,7 @@ export class LedgerE2E {
           action: 'ProductCreated',
           payload: { sku: 'SKU-0001', name: 'Recorded product' },
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'e2e-processor-record',
+          correlationId: 'e2e00000-0000-4000-8000-000000000006',
         });
 
         await this.ctx.waitForLedgerRecordQueue();
@@ -42,7 +42,7 @@ export class LedgerE2E {
           action: 'ProductArchived',
           payload: { sku: 'SKU-0002', previousStatus: 'active' },
           occurredAt: '2026-01-05T09:00:00.000Z',
-          correlationId: 'e2e-processor-replay',
+          correlationId: 'e2e00000-0000-4000-8000-000000000007',
         };
 
         await this.ctx.ledgerRecordQueue.add(record);
@@ -68,7 +68,7 @@ export class LedgerE2E {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-05T10:00:00.000Z',
-            correlationId: 'e2e-processor-failure',
+            correlationId: 'e2e00000-0000-4000-8000-000000000008',
           },
           { attempts: 1 },
         );
