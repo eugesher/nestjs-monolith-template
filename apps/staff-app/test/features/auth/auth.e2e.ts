@@ -24,7 +24,7 @@ export class AuthE2E {
           .auth(response.body.accessToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
-        const payload = this.ctx.jwt.verify<{ iat: number; exp: number }>(
+        const payload = this.ctx.jwt.verify<{ aud: string; iat: number; exp: number }>(
           response.body.accessToken,
         );
         const claims = Object.keys(payload).sort();
@@ -34,6 +34,7 @@ export class AuthE2E {
           response: { body: response.body },
           me: me.body,
           claims,
+          audience: payload.aud,
           lifetime,
         }).toMatchSnapshot({
           response: { body: { accessToken: expect.any(String) } },
@@ -149,6 +150,17 @@ export class AuthE2E {
 
       it('should refuse the token of a customer signed with the secret of this app', async () => {
         const token = this.ctx.jwt.sign({ sub: '101' });
+
+        const response = await request(this.ctx.app.getHttpServer())
+          .get('/api/auth/me')
+          .auth(token, { type: 'bearer' })
+          .expect(HttpStatus.UNAUTHORIZED);
+
+        expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should refuse the token of a staff user issued for the customer audience', async () => {
+        const token = this.ctx.jwt.sign({ sub: '2' }, { audience: 'customer' });
 
         const response = await request(this.ctx.app.getHttpServer())
           .get('/api/auth/me')

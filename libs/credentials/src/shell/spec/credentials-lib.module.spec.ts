@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
+import { AuthAudienceEnum } from '@acme-libs/kernel';
 import { CREDENTIALS_LIB_PORT, type ICredentialsLibPort } from '@acme-libs/contracts/credentials';
 
 import { CredentialsLibModule } from '../credentials-lib.module';
@@ -28,7 +29,7 @@ describe('CredentialsLibModule', () => {
             }),
           ],
         }),
-        CredentialsLibModule,
+        CredentialsLibModule.register(AuthAudienceEnum.STAFF),
       ],
     })
     class TestModule {}
@@ -40,17 +41,20 @@ describe('CredentialsLibModule', () => {
     await app.close();
   });
 
-  it('signs an access token with JWT_SECRET that expires after JWT_EXPIRES_IN', async () => {
+  it('signs an HS256 access token for the audience with JWT_SECRET that expires after JWT_EXPIRES_IN', async () => {
     const credentials = app.get<ICredentialsLibPort>(CREDENTIALS_LIB_PORT);
 
     const token = await credentials.handleSignAccessToken({ sub: 'user-1' });
 
     const claims = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).verifyAsync<{ sub: string; iat: number; exp: number }>(token);
+    }).verifyAsync<{ sub: string; aud: string; iat: number; exp: number }>(token, {
+      algorithms: ['HS256'],
+    });
 
-    expect({ sub: claims.sub, lifetime: claims.exp - claims.iat }).toEqual({
+    expect({ sub: claims.sub, aud: claims.aud, lifetime: claims.exp - claims.iat }).toEqual({
       sub: 'user-1',
+      aud: 'staff',
       lifetime: 900,
     });
   });

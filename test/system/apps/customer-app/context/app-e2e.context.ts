@@ -1,6 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import type { Redis } from 'ioredis';
 
+import { AuthAudienceEnum } from '@acme-libs/kernel';
 import { CACHE_LIB_REDIS_CLIENT_TOKEN } from '@acme-libs/testing';
 import { E2EContext } from '@acme-libs/testing';
 import { AppModule } from '@acme-customer/app/app.module';
@@ -36,7 +37,7 @@ export class AppE2EContext extends E2EContext {
   }
 
   constructor() {
-    super(AppModule);
+    super(AppModule, AuthAudienceEnum.CUSTOMER);
   }
 
   public override async init(): Promise<void> {

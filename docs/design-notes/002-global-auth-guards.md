@@ -77,8 +77,8 @@ credentials.
 ## The user is re-derived
 
 **The token names the subject and nothing else.** The `auth` feature of the app signs `{ sub }`, and
-the verified payload holds `sub`, `iat` and `exp`. Roles and permissions never travel in the token,
-so there is no stale copy of them to trust or to refresh.
+the verified payload holds `sub`, `aud`, `iat` and `exp`. Roles and permissions never travel in the
+token, so there is no stale copy of them to trust or to refresh.
 
 **Claims in the token are not trusted.** The guard reads only `sub` from the verified payload and
 asks the validator for the user: id, email and, in a staff app, permission codes. The user comes
@@ -89,11 +89,18 @@ the next call, not at token expiry. The cost is one read per request.
 in one query, so the permissions guard reads nothing. An ungated request pays for the codes too; the
 price is a join, and a gated request saves its second read.
 
-**One secret per audience.** The guard verifies with `JWT_SECRET` of the app, the secret its `auth`
-feature signs the access token with. staff-app and processor-app serve the same staff and share the
-secret, so a staff token works in both and either app signs one in. customer-app has its own secret,
-so its tokens fail the signature check in the staff apps. Even with a shared secret it would fail:
-the subject of a customer is not a row of `staff_user`, and the other way round. The auth e2e of
-staff-app and of customer-app sends a token signed with the secret of the app for a subject of the
-other audience and expects 401; `libs/auth/src/modules/spec/auth-jwt.module.spec.ts` checks a token
-signed with another secret.
+**One secret and one audience per app.** The guard verifies with `JWT_SECRET` of the app, the secret
+its `auth` feature signs the access token with. staff-app and processor-app serve the same staff and
+share the secret, so a staff token works in both and either app signs one in. customer-app has its
+own secret, so its tokens fail the signature check in the staff apps.
+
+**The audience is code, not configuration.** `customer.id` and `staff_user.id` both count from 1, so
+a secret shared by mistake would let customer 5 in as staff user 5. Each app passes
+`AuthAudienceEnum` of `libs/kernel` to `AuthJwtModule.forRoot()` and to
+`CredentialsLibModule.register()`: `staff` in staff-app and processor-app, `customer` in
+customer-app. The token carries it as `aud`, and the guard accepts only `HS256` and the audience of
+its app. An env variable could repeat the mistake of the secret; a constant in the module import
+cannot. The auth e2e of staff-app and of customer-app sends a token signed with the secret of the
+app for a subject of the app but the other audience and expects 401;
+`libs/auth/src/modules/spec/auth-jwt.module.spec.ts` checks another secret, another audience, no
+audience and `HS512`.

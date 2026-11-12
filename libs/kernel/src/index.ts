@@ -1,4 +1,5 @@
 export * from './app/app-name.enum';
+export * from './auth/auth-audience.enum';
 export * from './auth/permission-code.enum';
 export * from './catalog/product-status.enum';
 export * from './health/health-dependency-status.enum';

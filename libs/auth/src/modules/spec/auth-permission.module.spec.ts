@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { PermissionCodeEnum } from '@acme-libs/kernel';
+import { AuthAudienceEnum, PermissionCodeEnum } from '@acme-libs/kernel';
 import { AUTH_USER_VALIDATOR_PORT, type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { RequiresPermission } from '../../decorators/auth-requires-permission.decorator';
@@ -66,7 +66,11 @@ describe('AuthPermissionModule', () => {
     class ValidatorModule {}
 
     @Module({
-      imports: [ValidatorModule, AuthJwtModule, AuthPermissionModule],
+      imports: [
+        ValidatorModule,
+        AuthJwtModule.forRoot(AuthAudienceEnum.STAFF),
+        AuthPermissionModule,
+      ],
       controllers: [ProbeController],
     })
     class TestModule {}
@@ -89,7 +93,7 @@ describe('AuthPermissionModule', () => {
   it('admits a user holding a required permission', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'ann' });
+    }).signAsync({ sub: 'ann' }, { audience: 'staff' });
 
     const response = await fetch(`${url}/note`, {
       headers: { authorization: `Bearer ${token}` },
@@ -101,7 +105,7 @@ describe('AuthPermissionModule', () => {
   it('answers 403 to a user without the permission', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'bob' });
+    }).signAsync({ sub: 'bob' }, { audience: 'staff' });
 
     const response = await fetch(`${url}/note`, {
       headers: { authorization: `Bearer ${token}` },
@@ -113,7 +117,7 @@ describe('AuthPermissionModule', () => {
   it('lets a route without claim decorators through for any authenticated user', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'bob' });
+    }).signAsync({ sub: 'bob' }, { audience: 'staff' });
 
     const response = await fetch(`${url}/plain`, {
       headers: { authorization: `Bearer ${token}` },

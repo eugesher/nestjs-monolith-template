@@ -2,6 +2,7 @@ import { getQueueToken } from '@nestjs/bull';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import type { Queue } from 'bull';
 
+import { AuthAudienceEnum } from '@acme-libs/kernel';
 import { E2EContext } from '@acme-libs/testing';
 import {
   LEDGER_RECORD_QUEUE,
@@ -52,7 +53,7 @@ export class AppE2EContext extends E2EContext {
   }
 
   constructor() {
-    super(AppModule);
+    super(AppModule, AuthAudienceEnum.STAFF);
   }
 
   public override async init(): Promise<void> {

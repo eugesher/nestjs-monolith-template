@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm';
 import type { INestApplication, Type } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 
+import type { AuthAudienceEnum } from '@acme-libs/kernel';
 import type { Maybe } from '@acme-libs/toolkit';
 
 interface IE2EContextState {
@@ -43,14 +44,17 @@ export class E2EContext {
     return this.context;
   }
 
-  constructor(private readonly appModule: Type<unknown>) {}
+  constructor(
+    private readonly appModule: Type<unknown>,
+    private readonly audience: AuthAudienceEnum,
+  ) {}
 
   public async init(): Promise<void> {
     const moduleFixture = await E2EContext.compile(this.appModule);
     const dataSource = moduleFixture.get(DataSource);
     const config = moduleFixture.get(ConfigService);
     const secret = config.getOrThrow<string>('JWT_SECRET');
-    const jwt = new JwtService({ secret });
+    const jwt = new JwtService({ secret, signOptions: { audience: this.audience } });
     const app = await E2EContext.start(moduleFixture);
     const rootLoggerWarn = jest.spyOn(PinoLogger.root, 'warn');
 

@@ -63,11 +63,13 @@ feature module provides `HttpExceptionFilter` so that Nest can inject it into th
 
 ## One token per audience
 
-Each app signs and verifies with its `JWT_SECRET`. staff-app and processor-app share the secret and
-customer-app has its own, so a token of customer-app is refused by the staff apps with 401, and the
-other way round. Login carries `@Public()`; without it the global JWT guard would answer 401 before
-the controller runs. The token carries only `sub`, `iat` and `exp`, and its lifetime is
-`JWT_EXPIRES_IN`. Signing lives in `libs/credentials` (see `017-credentials-lib.md`).
+Each app signs and verifies with its `JWT_SECRET` and its audience: `staff` for staff-app and
+processor-app, which share the secret, and `customer` for customer-app, which has its own. A token
+of customer-app is refused by the staff apps with 401, and the other way round, even if the secrets
+were the same (see `002-global-auth-guards.md`). Login carries `@Public()`; without it the global
+JWT guard would answer 401 before the controller runs. The token carries only `sub`, `aud`, `iat`
+and `exp`, and its lifetime is `JWT_EXPIRES_IN`. Signing lives in `libs/credentials` (see
+`017-credentials-lib.md`).
 
 **The lifetime does not delay revocation.** The guard re-reads the user on every request (see
 `002-global-auth-guards.md`), so a change to the account applies to the next call.
