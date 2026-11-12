@@ -15,7 +15,7 @@ export interface IQueueRegistryPort {
   ): Promise<IQueueRegistryFailedJobsView>;
   findJobState(command: IQueueRegistryJobCommand): Promise<Nullable<string>>;
   retryJob(command: IQueueRegistryJobCommand): Promise<void>;
-  removeJob(command: IQueueRegistryJobCommand): Promise<void>;
+  removeJob(command: IQueueRegistryJobCommand): Promise<unknown>;
 }
 
 export const QUEUE_REGISTRY_PORT = Symbol('QUEUE_REGISTRY_PORT');

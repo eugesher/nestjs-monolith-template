@@ -138,14 +138,18 @@ describe('QueueRegistryQueueAdapter', () => {
   });
 
   describe('removeJob', () => {
-    it('removes the job', async () => {
+    it('removes the job and returns its data', async () => {
       const remove = jest.fn().mockResolvedValue(undefined);
 
-      ledgerQueue.getJob.mockResolvedValue({ remove } as never);
+      ledgerQueue.getJob.mockResolvedValue({
+        remove,
+        data: { record: { subjectId: '5' } },
+      } as never);
 
-      await adapter.removeJob({ queueName: 'ledger-record', jobId: '7' });
+      const data = await adapter.removeJob({ queueName: 'ledger-record', jobId: '7' });
 
       expect(remove).toHaveBeenCalledTimes(1);
+      expect(data).toEqual({ record: { subjectId: '5' } });
     });
 
     it('does nothing for a job that is gone', async () => {

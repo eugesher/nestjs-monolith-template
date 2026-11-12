@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
 import { BodyFingerprintHelper } from '@acme-libs/toolkit';
 import {
@@ -19,6 +20,8 @@ export class IdempotencyCoreClaimUseCase {
   constructor(
     @Inject(IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT)
     private readonly repository: IIdempotencyCoreClaimRepositoryPort,
+    @InjectPinoLogger(IdempotencyCoreClaimUseCase.name)
+    private readonly logger: PinoLogger,
   ) {}
 
   public async execute(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
@@ -34,12 +37,17 @@ export class IdempotencyCoreClaimUseCase {
     const record = await this.repository.findByKey({ scope, key });
 
     if (!record) {
-      return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
+      return this.inFlight(scope, key);
     }
 
     const existing = IdempotencyCoreKeyModel.reconstitute(record);
 
     if (!existing.matches(requestFingerprint)) {
+      this.logger.info(
+        { scope, key },
+        'Idempotency key reused with another body, the request is refused',
+      );
+
       return { outcome: IdempotencyCoreClaimOutcomeEnum.MISMATCH, storedResponse: undefined };
     }
 
@@ -48,6 +56,12 @@ export class IdempotencyCoreClaimUseCase {
 
       return { outcome: IdempotencyCoreClaimOutcomeEnum.REPLAY, storedResponse };
     }
+
+    return this.inFlight(scope, key);
+  }
+
+  private inFlight(scope: string, key: string): IIdempotencyCoreClaimView {
+    this.logger.info({ scope, key }, 'Idempotency key is in flight, the request is refused');
 
     return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
   }

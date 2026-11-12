@@ -11,8 +11,9 @@ import {
 } from '@nestjs/common';
 import { ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import {
   QueueDeleteFailedJobUseCase,
@@ -67,8 +68,14 @@ export class QueueController {
   @RequiresPermission(PermissionCodeEnum.QUEUE_RETRY)
   @ApiOperation({ summary: 'Return a failed job to the queue' })
   @ApiNoContentResponse()
-  public async handleRetryFailedJob(@Param() params: QueueJobParamDto): Promise<void> {
-    await this.retryFailedJob.execute(params);
+  public async handleRetryFailedJob(
+    @Param() params: QueueJobParamDto,
+    @CurrentUser() user: IAuthCurrentUserView,
+  ): Promise<void> {
+    const { queueName, jobId } = params;
+    const { id: staffUserId } = user;
+
+    await this.retryFailedJob.execute({ queueName, jobId, staffUserId });
   }
 
   @Delete(':queueName/jobs/failed/:jobId')
@@ -76,7 +83,13 @@ export class QueueController {
   @RequiresPermission(PermissionCodeEnum.QUEUE_DELETE)
   @ApiOperation({ summary: 'Delete a failed job' })
   @ApiNoContentResponse()
-  public async handleDeleteFailedJob(@Param() params: QueueJobParamDto): Promise<void> {
-    await this.deleteFailedJob.execute(params);
+  public async handleDeleteFailedJob(
+    @Param() params: QueueJobParamDto,
+    @CurrentUser() user: IAuthCurrentUserView,
+  ): Promise<void> {
+    const { queueName, jobId } = params;
+    const { id: staffUserId } = user;
+
+    await this.deleteFailedJob.execute({ queueName, jobId, staffUserId });
   }
 }

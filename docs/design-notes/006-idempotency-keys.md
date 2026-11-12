@@ -71,6 +71,11 @@ concurrent duplicate could work too.
   it without a TTL. Until the purge of processor-app runs, an expired key still replays, and a key
   that its dead holder never released still answers `in-flight` (see `009-scheduled-processor.md`).
 
+**The refusals and the release log.** `claim` logs `in-flight` and `mismatch` at `info` with the
+scope and the key, because `HttpExceptionFilter` sees only the 409 or 422, not which key. `release`
+logs `Idempotency claim released`: the work behind the key failed, and the next request with it
+starts over. A claim and a replay log nothing here; the caller logs the replay.
+
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.
 

@@ -58,18 +58,32 @@ describe('QueueController', () => {
   });
 
   describe('handleRetryFailedJob', () => {
-    it('retries the job of the path', async () => {
-      await controller.handleRetryFailedJob({ queueName: 'ledger-record', jobId: '7' });
+    it('retries the job of the path on behalf of the current user', async () => {
+      await controller.handleRetryFailedJob(
+        { queueName: 'ledger-record', jobId: '7' },
+        { id: '1', email: 'admin@example.com' },
+      );
 
-      expect(retryFailedJob).toHaveBeenCalledWith({ queueName: 'ledger-record', jobId: '7' });
+      expect(retryFailedJob).toHaveBeenCalledWith({
+        queueName: 'ledger-record',
+        jobId: '7',
+        staffUserId: '1',
+      });
     });
   });
 
   describe('handleDeleteFailedJob', () => {
-    it('deletes the job of the path', async () => {
-      await controller.handleDeleteFailedJob({ queueName: 'ledger-record', jobId: '7' });
+    it('deletes the job of the path on behalf of the current user', async () => {
+      await controller.handleDeleteFailedJob(
+        { queueName: 'ledger-record', jobId: '7' },
+        { id: '1', email: 'admin@example.com' },
+      );
 
-      expect(deleteFailedJob).toHaveBeenCalledWith({ queueName: 'ledger-record', jobId: '7' });
+      expect(deleteFailedJob).toHaveBeenCalledWith({
+        queueName: 'ledger-record',
+        jobId: '7',
+        staffUserId: '1',
+      });
     });
   });
 });

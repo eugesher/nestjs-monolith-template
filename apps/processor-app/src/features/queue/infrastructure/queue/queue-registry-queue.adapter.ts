@@ -80,11 +80,13 @@ export class QueueRegistryQueueAdapter implements IQueueRegistryPort {
     await job?.retry();
   }
 
-  public async removeJob(command: IQueueRegistryJobCommand): Promise<void> {
+  public async removeJob(command: IQueueRegistryJobCommand): Promise<unknown> {
     const { queueName, jobId } = command;
     const job = await this.queueOf(queueName).getJob(jobId);
 
     await job?.remove();
+
+    return job?.data;
   }
 
   private queueOf(queueName: string): Queue {
