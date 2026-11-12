@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectPinoLogger, type PinoLogger } from 'nestjs-pino';
 
-import { AuthInvalidCredentialsException, AuthStaffUserModel } from '../../domain';
+import { AuthInvalidCredentialsException, AuthUserInactiveException } from '../../domain';
 import {
-  AUTH_CREDENTIALS_PORT,
   AUTH_IDENTITY_PORT,
-  type IAuthCredentialsPort,
+  AuthIdentityLoginOutcomeEnum,
   type IAuthIdentityPort,
 } from '../../outbound';
 import type { IAuthLoginCommand, IAuthLoginView } from '../interfaces';
@@ -15,37 +13,20 @@ export class AuthLoginUseCase {
   constructor(
     @Inject(AUTH_IDENTITY_PORT)
     private readonly identity: IAuthIdentityPort,
-    @Inject(AUTH_CREDENTIALS_PORT)
-    private readonly credentials: IAuthCredentialsPort,
-    @InjectPinoLogger(AuthLoginUseCase.name)
-    private readonly logger: PinoLogger,
   ) {}
 
   public async execute(command: IAuthLoginCommand): Promise<IAuthLoginView> {
     const { email, password } = command;
-    const normalized = AuthStaffUserModel.normalizeEmail(email);
-    const record = await this.identity.findByEmail({ email: normalized });
-    const user = record ? AuthStaffUserModel.reconstitute(record) : null;
-    const passwordHash = user?.passwordHash ?? null;
-    const valid = await this.credentials.verifyPassword({ passwordHash, password });
+    const login = await this.identity.login({ email, password });
+    const { outcome, userId, accessToken } = login;
 
-    if (!user) {
-      this.logger.warn('Login failed: unknown email');
-
-      throw new AuthInvalidCredentialsException();
+    if (outcome === AuthIdentityLoginOutcomeEnum.USER_INACTIVE) {
+      throw new AuthUserInactiveException(String(userId));
     }
 
-    if (!valid) {
-      this.logger.warn({ userId: user.id }, 'Login failed: wrong password');
-
+    if (outcome === AuthIdentityLoginOutcomeEnum.INVALID_CREDENTIALS || !accessToken) {
       throw new AuthInvalidCredentialsException();
     }
-
-    user.assertActive();
-
-    const accessToken = await this.credentials.issueAccessToken(user.id);
-
-    this.logger.info({ userId: user.id }, 'User logged in');
 
     return { accessToken };
   }

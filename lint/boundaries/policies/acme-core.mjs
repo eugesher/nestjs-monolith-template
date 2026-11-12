@@ -48,7 +48,7 @@ export const acmeCore = [
   from('acme-core:modules:infrastructure:lib-adapters', [
     layer('outbound'),
     layer('infrastructure:lib-adapters'),
-    libContracts('ledger'),
+    libContracts('credentials', 'ledger'),
     baseLibs('observability'),
     packages('@nestjs/common'),
   ]),
@@ -64,7 +64,7 @@ export const acmeCore = [
     layer('shell:facade'),
     layer('shell'),
     ownContracts,
-    baseLibs('ledger', 'queue'),
+    baseLibs('credentials', 'ledger', 'queue'),
   ]),
   from('acme-core:modules:index', [layer('shell')]),
   from('acme-core:contracts', [ownContracts, baseLibs()]),

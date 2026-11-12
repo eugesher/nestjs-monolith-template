@@ -7,6 +7,7 @@ describe('libs by layer', () => {
   beforeAll(() => {
     scaffold = Scaffold.create([
       'libs/auth/src/index.ts',
+      'libs/bootstrap/src/index.ts',
       'libs/cache/src/index.ts',
       'libs/config/src/index.ts',
       'libs/database/src/index.ts',
@@ -44,6 +45,7 @@ describe('libs by layer', () => {
   ])('%s may reach only the framework-free libs', async (file, libs) => {
     const others = [
       'auth',
+      'bootstrap',
       'cache',
       'config',
       'database',
@@ -67,9 +69,10 @@ describe('libs by layer', () => {
   });
 
   it('main may reach only the libs that run before or outside DI', async () => {
-    const allowed = ['database', 'kernel', 'observability', 'openapi'];
+    const allowed = ['bootstrap', 'kernel', 'observability'];
     const libs = [
       'auth',
+      'bootstrap',
       'cache',
       'config',
       'database',
@@ -276,13 +279,10 @@ describe('libs by layer', () => {
     }).toPassArchitectureLint();
   });
 
-  it.each([
-    ['apps/__layers-fixture__/src/app/app.module.ts', '../../../../libs'],
-    ['apps/__layers-fixture__/src/main.ts', '../../../libs'],
-  ])('the AppModule and bootstrap MAY reach the database lib: %s', async (file, libs) => {
+  it('the AppModule MAY reach the database lib', async () => {
     await expect({
-      file,
-      code: `import { x } from "${libs}/database/src";`,
+      file: 'apps/__layers-fixture__/src/app/app.module.ts',
+      code: 'import { x } from "../../../../libs/database/src";',
     }).toPassArchitectureLint();
   });
 
@@ -526,11 +526,11 @@ describe('libs by layer', () => {
     }).toPassArchitectureLint();
   });
 
-  it('main MAY read the port from ConfigService', async () => {
+  it('main may NOT read the config: the bootstrap lib reads the port and the prefix', async () => {
     await expect({
       file: 'apps/__layers-fixture__/src/main.ts',
       code: 'import { ConfigService } from "@nestjs/config";',
-    }).toPassArchitectureLint();
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('a feature may NOT import joi — validation of env is the app bootstrap job', async () => {

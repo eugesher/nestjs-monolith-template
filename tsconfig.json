@@ -50,6 +50,8 @@
       "@acme-core/modules/*": ["./core/modules/src/*"],
       "@acme-libs/auth": ["./libs/auth/src"],
       "@acme-libs/auth/*": ["./libs/auth/src/*"],
+      "@acme-libs/bootstrap": ["./libs/bootstrap/src"],
+      "@acme-libs/bootstrap/*": ["./libs/bootstrap/src/*"],
       "@acme-libs/cache": ["./libs/cache/src"],
       "@acme-libs/cache/*": ["./libs/cache/src/*"],
       "@acme-libs/config": ["./libs/config/src"],

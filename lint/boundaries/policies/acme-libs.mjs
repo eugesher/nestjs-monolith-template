@@ -22,6 +22,7 @@ export const acmeLibs = [
   fromLib(
     [
       'auth',
+      'bootstrap',
       'cache',
       'config',
       'credentials',
@@ -37,6 +38,10 @@ export const acmeLibs = [
     ],
     [baseLibs()],
   ),
+  fromLib('bootstrap', [
+    libs('observability', 'openapi'),
+    packages('@nestjs/common', '@nestjs/config', '@nestjs/core', 'nestjs-pino'),
+  ]),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
   fromLib('testing', [
     to('acme-libs', { lib: 'cache', file: 'outbound/**' }),
@@ -79,6 +84,7 @@ export const acmeLibs = [
       '@nestjs/common',
       '@nestjs/config',
       '@nestjs/core',
+      '@nestjs/swagger',
       '@nestjs/throttler',
       'class-transformer',
       'class-validator',
@@ -103,7 +109,7 @@ export const acmeLibs = [
     ),
   ]),
   fromLib('observability', [libs('config')]),
-  fromLib('config', [packages('@nestjs/common', '@nestjs/config', 'fs', 'path')]),
+  fromLib('config', [packages('@nestjs/common', '@nestjs/config', 'fs', 'joi', 'path')]),
   fromLib('database', [
     libs('config', 'local-storage'),
     packages(

@@ -6,7 +6,7 @@ describe('AuthGlobalSubjectCoreAdapter', () => {
 
   beforeEach(() => {
     handleFindSubject = jest.fn();
-    adapter = new AuthGlobalSubjectCoreAdapter({ handleFindSubject, handleFindByEmail: jest.fn() });
+    adapter = new AuthGlobalSubjectCoreAdapter({ handleFindSubject, handleLogin: jest.fn() });
   });
 
   describe('findSubject', () => {

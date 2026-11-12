@@ -65,6 +65,6 @@ single-file bundle, which pulls no further scripts.
 **The styles stay inline.** Scalar adds its styles at runtime without a nonce, and a nonce in
 `style-src` would make the browser ignore `'unsafe-inline'`.
 
-**The route needs its own headers because it comes first.** `main.ts` mounts the page with `app.use`
-before `listen`, and Nest mounts the middlewares of the modules only when the app starts, so the
-request of the page never reaches the middlewares of `HttpSecuritySetupModule`.
+**The route needs its own headers because it comes first.** `AppBootstrap` mounts the page with
+`app.use` before `listen`, and Nest mounts the middlewares of the modules only when the app starts,
+so the request of the page never reaches the middlewares of `HttpSecuritySetupModule`.

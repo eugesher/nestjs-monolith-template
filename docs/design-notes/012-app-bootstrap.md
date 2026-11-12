@@ -8,18 +8,23 @@ login and the failed jobs of its queues, and runs the queue processors and the s
 
 ## main.ts
 
-`main.ts` starts the process and nothing else:
+`main.ts` starts the process and nothing else, in two statements:
 
 1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
    `yarn start:dev` and the built image pass `.env` to Node with `--env-file`, so both trace.
-2. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI: `listening` and a
-   failed start.
-3. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:
+2. `AppBootstrap.run(AppModule, <app>)` of `libs/bootstrap` starts the app.
+
+`AppBootstrap.run` holds the steps every app takes, so the three apps cannot start differently:
+
+1. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI:
+   `<app> is listening on port <port>`, and `<app> bootstrap error` with exit code 1 for a failed
+   start.
+2. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:
    Nest's own lines go through pino too, and the lines buffered before the logger existed are
    flushed through it.
-4. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
+3. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
    `PORT`.
 
 ## Environment
@@ -37,6 +42,15 @@ A variable with the same meaning has the same name in every app: `PORT`, the `DA
 the JWT secrets. An example lists exactly the variables its schema reads and connects to the
 infrastructure of `test/infra`, so a copy of it is all an app needs. A schema has no defaults: a
 missing or invalid variable stops the app at boot, and a Redis without `REDIS_PASSWORD` is refused.
+
+**The schema of an app is assembled from fragments.** `ConfigSchema` of `libs/config` holds one
+fragment per concern, each the rules of its variables: `APP`, `DATABASE`, `REDIS`, `QUEUE`, `AUTH`,
+`HTTP` and `OBSERVABILITY`. `ConfigSetupModule` spreads the fragments every app reads into
+`Joi.object` and adds the keys of its own modules after them: `CACHE_TTL_MS_DEFAULT` and
+`OCC_RETRY_ATTEMPTS` in staff-app and customer-app, the `IDEMPOTENCY_*` variables in processor-app.
+A rule that changes for every app changes once, and the schema of an app still lists exactly what
+the app reads. A key in two fragments would be overwritten silently by the spread, so the spec of
+`ConfigSchema` checks that every key appears once.
 
 `ConfigSetupModule` loads `env/apps/<app>/.env`, or `env/apps/<app>/.env.test` under
 `NODE_ENV=test`. Each file sits next to its example. `migrations/config/data-source.ts` chooses
@@ -57,7 +71,10 @@ e2e context built from `AppModule` without `main.ts` behaves like the running ap
 `API_USE_API_REFERENCE` is true. It runs after `setGlobalPrefix`, so the document lists the prefixed
 paths. The page carries a security policy of its own (see `037-http-edge.md`). The config schema
 accepts only `false` with `NODE_ENV=production`, so a production process never serves the schema of
-its API. The document lists no server, so the page calls the origin it is served from.
+its API. The document lists no server, so the page calls the origin it is served from. The title and
+the description of each app sit in `ApiReference`, and the description names every area of the API:
+a feature that adds a controller with a new tag extends the description of its app in the same
+change.
 
 ## AppModule
 
@@ -150,5 +167,5 @@ Lint gives `app.module.ts` its own category, `acme-app:app:module`:
 - `main.ts` sees nothing else of the app: not `setup/`, not `global/`;
 - it may import `@nestjs/core` for `APP_PIPE` and `APP_FILTER`, and the rest of `app/` may not.
 
-`main.ts` may also import the `database`, `kernel`, `observability` and `openapi` libs and
-`nestjs-pino`.
+`main.ts` may also import the `bootstrap`, `kernel` and `observability` libs, the last only for the
+tracer, and no package: the bootstrap lib alone reads the config and sets the logger.

@@ -1,3 +1,4 @@
-export interface IAuthIdentityFindByEmailCommand {
+export interface IAuthIdentityLoginCommand {
   email: string;
+  password: string;
 }

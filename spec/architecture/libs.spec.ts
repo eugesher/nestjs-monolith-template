@@ -7,6 +7,7 @@ describe('libs', () => {
   beforeAll(() => {
     scaffold = Scaffold.create([
       'libs/auth/src/index.ts',
+      'libs/bootstrap/src/index.ts',
       'libs/cache/src/index.ts',
       'libs/config/src/index.ts',
       'libs/credentials/src/index.ts',
@@ -62,6 +63,7 @@ describe('libs', () => {
     ['kernel', []],
     ['toolkit', []],
     ['auth', ['kernel', 'toolkit']],
+    ['bootstrap', ['kernel', 'toolkit', 'observability', 'openapi']],
     ['cache', ['kernel', 'toolkit', 'config', 'observability']],
     ['config', ['kernel', 'toolkit']],
     ['credentials', ['kernel', 'toolkit']],
@@ -77,6 +79,7 @@ describe('libs', () => {
   ])('%s may import only %j of the other libs', async (from, allowed) => {
     const libs = [
       'auth',
+      'bootstrap',
       'cache',
       'config',
       'credentials',
@@ -137,6 +140,7 @@ describe('libs', () => {
 
   it.each([
     ['auth', ['auth']],
+    ['bootstrap', []],
     ['cache', ['cache']],
     ['config', []],
     ['credentials', ['credentials']],
@@ -258,6 +262,13 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
+  it('the bootstrap lib MAY import the Nest packages that start an app', async () => {
+    await expect({
+      file: 'libs/bootstrap/src/app/__fixture__.ts',
+      code: 'import { ConfigService } from "@nestjs/config";\nimport { NestFactory } from "@nestjs/core";\nimport { Logger } from "nestjs-pino";',
+    }).toPassArchitectureLint();
+  });
+
   it('the config lib MAY import the Nest config packages it wraps', async () => {
     await expect({
       file: 'libs/config/src/provider/__fixture__.ts',
@@ -279,11 +290,18 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('the config lib may NOT import joi — each app owns its schema', async () => {
+  it('the config lib MAY import joi for the schema fragments the apps assemble', async () => {
     await expect({
-      file: 'libs/config/src/provider/__fixture__.ts',
+      file: 'libs/config/src/schema/__fixture__.ts',
       code: 'import Joi from "joi";',
-    }).toBreakRule('boundaries/dependencies');
+    }).toPassArchitectureLint();
+  });
+
+  it('the http lib MAY import @nestjs/swagger for the page query of a list', async () => {
+    await expect({
+      file: 'libs/http/src/pagination/__fixture__.ts',
+      code: 'import { ApiPropertyOptional } from "@nestjs/swagger";',
+    }).toPassArchitectureLint();
   });
 
   it('the observability lib MAY import the logging, tracing and async context packages', async () => {

@@ -18,18 +18,18 @@ stays in core; a method of it that one app calls moves into that app, and the re
 | core `idempotency`   | `handleClaim`, `handleComplete`, `handleRelease`      | staff `product`, staff `product-stock`, customer `order`                                 |
 | core `product`       | `handleArchive`                                       | staff `product`, the processor `product-stock`                                           |
 | core `product-stock` | `handleLock`, `handleMove`                            | staff `product-stock`, customer `order`, `handleLock` also the processor `product-stock` |
-| core `staff-auth`    | `handleFindSubject`, `handleFindByEmail`              | `app/global/auth` and `auth` of staff-app and of processor-app                           |
+| core `staff-auth`    | `handleFindSubject`, `handleLogin`                    | `app/global/auth` and `auth` of staff-app and of processor-app                           |
 | common `tag`         | `handleFind`, `handleReplace`, `handleFindSubjectIds` | staff `product`, staff `order`                                                           |
 
 Everything else sits with its only caller, for example:
 
-| Code                                        | Lives in                                        |
-| ------------------------------------------- | ----------------------------------------------- |
-| the append to `ledger_entry`                | `apps/processor-app/src/processors/ledger`      |
-| the read of `ledger_entry`                  | `apps/staff-app/src/features/ledger`            |
-| the delete of expired idempotency keys      | `apps/processor-app/src/processors/idempotency` |
-| the password check and the token of a login | `apps/<app>/src/features/**/auth`               |
-| the create, list, rename and delete of tags | `apps/staff-app/src/features/tools/modules/tag` |
+| Code                                                 | Lives in                                        |
+| ---------------------------------------------------- | ----------------------------------------------- |
+| the append to `ledger_entry`                         | `apps/processor-app/src/processors/ledger`      |
+| the read of `ledger_entry`                           | `apps/staff-app/src/features/ledger`            |
+| the delete of expired idempotency keys               | `apps/processor-app/src/processors/idempotency` |
+| the password check and the token of a customer login | `apps/customer-app/src/features/auth`           |
+| the create, list, rename and delete of tags          | `apps/staff-app/src/features/tools/modules/tag` |
 
 ## Why per method
 

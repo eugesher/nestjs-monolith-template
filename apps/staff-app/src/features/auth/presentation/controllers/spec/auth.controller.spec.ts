@@ -11,7 +11,7 @@ describe('AuthController', () => {
     findSubject = jest.fn();
     controller = new AuthController(
       { execute: login } as unknown as AuthLoginUseCase,
-      new AuthMeUseCase({ findSubject, findByEmail: jest.fn() }),
+      new AuthMeUseCase({ findSubject, login: jest.fn() }),
     );
   });
 

@@ -9,6 +9,7 @@ describe('lib entry points', () => {
 
     expect(libs).toEqual([
       'auth',
+      'bootstrap',
       'cache',
       'config',
       'contracts',
@@ -39,6 +40,8 @@ describe('lib entry points', () => {
     expect(libAliases).toEqual([
       '@acme-libs/auth',
       '@acme-libs/auth/*',
+      '@acme-libs/bootstrap',
+      '@acme-libs/bootstrap/*',
       '@acme-libs/cache',
       '@acme-libs/cache/*',
       '@acme-libs/config',
@@ -74,6 +77,7 @@ describe('lib entry points', () => {
 
   it.each([
     '@acme-libs/auth',
+    '@acme-libs/bootstrap',
     '@acme-libs/cache',
     '@acme-libs/config',
     '@acme-libs/contracts/auth',
@@ -317,16 +321,17 @@ describe('lib entry points', () => {
   });
 
   it.each(['apps/staff-app/src/main.ts', 'apps/customer-app/src/main.ts'])(
-    '%s MAY import the openapi lib by its alias',
+    '%s MAY import the bootstrap lib by its alias',
     async (file) => {
       await expect({
         file,
-        code: 'import { ApiReference } from "@acme-libs/openapi";',
+        code: 'import { AppBootstrap } from "@acme-libs/bootstrap";',
       }).toPassArchitectureLint();
     },
   );
 
   it.each([
+    'apps/staff-app/src/main.ts',
     'apps/staff-app/src/app/app.module.ts',
     'apps/staff-app/src/features/product/presentation/controllers/__fixture__.ts',
   ])('%s may NOT import the openapi lib, the document is built at startup only', async (file) => {

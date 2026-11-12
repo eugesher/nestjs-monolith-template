@@ -1,31 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform, Type, type TransformFnParams } from 'class-transformer';
-import {
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { Transform, type TransformFnParams } from 'class-transformer';
+import { IsBoolean, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
-export class NoteGetManyQueryDto {
-  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public page?: number;
+import { PageQueryDto } from '@acme-libs/http';
 
-  @ApiPropertyOptional({ example: 20, description: 'Capped at 100' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  public limit?: number;
-
+export class NoteGetManyQueryDto extends PageQueryDto {
   @ApiPropertyOptional({ example: 'product', description: 'Only together with subjectId' })
   @IsOptional()
   @IsString()

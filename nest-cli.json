@@ -46,6 +46,15 @@
         "tsConfigPath": "libs/auth/tsconfig.lib.json"
       }
     },
+    "bootstrap": {
+      "type": "library",
+      "root": "libs/bootstrap",
+      "entryFile": "index",
+      "sourceRoot": "libs/bootstrap/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/bootstrap/tsconfig.lib.json"
+      }
+    },
     "cache": {
       "type": "library",
       "root": "libs/cache",

@@ -46,20 +46,21 @@ signs `HS256` tokens with that `aud`.
 ## One model per module over one table
 
 Modules that read the same table keep models of their own, narrowed to what each uses (see
-`024-code-placement.md`). Example: `AuthStaffUserModel`
-(`apps/staff-app/src/features/auth/domain/models`), `UserStaffUserModel`
-(`apps/staff-app/src/features/access/modules/user/domain/models`) and `StaffAuthCoreSubjectModel`
-(`core/modules/src/staff-auth/domain/models`) all map `staff_user`.
+`024-code-placement.md`). Example: `UserStaffUserModel`
+(`apps/staff-app/src/features/access/modules/user/domain/models`), and `StaffAuthCoreSubjectModel`
+and `StaffAuthCoreUserModel` (`core/modules/src/staff-auth/domain/models`) all map `staff_user`.
 
 ## A core module for the staff of two apps
 
-staff-app and processor-app both sign the staff in and check the subject of every request, so the
-reads live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
+staff-app and processor-app both sign the staff in and check the subject of every request, so both
+live in `core/modules/src/staff-auth` behind `STAFF_AUTH_CORE_PORT`
 (`core/contracts/src/staff-auth`): `handleFindSubject` for the guard and `GET /auth/me`,
-`handleFindByEmail` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its
-`auth` feature and `AuthGlobalSubjectCoreAdapter` in its global module. The password check and the
-token stay in each app, behind `AuthCredentialsLibAdapter`: a core module never reaches the
-credentials.
+`handleLogin` for the login. Each app reaches it through `AuthIdentityCoreAdapter` in its `auth`
+feature and `AuthGlobalSubjectCoreAdapter` in its global module. The login checks the password and
+signs the token behind `StaffAuthCoreCredentialsLibAdapter`, and `StaffAuthCoreModule` mounts
+`CredentialsLibModule.register(AuthAudienceEnum.STAFF)`, so both apps sign the same staff token.
+Only the lib adapter and the module root of a core module reach the credentials; its application
+layer sees the port alone.
 
 ## Table naming
 

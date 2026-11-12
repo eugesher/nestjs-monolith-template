@@ -4,7 +4,7 @@ A paged read takes `page` and `limit`, and the use case owns the bounds.
 
 | Part     | Example                                                                                    |
 | -------- | ------------------------------------------------------------------------------------------ |
-| DTO      | `apps/staff-app/src/features/ledger/presentation/dto/`                                     |
+| DTO      | `PageQueryDto` in `libs/http`, `apps/staff-app/src/features/ledger/presentation/dto/`      |
 | use case | `apps/staff-app/src/features/ledger/application/use-cases/ledger-list-entries.use-case.ts` |
 | helper   | `PaginationHelper.clampPageWindow` in `libs/toolkit`                                       |
 
@@ -12,6 +12,12 @@ A paged read takes `page` and `limit`, and the use case owns the bounds.
 `@IsInt()` and `@IsPositive()`, not `@Min(1)`, and the use case applies the defaults (page 1,
 limit 20) and caps `page` at 1000 and `limit` at 100 with `PaginationHelper.clampPageWindow`. A
 value above the cap is capped, not rejected, and the response echoes the window it used.
+
+**Every list query extends `PageQueryDto`.** `page` and `limit` with their decorators live once, in
+`libs/http`; the query DTO of a list adds only its filters, and a list without filters extends it
+with an empty body. The OpenAPI description of each field names its cap from
+`PaginationHelper.MAX_PAGE` and `MAX_LIMIT`, the defaults of `clampPageWindow`, so the document and
+the cap cannot drift apart.
 
 **The helper computes the offset.** `clampPageWindow` answers `{ page, limit, offset }`, and the
 repository passes `offset` and `limit` to the query as they are. The page cap keeps the offset under
