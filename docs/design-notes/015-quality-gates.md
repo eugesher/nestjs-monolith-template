@@ -80,7 +80,9 @@ lint → typecheck → build → unit → e2e
   end of its log names the suite. The compose file and the suites read the `.env.test` files of the
   repository.
 
-Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.
+Node is the latest 26, and Yarn comes from `packageManager` through Corepack, which Node 26 no
+longer ships: every job installs a pinned `corepack` with npm before `corepack enable`, as the
+`Dockerfile` does.
 
 ## Order the lint keeps
 

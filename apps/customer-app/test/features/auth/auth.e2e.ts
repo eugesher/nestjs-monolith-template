@@ -80,7 +80,7 @@ export class AuthE2E {
           ],
         });
         expect(response.body.id).toMatch(/^\d+$/);
-        expect(actual.db.customer[0].password_hash).toMatch(/^\$argon2id\$v=19\$m=19456,p=1,t=2\$/);
+        expect(actual.db.customer[0].password_hash).toMatch(/^\$argon2id\$v=19\$m=19456,t=2,p=1\$/);
       });
 
       it('should refuse a taken email in another case with 409', async () => {
