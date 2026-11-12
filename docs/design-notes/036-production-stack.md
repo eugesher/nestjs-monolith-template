@@ -24,6 +24,14 @@ keeps only the production dependencies with `yarn workspaces focus --all --produ
 stage copies `node_modules`, `nest-cli.json` and `dist/apps/<app>/` and runs as the `node` user with
 `NODE_ENV=production`.
 
+**The image checks liveness.** Its `HEALTHCHECK` runs `node` with the same `--env-file-if-exists` as
+the app, because `PORT` and `API_PREFIX` come only from the mounted `.env`, and fetches
+`/<prefix>/health` every 10 seconds after a start period of 30. Readiness stays out of it: a failed
+database or Redis would mark every container unhealthy at once, and the apps recover on their own
+when the dependency returns. Docker without Swarm only reports the state and restarts nothing; an
+orchestrator such as Kubernetes ignores the instruction and probes `/health` and `/health/ready`
+itself. Each check is a request and so a line of the request log.
+
 The image has no dev dependencies and so no `pino-pretty`, which `LoggerSetupConfig` uses only
 outside production: a production process logs JSON.
 
@@ -63,6 +71,11 @@ verified against that authority.
 **The apps need no DDL.** The stack runs the apps and the migrations as one MySQL user, `acme`, with
 every privilege on the database. On a managed database the apps take a user with `SELECT`, `INSERT`,
 `UPDATE` and `DELETE` only, and `env/migrations/.env` takes another one that may change the schema.
+
+**The pools of all replicas share `max_connections`.** Each process opens up to `DATABASE_POOL_SIZE`
+connections, 10 in the examples (see `034-orm-lib.md`), so the sum over every replica of the three
+apps, plus the migrations and an operator, stays under the `max_connections` of the server, 151 by
+default for MySQL.
 
 **`HTTP_TRUST_PROXY_HOPS` is the number of proxies in front of an app.** The request limits count
 per client address (see `003-authentication.md`), and Express takes that address from

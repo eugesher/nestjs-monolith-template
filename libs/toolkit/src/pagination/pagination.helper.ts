@@ -8,10 +8,10 @@ export class PaginationHelper {
     limit: number | undefined,
     options: IPageWindowOptions = {},
   ): IPageRequest {
-    const { defaultPage = 1, defaultLimit = 20, maxLimit = 100 } = options;
+    const { defaultPage = 1, defaultLimit = 20, maxLimit = 100, maxPage = 1000 } = options;
     const flooredPage = Math.floor(page ?? 0);
     const flooredLimit = Math.floor(limit ?? 0);
-    const clampedPage = flooredPage > 0 ? flooredPage : defaultPage;
+    const clampedPage = flooredPage > 0 ? Math.min(flooredPage, maxPage) : defaultPage;
     const clampedLimit = flooredLimit > 0 ? Math.min(flooredLimit, maxLimit) : defaultLimit;
     const offset = (clampedPage - 1) * clampedLimit;
 

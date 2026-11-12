@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
 
 export class LedgerListEntriesQueryDto {
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: 1, description: 'Capped at 1000' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
