@@ -28,10 +28,10 @@ export class IdempotencyCoreCompleteRepository
   }
 
   public async complete(query: IIdempotencyCoreCompleteQuery): Promise<void> {
-    const { key, responseBody } = query;
+    const { scope, key, responseBody } = query;
 
     await this.idempotencyKeyRepository.update(
-      { idempotencyKey: key },
+      { scope, idempotencyKey: key },
       { status: IdempotencyStatusEnum.COMPLETED, responseBody },
     );
   }

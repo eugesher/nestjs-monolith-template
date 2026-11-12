@@ -6,6 +6,7 @@ import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 import {
   IDEMPOTENCY_CORE_CLAIM_REPOSITORY_PORT,
   IdempotencyCoreClaimInsertOutcomeEnum,
+  type IIdempotencyCoreClaimFindQuery,
   type IIdempotencyCoreClaimInsertQuery,
   type IIdempotencyCoreClaimRecord,
   type IIdempotencyCoreClaimRepositoryPort,
@@ -45,7 +46,11 @@ export class IdempotencyCoreClaimRepository
     }
   }
 
-  public async findByKey(key: string): Promise<Nullable<IIdempotencyCoreClaimRecord>> {
-    return await this.createIdempotencyKeyBuilder().forByKey(key).getOne();
+  public async findByKey(
+    query: IIdempotencyCoreClaimFindQuery,
+  ): Promise<Nullable<IIdempotencyCoreClaimRecord>> {
+    const { scope, key } = query;
+
+    return await this.createIdempotencyKeyBuilder().forByKey(scope, key).getOne();
   }
 }

@@ -7,11 +7,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
 import { IdempotencyKey } from '@acme-libs/http';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
 import { IfMatch } from '@acme-staff/common/shared';
 import type { Maybe } from '@acme-libs/toolkit';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import {
   ProductArchiveUseCase,
@@ -56,12 +57,14 @@ export class ProductController {
   @ApiOperation({ summary: 'Create a product (idempotent)' })
   @ApiCreatedResponse({ type: ProductResponseDto })
   public async handleCreate(
+    @CurrentUser() user: IAuthCurrentUserView,
     @Body() body: ProductCreateRequestDto,
     @IdempotencyKey() idempotencyKey: string,
   ): Promise<ProductResponseDto> {
+    const { id: staffUserId } = user;
     const { sku, name } = body;
 
-    return await this.create.execute({ sku, name, idempotencyKey });
+    return await this.create.execute({ sku, name, staffUserId, idempotencyKey });
   }
 
   @Get()

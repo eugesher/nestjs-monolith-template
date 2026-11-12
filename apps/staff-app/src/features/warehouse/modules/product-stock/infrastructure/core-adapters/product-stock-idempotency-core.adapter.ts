@@ -32,6 +32,7 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
     [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT]: ProductStockIdempotencyOutcomeEnum.IN_FLIGHT,
     [IdempotencyCoreClaimOutcomeEnum.MISMATCH]: ProductStockIdempotencyOutcomeEnum.MISMATCH,
   };
+  private static readonly SCOPE_PREFIX = 'staff';
 
   constructor(
     @Inject(IDEMPOTENCY_CORE_PORT)
@@ -41,8 +42,9 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
   public async claim<T>(
     command: IProductStockIdempotencyClaimCommand,
   ): Promise<IProductStockIdempotencyOutcomeView | IProductStockIdempotencyReplayView<T>> {
-    const { key, body } = command;
-    const claim = await this.idempotency.handleClaim({ key, body });
+    const { staffUserId, key, body } = command;
+    const scope = ProductStockIdempotencyCoreAdapter.toScope(staffUserId);
+    const claim = await this.idempotency.handleClaim({ scope, key, body });
     const { outcome, storedResponse } = claim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
@@ -56,14 +58,20 @@ export class ProductStockIdempotencyCoreAdapter implements IProductStockIdempote
   }
 
   public async complete(command: IProductStockIdempotencyCompleteCommand): Promise<void> {
-    const { key, response } = command;
+    const { staffUserId, key, response } = command;
+    const scope = ProductStockIdempotencyCoreAdapter.toScope(staffUserId);
 
-    await this.idempotency.handleComplete({ key, response });
+    await this.idempotency.handleComplete({ scope, key, response });
   }
 
   public async release(command: IProductStockIdempotencyReleaseCommand): Promise<void> {
-    const { key } = command;
+    const { staffUserId, key } = command;
+    const scope = ProductStockIdempotencyCoreAdapter.toScope(staffUserId);
 
-    await this.idempotency.handleRelease({ key });
+    await this.idempotency.handleRelease({ scope, key });
+  }
+
+  private static toScope(staffUserId: string): string {
+    return `${ProductStockIdempotencyCoreAdapter.SCOPE_PREFIX}:${staffUserId}`;
   }
 }

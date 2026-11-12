@@ -27,7 +27,7 @@ export class IdempotencyCoreKeyModel {
   public static createDraft(
     candidate: IIdempotencyCoreKeyCandidateInput,
   ): IIdempotencyCoreKeyDraftOutput {
-    const { key, requestFingerprint } = candidate;
+    const { scope, key, requestFingerprint } = candidate;
 
     if (key.length === 0) {
       throw new Error('IdempotencyKey.key is required');
@@ -37,7 +37,13 @@ export class IdempotencyCoreKeyModel {
       throw new Error('IdempotencyKey.key must be at most 128 characters');
     }
 
-    return { key, requestFingerprint, status: IdempotencyStatusEnum.IN_FLIGHT, responseBody: null };
+    return {
+      scope,
+      key,
+      requestFingerprint,
+      status: IdempotencyStatusEnum.IN_FLIGHT,
+      responseBody: null,
+    };
   }
 
   public matches(requestFingerprint: string): boolean {

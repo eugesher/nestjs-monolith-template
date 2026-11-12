@@ -62,8 +62,9 @@ describe('OrderPlaceUseCase', () => {
       });
 
       expect(claim).toHaveBeenCalledWith({
+        customerId: 'customer-1',
         key: 'key-1',
-        body: { customerId: 'customer-1', productIds: ['100', '103', '100'] },
+        body: { productIds: ['100', '103', '100'] },
       });
       expect(lock).toHaveBeenCalledWith({ productIds: ['100', '103'] });
       expect(findActiveProducts).toHaveBeenCalledWith(['100', '103']);
@@ -93,7 +94,11 @@ describe('OrderPlaceUseCase', () => {
           { productId: '100', orderProductId: '622' },
         ],
       });
-      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+      expect(complete).toHaveBeenCalledWith({
+        customerId: 'customer-1',
+        key: 'key-1',
+        response: view,
+      });
       expect(run).toHaveBeenCalledTimes(1);
       expect(release).not.toHaveBeenCalled();
     });
@@ -179,7 +184,7 @@ describe('OrderPlaceUseCase', () => {
       expect(withdraw).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(recordPlaced).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ customerId: 'customer-1', key: 'key-1' });
     });
 
     it('releases the key when the transaction fails and rethrows', async () => {
@@ -192,7 +197,7 @@ describe('OrderPlaceUseCase', () => {
           idempotencyKey: 'key-1',
         }),
       ).rejects.toThrow('lock wait timeout');
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ customerId: 'customer-1', key: 'key-1' });
       expect(recordPlaced).not.toHaveBeenCalled();
     });
   });

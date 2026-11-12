@@ -45,8 +45,9 @@ export class ProductStockAddUseCase {
   ) {}
 
   public async execute(command: IProductStockAddCommand): Promise<IProductStockAddView> {
-    const { productId, quantity, idempotencyKey } = command;
+    const { productId, quantity, staffUserId, idempotencyKey } = command;
     const claim = await this.idempotency.claim<IProductStockAddView>({
+      staffUserId,
       key: idempotencyKey,
       body: { productId, quantity },
     });
@@ -76,14 +77,14 @@ export class ProductStockAddUseCase {
 
       return stock;
     } catch (error) {
-      await this.idempotency.release({ key: idempotencyKey });
+      await this.idempotency.release({ staffUserId, key: idempotencyKey });
 
       throw error;
     }
   }
 
   private async persist(command: IProductStockAddCommand): Promise<IProductStockAddWriteView> {
-    const { productId, quantity, idempotencyKey } = command;
+    const { productId, quantity, staffUserId, idempotencyKey } = command;
     await this.movement.lock({ productId });
 
     const record = await this.repository.findById(productId);
@@ -101,7 +102,7 @@ export class ProductStockAddUseCase {
     const { productStockId } = added;
     const stock = { productId, quantity: added.quantity };
 
-    await this.idempotency.complete({ key: idempotencyKey, response: stock });
+    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: stock });
 
     return { stock, productStockId, events };
   }

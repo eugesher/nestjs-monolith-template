@@ -15,8 +15,8 @@ export class IdempotencyCoreReleaseUseCase {
   ) {}
 
   public async execute(command: IIdempotencyCoreReleaseCommand): Promise<void> {
-    const { key } = command;
+    const { scope, key } = command;
 
-    await this.repository.deleteInFlight(key);
+    await this.repository.deleteInFlight({ scope, key });
   }
 }

@@ -1,9 +1,10 @@
 import { Body, Controller, Param, Post, UseFilters } from '@nestjs/common';
 import { ApiCreatedResponse, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { RequiresPermission } from '@acme-libs/auth';
+import { CurrentUser, RequiresPermission } from '@acme-libs/auth';
 import { IdempotencyKey } from '@acme-libs/http';
 import { PermissionCodeEnum } from '@acme-libs/kernel';
+import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { ProductStockAddUseCase } from '../../application';
 import {
@@ -25,13 +26,15 @@ export class ProductStockController {
   @ApiOperation({ summary: 'Add units to the stock of a product (idempotent)' })
   @ApiCreatedResponse({ type: ProductStockResponseDto })
   public async handleAdd(
+    @CurrentUser() user: IAuthCurrentUserView,
     @Param() params: ProductStockProductIdParamDto,
     @Body() body: ProductStockAddRequestDto,
     @IdempotencyKey() idempotencyKey: string,
   ): Promise<ProductStockResponseDto> {
+    const { id: staffUserId } = user;
     const { productId } = params;
     const { quantity } = body;
 
-    return await this.add.execute({ productId, quantity, idempotencyKey });
+    return await this.add.execute({ productId, quantity, staffUserId, idempotencyKey });
   }
 }

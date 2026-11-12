@@ -23,11 +23,13 @@ describe('IdempotencyCoreKeyModel', () => {
   describe('createDraft', () => {
     it('drafts an in-flight key without a stored response', () => {
       const draft = IdempotencyCoreKeyModel.createDraft({
+        scope: 'customer:101',
         key: 'key-1',
         requestFingerprint: 'abc',
       });
 
       expect(draft).toEqual({
+        scope: 'customer:101',
         key: 'key-1',
         requestFingerprint: 'abc',
         status: 'in_flight',
@@ -37,6 +39,7 @@ describe('IdempotencyCoreKeyModel', () => {
 
     it('accepts a key of 128 characters', () => {
       const draft = IdempotencyCoreKeyModel.createDraft({
+        scope: 'customer:101',
         key: 'k'.repeat(128),
         requestFingerprint: 'abc',
       });
@@ -53,7 +56,11 @@ describe('IdempotencyCoreKeyModel', () => {
       ],
     ])('refuses %s', (_case, value, message) => {
       expect(() =>
-        IdempotencyCoreKeyModel.createDraft({ key: value, requestFingerprint: 'abc' }),
+        IdempotencyCoreKeyModel.createDraft({
+          scope: 'customer:101',
+          key: value,
+          requestFingerprint: 'abc',
+        }),
       ).toThrow(message);
     });
   });

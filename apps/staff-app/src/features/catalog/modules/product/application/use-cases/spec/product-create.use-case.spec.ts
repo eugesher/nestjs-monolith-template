@@ -57,10 +57,12 @@ describe('ProductCreateUseCase', () => {
       const view = await useCase.execute({
         sku: 'SKU-0001',
         name: 'Lamp',
+        staffUserId: 'staff-1',
         idempotencyKey: 'key-1',
       });
 
       expect(claim).toHaveBeenCalledWith({
+        staffUserId: 'staff-1',
         key: 'key-1',
         body: { sku: 'SKU-0001', name: 'Lamp' },
       });
@@ -81,7 +83,11 @@ describe('ProductCreateUseCase', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-01T00:00:00.000Z',
       });
-      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+      expect(complete).toHaveBeenCalledWith({
+        staffUserId: 'staff-1',
+        key: 'key-1',
+        response: view,
+      });
       expect(run).toHaveBeenCalledTimes(1);
       expect(release).not.toHaveBeenCalled();
     });
@@ -90,6 +96,7 @@ describe('ProductCreateUseCase', () => {
       await useCase.execute({
         sku: 'SKU-0001',
         name: 'Lamp',
+        staffUserId: 'staff-1',
         idempotencyKey: 'key-1',
       });
 
@@ -116,6 +123,7 @@ describe('ProductCreateUseCase', () => {
       const view = await useCase.execute({
         sku: 'SKU-0001',
         name: 'Lamp',
+        staffUserId: 'staff-1',
         idempotencyKey: 'key-1',
       });
 
@@ -146,6 +154,7 @@ describe('ProductCreateUseCase', () => {
         useCase.execute({
           sku: 'SKU-0001',
           name: 'Lamp',
+          staffUserId: 'staff-1',
           idempotencyKey: 'key-1',
         }),
       ).rejects.toMatchObject({ code, message });
@@ -160,6 +169,7 @@ describe('ProductCreateUseCase', () => {
         useCase.execute({
           sku: 'SKU-0001',
           name: 'Lamp',
+          staffUserId: 'staff-1',
           idempotencyKey: 'key-1',
         }),
       ).rejects.toMatchObject({
@@ -167,7 +177,7 @@ describe('ProductCreateUseCase', () => {
         message: 'Product sku SKU-0001 is already registered',
       });
       expect(insert).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
     });
 
     it('refuses a sku taken by a concurrent insert with PRODUCT_SKU_TAKEN and releases the key', async () => {
@@ -177,6 +187,7 @@ describe('ProductCreateUseCase', () => {
         useCase.execute({
           sku: 'SKU-0001',
           name: 'Lamp',
+          staffUserId: 'staff-1',
           idempotencyKey: 'key-1',
         }),
       ).rejects.toMatchObject({
@@ -184,7 +195,7 @@ describe('ProductCreateUseCase', () => {
         message: 'Product sku SKU-0001 is already registered',
       });
       expect(findInserted).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
     });
 
     it('releases the key when the transaction fails and rethrows', async () => {
@@ -194,10 +205,11 @@ describe('ProductCreateUseCase', () => {
         useCase.execute({
           sku: 'SKU-0001',
           name: 'Lamp',
+          staffUserId: 'staff-1',
           idempotencyKey: 'key-1',
         }),
       ).rejects.toThrow('lock wait timeout');
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
       expect(recordCreated).not.toHaveBeenCalled();
     });
   });

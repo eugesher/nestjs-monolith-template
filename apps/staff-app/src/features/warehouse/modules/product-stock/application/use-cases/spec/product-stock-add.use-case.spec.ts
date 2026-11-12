@@ -42,10 +42,12 @@ describe('ProductStockAddUseCase', () => {
       const view = await useCase.execute({
         productId: '12',
         quantity: 5,
+        staffUserId: 'staff-1',
         idempotencyKey: 'key-1',
       });
 
       expect(claim).toHaveBeenCalledWith({
+        staffUserId: 'staff-1',
         key: 'key-1',
         body: { productId: '12', quantity: 5 },
       });
@@ -54,13 +56,22 @@ describe('ProductStockAddUseCase', () => {
       expect(lock.mock.invocationCallOrder[0]).toBeLessThan(findById.mock.invocationCallOrder[0]);
       expect(add).toHaveBeenCalledWith({ productId: '12', quantity: 5 });
       expect(view).toEqual({ productId: '12', quantity: 15 });
-      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+      expect(complete).toHaveBeenCalledWith({
+        staffUserId: 'staff-1',
+        key: 'key-1',
+        response: view,
+      });
       expect(run).toHaveBeenCalledTimes(1);
       expect(release).not.toHaveBeenCalled();
     });
 
     it('enqueues the ledger record under the stock row after the commit and logs it', async () => {
-      await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
+      await useCase.execute({
+        productId: '12',
+        quantity: 5,
+        staffUserId: 'staff-1',
+        idempotencyKey: 'key-1',
+      });
 
       expect(recordEvents).toHaveBeenCalledWith({
         productStockId: '700',
@@ -81,7 +92,12 @@ describe('ProductStockAddUseCase', () => {
         storedResponse: { productId: '12', quantity: 10 },
       });
 
-      const view = await useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' });
+      const view = await useCase.execute({
+        productId: '12',
+        quantity: 5,
+        staffUserId: 'staff-1',
+        idempotencyKey: 'key-1',
+      });
 
       expect(view).toEqual({ productId: '12', quantity: 10 });
       expect(lock).not.toHaveBeenCalled();
@@ -107,7 +123,12 @@ describe('ProductStockAddUseCase', () => {
       claim.mockResolvedValue({ outcome });
 
       await expect(
-        useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' }),
+        useCase.execute({
+          productId: '12',
+          quantity: 5,
+          staffUserId: 'staff-1',
+          idempotencyKey: 'key-1',
+        }),
       ).rejects.toMatchObject({ code, message });
       expect(lock).not.toHaveBeenCalled();
       expect(release).not.toHaveBeenCalled();
@@ -117,22 +138,32 @@ describe('ProductStockAddUseCase', () => {
       findById.mockResolvedValue(null);
 
       await expect(
-        useCase.execute({ productId: '999', quantity: 5, idempotencyKey: 'key-1' }),
+        useCase.execute({
+          productId: '999',
+          quantity: 5,
+          staffUserId: 'staff-1',
+          idempotencyKey: 'key-1',
+        }),
       ).rejects.toMatchObject({
         code: 'PRODUCT_NOT_FOUND',
         message: 'Product 999 was not found',
       });
       expect(add).not.toHaveBeenCalled();
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
     });
 
     it('releases the key when the transaction fails and rethrows', async () => {
       complete.mockRejectedValue(new Error('lock wait timeout'));
 
       await expect(
-        useCase.execute({ productId: '12', quantity: 5, idempotencyKey: 'key-1' }),
+        useCase.execute({
+          productId: '12',
+          quantity: 5,
+          staffUserId: 'staff-1',
+          idempotencyKey: 'key-1',
+        }),
       ).rejects.toThrow('lock wait timeout');
-      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+      expect(release).toHaveBeenCalledWith({ staffUserId: 'staff-1', key: 'key-1' });
       expect(recordEvents).not.toHaveBeenCalled();
     });
   });

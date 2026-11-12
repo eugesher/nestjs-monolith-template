@@ -32,6 +32,7 @@ export class ProductIdempotencyCoreAdapter implements IProductIdempotencyPort {
     [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT]: ProductIdempotencyOutcomeEnum.IN_FLIGHT,
     [IdempotencyCoreClaimOutcomeEnum.MISMATCH]: ProductIdempotencyOutcomeEnum.MISMATCH,
   };
+  private static readonly SCOPE_PREFIX = 'staff';
 
   constructor(
     @Inject(IDEMPOTENCY_CORE_PORT)
@@ -41,8 +42,9 @@ export class ProductIdempotencyCoreAdapter implements IProductIdempotencyPort {
   public async claim<T>(
     command: IProductIdempotencyClaimCommand,
   ): Promise<IProductIdempotencyOutcomeView | IProductIdempotencyReplayView<T>> {
-    const { key, body } = command;
-    const claim = await this.idempotency.handleClaim({ key, body });
+    const { staffUserId, key, body } = command;
+    const scope = ProductIdempotencyCoreAdapter.toScope(staffUserId);
+    const claim = await this.idempotency.handleClaim({ scope, key, body });
     const { outcome, storedResponse } = claim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
@@ -53,14 +55,20 @@ export class ProductIdempotencyCoreAdapter implements IProductIdempotencyPort {
   }
 
   public async complete(command: IProductIdempotencyCompleteCommand): Promise<void> {
-    const { key, response } = command;
+    const { staffUserId, key, response } = command;
+    const scope = ProductIdempotencyCoreAdapter.toScope(staffUserId);
 
-    await this.idempotency.handleComplete({ key, response });
+    await this.idempotency.handleComplete({ scope, key, response });
   }
 
   public async release(command: IProductIdempotencyReleaseCommand): Promise<void> {
-    const { key } = command;
+    const { staffUserId, key } = command;
+    const scope = ProductIdempotencyCoreAdapter.toScope(staffUserId);
 
-    await this.idempotency.handleRelease({ key });
+    await this.idempotency.handleRelease({ scope, key });
+  }
+
+  private static toScope(staffUserId: string): string {
+    return `${ProductIdempotencyCoreAdapter.SCOPE_PREFIX}:${staffUserId}`;
   }
 }
