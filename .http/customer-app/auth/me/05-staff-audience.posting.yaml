@@ -1,0 +1,13 @@
+name: 05-staff-audience
+description: |-
+  e2e: Auth › GET /api/auth/me › should refuse the token of a customer issued for the staff audience
+
+  Expect: 401 Unauthorized
+  User: customer ann@example.com (token signed by scripts.py with the JWT_SECRET of this app and aud staff)
+url: $CUSTOMER_APP_BASE_URL/auth/me
+auth:
+  type: bearer_token
+  bearer_token:
+    token: $token
+scripts:
+  setup: scripts.py:as_ann_for_staff_audience

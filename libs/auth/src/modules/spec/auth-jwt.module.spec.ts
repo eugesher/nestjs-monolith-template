@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
+import { AuthAudienceEnum } from '@acme-libs/kernel';
 import { AUTH_USER_VALIDATOR_PORT, type IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 import type { Maybe } from '@acme-libs/toolkit';
 
@@ -56,7 +57,10 @@ describe('AuthJwtModule', () => {
     })
     class ValidatorModule {}
 
-    @Module({ imports: [ValidatorModule, AuthJwtModule], controllers: [ProbeController] })
+    @Module({
+      imports: [ValidatorModule, AuthJwtModule.forRoot(AuthAudienceEnum.STAFF)],
+      controllers: [ProbeController],
+    })
     class TestModule {}
 
     app = await NestFactory.create(TestModule, { logger: false });
@@ -83,7 +87,37 @@ describe('AuthJwtModule', () => {
   it('answers 401 for a token signed with another secret', async () => {
     const token = await new JwtService({
       secret: 'another-secret-of-at-least-thirty-two',
+    }).signAsync({ sub: 'ann' }, { audience: 'staff' });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('answers 401 for a token of a known user issued for another audience', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'ann' }, { audience: 'customer' });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('answers 401 for a token of a known user without an audience', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
     }).signAsync({ sub: 'ann' });
+
+    const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('answers 401 for a token of a known user signed with HS512', async () => {
+    const token = await new JwtService({
+      secret: 'access-secret-of-at-least-thirty-two-chars',
+    }).signAsync({ sub: 'ann' }, { audience: 'staff', algorithm: 'HS512' });
 
     const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
 
@@ -93,7 +127,7 @@ describe('AuthJwtModule', () => {
   it('answers 401 for a valid token of a user the validator does not know', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'eve' });
+    }).signAsync({ sub: 'eve' }, { audience: 'staff' });
 
     const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
 
@@ -103,7 +137,7 @@ describe('AuthJwtModule', () => {
   it('hands the re-derived user to @CurrentUser()', async () => {
     const token = await new JwtService({
       secret: 'access-secret-of-at-least-thirty-two-chars',
-    }).signAsync({ sub: 'ann', email: 'forged@example.com' });
+    }).signAsync({ sub: 'ann', email: 'forged@example.com' }, { audience: 'staff' });
 
     const response = await fetch(`${url}/me`, { headers: { authorization: `Bearer ${token}` } });
     const body: unknown = await response.json();

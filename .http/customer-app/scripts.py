@@ -5,6 +5,8 @@ import json
 import time
 from pathlib import Path
 
+AUDIENCE = "customer"
+OTHER_AUDIENCE = "staff"
 ENV_DIR = Path(__file__).resolve().parents[2] / "env" / "apps"
 ENV_FILE = ENV_DIR / "customer-app" / ".env"
 STAFF_ENV_FILE = ENV_DIR / "staff-app" / ".env"
@@ -44,9 +46,13 @@ def as_ann_with_staff_secret(posting) -> None:
     sign(posting, {"sub": ANN_ID}, STAFF_ENV_FILE)
 
 
-def sign(posting, claims: dict, env_file: Path = ENV_FILE) -> None:
+def as_ann_for_staff_audience(posting) -> None:
+    sign(posting, {"sub": ANN_ID}, audience=OTHER_AUDIENCE)
+
+
+def sign(posting, claims: dict, env_file: Path = ENV_FILE, audience: str = AUDIENCE) -> None:
     header = encode(json.dumps({"alg": "HS256", "typ": "JWT"}, separators=(",", ":")).encode())
-    payload = encode(json.dumps({**claims, "iat": int(time.time())}, separators=(",", ":")).encode())
+    payload = encode(json.dumps({**claims, "aud": audience, "iat": int(time.time())}, separators=(",", ":")).encode())
     signing_input = f"{header}.{payload}"
     signature = hmac.new(access_secret(env_file).encode(), signing_input.encode(), hashlib.sha256).digest()
     posting.set_variable("token", f"{signing_input}.{encode(signature)}")

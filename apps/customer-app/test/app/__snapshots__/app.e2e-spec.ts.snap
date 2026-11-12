@@ -11,6 +11,17 @@ exports[`App Auth GET /api/auth/me should refuse a caller without a token 1`] = 
 }
 `;
 
+exports[`App Auth GET /api/auth/me should refuse the token of a customer issued for the staff audience 1`] = `
+{
+  "response": {
+    "body": {
+      "message": "Unauthorized",
+      "statusCode": 401,
+    },
+  },
+}
+`;
+
 exports[`App Auth GET /api/auth/me should refuse the token of a disabled customer 1`] = `
 {
   "response": {
@@ -54,7 +65,9 @@ exports[`App Auth POST /api/auth/login should answer 429 to an address that spen
 
 exports[`App Auth POST /api/auth/login should issue an access token of the subject alone, valid for the lifetime of this app 1`] = `
 {
+  "audience": "customer",
   "claims": [
+    "aud",
     "exp",
     "iat",
     "sub",

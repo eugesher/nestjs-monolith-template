@@ -37,9 +37,9 @@ The app has the folders of an HTTP app and uses fewer of them:
 
 **HTTP serves the probes, the login and the queues.** `AuthGlobalModule` and the login reach the
 staff through the core module `staff-auth` (see `017-credentials-lib.md`). processor-app shares
-`JWT_SECRET` with staff-app, so a token of either app works in both, and lists the staff identity
-entities on its connection for the core module. The health routes carry `@Public()`. `APP_PIPE` is
-the one of staff-app, and `APP_FILTER` is `HttpExceptionFilter` alone.
+`JWT_SECRET` and the `staff` audience with staff-app, so a token of either app works in both, and
+lists the staff identity entities on its connection for the core module. The health routes carry
+`@Public()`. `APP_PIPE` is the one of staff-app, and `APP_FILTER` is `HttpExceptionFilter` alone.
 
 | Route                                          | Permission     | What it does                                              |
 | ---------------------------------------------- | -------------- | --------------------------------------------------------- |

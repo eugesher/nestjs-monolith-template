@@ -2,7 +2,7 @@ import { libs } from './selectors.mjs';
 
 const authNames = '{AuthJwtModule,CurrentUser,Public}';
 const kernelNames =
-  '{AppNameEnum,HealthDependencyStatusEnum,HealthLivenessStatusEnum,HealthReadinessStatusEnum,IdentityExceptionCodeEnum,ProductStatusEnum,UserStatusEnum}';
+  '{AppNameEnum,AuthAudienceEnum,HealthDependencyStatusEnum,HealthLivenessStatusEnum,HealthReadinessStatusEnum,IdentityExceptionCodeEnum,ProductStatusEnum,UserStatusEnum}';
 
 export const customerClaims = {
   from: { file: { categories: 'acme-app:*', captured: { app: 'customer-app' } } },

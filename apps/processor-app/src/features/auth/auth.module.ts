@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
+import { AuthAudienceEnum } from '@acme-libs/kernel';
 import { StaffAuthCoreModule } from '@acme-core/modules/staff-auth';
 
 import { AuthLoginUseCase } from './application';
@@ -9,7 +10,7 @@ import { AuthCredentialsLibAdapter, AuthIdentityCoreAdapter } from './infrastruc
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [CredentialsLibModule, StaffAuthCoreModule],
+  imports: [CredentialsLibModule.register(AuthAudienceEnum.STAFF), StaffAuthCoreModule],
   controllers: [AuthController],
   providers: [
     HttpExceptionFilter,

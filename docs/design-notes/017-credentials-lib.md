@@ -8,7 +8,7 @@ case, and the use cases reach the libraries through ports of the lib's own `outb
 
 | Facade method           | Use case                               | Adapter                               | Reads                                                                                                                                        |
 | ----------------------- | -------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`                                                                                                               |
+| `handleSignAccessToken` | `CredentialsLibSignAccessTokenUseCase` | `CredentialsLibAccessTokenAdapter`    | `JWT_SECRET`, `JWT_EXPIRES_IN`, the audience of `register()`                                                                                 |
 | `handleHashPassword`    | `CredentialsLibHashPasswordUseCase`    | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MEMORY_COST`, `AUTH_ARGON2_PARALLELISM`, `AUTH_ARGON2_TIME_COST`, `AUTH_ARGON2_MAX_CONCURRENCY`, `AUTH_ARGON2_QUEUE_TIMEOUT_MS` |
 | `handleVerifyPassword`  | `CredentialsLibVerifyPasswordUseCase`  | `CredentialsLibPasswordHasherAdapter` | `AUTH_ARGON2_MAX_CONCURRENCY`, `AUTH_ARGON2_QUEUE_TIMEOUT_MS`                                                                                |
 
@@ -39,7 +39,9 @@ feature declares a port of its own (`AUTH_CREDENTIALS_PORT`) and implements it i
 `infrastructure/lib-adapters` on top of `CREDENTIALS_LIB_PORT`, so no feature imports `argon2` or
 `@nestjs/jwt` and the application never sees the lib. Example:
 `apps/customer-app/src/features/auth/infrastructure/lib-adapters/auth-credentials-lib.adapter.ts`.
-Verifying a token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET`.
+Verifying a token stays in `libs/auth`: signing and verifying meet only in `JWT_SECRET` and in
+`AuthAudienceEnum`. A module imports the lib as `CredentialsLibModule.register(audience)`; the lib
+signs `HS256` tokens with that `aud`.
 
 ## One model per module over one table
 
