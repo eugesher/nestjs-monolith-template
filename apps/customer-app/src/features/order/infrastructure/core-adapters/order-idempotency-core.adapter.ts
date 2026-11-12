@@ -32,6 +32,7 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
     [IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT]: OrderIdempotencyOutcomeEnum.IN_FLIGHT,
     [IdempotencyCoreClaimOutcomeEnum.MISMATCH]: OrderIdempotencyOutcomeEnum.MISMATCH,
   };
+  private static readonly SCOPE_PREFIX = 'customer';
 
   constructor(
     @Inject(IDEMPOTENCY_CORE_PORT)
@@ -41,8 +42,9 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
   public async claim<T>(
     command: IOrderIdempotencyClaimCommand,
   ): Promise<IOrderIdempotencyOutcomeView | IOrderIdempotencyReplayView<T>> {
-    const { key, body } = command;
-    const claim = await this.idempotency.handleClaim({ key, body });
+    const { customerId, key, body } = command;
+    const scope = OrderIdempotencyCoreAdapter.toScope(customerId);
+    const claim = await this.idempotency.handleClaim({ scope, key, body });
     const { outcome, storedResponse } = claim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
@@ -53,14 +55,20 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
   }
 
   public async complete(command: IOrderIdempotencyCompleteCommand): Promise<void> {
-    const { key, response } = command;
+    const { customerId, key, response } = command;
+    const scope = OrderIdempotencyCoreAdapter.toScope(customerId);
 
-    await this.idempotency.handleComplete({ key, response });
+    await this.idempotency.handleComplete({ scope, key, response });
   }
 
   public async release(command: IOrderIdempotencyReleaseCommand): Promise<void> {
-    const { key } = command;
+    const { customerId, key } = command;
+    const scope = OrderIdempotencyCoreAdapter.toScope(customerId);
 
-    await this.idempotency.handleRelease({ key });
+    await this.idempotency.handleRelease({ scope, key });
+  }
+
+  private static toScope(customerId: string): string {
+    return `${OrderIdempotencyCoreAdapter.SCOPE_PREFIX}:${customerId}`;
   }
 }

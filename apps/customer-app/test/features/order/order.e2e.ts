@@ -169,23 +169,39 @@ export class OrderE2E {
         }).toMatchSnapshot();
       });
 
-      it('should refuse the key of another customer with 422 rather than replay their order', async () => {
+      it('should place an order of another customer under the same key instead of refusing or replaying it', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/orders')
           .set('Idempotency-Key', 'e2e-order-place-key')
-          .auth(this.ctx.bobToken, { type: 'bearer' })
+          .auth(this.ctx.carolToken, { type: 'bearer' })
           .send({ productIds: ['100', '100'] })
-          .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+          .expect(HttpStatus.CREATED);
+
+        const records = await this.ctx.takeLedgerRecords();
+
+        await this.ctx.takePostSubtractJobs();
 
         expect({
           response: { body: response.body },
           db: {
-            order: await this.ctx.dataSource.query(
-              'SELECT id FROM `order` WHERE customer_id = ? ORDER BY id',
-              ['102'],
+            order: await this.ctx.dataSource.query('SELECT customer_id FROM `order` WHERE id = ?', [
+              response.body.id,
+            ]),
+            idempotency_key: await this.ctx.dataSource.query(
+              'SELECT scope, status FROM idempotency_key WHERE idempotency_key = ? ORDER BY id',
+              ['e2e-order-place-key'],
             ),
           },
-        }).toMatchSnapshot();
+          ledger_record_queue: records.map((record) => record.action),
+        }).toMatchSnapshot({
+          response: {
+            body: {
+              id: expect.any(String),
+              createdAt: expect.any(String),
+              products: [{ id: expect.any(String) }, { id: expect.any(String) }],
+            },
+          },
+        });
       });
 
       it('should refuse a placement without a key with 400', async () => {

@@ -38,8 +38,9 @@ export class ProductCreateUseCase {
   ) {}
 
   public async execute(command: IProductCreateCommand): Promise<IProductView> {
-    const { sku, name, idempotencyKey } = command;
+    const { sku, name, staffUserId, idempotencyKey } = command;
     const claim = await this.idempotency.claim<IProductView>({
+      staffUserId,
       key: idempotencyKey,
       body: { sku, name },
     });
@@ -66,7 +67,7 @@ export class ProductCreateUseCase {
       }
 
       const draft = ProductModel.createDraft({ sku, name });
-      const view = await this.transaction.run(() => this.persist(draft, idempotencyKey));
+      const view = await this.transaction.run(() => this.persist(draft, command));
 
       await this.ledger.recordCreated({
         productId: view.id,
@@ -78,13 +79,17 @@ export class ProductCreateUseCase {
 
       return view;
     } catch (error) {
-      await this.idempotency.release({ key: idempotencyKey });
+      await this.idempotency.release({ staffUserId, key: idempotencyKey });
 
       throw error;
     }
   }
 
-  private async persist(draft: IProductDraftOutput, idempotencyKey: string): Promise<IProductView> {
+  private async persist(
+    draft: IProductDraftOutput,
+    command: IProductCreateCommand,
+  ): Promise<IProductView> {
+    const { staffUserId, idempotencyKey } = command;
     const inserted = await this.repository.insert(draft);
 
     if (inserted.outcome === ProductCreateInsertOutcomeEnum.DUPLICATE) {
@@ -95,7 +100,7 @@ export class ProductCreateUseCase {
     const created = ProductModel.reconstitute(record);
     const view = created.toSnapshot();
 
-    await this.idempotency.complete({ key: idempotencyKey, response: view });
+    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: view });
 
     return view;
   }

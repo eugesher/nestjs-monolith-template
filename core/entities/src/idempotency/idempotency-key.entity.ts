@@ -3,11 +3,14 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 
 @Entity({ name: 'idempotency_key' })
+@Index('uq_idempotency_scope_key', ['scope', 'idempotencyKey'], { unique: true })
 export class IdempotencyKey {
   @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   public id: string;
 
-  @Index('uq_idempotency_key', { unique: true })
+  @Column({ type: 'varchar', length: 64 })
+  public scope: string;
+
   @Column({ type: 'varchar', length: 128 })
   public idempotencyKey: string;
 

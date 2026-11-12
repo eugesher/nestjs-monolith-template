@@ -18,17 +18,29 @@ A feature root mounts `IdempotencyCoreModule` from `@acme-core/modules/idempoten
 port only from a core-adapter, like any core module. The `IdempotencyKey` decorator that reads the
 header lives in `@acme-libs/http`, so both apps parse the key the same way.
 
-Keys share one table and one UNIQUE index across the apps. A key that one app or one client already
-used is a `mismatch` for any other body, so a caller that wants keys scoped per user puts the user
-into the body it claims, as
-`apps/customer-app/src/features/order/application/use-cases/order-place.use-case.ts` does.
+## A key belongs to its owner
+
+Every command of the port carries a `scope` next to the key, and the UNIQUE index covers
+`(scope, idempotency_key)`. The same key under two scopes is two keys: one customer never meets the
+key of another, and a staff user never meets the key of a customer.
+
+| Caller                | Scope                    |
+| --------------------- | ------------------------ |
+| customer `order`      | `customer:<customer id>` |
+| staff `product`       | `staff:<staff user id>`  |
+| staff `product-stock` | `staff:<staff user id>`  |
+
+**The core-adapter builds the scope.** A feature port takes the id of the owner, `customerId` or
+`staffUserId`, and its core-adapter turns it into the scope, so the format lives in one class per
+feature and the use case never spells it. The body a caller claims holds only the request: the owner
+is already in the scope.
 
 ## Claim before the work
 
-**The insert is the lock.** `claim` inserts an in-flight row against the UNIQUE index on the key
-before the caller does any work. Of two simultaneous requests with the same key, exactly one insert
-succeeds; the repository answers `DUPLICATE` to the other (see `003-authentication.md`). A "have I
-seen this key?" read before the write would let both through.
+**The insert is the lock.** `claim` inserts an in-flight row against the UNIQUE index on the scope
+and key before the caller does any work. Of two simultaneous requests with the same scope and key,
+exactly one insert succeeds; the repository answers `DUPLICATE` to the other (see
+`003-authentication.md`). A "have I seen this key?" read before the write would let both through.
 
 **The module fingerprints the body.** The caller passes the logical body, never a hash.
 `BodyFingerprintHelper` hashes it canonically: object keys are sorted at every depth and array order

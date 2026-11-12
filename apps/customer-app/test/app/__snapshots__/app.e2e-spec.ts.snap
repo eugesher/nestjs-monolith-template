@@ -547,6 +547,51 @@ exports[`App Order POST /api/orders should let one of two simultaneous orders fo
 }
 `;
 
+exports[`App Order POST /api/orders should place an order of another customer under the same key instead of refusing or replaying it 1`] = `
+{
+  "db": {
+    "idempotency_key": [
+      {
+        "scope": "customer:101",
+        "status": "completed",
+      },
+      {
+        "scope": "customer:103",
+        "status": "completed",
+      },
+    ],
+    "order": [
+      {
+        "customer_id": "103",
+      },
+    ],
+  },
+  "ledger_record_queue": [
+    "OrderPlaced",
+  ],
+  "response": {
+    "body": {
+      "createdAt": Any<String>,
+      "id": Any<String>,
+      "products": [
+        {
+          "id": Any<String>,
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+        {
+          "id": Any<String>,
+          "name": "Seeded reference product",
+          "productId": "100",
+          "sku": "SKU-0001",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`App Order POST /api/orders should place the order with a line and a -1 stock movement per unit, keep the response under the key, enqueue the ledger record and the stock check of its products under the correlation id 1`] = `
 {
   "db": {
@@ -555,8 +600,9 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
         "created_at": Any<Date>,
         "id": Any<String>,
         "idempotency_key": "e2e-order-place-key",
-        "request_fingerprint": "5c4301c84212cc93c40e2d83d813f76ebebe2880b6a99520ae94fda1f0b73bea",
+        "request_fingerprint": "c642d18d849f7f3adf3a79fbb20511eaa1e54d7f5e710bd05857095d606dd502",
         "response_body": Any<String>,
+        "scope": "customer:101",
         "status": "completed",
       },
     ],
@@ -786,28 +832,6 @@ exports[`App Order POST /api/orders should refuse more units than in stock with 
       },
       "message": "Product 106 has 0 in stock, 1 requested",
       "statusCode": 409,
-    },
-  },
-}
-`;
-
-exports[`App Order POST /api/orders should refuse the key of another customer with 422 rather than replay their order 1`] = `
-{
-  "db": {
-    "order": [
-      {
-        "id": "601",
-      },
-      {
-        "id": "602",
-      },
-    ],
-  },
-  "response": {
-    "body": {
-      "code": "ORDER_IDEMPOTENCY_KEY_REUSED",
-      "message": "Idempotency-Key e2e-order-place-key was already used with a different request body",
-      "statusCode": 422,
     },
   },
 }

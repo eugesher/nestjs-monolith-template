@@ -11,9 +11,9 @@ export class IdempotencyE2E {
     describe('schedule idempotency-purge', () => {
       it('should purge the keys older than the TTL and keep the fresh ones', async () => {
         await this.ctx.dataSource.query(
-          `INSERT INTO idempotency_key (idempotency_key, request_fingerprint, status, response_body, created_at)
-           VALUES ('e2e-purge-expired', REPEAT('a', 64), 'completed', NULL, '2026-01-01 00:00:00'),
-                  ('e2e-purge-fresh', REPEAT('b', 64), 'completed', NULL, CURRENT_TIMESTAMP)`,
+          `INSERT INTO idempotency_key (scope, idempotency_key, request_fingerprint, status, response_body, created_at)
+           VALUES ('customer:101', 'e2e-purge-expired', REPEAT('a', 64), 'completed', NULL, '2026-01-01 00:00:00'),
+                  ('customer:101', 'e2e-purge-fresh', REPEAT('b', 64), 'completed', NULL, CURRENT_TIMESTAMP)`,
         );
 
         this.ctx.fireSchedule('idempotency-purge');
@@ -39,10 +39,10 @@ export class IdempotencyE2E {
 
       it('should purge the in-flight keys older than the in-flight TTL and keep the rest', async () => {
         await this.ctx.dataSource.query(
-          `INSERT INTO idempotency_key (idempotency_key, request_fingerprint, status, response_body, created_at)
-           VALUES ('e2e-stuck-in-flight', REPEAT('c', 64), 'in_flight', NULL, CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
-                  ('e2e-stuck-completed', REPEAT('d', 64), 'completed', '{}', CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
-                  ('e2e-stuck-fresh', REPEAT('e', 64), 'in_flight', NULL, CURRENT_TIMESTAMP)`,
+          `INSERT INTO idempotency_key (scope, idempotency_key, request_fingerprint, status, response_body, created_at)
+           VALUES ('customer:101', 'e2e-stuck-in-flight', REPEAT('c', 64), 'in_flight', NULL, CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
+                  ('customer:101', 'e2e-stuck-completed', REPEAT('d', 64), 'completed', '{}', CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
+                  ('customer:101', 'e2e-stuck-fresh', REPEAT('e', 64), 'in_flight', NULL, CURRENT_TIMESTAMP)`,
         );
 
         this.ctx.fireSchedule('idempotency-purge');

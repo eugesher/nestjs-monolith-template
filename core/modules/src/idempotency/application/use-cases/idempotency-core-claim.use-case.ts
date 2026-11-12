@@ -22,16 +22,16 @@ export class IdempotencyCoreClaimUseCase {
   ) {}
 
   public async execute(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
-    const { key, body } = command;
+    const { scope, key, body } = command;
     const requestFingerprint = BodyFingerprintHelper.compute(body);
-    const draft = IdempotencyCoreKeyModel.createDraft({ key, requestFingerprint });
+    const draft = IdempotencyCoreKeyModel.createDraft({ scope, key, requestFingerprint });
     const inserted = await this.insert(draft);
 
     if (inserted) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.CLAIMED, storedResponse: undefined };
     }
 
-    const record = await this.repository.findByKey(key);
+    const record = await this.repository.findByKey({ scope, key });
 
     if (!record) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.IN_FLIGHT, storedResponse: undefined };
@@ -53,9 +53,10 @@ export class IdempotencyCoreClaimUseCase {
   }
 
   private async insert(draft: IIdempotencyCoreKeyDraftOutput): Promise<boolean> {
-    const { key, requestFingerprint, status, responseBody } = draft;
+    const { scope, key, requestFingerprint, status, responseBody } = draft;
 
     const outcome = await this.repository.insert({
+      scope,
       idempotencyKey: key,
       requestFingerprint,
       status,

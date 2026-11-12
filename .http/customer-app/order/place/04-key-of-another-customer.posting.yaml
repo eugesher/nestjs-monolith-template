@@ -1,9 +1,9 @@
 name: 04-key-of-another-customer
 description: |-
-  e2e: Order › POST /api/orders › should refuse the key of another customer with 422 rather than replay their order
+  e2e: Order › POST /api/orders › should place an order of another customer under the same key instead of refusing or replaying it
 
-  Expect: 422 Unprocessable Entity, code ORDER_IDEMPOTENCY_KEY_REUSED, bob still has orders 601 and 602
-  User: bob@example.com (token signed by scripts.py)
+  Expect: 201 Created, a new order of carol with two lines of product 100; two completed idempotency_key rows under the key, scopes customer:101 and customer:103; a ledger record order-placed
+  User: carol@example.com (token signed by scripts.py)
   Note: send place/01-place first
 method: POST
 url: $CUSTOMER_APP_BASE_URL/orders
@@ -25,4 +25,4 @@ headers:
   - name: Content-Type
     value: application/json
 scripts:
-  setup: scripts.py:as_bob
+  setup: scripts.py:as_carol

@@ -25,20 +25,20 @@ describe('IdempotencyCorePersistenceIdempotencyKeyBuilder', () => {
   });
 
   describe('forByKey', () => {
-    it('selects the fingerprint, status and stored response of the key', () => {
+    it('selects the fingerprint, status and stored response of the key in the scope', () => {
       const builder = new IdempotencyCorePersistenceIdempotencyKeyBuilder(baseBuilder);
 
-      builder.forByKey('key-1');
+      builder.forByKey('customer:101', 'key-1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `IdempotencyKey`.`id` AS `IdempotencyKey_id`, `IdempotencyKey`.`requestFingerprint` AS `IdempotencyKey_requestFingerprint`, `IdempotencyKey`.`status` AS `IdempotencyKey_status`, `IdempotencyKey`.`responseBody` AS `IdempotencyKey_responseBody` FROM `idempotency_key` `IdempotencyKey` WHERE `IdempotencyKey`.`idempotencyKey` = ?',
-        ['key-1'],
+        'SELECT `IdempotencyKey`.`id` AS `IdempotencyKey_id`, `IdempotencyKey`.`requestFingerprint` AS `IdempotencyKey_requestFingerprint`, `IdempotencyKey`.`status` AS `IdempotencyKey_status`, `IdempotencyKey`.`responseBody` AS `IdempotencyKey_responseBody` FROM `idempotency_key` `IdempotencyKey` WHERE `IdempotencyKey`.`scope` = ? AND `IdempotencyKey`.`idempotencyKey` = ?',
+        ['customer:101', 'key-1'],
       ]);
     });
 
     it('returns the same builder for chaining', () => {
       const builder = new IdempotencyCorePersistenceIdempotencyKeyBuilder(baseBuilder);
-      const chained = builder.forByKey('key-1');
+      const chained = builder.forByKey('customer:101', 'key-1');
 
       expect(chained).toBe(builder);
     });

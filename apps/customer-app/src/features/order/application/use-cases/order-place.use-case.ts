@@ -41,8 +41,9 @@ export class OrderPlaceUseCase {
   public async execute(command: IOrderPlaceCommand): Promise<IOrderView> {
     const { customerId, productIds, idempotencyKey } = command;
     const claim = await this.idempotency.claim<IOrderView>({
+      customerId,
       key: idempotencyKey,
-      body: { customerId, productIds },
+      body: { productIds },
     });
 
     if (claim.outcome === OrderIdempotencyOutcomeEnum.REPLAY) {
@@ -76,7 +77,7 @@ export class OrderPlaceUseCase {
 
       return view;
     } catch (error) {
-      await this.idempotency.release({ key: idempotencyKey });
+      await this.idempotency.release({ customerId, key: idempotencyKey });
 
       throw error;
     }
@@ -102,7 +103,7 @@ export class OrderPlaceUseCase {
     const movements = placed.getMovements();
 
     await this.productStock.withdraw({ movements });
-    await this.idempotency.complete({ key: idempotencyKey, response: view });
+    await this.idempotency.complete({ customerId, key: idempotencyKey, response: view });
 
     return view;
   }

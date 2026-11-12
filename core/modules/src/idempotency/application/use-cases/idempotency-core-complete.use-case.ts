@@ -15,9 +15,9 @@ export class IdempotencyCoreCompleteUseCase {
   ) {}
 
   public async execute(command: IIdempotencyCoreCompleteCommand): Promise<void> {
-    const { key, response } = command;
+    const { scope, key, response } = command;
     const responseBody = JSON.stringify(response);
 
-    await this.repository.complete({ key, responseBody });
+    await this.repository.complete({ scope, key, responseBody });
   }
 }

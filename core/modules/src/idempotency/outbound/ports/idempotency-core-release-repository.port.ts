@@ -1,5 +1,7 @@
+import type { IIdempotencyCoreReleaseQuery } from '../interfaces';
+
 export interface IIdempotencyCoreReleaseRepositoryPort {
-  deleteInFlight(key: string): Promise<void>;
+  deleteInFlight(query: IIdempotencyCoreReleaseQuery): Promise<void>;
 }
 
 export const IDEMPOTENCY_CORE_RELEASE_REPOSITORY_PORT = Symbol(
