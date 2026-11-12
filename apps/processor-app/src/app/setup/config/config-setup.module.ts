@@ -33,6 +33,7 @@ export class ConfigSetupModule {
         REDIS_COMMAND_TIMEOUT_MS: Joi.number().integer().positive().required(),
 
         IDEMPOTENCY_KEY_TTL_HOURS: Joi.number().integer().min(1).required(),
+        IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES: Joi.number().integer().min(1).required(),
 
         LEDGER_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),
         QUEUE_RETRY_ATTEMPTS: Joi.number().integer().min(1).required(),

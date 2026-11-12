@@ -6,16 +6,19 @@ import { IdempotencyPurgeUseCase } from '../idempotency-purge.use-case';
 
 describe('IdempotencyPurgeUseCase', () => {
   let deleteCreatedBefore: jest.Mock;
+  let deleteInFlightCreatedBefore: jest.Mock;
   let logger: PinoLoggerMock;
   let useCase: IdempotencyPurgeUseCase;
 
   beforeEach(() => {
     jest.useFakeTimers({ now: new Date('2026-01-02T12:00:00.000Z') });
     deleteCreatedBefore = jest.fn().mockResolvedValue({ affected: 3 });
+    deleteInFlightCreatedBefore = jest.fn().mockResolvedValue({ affected: 2 });
     logger = makePinoLoggerMock();
     useCase = new IdempotencyPurgeUseCase(
-      { deleteCreatedBefore },
+      { deleteCreatedBefore, deleteInFlightCreatedBefore },
       24,
+      5,
       logger as unknown as PinoLogger,
     );
   });
@@ -32,12 +35,27 @@ describe('IdempotencyPurgeUseCase', () => {
       expect(logger.warn).not.toHaveBeenCalled();
     });
 
-    it('logs the cutoff, the count and the TTL', async () => {
+    it('deletes the in-flight keys created more than the in-flight TTL ago', async () => {
+      await useCase.execute();
+
+      expect(deleteInFlightCreatedBefore.mock.calls).toEqual([
+        [new Date('2026-01-02T11:55:00.000Z')],
+      ]);
+    });
+
+    it('logs both cutoffs, both counts and both TTLs', async () => {
       await useCase.execute();
 
       expect(logger.info.mock.calls).toEqual([
         [
-          { cutoff: '2026-01-01T12:00:00.000Z', removed: 3, ttlHours: 24 },
+          {
+            cutoff: '2026-01-01T12:00:00.000Z',
+            removed: 3,
+            ttlHours: 24,
+            inFlightCutoff: '2026-01-02T11:55:00.000Z',
+            removedInFlight: 2,
+            inFlightTtlMinutes: 5,
+          },
           'Expired idempotency keys purged',
         ],
       ]);
@@ -45,12 +63,20 @@ describe('IdempotencyPurgeUseCase', () => {
 
     it('logs no removed keys when the database reports no affected count', async () => {
       deleteCreatedBefore.mockResolvedValue({});
+      deleteInFlightCreatedBefore.mockResolvedValue({});
 
       await useCase.execute();
 
       expect(logger.info.mock.calls).toEqual([
         [
-          { cutoff: '2026-01-01T12:00:00.000Z', removed: 0, ttlHours: 24 },
+          {
+            cutoff: '2026-01-01T12:00:00.000Z',
+            removed: 0,
+            ttlHours: 24,
+            inFlightCutoff: '2026-01-02T11:55:00.000Z',
+            removedInFlight: 0,
+            inFlightTtlMinutes: 5,
+          },
           'Expired idempotency keys purged',
         ],
       ]);

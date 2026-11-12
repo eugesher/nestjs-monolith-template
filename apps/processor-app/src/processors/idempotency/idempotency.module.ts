@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 
 import { IdempotencyPurgeUseCase } from './application';
-import { IdempotencyConfigKeyTtlHoursProvider, IdempotencyPurgeRepository } from './infrastructure';
+import {
+  IdempotencyConfigInFlightTtlMinutesProvider,
+  IdempotencyConfigKeyTtlHoursProvider,
+  IdempotencyPurgeRepository,
+} from './infrastructure';
 import { IdempotencyPurgeProcessor } from './presentation';
 
 @Module({
@@ -10,6 +14,7 @@ import { IdempotencyPurgeProcessor } from './presentation';
     IdempotencyPurgeUseCase,
     IdempotencyPurgeRepository.provider,
     IdempotencyConfigKeyTtlHoursProvider,
+    IdempotencyConfigInFlightTtlMinutesProvider,
   ],
 })
 export class IdempotencyModule {}
