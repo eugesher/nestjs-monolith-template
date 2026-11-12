@@ -85,7 +85,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/catalog/products')
           .set('Idempotency-Key', 'e2e-create-key')
-          .set('x-correlation-id', 'e2e-product-create')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000014')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ sku: 'E2E-0001', name: 'Created product' })
           .expect(HttpStatus.CREATED);
@@ -371,7 +371,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/103/archive')
           .set('If-Match', '1')
-          .set('x-correlation-id', 'e2e-product-archive')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000015')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -416,7 +416,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/101/publish')
           .set('If-Match', '1')
-          .set('x-correlation-id', 'e2e-product-publish')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000016')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -454,7 +454,7 @@ export class ProductE2E {
       it('should publish an archived product again under a ledger record of its new version', async () => {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/105/publish')
-          .set('x-correlation-id', 'e2e-product-republish')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000017')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 

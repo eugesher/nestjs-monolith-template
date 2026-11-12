@@ -133,7 +133,7 @@ exports[`App Ledger queue ledger-record should append the record as a ledger ent
     "ledger_entry": [
       {
         "action": "ProductCreated",
-        "correlation_id": "e2e-processor-record",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000006",
         "id": Any<String>,
         "occurred_at": 2026-01-05T08:00:00.000Z,
         "operation_key": "e2e-record:1",
@@ -158,7 +158,7 @@ exports[`App Ledger queue ledger-record should keep a record that fails its last
   "failed": [
     {
       "action": "ProductCreated",
-      "correlationId": "e2e-processor-failure",
+      "correlationId": "e2e00000-0000-4000-8000-000000000008",
       "occurredAt": "2026-01-05T10:00:00.000Z",
       "operationKey": "e2e-record:3",
       "payload": {},
@@ -175,7 +175,7 @@ exports[`App ProductStock queue product-stock-post-subtract should archive a pub
     "ledger_entry": [
       {
         "action": "ProductArchived",
-        "correlation_id": "e2e-processor-out-of-stock",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000004",
         "operation_key": "product-archived:106:2",
         "payload": {
           "previousStatus": "active",
@@ -297,7 +297,7 @@ exports[`App Queue GET /api/queues/:queueName/jobs/failed should answer a page o
           "attemptsMade": 1,
           "data": {
             "action": "ProductCreated",
-            "correlationId": "e2e-processor-queue-list",
+            "correlationId": "e2e00000-0000-4000-8000-000000000009",
             "occurredAt": "2026-01-06T08:00:00.000Z",
             "operationKey": "e2e-queue:1",
             "payload": {},
@@ -418,7 +418,7 @@ exports[`App Queue PUT /api/queues/:queueName/jobs/failed/:jobId should return a
     "ledger_entry": [
       {
         "action": "ProductArchived",
-        "correlation_id": "e2e-processor-queue-retry",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000010",
         "id": Any<String>,
         "occurred_at": 2026-01-06T09:00:00.000Z,
         "operation_key": "e2e-queue:2",

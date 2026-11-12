@@ -17,7 +17,7 @@ VALUES
     '100',
     'ProductCreated',
     '{"sku": "SKU-0001", "name": "Seeded reference product"}',
-    'seed-correlation-id',
+    '5eed0000-0000-4000-8000-000000000001',
     '2026-01-01 00:00:00.000',
     '2026-01-01 00:00:00.000'
   ),
@@ -28,7 +28,7 @@ VALUES
     '101',
     'ProductCreated',
     '{"sku": "SKU-0002", "name": "Seeded draft product"}',
-    'seed-correlation-id',
+    '5eed0000-0000-4000-8000-000000000001',
     '2026-01-01 00:00:00.000',
     '2026-01-01 00:00:00.000'
   );

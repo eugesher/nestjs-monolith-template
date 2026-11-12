@@ -133,7 +133,8 @@ afterEach(() => {
 ```
 
 A warning on the root logger means a correlation context was lost: `CorrelationContextHelper` logs
-one when it has to mint an id outside a request.
+one when it has to mint an id outside a request. `CorrelationIdHelper` logs one for an inbound id
+that is not a UUID, so the health case that sends one takes the warning and checks it.
 
 **A spy on `PinoLogger.root.warn` also sees the request loggers.** pino builds a child logger with
 `Object.create(parent)`, so the request logger inherits the spied method of the root. The context
@@ -152,7 +153,8 @@ keeps a call only when the logger it was called on is the root itself, by `mock.
 - **A case that needs a state the seeds lack makes it and undoes it in `finally`**, as the rollback
   of a note edit inserts the revision that breaks the edit and deletes it afterwards.
 - **A case that writes sends a fixed `x-correlation-id`** when the correlation id lands in a row, so
-  the row is literal in the snapshot.
+  the row is literal in the snapshot. The id is a UUID, `e2e00000-0000-4000-8000-…` with a number
+  per case, and the seeds use `5eed0000-0000-4000-8000-000000000001`: any other value is replaced.
 
 ## What the suites cover
 

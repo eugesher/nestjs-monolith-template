@@ -18,7 +18,7 @@ describe('AuthLedgerLibAdapter', () => {
 
   describe('recordRegistered', () => {
     it('enqueues the registration under the operation key and correlation id', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         adapter.recordRegistered({ customerId: 'customer-1', email: 'eve@example.com' }),
       );
 
@@ -30,7 +30,7 @@ describe('AuthLedgerLibAdapter', () => {
         action: 'CustomerRegistered',
         payload: { email: 'eve@example.com' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
   });

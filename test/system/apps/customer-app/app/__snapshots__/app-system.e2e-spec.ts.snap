@@ -15,7 +15,7 @@ exports[`App Auth POST /api/auth/register should create a customer and append th
     "ledger_entry": [
       {
         "action": "CustomerRegistered",
-        "correlation_id": "system-customer-register",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000023",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": Any<String>,
@@ -56,7 +56,7 @@ exports[`App Order POST /api/orders should place the order, append its ledger en
     "ledger_entry": [
       {
         "action": "OrderPlaced",
-        "correlation_id": "system-order-place",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000024",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": Any<String>,
@@ -74,7 +74,7 @@ exports[`App Order POST /api/orders should place the order, append its ledger en
       },
       {
         "action": "ProductArchived",
-        "correlation_id": "system-order-place",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000024",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": "product-archived:103:2",

@@ -16,7 +16,7 @@ exports[`App Catalog Product POST /api/catalog/products should create a draft an
     "ledger_entry": [
       {
         "action": "ProductCreated",
-        "correlation_id": "system-product-create",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000020",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": Any<String>,
@@ -65,7 +65,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/archive should
     "ledger_entry": [
       {
         "action": "ProductArchived",
-        "correlation_id": "system-product-archive",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000021",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": "product-archived:103:2",
@@ -114,7 +114,7 @@ exports[`App Catalog Product PUT /api/catalog/products/:productId/publish should
     "ledger_entry": [
       {
         "action": "ProductPublished",
-        "correlation_id": "system-product-publish",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000022",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": "product-published:101:2",
@@ -170,7 +170,7 @@ exports[`App Warehouse ProductStock POST /api/warehouse/product-stock/:productId
     "ledger_entry": [
       {
         "action": "ProductRestocked",
-        "correlation_id": "system-product-restock",
+        "correlation_id": "e2e00000-0000-4000-8000-000000000019",
         "id": Any<String>,
         "occurred_at": Any<Date>,
         "operation_key": Any<String>,

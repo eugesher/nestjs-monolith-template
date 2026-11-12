@@ -31,7 +31,7 @@ describe('LedgerAppendUseCase', () => {
 
   describe('execute', () => {
     it('appends the entry under the correlation id of the context and logs the start and the result', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({
           operationKey: ' product-archived:12:2 ',
           subjectType: 'product',
@@ -50,7 +50,7 @@ describe('LedgerAppendUseCase', () => {
         subjectId: '12',
         action: 'ProductArchived',
         payload: { previousStatus: 'active' },
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         occurredAt: new Date('2026-01-01T00:00:00.000Z'),
       });
       expect(logger.info.mock.calls).toEqual([
@@ -68,7 +68,7 @@ describe('LedgerAppendUseCase', () => {
     it('logs a record the ledger already holds as already appended, without an error', async () => {
       insert.mockResolvedValue({ outcome: LedgerAppendEntryInsertOutcomeEnum.DUPLICATE });
 
-      await CorrelationContextHelper.run('corr-2', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000002', () =>
         useCase.execute({
           operationKey: 'product-archived:12:2',
           subjectType: 'product',
@@ -86,7 +86,7 @@ describe('LedgerAppendUseCase', () => {
     });
 
     it('refuses an instant without a zone before touching storage', async () => {
-      const executing = CorrelationContextHelper.run('corr-3', () =>
+      const executing = CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000003', () =>
         useCase.execute({
           operationKey: 'product-archived:12:2',
           subjectType: 'product',
@@ -106,7 +106,7 @@ describe('LedgerAppendUseCase', () => {
     it('passes a failing append through, so Bull retries the job', async () => {
       insert.mockRejectedValue(new Error('deadlock'));
 
-      const executing = CorrelationContextHelper.run('corr-4', () =>
+      const executing = CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000004', () =>
         useCase.execute({
           operationKey: 'product-created:12',
           subjectType: 'product',

@@ -26,7 +26,7 @@ describe('LedgerLibQueueAdapter', () => {
         action: 'ItemOpened',
         payload: { name: 'Lamp' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         extra: 'dropped',
       };
 
@@ -40,7 +40,7 @@ describe('LedgerLibQueueAdapter', () => {
         action: 'ItemOpened',
         payload: { name: 'Lamp' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
 
@@ -55,7 +55,7 @@ describe('LedgerLibQueueAdapter', () => {
           action: 'ItemOpened',
           payload: {},
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
         timeoutMs: 500,
       });
@@ -75,7 +75,7 @@ describe('LedgerLibQueueAdapter', () => {
           action: 'ItemOpened',
           payload: {},
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
         timeoutMs: 500,
       });
@@ -96,7 +96,7 @@ describe('LedgerLibQueueAdapter', () => {
           action: 'ItemOpened',
           payload: {},
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         },
         timeoutMs: 500,
       });

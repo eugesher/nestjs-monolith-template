@@ -25,11 +25,11 @@ describe('ProductStockLedgerLibAdapter', () => {
         toLedgerRecord,
       } as unknown as IProductStockLedgerRecordEventsCommand['events'][0];
 
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         adapter.recordEvents({ productStockId: '700', events: [event] }),
       );
 
-      expect(toLedgerRecord).toHaveBeenCalledWith('700', 'corr-1');
+      expect(toLedgerRecord).toHaveBeenCalledWith('700', 'c0ffee00-0000-4000-8000-000000000001');
       expect(handleEnqueue).toHaveBeenCalledWith(record);
     });
   });

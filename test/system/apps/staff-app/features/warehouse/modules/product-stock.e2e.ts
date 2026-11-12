@@ -16,7 +16,7 @@ export class ProductStockE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/warehouse/product-stock/106/add')
           .set('Idempotency-Key', 'system-restock-key')
-          .set('x-correlation-id', 'system-product-restock')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000019')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ quantity: 5 })
           .expect(HttpStatus.CREATED);
@@ -34,7 +34,7 @@ export class ProductStockE2E {
             ledger_entry: await this.ctx.pollUntil<Record<string, unknown>[]>(
               () =>
                 this.ctx.dataSource.query('SELECT * FROM ledger_entry WHERE correlation_id = ?', [
-                  'system-product-restock',
+                  'e2e00000-0000-4000-8000-000000000019',
                 ]),
               (rows) => rows.length >= 1,
             ),

@@ -26,7 +26,7 @@ describe('LocalStorageSetupModule', () => {
     LocalStorageSetupModule.forRoot();
     const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
     const cls = ClsServiceManager.getClsService();
-    const req = { headers: { 'x-correlation-id': 'inbound-id' } };
+    const req = { headers: { 'x-correlation-id': 'c0ffee00-0000-4000-8000-000000000001' } };
     const res = { headersSent: false, setHeader: jest.fn() };
 
     const current = await cls.run(async () => {
@@ -35,8 +35,11 @@ describe('LocalStorageSetupModule', () => {
       return CorrelationContextHelper.current('ItemController');
     });
 
-    expect(current).toBe('inbound-id');
-    expect(res.setHeader).toHaveBeenCalledWith('x-correlation-id', 'inbound-id');
+    expect(current).toBe('c0ffee00-0000-4000-8000-000000000001');
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'x-correlation-id',
+      'c0ffee00-0000-4000-8000-000000000001',
+    );
   });
 
   it('mints a correlation id for a request without one and puts it on the request', async () => {

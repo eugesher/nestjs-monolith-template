@@ -16,7 +16,7 @@ export class OrderE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/orders')
           .set('Idempotency-Key', 'e2e-order-place-key')
-          .set('x-correlation-id', 'e2e-order-place')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000003')
           .auth(this.ctx.annToken, { type: 'bearer' })
           .send({ productIds: ['100', '100'] })
           .expect(HttpStatus.CREATED);

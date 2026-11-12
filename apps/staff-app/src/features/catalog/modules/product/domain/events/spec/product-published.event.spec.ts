@@ -15,14 +15,14 @@ describe('ProductPublishedEvent', () => {
     it('answers the ledger record of the publication under the product and its version', () => {
       const event = new ProductPublishedEvent('12', 'SKU-0001', 6, ProductStatusEnum.ARCHIVED);
 
-      expect(event.toLedgerRecord('corr-1')).toEqual({
+      expect(event.toLedgerRecord('c0ffee00-0000-4000-8000-000000000001')).toEqual({
         operationKey: 'product-published:12:6',
         subjectType: 'product',
         subjectId: '12',
         action: 'ProductPublished',
         payload: { sku: 'SKU-0001', previousStatus: 'archived' },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
   });

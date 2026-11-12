@@ -10,7 +10,7 @@ describe('NoteRevisionModel', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-2',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         recordedAt: new Date('2026-01-02T00:00:00.123Z'),
       });
 
@@ -29,7 +29,7 @@ describe('NoteRevisionModel', () => {
           bodyBefore: 'Check the supplier',
           bodyAfter: 'Supplier confirmed',
           editorId: 'admin-2',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
           recordedAt: new Date('2026-01-02T00:00:00.123Z'),
         }),
       ).toThrow(expect.objectContaining({ code: 'NOTE_VERSION_INVALID' }) as Error);
@@ -44,7 +44,7 @@ describe('NoteRevisionModel', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-2',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(draft).toEqual({
@@ -53,7 +53,7 @@ describe('NoteRevisionModel', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-2',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
 
@@ -65,7 +65,7 @@ describe('NoteRevisionModel', () => {
           bodyBefore: 'Check the supplier',
           bodyAfter: 'Supplier confirmed',
           editorId: 'admin-2',
-          correlationId: 'corr-1',
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         }),
       ).toThrow(
         expect.objectContaining({
@@ -85,7 +85,7 @@ describe('NoteRevisionModel', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-2',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         recordedAt: new Date('2026-01-02T00:00:00.123Z'),
       });
 
@@ -96,7 +96,7 @@ describe('NoteRevisionModel', () => {
         bodyBefore: 'Check the supplier',
         bodyAfter: 'Supplier confirmed',
         editorId: 'admin-2',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         recordedAt: '2026-01-02T00:00:00.123Z',
       });
     });

@@ -187,7 +187,7 @@ export class NoteE2E {
 
         const response = await request(this.ctx.app.getHttpServer())
           .patch('/api/tools/notes/200')
-          .set('x-correlation-id', 'e2e-note-edit')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000018')
           .auth(this.ctx.adminToken, { type: 'bearer' })
           .send({ body: 'Customer called twice; refunded manually.' })
           .expect(HttpStatus.OK);

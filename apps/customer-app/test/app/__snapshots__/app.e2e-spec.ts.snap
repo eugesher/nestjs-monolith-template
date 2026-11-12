@@ -118,7 +118,7 @@ exports[`App Auth POST /api/auth/register should create a customer who logs in a
   "ledger_record_queue": [
     {
       "action": "CustomerRegistered",
-      "correlationId": "e2e-customer-register",
+      "correlationId": "e2e00000-0000-4000-8000-000000000002",
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
       "payload": {
@@ -545,7 +545,7 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
   "ledger_record_queue": [
     {
       "action": "OrderPlaced",
-      "correlationId": "e2e-order-place",
+      "correlationId": "e2e00000-0000-4000-8000-000000000003",
       "occurredAt": Any<String>,
       "operationKey": Any<String>,
       "payload": {
@@ -561,7 +561,7 @@ exports[`App Order POST /api/orders should place the order with a line and a -1 
   ],
   "product_stock_post_subtract_queue": [
     {
-      "correlationId": "e2e-order-place",
+      "correlationId": "e2e00000-0000-4000-8000-000000000003",
       "productIds": [
         "100",
       ],

@@ -18,7 +18,7 @@ describe('LedgerListEntriesUseCase', () => {
         limit: 10,
         subjectType: 'product',
         subjectId: '12',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
 
       expect(list).toHaveBeenCalledWith({
@@ -27,7 +27,7 @@ describe('LedgerListEntriesUseCase', () => {
         offset: 10,
         subjectType: 'product',
         subjectId: '12',
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
 
@@ -71,7 +71,7 @@ describe('LedgerListEntriesUseCase', () => {
             subjectId: '12',
             action: 'ProductArchived',
             payload: { title: 'Lamp' },
-            correlationId: 'corr-1',
+            correlationId: 'c0ffee00-0000-4000-8000-000000000001',
             occurredAt: new Date('2026-01-01T00:00:00.000Z'),
             recordedAt: new Date('2026-01-01T00:00:01.000Z'),
           },
@@ -94,7 +94,7 @@ describe('LedgerListEntriesUseCase', () => {
             subjectId: '12',
             action: 'ProductArchived',
             payload: { title: 'Lamp' },
-            correlationId: 'corr-1',
+            correlationId: 'c0ffee00-0000-4000-8000-000000000001',
             occurredAt: '2026-01-01T00:00:00.000Z',
             recordedAt: '2026-01-01T00:00:01.000Z',
           },

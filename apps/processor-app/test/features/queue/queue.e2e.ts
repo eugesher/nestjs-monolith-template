@@ -42,7 +42,7 @@ export class QueueE2E {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-06T08:00:00.000Z',
-            correlationId: 'e2e-processor-queue-list',
+            correlationId: 'e2e00000-0000-4000-8000-000000000009',
           },
           { attempts: 1 },
         );
@@ -107,7 +107,7 @@ export class QueueE2E {
             action: 'ProductArchived',
             payload: { sku: 'SKU-0004', previousStatus: 'active' },
             occurredAt: '2026-01-06T09:00:00.000Z',
-            correlationId: 'e2e-processor-queue-retry',
+            correlationId: 'e2e00000-0000-4000-8000-000000000010',
           },
           { attempts: 1 },
         );
@@ -144,7 +144,7 @@ export class QueueE2E {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-06T10:00:00.000Z',
-            correlationId: 'e2e-processor-queue-delayed',
+            correlationId: 'e2e00000-0000-4000-8000-000000000011',
           },
           { delay: 60000 },
         );
@@ -207,7 +207,7 @@ export class QueueE2E {
             action: 'ProductCreated',
             payload: {},
             occurredAt: '2026-01-06T11:00:00.000Z',
-            correlationId: 'e2e-processor-queue-delete',
+            correlationId: 'e2e00000-0000-4000-8000-000000000012',
           },
           { attempts: 1 },
         );

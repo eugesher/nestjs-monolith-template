@@ -18,7 +18,7 @@ export class ProductStockE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/warehouse/product-stock/106/add')
           .set('Idempotency-Key', 'e2e-restock-key')
-          .set('x-correlation-id', 'e2e-product-restock')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000013')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ quantity: 5 })
           .expect(HttpStatus.CREATED);

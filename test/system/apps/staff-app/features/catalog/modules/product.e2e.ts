@@ -16,7 +16,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .post('/api/catalog/products')
           .set('Idempotency-Key', 'system-create-key')
-          .set('x-correlation-id', 'system-product-create')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000020')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .send({ sku: 'SYS-0001', name: 'Created product' })
           .expect(HttpStatus.CREATED);
@@ -34,7 +34,7 @@ export class ProductE2E {
             ledger_entry: await this.ctx.pollUntil<Record<string, unknown>[]>(
               () =>
                 this.ctx.dataSource.query('SELECT * FROM ledger_entry WHERE correlation_id = ?', [
-                  'system-product-create',
+                  'e2e00000-0000-4000-8000-000000000020',
                 ]),
               (rows) => rows.length >= 1,
             ),
@@ -99,7 +99,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/103/archive')
           .set('If-Match', '1')
-          .set('x-correlation-id', 'system-product-archive')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000021')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -110,7 +110,7 @@ export class ProductE2E {
             ledger_entry: await this.ctx.pollUntil<Record<string, unknown>[]>(
               () =>
                 this.ctx.dataSource.query('SELECT * FROM ledger_entry WHERE correlation_id = ?', [
-                  'system-product-archive',
+                  'e2e00000-0000-4000-8000-000000000021',
                 ]),
               (rows) => rows.length >= 1,
             ),
@@ -141,7 +141,7 @@ export class ProductE2E {
         const response = await request(this.ctx.app.getHttpServer())
           .put('/api/catalog/products/101/publish')
           .set('If-Match', '1')
-          .set('x-correlation-id', 'system-product-publish')
+          .set('x-correlation-id', 'e2e00000-0000-4000-8000-000000000022')
           .auth(this.ctx.editorToken, { type: 'bearer' })
           .expect(HttpStatus.OK);
 
@@ -152,7 +152,7 @@ export class ProductE2E {
             ledger_entry: await this.ctx.pollUntil<Record<string, unknown>[]>(
               () =>
                 this.ctx.dataSource.query('SELECT * FROM ledger_entry WHERE correlation_id = ?', [
-                  'system-product-publish',
+                  'e2e00000-0000-4000-8000-000000000022',
                 ]),
               (rows) => rows.length >= 1,
             ),

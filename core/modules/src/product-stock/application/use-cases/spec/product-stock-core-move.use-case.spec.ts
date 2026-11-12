@@ -92,7 +92,7 @@ describe('ProductStockCoreMoveUseCase', () => {
     });
 
     it('announces the subtracted products after the commit, under the correlation id of the request', async () => {
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({
           kind: ProductStockCoreMovementKindEnum.SUBTRACT,
           movements: [
@@ -110,7 +110,7 @@ describe('ProductStockCoreMoveUseCase', () => {
 
       expect(enqueue).toHaveBeenCalledWith({
         productIds: ['100'],
-        correlationId: 'corr-1',
+        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
         timeoutMs: 500,
       });
     });
@@ -118,7 +118,7 @@ describe('ProductStockCoreMoveUseCase', () => {
     it('retries a failed announcement and logs it for a replay once the budget is spent', async () => {
       enqueue.mockRejectedValue(new Error('redis is down'));
 
-      await CorrelationContextHelper.run('corr-1', () =>
+      await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({
           kind: ProductStockCoreMovementKindEnum.SUBTRACT,
           movements: [{ productId: '100', quantity: 1, orderProductId: '620' }],
@@ -131,7 +131,11 @@ describe('ProductStockCoreMoveUseCase', () => {
 
       expect(enqueue).toHaveBeenCalledTimes(2);
       expect(logger.error).toHaveBeenCalledWith(
-        { err: new Error('redis is down'), correlationId: 'corr-1', productIds: ['100'] },
+        {
+          err: new Error('redis is down'),
+          correlationId: 'c0ffee00-0000-4000-8000-000000000001',
+          productIds: ['100'],
+        },
         'Post-subtract enqueue failed permanently: the out-of-stock check of these products did not run, replay it',
       );
     });
