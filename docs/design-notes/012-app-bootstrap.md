@@ -68,6 +68,7 @@ paths.
 | `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
 | `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
 | `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
+| `ThrottleSetupModule.forRoot()`     | `libs/http`                                          | the global request limits over Redis and `trust proxy` (see `003-authentication.md`)                    |
 | `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
 | features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
 | `APP_PIPE`                          | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |

@@ -77,9 +77,12 @@ export const acmeLibs = [
     libs('observability'),
     packages(
       '@nestjs/common',
+      '@nestjs/config',
       '@nestjs/core',
+      '@nestjs/throttler',
       'class-transformer',
       'class-validator',
+      'ioredis',
       'nestjs-pino',
       'typeorm',
     ),

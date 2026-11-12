@@ -9,6 +9,7 @@ import {
   type ICredentialsLibPasswordHasherPort,
 } from '../../outbound';
 import { CredentialsLibPasswordHasherOptions } from './credentials-lib-password-hasher.options';
+import { CredentialsLibPasswordHasherSemaphore } from './credentials-lib-password-hasher.semaphore';
 
 @Injectable()
 export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPasswordHasherPort {
@@ -18,16 +19,22 @@ export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPassw
   };
 
   private readonly options: CredentialsLibPasswordHasherOptions;
+  private readonly semaphore: CredentialsLibPasswordHasherSemaphore;
 
   constructor(config: ConfigService) {
     this.options = new CredentialsLibPasswordHasherOptions(config);
+    this.semaphore = new CredentialsLibPasswordHasherSemaphore(config);
   }
 
   public async hash(password: string): Promise<string> {
-    return await hash(password, this.options);
+    return await this.semaphore.run(() => hash(password, this.options));
   }
 
   public async verify(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean> {
+    return await this.semaphore.run(() => this.verifyHash(command));
+  }
+
+  private async verifyHash(command: ICredentialsLibVerifyPasswordCommand): Promise<boolean> {
     const { passwordHash, password } = command;
 
     try {

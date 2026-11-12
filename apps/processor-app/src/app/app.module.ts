@@ -3,7 +3,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { CacheLibModule } from '@acme-libs/cache';
 import { OrmModule } from '@acme-libs/database';
-import { HttpExceptionFilter, StrictValidationPipe } from '@acme-libs/http';
+import { HttpExceptionFilter, StrictValidationPipe, ThrottleSetupModule } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { LocalStorageSetupModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
@@ -24,6 +24,7 @@ import { ConfigSetupModule, ScheduleSetupModule } from './setup';
     ScheduleSetupModule,
     BullSetupModule.forRoot(),
     CacheLibModule,
+    ThrottleSetupModule.forRoot(),
     AuthGlobalModule,
     AuthModule,
     HealthModule,

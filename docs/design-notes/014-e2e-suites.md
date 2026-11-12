@@ -119,6 +119,14 @@ The Jest files outside the apps live in `jest/`:
 loads the file over the variables of the process, so a variable left in the shell, such as a
 production database host, cannot point a suite at another database.
 
+**The request limits of `.env.test` stay above what a suite sends.** Every case calls from the same
+address, so `THROTTLE_LIMIT` and `THROTTLE_AUTH_LIMIT` there are far above the calls of a suite, and
+a `:run` repeated within the window stays under them. The case that spends the auth limit sets
+`HTTP_TRUST_PROXY_HOPS=1` to use: it logs in from an address of its own in `X-Forwarded-For`
+(`203.0.113.0/24`, a documentation range), reads the limit from the config, and then checks that a
+second address is still served. A repeated run finds that address blocked already, and the case
+asserts only the last call, so it passes either way.
+
 **The suites run west of UTC.** `TZ=America/New_York` makes a date that drifts through a JavaScript
 `Date` come back a day early, so the reminder cases catch it.
 

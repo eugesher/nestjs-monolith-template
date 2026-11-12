@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseFilters } from '@
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser, Public } from '@acme-libs/auth';
+import { AuthThrottle } from '@acme-libs/http';
 import type { IAuthCurrentUserView } from '@acme-libs/contracts/auth';
 
 import { AuthLoginUseCase, AuthMeUseCase } from '../../application';
@@ -19,6 +20,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @AuthThrottle()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange staff credentials for an access token' })
   @ApiOkResponse({ type: AuthAccessTokenResponseDto })

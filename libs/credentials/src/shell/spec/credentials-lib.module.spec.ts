@@ -23,6 +23,8 @@ describe('CredentialsLibModule', () => {
               AUTH_ARGON2_MEMORY_COST: 1024,
               AUTH_ARGON2_PARALLELISM: 1,
               AUTH_ARGON2_TIME_COST: 2,
+              AUTH_ARGON2_MAX_CONCURRENCY: 1,
+              AUTH_ARGON2_QUEUE_TIMEOUT_MS: 1000,
             }),
           ],
         }),

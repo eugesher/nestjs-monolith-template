@@ -7,6 +7,7 @@ import {
   DuplicateKeyExceptionFilter,
   HttpExceptionFilter,
   StrictValidationPipe,
+  ThrottleSetupModule,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
 import { LocalStorageSetupModule } from '@acme-libs/local-storage';
@@ -26,6 +27,7 @@ import { ConfigSetupModule } from './setup';
     OrmModule.forRoot(entities),
     BullSetupModule.forRoot(),
     CacheLibModule,
+    ThrottleSetupModule.forRoot(),
     AuthGlobalModule,
     HealthModule,
     AuthModule,

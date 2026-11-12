@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import request from 'supertest';
 
 import type { AppE2EContext } from '../../context/app-e2e.context';
@@ -70,6 +71,37 @@ export class AuthE2E {
           .expect(HttpStatus.BAD_REQUEST);
 
         expect({ response: { body: response.body } }).toMatchSnapshot();
+      });
+
+      it('should answer 429 to an address that spends the auth limit and keep serving another address', async () => {
+        const limit = this.ctx.moduleFixture
+          .get(ConfigService)
+          .getOrThrow<number>('THROTTLE_AUTH_LIMIT');
+        const body = { email: 'nobody@example.com', password: 'editor-password-please-change' };
+
+        for (let attempt = 0; attempt < limit; attempt++) {
+          await request(this.ctx.app.getHttpServer())
+            .post('/api/auth/login')
+            .set('X-Forwarded-For', '203.0.113.10')
+            .send(body);
+        }
+
+        const blocked = await request(this.ctx.app.getHttpServer())
+          .post('/api/auth/login')
+          .set('X-Forwarded-For', '203.0.113.10')
+          .send(body)
+          .expect(HttpStatus.TOO_MANY_REQUESTS);
+        const other = await request(this.ctx.app.getHttpServer())
+          .post('/api/auth/login')
+          .set('X-Forwarded-For', '203.0.113.11')
+          .send(body)
+          .expect(HttpStatus.UNAUTHORIZED);
+
+        expect({
+          blocked: { body: blocked.body, retryAfter: blocked.headers['retry-after-auth'] },
+          other: { body: other.body },
+        }).toMatchSnapshot({ blocked: { retryAfter: expect.stringMatching(/^\d+$/) } });
+        expect(Number(blocked.headers['retry-after-auth'])).toBeGreaterThan(0);
       });
     });
   }
