@@ -56,7 +56,8 @@ concurrent duplicate could work too.
 - **`release` deletes only an in-flight row.** A completed key survives a late release, so a replay
   stays possible.
 - **The module never expires a key.** It reads no configuration, so staff-app and customer-app mount
-  it without a TTL. Until the purge of processor-app runs, an expired key still replays.
+  it without a TTL. Until the purge of processor-app runs, an expired key still replays, and a key
+  that its dead holder never released still answers `in-flight` (see `009-scheduled-processor.md`).
 
 The key model refuses an empty key and a key longer than the 128-character column with a plain
 `Error`. A client should meet that limit as a 400 at the HTTP edge, not here.

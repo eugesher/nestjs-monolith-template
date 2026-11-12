@@ -8,4 +8,12 @@ describe('IdempotencyPurgeHelper', () => {
       expect(cutoff).toEqual(new Date('2026-01-01T12:00:00.000Z'));
     });
   });
+
+  describe('inFlightCutoff', () => {
+    it('is the instant that lies the in-flight TTL before now', () => {
+      const cutoff = IdempotencyPurgeHelper.inFlightCutoff(new Date('2026-01-02T12:00:00.000Z'), 5);
+
+      expect(cutoff).toEqual(new Date('2026-01-02T11:55:00.000Z'));
+    });
+  });
 });

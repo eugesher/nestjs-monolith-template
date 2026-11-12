@@ -36,6 +36,35 @@ export class IdempotencyE2E {
           },
         }).toMatchSnapshot();
       });
+
+      it('should purge the in-flight keys older than the in-flight TTL and keep the rest', async () => {
+        await this.ctx.dataSource.query(
+          `INSERT INTO idempotency_key (idempotency_key, request_fingerprint, status, response_body, created_at)
+           VALUES ('e2e-stuck-in-flight', REPEAT('c', 64), 'in_flight', NULL, CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
+                  ('e2e-stuck-completed', REPEAT('d', 64), 'completed', '{}', CURRENT_TIMESTAMP - INTERVAL 1 HOUR),
+                  ('e2e-stuck-fresh', REPEAT('e', 64), 'in_flight', NULL, CURRENT_TIMESTAMP)`,
+        );
+
+        this.ctx.fireSchedule('idempotency-purge');
+
+        await this.ctx.waitFor('the stuck in-flight key to be purged', async () => {
+          const [{ stuck }] = await this.ctx.dataSource.query(
+            'SELECT COUNT(*) AS stuck FROM idempotency_key WHERE idempotency_key = ?',
+            ['e2e-stuck-in-flight'],
+          );
+
+          return Number(stuck) === 0;
+        });
+
+        expect({
+          db: {
+            idempotency_key: await this.ctx.dataSource.query(
+              'SELECT idempotency_key, status FROM idempotency_key WHERE idempotency_key LIKE ? ORDER BY id',
+              ['e2e-stuck-%'],
+            ),
+          },
+        }).toMatchSnapshot();
+      });
     });
   }
 }

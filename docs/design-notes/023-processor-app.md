@@ -4,18 +4,18 @@
 schedules, and serves the staff the failed jobs of its queues. staff-app and customer-app only
 enqueue. All three apps share one database and one Redis.
 
-| Processor       | Entered by                                       | What it does                                                            |
-| --------------- | ------------------------------------------------ | ----------------------------------------------------------------------- |
-| `ledger`        | a job of the `ledger-record` queue               | appends the record (see `008-queue-processor.md`)                       |
-| `idempotency`   | `@Cron(EVERY_HOUR)`                              | deletes the expired idempotency keys (see `009-scheduled-processor.md`) |
-| `product-stock` | a job of the `product-stock-post-subtract` queue | a transaction over two core modules (see below)                         |
+| Processor       | Entered by                                       | What it does                                                                      |
+| --------------- | ------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `ledger`        | a job of the `ledger-record` queue               | appends the record (see `008-queue-processor.md`)                                 |
+| `idempotency`   | `@Cron(EVERY_5_MINUTES)`                         | deletes the expired and stuck idempotency keys (see `009-scheduled-processor.md`) |
+| `product-stock` | a job of the `product-stock-post-subtract` queue | a transaction over two core modules (see below)                                   |
 
 ## Why a third app
 
 **Background work scales and fails apart from HTTP.** A processor inside an HTTP app shares the CPU
 of the requests, and a schedule inside it runs once per replica: three replicas of staff-app would
-purge three times an hour. processor-app is its own deployable, so the HTTP apps scale with traffic
-and processor-app with the queue.
+purge three times on every tick. processor-app is its own deployable, so the HTTP apps scale with
+traffic and processor-app with the queue.
 
 **No HTTP app owns this work.** The queues are written by several apps, and a processor of one HTTP
 app would serve the others through a shared Redis anyway; a third app says so.
@@ -54,9 +54,9 @@ attempt, not a new round. The ledger deduplicates on the operation key, so retry
 that did append writes nothing.
 
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
-`LEDGER_RETRY_ATTEMPTS` of the ledger lib and `QUEUE_RETRY_ATTEMPTS` of the core modules it mounts,
-the logger and tracing, and `JWT_SECRET`, `JWT_EXPIRES_IN` and the argon2 costs for the staff login.
-No cache TTL.
+`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_RETRY_ATTEMPTS` of the ledger lib and
+`QUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and tracing, and `JWT_SECRET`,
+`JWT_EXPIRES_IN` and the argon2 costs for the staff login. No cache TTL.
 
 **The entity list holds `IdempotencyKey`, `LedgerEntry`, `Product` and `ProductStock`**, the tables
 of the purge, the ledger append and the stock check, with `Order`, `OrderProduct` and `Customer`,

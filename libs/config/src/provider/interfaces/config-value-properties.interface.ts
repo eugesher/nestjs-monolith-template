@@ -1,5 +1,6 @@
 export interface IConfigValueProperties {
   CACHE_TTL_MS_DEFAULT: number;
+  IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES: number;
   IDEMPOTENCY_KEY_TTL_HOURS: number;
   LEDGER_RETRY_ATTEMPTS: number;
   OCC_RETRY_ATTEMPTS: number;

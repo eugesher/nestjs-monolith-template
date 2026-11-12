@@ -1,6 +1,7 @@
 import { Inject, Injectable, type ClassProvider } from '@nestjs/common';
 import { LessThan } from 'typeorm';
 
+import { IdempotencyStatusEnum } from '@acme-libs/kernel';
 import { ORM_PORT, type IOrmPort } from '@acme-libs/contracts/database';
 
 import {
@@ -29,5 +30,12 @@ export class IdempotencyPurgeRepository
 
   public async deleteCreatedBefore(cutoff: Date): Promise<IIdempotencyPurgeRecord> {
     return await this.idempotencyKeyRepository.delete({ createdAt: LessThan(cutoff) });
+  }
+
+  public async deleteInFlightCreatedBefore(cutoff: Date): Promise<IIdempotencyPurgeRecord> {
+    return await this.idempotencyKeyRepository.delete({
+      status: IdempotencyStatusEnum.IN_FLIGHT,
+      createdAt: LessThan(cutoff),
+    });
   }
 }
