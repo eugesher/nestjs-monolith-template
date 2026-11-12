@@ -134,8 +134,7 @@ describe('libs by layer', () => {
   it.each([
     'apps/__layers-fixture__/src/features/product/domain/__fixture__.ts',
     'apps/__layers-fixture__/src/features/product/presentation/controllers/__fixture__.ts',
-    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/repositories/' +
-      '__fixture__.ts',
+    'apps/__layers-fixture__/src/features/product/infrastructure/persistence/repositories/__fixture__.ts',
     'apps/__layers-fixture__/src/processors/purge/application/use-cases/__fixture__.ts',
     'apps/__layers-fixture__/src/contracts/audit/__fixture__.ts',
     'core/modules/src/__ledger-fixture__/domain/__fixture__.ts',
@@ -212,9 +211,7 @@ describe('libs by layer', () => {
   it('the staff-app global auth module MAY wire the claim guards', async () => {
     await expect({
       file: 'apps/staff-app/src/app/global/auth/shell/__fixture__.ts',
-      code:
-        'import { AuthJwtModule, AuthPermissionModule } from "@acme-libs/auth";\n' +
-        'import { AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
+      code: 'import { AuthJwtModule, AuthPermissionModule } from "@acme-libs/auth";\nimport { AUTH_USER_VALIDATOR_PORT } from "@acme-libs/contracts/auth";',
     }).toPassArchitectureLint();
   });
 
@@ -261,8 +258,7 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
-        '__fixture__.ts',
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
       '../../../../../../../../libs',
     ],
     [
@@ -314,8 +310,7 @@ describe('libs by layer', () => {
       '../../../../../../../libs',
     ],
     [
-      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/' +
-        '__fixture__.ts',
+      'apps/__layers-fixture__/src/common/modules/idempotency/infrastructure/persistence/__fixture__.ts',
       '../../../../../../../../libs',
     ],
     [
@@ -426,8 +421,7 @@ describe('libs by layer', () => {
       'observability',
     ],
   ])(
-    '%s may NOT reach the %s lib root — adapters take ' +
-      'the lib contracts, Nest modules are wired at the root',
+    '%s may NOT reach the %s lib root — adapters take the lib contracts, Nest modules are wired at the root',
     async (file, lib) => {
       await expect({
         file,

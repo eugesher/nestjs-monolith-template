@@ -39,8 +39,8 @@ const eslint = new ESLint({
 });
 
 const unresolvedImportsOf = ({ file, code }: ILintFixture): string[] =>
-  [...code.matchAll(/from ["']([^"']+)["']|import\(["']([^"']+)["']\)/g)]
-    .map((match) => match[1] ?? match[2])
+  [...code.matchAll(/(?:from |import\()["']([^"']+)["']/g)]
+    .map((match) => match[1])
     .filter((source) => !resolveImport(source, path.join(ROOT, file), { project: TSCONFIG }).found);
 
 const architectureMessagesOf = async ({ file, code }: ILintFixture): Promise<string[]> => {
@@ -61,8 +61,7 @@ const assertResolved = (fixture: ILintFixture): void => {
 
   if (unresolved.length > 0) {
     throw new Error(
-      `fixture imports do not resolve, so boundaries cannot see them: ${unresolved.join(', ')}\n` +
-        `in ${fixture.file}`,
+      `fixture imports do not resolve, so boundaries cannot see them: ${unresolved.join(', ')}\nin ${fixture.file}`,
     );
   }
 };
@@ -79,8 +78,7 @@ expect.extend({
     return {
       pass: messages.some((message) => message.startsWith(`${ruleId}: `)),
       message: () =>
-        `expected ${fixture.file} ${this.isNot ? 'not ' : ''}to break ${ruleId}\n` +
-        `code: ${fixture.code}\nreported: ${JSON.stringify(messages, null, 2)}`,
+        `expected ${fixture.file} ${this.isNot ? 'not ' : ''}to break ${ruleId}\ncode: ${fixture.code}\nreported: ${JSON.stringify(messages, null, 2)}`,
     };
   },
 
@@ -92,8 +90,7 @@ expect.extend({
     return {
       pass: messages.length === 0,
       message: () =>
-        `expected ${fixture.file} to pass the architecture lint\n` +
-        `code: ${fixture.code}\nreported: ${JSON.stringify(messages, null, 2)}`,
+        `expected ${fixture.file} to pass the architecture lint\ncode: ${fixture.code}\nreported: ${JSON.stringify(messages, null, 2)}`,
     };
   },
 

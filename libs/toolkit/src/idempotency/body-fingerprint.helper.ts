@@ -1,8 +1,11 @@
 import { createHash } from 'crypto';
 
+import type { Maybe } from '../types/utility.type';
+
 export class BodyFingerprintHelper {
   public static compute(value: unknown): string {
-    const canonical = JSON.stringify(value, BodyFingerprintHelper.sortObjectKeys) ?? 'null';
+    const canonical =
+      (JSON.stringify(value, BodyFingerprintHelper.sortObjectKeys) as Maybe<string>) ?? 'null';
 
     return createHash('sha256').update(canonical, 'utf8').digest('hex');
   }

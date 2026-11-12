@@ -3,7 +3,7 @@ import { join } from 'path';
 
 const [name] = process.argv.slice(2);
 
-if (name === undefined || !/^[A-Z][A-Za-z0-9]*$/.test(name)) {
+if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) {
   process.stderr.write('Usage: yarn migration:create <PascalCaseName>\n');
   process.exit(1);
 }

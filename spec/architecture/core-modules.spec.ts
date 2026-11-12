@@ -77,9 +77,7 @@ describe('core modules', () => {
     it('a core module may NOT import an app', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
-        code:
-          'import { x } from ' +
-          '"../../../../../apps/__core-fixture__/src/features/product/product.module";',
+        code: 'import { x } from "../../../../../apps/__core-fixture__/src/features/product/product.module";',
       }).toBreakRule('boundaries/dependencies');
     });
 
@@ -120,22 +118,17 @@ describe('core modules', () => {
       }).toBreakRule('no-restricted-syntax');
     });
 
-    it(
-      'the composition root may NOT import entities — ' + 'it wires them through infrastructure',
-      async () => {
-        await expect({
-          file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-          code: 'import { x } from "../../../../entities/src";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('the composition root may NOT import entities — it wires them through infrastructure', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+        code: 'import { x } from "../../../../entities/src";',
+      }).toBreakRule('boundaries/dependencies');
+    });
 
     it('a facade MAY reach the application layer and its own contracts', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/ledger-core.facade.ts',
-        code:
-          'import { x } from "../application";\n' +
-          'import { y } from "../../../../contracts/src/__ledger-fixture__";',
+        code: 'import { x } from "../application";\nimport { y } from "../../../../contracts/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
     });
 
@@ -174,9 +167,7 @@ describe('core modules', () => {
     ])('%s MAY take the DI names from @nestjs/common', async (file) => {
       await expect({
         file,
-        code:
-          'import { ClassProvider, DynamicModule, Inject, ' +
-          'Injectable, Module } from "@nestjs/common";',
+        code: 'import { ClassProvider, DynamicModule, Inject, Injectable, Module } from "@nestjs/common";',
       }).toPassArchitectureLint();
     });
 
@@ -217,10 +208,7 @@ describe('core modules', () => {
     it('infrastructure MAY read tables through the repository host port', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
-        code:
-          'import { Repository } from "typeorm";\n' +
-          'import { type IOrmPort, ' +
-          'ORM_PORT } from "@acme-libs/contracts/database";',
+        code: 'import { Repository } from "typeorm";\nimport { type IOrmPort, ORM_PORT } from "@acme-libs/contracts/database";',
       }).toPassArchitectureLint();
     });
 
@@ -238,15 +226,12 @@ describe('core modules', () => {
       },
     );
 
-    it(
-      'infrastructure may NOT import @nestjs/typeorm — ' + 'the app setup registers the entities',
-      async () => {
-        await expect({
-          file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
-          code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
-        }).toBreakRule('boundaries/dependencies');
-      },
-    );
+    it('infrastructure may NOT import @nestjs/typeorm — the app setup registers the entities', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+        code: 'import { TypeOrmModule } from "@nestjs/typeorm";',
+      }).toBreakRule('boundaries/dependencies');
+    });
 
     it.each(['argon2', '@nestjs/jwt'])(
       'infrastructure may NOT import %s — hashing and signing live in the credentials lib',
@@ -326,18 +311,12 @@ describe('core modules', () => {
       }).toPassArchitectureLint();
     });
 
-    it(
-      'a queue adapter MAY take InjectQueue, ' + 'the Queue type and the queue contract',
-      async () => {
-        await expect({
-          file: 'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
-          code:
-            'import { InjectQueue } from "@nestjs/bull";\n' +
-            'import type { Queue } from "bull";\n' +
-            'import { X_QUEUE } from "../../../../../contracts/src/__ledger-fixture__";',
-        }).toPassArchitectureLint();
-      },
-    );
+    it('a queue adapter MAY take InjectQueue, the Queue type and the queue contract', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/queue/__fixture__.ts',
+        code: 'import { InjectQueue } from "@nestjs/bull";\nimport type { Queue } from "bull";\nimport { X_QUEUE } from "../../../../../contracts/src/__ledger-fixture__";',
+      }).toPassArchitectureLint();
+    });
 
     it('a queue adapter may NOT register a queue', async () => {
       await expect({
@@ -349,9 +328,7 @@ describe('core modules', () => {
     it('the module root MAY register the queues it writes to with the queue lib', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-        code:
-          'import { BullSetupModule } from "@acme-libs/queue";\n' +
-          'import { X_QUEUE } from "../../../../contracts/src/__ledger-fixture__";',
+        code: 'import { BullSetupModule } from "@acme-libs/queue";\nimport { X_QUEUE } from "../../../../contracts/src/__ledger-fixture__";',
       }).toPassArchitectureLint();
     });
 
@@ -365,11 +342,7 @@ describe('core modules', () => {
     it('a lib adapter MAY take the ledger contract and the correlation helper', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
-        code:
-          'import { Injectable } from "@nestjs/common";\n' +
-          'import { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";\n' +
-          'import { CorrelationContextHelper } from "@acme-libs/observability";\n' +
-          'import { y } from "../../outbound";',
+        code: 'import { Injectable } from "@nestjs/common";\nimport { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";\nimport { CorrelationContextHelper } from "@acme-libs/observability";\nimport { y } from "../../outbound";',
       }).toPassArchitectureLint();
     });
 

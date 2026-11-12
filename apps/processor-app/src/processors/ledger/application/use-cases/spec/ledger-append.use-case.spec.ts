@@ -30,44 +30,40 @@ describe('LedgerAppendUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'appends the entry under the correlation id of ' +
-        'the context and logs the start and the result',
-      async () => {
-        await CorrelationContextHelper.run('corr-1', () =>
-          useCase.execute({
-            operationKey: ' product-archived:12:2 ',
-            subjectType: 'product',
-            subjectId: '12',
-            action: 'ProductArchived',
-            payload: { previousStatus: 'active' },
-            occurredAt: '2026-01-01T03:00:00+03:00',
-          }),
-        );
-
-        const [draft] = insert.mock.calls[0] as [ILedgerAppendEntryDraftOutput];
-
-        expect(draft).toEqual({
-          operationKey: 'product-archived:12:2',
+    it('appends the entry under the correlation id of the context and logs the start and the result', async () => {
+      await CorrelationContextHelper.run('corr-1', () =>
+        useCase.execute({
+          operationKey: ' product-archived:12:2 ',
           subjectType: 'product',
           subjectId: '12',
           action: 'ProductArchived',
           payload: { previousStatus: 'active' },
-          correlationId: 'corr-1',
-          occurredAt: new Date('2026-01-01T00:00:00.000Z'),
-        });
-        expect(logger.info.mock.calls).toEqual([
-          [
-            { operationKey: ' product-archived:12:2 ', action: 'ProductArchived' },
-            'Ledger record received',
-          ],
-          [
-            { id: '4210', operationKey: 'product-archived:12:2', appended: true },
-            'Ledger record appended',
-          ],
-        ]);
-      },
-    );
+          occurredAt: '2026-01-01T03:00:00+03:00',
+        }),
+      );
+
+      const [draft] = insert.mock.calls[0] as [ILedgerAppendEntryDraftOutput];
+
+      expect(draft).toEqual({
+        operationKey: 'product-archived:12:2',
+        subjectType: 'product',
+        subjectId: '12',
+        action: 'ProductArchived',
+        payload: { previousStatus: 'active' },
+        correlationId: 'corr-1',
+        occurredAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+      expect(logger.info.mock.calls).toEqual([
+        [
+          { operationKey: ' product-archived:12:2 ', action: 'ProductArchived' },
+          'Ledger record received',
+        ],
+        [
+          { id: '4210', operationKey: 'product-archived:12:2', appended: true },
+          'Ledger record appended',
+        ],
+      ]);
+    });
 
     it('logs a record the ledger already holds as already appended, without an error', async () => {
       insert.mockResolvedValue({ outcome: LedgerAppendEntryInsertOutcomeEnum.DUPLICATE });

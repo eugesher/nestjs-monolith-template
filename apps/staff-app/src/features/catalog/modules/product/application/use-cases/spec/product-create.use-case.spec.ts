@@ -53,66 +53,59 @@ describe('ProductCreateUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'claims the key on the logical body, ' +
-        'creates the product and completes the key in one transaction',
-      async () => {
-        const view = await useCase.execute({
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          idempotencyKey: 'key-1',
-        });
+    it('claims the key on the logical body, creates the product and completes the key in one transaction', async () => {
+      const view = await useCase.execute({
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        idempotencyKey: 'key-1',
+      });
 
-        expect(claim).toHaveBeenCalledWith({
-          key: 'key-1',
-          body: { sku: 'SKU-0001', name: 'Lamp' },
-        });
-        expect(existsBySku).toHaveBeenCalledWith('SKU-0001');
-        expect(insert).toHaveBeenCalledWith({
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          status: 'draft',
-          version: 1,
-        });
-        expect(findInserted).toHaveBeenCalledWith('12');
-        expect(view).toEqual({
-          id: '12',
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          status: 'draft',
-          version: 1,
-          createdAt: '2026-01-01T00:00:00.000Z',
-          updatedAt: '2026-01-01T00:00:00.000Z',
-        });
-        expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
-        expect(run).toHaveBeenCalledTimes(1);
-        expect(release).not.toHaveBeenCalled();
-      },
-    );
+      expect(claim).toHaveBeenCalledWith({
+        key: 'key-1',
+        body: { sku: 'SKU-0001', name: 'Lamp' },
+      });
+      expect(existsBySku).toHaveBeenCalledWith('SKU-0001');
+      expect(insert).toHaveBeenCalledWith({
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status: 'draft',
+        version: 1,
+      });
+      expect(findInserted).toHaveBeenCalledWith('12');
+      expect(view).toEqual({
+        id: '12',
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        status: 'draft',
+        version: 1,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+      });
+      expect(complete).toHaveBeenCalledWith({ key: 'key-1', response: view });
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(release).not.toHaveBeenCalled();
+    });
 
-    it(
-      'enqueues the creation record under the ' + 'stored id after the commit and logs it',
-      async () => {
-        await useCase.execute({
-          sku: 'SKU-0001',
-          name: 'Lamp',
-          idempotencyKey: 'key-1',
-        });
+    it('enqueues the creation record under the stored id after the commit and logs it', async () => {
+      await useCase.execute({
+        sku: 'SKU-0001',
+        name: 'Lamp',
+        idempotencyKey: 'key-1',
+      });
 
-        expect(recordCreated).toHaveBeenCalledWith({
-          productId: '12',
-          sku: 'SKU-0001',
-          name: 'Lamp',
-        });
-        expect(run.mock.invocationCallOrder[0]).toBeLessThan(
-          recordCreated.mock.invocationCallOrder[0],
-        );
-        expect(logger.info).toHaveBeenCalledWith(
-          { productId: '12', sku: 'SKU-0001' },
-          'Product created',
-        );
-      },
-    );
+      expect(recordCreated).toHaveBeenCalledWith({
+        productId: '12',
+        sku: 'SKU-0001',
+        name: 'Lamp',
+      });
+      expect(run.mock.invocationCallOrder[0]).toBeLessThan(
+        recordCreated.mock.invocationCallOrder[0],
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        { productId: '12', sku: 'SKU-0001' },
+        'Product created',
+      );
+    });
 
     it('answers a replay with the stored response and does nothing else', async () => {
       claim.mockResolvedValue({
@@ -177,25 +170,22 @@ describe('ProductCreateUseCase', () => {
       expect(release).toHaveBeenCalledWith({ key: 'key-1' });
     });
 
-    it(
-      'refuses a sku taken by a concurrent insert ' + 'with PRODUCT_SKU_TAKEN and releases the key',
-      async () => {
-        insert.mockResolvedValue({ outcome: ProductCreateInsertOutcomeEnum.DUPLICATE });
+    it('refuses a sku taken by a concurrent insert with PRODUCT_SKU_TAKEN and releases the key', async () => {
+      insert.mockResolvedValue({ outcome: ProductCreateInsertOutcomeEnum.DUPLICATE });
 
-        await expect(
-          useCase.execute({
-            sku: 'SKU-0001',
-            name: 'Lamp',
-            idempotencyKey: 'key-1',
-          }),
-        ).rejects.toMatchObject({
-          code: 'PRODUCT_SKU_TAKEN',
-          message: 'Product sku SKU-0001 is already registered',
-        });
-        expect(findInserted).not.toHaveBeenCalled();
-        expect(release).toHaveBeenCalledWith({ key: 'key-1' });
-      },
-    );
+      await expect(
+        useCase.execute({
+          sku: 'SKU-0001',
+          name: 'Lamp',
+          idempotencyKey: 'key-1',
+        }),
+      ).rejects.toMatchObject({
+        code: 'PRODUCT_SKU_TAKEN',
+        message: 'Product sku SKU-0001 is already registered',
+      });
+      expect(findInserted).not.toHaveBeenCalled();
+      expect(release).toHaveBeenCalledWith({ key: 'key-1' });
+    });
 
     it('releases the key when the transaction fails and rethrows', async () => {
       complete.mockRejectedValue(new Error('lock wait timeout'));

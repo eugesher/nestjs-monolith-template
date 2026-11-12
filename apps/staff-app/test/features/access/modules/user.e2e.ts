@@ -63,7 +63,7 @@ export class UserE2E {
         });
         expect(response.body.id).toMatch(/^\d+$/);
         expect(actual.db.staff_user[0].password_hash).toMatch(
-          /^\$argon2id\$v=19\$m=19456,p=1,t=2\$/,
+          /^\$argon2id\$v=19\$m=19456,t=2,p=1\$/,
         );
         expect(login.body).toEqual({ accessToken: expect.any(String) });
       });

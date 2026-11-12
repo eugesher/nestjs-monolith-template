@@ -89,17 +89,14 @@ describe('IdempotencyCoreClaimUseCase', () => {
       expect(claim).toEqual({ outcome: 'mismatch', storedResponse: undefined });
     });
 
-    it(
-      'answers in-flight when the holder released ' + 'the key between the insert and the read',
-      async () => {
-        repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
-        repository.findByKey.mockResolvedValue(null);
+    it('answers in-flight when the holder released the key between the insert and the read', async () => {
+      repository.insert.mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.DUPLICATE);
+      repository.findByKey.mockResolvedValue(null);
 
-        const claim = await useCase.execute({ key: 'key-1', body: { sku: 'A-1', name: 'Lamp' } });
+      const claim = await useCase.execute({ key: 'key-1', body: { sku: 'A-1', name: 'Lamp' } });
 
-        expect(claim).toEqual({ outcome: 'in-flight', storedResponse: undefined });
-      },
-    );
+      expect(claim).toEqual({ outcome: 'in-flight', storedResponse: undefined });
+    });
 
     it('lets an invalid key escape before touching the store', async () => {
       await expect(useCase.execute({ key: '', body: {} })).rejects.toThrow(

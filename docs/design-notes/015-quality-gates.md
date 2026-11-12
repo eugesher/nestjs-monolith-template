@@ -80,7 +80,9 @@ lint → typecheck → build → unit → e2e
   end of its log names the suite. The compose file and the suites read the `.env.test` files of the
   repository.
 
-Node is the latest 24, and Yarn comes from `packageManager` through `corepack enable`.
+Node is the latest 26, and Yarn comes from `packageManager` through Corepack, which Node 26 no
+longer ships: every job installs a pinned `corepack` with npm before `corepack enable`, as the
+`Dockerfile` does.
 
 ## Order the lint keeps
 
@@ -124,6 +126,25 @@ apart by the decorator, not by the number of lines.
 `controllers`, `providers`: what the module takes and shows comes before how it is built. The rule
 applies to an object whose keys are all among these six, the argument of `@Module` and the object a
 `forRoot` returns alike, and leaves every other object as it is written.
+
+## TypeScript rules
+
+`lint/configs/typescript.mjs` lays `typescript-eslint`'s `strictTypeChecked` and
+`stylisticTypeChecked` over every `*.ts` file. Four rules are loosened for the shapes the template
+uses on purpose:
+
+- `no-extraneous-class` allows a decorated class, such as an empty `@Module`, and a class of static
+  members only, such as a helper; specs also allow an empty class, the fake entity of a repository
+  test;
+- `restrict-template-expressions` allows a number, as in an exception message;
+- `no-confusing-void-expression` allows an arrow shorthand, as in `expect(() => model.assert())`;
+- `no-invalid-void-type` allows `this: void` on a static method passed as a callback.
+
+A spec asserts that a `void` method resolves with `await expect(call).resolves.toBeUndefined()`, not
+by keeping its result. Where a declared type is narrower than the runtime value, such as the CLS id,
+`PinoLogger.root` before the logger starts or `JSON.stringify(undefined)`, the value is widened with
+`as Maybe<…>`: an annotated `const` is narrowed back by its initializer, and
+`no-unnecessary-condition` would then flag the check.
 
 ## Type imports
 

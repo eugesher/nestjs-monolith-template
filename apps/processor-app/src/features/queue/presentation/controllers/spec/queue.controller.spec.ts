@@ -42,22 +42,19 @@ describe('QueueController', () => {
   });
 
   describe('handleListFailedJobs', () => {
-    it(
-      'answers the page for the queue of the ' + 'path and the window of the query string',
-      async () => {
-        const response = await controller.handleListFailedJobs(
-          { queueName: 'ledger-record' },
-          { page: 2, limit: 10 },
-        );
+    it('answers the page for the queue of the path and the window of the query string', async () => {
+      const response = await controller.handleListFailedJobs(
+        { queueName: 'ledger-record' },
+        { page: 2, limit: 10 },
+      );
 
-        expect(response).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
-        expect(listFailedJobs).toHaveBeenCalledWith({
-          queueName: 'ledger-record',
-          page: 2,
-          limit: 10,
-        });
-      },
-    );
+      expect(response).toEqual({ page: 1, count: 0, pageCount: 0, total: 0, data: [] });
+      expect(listFailedJobs).toHaveBeenCalledWith({
+        queueName: 'ledger-record',
+        page: 2,
+        limit: 10,
+      });
+    });
   });
 
   describe('handleRetryFailedJob', () => {

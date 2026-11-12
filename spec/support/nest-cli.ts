@@ -11,14 +11,13 @@ export interface INestProject {
   compilerOptions: { tsConfigPath: string };
 }
 
-const readJson = <T>(file: string): T =>
-  JSON.parse(readFileSync(path.join(ROOT, file), 'utf8')) as T;
+const readJson = (file: string): unknown => JSON.parse(readFileSync(path.join(ROOT, file), 'utf8'));
 
-export const projects = readJson<{ projects: Record<string, INestProject> }>(
-  'nest-cli.json',
-).projects;
-const aliases = readJson<{ compilerOptions: { paths: Record<string, string[]> } }>('tsconfig.json')
-  .compilerOptions.paths;
+export const projects = (readJson('nest-cli.json') as { projects: Record<string, INestProject> })
+  .projects;
+const aliases = (
+  readJson('tsconfig.json') as { compilerOptions: { paths: Record<string, string[]> } }
+).compilerOptions.paths;
 
 export const existsInRepo = (relPath: string): boolean => existsSync(path.join(ROOT, relPath));
 

@@ -55,44 +55,37 @@ describe('feature kinds: an aggregator or a regular module, never both', () => {
       rmSync(root, { recursive: true, force: true });
     });
 
-    it(
-      'goes exactly one level into modules/ of a top-level module, ' + 'in features and processors',
-      () => {
-        expect(
-          appModules(root)
-            .map(({ relPath, area, nested }) => ({ relPath, area, nested }))
-            .sort((a, b) => a.relPath.localeCompare(b.relPath)),
-        ).toEqual([
-          { relPath: 'apps/app/src/features/ledger', area: 'features', nested: false },
-          {
-            relPath: 'apps/app/src/features/ledger/modules/ledger-export',
-            area: 'features',
-            nested: true,
-          },
-          { relPath: 'apps/app/src/features/product', area: 'features', nested: false },
-          { relPath: 'apps/app/src/processors/catalog-events', area: 'processors', nested: false },
-          { relPath: 'apps/app/src/processors/digest', area: 'processors', nested: false },
-          { relPath: 'apps/app/src/processors/purge', area: 'processors', nested: false },
-        ]);
-      },
-    );
+    it('goes exactly one level into modules/ of a top-level module, in features and processors', () => {
+      expect(
+        appModules(root)
+          .map(({ relPath, area, nested }) => ({ relPath, area, nested }))
+          .sort((a, b) => a.relPath.localeCompare(b.relPath)),
+      ).toEqual([
+        { relPath: 'apps/app/src/features/ledger', area: 'features', nested: false },
+        {
+          relPath: 'apps/app/src/features/ledger/modules/ledger-export',
+          area: 'features',
+          nested: true,
+        },
+        { relPath: 'apps/app/src/features/product', area: 'features', nested: false },
+        { relPath: 'apps/app/src/processors/catalog-events', area: 'processors', nested: false },
+        { relPath: 'apps/app/src/processors/digest', area: 'processors', nested: false },
+        { relPath: 'apps/app/src/processors/purge', area: 'processors', nested: false },
+      ]);
+    });
 
-    it(
-      'flags the submodule that aggregates modules of ' +
-        'its own and the processors without a .processor.ts',
-      () => {
-        expect(
-          appModules(root)
-            .filter((module) => moduleKindViolationOf(module) !== null)
-            .map(({ relPath }) => relPath)
-            .sort(),
-        ).toEqual([
-          'apps/app/src/features/ledger/modules/ledger-export',
-          'apps/app/src/processors/digest',
-          'apps/app/src/processors/purge',
-        ]);
-      },
-    );
+    it('flags the submodule that aggregates modules of its own and the processors without a .processor.ts', () => {
+      expect(
+        appModules(root)
+          .filter((module) => moduleKindViolationOf(module) !== null)
+          .map(({ relPath }) => relPath)
+          .sort(),
+      ).toEqual([
+        'apps/app/src/features/ledger/modules/ledger-export',
+        'apps/app/src/processors/digest',
+        'apps/app/src/processors/purge',
+      ]);
+    });
   });
 
   describe('the rule itself', () => {

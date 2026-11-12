@@ -1,4 +1,4 @@
-FROM node:24.22.1-alpine AS builder
+FROM node:26.13.1-alpine AS builder
 
 ARG APP_NAME
 RUN test -n "$APP_NAME" || (echo "APP_NAME build arg is required" && exit 1)
@@ -7,7 +7,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 WORKDIR /app
 
-RUN corepack enable
+RUN npm install --global corepack@0.36.0 && corepack enable
 
 COPY package.json yarn.lock .yarnrc.yml ./
 
@@ -22,14 +22,14 @@ RUN yarn build:${APP_NAME}
 
 RUN yarn workspaces focus --all --production
 
-FROM node:24.22.1-alpine AS migrations
+FROM node:26.13.1-alpine AS migrations
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV NODE_ENV=production
 
 WORKDIR /app
 
-RUN corepack enable
+RUN npm install --global corepack@0.36.0 && corepack enable
 
 COPY package.json yarn.lock .yarnrc.yml ./
 
@@ -43,7 +43,7 @@ USER node
 
 CMD ["node", "./node_modules/typeorm/cli.js", "-d", "./migrations/config/data-source.ts", "migration:run"]
 
-FROM node:24.22.1-alpine
+FROM node:26.13.1-alpine
 
 ARG APP_NAME
 

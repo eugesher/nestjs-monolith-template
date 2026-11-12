@@ -5,8 +5,15 @@ and `processor-app` (port 3002).
 
 ## Prerequisites
 
-- Node 24, with Corepack enabled (`corepack enable`)
+- Node 26
 - Docker with Compose
+
+```bash
+npm install --global corepack # CI and the Dockerfile pin 0.36.0
+corepack enable
+```
+
+Then install the dependencies:
 
 ```bash
 yarn install

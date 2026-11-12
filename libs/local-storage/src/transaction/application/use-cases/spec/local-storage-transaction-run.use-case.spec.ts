@@ -42,9 +42,10 @@ describe('LocalStorageTransactionRunUseCase', () => {
       hooks.push(() => Promise.resolve(void outcomes.push('hook')));
     });
 
-    const result = await useCase.execute(() => Promise.resolve(void outcomes.push('work')));
+    await expect(
+      useCase.execute(() => Promise.resolve(void outcomes.push('work'))),
+    ).resolves.toBeUndefined();
 
-    expect(result).toBeUndefined();
     expect(run).toHaveBeenCalledTimes(1);
     expect(outcomes).toEqual(['work', 'hook']);
   });

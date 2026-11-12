@@ -37,41 +37,37 @@ describe('ReminderRescheduleUseCase', () => {
   });
 
   describe('execute', () => {
-    it(
-      'reschedules through the write service, ' +
-        'invalidates the summary and answers the stored reminder',
-      async () => {
-        const view = await useCase.execute({
-          reminderId: '7',
-          ownerId: 'owner-1',
-          dueOn: '2026-11-12',
-        });
+    it('reschedules through the write service, invalidates the summary and answers the stored reminder', async () => {
+      const view = await useCase.execute({
+        reminderId: '7',
+        ownerId: 'owner-1',
+        dueOn: '2026-11-12',
+      });
 
-        expect(write).toHaveBeenCalledWith(
-          { reminderId: '7', ownerId: 'owner-1' },
-          expect.any(Function),
-        );
-        expect(invalidate).toHaveBeenCalledWith('owner-1');
-        expect(write.mock.invocationCallOrder[0]).toBeLessThan(
-          invalidate.mock.invocationCallOrder[0],
-        );
-        expect(view).toEqual({
-          id: '7',
-          ownerId: 'owner-1',
-          title: 'Call the bank',
-          body: '',
-          dueOn: '2026-11-12',
-          status: 'pending',
-          version: 3,
-          createdAt: '2026-01-01T00:00:00.000Z',
-          updatedAt: '2026-01-03T00:00:00.000Z',
-        });
-        expect(logger.info).toHaveBeenCalledWith(
-          { reminderId: '7', dueOn: '2026-11-12', version: 3 },
-          'Reminder rescheduled',
-        );
-      },
-    );
+      expect(write).toHaveBeenCalledWith(
+        { reminderId: '7', ownerId: 'owner-1' },
+        expect.any(Function),
+      );
+      expect(invalidate).toHaveBeenCalledWith('owner-1');
+      expect(write.mock.invocationCallOrder[0]).toBeLessThan(
+        invalidate.mock.invocationCallOrder[0],
+      );
+      expect(view).toEqual({
+        id: '7',
+        ownerId: 'owner-1',
+        title: 'Call the bank',
+        body: '',
+        dueOn: '2026-11-12',
+        status: 'pending',
+        version: 3,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-03T00:00:00.000Z',
+      });
+      expect(logger.info).toHaveBeenCalledWith(
+        { reminderId: '7', dueOn: '2026-11-12', version: 3 },
+        'Reminder rescheduled',
+      );
+    });
 
     it('hands the write service a change that moves the due date', async () => {
       const reminder = ReminderModel.reconstitute({

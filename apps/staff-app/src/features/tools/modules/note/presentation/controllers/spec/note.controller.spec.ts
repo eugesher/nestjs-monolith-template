@@ -90,25 +90,22 @@ describe('NoteController', () => {
   });
 
   describe('handleEdit', () => {
-    it(
-      'edits the note of the path with the body ' + 'of the request and the caller as editor',
-      async () => {
-        edit.mockResolvedValue({ id: '17', version: 2 });
+    it('edits the note of the path with the body of the request and the caller as editor', async () => {
+      edit.mockResolvedValue({ id: '17', version: 2 });
 
-        const response = await controller.handleEdit(
-          { noteId: '17' },
-          { body: 'Refunded twice' },
-          { id: 'user-1', email: 'ann@example.com' },
-        );
+      const response = await controller.handleEdit(
+        { noteId: '17' },
+        { body: 'Refunded twice' },
+        { id: 'user-1', email: 'ann@example.com' },
+      );
 
-        expect(response).toEqual({ id: '17', version: 2 });
-        expect(edit).toHaveBeenCalledWith({
-          noteId: '17',
-          body: 'Refunded twice',
-          editorId: 'user-1',
-        });
-      },
-    );
+      expect(response).toEqual({ id: '17', version: 2 });
+      expect(edit).toHaveBeenCalledWith({
+        noteId: '17',
+        body: 'Refunded twice',
+        editorId: 'user-1',
+      });
+    });
   });
 
   describe('handleResolve', () => {

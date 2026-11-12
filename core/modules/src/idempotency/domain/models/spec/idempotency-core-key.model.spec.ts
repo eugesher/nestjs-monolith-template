@@ -11,7 +11,7 @@ describe('IdempotencyCoreKeyModel', () => {
         responseBody: '{"id":"12"}',
       });
 
-      expect({ ...key }).toEqual({
+      expect(key).toEqual({
         requestFingerprint: 'abc',
         status: 'completed',
         responseBody: '{"id":"12"}',

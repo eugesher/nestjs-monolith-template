@@ -31,7 +31,7 @@ export class LoggerSetupConfig implements Params {
     const baseOptions: Options = {
       level: process.env.LOG_LEVEL ?? (isProduction ? 'info' : 'debug'),
       mixin: () => {
-        const correlationId: Maybe<string> = ClsServiceManager.getClsService().getId();
+        const correlationId = ClsServiceManager.getClsService().getId() as Maybe<string>;
         const span = trace.getActiveSpan()?.spanContext();
         const correlation = correlationId === undefined ? {} : { correlationId };
         const tracing = span ? { traceId: span.traceId, spanId: span.spanId } : {};

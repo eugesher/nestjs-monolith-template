@@ -16,7 +16,7 @@ describe('CredentialsLibPasswordHasherOptions', () => {
 
     const options = new CredentialsLibPasswordHasherOptions(config);
 
-    expect({ ...options }).toEqual({
+    expect(options).toEqual({
       type: argon2id,
       memoryCost: 1024,
       parallelism: 1,

@@ -11,7 +11,7 @@ describe('DomainEvent', () => {
 
   it('records its aggregate id, the time it occurred and a fresh UUID v4 id', () => {
     class ItemOpenedEvent extends DomainEvent {
-      constructor(aggregateId: number) {
+      public constructor(aggregateId: number) {
         super(aggregateId);
       }
     }
@@ -27,7 +27,7 @@ describe('DomainEvent', () => {
 
   it('gives every event its own id', () => {
     class ItemOpenedEvent extends DomainEvent {
-      constructor(aggregateId: number) {
+      public constructor(aggregateId: number) {
         super(aggregateId);
       }
     }

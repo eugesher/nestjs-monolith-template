@@ -31,11 +31,7 @@ describe('StaffAuthCorePersistenceStaffUserBuilder', () => {
       builder.forByEmail('admin@example.com');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffUser`.`id` AS `StaffUser_id`, ' +
-          '`StaffUser`.`passwordHash` AS `StaffUser_passwordHash`, ' +
-          '`StaffUser`.`status` AS `StaffUser_status` ' +
-          'FROM `staff_user` `StaffUser` ' +
-          'WHERE `StaffUser`.`email` = ?',
+        'SELECT `StaffUser`.`id` AS `StaffUser_id`, `StaffUser`.`passwordHash` AS `StaffUser_passwordHash`, `StaffUser`.`status` AS `StaffUser_status` FROM `staff_user` `StaffUser` WHERE `StaffUser`.`email` = ?',
         ['admin@example.com'],
       ]);
     });
@@ -55,20 +51,7 @@ describe('StaffAuthCorePersistenceStaffUserBuilder', () => {
       builder.forActiveById('1');
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffUser`.`id` AS `StaffUser_id`, ' +
-          '`StaffUser`.`email` AS `StaffUser_email`, ' +
-          '`StaffUserRole`.`userId` AS `StaffUserRole_userId`, ' +
-          '`StaffUserRole`.`roleId` AS `StaffUserRole_roleId`, ' +
-          '`StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, ' +
-          '`StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, ' +
-          '`StaffRolePermission`.`code` AS `StaffRolePermission_code` ' +
-          'FROM `staff_user` `StaffUser` ' +
-          'LEFT JOIN `staff_user_roles` `StaffUserRole` ON ' +
-          '`StaffUserRole`.`user_id`=`StaffUser`.`id` ' +
-          'LEFT JOIN `staff_role` `StaffRole` ON `StaffRole`.`id`=`StaffUserRole`.`role_id` ' +
-          'LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON ' +
-          '`StaffRolePermission`.`role_id`=`StaffRole`.`id` ' +
-          'WHERE `StaffUser`.`id` = ? AND `StaffUser`.`status` = ?',
+        'SELECT `StaffUser`.`id` AS `StaffUser_id`, `StaffUser`.`email` AS `StaffUser_email`, `StaffUserRole`.`userId` AS `StaffUserRole_userId`, `StaffUserRole`.`roleId` AS `StaffUserRole_roleId`, `StaffRole`.`id` AS `StaffRole_id`, `StaffRole`.`name` AS `StaffRole_name`, `StaffRolePermission`.`roleId` AS `StaffRolePermission_roleId`, `StaffRolePermission`.`code` AS `StaffRolePermission_code` FROM `staff_user` `StaffUser` LEFT JOIN `staff_user_roles` `StaffUserRole` ON `StaffUserRole`.`user_id`=`StaffUser`.`id` LEFT JOIN `staff_role` `StaffRole` ON `StaffRole`.`id`=`StaffUserRole`.`role_id` LEFT JOIN `staff_role_permissions` `StaffRolePermission` ON `StaffRolePermission`.`role_id`=`StaffRole`.`id` WHERE `StaffUser`.`id` = ? AND `StaffUser`.`status` = ?',
         ['1', 'active'],
       ]);
     });

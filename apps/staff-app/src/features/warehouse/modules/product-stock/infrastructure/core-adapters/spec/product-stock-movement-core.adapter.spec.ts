@@ -16,10 +16,9 @@ describe('ProductStockMovementCoreAdapter', () => {
 
   describe('lock', () => {
     it('locks the one product through the core module and keeps its stock to itself', async () => {
-      const result = await adapter.lock({ productId: '12' });
+      await expect(adapter.lock({ productId: '12' })).resolves.toBeUndefined();
 
       expect(handleLock).toHaveBeenCalledWith({ productIds: ['12'] });
-      expect(result).toBeUndefined();
     });
   });
 

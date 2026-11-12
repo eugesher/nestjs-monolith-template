@@ -17,7 +17,7 @@ export class CorrelationContextHelper {
   }
 
   public static current(context: string): string {
-    const correlationId: Maybe<string> = ClsServiceManager.getClsService().getId();
+    const correlationId = ClsServiceManager.getClsService().getId() as Maybe<string>;
 
     if (correlationId) {
       return correlationId;
@@ -25,7 +25,7 @@ export class CorrelationContextHelper {
 
     const minted = randomUUID();
 
-    PinoLogger.root?.warn(
+    (PinoLogger.root as Maybe<typeof PinoLogger.root>)?.warn(
       { context, correlationId: minted },
       'No correlation context: the entry point does not open one, a new correlationId is minted',
     );

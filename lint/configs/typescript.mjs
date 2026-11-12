@@ -8,7 +8,7 @@ import { namedImportSelectors } from '../syntax/named-imports.selectors.mjs';
 export const typescript = {
   files: ['**/*.ts'],
   extends: [
-    ...typescriptEslint.configs.recommendedTypeChecked,
+    ...typescriptEslint.configs.strictTypeChecked,
     ...typescriptEslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
@@ -22,6 +22,13 @@ export const typescript = {
       'error',
       { overrides: { constructors: 'off' } },
     ],
+    '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
+    '@typescript-eslint/no-extraneous-class': [
+      'error',
+      { allowStaticOnly: true, allowWithDecorator: true },
+    ],
+    '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }],
+    '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
     '@typescript-eslint/naming-convention': [
       'error',
       {

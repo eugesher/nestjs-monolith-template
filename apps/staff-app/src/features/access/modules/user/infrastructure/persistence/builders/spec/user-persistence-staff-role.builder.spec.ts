@@ -31,9 +31,7 @@ describe('UserPersistenceStaffRoleBuilder', () => {
       builder.forByIds(['2', '3']);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `StaffRole`.`id` AS `StaffRole_id` ' +
-          'FROM `staff_role` `StaffRole` ' +
-          'WHERE `StaffRole`.`id` IN (?, ?)',
+        'SELECT `StaffRole`.`id` AS `StaffRole_id` FROM `staff_role` `StaffRole` WHERE `StaffRole`.`id` IN (?, ?)',
         ['2', '3'],
       ]);
     });

@@ -31,11 +31,7 @@ describe('TagCommonPersistenceBuilder', () => {
       builder.forList({ subjectType: 'product', subjectId: '100' });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name` ' +
-          'FROM `tag` `Tag` ' +
-          'INNER JOIN `subject_tag` `SubjectTag` ON `SubjectTag`.`tagId` = `Tag`.`id` ' +
-          'WHERE `SubjectTag`.`subjectType` = ? AND `SubjectTag`.`subjectId` = ? ' +
-          'ORDER BY `Tag_name` ASC',
+        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name` FROM `tag` `Tag` INNER JOIN `subject_tag` `SubjectTag` ON `SubjectTag`.`tagId` = `Tag`.`id` WHERE `SubjectTag`.`subjectType` = ? AND `SubjectTag`.`subjectId` = ? ORDER BY `Tag_name` ASC',
         ['product', '100'],
       ]);
     });
@@ -55,11 +51,7 @@ describe('TagCommonPersistenceBuilder', () => {
       builder.forLockTags(['300', '301']);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name` ' +
-          'FROM `tag` `Tag` ' +
-          'WHERE `Tag`.`id` IN (?, ?) ' +
-          'ORDER BY `Tag_name` ASC ' +
-          'LOCK IN SHARE MODE',
+        'SELECT `Tag`.`id` AS `Tag_id`, `Tag`.`name` AS `Tag_name` FROM `tag` `Tag` WHERE `Tag`.`id` IN (?, ?) ORDER BY `Tag_name` ASC LOCK IN SHARE MODE',
         ['300', '301'],
       ]);
     });

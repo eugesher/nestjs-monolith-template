@@ -31,11 +31,7 @@ describe('ProductStockCorePersistenceProductBuilder', () => {
       builder.forLockProducts(['100', '101']);
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `Product`.`id` AS `Product_id` ' +
-          'FROM `product` `Product` ' +
-          'WHERE ( `Product`.`id` IN (?, ?) ) AND ( `Product`.`deletedAt` IS NULL ) ' +
-          'ORDER BY `Product_id` ASC ' +
-          'FOR UPDATE',
+        'SELECT `Product`.`id` AS `Product_id` FROM `product` `Product` WHERE ( `Product`.`id` IN (?, ?) ) AND ( `Product`.`deletedAt` IS NULL ) ORDER BY `Product_id` ASC FOR UPDATE',
         ['100', '101'],
       ]);
     });

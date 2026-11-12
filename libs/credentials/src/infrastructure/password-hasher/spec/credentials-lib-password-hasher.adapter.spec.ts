@@ -22,7 +22,7 @@ describe('CredentialsLibPasswordHasherAdapter', () => {
     it('produces an argon2id hash with the configured costs', async () => {
       const passwordHash = await adapter.hash('correct-horse-battery');
 
-      expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,p=1,t=2\$/);
+      expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,t=2,p=1\$/);
     });
 
     it('salts every hash', async () => {

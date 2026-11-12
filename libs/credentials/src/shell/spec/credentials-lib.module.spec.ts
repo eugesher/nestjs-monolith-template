@@ -58,7 +58,7 @@ describe('CredentialsLibModule', () => {
 
     const passwordHash = await credentials.handleHashPassword('correct-horse-battery');
 
-    expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,p=1,t=2\$/);
+    expect(passwordHash).toMatch(/^\$argon2id\$v=19\$m=1024,t=2,p=1\$/);
   });
 
   it('verifies a password against the hash it produced', async () => {

@@ -92,10 +92,7 @@ describe('repo', () => {
     it('a system test MAY mount the app modules and its own context', async () => {
       await expect({
         file: 'test/system/apps/staff-app/app/__fixture__.ts',
-        code:
-          'import { x } from "@acme-staff/app/app.module";\n' +
-          'import { y } from "@acme-processor/app/app.module";\n' +
-          'import { z } from "../context/__context-fixture__";',
+        code: 'import { x } from "@acme-staff/app/app.module";\nimport { y } from "@acme-processor/app/app.module";\nimport { z } from "../context/__context-fixture__";',
       }).toPassArchitectureLint();
     });
 
@@ -112,8 +109,7 @@ describe('repo', () => {
     it('a system test MAY use the testing lib', async () => {
       await expect({
         file: 'test/system/apps/staff-app/context/__fixture__.ts',
-        code:
-          'import { x } from "@acme-libs/testing";\n' + 'import { y } from "@acme-libs/testing";',
+        code: 'import { x } from "@acme-libs/testing";\nimport { y } from "@acme-libs/testing";',
       }).toPassArchitectureLint();
     });
 
@@ -202,8 +198,7 @@ describe('repo', () => {
     });
 
     it.each(['joi', 'dotenv', 'typeorm'])(
-      'a namespace import of the CommonJS package %s is forbidden — ' +
-        'it has no callable members under ESM',
+      'a namespace import of the CommonJS package %s is forbidden — it has no callable members under ESM',
       async (source) => {
         await expect({
           file: 'migrations/config/__fixture__.ts',
@@ -235,8 +230,7 @@ describe('repo', () => {
       ['migrations', 'config/data-source.ts'],
       ['apps/staff-app', 'src/main.ts'],
     ])(
-      'linting from %s, as an editor does from the nearest package, ' +
-        'classifies %s from the repo root',
+      'linting from %s, as an editor does from the nearest package, classifies %s from the repo root',
       (cwd, file) => {
         const root = path.resolve(__dirname, '../..');
         const eslint = path.join(root, 'node_modules/eslint/bin/eslint.js');

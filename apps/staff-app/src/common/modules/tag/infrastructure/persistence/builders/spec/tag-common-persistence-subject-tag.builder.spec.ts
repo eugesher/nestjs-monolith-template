@@ -31,10 +31,7 @@ describe('TagCommonPersistenceSubjectTagBuilder', () => {
       builder.forList({ subjectType: 'product', tagId: '300' });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, ' +
-          '`SubjectTag`.`subjectId` AS `SubjectTag_subjectId` ' +
-          'FROM `subject_tag` `SubjectTag` ' +
-          'WHERE `SubjectTag`.`tagId` = ? AND `SubjectTag`.`subjectType` = ?',
+        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, `SubjectTag`.`subjectId` AS `SubjectTag_subjectId` FROM `subject_tag` `SubjectTag` WHERE `SubjectTag`.`tagId` = ? AND `SubjectTag`.`subjectType` = ?',
         ['300', 'product'],
       ]);
     });
@@ -54,9 +51,7 @@ describe('TagCommonPersistenceSubjectTagBuilder', () => {
       builder.forLinked({ subjectType: 'product', subjectId: '100' });
 
       expect(builder.getQueryAndParameters()).toEqual([
-        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, `SubjectTag`.`tagId` AS `SubjectTag_tagId` ' +
-          'FROM `subject_tag` `SubjectTag` ' +
-          'WHERE `SubjectTag`.`subjectType` = ? AND `SubjectTag`.`subjectId` = ?',
+        'SELECT `SubjectTag`.`id` AS `SubjectTag_id`, `SubjectTag`.`tagId` AS `SubjectTag_tagId` FROM `subject_tag` `SubjectTag` WHERE `SubjectTag`.`subjectType` = ? AND `SubjectTag`.`subjectId` = ?',
         ['product', '100'],
       ]);
     });
