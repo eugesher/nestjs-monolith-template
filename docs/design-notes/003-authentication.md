@@ -88,7 +88,10 @@ object above.
 **The counters live in Redis, so the replicas of an app share them.** `ThrottleRedisStorage`
 increments a key `throttle:<hash>` and sets its expiry with the first hit, in one Lua script: a
 fixed window, and a hit over the limit is refused until the window ends. The package's own storage
-is in memory, so each replica would allow the limit again.
+is in memory, so each replica would allow the limit again. `ThrottleSetupModule` hands the storage
+to `ThrottlerModule.forRootAsync` through its own `ThrottleStorageModule`: the storage stays a
+provider of Nest, so it reads `ConfigService` and closes its Redis connection on shutdown, where an
+instance built inside `useFactory` would never see `onApplicationShutdown`.
 
 **A Redis outage lifts the limits instead of failing the requests.** The client has no offline queue
 and a command timeout, as the cache has; a failed increment logs a warning and lets the request
