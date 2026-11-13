@@ -49,12 +49,12 @@ export class OrderTagCommonAdapter implements IOrderTagPort {
 
   public async replace(command: IOrderTagReplaceCommand): Promise<IOrderTagReplaceView> {
     const { orderId, tagIds } = command;
-    const replaced = await this.tag.handleReplace({
+    const replaceView = await this.tag.handleReplace({
       subjectType: TagCommonSubjectTypeEnum.ORDER,
       subjectId: orderId,
       tagIds,
     });
-    const { outcome, tags, missingTagIds } = replaced;
+    const { outcome, tags, missingTagIds } = replaceView;
 
     return { outcome: OrderTagCommonAdapter.OUTCOMES[outcome], tags, missingTagIds };
   }

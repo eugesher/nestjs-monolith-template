@@ -12,9 +12,9 @@ export class RoleListUseCase {
   ) {}
 
   public async execute(): Promise<IRoleView[]> {
-    const records = await this.repository.list();
+    const roleRecords = await this.repository.list();
 
-    return records.map((record) => {
+    return roleRecords.map((record) => {
       const role = RoleModel.reconstitute(record);
 
       return role.toSnapshot();

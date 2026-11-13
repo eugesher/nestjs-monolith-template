@@ -44,8 +44,8 @@ export class OrderIdempotencyCoreAdapter implements IOrderIdempotencyPort {
   ): Promise<IOrderIdempotencyOutcomeView | IOrderIdempotencyReplayView<T>> {
     const { customerId, key, body } = command;
     const scope = OrderIdempotencyCoreAdapter.toScope(customerId);
-    const claim = await this.idempotency.handleClaim({ scope, key, body });
-    const { outcome, storedResponse } = claim;
+    const coreClaim = await this.idempotency.handleClaim({ scope, key, body });
+    const { outcome, storedResponse } = coreClaim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
       return { outcome: OrderIdempotencyOutcomeEnum.REPLAY, storedResponse: storedResponse as T };

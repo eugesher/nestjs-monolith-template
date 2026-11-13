@@ -32,13 +32,13 @@ export class LocalStorageTransactionalRunUseCase {
 
     this.context.setHooks(hooks);
 
-    const result = await this.host.withTransaction(work);
+    const workResult = await this.host.withTransaction(work);
 
     for (const hook of hooks) {
       await this.runHook(hook);
     }
 
-    return result;
+    return workResult;
   }
 
   private async runHook(hook: () => Promise<void>): Promise<void> {

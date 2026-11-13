@@ -23,11 +23,11 @@ export class AuthLoginUseCase {
 
   public async execute(command: IAuthLoginCommand): Promise<IAuthLoginView> {
     const { email, password } = command;
-    const normalized = AuthCustomerModel.normalizeEmail(email);
-    const record = await this.repository.findByEmail(normalized);
-    const customer = record ? AuthCustomerModel.reconstitute(record) : null;
+    const normalizedEmail = AuthCustomerModel.normalizeEmail(email);
+    const customerRecord = await this.repository.findByEmail(normalizedEmail);
+    const customer = customerRecord ? AuthCustomerModel.reconstitute(customerRecord) : null;
     const passwordHash = customer?.passwordHash ?? null;
-    const valid = await this.credentials.verifyPassword({ passwordHash, password });
+    const isPasswordValid = await this.credentials.verifyPassword({ passwordHash, password });
 
     if (!customer) {
       this.logger.warn('Login failed: unknown email');
@@ -35,7 +35,7 @@ export class AuthLoginUseCase {
       throw new AuthInvalidCredentialsException();
     }
 
-    if (!valid) {
+    if (!isPasswordValid) {
       this.logger.warn({ customerId: customer.id }, 'Login failed: wrong password');
 
       throw new AuthInvalidCredentialsException();

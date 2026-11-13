@@ -37,29 +37,31 @@ export class UserRegisterUseCase {
     UserStaffUserModel.assertPasswordStrength(password);
 
     const passwordHash = await this.credentials.hashPassword(password);
-    const draft = UserStaffUserModel.createDraft({ email, passwordHash, roleIds });
-    const id = await this.transaction.run(() => this.insert(draft));
+    const userDraft = UserStaffUserModel.createDraft({ email, passwordHash, roleIds });
+    const userId = await this.transaction.run(() => this.insert(userDraft));
 
-    this.logger.info({ userId: id }, 'User registered');
+    this.logger.info({ userId }, 'User registered');
 
-    return { id, email: draft.email };
+    return { id: userId, email: userDraft.email };
   }
 
   private async insert(draft: IUserStaffUserDraftOutput): Promise<string> {
     const { email, passwordHash, status, roleIds } = draft;
 
-    const inserted = await this.repository.insertUser({ email, passwordHash, status });
+    const insertResult = await this.repository.insertUser({ email, passwordHash, status });
 
-    if (inserted.outcome === UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE) {
+    if (insertResult.outcome === UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE) {
       throw new AuthEmailTakenException();
     }
 
-    const { id } = inserted;
+    const { id } = insertResult;
     const storedRoles = await this.repository.findRoles(roleIds);
-    const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
+    const missingRoleId = roleIds.find(
+      (roleId) => !storedRoles.some((stored) => stored.id === roleId),
+    );
 
-    if (missing !== undefined) {
-      throw new AuthRoleNotFoundException(missing);
+    if (missingRoleId !== undefined) {
+      throw new AuthRoleNotFoundException(missingRoleId);
     }
 
     const userRoles = storedRoles.map((role) => ({ userId: id, roleId: role.id }));

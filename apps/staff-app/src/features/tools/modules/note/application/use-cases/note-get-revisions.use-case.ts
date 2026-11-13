@@ -25,12 +25,12 @@ export class NoteGetRevisionsUseCase {
 
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.listForNote({ ...pageWindow, noteId });
-    const data = records.map((record) => {
+    const revisionViews = records.map((record) => {
       const revision = NoteRevisionModel.reconstitute(record);
 
       return revision.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(revisionViews, total, pageWindow);
   }
 }

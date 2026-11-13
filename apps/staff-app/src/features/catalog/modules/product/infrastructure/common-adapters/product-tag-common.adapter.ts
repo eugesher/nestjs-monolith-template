@@ -49,12 +49,12 @@ export class ProductTagCommonAdapter implements IProductTagPort {
 
   public async replace(command: IProductTagReplaceCommand): Promise<IProductTagReplaceView> {
     const { productId, tagIds } = command;
-    const replaced = await this.tag.handleReplace({
+    const replaceView = await this.tag.handleReplace({
       subjectType: TagCommonSubjectTypeEnum.PRODUCT,
       subjectId: productId,
       tagIds,
     });
-    const { outcome, tags, missingTagIds } = replaced;
+    const { outcome, tags, missingTagIds } = replaceView;
 
     return { outcome: ProductTagCommonAdapter.OUTCOMES[outcome], tags, missingTagIds };
   }

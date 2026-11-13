@@ -11,13 +11,13 @@ export class RequestBodyHelper {
       return body;
     }
 
-    const entries = Object.entries(body as Record<string, unknown>).map(([field, value]) => [
+    const maskedEntries = Object.entries(body as Record<string, unknown>).map(([field, value]) => [
       field,
       RequestBodyHelper.MASKED_FIELDS.has(field)
         ? RequestBodyHelper.MASK
         : RequestBodyHelper.mask(value),
     ]);
 
-    return Object.fromEntries(entries);
+    return Object.fromEntries(maskedEntries);
   }
 }

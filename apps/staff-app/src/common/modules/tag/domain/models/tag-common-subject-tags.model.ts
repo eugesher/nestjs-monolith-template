@@ -20,9 +20,9 @@ export class TagCommonSubjectTagsModel {
   }
 
   public replace(tagIds: readonly string[]): ITagCommonSubjectTagsChangesOutput {
-    const next = new Set(tagIds);
-    const linkTagIds = [...next].filter((tagId) => !this.tagIds.has(tagId));
-    const unlinkTagIds = [...this.tagIds].filter((tagId) => !next.has(tagId));
+    const nextTagIds = new Set(tagIds);
+    const linkTagIds = [...nextTagIds].filter((tagId) => !this.tagIds.has(tagId));
+    const unlinkTagIds = [...this.tagIds].filter((tagId) => !nextTagIds.has(tagId));
 
     return { linkTagIds, unlinkTagIds };
   }

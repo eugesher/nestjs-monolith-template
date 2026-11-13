@@ -34,13 +34,13 @@ export class RoleReassignPermissionsUseCase {
 
   private async reassign(command: IRoleReassignPermissionsCommand): Promise<RoleModel> {
     const { roleId, permissionCodes } = command;
-    const record = await this.repository.findRole(roleId);
+    const roleRecord = await this.repository.findRole(roleId);
 
-    if (!record) {
+    if (!roleRecord) {
       throw new AuthRoleNotFoundException(roleId);
     }
 
-    const role = RoleModel.reconstitute(record);
+    const role = RoleModel.reconstitute(roleRecord);
 
     role.reassignPermissions(permissionCodes);
 

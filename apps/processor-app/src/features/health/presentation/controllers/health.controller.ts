@@ -35,14 +35,14 @@ export class HealthController {
   public async ready(
     @Res({ passthrough: true }) response: { status(code: HttpStatus): unknown },
   ): Promise<HealthReadinessResponseDto> {
-    const view = await this.readiness.execute();
+    const readinessView = await this.readiness.execute();
     const status =
-      view.status === HealthReadinessStatusEnum.READY
+      readinessView.status === HealthReadinessStatusEnum.READY
         ? HttpStatus.OK
         : HttpStatus.SERVICE_UNAVAILABLE;
 
     response.status(status);
 
-    return view;
+    return readinessView;
   }
 }

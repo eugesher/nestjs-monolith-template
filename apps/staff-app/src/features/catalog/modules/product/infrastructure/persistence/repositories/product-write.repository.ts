@@ -28,11 +28,11 @@ export class ProductWriteRepository
 
   public async update(query: IProductWriteUpdateQuery): Promise<boolean> {
     const { id, versionAsRead, name, status, version } = query;
-    const result = await this.productRepository.update(
+    const updateResult = await this.productRepository.update(
       { id, version: versionAsRead },
       { name, status, version },
     );
 
-    return result.affected === 1;
+    return updateResult.affected === 1;
   }
 }

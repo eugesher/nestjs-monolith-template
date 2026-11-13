@@ -30,13 +30,13 @@ export class ProductGetManyUseCase {
     }
 
     const [records, total] = await this.repository.list({ ...pageWindow, productIds });
-    const data = records.map((record) => {
+    const productViews = records.map((record) => {
       const product = ProductModel.reconstitute(record);
 
       return product.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(productViews, total, pageWindow);
   }
 
   private async findProductIds(tagId: Maybe<string>): Promise<Maybe<string[]>> {

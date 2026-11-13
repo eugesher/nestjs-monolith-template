@@ -32,8 +32,8 @@ export class ProductReplaceTagsUseCase {
         throw new ProductNotFoundException(productId);
       }
 
-      const replaced = await this.tag.replace({ productId, tagIds });
-      const { outcome, tags, missingTagIds } = replaced;
+      const replaceResult = await this.tag.replace({ productId, tagIds });
+      const { outcome, tags, missingTagIds } = replaceResult;
 
       if (outcome === ProductTagReplaceOutcomeEnum.TAG_NOT_FOUND) {
         throw new ProductTagNotFoundException(missingTagIds);

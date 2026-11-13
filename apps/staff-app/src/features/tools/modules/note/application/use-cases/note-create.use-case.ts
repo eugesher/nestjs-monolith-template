@@ -16,22 +16,22 @@ export class NoteCreateUseCase {
 
   public async execute(command: INoteCreateCommand): Promise<INoteView> {
     const { subjectType, subjectId, body, authorId } = command;
-    const draft = NoteModel.createDraft({ subjectType, subjectId, body, authorId });
-    const noteId = await this.repository.insert(draft);
-    const record = await this.repository.findInserted(noteId);
-    const created = NoteModel.reconstitute(record);
-    const view = created.toSnapshot();
+    const noteDraft = NoteModel.createDraft({ subjectType, subjectId, body, authorId });
+    const noteId = await this.repository.insert(noteDraft);
+    const noteRecord = await this.repository.findInserted(noteId);
+    const createdNote = NoteModel.reconstitute(noteRecord);
+    const noteView = createdNote.toSnapshot();
 
     this.logger.info(
       {
-        noteId: view.id,
-        subjectType: view.subjectType,
-        subjectId: view.subjectId,
+        noteId: noteView.id,
+        subjectType: noteView.subjectType,
+        subjectId: noteView.subjectId,
         authorId,
       },
       'Note created',
     );
 
-    return view;
+    return noteView;
   }
 }

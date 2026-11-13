@@ -11,13 +11,13 @@ export class IfMatchHelper {
       return undefined;
     }
 
-    const value = header.trim().replace(IfMatchHelper.QUOTED, '$1');
+    const unquotedHeader = header.trim().replace(IfMatchHelper.QUOTED, '$1');
 
-    if (value.length === 0) {
+    if (unquotedHeader.length === 0) {
       return undefined;
     }
 
-    const version = Number(value);
+    const version = Number(unquotedHeader);
 
     if (!Number.isInteger(version) || version < 0) {
       throw new BadRequestException({

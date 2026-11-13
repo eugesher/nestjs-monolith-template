@@ -25,13 +25,13 @@ export class CorrelationContextHelper {
       return correlationId;
     }
 
-    const minted = randomUUID();
+    const mintedId = randomUUID();
 
     (PinoLogger.root as Maybe<typeof PinoLogger.root>)?.warn(
-      { context, correlationId: minted },
+      { context, correlationId: mintedId },
       'No correlation context: the entry point does not open one, a new correlationId is minted',
     );
 
-    return minted;
+    return mintedId;
   }
 }

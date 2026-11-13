@@ -16,12 +16,12 @@ export class ReminderAccessService {
 
   public async loadOwned(command: IReminderAccessLoadOwnedCommand): Promise<ReminderModel> {
     const { reminderId, ownerId } = command;
-    const record = await this.repository.findOwned({ reminderId, ownerId });
+    const reminderRecord = await this.repository.findOwned({ reminderId, ownerId });
 
-    if (!record) {
+    if (!reminderRecord) {
       throw new ReminderNotFoundException(reminderId);
     }
 
-    return ReminderModel.reconstitute(record);
+    return ReminderModel.reconstitute(reminderRecord);
   }
 }

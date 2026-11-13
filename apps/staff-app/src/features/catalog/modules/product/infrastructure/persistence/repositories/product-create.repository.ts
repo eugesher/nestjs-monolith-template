@@ -36,9 +36,9 @@ export class ProductCreateRepository
 
   public async insert(query: IProductCreateInsertQuery): Promise<IProductCreateInsertRecord> {
     try {
-      const id = await this.productRepository.insertOne(query);
+      const productId = await this.productRepository.insertOne(query);
 
-      return { outcome: ProductCreateInsertOutcomeEnum.INSERTED, id };
+      return { outcome: ProductCreateInsertOutcomeEnum.INSERTED, id: productId };
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         return { outcome: ProductCreateInsertOutcomeEnum.DUPLICATE };

@@ -115,23 +115,23 @@ export class ReminderModel extends AggregateRootBase<string> {
   }
 
   private static validTitle(title: string): string {
-    const trimmed = title.trim();
+    const trimmedTitle = title.trim();
 
-    if (trimmed.length === 0 || trimmed.length > ReminderModel.TITLE_MAX_LENGTH) {
+    if (trimmedTitle.length === 0 || trimmedTitle.length > ReminderModel.TITLE_MAX_LENGTH) {
       throw new ReminderTitleInvalidException(ReminderModel.TITLE_MAX_LENGTH);
     }
 
-    return trimmed;
+    return trimmedTitle;
   }
 
   private static validBody(body: string): string {
-    const trimmed = body.trim();
+    const trimmedBody = body.trim();
 
-    if (trimmed.length > ReminderModel.BODY_MAX_LENGTH) {
+    if (trimmedBody.length > ReminderModel.BODY_MAX_LENGTH) {
       throw new ReminderBodyInvalidException(ReminderModel.BODY_MAX_LENGTH);
     }
 
-    return trimmed;
+    return trimmedBody;
   }
 
   private static validDueOn(dueOn: string): string {
@@ -139,9 +139,9 @@ export class ReminderModel extends AggregateRootBase<string> {
       throw new ReminderDueOnInvalidException(dueOn);
     }
 
-    const parsed = new Date(`${dueOn}T00:00:00.000Z`);
+    const parsedDueOn = new Date(`${dueOn}T00:00:00.000Z`);
 
-    if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== dueOn) {
+    if (Number.isNaN(parsedDueOn.getTime()) || parsedDueOn.toISOString().slice(0, 10) !== dueOn) {
       throw new ReminderDueOnInvalidException(
         dueOn,
         `Reminder.dueOn is not a real calendar date: ${dueOn}`,

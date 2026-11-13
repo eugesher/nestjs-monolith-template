@@ -30,13 +30,13 @@ export class OrderGetManyUseCase {
     }
 
     const [records, total] = await this.repository.list({ ...pageWindow, orderIds });
-    const data = records.map((record) => {
+    const orderViews = records.map((record) => {
       const order = OrderSummaryModel.reconstitute(record);
 
       return order.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(orderViews, total, pageWindow);
   }
 
   private async findOrderIds(tagId: Maybe<string>): Promise<Maybe<string[]>> {

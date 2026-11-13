@@ -46,31 +46,31 @@ export class ProductStockAddUseCase {
 
   public async execute(command: IProductStockAddCommand): Promise<IProductStockAddView> {
     const { productId, quantity, staffUserId, idempotencyKey } = command;
-    const claim = await this.idempotency.claim<IProductStockAddView>({
+    const idempotencyClaim = await this.idempotency.claim<IProductStockAddView>({
       staffUserId,
       key: idempotencyKey,
       body: { productId, quantity },
     });
 
-    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.REPLAY) {
+    if (idempotencyClaim.outcome === ProductStockIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Product restock replayed from the idempotency store');
 
-      return claim.storedResponse;
+      return idempotencyClaim.storedResponse;
     }
 
-    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.IN_FLIGHT) {
+    if (idempotencyClaim.outcome === ProductStockIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === ProductStockIdempotencyOutcomeEnum.MISMATCH) {
+    if (idempotencyClaim.outcome === ProductStockIdempotencyOutcomeEnum.MISMATCH) {
       throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 
-    const written = await this.write(command);
-    const { stock, productStockId, events } = written;
-    const added = events.filter((event) => event instanceof ProductStockAddedEvent);
+    const writeResult = await this.write(command);
+    const { stock, productStockId, events } = writeResult;
+    const addedEvents = events.filter((event) => event instanceof ProductStockAddedEvent);
 
-    await this.ledger.recordEvents({ productStockId, events: added });
+    await this.ledger.recordEvents({ productStockId, events: addedEvents });
 
     this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
 
@@ -93,23 +93,23 @@ export class ProductStockAddUseCase {
     const { productId, quantity, staffUserId, idempotencyKey } = command;
     await this.movement.lock({ productId });
 
-    const record = await this.repository.findById(productId);
+    const productRecord = await this.repository.findById(productId);
 
-    if (!record) {
+    if (!productRecord) {
       throw new ProductNotFoundException(productId);
     }
 
-    const productStock = ProductStockModel.reconstitute(record);
+    const productStock = ProductStockModel.reconstitute(productRecord);
 
     productStock.add(quantity);
 
-    const events = productStock.pullDomainEvents();
+    const domainEvents = productStock.pullDomainEvents();
     const added = await this.movement.add({ productId, quantity });
     const { productStockId } = added;
-    const stock = { productId, quantity: added.quantity };
+    const stockOnHand = { productId, quantity: added.quantity };
 
-    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: stock });
+    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: stockOnHand });
 
-    return { stock, productStockId, events };
+    return { stock: stockOnHand, productStockId, events: domainEvents };
   }
 }

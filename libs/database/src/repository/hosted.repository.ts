@@ -7,8 +7,8 @@ export class HostedRepository<Entity extends ObjectLiteral>
   implements IHostedRepository<Entity>
 {
   public async insertOne(entity: QueryDeepPartialEntity<Entity>): Promise<string> {
-    const result = await this.insert(entity);
-    const [identifier] = result.identifiers as { id: number | string }[];
+    const insertResult = await this.insert(entity);
+    const [identifier] = insertResult.identifiers as { id: number | string }[];
 
     return String(identifier.id);
   }

@@ -68,13 +68,13 @@ export class ProductWriteService {
 
     mutate(product);
 
-    const events = product.pullDomainEvents();
+    const domainEvents = product.pullDomainEvents();
 
     if (product.version === versionAsRead) {
-      return { product, events };
+      return { product, events: domainEvents };
     }
 
-    const updated = await this.repository.update({
+    const isUpdated = await this.repository.update({
       id: product.id,
       versionAsRead,
       name: product.name,
@@ -82,24 +82,24 @@ export class ProductWriteService {
       version: product.version,
     });
 
-    if (!updated) {
-      const current = await this.load(productId);
+    if (!isUpdated) {
+      const currentProduct = await this.load(productId);
 
-      throw new ProductWriteConflictError(productId, current.version);
+      throw new ProductWriteConflictError(productId, currentProduct.version);
     }
 
-    const saved = await this.load(productId);
+    const savedProduct = await this.load(productId);
 
-    return { product: saved, events };
+    return { product: savedProduct, events: domainEvents };
   }
 
   private async load(productId: string): Promise<ProductModel> {
-    const record = await this.repository.findById(productId);
+    const productRecord = await this.repository.findById(productId);
 
-    if (!record) {
+    if (!productRecord) {
       throw new ProductNotFoundException(productId);
     }
 
-    return ProductModel.reconstitute(record);
+    return ProductModel.reconstitute(productRecord);
   }
 }

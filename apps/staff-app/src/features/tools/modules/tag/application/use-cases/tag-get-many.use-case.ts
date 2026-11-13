@@ -17,12 +17,12 @@ export class TagGetManyUseCase {
     const { page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.list({ ...pageWindow });
-    const data = records.map((record) => {
+    const tagViews = records.map((record) => {
       const tag = TagModel.reconstitute(record);
 
       return tag.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(tagViews, total, pageWindow);
   }
 }

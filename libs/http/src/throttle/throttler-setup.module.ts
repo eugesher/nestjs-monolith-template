@@ -36,10 +36,10 @@ export class ThrottlerSetupModule {
     storage: ThrottleRedisStorage,
   ): ThrottlerModuleOptions {
     const isOutsideAuth = (context: ExecutionContext): boolean => {
-      const targets = [context.getHandler(), context.getClass()];
+      const metadataTargets = [context.getHandler(), context.getClass()];
       const isAuth = reflector.getAllAndOverride<Maybe<boolean>>(
         ThrottleMetadataKeyEnum.AUTH,
-        targets,
+        metadataTargets,
       );
 
       return isAuth !== true;

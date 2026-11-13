@@ -28,12 +28,12 @@ export class NoteGetManyUseCase {
       resolved,
       authorId,
     });
-    const data = records.map((record) => {
+    const noteViews = records.map((record) => {
       const note = NoteModel.reconstitute(record);
 
       return note.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(noteViews, total, pageWindow);
   }
 }

@@ -17,16 +17,16 @@ export class ReminderCompleteUseCase {
 
   public async execute(command: IReminderCompleteCommand): Promise<IReminderView> {
     const { reminderId, ownerId } = command;
-    const written = await this.writeService.write({ reminderId, ownerId }, (reminder) =>
+    const writtenReminder = await this.writeService.write({ reminderId, ownerId }, (reminder) =>
       reminder.complete(),
     );
 
     await this.summary.invalidate(ownerId);
 
-    const view = written.toSnapshot();
+    const reminderView = writtenReminder.toSnapshot();
 
-    this.logger.info({ reminderId, version: view.version }, 'Reminder completed');
+    this.logger.info({ reminderId, version: reminderView.version }, 'Reminder completed');
 
-    return view;
+    return reminderView;
   }
 }

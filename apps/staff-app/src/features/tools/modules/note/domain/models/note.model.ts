@@ -124,25 +124,28 @@ export class NoteModel extends AggregateRootBase<string> {
   }
 
   private static validSubjectId(subjectId: string): string {
-    const trimmed = subjectId.trim();
+    const trimmedSubjectId = subjectId.trim();
 
-    if (trimmed.length === 0 || trimmed.length > NoteModel.SUBJECT_ID_MAX_LENGTH) {
+    if (
+      trimmedSubjectId.length === 0 ||
+      trimmedSubjectId.length > NoteModel.SUBJECT_ID_MAX_LENGTH
+    ) {
       throw new NoteSubjectInvalidException(
         `Note.subjectId must be a non-empty string of at most ${NoteModel.SUBJECT_ID_MAX_LENGTH} characters`,
       );
     }
 
-    return trimmed;
+    return trimmedSubjectId;
   }
 
   private static validBody(body: string): string {
-    const trimmed = body.trim();
+    const trimmedBody = body.trim();
 
-    if (trimmed.length === 0 || trimmed.length > NoteModel.BODY_MAX_LENGTH) {
+    if (trimmedBody.length === 0 || trimmedBody.length > NoteModel.BODY_MAX_LENGTH) {
       throw new NoteBodyInvalidException(NoteModel.BODY_MAX_LENGTH);
     }
 
-    return trimmed;
+    return trimmedBody;
   }
 
   private static validVersion(version: number): number {

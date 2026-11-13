@@ -17,12 +17,12 @@ export class OrderGetManyUseCase {
     const { customerId, page, limit } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.list({ ...pageWindow, customerId });
-    const data = records.map((record) => {
+    const orderViews = records.map((record) => {
       const order = OrderSummaryModel.reconstitute(record);
 
       return order.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(orderViews, total, pageWindow);
   }
 }

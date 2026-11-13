@@ -26,12 +26,12 @@ export class LedgerListEntriesUseCase {
       subjectId,
       correlationId,
     });
-    const data = records.map((record) => {
-      const entry = LedgerEntryModel.reconstitute(record);
+    const entryViews = records.map((record) => {
+      const ledgerEntry = LedgerEntryModel.reconstitute(record);
 
-      return entry.toSnapshot();
+      return ledgerEntry.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(entryViews, total, pageWindow);
   }
 }

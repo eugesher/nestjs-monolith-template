@@ -24,10 +24,10 @@ export class AuthJwtGuard implements CanActivate {
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const targets = [context.getHandler(), context.getClass()];
+    const metadataTargets = [context.getHandler(), context.getClass()];
     const isPublic = this.reflector.getAllAndOverride<Maybe<boolean>>(
       AuthMetadataKeyEnum.PUBLIC,
-      targets,
+      metadataTargets,
     );
 
     if (isPublic) {

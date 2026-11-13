@@ -13,13 +13,13 @@ export class OrderGetOneUseCase {
 
   public async execute(command: IOrderGetOneCommand): Promise<IOrderGetOneView> {
     const { orderId } = command;
-    const record = await this.repository.findById(orderId);
+    const orderRecord = await this.repository.findById(orderId);
 
-    if (!record) {
+    if (!orderRecord) {
       throw new OrderNotFoundException(orderId);
     }
 
-    const order = OrderModel.reconstitute(record);
+    const order = OrderModel.reconstitute(orderRecord);
 
     return order.toSnapshot();
   }

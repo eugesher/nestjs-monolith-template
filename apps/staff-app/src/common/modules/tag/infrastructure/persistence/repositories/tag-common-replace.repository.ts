@@ -52,9 +52,9 @@ export class TagCommonReplaceRepository
       return;
     }
 
-    const rows = tagIds.map((tagId) => ({ subjectType, subjectId, tagId }));
+    const subjectTagRows = tagIds.map((tagId) => ({ subjectType, subjectId, tagId }));
 
-    await this.subjectTagRepository.insert(rows);
+    await this.subjectTagRepository.insert(subjectTagRows);
   }
 
   public async unlink(query: ITagCommonReplaceUnlinkQuery): Promise<void> {

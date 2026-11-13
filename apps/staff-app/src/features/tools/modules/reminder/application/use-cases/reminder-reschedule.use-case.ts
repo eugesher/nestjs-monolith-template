@@ -17,19 +17,19 @@ export class ReminderRescheduleUseCase {
 
   public async execute(command: IReminderRescheduleCommand): Promise<IReminderView> {
     const { reminderId, ownerId, dueOn } = command;
-    const written = await this.writeService.write({ reminderId, ownerId }, (reminder) =>
+    const writtenReminder = await this.writeService.write({ reminderId, ownerId }, (reminder) =>
       reminder.reschedule(dueOn),
     );
 
     await this.summary.invalidate(ownerId);
 
-    const view = written.toSnapshot();
+    const reminderView = writtenReminder.toSnapshot();
 
     this.logger.info(
-      { reminderId, dueOn: view.dueOn, version: view.version },
+      { reminderId, dueOn: reminderView.dueOn, version: reminderView.version },
       'Reminder rescheduled',
     );
 
-    return view;
+    return reminderView;
   }
 }

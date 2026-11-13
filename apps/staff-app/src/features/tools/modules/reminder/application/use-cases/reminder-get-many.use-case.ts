@@ -20,12 +20,12 @@ export class ReminderGetManyUseCase {
     const { page, limit, ownerId, status } = command;
     const pageWindow = PaginationHelper.clampPageWindow(page, limit);
     const [records, total] = await this.repository.list({ ...pageWindow, ownerId, status });
-    const data = records.map((record) => {
+    const reminderViews = records.map((record) => {
       const reminder = ReminderModel.reconstitute(record);
 
       return reminder.toSnapshot();
     });
 
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage(reminderViews, total, pageWindow);
   }
 }

@@ -23,11 +23,11 @@ export class CacheLibGetUseCase {
       name: 'cache.get',
       attributes: { 'cache.key': key },
       work: async (attributes) => {
-        const value = await this.store.get<T>(key);
+        const cachedValue = await this.store.get<T>(key);
 
-        attributes['cache.hit'] = value !== undefined;
+        attributes['cache.hit'] = cachedValue !== undefined;
 
-        return value;
+        return cachedValue;
       },
     });
   }

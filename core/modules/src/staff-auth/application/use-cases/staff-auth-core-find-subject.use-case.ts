@@ -23,13 +23,13 @@ export class StaffAuthCoreFindSubjectUseCase {
     command: IStaffAuthCoreFindSubjectCommand,
   ): Promise<Nullable<IStaffAuthCoreSubjectView>> {
     const { userId } = command;
-    const record = await this.repository.findActiveById(userId);
+    const userRecord = await this.repository.findActiveById(userId);
 
-    if (!record) {
+    if (!userRecord) {
       return null;
     }
 
-    const subject = StaffAuthCoreSubjectModel.reconstitute(record);
+    const subject = StaffAuthCoreSubjectModel.reconstitute(userRecord);
 
     return {
       id: subject.id,

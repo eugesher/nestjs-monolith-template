@@ -19,8 +19,8 @@ export class QueueDeleteFailedJobUseCase {
     const { queueName, jobId, staffUserId } = command;
 
     await this.failedJobService.ensure({ queueName, jobId });
-    const data = await this.registry.removeJob({ queueName, jobId });
+    const jobData = await this.registry.removeJob({ queueName, jobId });
 
-    this.logger.warn({ queueName, jobId, staffUserId, data }, 'Failed job deleted');
+    this.logger.warn({ queueName, jobId, staffUserId, data: jobData }, 'Failed job deleted');
   }
 }

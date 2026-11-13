@@ -17,17 +17,17 @@ export class ProductUpdateUseCase {
 
   public async execute(command: IProductUpdateCommand): Promise<IProductView> {
     const { productId, name, expectedVersion } = command;
-    const written = await this.writeService.write({ productId, expectedVersion }, (product) =>
+    const writeResult = await this.writeService.write({ productId, expectedVersion }, (product) =>
       product.update({ name }),
     );
-    const { product } = written;
+    const { product } = writeResult;
 
     await this.catalogCache.invalidate();
 
-    const view = product.toSnapshot();
+    const productView = product.toSnapshot();
 
-    this.logger.info({ productId, version: view.version }, 'Product updated');
+    this.logger.info({ productId, version: productView.version }, 'Product updated');
 
-    return view;
+    return productView;
   }
 }

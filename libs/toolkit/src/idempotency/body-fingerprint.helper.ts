@@ -15,12 +15,12 @@ export class BodyFingerprintHelper {
       return value;
     }
 
-    const source = value as Record<string, unknown>;
+    const sourceObject = value as Record<string, unknown>;
 
-    return Object.keys(source)
+    return Object.keys(sourceObject)
       .sort()
       .reduce<Record<string, unknown>>((sorted, key) => {
-        sorted[key] = source[key];
+        sorted[key] = sourceObject[key];
 
         return sorted;
       }, {});

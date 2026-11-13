@@ -28,8 +28,8 @@ export class TagCommonReplaceUseCase {
 
   public async execute(command: ITagCommonReplaceCommand): Promise<ITagCommonReplaceView> {
     const { subjectType, subjectId } = command;
-    const view = await this.transaction.run(() => this.replace(command));
-    const { outcome, tags } = view;
+    const replaceView = await this.transaction.run(() => this.replace(command));
+    const { outcome, tags } = replaceView;
 
     if (outcome === TagCommonReplaceOutcomeEnum.REPLACED) {
       const tagIds = tags.map((tag) => tag.id);
@@ -37,7 +37,7 @@ export class TagCommonReplaceUseCase {
       this.logger.info({ subjectType, subjectId, tagIds }, 'Subject tags replaced');
     }
 
-    return view;
+    return replaceView;
   }
 
   private async replace(command: ITagCommonReplaceCommand): Promise<ITagCommonReplaceView> {
@@ -58,8 +58,8 @@ export class TagCommonReplaceUseCase {
     await this.repository.unlink({ subjectType, subjectId, tagIds: unlinkTagIds });
     await this.repository.link({ subjectType, subjectId, tagIds: linkTagIds });
 
-    const views = tags.map((tag) => ({ id: tag.id, name: tag.name }));
+    const tagViews = tags.map((tag) => ({ id: tag.id, name: tag.name }));
 
-    return { outcome: TagCommonReplaceOutcomeEnum.REPLACED, tags: views, missingTagIds: [] };
+    return { outcome: TagCommonReplaceOutcomeEnum.REPLACED, tags: tagViews, missingTagIds: [] };
   }
 }
