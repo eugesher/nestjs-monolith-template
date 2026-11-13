@@ -77,6 +77,15 @@ describe('ProductUpdateUseCase', () => {
       expect(invalidate).not.toHaveBeenCalled();
     });
 
+    it('lets a failed invalidation reject without logging the update', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({ productId: '12', name: 'Desk lamp', expectedVersion: 3 }),
+      ).rejects.toThrow('redis is down');
+      expect(logger.info).not.toHaveBeenCalled();
+    });
+
     it('hands the write service a change that updates the name of the product', async () => {
       const product = ProductModel.reconstitute({
         id: '12',

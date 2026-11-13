@@ -30,10 +30,6 @@ export class LocalStorageTransactionalContextAdapter implements ILocalStorageTra
   }
 
   public getHooks(): Maybe<(() => Promise<void>)[]> {
-    if (!this.cls.isActive()) {
-      return undefined;
-    }
-
     return this.cls.get<Maybe<(() => Promise<void>)[]>>(
       LocalStorageTransactionalContextAdapter.AFTER_COMMIT_HOOKS,
     );

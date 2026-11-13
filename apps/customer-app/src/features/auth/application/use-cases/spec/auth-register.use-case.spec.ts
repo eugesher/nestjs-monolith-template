@@ -99,6 +99,17 @@ describe('AuthRegisterUseCase', () => {
     expect(recordRegistered).toHaveBeenCalledWith({ customerId: '105' });
   });
 
+  it('lets a failed ledger record reject', async () => {
+    recordRegistered.mockRejectedValue(new Error('redis is down'));
+
+    const register = useCase.execute({
+      email: 'eve@example.com',
+      password: 'correct-horse-battery',
+    });
+
+    await expect(register).rejects.toThrow('redis is down');
+  });
+
   it('records nothing when the customer is refused', async () => {
     repository.insert.mockRejectedValue(new Error('Email eve@example.com is already registered'));
 

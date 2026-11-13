@@ -96,5 +96,14 @@ describe('ReminderCompleteUseCase', () => {
       expect(invalidate).not.toHaveBeenCalled();
       expect(logger.info).not.toHaveBeenCalled();
     });
+
+    it('lets a failed invalidation reject without logging the completion', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(useCase.execute({ reminderId: '7', ownerId: 'owner-1' })).rejects.toThrow(
+        'redis is down',
+      );
+      expect(logger.info).not.toHaveBeenCalled();
+    });
   });
 });

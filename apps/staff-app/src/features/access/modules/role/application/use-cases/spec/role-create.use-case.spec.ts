@@ -94,4 +94,17 @@ describe('RoleCreateUseCase', () => {
 
     await expect(create).rejects.toBe(failure);
   });
+
+  it('rolls the transaction back when the permissions fail to store', async () => {
+    repository.insertRolePermissions.mockRejectedValue(new Error('deadlock'));
+
+    const create = useCase.execute({
+      name: 'auditor',
+      permissionCodes: [PermissionCodeEnum.LEDGER_READ],
+    });
+
+    await expect(create).rejects.toThrow('deadlock');
+    expect(outcomes).toEqual(['begin']);
+    expect(logger.info).not.toHaveBeenCalled();
+  });
 });

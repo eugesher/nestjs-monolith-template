@@ -135,5 +135,13 @@ describe('ReminderController', () => {
 
       expect(remove).toHaveBeenCalledWith({ reminderId: '31', ownerId: 'staff-1' });
     });
+
+    it('lets a failed delete reject', async () => {
+      remove.mockRejectedValue(new Error('reminder not found'));
+
+      await expect(
+        controller.handleDelete({ reminderId: '31' }, { id: 'staff-1', email: 'ann@example.com' }),
+      ).rejects.toThrow('reminder not found');
+    });
   });
 });

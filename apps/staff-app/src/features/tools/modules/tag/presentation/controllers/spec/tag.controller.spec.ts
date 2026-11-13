@@ -71,5 +71,11 @@ describe('TagController', () => {
 
       expect(remove).toHaveBeenCalledWith({ tagId: '300' });
     });
+
+    it('lets a failed delete reject', async () => {
+      remove.mockRejectedValue(new Error('tag is in use'));
+
+      await expect(controller.handleDelete({ tagId: '300' })).rejects.toThrow('tag is in use');
+    });
   });
 });

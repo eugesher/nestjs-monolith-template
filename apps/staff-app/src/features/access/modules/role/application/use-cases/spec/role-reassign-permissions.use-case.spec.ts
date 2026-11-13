@@ -81,4 +81,17 @@ describe('RoleReassignPermissionsUseCase', () => {
     });
     expect(repository.deleteRolePermissions).not.toHaveBeenCalled();
   });
+
+  it('rolls the transaction back without inserting when the old permissions fail to delete', async () => {
+    repository.deleteRolePermissions.mockRejectedValue(new Error('deadlock'));
+
+    const reassign = useCase.execute({
+      roleId: '2',
+      permissionCodes: [PermissionCodeEnum.PRODUCT_READ],
+    });
+
+    await expect(reassign).rejects.toThrow('deadlock');
+    expect(repository.insertRolePermissions).not.toHaveBeenCalled();
+    expect(outcomes).toEqual(['begin']);
+  });
 });

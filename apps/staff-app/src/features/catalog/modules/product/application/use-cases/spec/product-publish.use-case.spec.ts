@@ -97,6 +97,15 @@ describe('ProductPublishUseCase', () => {
       expect(recordEvents).not.toHaveBeenCalled();
     });
 
+    it('stops at a failed invalidation before the ledger', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({ productId: '12', expectedVersion: undefined }),
+      ).rejects.toThrow('redis is down');
+      expect(recordEvents).not.toHaveBeenCalled();
+    });
+
     it('hands the write service a change that publishes the product', async () => {
       const product = ProductModel.reconstitute({
         id: '12',

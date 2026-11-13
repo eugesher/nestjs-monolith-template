@@ -62,6 +62,14 @@ describe('CacheLibStoreAdapter', () => {
 
       expect(redis.set).toHaveBeenCalledWith('k', '{"a":1}', 'PX', 60_000);
     });
+
+    it('lets a failed write reject', async () => {
+      redis.set.mockRejectedValue(new Error('set failed'));
+
+      await expect(store.set({ key: 'k', value: { a: 1 }, ttlMs: 60_000 })).rejects.toThrow(
+        'set failed',
+      );
+    });
   });
 
   describe('del', () => {

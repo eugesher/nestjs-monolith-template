@@ -70,6 +70,17 @@ describe('QueueController', () => {
         staffUserId: '1',
       });
     });
+
+    it('lets a failed retry reject', async () => {
+      retryFailedJob.mockRejectedValue(new Error('job is not failed'));
+
+      const retry = controller.handleRetryFailedJob(
+        { queueName: 'ledger-record', jobId: '7' },
+        { id: '1', email: 'admin@example.com' },
+      );
+
+      await expect(retry).rejects.toThrow('job is not failed');
+    });
   });
 
   describe('handleDeleteFailedJob', () => {

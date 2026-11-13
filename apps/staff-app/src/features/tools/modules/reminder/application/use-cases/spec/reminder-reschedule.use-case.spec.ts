@@ -99,5 +99,14 @@ describe('ReminderRescheduleUseCase', () => {
       ).rejects.toThrow('refused');
       expect(invalidate).not.toHaveBeenCalled();
     });
+
+    it('lets a failed invalidation reject without logging the reschedule', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({ reminderId: '7', ownerId: 'owner-1', dueOn: '2026-11-12' }),
+      ).rejects.toThrow('redis is down');
+      expect(logger.info).not.toHaveBeenCalled();
+    });
   });
 });

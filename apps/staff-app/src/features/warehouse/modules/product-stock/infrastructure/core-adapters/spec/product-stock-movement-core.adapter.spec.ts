@@ -20,6 +20,12 @@ describe('ProductStockMovementCoreAdapter', () => {
 
       expect(handleLock).toHaveBeenCalledWith({ productIds: ['12'] });
     });
+
+    it('lets a failed lock reject', async () => {
+      handleLock.mockRejectedValue(new Error('lock wait timeout'));
+
+      await expect(adapter.lock({ productId: '12' })).rejects.toThrow('lock wait timeout');
+    });
   });
 
   describe('add', () => {

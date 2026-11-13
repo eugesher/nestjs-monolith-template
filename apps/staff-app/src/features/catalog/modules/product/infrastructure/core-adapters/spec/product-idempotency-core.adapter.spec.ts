@@ -71,6 +71,14 @@ describe('ProductIdempotencyCoreAdapter', () => {
         response: { id: '12' },
       });
     });
+
+    it('lets a failed write reject', async () => {
+      handleComplete.mockRejectedValue(new Error('connection lost'));
+
+      const complete = adapter.complete({ staffUserId: 'staff-1', key: 'key-1', response: {} });
+
+      await expect(complete).rejects.toThrow('connection lost');
+    });
   });
 
   describe('release', () => {

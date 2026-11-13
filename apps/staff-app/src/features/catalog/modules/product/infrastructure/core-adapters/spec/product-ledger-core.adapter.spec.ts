@@ -41,5 +41,20 @@ describe('ProductLedgerCoreAdapter', () => {
       expect(toLedgerRecord).toHaveBeenCalledWith();
       expect(handleEnqueue).toHaveBeenCalledWith(record);
     });
+
+    it('stops at a failed enqueue and rejects', async () => {
+      handleEnqueue.mockRejectedValueOnce(new Error('redis is down'));
+      const first = {
+        toLedgerRecord: jest.fn().mockReturnValue({ operationKey: 'product-published:12:6' }),
+      } as unknown as IProductLedgerRecordEventsCommand['events'][0];
+      const second = {
+        toLedgerRecord: jest.fn().mockReturnValue({ operationKey: 'product-unpublished:12:7' }),
+      } as unknown as IProductLedgerRecordEventsCommand['events'][0];
+
+      const record = adapter.recordEvents({ events: [first, second] });
+
+      await expect(record).rejects.toThrow('redis is down');
+      expect(handleEnqueue).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -50,6 +50,21 @@ describe('LocalStorageTransactionalRunUseCase', () => {
     expect(outcomes).toEqual(['work', 'hook']);
   });
 
+  it('runs the hooks one after another and answers after the last one', async () => {
+    const outcomes: string[] = [];
+    setHooks.mockImplementation((hooks: (() => Promise<void>)[]) => {
+      hooks.push(async () => {
+        await Promise.resolve();
+        outcomes.push('hook 1');
+      });
+      hooks.push(() => Promise.resolve(void outcomes.push('hook 2')));
+    });
+
+    await useCase.execute(() => Promise.resolve());
+
+    expect(outcomes).toEqual(['hook 1', 'hook 2']);
+  });
+
   it('logs a failed hook and runs the rest', async () => {
     const outcomes: string[] = [];
     setHooks.mockImplementation((hooks: (() => Promise<void>)[]) => {

@@ -213,6 +213,20 @@ describe('ProductCreateUseCase', () => {
       expect(recordCreated).not.toHaveBeenCalled();
     });
 
+    it('rejects with the failure of the release when the key cannot be released', async () => {
+      complete.mockRejectedValue(new Error('lock wait timeout'));
+      release.mockRejectedValue(new Error('connection lost'));
+
+      await expect(
+        useCase.execute({
+          sku: 'SKU-0001',
+          name: 'Lamp',
+          staffUserId: 'staff-1',
+          idempotencyKey: 'key-1',
+        }),
+      ).rejects.toThrow('connection lost');
+    });
+
     it('keeps the completed key when the ledger fails after the commit and rethrows', async () => {
       recordCreated.mockRejectedValue(new Error('ledger down'));
 

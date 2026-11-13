@@ -165,6 +165,12 @@ describe('ThrottleRedisStorage', () => {
       });
     });
 
+    it('lets a failed quit reject', async () => {
+      redis.quit.mockRejectedValue(new Error('quit failed'));
+
+      await expect(storage.onApplicationShutdown()).rejects.toThrow('quit failed');
+    });
+
     it('drops a connection that is not ready', async () => {
       redis.status = 'reconnecting';
 

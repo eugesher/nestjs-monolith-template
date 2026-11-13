@@ -71,6 +71,14 @@ describe('OrderIdempotencyCoreAdapter', () => {
         response: { id: '600' },
       });
     });
+
+    it('lets a failed write reject', async () => {
+      handleComplete.mockRejectedValue(new Error('connection lost'));
+
+      const complete = adapter.complete({ customerId: '101', key: 'key-1', response: {} });
+
+      await expect(complete).rejects.toThrow('connection lost');
+    });
   });
 
   describe('release', () => {

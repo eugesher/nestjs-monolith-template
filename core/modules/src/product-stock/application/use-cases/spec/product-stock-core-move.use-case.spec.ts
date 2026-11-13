@@ -91,6 +91,18 @@ describe('ProductStockCoreMoveUseCase', () => {
       );
     });
 
+    it('lets a failed lock reject before it writes', async () => {
+      lockProducts.mockRejectedValue(new Error('lock wait timeout'));
+
+      const move = useCase.execute({
+        kind: ProductStockCoreMovementKindEnum.ADD,
+        movements: [{ productId: '100', quantity: 5, orderProductId: null }],
+      });
+
+      await expect(move).rejects.toThrow('lock wait timeout');
+      expect(insertMany).not.toHaveBeenCalled();
+    });
+
     it('announces the subtracted products after the commit, under the correlation id of the request', async () => {
       await CorrelationContextHelper.run('c0ffee00-0000-4000-8000-000000000001', () =>
         useCase.execute({
