@@ -3,7 +3,7 @@ import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import type { DynamicModule } from '@nestjs/common';
 
 import { TlsHelper } from '@acme-libs/config';
-import { LocalStorageTransactionModule } from '@acme-libs/local-storage';
+import { LocalStorageTransactionalModule } from '@acme-libs/local-storage';
 import { ORM_PORT } from '@acme-libs/contracts/database';
 
 import { SnakeNamingStrategy } from '../../naming/snake-naming.strategy';
@@ -16,7 +16,7 @@ export class OrmModule {
     return {
       module: OrmModule,
       global: true,
-      imports: [OrmModule.forRootAsync(entities), LocalStorageTransactionModule.forRoot()],
+      imports: [OrmModule.forRootAsync(entities), LocalStorageTransactionalModule.forRoot()],
       exports: [ORM_PORT],
       providers: [
         { provide: ORM_PORT, useClass: OrmFacade },

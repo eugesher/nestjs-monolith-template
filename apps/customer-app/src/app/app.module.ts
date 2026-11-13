@@ -10,7 +10,7 @@ import {
   ThrottlerSetupModule,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { LocalStorageModule } from '@acme-libs/local-storage';
+import { LocalStorageSetupModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, CatalogModule, HealthModule, OrderModule } from '@acme-customer/features';
@@ -23,7 +23,7 @@ import { ConfigSetupModule } from './setup';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.CUSTOMER_APP),
-    LocalStorageModule.forRoot(),
+    LocalStorageSetupModule.forRoot(),
     OrmModule.forRoot(entities),
     BullSetupModule.forRoot(),
     CacheLibModule,

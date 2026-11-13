@@ -32,7 +32,7 @@ describe('lib layers', () => {
 
   it('the layers of a lib part follow the same rules', async () => {
     await expect({
-      file: 'libs/local-storage/src/transaction/application/__fixture__.ts',
+      file: 'libs/local-storage/src/transactional/application/__fixture__.ts',
       code: 'import { x } from "../infrastructure";',
     }).toBreakRule('boundaries/dependencies');
   });

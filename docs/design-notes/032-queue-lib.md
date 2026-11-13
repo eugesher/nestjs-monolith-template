@@ -14,7 +14,7 @@ export const LedgerQueueModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUE
 
 **A setup class, not a module.** `BullSetupModule` has no `@Module`: it is a class of static methods
 that return the modules of `@nestjs/bull`, and the options are built in the private static
-`options(config)`. `LocalStorageModule` of `libs/local-storage` follows the same shape (see
+`options(config)`. `LocalStorageSetupModule` of `libs/local-storage` follows the same shape (see
 `012-app-bootstrap.md`).
 
 **The lib has no port.** Bull is reached through its decorators: a producer injects the queue with

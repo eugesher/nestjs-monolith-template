@@ -11,11 +11,11 @@ interface ITransactionPort {
 }
 ```
 
-`LocalStorageTransactionFacade` of `libs/local-storage` implements it, and
-`LocalStorageTransactionModule` of the same lib binds it next to `ClsPluginTransactional` (see
+`LocalStorageTransactionalFacade` of `libs/local-storage` implements it, and
+`LocalStorageTransactionalModule` of the same lib binds it next to `ClsPluginTransactional` (see
 `012-app-bootstrap.md`). The facade hands `run` and `afterCommit` to two use cases, which reach
 `TransactionHost` and `ClsService` through the ports of the lib's own `outbound`
-(`LocalStorageTransactionHostAdapter`, `LocalStorageTransactionContextAdapter`).
+(`LocalStorageTransactionalHostAdapter`, `LocalStorageTransactionalContextAdapter`).
 
 ## The port of the module
 
@@ -41,10 +41,10 @@ case that owns its transaction cannot register a hook, and the mock of its spec 
 repository from the current transaction on every call, so every query inside `work` joins the
 transaction without being handed anything. The port exposes only `getRepository`, so a repository
 cannot open a transaction of its own, and only `libs/database` and `libs/local-storage` import
-`@nestjs-cls/transactional`. The CLS context itself is opened by `LocalStorageModule` for a request
-and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests in it with
-`ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one commit, at
-the end of the outermost `run`.
+`@nestjs-cls/transactional`. The CLS context itself is opened by `LocalStorageSetupModule` for a
+request and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests in
+it with `ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one
+commit, at the end of the outermost `run`.
 
 ## `afterCommit`
 
@@ -66,7 +66,7 @@ that a later statement of the outer transaction could still roll back.
 **A rollback drops the hooks.** When `work` throws, `run` rethrows and no hook runs.
 
 **A failed hook does not fail the write.** The transaction has already committed, so `run` cannot
-undo it. `LocalStorageTransactionRunUseCase` logs the error at `error` as
+undo it. `LocalStorageTransactionalRunUseCase` logs the error at `error` as
 `After-commit hook failed`, runs the remaining hooks and answers the result of `work`. A hook is for
 an effect that may be lost, such as dropping a cache whose entries expire anyway; a fact that must
 not be lost goes into the transaction itself or onto a queue with retries.
