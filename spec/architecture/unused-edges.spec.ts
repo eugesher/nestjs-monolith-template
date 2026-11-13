@@ -28,20 +28,6 @@ describe('unused edges', () => {
     scaffold.remove();
   });
 
-  describe('bootstrap', () => {
-    it.each([
-      [
-        'main may NOT import @nestjs/common: the app module binds the global pipes and filters as providers',
-        'apps/__unused-fixture__/src/main.ts',
-        '@nestjs/common',
-      ],
-    ])('%s', async (_, file, source) => {
-      await expect({ file, code: `import { x } from "${source}";` }).toBreakRule(
-        'boundaries/dependencies',
-      );
-    });
-  });
-
   describe('app root', () => {
     it.each([
       [

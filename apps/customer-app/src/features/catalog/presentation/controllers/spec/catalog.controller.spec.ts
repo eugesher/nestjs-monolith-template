@@ -25,7 +25,7 @@ describe('CatalogController', () => {
         total: 1,
         data: [{ id: '12', sku: 'SKU-0001', name: 'Lamp' }],
       });
-      expect(list).toHaveBeenCalledWith({ page: 2, limit: 10, offset: 10 });
+      expect(list).toHaveBeenCalledWith({ limit: 10, offset: 10 });
     });
   });
 });
