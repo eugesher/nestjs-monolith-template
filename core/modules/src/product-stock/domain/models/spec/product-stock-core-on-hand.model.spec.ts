@@ -5,7 +5,7 @@ describe('ProductStockCoreOnHandModel', () => {
     it('answers the on-hand of every product in the order of the ids, as a number', () => {
       const onHand = ProductStockCoreOnHandModel.reconstitute({
         productIds: ['103', '100'],
-        sums: [
+        stockSums: [
           { productId: '100', quantity: '8' },
           { productId: '103', quantity: 2 },
         ],
@@ -20,7 +20,7 @@ describe('ProductStockCoreOnHandModel', () => {
     it('answers zero for a product without stock rows', () => {
       const onHand = ProductStockCoreOnHandModel.reconstitute({
         productIds: ['100', '103'],
-        sums: [{ productId: '100', quantity: '8' }],
+        stockSums: [{ productId: '100', quantity: '8' }],
       });
 
       expect(onHand.toSnapshot()).toEqual([

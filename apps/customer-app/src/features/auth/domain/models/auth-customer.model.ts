@@ -27,13 +27,13 @@ export class AuthCustomerModel {
 
   public static createDraft(candidate: IAuthCustomerCandidateInput): IAuthCustomerDraftOutput {
     const { email, passwordHash } = candidate;
-    const normalized = AuthCustomerModel.normalizeEmail(email);
+    const normalizedEmail = AuthCustomerModel.normalizeEmail(email);
 
-    if (!AuthCustomerModel.EMAIL_PATTERN.test(normalized)) {
+    if (!AuthCustomerModel.EMAIL_PATTERN.test(normalizedEmail)) {
       throw new AuthEmailInvalidException();
     }
 
-    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE };
+    return { email: normalizedEmail, passwordHash, status: UserStatusEnum.ACTIVE };
   }
 
   public static normalizeEmail(email: string): string {

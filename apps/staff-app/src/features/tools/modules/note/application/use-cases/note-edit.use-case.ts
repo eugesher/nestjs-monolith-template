@@ -34,13 +34,16 @@ export class NoteEditUseCase {
 
   public async execute(command: INoteEditCommand): Promise<INoteView> {
     const { noteId, editorId } = command;
-    const outcome = await this.writeService.run({ noteId }, () => this.attempt(command));
-    const view = outcome.note.toSnapshot();
-    const message = outcome.edited ? 'Note edited' : 'Note edit was a no-op';
+    const editOutcome = await this.writeService.run({ noteId }, () => this.attempt(command));
+    const noteView = editOutcome.note.toSnapshot();
+    const message = editOutcome.edited ? 'Note edited' : 'Note edit was a no-op';
 
-    this.logger.info({ noteId, editorId, version: view.version, edited: outcome.edited }, message);
+    this.logger.info(
+      { noteId, editorId, version: noteView.version, edited: editOutcome.edited },
+      message,
+    );
 
-    return view;
+    return noteView;
   }
 
   private async attempt(command: INoteEditCommand): Promise<INoteEditOutcomeView> {
@@ -55,17 +58,21 @@ export class NoteEditUseCase {
       return { note, edited: false };
     }
 
-    const saved = await this.transaction.run(() =>
+    const isSaved = await this.transaction.run(() =>
       this.save({ noteId, note, versionAsRead, bodyBefore, editorId }),
     );
-    const stored = await this.writeService.reload({ noteId, authorId: editorId, saved });
+    const storedNote = await this.writeService.reload({
+      noteId,
+      authorId: editorId,
+      isSaved,
+    });
 
-    return { note: stored, edited: true };
+    return { note: storedNote, edited: true };
   }
 
   private async save(command: INoteEditSaveCommand): Promise<boolean> {
     const { noteId, note, versionAsRead, bodyBefore, editorId } = command;
-    const updated = await this.repository.update({
+    const isUpdated = await this.repository.update({
       id: note.id,
       versionAsRead,
       body: note.body,
@@ -73,7 +80,7 @@ export class NoteEditUseCase {
       version: note.version,
     });
 
-    if (!updated) {
+    if (!isUpdated) {
       return false;
     }
 

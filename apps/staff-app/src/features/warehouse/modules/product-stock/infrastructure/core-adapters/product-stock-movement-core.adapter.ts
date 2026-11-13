@@ -36,12 +36,12 @@ export class ProductStockMovementCoreAdapter implements IProductStockMovementPor
     command: IProductStockMovementAddCommand,
   ): Promise<IProductStockMovementAddView> {
     const { productId, quantity } = command;
-    const moved = await this.productStock.handleMove({
+    const moveView = await this.productStock.handleMove({
       kind: ProductStockCoreMovementKindEnum.ADD,
       movements: [{ productId, quantity, orderProductId: null }],
     });
-    const [productStockId] = moved.productStockIds;
-    const [onHand] = moved.stock;
+    const [productStockId] = moveView.productStockIds;
+    const [onHand] = moveView.stock;
 
     return { productStockId, quantity: onHand.quantity };
   }

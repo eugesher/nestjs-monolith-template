@@ -63,7 +63,7 @@ export class ReminderWriteService {
       return reminder;
     }
 
-    const updated = await this.repository.update({
+    const isUpdated = await this.repository.update({
       id: reminder.id,
       versionAsRead,
       dueOn: reminder.dueOn,
@@ -71,22 +71,22 @@ export class ReminderWriteService {
       version: reminder.version,
     });
 
-    if (!updated) {
-      const current = await this.load(reminderId);
+    if (!isUpdated) {
+      const currentReminder = await this.load(reminderId);
 
-      throw new ReminderWriteConflictError(reminderId, current.version);
+      throw new ReminderWriteConflictError(reminderId, currentReminder.version);
     }
 
     return await this.load(reminderId);
   }
 
   private async load(reminderId: string): Promise<ReminderModel> {
-    const record = await this.repository.findById(reminderId);
+    const reminderRecord = await this.repository.findById(reminderId);
 
-    if (!record) {
+    if (!reminderRecord) {
       throw new ReminderNotFoundException(reminderId);
     }
 
-    return ReminderModel.reconstitute(record);
+    return ReminderModel.reconstitute(reminderRecord);
   }
 }

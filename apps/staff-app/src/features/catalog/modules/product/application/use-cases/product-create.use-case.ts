@@ -39,37 +39,37 @@ export class ProductCreateUseCase {
 
   public async execute(command: IProductCreateCommand): Promise<IProductView> {
     const { sku, name, staffUserId, idempotencyKey } = command;
-    const claim = await this.idempotency.claim<IProductView>({
+    const idempotencyClaim = await this.idempotency.claim<IProductView>({
       staffUserId,
       key: idempotencyKey,
       body: { sku, name },
     });
 
-    if (claim.outcome === ProductIdempotencyOutcomeEnum.REPLAY) {
+    if (idempotencyClaim.outcome === ProductIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Product creation replayed from the idempotency store');
 
-      return claim.storedResponse;
+      return idempotencyClaim.storedResponse;
     }
 
-    if (claim.outcome === ProductIdempotencyOutcomeEnum.IN_FLIGHT) {
+    if (idempotencyClaim.outcome === ProductIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new ProductIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === ProductIdempotencyOutcomeEnum.MISMATCH) {
+    if (idempotencyClaim.outcome === ProductIdempotencyOutcomeEnum.MISMATCH) {
       throw new ProductIdempotencyKeyReusedException(idempotencyKey);
     }
 
-    const view = await this.write(command);
+    const productView = await this.write(command);
 
     await this.ledger.recordCreated({
-      productId: view.id,
-      sku: view.sku,
-      name: view.name,
+      productId: productView.id,
+      sku: productView.sku,
+      name: productView.name,
     });
 
-    this.logger.info({ productId: view.id, sku: view.sku }, 'Product created');
+    this.logger.info({ productId: productView.id, sku: productView.sku }, 'Product created');
 
-    return view;
+    return productView;
   }
 
   private async write(command: IProductCreateCommand): Promise<IProductView> {
@@ -86,15 +86,15 @@ export class ProductCreateUseCase {
 
   private async create(command: IProductCreateCommand): Promise<IProductView> {
     const { sku, name } = command;
-    const taken = await this.repository.existsBySku(sku);
+    const isSkuTaken = await this.repository.existsBySku(sku);
 
-    if (taken) {
+    if (isSkuTaken) {
       throw new ProductSkuTakenException(sku);
     }
 
-    const draft = ProductModel.createDraft({ sku, name });
+    const productDraft = ProductModel.createDraft({ sku, name });
 
-    return await this.transaction.run(() => this.persist(draft, command));
+    return await this.transaction.run(() => this.persist(productDraft, command));
   }
 
   private async persist(
@@ -102,18 +102,18 @@ export class ProductCreateUseCase {
     command: IProductCreateCommand,
   ): Promise<IProductView> {
     const { staffUserId, idempotencyKey } = command;
-    const inserted = await this.repository.insert(draft);
+    const insertResult = await this.repository.insert(draft);
 
-    if (inserted.outcome === ProductCreateInsertOutcomeEnum.DUPLICATE) {
+    if (insertResult.outcome === ProductCreateInsertOutcomeEnum.DUPLICATE) {
       throw new ProductSkuTakenException(draft.sku);
     }
 
-    const record = await this.repository.findInserted(inserted.id);
-    const created = ProductModel.reconstitute(record);
-    const view = created.toSnapshot();
+    const productRecord = await this.repository.findInserted(insertResult.id);
+    const createdProduct = ProductModel.reconstitute(productRecord);
+    const productView = createdProduct.toSnapshot();
 
-    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: view });
+    await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: productView });
 
-    return view;
+    return productView;
   }
 }

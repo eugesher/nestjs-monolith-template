@@ -18,5 +18,14 @@ describe('IdempotencyCoreCompleteUseCase', () => {
         responseBody: '{"id":"12","sku":"A-1"}',
       });
     });
+
+    it('lets a failed write reject', async () => {
+      const complete = jest.fn().mockRejectedValue(new Error('connection lost'));
+      const useCase = new IdempotencyCoreCompleteUseCase({ complete });
+
+      const execute = useCase.execute({ scope: 'customer:101', key: 'key-1', response: {} });
+
+      await expect(execute).rejects.toThrow('connection lost');
+    });
   });
 });

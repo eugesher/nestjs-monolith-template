@@ -48,7 +48,7 @@ export class ProductStockCoreMoveUseCase {
     const { kind, movements } = command;
     const sign = ProductStockCoreMoveUseCase.SIGNS[kind];
     const productIds = [...new Set(movements.map((movement) => movement.productId))];
-    const rows = movements.map((movement) => ({
+    const movementRows = movements.map((movement) => ({
       productId: movement.productId,
       quantity: sign * movement.quantity,
       orderProductId: movement.orderProductId,
@@ -56,11 +56,11 @@ export class ProductStockCoreMoveUseCase {
 
     await this.repository.lockProducts(productIds);
 
-    const inserted = await this.repository.insertMany(rows);
-    const productStockIds = inserted.map((identifier) => String(identifier.id));
-    const sums = await this.repository.sumStock(productIds);
-    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, sums });
-    const stock = onHand.toSnapshot();
+    const insertedIdentifiers = await this.repository.insertMany(movementRows);
+    const productStockIds = insertedIdentifiers.map((identifier) => String(identifier.id));
+    const stockSums = await this.repository.sumStock(productIds);
+    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, stockSums });
+    const stockOnHand = onHand.toSnapshot();
 
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {
       const correlationId = CorrelationContextHelper.current(ProductStockCoreMoveUseCase.name);
@@ -74,7 +74,7 @@ export class ProductStockCoreMoveUseCase {
       );
     }
 
-    return { productStockIds, stock };
+    return { productStockIds, stock: stockOnHand };
   }
 
   private async announceSubtract(

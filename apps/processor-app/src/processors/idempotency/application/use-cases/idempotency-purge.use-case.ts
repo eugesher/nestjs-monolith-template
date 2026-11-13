@@ -46,15 +46,15 @@ export class IdempotencyPurgeUseCase {
     const now = new Date();
     const cutoff = IdempotencyPurgeHelper.expiryCutoff(now, this.ttlHours);
     const inFlightCutoff = IdempotencyPurgeHelper.inFlightCutoff(now, this.inFlightTtlMinutes);
-    const deleted = await this.repository.deleteCreatedBefore(cutoff);
+    const deleteResult = await this.repository.deleteCreatedBefore(cutoff);
     const deletedInFlight = await this.repository.deleteInFlightCreatedBefore(inFlightCutoff);
-    const removed = deleted.affected ?? 0;
+    const removedCount = deleteResult.affected ?? 0;
     const removedInFlight = deletedInFlight.affected ?? 0;
 
     this.logger.info(
       {
         cutoff: cutoff.toISOString(),
-        removed,
+        removed: removedCount,
         ttlHours: this.ttlHours,
         inFlightCutoff: inFlightCutoff.toISOString(),
         removedInFlight,

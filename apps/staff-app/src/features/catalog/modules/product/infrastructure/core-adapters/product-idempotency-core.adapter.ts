@@ -44,8 +44,8 @@ export class ProductIdempotencyCoreAdapter implements IProductIdempotencyPort {
   ): Promise<IProductIdempotencyOutcomeView | IProductIdempotencyReplayView<T>> {
     const { staffUserId, key, body } = command;
     const scope = ProductIdempotencyCoreAdapter.toScope(staffUserId);
-    const claim = await this.idempotency.handleClaim({ scope, key, body });
-    const { outcome, storedResponse } = claim;
+    const coreClaim = await this.idempotency.handleClaim({ scope, key, body });
+    const { outcome, storedResponse } = coreClaim;
 
     if (outcome === IdempotencyCoreClaimOutcomeEnum.REPLAY) {
       return { outcome: ProductIdempotencyOutcomeEnum.REPLAY, storedResponse: storedResponse as T };

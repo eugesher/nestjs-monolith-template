@@ -43,9 +43,9 @@ export class CredentialsLibPasswordHasherAdapter implements ICredentialsLibPassw
     const checkedHash = passwordHash ?? (await this.dummyHash);
 
     try {
-      const valid = await verify(checkedHash, password);
+      const isPasswordValid = await verify(checkedHash, password);
 
-      return valid && passwordHash !== null;
+      return isPasswordValid && passwordHash !== null;
     } catch {
       return false;
     }

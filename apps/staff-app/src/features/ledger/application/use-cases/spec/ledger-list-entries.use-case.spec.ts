@@ -22,7 +22,6 @@ describe('LedgerListEntriesUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 2,
         limit: 10,
         offset: 10,
         subjectType: 'product',
@@ -37,7 +36,6 @@ describe('LedgerListEntriesUseCase', () => {
       await useCase.execute({ subjectType: 'product' });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 20,
         offset: 0,
         subjectType: 'product',
@@ -52,7 +50,6 @@ describe('LedgerListEntriesUseCase', () => {
       await useCase.execute({ limit: 500 });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 100,
         offset: 0,
         subjectType: undefined,

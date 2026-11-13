@@ -20,12 +20,12 @@ export class NoteResolveUseCase {
 
   public async execute(command: INoteResolveCommand): Promise<INoteView> {
     const { noteId } = command;
-    const resolved = await this.writeService.run({ noteId }, () => this.attempt(command));
-    const view = resolved.toSnapshot();
+    const resolvedNote = await this.writeService.run({ noteId }, () => this.attempt(command));
+    const noteView = resolvedNote.toSnapshot();
 
-    this.logger.info({ noteId, version: view.version }, 'Note resolved');
+    this.logger.info({ noteId, version: noteView.version }, 'Note resolved');
 
-    return view;
+    return noteView;
   }
 
   private async attempt(command: INoteResolveCommand): Promise<NoteModel> {
@@ -35,7 +35,7 @@ export class NoteResolveUseCase {
 
     note.resolve();
 
-    const saved = await this.repository.update({
+    const isSaved = await this.repository.update({
       id: note.id,
       versionAsRead,
       body: note.body,
@@ -43,6 +43,6 @@ export class NoteResolveUseCase {
       version: note.version,
     });
 
-    return await this.writeService.reload({ noteId, authorId, saved });
+    return await this.writeService.reload({ noteId, authorId, isSaved });
   }
 }

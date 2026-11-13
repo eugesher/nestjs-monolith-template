@@ -24,9 +24,9 @@ export class ProductStockLedgerCoreAdapter implements IProductStockLedgerPort {
     const { productStockId, events } = command;
 
     for (const event of events) {
-      const record = event.toLedgerRecord(productStockId);
+      const ledgerRecord = event.toLedgerRecord(productStockId);
 
-      await this.ledger.handleEnqueue(record);
+      await this.ledger.handleEnqueue(ledgerRecord);
     }
   }
 }

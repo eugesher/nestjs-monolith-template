@@ -38,9 +38,9 @@ export class LedgerAppendRepository
     const payload = record.payload as QueryDeepPartialEntity<LedgerEntry>['payload'];
 
     try {
-      const id = await this.ledgerEntryRepository.insertOne({ ...record, payload });
+      const entryId = await this.ledgerEntryRepository.insertOne({ ...record, payload });
 
-      return { outcome: LedgerAppendEntryInsertOutcomeEnum.INSERTED, id };
+      return { outcome: LedgerAppendEntryInsertOutcomeEnum.INSERTED, id: entryId };
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         return { outcome: LedgerAppendEntryInsertOutcomeEnum.DUPLICATE };

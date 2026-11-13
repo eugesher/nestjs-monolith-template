@@ -146,4 +146,18 @@ describe('UserRegisterUseCase', () => {
     await expect(register).rejects.toThrow('deadlock');
     expect(outcomes).toEqual(['begin']);
   });
+
+  it('rolls the transaction back when the roles fail to store', async () => {
+    repository.insertUserRoles.mockRejectedValue(new Error('deadlock'));
+
+    const register = useCase.execute({
+      email: 'editor@example.com',
+      password: 'correct-horse-battery',
+      roleIds: ['2'],
+    });
+
+    await expect(register).rejects.toThrow('deadlock');
+    expect(outcomes).toEqual(['begin', 'insert']);
+    expect(logger.info).not.toHaveBeenCalled();
+  });
 });

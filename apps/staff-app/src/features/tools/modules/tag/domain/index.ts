@@ -7,4 +7,5 @@ export * from './exceptions/tag-not-found.exception';
 
 export * from './interfaces';
 
+export * from './models/tag-get-many.model';
 export * from './models/tag.model';

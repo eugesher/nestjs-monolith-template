@@ -43,9 +43,9 @@ export class TagRenameUseCase {
   private async update(tag: TagModel): Promise<void> {
     const { id, name } = tag;
 
-    const outcome = await this.repository.update({ id, name });
+    const renameOutcome = await this.repository.update({ id, name });
 
-    if (outcome === TagRenameUpdateOutcomeEnum.DUPLICATE) {
+    if (renameOutcome === TagRenameUpdateOutcomeEnum.DUPLICATE) {
       throw new TagNameTakenException(name);
     }
   }

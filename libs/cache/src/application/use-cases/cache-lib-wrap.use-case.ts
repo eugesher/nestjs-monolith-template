@@ -75,16 +75,16 @@ export class CacheLibWrapUseCase {
 
     attributes['cache.hit'] = false;
 
-    const value = await compute();
+    const computedValue = await compute();
 
-    if (value !== undefined) {
+    if (computedValue !== undefined) {
       try {
-        await this.store.set({ key, value, ttlMs });
+        await this.store.set({ key, value: computedValue, ttlMs });
       } catch (error) {
         this.logger.warn({ err: error, key }, 'Cache write failed');
       }
     }
 
-    return value;
+    return computedValue;
   }
 }

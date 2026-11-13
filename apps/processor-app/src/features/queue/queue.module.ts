@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
 import {
-  LedgerQueueSetupModule,
+  LedgerQueueModule,
   ProductStockPostSubtractQueueModule,
 } from '@acme-processor/common/shared';
 
@@ -17,7 +17,7 @@ import { QueueRegistryQueueAdapter } from './infrastructure';
 import { QueueController } from './presentation';
 
 @Module({
-  imports: [LedgerQueueSetupModule, ProductStockPostSubtractQueueModule],
+  imports: [LedgerQueueModule, ProductStockPostSubtractQueueModule],
   controllers: [QueueController],
   providers: [
     HttpExceptionFilter,

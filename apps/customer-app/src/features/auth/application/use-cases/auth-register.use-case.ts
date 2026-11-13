@@ -36,23 +36,23 @@ export class AuthRegisterUseCase {
     AuthCustomerModel.assertPasswordStrength(password);
 
     const passwordHash = await this.credentials.hashPassword(password);
-    const draft = AuthCustomerModel.createDraft({ email, passwordHash });
-    const id = await this.insert(draft);
+    const customerDraft = AuthCustomerModel.createDraft({ email, passwordHash });
+    const customerId = await this.insert(customerDraft);
 
-    this.logger.info({ customerId: id }, 'Customer registered');
+    this.logger.info({ customerId }, 'Customer registered');
 
-    await this.ledger.recordRegistered({ customerId: id });
+    await this.ledger.recordRegistered({ customerId });
 
-    return { id, email: draft.email };
+    return { id: customerId, email: customerDraft.email };
   }
 
   private async insert(draft: IAuthCustomerDraftOutput): Promise<string> {
-    const inserted = await this.repository.insert(draft);
+    const insertResult = await this.repository.insert(draft);
 
-    if (inserted.outcome === AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE) {
+    if (insertResult.outcome === AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE) {
       throw new AuthEmailTakenException();
     }
 
-    return inserted.id;
+    return insertResult.id;
   }
 }

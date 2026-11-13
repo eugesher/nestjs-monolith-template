@@ -86,7 +86,7 @@ describe('NoteWriteService', () => {
 
   describe('reload', () => {
     it('answers the stored note after a saved write', async () => {
-      const note = await service.reload({ noteId: '7', authorId: 'admin-1', saved: true });
+      const note = await service.reload({ noteId: '7', authorId: 'admin-1', isSaved: true });
 
       expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
       expect(note.version).toBe(4);
@@ -95,7 +95,7 @@ describe('NoteWriteService', () => {
 
     it('turns a lost race into a conflict carrying the stored version', async () => {
       await expect(
-        service.reload({ noteId: '7', authorId: 'admin-1', saved: false }),
+        service.reload({ noteId: '7', authorId: 'admin-1', isSaved: false }),
       ).rejects.toEqual(new NoteWriteConflictError('7', 4));
     });
   });

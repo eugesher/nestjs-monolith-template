@@ -6,7 +6,7 @@ request limits (see `003-authentication.md` and `036-production-stack.md`).
 
 ## One module for the API routes
 
-`HttpSecuritySetupModule` of `libs/http`, imported by the `AppModule` of all three apps, mounts two
+`HttpSecurityModule` of `libs/http`, imported by the `AppModule` of all three apps, mounts two
 middlewares on every route of the prefix, in this order:
 
 | Middleware           | What it does                                                                      |
@@ -67,4 +67,4 @@ single-file bundle, which pulls no further scripts.
 
 **The route needs its own headers because it comes first.** `AppBootstrap` mounts the page with
 `app.use` before `listen`, and Nest mounts the middlewares of the modules only when the app starts,
-so the request of the page never reaches the middlewares of `HttpSecuritySetupModule`.
+so the request of the page never reaches the middlewares of `HttpSecurityModule`.

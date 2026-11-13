@@ -9,14 +9,14 @@ export class ProductStockCoreOnHandModel {
   public static reconstitute(
     record: IProductStockCoreOnHandRecordInput,
   ): ProductStockCoreOnHandModel {
-    const { productIds, sums } = record;
-    const stock = productIds.map((productId) => {
-      const sum = sums.find((candidate) => candidate.productId === productId);
+    const { productIds, stockSums } = record;
+    const stockOnHand = productIds.map((productId) => {
+      const stockSum = stockSums.find((candidate) => candidate.productId === productId);
 
-      return { productId, quantity: Number(sum?.quantity ?? 0) };
+      return { productId, quantity: Number(stockSum?.quantity ?? 0) };
     });
 
-    return new ProductStockCoreOnHandModel(stock);
+    return new ProductStockCoreOnHandModel(stockOnHand);
   }
 
   public toSnapshot(): IProductStockCoreOnHandSnapshotOutput[] {

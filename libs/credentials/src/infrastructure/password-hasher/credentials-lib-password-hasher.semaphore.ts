@@ -44,10 +44,10 @@ export class CredentialsLibPasswordHasherSemaphore {
   }
 
   private release(): void {
-    const next = this.waiting.shift();
+    const nextWaiter = this.waiting.shift();
 
-    if (next) {
-      next();
+    if (nextWaiter) {
+      nextWaiter();
 
       return;
     }

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PaginationHelper, type IPage } from '@acme-libs/toolkit';
 
-import { ReminderModel } from '../../domain';
+import { ReminderGetManyModel } from '../../domain';
 import {
   REMINDER_GET_MANY_REPOSITORY_PORT,
   type IReminderGetManyRepositoryPort,
@@ -17,15 +17,11 @@ export class ReminderGetManyUseCase {
   ) {}
 
   public async execute(command: IReminderGetManyCommand): Promise<IPage<IReminderView>> {
-    const { page, limit, ownerId, status } = command;
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
-    const [records, total] = await this.repository.list({ ...pageWindow, ownerId, status });
-    const data = records.map((record) => {
-      const reminder = ReminderModel.reconstitute(record);
+    const { ownerId, status } = command;
+    const { limit, offset, page } = PaginationHelper.clampPageWindow({ query: command });
+    const [records, total] = await this.repository.list({ limit, offset, ownerId, status });
+    const data = ReminderGetManyModel.toViewData(records);
 
-      return reminder.toSnapshot();
-    });
-
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 }

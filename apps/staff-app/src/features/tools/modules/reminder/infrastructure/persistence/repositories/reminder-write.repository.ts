@@ -34,11 +34,11 @@ export class ReminderWriteRepository
 
   public async update(query: IReminderWriteUpdateQuery): Promise<boolean> {
     const { id, versionAsRead, dueOn, status, version } = query;
-    const result = await this.reminderRepository.update(
+    const updateResult = await this.reminderRepository.update(
       { id, version: versionAsRead },
       { dueOn, status, version },
     );
 
-    return result.affected === 1;
+    return updateResult.affected === 1;
   }
 }

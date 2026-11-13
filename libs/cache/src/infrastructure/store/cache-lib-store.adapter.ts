@@ -25,17 +25,17 @@ export class CacheLibStoreAdapter implements ICacheLibStorePort, OnApplicationSh
   ) {}
 
   public async get<T>(key: string): Promise<Maybe<T>> {
-    const raw = await this.redis.get(key);
-    const value = raw === null ? null : (JSON.parse(raw) as T | null);
+    const rawValue = await this.redis.get(key);
+    const cachedValue = rawValue === null ? null : (JSON.parse(rawValue) as T | null);
 
-    return value ?? undefined;
+    return cachedValue ?? undefined;
   }
 
   public async set<T>(command: ICacheLibStoreSetCommand<T>): Promise<void> {
     const { key, value, ttlMs } = command;
-    const raw = JSON.stringify(value);
+    const rawValue = JSON.stringify(value);
 
-    await this.redis.set(key, raw, 'PX', ttlMs);
+    await this.redis.set(key, rawValue, 'PX', ttlMs);
   }
 
   public async del(key: string): Promise<void> {

@@ -18,7 +18,9 @@ A name says who or where; the action lives in the method or in the port.
 | binding of an infrastructure class | `public static readonly provider: ClassProvider<I…Port>`                                | `OrderIdempotencyCoreAdapter.provider`                     |
 | provider of a config value         | `<Module>Config<Property>Provider`, `<module>-config.provider.ts`                       | `ProductConfigOccRetryAttemptsProvider`                    |
 | abstract base class                | `<Name>Base`, `<name>.base.ts`                                                          | `AggregateRootBase`                                        |
-| type file of a lib without layers  | role suffix where the type has one, else `.interface.ts` or `.type.ts`                  | `page-window.options.ts`, `page.interface.ts`              |
+| type file of a lib without layers  | role suffix where the type has one, else `.interface.ts` or `.type.ts`                  | `replay-retry.options.ts`, `result.type.ts`                |
+| params of a helper method          | `I<Subject><Action>`, `interfaces/params/<subject>-<action>.interface.ts`               | `IPageWindowClamp`, `IPageBuild`                           |
+| result of a helper method          | `I<Subject>`, `interfaces/results/<subject>.interface.ts`                               | `IPageWindow`, `IPage`                                     |
 
 **A module with one port names it after the module.** The port, its token and its facade carry the
 name of the module and its layer (`Core`, `Lib`, `Common`) and nothing else, so a consumer finds the
@@ -79,6 +81,30 @@ keeps the word in front of `Exception`: `QueueBaseException` in `queue-base.exce
 libs name an interface file by its role: `.command`, `.view`, `.options`. The types of
 `libs/toolkit`, `libs/config`, `libs/auth` and `libs/contracts/src/database` serve a helper, a
 provider or a guard rather than a use case. The options of a helper take `.options.ts`
-(`page-window.options.ts`, `replay-retry.options.ts`, `config-value-provide.options.ts`); a type
-with no such role keeps the suffix of its syntax, `.interface.ts` or `.type.ts`
-(`page.interface.ts`, `hosted-repository.interface.ts`, `result.type.ts`).
+(`replay-retry.options.ts`, `config-value-provide.options.ts`); a type with no such role keeps the
+suffix of its syntax, `.interface.ts` or `.type.ts` (`hosted-repository.interface.ts`,
+`result.type.ts`).
+
+**A helper method takes one params object and answers a result.** The types of the method live in
+`interfaces/params` and `interfaces/results` next to the helper, as those of `PaginationHelper` in
+`libs/toolkit/src/pagination/interfaces`. The folder names the role, so both files end with
+`.interface.ts`.
+
+- One params interface per public method, and the method calls its argument `params`:
+  `clampPageWindow(params: IPageWindowClamp)`, `toPage<T>(params: IPageBuild<T>)`.
+- A params interface is `I<Subject><Action>`: what the method builds, then what it does to it, in
+  `<subject>-<action>.interface.ts`. A method whose name is not a verb takes the verb of its work:
+  `toPage` builds a page, `IPageBuild`. Subject first keeps the files of one subject together.
+- The parts of a params object are `I<Params><Part>` in the same file: the data the caller has in
+  `query`, the optional defaults and caps in `options`, as `IPageWindowClampQuery` and
+  `IPageWindowClampOptions`. A caller then hands over its own object, `{ query: command }`. A part
+  stays unexported until another file needs it; until then `IPageWindowClamp['query']` reaches it.
+- A result interface is the noun of the answer, `I<Subject>`, without a role suffix, in
+  `<subject>.interface.ts`: `IPageWindow`, `IPage<T>`. Two methods with the same answer share one
+  result.
+- Results leave the lib through its index, because callers keep and pass them on (`IPage<T>` in the
+  views of the lists, `IPageWindow` in `CatalogProductListUseCase`). Params leave only through the
+  barrel of `interfaces`: callers pass literals.
+
+A layered lib keeps `commands` and `views` for the input and output of a use case or a port: a
+params interface is to a helper what a command is to a use case, a result what a view is.

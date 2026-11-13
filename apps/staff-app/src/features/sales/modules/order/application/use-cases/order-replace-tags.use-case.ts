@@ -32,8 +32,8 @@ export class OrderReplaceTagsUseCase {
         throw new OrderNotFoundException(orderId);
       }
 
-      const replaced = await this.tag.replace({ orderId, tagIds });
-      const { outcome, tags, missingTagIds } = replaced;
+      const replaceResult = await this.tag.replace({ orderId, tagIds });
+      const { outcome, tags, missingTagIds } = replaceResult;
 
       if (outcome === OrderTagReplaceOutcomeEnum.TAG_NOT_FOUND) {
         throw new OrderTagNotFoundException(missingTagIds);

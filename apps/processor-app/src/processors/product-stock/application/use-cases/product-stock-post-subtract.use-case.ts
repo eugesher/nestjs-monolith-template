@@ -34,15 +34,17 @@ export class ProductStockPostSubtractUseCase {
 
   private async archiveOutOfStock(command: IProductStockPostSubtractCommand): Promise<void> {
     const { productIds } = command;
-    const stock = await this.onHand.lock({ productIds });
-    const outOfStock = stock.filter((row) => row.quantity <= 0).map((row) => row.productId);
-    const active = await this.repository.findActive(outOfStock);
+    const stockOnHand = await this.onHand.lock({ productIds });
+    const outOfStockProductIds = stockOnHand
+      .filter((row) => row.quantity <= 0)
+      .map((row) => row.productId);
+    const active = await this.repository.findActive(outOfStockProductIds);
     const activeIds = active.map((product) => product.id);
 
     for (const productId of activeIds) {
-      const archived = await this.archive.archive({ productId });
+      const archiveResult = await this.archive.archive({ productId });
 
-      if (archived.archived) {
+      if (archiveResult.archived) {
         this.logger.info({ productId }, 'Out-of-stock product archived');
       }
     }

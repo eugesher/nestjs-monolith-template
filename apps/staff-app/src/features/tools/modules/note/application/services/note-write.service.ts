@@ -37,10 +37,10 @@ export class NoteWriteService {
   }
 
   public async reload(command: INoteWriteReloadCommand): Promise<NoteModel> {
-    const { noteId, authorId, saved } = command;
+    const { noteId, authorId, isSaved } = command;
     const note = await this.accessService.loadOwned({ noteId, authorId });
 
-    if (!saved) {
+    if (!isSaved) {
       throw new NoteWriteConflictError(noteId, note.version);
     }
 

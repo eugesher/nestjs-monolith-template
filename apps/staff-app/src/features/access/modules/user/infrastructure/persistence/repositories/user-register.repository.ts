@@ -35,9 +35,9 @@ export class UserRegisterRepository
     query: IUserRegisterStaffUserInsertQuery,
   ): Promise<IUserRegisterStaffUserInsertRecord> {
     try {
-      const id = await this.staffUserRepository.insertOne(query);
+      const userId = await this.staffUserRepository.insertOne(query);
 
-      return { outcome: UserRegisterStaffUserInsertOutcomeEnum.INSERTED, id };
+      return { outcome: UserRegisterStaffUserInsertOutcomeEnum.INSERTED, id: userId };
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         return { outcome: UserRegisterStaffUserInsertOutcomeEnum.DUPLICATE };

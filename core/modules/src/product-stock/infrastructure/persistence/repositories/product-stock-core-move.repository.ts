@@ -34,8 +34,8 @@ export class ProductStockCoreMoveRepository
       return [];
     }
 
-    const result = await this.productStockRepository.insert(queries);
+    const insertResult = await this.productStockRepository.insert(queries);
 
-    return result.identifiers as IProductStockCoreMoveInsertRecord[];
+    return insertResult.identifiers as IProductStockCoreMoveInsertRecord[];
   }
 }

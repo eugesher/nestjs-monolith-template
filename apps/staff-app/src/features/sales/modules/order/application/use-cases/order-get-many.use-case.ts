@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PaginationHelper, type Maybe } from '@acme-libs/toolkit';
 
-import { OrderSummaryModel } from '../../domain';
+import { OrderGetManyModel } from '../../domain';
 import {
   ORDER_GET_MANY_REPOSITORY_PORT,
   ORDER_TAG_PORT,
@@ -21,22 +21,18 @@ export class OrderGetManyUseCase {
   ) {}
 
   public async execute(command: IOrderGetManyCommand): Promise<IOrderGetManyView> {
-    const { page, limit, tagId } = command;
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const { tagId } = command;
+    const { limit, offset, page } = PaginationHelper.clampPageWindow({ query: command });
     const orderIds = await this.findOrderIds(tagId);
 
     if (orderIds?.length === 0) {
-      return PaginationHelper.toPage([], 0, pageWindow);
+      return PaginationHelper.toPage({ data: [], page, limit, total: 0 });
     }
 
-    const [records, total] = await this.repository.list({ ...pageWindow, orderIds });
-    const data = records.map((record) => {
-      const order = OrderSummaryModel.reconstitute(record);
+    const [records, total] = await this.repository.list({ limit, offset, orderIds });
+    const data = OrderGetManyModel.toViewData(records);
 
-      return order.toSnapshot();
-    });
-
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 
   private async findOrderIds(tagId: Maybe<string>): Promise<Maybe<string[]>> {

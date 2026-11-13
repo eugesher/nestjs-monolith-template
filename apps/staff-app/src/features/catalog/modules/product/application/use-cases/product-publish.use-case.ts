@@ -25,19 +25,19 @@ export class ProductPublishUseCase {
 
   public async execute(command: IProductPublishCommand): Promise<IProductView> {
     const { productId, expectedVersion } = command;
-    const written = await this.writeService.write({ productId, expectedVersion }, (product) =>
+    const writeResult = await this.writeService.write({ productId, expectedVersion }, (product) =>
       product.publish(),
     );
-    const { product, events } = written;
-    const published = events.filter((event) => event instanceof ProductPublishedEvent);
+    const { product, domainEvents } = writeResult;
+    const publishedEvents = domainEvents.filter((event) => event instanceof ProductPublishedEvent);
 
     await this.catalogCache.invalidate();
-    await this.ledger.recordEvents({ events: published });
+    await this.ledger.recordEvents({ events: publishedEvents });
 
-    const view = product.toSnapshot();
+    const productView = product.toSnapshot();
 
     this.logger.info({ productId }, 'Product published');
 
-    return view;
+    return productView;
   }
 }

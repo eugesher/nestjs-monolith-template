@@ -28,7 +28,7 @@ describe('CatalogPersistenceProductBuilder', () => {
     it('selects the active products in id order inside the page window', () => {
       const builder = new CatalogPersistenceProductBuilder(baseBuilder);
 
-      builder.forList({ page: 3, limit: 20, offset: 40 });
+      builder.forList({ limit: 20, offset: 40 });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name` FROM `product` `Product` WHERE ( `Product`.`status` = ? ) AND ( `Product`.`deletedAt` IS NULL ) ORDER BY `Product_id` ASC LIMIT 20 OFFSET 40',
@@ -38,7 +38,7 @@ describe('CatalogPersistenceProductBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new CatalogPersistenceProductBuilder(baseBuilder);
-      const chained = builder.forList({ page: 3, limit: 20, offset: 40 });
+      const chained = builder.forList({ limit: 20, offset: 40 });
 
       expect(chained).toBe(builder);
     });

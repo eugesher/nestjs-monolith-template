@@ -27,22 +27,22 @@ export class IdempotencyCoreClaimUseCase {
   public async execute(command: IIdempotencyCoreClaimCommand): Promise<IIdempotencyCoreClaimView> {
     const { scope, key, body } = command;
     const requestFingerprint = BodyFingerprintHelper.compute(body);
-    const draft = IdempotencyCoreKeyModel.createDraft({ scope, key, requestFingerprint });
-    const inserted = await this.insert(draft);
+    const keyDraft = IdempotencyCoreKeyModel.createDraft({ scope, key, requestFingerprint });
+    const insertOutcome = await this.insert(keyDraft);
 
-    if (inserted) {
+    if (insertOutcome) {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.CLAIMED, storedResponse: undefined };
     }
 
-    const record = await this.repository.findByKey({ scope, key });
+    const keyRecord = await this.repository.findByKey({ scope, key });
 
-    if (!record) {
+    if (!keyRecord) {
       return this.inFlight(scope, key);
     }
 
-    const existing = IdempotencyCoreKeyModel.reconstitute(record);
+    const existingKey = IdempotencyCoreKeyModel.reconstitute(keyRecord);
 
-    if (!existing.matches(requestFingerprint)) {
+    if (!existingKey.matches(requestFingerprint)) {
       this.logger.info(
         { scope, key },
         'Idempotency key reused with another body, the request is refused',
@@ -51,8 +51,8 @@ export class IdempotencyCoreClaimUseCase {
       return { outcome: IdempotencyCoreClaimOutcomeEnum.MISMATCH, storedResponse: undefined };
     }
 
-    if (existing.isCompleted()) {
-      const storedResponse: unknown = JSON.parse(existing.responseBody);
+    if (existingKey.isCompleted()) {
+      const storedResponse: unknown = JSON.parse(existingKey.responseBody);
 
       return { outcome: IdempotencyCoreClaimOutcomeEnum.REPLAY, storedResponse };
     }
@@ -69,7 +69,7 @@ export class IdempotencyCoreClaimUseCase {
   private async insert(draft: IIdempotencyCoreKeyDraftOutput): Promise<boolean> {
     const { scope, key, requestFingerprint, status, responseBody } = draft;
 
-    const outcome = await this.repository.insert({
+    const insertOutcome = await this.repository.insert({
       scope,
       idempotencyKey: key,
       requestFingerprint,
@@ -77,6 +77,6 @@ export class IdempotencyCoreClaimUseCase {
       responseBody,
     });
 
-    return outcome === IdempotencyCoreClaimInsertOutcomeEnum.INSERTED;
+    return insertOutcome === IdempotencyCoreClaimInsertOutcomeEnum.INSERTED;
   }
 }

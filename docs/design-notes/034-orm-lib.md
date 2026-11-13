@@ -47,10 +47,10 @@ a getter, never in its constructor, so every query joins the transaction open at
 
 ## `OrmModule` mounts the transactions
 
-`OrmHostAdapter` needs `TransactionHost`, which only the plugin of `LocalStorageTransactionModule`
+`OrmHostAdapter` needs `TransactionHost`, which only the plugin of `LocalStorageTransactionalModule`
 provides, and the plugin needs the `DataSource` of the connection. `OrmModule.forRoot` imports
-`LocalStorageTransactionModule.forRoot()` itself, so an app cannot mount the connection without the
-transactions, and the order is set by the import, not by the `AppModule` of each app. The root
+`LocalStorageTransactionalModule.forRoot()` itself, so an app cannot mount the connection without
+the transactions, and the order is set by the import, not by the `AppModule` of each app. The root
 `ClsModule` stays with the app: `LocalStorageSetupModule` comes before `OrmModule` (see
 `033-local-storage-lib.md`).
 

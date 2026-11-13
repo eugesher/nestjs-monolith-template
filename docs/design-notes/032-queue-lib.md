@@ -9,7 +9,7 @@ All three apps connect Bull the same way, so the connection lives in a lib:
 | `BullSetupModule.registerQueue` | `common/shared` of processor-app, core `ledger` and `product-stock` | `BullModule.registerQueue({ name })`                            |
 
 ```ts
-export const LedgerQueueSetupModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);
+export const LedgerQueueModule = BullSetupModule.registerQueue(LEDGER_RECORD_QUEUE);
 ```
 
 **A setup class, not a module.** `BullSetupModule` has no `@Module`: it is a class of static methods

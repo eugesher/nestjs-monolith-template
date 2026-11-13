@@ -19,5 +19,11 @@ describe('ProductCatalogCacheAdapter', () => {
 
       expect(handleDelByPrefix).toHaveBeenCalledWith('acme:catalog:v1:');
     });
+
+    it('lets a failed delete reject', async () => {
+      handleDelByPrefix.mockRejectedValue(new Error('redis is down'));
+
+      await expect(adapter.invalidate()).rejects.toThrow('redis is down');
+    });
   });
 });

@@ -22,9 +22,9 @@ export class ProductStockModel extends AggregateRootBase<string> {
 
   public add(quantity: number): void {
     const validQuantity = ProductStockModel.validQuantity(quantity);
-    const event = new ProductStockAddedEvent(this.id, this.sku, validQuantity);
+    const addedEvent = new ProductStockAddedEvent(this.id, this.sku, validQuantity);
 
-    this.addDomainEvent(event);
+    this.addDomainEvent(addedEvent);
   }
 
   private static validQuantity(quantity: number): number {

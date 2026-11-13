@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PaginationHelper, type IPage } from '@acme-libs/toolkit';
 
-import { TagModel } from '../../domain';
+import { TagGetManyModel } from '../../domain';
 import { TAG_GET_MANY_REPOSITORY_PORT, type ITagGetManyRepositoryPort } from '../../outbound';
 import type { ITagGetManyCommand, ITagView } from '../interfaces';
 
@@ -14,15 +14,10 @@ export class TagGetManyUseCase {
   ) {}
 
   public async execute(command: ITagGetManyCommand): Promise<IPage<ITagView>> {
-    const { page, limit } = command;
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
-    const [records, total] = await this.repository.list({ ...pageWindow });
-    const data = records.map((record) => {
-      const tag = TagModel.reconstitute(record);
+    const { limit, offset, page } = PaginationHelper.clampPageWindow({ query: command });
+    const [records, total] = await this.repository.list({ limit, offset });
+    const data = TagGetManyModel.toViewData(records);
 
-      return tag.toSnapshot();
-    });
-
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 }

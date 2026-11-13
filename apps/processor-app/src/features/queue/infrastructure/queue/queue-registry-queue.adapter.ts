@@ -61,9 +61,9 @@ export class QueueRegistryQueueAdapter implements IQueueRegistryPort {
       queue.getFailed(offset, offset + limit - 1),
       queue.getFailedCount(),
     ]);
-    const data = jobs.map((job) => ({ debounceId: null, ...job.toJSON() }));
+    const jobViews = jobs.map((job) => ({ debounceId: null, ...job.toJSON() }));
 
-    return [data, total];
+    return [jobViews, total];
   }
 
   public async findJobState(command: IQueueRegistryJobCommand): Promise<Nullable<string>> {

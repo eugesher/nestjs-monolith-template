@@ -30,14 +30,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = http.getRequest<{ body?: unknown }>();
     const answered = HttpExceptionFilter.toHttpException(exception);
     const status = answered.getStatus();
-    const response = answered.getResponse();
+    const exceptionResponse = answered.getResponse();
     const cause = answered === exception ? {} : { err: exception };
     const details = {
       method: httpAdapter.getRequestMethod(request) as string,
       url: httpAdapter.getRequestUrl(request) as string,
       status,
       request: RequestBodyHelper.mask(request.body),
-      response,
+      response: exceptionResponse,
       ...cause,
     };
 
@@ -47,7 +47,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       this.logger.warn(details, 'Response with error');
     }
 
-    httpAdapter.reply(http.getResponse(), response, status);
+    httpAdapter.reply(http.getResponse(), exceptionResponse, status);
   }
 
   private static toHttpException(exception: unknown): HttpException {

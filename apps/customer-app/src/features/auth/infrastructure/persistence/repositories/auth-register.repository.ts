@@ -33,9 +33,9 @@ export class AuthRegisterRepository
     query: IAuthRegisterCustomerInsertQuery,
   ): Promise<IAuthRegisterCustomerInsertRecord> {
     try {
-      const id = await this.customerRepository.insertOne(query);
+      const customerId = await this.customerRepository.insertOne(query);
 
-      return { outcome: AuthRegisterCustomerInsertOutcomeEnum.INSERTED, id };
+      return { outcome: AuthRegisterCustomerInsertOutcomeEnum.INSERTED, id: customerId };
     } catch (error) {
       if (MysqlErrorHelper.isDuplicateKey(error)) {
         return { outcome: AuthRegisterCustomerInsertOutcomeEnum.DUPLICATE };

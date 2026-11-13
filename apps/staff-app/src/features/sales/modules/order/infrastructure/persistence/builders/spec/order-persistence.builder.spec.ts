@@ -28,7 +28,7 @@ describe('OrderPersistenceBuilder', () => {
     it('selects every order newest first inside the page window', () => {
       const builder = new OrderPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 3, limit: 20, offset: 40, orderIds: undefined });
+      builder.forList({ limit: 20, offset: 40, orderIds: undefined });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Order`.`id` AS `Order_id`, `Order`.`customerId` AS `Order_customerId`, `Order`.`createdAt` AS `Order_createdAt` FROM `order` `Order` ORDER BY `Order_id` DESC LIMIT 20 OFFSET 40',
@@ -39,7 +39,7 @@ describe('OrderPersistenceBuilder', () => {
     it('keeps only the given orders', () => {
       const builder = new OrderPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 1, limit: 20, offset: 0, orderIds: ['600', '601'] });
+      builder.forList({ limit: 20, offset: 0, orderIds: ['600', '601'] });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Order`.`id` AS `Order_id`, `Order`.`customerId` AS `Order_customerId`, `Order`.`createdAt` AS `Order_createdAt` FROM `order` `Order` WHERE `Order`.`id` IN (?, ?) ORDER BY `Order_id` DESC LIMIT 20 OFFSET 0',
@@ -49,7 +49,7 @@ describe('OrderPersistenceBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new OrderPersistenceBuilder(baseBuilder);
-      const chained = builder.forList({ page: 3, limit: 20, offset: 40, orderIds: undefined });
+      const chained = builder.forList({ limit: 20, offset: 40, orderIds: undefined });
 
       expect(chained).toBe(builder);
     });

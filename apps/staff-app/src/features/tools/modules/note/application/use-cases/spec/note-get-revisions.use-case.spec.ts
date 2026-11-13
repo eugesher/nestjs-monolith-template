@@ -46,7 +46,7 @@ describe('NoteGetRevisionsUseCase', () => {
       const page = await useCase.execute({ noteId: '7', authorId: 'admin-1', page: 2, limit: 5 });
 
       expect(loadOwned).toHaveBeenCalledWith({ noteId: '7', authorId: 'admin-1' });
-      expect(listForNote).toHaveBeenCalledWith({ page: 2, limit: 5, offset: 5, noteId: '7' });
+      expect(listForNote).toHaveBeenCalledWith({ limit: 5, offset: 5, noteId: '7' });
       expect(page).toEqual({
         page: 2,
         count: 1,

@@ -13,12 +13,12 @@ export class TagAccessService {
 
   public async load(command: ITagAccessLoadCommand): Promise<TagModel> {
     const { tagId } = command;
-    const record = await this.repository.findById(tagId);
+    const tagRecord = await this.repository.findById(tagId);
 
-    if (!record) {
+    if (!tagRecord) {
       throw new TagNotFoundException(tagId);
     }
 
-    return TagModel.reconstitute(record);
+    return TagModel.reconstitute(tagRecord);
   }
 }

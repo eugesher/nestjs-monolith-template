@@ -16,8 +16,8 @@ export class HttpCorsMiddleware implements NestMiddleware {
   private readonly handler: ReturnType<typeof cors>;
 
   constructor(config: ConfigService) {
-    const value = config.getOrThrow<string>('HTTP_CORS_ORIGINS');
-    const origins = value.split(',').filter((origin) => origin !== '');
+    const originsValue = config.getOrThrow<string>('HTTP_CORS_ORIGINS');
+    const origins = originsValue.split(',').filter((origin) => origin !== '');
     const origin = origins.length > 0 ? origins : false;
 
     this.handler = cors({ origin, exposedHeaders: HttpCorsMiddleware.EXPOSED_HEADERS });

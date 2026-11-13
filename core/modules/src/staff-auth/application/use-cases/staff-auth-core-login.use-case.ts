@@ -28,11 +28,11 @@ export class StaffAuthCoreLoginUseCase {
 
   public async execute(command: IStaffAuthCoreLoginCommand): Promise<IStaffAuthCoreLoginView> {
     const { email, password } = command;
-    const normalized = StaffAuthCoreUserModel.normalizeEmail(email);
-    const record = await this.repository.findByEmail(normalized);
-    const user = record ? StaffAuthCoreUserModel.reconstitute(record) : null;
+    const normalizedEmail = StaffAuthCoreUserModel.normalizeEmail(email);
+    const userRecord = await this.repository.findByEmail(normalizedEmail);
+    const user = userRecord ? StaffAuthCoreUserModel.reconstitute(userRecord) : null;
     const passwordHash = user?.passwordHash ?? null;
-    const valid = await this.credentials.verifyPassword({ passwordHash, password });
+    const isPasswordValid = await this.credentials.verifyPassword({ passwordHash, password });
 
     if (!user) {
       this.logger.warn('Login failed: unknown email');
@@ -44,7 +44,7 @@ export class StaffAuthCoreLoginUseCase {
       };
     }
 
-    if (!valid) {
+    if (!isPasswordValid) {
       this.logger.warn({ userId: user.id }, 'Login failed: wrong password');
 
       return {

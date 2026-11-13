@@ -23,7 +23,7 @@ describe('TagGetManyUseCase', () => {
     it('answers a page of views', async () => {
       const page = await useCase.execute({ page: 2, limit: 20 });
 
-      expect(list).toHaveBeenCalledWith({ page: 2, limit: 20, offset: 20 });
+      expect(list).toHaveBeenCalledWith({ limit: 20, offset: 20 });
       expect(page).toEqual({
         page: 2,
         count: 1,
@@ -41,8 +41,8 @@ describe('TagGetManyUseCase', () => {
     });
 
     it.each([
-      ['defaults an absent window', undefined, undefined, { page: 1, limit: 20, offset: 0 }],
-      ['caps the limit at 100', 1, 500, { page: 1, limit: 100, offset: 0 }],
+      ['defaults an absent window', undefined, undefined, { limit: 20, offset: 0 }],
+      ['caps the limit at 100', 1, 500, { limit: 100, offset: 0 }],
     ])('%s', async (_, page, limit, pageWindow) => {
       await useCase.execute({ page, limit });
 

@@ -5,5 +5,5 @@ export interface IOrderCandidateInput {
   customerId: string;
   productIds: string[];
   products: IOrderActiveProductInput[];
-  stock: IOrderStockInput[];
+  stockOnHand: IOrderStockInput[];
 }

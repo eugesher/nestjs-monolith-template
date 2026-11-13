@@ -24,7 +24,7 @@ describe('ProductUpdateUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
+      domainEvents: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
     });
     invalidate = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();
@@ -75,6 +75,15 @@ describe('ProductUpdateUseCase', () => {
         useCase.execute({ productId: '12', name: 'Desk lamp', expectedVersion: 3 }),
       ).rejects.toThrow('PRODUCT_NOT_FOUND');
       expect(invalidate).not.toHaveBeenCalled();
+    });
+
+    it('lets a failed invalidation reject without logging the update', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({ productId: '12', name: 'Desk lamp', expectedVersion: 3 }),
+      ).rejects.toThrow('redis is down');
+      expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('hands the write service a change that updates the name of the product', async () => {

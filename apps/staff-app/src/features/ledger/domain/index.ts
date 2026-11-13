@@ -1,3 +1,3 @@
 export * from './interfaces';
 
-export * from './models/ledger-entry.model';
+export * from './models/ledger-list-entries.model';

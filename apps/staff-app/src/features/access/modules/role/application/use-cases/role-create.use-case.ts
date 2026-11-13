@@ -24,24 +24,24 @@ export class RoleCreateUseCase {
 
   public async execute(command: IRoleCreateCommand): Promise<IRoleView> {
     const { name, permissionCodes } = command;
-    const draft = RoleModel.createDraft({ name, permissionCodes });
-    const id = await this.transaction.run(() => this.insert(draft));
+    const roleDraft = RoleModel.createDraft({ name, permissionCodes });
+    const roleId = await this.transaction.run(() => this.insert(roleDraft));
 
-    this.logger.info({ roleId: id }, 'Role created');
+    this.logger.info({ roleId }, 'Role created');
 
-    return { id, name: draft.name, permissionCodes: draft.permissionCodes };
+    return { id: roleId, name: roleDraft.name, permissionCodes: roleDraft.permissionCodes };
   }
 
   private async insert(draft: IRoleDraftOutput): Promise<string> {
     const { name, permissionCodes } = draft;
 
-    const inserted = await this.repository.insertRole({ name });
+    const insertResult = await this.repository.insertRole({ name });
 
-    if (inserted.outcome === RoleCreateStaffRoleInsertOutcomeEnum.DUPLICATE) {
+    if (insertResult.outcome === RoleCreateStaffRoleInsertOutcomeEnum.DUPLICATE) {
       throw new AuthRoleNameTakenException(name);
     }
 
-    const { id } = inserted;
+    const { id } = insertResult;
     const rolePermissions = permissionCodes.map((code) => ({ roleId: id, code }));
 
     await this.repository.insertRolePermissions(rolePermissions);

@@ -28,7 +28,7 @@ describe('OrderPersistenceBuilder', () => {
     it('selects the id and creation time of the orders of the customer, newest first, inside the page window', () => {
       const builder = new OrderPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 3, limit: 20, offset: 40, customerId: '7' });
+      builder.forList({ limit: 20, offset: 40, customerId: '7' });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Order`.`id` AS `Order_id`, `Order`.`createdAt` AS `Order_createdAt` FROM `order` `Order` WHERE `Order`.`customerId` = ? ORDER BY `Order_id` DESC LIMIT 20 OFFSET 40',
@@ -38,7 +38,7 @@ describe('OrderPersistenceBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new OrderPersistenceBuilder(baseBuilder);
-      const chained = builder.forList({ page: 1, limit: 10, offset: 0, customerId: '7' });
+      const chained = builder.forList({ limit: 10, offset: 0, customerId: '7' });
 
       expect(chained).toBe(builder);
     });

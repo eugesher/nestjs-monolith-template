@@ -36,25 +36,25 @@ export class ProductCoreArchiveUseCase {
 
   public async execute(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
     const { productId } = command;
-    const view = await this.transaction.run(() => this.archive(command));
-    const { outcome, currentVersion } = view;
+    const archiveView = await this.transaction.run(() => this.archive(command));
+    const { outcome, currentVersion } = archiveView;
 
     if (outcome === ProductCoreArchiveOutcomeEnum.ARCHIVED) {
       this.logger.info({ productId, version: currentVersion }, 'Product archived');
     }
 
-    return view;
+    return archiveView;
   }
 
   private async archive(command: IProductCoreArchiveCommand): Promise<IProductCoreArchiveView> {
     const { productId, expectedVersion } = command;
-    const record = await this.repository.lockById(productId);
+    const productRecord = await this.repository.lockById(productId);
 
-    if (!record) {
+    if (!productRecord) {
       return { outcome: ProductCoreArchiveOutcomeEnum.NOT_FOUND, currentVersion: undefined };
     }
 
-    const product = ProductCoreModel.reconstitute(record);
+    const product = ProductCoreModel.reconstitute(productRecord);
 
     if (expectedVersion !== undefined && expectedVersion !== product.version) {
       return {
@@ -83,10 +83,10 @@ export class ProductCoreArchiveUseCase {
     });
 
     const { id, sku, version } = product;
-    const archived = { productId: id, sku, version, previousStatus };
+    const archivedProduct = { productId: id, sku, version, previousStatus };
 
     this.transaction.afterCommit(() => this.catalogCache.invalidate());
-    this.transaction.afterCommit(() => this.ledger.recordArchived(archived));
+    this.transaction.afterCommit(() => this.ledger.recordArchived(archivedProduct));
 
     return { outcome: ProductCoreArchiveOutcomeEnum.ARCHIVED, currentVersion: version };
   }

@@ -31,10 +31,10 @@ export class LedgerCoreEnqueueUseCase {
   public async execute(command: ILedgerCoreEnqueueCommand): Promise<void> {
     const { operationKey, subjectType, subjectId } = command;
     const correlationId = CorrelationContextHelper.current(LedgerCoreEnqueueUseCase.name);
-    const record = { ...command, correlationId };
+    const ledgerRecord = { ...command, correlationId };
     const context = { subjectType, subjectId, operationKey };
 
-    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(record), {
+    await ReplayRetryHelper.retryThenLogForReplay(() => this.enqueueOne(ledgerRecord), {
       maxAttempts: this.enqueueRetryAttempts,
       logger: this.logger,
       correlationId,

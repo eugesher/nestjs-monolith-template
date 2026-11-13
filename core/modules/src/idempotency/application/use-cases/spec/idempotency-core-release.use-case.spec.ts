@@ -22,5 +22,19 @@ describe('IdempotencyCoreReleaseUseCase', () => {
         'Idempotency claim released',
       );
     });
+
+    it('lets a failed delete reject without logging a release', async () => {
+      const deleteInFlight = jest.fn().mockRejectedValue(new Error('connection lost'));
+      const logger = makePinoLoggerMock();
+      const useCase = new IdempotencyCoreReleaseUseCase(
+        { deleteInFlight },
+        logger as unknown as PinoLogger,
+      );
+
+      const execute = useCase.execute({ scope: 'customer:101', key: 'key-1' });
+
+      await expect(execute).rejects.toThrow('connection lost');
+      expect(logger.info).not.toHaveBeenCalled();
+    });
   });
 });

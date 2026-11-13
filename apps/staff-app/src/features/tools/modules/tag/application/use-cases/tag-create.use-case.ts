@@ -20,24 +20,24 @@ export class TagCreateUseCase {
 
   public async execute(command: ITagCreateCommand): Promise<ITagView> {
     const { name } = command;
-    const draft = TagModel.createDraft({ name });
-    const tagId = await this.insert(draft.name);
-    const record = await this.repository.findInserted(tagId);
-    const created = TagModel.reconstitute(record);
-    const view = created.toSnapshot();
+    const tagDraft = TagModel.createDraft({ name });
+    const tagId = await this.insert(tagDraft.name);
+    const tagRecord = await this.repository.findInserted(tagId);
+    const createdTag = TagModel.reconstitute(tagRecord);
+    const tagView = createdTag.toSnapshot();
 
-    this.logger.info({ tagId: view.id, name: view.name }, 'Tag created');
+    this.logger.info({ tagId: tagView.id, name: tagView.name }, 'Tag created');
 
-    return view;
+    return tagView;
   }
 
   private async insert(name: string): Promise<string> {
-    const inserted = await this.repository.insert({ name });
+    const insertResult = await this.repository.insert({ name });
 
-    if (inserted.outcome === TagCreateInsertOutcomeEnum.DUPLICATE) {
+    if (insertResult.outcome === TagCreateInsertOutcomeEnum.DUPLICATE) {
       throw new TagNameTakenException(name);
     }
 
-    return inserted.id;
+    return insertResult.id;
   }
 }

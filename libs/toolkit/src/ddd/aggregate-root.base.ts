@@ -5,11 +5,11 @@ export abstract class AggregateRootBase<TId> extends EntityBase<TId> {
   private domainEvents: DomainEventBase<TId>[] = [];
 
   public pullDomainEvents(): DomainEventBase<TId>[] {
-    const events = this.domainEvents;
+    const pulledEvents = this.domainEvents;
 
     this.domainEvents = [];
 
-    return events;
+    return pulledEvents;
   }
 
   protected addDomainEvent(event: DomainEventBase<TId>): void {

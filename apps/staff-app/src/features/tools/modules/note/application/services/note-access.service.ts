@@ -13,12 +13,12 @@ export class NoteAccessService {
 
   public async loadOwned(command: INoteAccessLoadOwnedCommand): Promise<NoteModel> {
     const { noteId, authorId } = command;
-    const record = await this.repository.findOwned({ noteId, authorId });
+    const noteRecord = await this.repository.findOwned({ noteId, authorId });
 
-    if (!record) {
+    if (!noteRecord) {
       throw new NoteNotFoundException(noteId);
     }
 
-    return NoteModel.reconstitute(record);
+    return NoteModel.reconstitute(noteRecord);
   }
 }

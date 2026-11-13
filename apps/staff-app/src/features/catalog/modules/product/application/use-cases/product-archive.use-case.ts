@@ -23,8 +23,8 @@ export class ProductArchiveUseCase {
 
   public async execute(command: IProductArchiveCommand): Promise<IProductView> {
     const { productId, expectedVersion } = command;
-    const archived = await this.status.archive({ productId, expectedVersion });
-    const { outcome, currentVersion } = archived;
+    const archiveResult = await this.status.archive({ productId, expectedVersion });
+    const { outcome, currentVersion } = archiveResult;
 
     if (outcome === ProductStatusArchiveOutcomeEnum.NOT_FOUND) {
       throw new ProductNotFoundException(productId);

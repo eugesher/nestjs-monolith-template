@@ -51,10 +51,10 @@ lands on the object that `useClass` holds.
   exports the port it binds: the literal next to `exports` shows at a glance which class answers the
   exported port. The binding is typed by the facade alone, which `implements` the port.
 - **The facades of `libs/database` and `libs/local-storage`** (`OrmFacade`,
-  `LocalStorageTransactionFacade`) are bound under the contract tokens `ORM_PORT` and
-  `TRANSACTION_PORT` by `OrmModule` and `LocalStorageTransactionModule` of their libs, next to the
+  `LocalStorageTransactionalFacade`) are bound under the contract tokens `ORM_PORT` and
+  `TRANSACTION_PORT` by `OrmModule` and `LocalStorageTransactionalModule` of their libs, next to the
   TypeORM connection and the transactional plugin they need. The app picks the implementation by
-  mounting `OrmModule`, which imports `LocalStorageTransactionModule`, and hands it only its
+  mounting `OrmModule`, which imports `LocalStorageTransactionalModule`, and hands it only its
   entities.
 - **Global enhancers** (`APP_PIPE`, `APP_FILTER`, `APP_GUARD`) are bound by the app module and the
   auth lib, under tokens of Nest.

@@ -1,44 +1,39 @@
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
-import { Logger, type PinoLogger } from 'nestjs-pino';
-import type { Type } from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
+import type { INestApplication } from '@nestjs/common';
 
-import { BootstrapLogger } from '@acme-libs/observability';
 import { ApiReference } from '@acme-libs/openapi';
 import type { AppNameEnum } from '@acme-libs/kernel';
 
 export class AppBootstrap {
-  public static async run(appModule: Type<unknown>, appName: AppNameEnum): Promise<void> {
-    const logger = BootstrapLogger.setup(appName);
+  private readonly config: ConfigService;
+  private readonly port: number;
+  private readonly prefix: string;
+  private readonly logger: Logger;
 
-    try {
-      await AppBootstrap.start(appModule, appName, logger);
-    } catch (error: unknown) {
-      logger.error(error, `${appName} bootstrap error`);
-
-      process.exit(1);
-    }
+  private constructor(
+    private readonly app: INestApplication,
+    private readonly appName: AppNameEnum,
+  ) {
+    this.config = app.get(ConfigService);
+    this.port = this.config.getOrThrow<number>('PORT');
+    this.prefix = this.config.getOrThrow<string>('API_PREFIX');
+    this.logger = app.get(Logger);
   }
 
-  private static async start(
-    appModule: Type<unknown>,
-    appName: AppNameEnum,
-    logger: PinoLogger,
-  ): Promise<void> {
-    const app = await NestFactory.create(appModule, { bufferLogs: true });
-    const config = app.get(ConfigService);
-    const port = config.getOrThrow<number>('PORT');
-    const prefix = config.getOrThrow<string>('API_PREFIX');
-    const appLogger = app.get(Logger);
+  public static create(app: INestApplication, appName: AppNameEnum): AppBootstrap {
+    return new AppBootstrap(app, appName);
+  }
 
-    app.useLogger(appLogger);
-    app.setGlobalPrefix(prefix);
-    app.enableShutdownHooks();
+  public async execute(): Promise<void> {
+    this.app.useLogger(this.logger);
+    this.app.setGlobalPrefix(this.prefix);
+    this.app.enableShutdownHooks();
 
-    ApiReference.setup(app, appName);
+    ApiReference.setup(this.app, this.appName);
 
-    await app.listen(port);
+    await this.app.listen(this.port);
 
-    logger.info(`${appName} is listening on port ${port}`);
+    this.logger.log(`${this.appName} is listening on port ${this.port}`);
   }
 }

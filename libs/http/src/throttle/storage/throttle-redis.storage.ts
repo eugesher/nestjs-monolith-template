@@ -51,13 +51,13 @@ export class ThrottleRedisStorage implements ThrottlerStorage, OnApplicationShut
     limit: number,
   ): ReturnType<ThrottlerStorage['increment']> {
     try {
-      const reply = await this.redis.eval(
+      const evalReply = await this.redis.eval(
         ThrottleRedisStorage.INCREMENT_SCRIPT,
         1,
         `${ThrottleRedisStorage.KEY_PREFIX}${key}`,
         ttl,
       );
-      const [totalHits, ttlMs] = reply as [number, number];
+      const [totalHits, ttlMs] = evalReply as [number, number];
       const timeToExpire = Math.ceil(ttlMs / 1000);
       const isBlocked = totalHits > limit;
 

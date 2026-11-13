@@ -123,5 +123,19 @@ describe('TagCommonReplaceUseCase', () => {
       expect(outcomes).toEqual(['unlink']);
       expect(logger.info).not.toHaveBeenCalled();
     });
+
+    it('neither links nor commits when the unlink fails', async () => {
+      unlink.mockRejectedValue(new Error('connection lost'));
+
+      await expect(
+        useCase.execute({
+          subjectType: TagCommonSubjectTypeEnum.PRODUCT,
+          subjectId: '100',
+          tagIds: ['301', '302'],
+        }),
+      ).rejects.toThrow('connection lost');
+      expect(link).not.toHaveBeenCalled();
+      expect(outcomes).toEqual([]);
+    });
   });
 });

@@ -26,7 +26,7 @@ describe('ProductPublishUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ProductPublishedEvent('12', 'SKU-0001', 2, ProductStatusEnum.DRAFT)],
+      domainEvents: [new ProductPublishedEvent('12', 'SKU-0001', 2, ProductStatusEnum.DRAFT)],
     });
     recordEvents = jest.fn().mockResolvedValue(undefined);
     invalidate = jest.fn().mockResolvedValue(undefined);
@@ -67,7 +67,7 @@ describe('ProductPublishUseCase', () => {
 
       write.mockResolvedValue({
         product,
-        events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
+        domainEvents: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
       });
 
       await useCase.execute({ productId: '12', expectedVersion: 1 });
@@ -94,6 +94,15 @@ describe('ProductPublishUseCase', () => {
         useCase.execute({ productId: '12', expectedVersion: undefined }),
       ).rejects.toThrow('PRODUCT_ALREADY_ARCHIVED');
       expect(invalidate).not.toHaveBeenCalled();
+      expect(recordEvents).not.toHaveBeenCalled();
+    });
+
+    it('stops at a failed invalidation before the ledger', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({ productId: '12', expectedVersion: undefined }),
+      ).rejects.toThrow('redis is down');
       expect(recordEvents).not.toHaveBeenCalled();
     });
 

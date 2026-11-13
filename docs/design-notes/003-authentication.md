@@ -93,7 +93,7 @@ without a second login, and `7d` in customer-app.
 Login and registration are public and each runs argon2id, so they carry the tightest limits of the
 app.
 
-**Every route has a limit per address, the credential routes a second one.** `ThrottleSetupModule`
+**Every route has a limit per address, the credential routes a second one.** `ThrottlerSetupModule`
 of `libs/http` mounts `ThrottleGuard`, a subclass of the `ThrottlerGuard` of `@nestjs/throttler`, as
 a global guard with two throttlers: `default` from `THROTTLE_TTL_MS` and `THROTTLE_LIMIT` on every
 route, and `auth` from `THROTTLE_AUTH_TTL_MS` and `THROTTLE_AUTH_LIMIT` on the routes marked
@@ -111,7 +111,7 @@ object above.
 **The counters live in Redis, so the replicas of an app share them.** `ThrottleRedisStorage`
 increments a key `throttle:<hash>` and sets its expiry with the first hit, in one Lua script: a
 fixed window, and a hit over the limit is refused until the window ends. The package's own storage
-is in memory, so each replica would allow the limit again. `ThrottleSetupModule` hands the storage
+is in memory, so each replica would allow the limit again. `ThrottlerSetupModule` hands the storage
 to `ThrottlerModule.forRootAsync` through its own `ThrottleStorageModule`: the storage stays a
 provider of Nest, so it reads `ConfigService` and closes its Redis connection on shutdown, where an
 instance built inside `useFactory` would never see `onApplicationShutdown`.

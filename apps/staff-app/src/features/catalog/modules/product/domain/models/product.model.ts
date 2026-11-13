@@ -77,9 +77,13 @@ export class ProductModel extends AggregateRootBase<string> {
     this.currentName = validName;
     this.currentVersion += 1;
 
-    const event = new ProductUpdatedEvent(this.id, { name: validName }, { name: previousName });
+    const updatedEvent = new ProductUpdatedEvent(
+      this.id,
+      { name: validName },
+      { name: previousName },
+    );
 
-    this.addDomainEvent(event);
+    this.addDomainEvent(updatedEvent);
   }
 
   public publish(): void {
@@ -92,9 +96,14 @@ export class ProductModel extends AggregateRootBase<string> {
     this.currentStatus = ProductStatusEnum.ACTIVE;
     this.currentVersion += 1;
 
-    const event = new ProductPublishedEvent(this.id, this.sku, this.currentVersion, previousStatus);
+    const publishedEvent = new ProductPublishedEvent(
+      this.id,
+      this.sku,
+      this.currentVersion,
+      previousStatus,
+    );
 
-    this.addDomainEvent(event);
+    this.addDomainEvent(publishedEvent);
   }
 
   public toSnapshot(): IProductSnapshotOutput {
@@ -118,13 +127,13 @@ export class ProductModel extends AggregateRootBase<string> {
   }
 
   private static validName(name: string): string {
-    const trimmed = name.trim();
+    const trimmedName = name.trim();
 
-    if (trimmed.length === 0 || trimmed.length > ProductModel.NAME_MAX_LENGTH) {
+    if (trimmedName.length === 0 || trimmedName.length > ProductModel.NAME_MAX_LENGTH) {
       throw new ProductNameInvalidException(ProductModel.NAME_MAX_LENGTH);
     }
 
-    return trimmed;
+    return trimmedName;
   }
 
   private static validVersion(version: number): number {

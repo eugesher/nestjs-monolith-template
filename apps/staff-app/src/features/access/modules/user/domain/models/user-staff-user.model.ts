@@ -10,15 +10,15 @@ export class UserStaffUserModel {
 
   public static createDraft(candidate: IUserStaffUserCandidateInput): IUserStaffUserDraftOutput {
     const { email, passwordHash, roleIds } = candidate;
-    const normalized = UserStaffUserModel.normalizeEmail(email);
+    const normalizedEmail = UserStaffUserModel.normalizeEmail(email);
 
-    if (!UserStaffUserModel.EMAIL_PATTERN.test(normalized)) {
+    if (!UserStaffUserModel.EMAIL_PATTERN.test(normalizedEmail)) {
       throw new AuthEmailInvalidException();
     }
 
     const unique = [...new Set(roleIds)];
 
-    return { email: normalized, passwordHash, status: UserStatusEnum.ACTIVE, roleIds: unique };
+    return { email: normalizedEmail, passwordHash, status: UserStatusEnum.ACTIVE, roleIds: unique };
   }
 
   public static assertPasswordStrength(password: string): void {

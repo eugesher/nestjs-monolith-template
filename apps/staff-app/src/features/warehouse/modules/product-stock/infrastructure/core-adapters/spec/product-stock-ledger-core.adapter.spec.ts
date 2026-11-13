@@ -28,5 +28,20 @@ describe('ProductStockLedgerCoreAdapter', () => {
       expect(toLedgerRecord).toHaveBeenCalledWith('700');
       expect(handleEnqueue).toHaveBeenCalledWith(record);
     });
+
+    it('stops at a failed enqueue and rejects', async () => {
+      handleEnqueue.mockRejectedValueOnce(new Error('redis is down'));
+      const first = {
+        toLedgerRecord: jest.fn().mockReturnValue({ operationKey: 'product-restocked:700' }),
+      } as unknown as IProductStockLedgerRecordEventsCommand['events'][0];
+      const second = {
+        toLedgerRecord: jest.fn().mockReturnValue({ operationKey: 'product-out-of-stock:700' }),
+      } as unknown as IProductStockLedgerRecordEventsCommand['events'][0];
+
+      const record = adapter.recordEvents({ productStockId: '700', events: [first, second] });
+
+      await expect(record).rejects.toThrow('redis is down');
+      expect(handleEnqueue).toHaveBeenCalledTimes(1);
+    });
   });
 });

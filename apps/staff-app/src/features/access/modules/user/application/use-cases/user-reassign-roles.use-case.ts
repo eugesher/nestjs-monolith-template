@@ -23,17 +23,19 @@ export class UserReassignRolesUseCase {
 
   public async execute(command: IUserReassignRolesCommand): Promise<IUserReassignRolesView> {
     const { userId, roleIds } = command;
-    const exists = await this.repository.existsUser(userId);
+    const userExists = await this.repository.existsUser(userId);
 
-    if (!exists) {
+    if (!userExists) {
       throw new AuthUserNotFoundException(userId);
     }
 
     const storedRoles = await this.repository.findRoles(roleIds);
-    const missing = roleIds.find((roleId) => !storedRoles.some((stored) => stored.id === roleId));
+    const missingRoleId = roleIds.find(
+      (roleId) => !storedRoles.some((stored) => stored.id === roleId),
+    );
 
-    if (missing !== undefined) {
-      throw new AuthRoleNotFoundException(missing);
+    if (missingRoleId !== undefined) {
+      throw new AuthRoleNotFoundException(missingRoleId);
     }
 
     await this.transaction.run(() => this.reassign(command));

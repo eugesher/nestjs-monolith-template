@@ -184,7 +184,7 @@ name.
 
 A lib with a port has the layers of a core module: `shell`, `application`, `outbound` and
 `infrastructure`, in `src/` (`libs/cache`, `libs/credentials`, `libs/health`) or in a part of the
-lib (`libs/database/src/orm`, `libs/local-storage/src/transaction`). Every file of a lib is one
+lib (`libs/database/src/orm`, `libs/local-storage/src/transactional`). Every file of a lib is one
 category, `acme-libs`, so its edges to other libs and packages stay per lib.
 `policies/lib-layers.mjs` gives every layer file an allowlist within its lib from the `file`
 capture; the files outside the layers may reach the whole lib:

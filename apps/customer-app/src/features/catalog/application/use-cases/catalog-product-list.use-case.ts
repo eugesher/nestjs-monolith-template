@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { PaginationHelper, type IPageRequest } from '@acme-libs/toolkit';
+import { PaginationHelper, type IPageWindow } from '@acme-libs/toolkit';
 
 import {
   CATALOG_CACHE_PORT,
@@ -23,19 +23,21 @@ export class CatalogProductListUseCase {
   ) {}
 
   public async execute(command: ICatalogProductListCommand): Promise<ICatalogProductListView> {
-    const { page, limit } = command;
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const pageWindow = PaginationHelper.clampPageWindow({ query: command });
+    const { page, limit } = pageWindow;
 
     return await this.cache.read({
-      ...pageWindow,
+      page,
+      limit,
       ttlMs: this.cacheTtlMs,
       compute: () => this.listPage(pageWindow),
     });
   }
 
-  private async listPage(pageWindow: IPageRequest): Promise<ICatalogProductListView> {
-    const [products, total] = await this.repository.list({ ...pageWindow });
+  private async listPage(pageWindow: IPageWindow): Promise<ICatalogProductListView> {
+    const { page, limit, offset } = pageWindow;
+    const [data, total] = await this.repository.list({ limit, offset });
 
-    return PaginationHelper.toPage(products, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 }

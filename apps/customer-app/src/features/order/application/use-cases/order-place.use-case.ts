@@ -40,41 +40,41 @@ export class OrderPlaceUseCase {
 
   public async execute(command: IOrderPlaceCommand): Promise<IOrderView> {
     const { customerId, productIds, idempotencyKey } = command;
-    const claim = await this.idempotency.claim<IOrderView>({
+    const idempotencyClaim = await this.idempotency.claim<IOrderView>({
       customerId,
       key: idempotencyKey,
       body: { productIds },
     });
 
-    if (claim.outcome === OrderIdempotencyOutcomeEnum.REPLAY) {
+    if (idempotencyClaim.outcome === OrderIdempotencyOutcomeEnum.REPLAY) {
       this.logger.info({ idempotencyKey }, 'Order placement replayed from the idempotency store');
 
-      return claim.storedResponse;
+      return idempotencyClaim.storedResponse;
     }
 
-    if (claim.outcome === OrderIdempotencyOutcomeEnum.IN_FLIGHT) {
+    if (idempotencyClaim.outcome === OrderIdempotencyOutcomeEnum.IN_FLIGHT) {
       throw new OrderIdempotentRequestInFlightException(idempotencyKey);
     }
 
-    if (claim.outcome === OrderIdempotencyOutcomeEnum.MISMATCH) {
+    if (idempotencyClaim.outcome === OrderIdempotencyOutcomeEnum.MISMATCH) {
       throw new OrderIdempotencyKeyReusedException(idempotencyKey);
     }
 
-    const view = await this.write(command);
-    const placedProductIds = view.products.map((product) => product.productId);
+    const orderView = await this.write(command);
+    const placedProductIds = orderView.products.map((product) => product.productId);
 
     await this.ledger.recordPlaced({
-      orderId: view.id,
+      orderId: orderView.id,
       customerId,
       productIds: placedProductIds,
     });
 
     this.logger.info(
-      { orderId: view.id, customerId, units: placedProductIds.length },
+      { orderId: orderView.id, customerId, units: placedProductIds.length },
       'Order placed',
     );
 
-    return view;
+    return orderView;
   }
 
   private async write(command: IOrderPlaceCommand): Promise<IOrderView> {
@@ -93,24 +93,29 @@ export class OrderPlaceUseCase {
     const { customerId, productIds, idempotencyKey } = command;
     const distinctIds = [...new Set(productIds)];
 
-    const stock = await this.productStock.lock({ productIds: distinctIds });
+    const stockOnHand = await this.productStock.lock({ productIds: distinctIds });
     const products = await this.repository.findActiveProducts(distinctIds);
 
-    const draft = OrderModel.createDraft({ customerId, productIds, products, stock });
-    const orderId = await this.repository.insertOrder({ customerId: draft.customerId });
+    const orderDraft = OrderModel.createDraft({
+      customerId,
+      productIds,
+      products,
+      stockOnHand,
+    });
+    const orderId = await this.repository.insertOrder({ customerId: orderDraft.customerId });
 
-    const orderProducts = draft.productIds.map((productId) => ({ orderId, productId }));
+    const orderProducts = orderDraft.productIds.map((productId) => ({ orderId, productId }));
     await this.repository.insertOrderProducts(orderProducts);
 
-    const record = await this.repository.findPlaced(orderId);
+    const orderRecord = await this.repository.findPlaced(orderId);
 
-    const placed = OrderModel.reconstitute(record);
-    const view = placed.toSnapshot();
+    const placed = OrderModel.reconstitute(orderRecord);
+    const orderView = placed.toSnapshot();
     const movements = placed.getMovements();
 
     await this.productStock.withdraw({ movements });
-    await this.idempotency.complete({ customerId, key: idempotencyKey, response: view });
+    await this.idempotency.complete({ customerId, key: idempotencyKey, response: orderView });
 
-    return view;
+    return orderView;
   }
 }

@@ -12,8 +12,8 @@ export class CorrelationIdHelper {
 
   public static resolve(req: IncomingMessage, res: ServerResponse): string {
     const inbound = req.headers[CORRELATION_ID_HEADER];
-    const first = Array.isArray(inbound) ? inbound[0] : inbound;
-    const correlationId = CorrelationIdHelper.fromInbound(first);
+    const inboundValue = Array.isArray(inbound) ? inbound[0] : inbound;
+    const correlationId = CorrelationIdHelper.fromInbound(inboundValue);
 
     req.headers[CORRELATION_ID_HEADER] = correlationId;
 
@@ -33,13 +33,13 @@ export class CorrelationIdHelper {
       return inbound;
     }
 
-    const minted = randomUUID();
+    const mintedId = randomUUID();
 
     (PinoLogger.root as Maybe<typeof PinoLogger.root>)?.warn(
-      { correlationId: minted, inboundLength: inbound.length },
+      { correlationId: mintedId, inboundLength: inbound.length },
       'Invalid inbound correlationId: not a UUID, a new correlationId is minted',
     );
 
-    return minted;
+    return mintedId;
   }
 }

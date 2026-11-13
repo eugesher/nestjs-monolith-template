@@ -52,12 +52,12 @@ export class TagModel extends AggregateRootBase<string> {
   }
 
   private static validName(name: string): string {
-    const trimmed = name.trim();
+    const trimmedName = name.trim();
 
-    if (trimmed.length === 0 || trimmed.length > TagModel.NAME_MAX_LENGTH) {
+    if (trimmedName.length === 0 || trimmedName.length > TagModel.NAME_MAX_LENGTH) {
       throw new TagNameInvalidException(TagModel.NAME_MAX_LENGTH);
     }
 
-    return trimmed;
+    return trimmedName;
   }
 }

@@ -105,5 +105,19 @@ describe('ReminderCreateUseCase', () => {
       ).rejects.toThrow('connection lost');
       expect(invalidate).not.toHaveBeenCalled();
     });
+
+    it('lets a failed invalidation reject without logging the creation', async () => {
+      invalidate.mockRejectedValue(new Error('redis is down'));
+
+      await expect(
+        useCase.execute({
+          ownerId: 'owner-1',
+          title: 'Call the bank',
+          body: undefined,
+          dueOn: '2026-11-05',
+        }),
+      ).rejects.toThrow('redis is down');
+      expect(logger.info).not.toHaveBeenCalled();
+    });
   });
 });

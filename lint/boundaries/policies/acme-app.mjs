@@ -24,6 +24,7 @@ export const acmeApp = [
   from('acme-app:main', [
     to('acme-app:app:module', own('app')),
     libs('bootstrap', 'kernel', 'observability'),
+    packages('@nestjs/common', '@nestjs/core'),
   ]),
   from('acme-app:app:module', [
     to('acme-app:app', own('app')),

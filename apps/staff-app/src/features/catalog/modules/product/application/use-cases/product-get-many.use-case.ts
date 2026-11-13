@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PaginationHelper, type IPage, type Maybe } from '@acme-libs/toolkit';
 
-import { ProductModel } from '../../domain';
+import { ProductGetManyModel } from '../../domain';
 import {
   PRODUCT_GET_MANY_REPOSITORY_PORT,
   PRODUCT_TAG_PORT,
@@ -21,22 +21,18 @@ export class ProductGetManyUseCase {
   ) {}
 
   public async execute(command: IProductGetManyCommand): Promise<IPage<IProductView>> {
-    const { page, limit, tagId } = command;
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
+    const { tagId } = command;
+    const { limit, offset, page } = PaginationHelper.clampPageWindow({ query: command });
     const productIds = await this.findProductIds(tagId);
 
     if (productIds?.length === 0) {
-      return PaginationHelper.toPage([], 0, pageWindow);
+      return PaginationHelper.toPage({ data: [], page, limit, total: 0 });
     }
 
-    const [records, total] = await this.repository.list({ ...pageWindow, productIds });
-    const data = records.map((record) => {
-      const product = ProductModel.reconstitute(record);
+    const [records, total] = await this.repository.list({ limit, offset, productIds });
+    const data = ProductGetManyModel.toViewData(records);
 
-      return product.toSnapshot();
-    });
-
-    return PaginationHelper.toPage(data, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 
   private async findProductIds(tagId: Maybe<string>): Promise<Maybe<string[]>> {

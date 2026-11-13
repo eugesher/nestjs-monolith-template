@@ -41,5 +41,11 @@ describe('ReminderSummaryCacheAdapter', () => {
 
       expect(handleDelByPrefix).toHaveBeenCalledWith('acme:reminders:summary:v1:user-1:');
     });
+
+    it('lets a failed delete reject', async () => {
+      handleDelByPrefix.mockRejectedValue(new Error('redis is down'));
+
+      await expect(adapter.invalidate('user-1')).rejects.toThrow('redis is down');
+    });
   });
 });

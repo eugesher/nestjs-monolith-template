@@ -81,18 +81,21 @@ direction alone: `order-stock.input.ts` is a field of `IOrderCandidateInput`,
 ## Read models
 
 A read answers what a model makes of the record, never the record mapped in the application layer:
-the use case calls `Model.reconstitute(record)` and answers `toSnapshot()`, for one row and for each
-row of a page alike (`TagGetManyUseCase`). A module that only reads has a domain for that alone:
-`LedgerEntryModel` in `apps/staff-app/src/features/ledger`, `ProductStockCoreOnHandModel` in
+for one row the use case calls `Model.reconstitute(record)` and answers `toSnapshot()`. A page has a
+model of its own, `<Context>GetManyModel`, whose static `toViewData(records)` rebuilds every row and
+answers the snapshots (`TagGetManyModel`): the domain defines the listed item, and the use case only
+puts the snapshots on the page. A module that only reads has a domain for that alone:
+`LedgerListEntriesModel` in `apps/staff-app/src/features/ledger`, `ProductStockCoreOnHandModel` in
 `core/modules/src/product-stock`.
 
 **A read model is a plain class.** It records no events and takes no changes, so it does not extend
 `AggregateRootBase`, like `StaffAuthCoreSubjectModel`.
 
-**A record with fewer columns gets a model of its own.** A page of orders carries no products, so
-`OrderSummaryModel` rebuilds it, not `OrderModel`, whose record requires them. Both live in the
-domain of the order, the summary with `order-summary-record.input.ts` and
-`order-summary-snapshot.output.ts`.
+**A list model carries the columns of the list.** A page of orders carries no products, so
+`OrderGetManyModel` rebuilds it, not `OrderModel`, whose record requires them. Both live in the
+domain of the order, the list model with `order-get-many-record.input.ts` and
+`order-get-many-snapshot.output.ts`. A list model does not repeat the checks of the aggregate: it
+rebuilds what the aggregate stored.
 
 **A model may be rebuilt from several rows.** `ProductStockCoreOnHandModel.reconstitute` takes the
 ids of the products and the sums of their stock rows as one record and answers the stock of every

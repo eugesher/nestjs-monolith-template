@@ -8,12 +8,12 @@ export class LedgerAppendHelper {
       );
     }
 
-    const parsed = new Date(value);
+    const parsedDate = new Date(value);
 
-    if (Number.isNaN(parsed.getTime())) {
+    if (Number.isNaN(parsedDate.getTime())) {
       throw new Error(`${field} is not a valid instant: ${value}`);
     }
 
-    return parsed;
+    return parsedDate;
   }
 }

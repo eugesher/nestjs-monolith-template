@@ -17,10 +17,10 @@ export class AuthPermissionGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   public canActivate(context: ExecutionContext): boolean {
-    const targets = [context.getHandler(), context.getClass()];
+    const metadataTargets = [context.getHandler(), context.getClass()];
     const required = this.reflector.getAllAndOverride<Maybe<PermissionCodeEnum>>(
       AuthMetadataKeyEnum.PERMISSION,
-      targets,
+      metadataTargets,
     );
 
     if (!required) {
