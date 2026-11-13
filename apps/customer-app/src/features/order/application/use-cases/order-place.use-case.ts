@@ -100,7 +100,7 @@ export class OrderPlaceUseCase {
       customerId,
       productIds,
       products,
-      stock: stockOnHand,
+      stockOnHand,
     });
     const orderId = await this.repository.insertOrder({ customerId: orderDraft.customerId });
 

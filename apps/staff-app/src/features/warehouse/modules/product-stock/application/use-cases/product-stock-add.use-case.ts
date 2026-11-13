@@ -67,14 +67,14 @@ export class ProductStockAddUseCase {
     }
 
     const writeResult = await this.write(command);
-    const { stock, productStockId, events } = writeResult;
-    const addedEvents = events.filter((event) => event instanceof ProductStockAddedEvent);
+    const { stockOnHand, productStockId, domainEvents } = writeResult;
+    const addedEvents = domainEvents.filter((event) => event instanceof ProductStockAddedEvent);
 
     await this.ledger.recordEvents({ productStockId, events: addedEvents });
 
-    this.logger.info({ productId, quantity, onHand: stock.quantity }, 'Product restocked');
+    this.logger.info({ productId, quantity, onHand: stockOnHand.quantity }, 'Product restocked');
 
-    return stock;
+    return stockOnHand;
   }
 
   private async write(command: IProductStockAddCommand): Promise<IProductStockAddWriteView> {
@@ -110,6 +110,6 @@ export class ProductStockAddUseCase {
 
     await this.idempotency.complete({ staffUserId, key: idempotencyKey, response: stockOnHand });
 
-    return { stock: stockOnHand, productStockId, events: domainEvents };
+    return { stockOnHand, productStockId, domainEvents };
   }
 }

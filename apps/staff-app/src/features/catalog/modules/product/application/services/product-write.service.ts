@@ -71,7 +71,7 @@ export class ProductWriteService {
     const domainEvents = product.pullDomainEvents();
 
     if (product.version === versionAsRead) {
-      return { product, events: domainEvents };
+      return { product, domainEvents };
     }
 
     const isUpdated = await this.repository.update({
@@ -90,7 +90,7 @@ export class ProductWriteService {
 
     const savedProduct = await this.load(productId);
 
-    return { product: savedProduct, events: domainEvents };
+    return { product: savedProduct, domainEvents };
   }
 
   private async load(productId: string): Promise<ProductModel> {

@@ -9,9 +9,9 @@ export class ProductStockCoreOnHandModel {
   public static reconstitute(
     record: IProductStockCoreOnHandRecordInput,
   ): ProductStockCoreOnHandModel {
-    const { productIds, sums } = record;
+    const { productIds, stockSums } = record;
     const stockOnHand = productIds.map((productId) => {
-      const stockSum = sums.find((candidate) => candidate.productId === productId);
+      const stockSum = stockSums.find((candidate) => candidate.productId === productId);
 
       return { productId, quantity: Number(stockSum?.quantity ?? 0) };
     });

@@ -28,8 +28,8 @@ export class ProductPublishUseCase {
     const writeResult = await this.writeService.write({ productId, expectedVersion }, (product) =>
       product.publish(),
     );
-    const { product, events } = writeResult;
-    const publishedEvents = events.filter((event) => event instanceof ProductPublishedEvent);
+    const { product, domainEvents } = writeResult;
+    const publishedEvents = domainEvents.filter((event) => event instanceof ProductPublishedEvent);
 
     await this.catalogCache.invalidate();
     await this.ledger.recordEvents({ events: publishedEvents });

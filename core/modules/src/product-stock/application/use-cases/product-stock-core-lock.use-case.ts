@@ -27,7 +27,7 @@ export class ProductStockCoreLockUseCase {
     const stockSums = await this.repository.sumStock(lockedIds);
     const onHand = ProductStockCoreOnHandModel.reconstitute({
       productIds: lockedIds,
-      sums: stockSums,
+      stockSums,
     });
 
     return onHand.toSnapshot();

@@ -24,7 +24,7 @@ describe('ProductUpdateUseCase', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
         updatedAt: new Date('2026-01-03T00:00:00.000Z'),
       }),
-      events: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
+      domainEvents: [new ProductUpdatedEvent('12', { name: 'Desk lamp' }, { name: 'Lamp' })],
     });
     invalidate = jest.fn().mockResolvedValue(undefined);
     logger = makePinoLoggerMock();

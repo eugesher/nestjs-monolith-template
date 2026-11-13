@@ -64,7 +64,7 @@ export class NoteEditUseCase {
     const storedNote = await this.writeService.reload({
       noteId,
       authorId: editorId,
-      saved: isSaved,
+      isSaved,
     });
 
     return { note: storedNote, edited: true };

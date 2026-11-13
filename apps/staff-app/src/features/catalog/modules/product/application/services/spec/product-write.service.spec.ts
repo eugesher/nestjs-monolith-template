@@ -63,8 +63,8 @@ describe('ProductWriteService', () => {
       });
       expect(findById).toHaveBeenCalledWith('12');
       expect(written.product.updatedAt).toEqual(new Date('2026-01-03T00:00:00.000Z'));
-      expect(written.events).toHaveLength(1);
-      expect(written.events[0]).toBeInstanceOf(ProductUpdatedEvent);
+      expect(written.domainEvents).toHaveLength(1);
+      expect(written.domainEvents[0]).toBeInstanceOf(ProductUpdatedEvent);
       expect(logger.info).not.toHaveBeenCalled();
     });
 
@@ -76,7 +76,7 @@ describe('ProductWriteService', () => {
       expect(update).not.toHaveBeenCalled();
       expect(findById).not.toHaveBeenCalled();
       expect(written.product.version).toBe(3);
-      expect(written.events).toEqual([]);
+      expect(written.domainEvents).toEqual([]);
     });
 
     it('retries a lost race with a fresh read and logs the retry', async () => {

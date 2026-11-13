@@ -59,7 +59,7 @@ export class ProductStockCoreMoveUseCase {
     const insertedIdentifiers = await this.repository.insertMany(movementRows);
     const productStockIds = insertedIdentifiers.map((identifier) => String(identifier.id));
     const stockSums = await this.repository.sumStock(productIds);
-    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, sums: stockSums });
+    const onHand = ProductStockCoreOnHandModel.reconstitute({ productIds, stockSums });
     const stockOnHand = onHand.toSnapshot();
 
     if (kind === ProductStockCoreMovementKindEnum.SUBTRACT) {

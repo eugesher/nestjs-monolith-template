@@ -43,6 +43,6 @@ export class NoteResolveUseCase {
       version: note.version,
     });
 
-    return await this.writeService.reload({ noteId, authorId, saved: isSaved });
+    return await this.writeService.reload({ noteId, authorId, isSaved });
   }
 }

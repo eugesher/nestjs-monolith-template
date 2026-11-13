@@ -36,14 +36,14 @@ export class OrderModel extends AggregateRootBase<string> {
   }
 
   public static createDraft(candidate: IOrderCandidateInput): IOrderDraftOutput {
-    const { customerId, productIds, products, stock } = candidate;
+    const { customerId, productIds, products, stockOnHand } = candidate;
 
     if (productIds.length === 0) {
       throw new OrderEmptyException();
     }
 
     OrderModel.assertFound(productIds, products);
-    OrderModel.assertInStock(productIds, stock);
+    OrderModel.assertInStock(productIds, stockOnHand);
 
     return { customerId, productIds: [...productIds] };
   }
@@ -80,12 +80,12 @@ export class OrderModel extends AggregateRootBase<string> {
     }
   }
 
-  private static assertInStock(productIds: string[], stock: IOrderStockInput[]): void {
+  private static assertInStock(productIds: string[], stockOnHand: IOrderStockInput[]): void {
     const distinctIds = new Set(productIds);
 
     for (const productId of distinctIds) {
       const requestedQuantity = productIds.filter((id) => id === productId).length;
-      const productStock = stock.find((candidate) => candidate.productId === productId);
+      const productStock = stockOnHand.find((candidate) => candidate.productId === productId);
       const available = productStock?.quantity ?? 0;
 
       if (requestedQuantity > available) {

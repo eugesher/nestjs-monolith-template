@@ -25,7 +25,7 @@ describe('OrderModel', () => {
         customerId: 'customer-1',
         productIds: ['100', '103', '100'],
         products: [{ id: '100' }, { id: '103' }],
-        stock: [
+        stockOnHand: [
           { productId: '100', quantity: 2 },
           { productId: '103', quantity: 3 },
         ],
@@ -40,7 +40,7 @@ describe('OrderModel', () => {
           customerId: 'customer-1',
           productIds: [],
           products: [],
-          stock: [],
+          stockOnHand: [],
         }),
       ).toThrow(
         expect.objectContaining({
@@ -56,7 +56,7 @@ describe('OrderModel', () => {
           customerId: 'customer-1',
           productIds: ['999'],
           products: [],
-          stock: [{ productId: '999', quantity: 5 }],
+          stockOnHand: [{ productId: '999', quantity: 5 }],
         }),
       ).toThrow(
         expect.objectContaining({
@@ -73,7 +73,7 @@ describe('OrderModel', () => {
           customerId: 'customer-1',
           productIds: ['100', '100', '100'],
           products: [{ id: '100' }],
-          stock: [{ productId: '100', quantity: 2 }],
+          stockOnHand: [{ productId: '100', quantity: 2 }],
         }),
       ).toThrow(
         expect.objectContaining({
@@ -90,7 +90,7 @@ describe('OrderModel', () => {
           customerId: 'customer-1',
           productIds: ['100'],
           products: [{ id: '100' }],
-          stock: [],
+          stockOnHand: [],
         }),
       ).toThrow(
         expect.objectContaining({
@@ -105,7 +105,7 @@ describe('OrderModel', () => {
         customerId: 'customer-1',
         productIds: ['100', '100'],
         products: [{ id: '100' }],
-        stock: [{ productId: '100', quantity: 2 }],
+        stockOnHand: [{ productId: '100', quantity: 2 }],
       });
 
       expect(draft.productIds).toEqual(['100', '100']);
