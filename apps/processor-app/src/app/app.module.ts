@@ -5,12 +5,12 @@ import { CacheLibModule } from '@acme-libs/cache';
 import { OrmModule } from '@acme-libs/database';
 import {
   HttpExceptionFilter,
-  HttpSecuritySetupModule,
+  HttpSecurityModule,
   StrictValidationPipe,
-  ThrottleSetupModule,
+  ThrottlerSetupModule,
 } from '@acme-libs/http';
 import { AppNameEnum } from '@acme-libs/kernel';
-import { LocalStorageSetupModule } from '@acme-libs/local-storage';
+import { LocalStorageModule } from '@acme-libs/local-storage';
 import { LoggerSetupModule } from '@acme-libs/observability';
 import { BullSetupModule } from '@acme-libs/queue';
 import { AuthModule, HealthModule, QueueModule } from '@acme-processor/features';
@@ -24,13 +24,13 @@ import { ConfigSetupModule, ScheduleSetupModule } from './setup';
   imports: [
     ConfigSetupModule.forRoot(),
     LoggerSetupModule.forRoot(AppNameEnum.PROCESSOR_APP),
-    LocalStorageSetupModule.forRoot(),
+    LocalStorageModule.forRoot(),
     OrmModule.forRoot(entities),
     ScheduleSetupModule,
     BullSetupModule.forRoot(),
     CacheLibModule,
-    HttpSecuritySetupModule.forRoot(),
-    ThrottleSetupModule.forRoot(),
+    HttpSecurityModule.forRoot(),
+    ThrottlerSetupModule.forRoot(),
     AuthGlobalModule,
     AuthModule,
     HealthModule,

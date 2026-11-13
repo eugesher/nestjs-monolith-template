@@ -2,9 +2,9 @@ import { Controller, Get, Global, Module, type INestApplication } from '@nestjs/
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
-import { HttpSecuritySetupModule } from '../http-security-setup.module';
+import { HttpSecurityModule } from '../http-security.module';
 
-describe('HttpSecuritySetupModule', () => {
+describe('HttpSecurityModule', () => {
   let app: INestApplication;
 
   const createApp = async (origins: string): Promise<string> => {
@@ -31,7 +31,7 @@ describe('HttpSecuritySetupModule', () => {
     }
 
     @Module({
-      imports: [ConfigStubModule, HttpSecuritySetupModule.forRoot()],
+      imports: [ConfigStubModule, HttpSecurityModule.forRoot()],
       controllers: [FixtureController],
     })
     class TestModule {}

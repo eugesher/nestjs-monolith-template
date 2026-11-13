@@ -78,21 +78,21 @@ change.
 
 ## AppModule
 
-| Piece                               | Where                                                | What it does                                                                                            |
-| ----------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ConfigSetupModule.forRoot()`       | `app/setup/config`                                   | validates the environment of the app with Joi                                                           |
-| `LoggerSetupModule.forRoot(<app>)`  | `libs/observability`                                 | pino, HTTP request logs                                                                                 |
-| `LocalStorageSetupModule.forRoot()` | `libs/local-storage`                                 | the CLS context of every request under its correlation id                                               |
-| `OrmModule.forRoot(entities)`       | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
-| `ScheduleSetupModule`               | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
-| `BullSetupModule.forRoot()`         | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
-| `CacheLibModule`                    | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
-| `HttpSecuritySetupModule.forRoot()` | `libs/http`                                          | the security headers of `helmet` and CORS from `HTTP_CORS_ORIGINS` (see `037-http-edge.md`)             |
-| `ThrottleSetupModule.forRoot()`     | `libs/http`                                          | the global request limits over Redis and `trust proxy` (see `003-authentication.md`)                    |
-| `AuthGlobalModule`                  | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
-| features, processors                | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
-| `APP_PIPE`                          | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |
-| `APP_FILTER`                        | `HttpExceptionFilter`                                | the error body and its log                                                                              |
+| Piece                              | Where                                                | What it does                                                                                            |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ConfigSetupModule.forRoot()`      | `app/setup/config`                                   | validates the environment of the app with Joi                                                           |
+| `LoggerSetupModule.forRoot(<app>)` | `libs/observability`                                 | pino, HTTP request logs                                                                                 |
+| `LocalStorageModule.forRoot()`     | `libs/local-storage`                                 | the CLS context of every request under its correlation id                                               |
+| `OrmModule.forRoot(entities)`      | `libs/database`, the entities of `app/entities`      | the connection, the entities of the app, `ORM_PORT`, `TRANSACTION_PORT` (see `026-transaction-port.md`) |
+| `ScheduleSetupModule`              | `app/setup/schedule`, processor-app only             | `ScheduleModule.forRoot()` for `@Cron`                                                                  |
+| `BullSetupModule.forRoot()`        | `libs/queue`                                         | the Bull connection to Redis, the job options of every queue                                            |
+| `CacheLibModule`                   | `libs/cache`                                         | global `CACHE_LIB_PORT`                                                                                 |
+| `HttpSecurityModule.forRoot()`     | `libs/http`                                          | the security headers of `helmet` and CORS from `HTTP_CORS_ORIGINS` (see `037-http-edge.md`)             |
+| `ThrottlerSetupModule.forRoot()`   | `libs/http`                                          | the global request limits over Redis and `trust proxy` (see `003-authentication.md`)                    |
+| `AuthGlobalModule`                 | `app/global/auth`                                    | the global guards: JWT, and permissions in a staff app                                                  |
+| features, processors               | `@acme-<app>/features`, `@acme-processor/processors` | the routes and the processors                                                                           |
+| `APP_PIPE`                         | `StrictValidationPipe`                               | whitelist, forbid unknown properties, transform                                                         |
+| `APP_FILTER`                       | `HttpExceptionFilter`                                | the error body and its log                                                                              |
 
 Every module in `app/setup/` is named `*SetupModule`.
 
@@ -116,14 +116,13 @@ before validation and may hold fields no DTO declares. The client finds the corr
 parser to an `HttpException` before any filter runs. A feature filter on a controller catches the
 domain exceptions of that feature first and hands the response to `HttpExceptionFilter`.
 
-**One CLS context carries the correlation id, the transaction and the logs.**
-`LocalStorageSetupModule` of `libs/local-storage` is the root `ClsModule` of the app. Its middleware
-is mounted on every route and opens the context with `run`, never with `enterWith`. It stores the id
-under `CLS_ID`. `LocalStorageTransactionModule` of the same lib, which `OrmModule` imports, adds the
-transactional plugin with `ClsModule.registerPlugins`, and `TRANSACTION_PORT.run` opens a nested
-context with `ifNested: 'inherit'`, so the id stays inside the transaction. A queue job or a tick
-has no request, so `CorrelationContextHelper.run` opens a context of its own
-(`ifNested: 'override'`).
+**One CLS context carries the correlation id, the transaction and the logs.** `LocalStorageModule`
+of `libs/local-storage` is the root `ClsModule` of the app. Its middleware is mounted on every route
+and opens the context with `run`, never with `enterWith`. It stores the id under `CLS_ID`.
+`LocalStorageTransactionModule` of the same lib, which `OrmModule` imports, adds the transactional
+plugin with `ClsModule.registerPlugins`, and `TRANSACTION_PORT.run` opens a nested context with
+`ifNested: 'inherit'`, so the id stays inside the transaction. A queue job or a tick has no request,
+so `CorrelationContextHelper.run` opens a context of its own (`ifNested: 'override'`).
 
 **The context and the request logger see one id.** Both call `CorrelationIdHelper.resolve`, which
 takes the inbound `x-correlation-id`, or creates one and sets it on the request and the response.

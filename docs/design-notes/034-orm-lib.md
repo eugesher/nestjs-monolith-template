@@ -51,7 +51,7 @@ a getter, never in its constructor, so every query joins the transaction open at
 provides, and the plugin needs the `DataSource` of the connection. `OrmModule.forRoot` imports
 `LocalStorageTransactionModule.forRoot()` itself, so an app cannot mount the connection without the
 transactions, and the order is set by the import, not by the `AppModule` of each app. The root
-`ClsModule` stays with the app: `LocalStorageSetupModule` comes before `OrmModule` (see
+`ClsModule` stays with the app: `LocalStorageModule` comes before `OrmModule` (see
 `033-local-storage-lib.md`).
 
 The edge goes one way: `libs/database` may import `libs/local-storage`, and `libs/local-storage` may

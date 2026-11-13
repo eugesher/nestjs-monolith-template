@@ -2,9 +2,9 @@ import { ClsModule, ClsServiceManager, type ClsModuleOptions } from 'nestjs-cls'
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
 
-import { LocalStorageSetupModule } from '../local-storage-setup.module';
+import { LocalStorageModule } from '../local-storage.module';
 
-describe('LocalStorageSetupModule', () => {
+describe('LocalStorageModule', () => {
   let forRoot: jest.SpyInstance;
 
   beforeEach(() => {
@@ -16,14 +16,14 @@ describe('LocalStorageSetupModule', () => {
   });
 
   it('mounts a global context middleware on every route', () => {
-    LocalStorageSetupModule.forRoot();
+    LocalStorageModule.forRoot();
     const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
 
     expect(options).toMatchObject({ global: true, middleware: { mount: true } });
   });
 
   it('opens the request context under the inbound correlation id and returns it in the response', async () => {
-    LocalStorageSetupModule.forRoot();
+    LocalStorageModule.forRoot();
     const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
     const cls = ClsServiceManager.getClsService();
     const req = { headers: { 'x-correlation-id': 'c0ffee00-0000-4000-8000-000000000001' } };
@@ -43,7 +43,7 @@ describe('LocalStorageSetupModule', () => {
   });
 
   it('mints a correlation id for a request without one and puts it on the request', async () => {
-    LocalStorageSetupModule.forRoot();
+    LocalStorageModule.forRoot();
     const [options] = forRoot.mock.calls[0] as [ClsModuleOptions];
     const cls = ClsServiceManager.getClsService();
     const req: { headers: Record<string, string> } = { headers: {} };

@@ -41,10 +41,10 @@ case that owns its transaction cannot register a hook, and the mock of its spec 
 repository from the current transaction on every call, so every query inside `work` joins the
 transaction without being handed anything. The port exposes only `getRepository`, so a repository
 cannot open a transaction of its own, and only `libs/database` and `libs/local-storage` import
-`@nestjs-cls/transactional`. The CLS context itself is opened by `LocalStorageSetupModule` for a
-request and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests in
-it with `ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one
-commit, at the end of the outermost `run`.
+`@nestjs-cls/transactional`. The CLS context itself is opened by `LocalStorageModule` for a request
+and by `CorrelationContextHelper.run` for a job (see `012-app-bootstrap.md`); `run` nests in it with
+`ifNested: 'inherit'`. A `run` inside a `run` joins the open transaction: there is one commit, at
+the end of the outermost `run`.
 
 ## `afterCommit`
 

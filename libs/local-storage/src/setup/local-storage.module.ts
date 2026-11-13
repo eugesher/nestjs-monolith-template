@@ -4,9 +4,9 @@ import type { IncomingMessage, ServerResponse } from 'http';
 
 import { CorrelationIdHelper } from '@acme-libs/observability';
 
-export class LocalStorageSetupModule {
+export class LocalStorageModule {
   public static forRoot(): DynamicModule {
-    const options = LocalStorageSetupModule.options();
+    const options = LocalStorageModule.options();
 
     return ClsModule.forRoot(options);
   }

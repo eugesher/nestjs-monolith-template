@@ -118,7 +118,7 @@ describe('lib entry points', () => {
     '@acme-libs/health/shell/health-lib.module',
     '@acme-libs/auth/modules/auth-jwt.module',
     '@acme-libs/credentials/shell/credentials-lib.module',
-    '@acme-libs/local-storage/setup/local-storage-setup.module',
+    '@acme-libs/local-storage/setup/local-storage.module',
     '@acme-libs/contracts/local-storage/ports/local-storage-transaction.port',
     '@acme-libs/contracts/database/ports/orm.port',
     '@acme-libs/cache/infrastructure/store/cache-lib-store.adapter',

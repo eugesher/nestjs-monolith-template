@@ -75,7 +75,7 @@ describe('app entry points', () => {
     ],
     [
       'apps/processor-app/src/processors/ledger/__fixture__.ts',
-      '@acme-processor/common/shared/ledger/ledger-queue-setup.module',
+      '@acme-processor/common/shared/ledger/ledger-queue.module',
     ],
   ])('%s may NOT reach a deep path through an alias: %s', async (file, source) => {
     await expect({
@@ -255,7 +255,7 @@ describe('app entry points', () => {
   it.each([
     'apps/processor-app/src/processors/ledger/presentation/processors/ledger-append.processor.ts',
     'apps/processor-app/src/features/queue/infrastructure/queue/queue-registry-queue.adapter.ts',
-    'apps/processor-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
+    'apps/processor-app/src/common/shared/ledger/ledger-queue.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
   ])('%s MAY import the ledger record contract of the core ledger', async (file) => {
@@ -278,7 +278,7 @@ describe('app entry points', () => {
   it('a processor MAY register the ledger record queue through common/shared', async () => {
     await expect({
       file: 'apps/processor-app/src/processors/ledger/ledger.module.ts',
-      code: 'import { LedgerQueueSetupModule } from "@acme-processor/common/shared";',
+      code: 'import { LedgerQueueModule } from "@acme-processor/common/shared";',
     }).toPassArchitectureLint();
   });
 

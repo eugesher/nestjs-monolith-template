@@ -11,10 +11,10 @@ import { ThrottleTrustProxySetup } from './proxy/throttle-trust-proxy.setup';
 import { ThrottleRedisStorage } from './storage/throttle-redis.storage';
 import { ThrottleStorageModule } from './storage/throttle-storage.module';
 
-export class ThrottleSetupModule {
+export class ThrottlerSetupModule {
   public static forRoot(): DynamicModule {
     return {
-      module: ThrottleSetupModule,
+      module: ThrottlerSetupModule,
       imports: [
         ThrottlerModule.forRootAsync({
           imports: [ThrottleStorageModule],
@@ -23,7 +23,7 @@ export class ThrottleSetupModule {
             config: ConfigService,
             reflector: Reflector,
             storage: ThrottleRedisStorage,
-          ): ThrottlerModuleOptions => ThrottleSetupModule.options(config, reflector, storage),
+          ): ThrottlerModuleOptions => ThrottlerSetupModule.options(config, reflector, storage),
         }),
       ],
       providers: [{ provide: APP_GUARD, useClass: ThrottleGuard }, ThrottleTrustProxySetup],

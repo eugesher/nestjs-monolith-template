@@ -1,2 +1,2 @@
-export * from './setup/local-storage-setup.module';
+export * from './setup/local-storage.module';
 export * from './transaction';

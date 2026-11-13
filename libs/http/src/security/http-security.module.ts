@@ -8,7 +8,7 @@ import helmet, { type HelmetOptions } from 'helmet';
 
 import { HttpCorsMiddleware } from './middlewares/http-cors.middleware';
 
-export class HttpSecuritySetupModule implements NestModule {
+export class HttpSecurityModule implements NestModule {
   private static readonly HELMET_OPTIONS: HelmetOptions = {
     contentSecurityPolicy: {
       useDefaults: false,
@@ -18,11 +18,11 @@ export class HttpSecuritySetupModule implements NestModule {
   };
 
   public static forRoot(): DynamicModule {
-    return { module: HttpSecuritySetupModule };
+    return { module: HttpSecurityModule };
   }
 
   public configure(consumer: MiddlewareConsumer): void {
-    const headers = helmet(HttpSecuritySetupModule.HELMET_OPTIONS);
+    const headers = helmet(HttpSecurityModule.HELMET_OPTIONS);
 
     consumer
       .apply(headers, HttpCorsMiddleware)

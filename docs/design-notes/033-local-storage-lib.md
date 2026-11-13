@@ -5,19 +5,19 @@ so they live in one lib, `libs/local-storage`, in two parts:
 
 | Part           | Entry                                     | What it gives the app                                                       |
 | -------------- | ----------------------------------------- | --------------------------------------------------------------------------- |
-| `setup/`       | `LocalStorageSetupModule.forRoot()`       | the root `ClsModule`, the context of every request under its correlation id |
+| `setup/`       | `LocalStorageModule.forRoot()`            | the root `ClsModule`, the context of every request under its correlation id |
 | `transaction/` | `LocalStorageTransactionModule.forRoot()` | the transactional plugin, global `TRANSACTION_PORT`                         |
 
-`AppModule` imports `LocalStorageSetupModule` before `OrmModule` of `libs/database`, and `OrmModule`
+`AppModule` imports `LocalStorageModule` before `OrmModule` of `libs/database`, and `OrmModule`
 imports `LocalStorageTransactionModule` (see `012-app-bootstrap.md`).
 
 ## `setup/`
 
-`LocalStorageSetupModule` is a setup class, as `BullSetupModule` is (see `032-queue-lib.md`):
-`forRoot()` returns `ClsModule.forRoot` with the options of the private static `options()`. The
-middleware is mounted on every route and stores the id of `CorrelationIdHelper.resolve` under
-`CLS_ID`, so the context and the pino request logger see one id. The helper stays in
-`libs/observability`, which the lib imports: the logger needs it too.
+`LocalStorageModule` is a setup class, as `BullSetupModule` is (see `032-queue-lib.md`): `forRoot()`
+returns `ClsModule.forRoot` with the options of the private static `options()`. The middleware is
+mounted on every route and stores the id of `CorrelationIdHelper.resolve` under `CLS_ID`, so the
+context and the pino request logger see one id. The helper stays in `libs/observability`, which the
+lib imports: the logger needs it too.
 
 ## `transaction/`
 
@@ -57,7 +57,7 @@ import `libs/local-storage`.
 
 | Importer                                  | Uses                                                              |
 | ----------------------------------------- | ----------------------------------------------------------------- |
-| `app.module.ts`                           | `LocalStorageSetupModule.forRoot()`                               |
+| `app.module.ts`                           | `LocalStorageModule.forRoot()`                                    |
 | `OrmModule` of `libs/database`            | `LocalStorageTransactionModule.forRoot()`                         |
 | `infrastructure` of the apps and the core | `TRANSACTION_PORT` from the contracts, in the transaction adapter |
 

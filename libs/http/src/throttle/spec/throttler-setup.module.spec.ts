@@ -7,9 +7,9 @@ import { LoggerModule, PinoLogger } from 'nestjs-pino';
 import { HttpExceptionFilter } from '../../filters/http-exception.filter';
 import { AuthThrottle } from '../decorators/throttle-auth.decorator';
 import { ThrottleRedisStorage } from '../storage/throttle-redis.storage';
-import { ThrottleSetupModule } from '../throttle-setup.module';
+import { ThrottlerSetupModule } from '../throttler-setup.module';
 
-describe('ThrottleSetupModule', () => {
+describe('ThrottlerSetupModule', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -60,7 +60,7 @@ describe('ThrottleSetupModule', () => {
       imports: [
         LoggerModule.forRoot({ pinoHttp: { level: 'silent' } }),
         ConfigStubModule,
-        ThrottleSetupModule.forRoot(),
+        ThrottlerSetupModule.forRoot(),
       ],
       controllers: [FixtureController],
       providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],
