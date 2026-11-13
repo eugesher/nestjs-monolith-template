@@ -13,6 +13,11 @@ export const acmeCore = [
     ['module'],
   ],
   [
+    'acme-core:modules:infrastructure:core-adapters',
+    'core/modules/src/*/infrastructure/core-adapters/**',
+    ['module'],
+  ],
+  [
     'acme-core:modules:infrastructure:lib-adapters',
     'core/modules/src/*/infrastructure/lib-adapters/**',
     ['module'],

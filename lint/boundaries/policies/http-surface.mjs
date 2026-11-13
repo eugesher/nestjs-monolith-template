@@ -15,6 +15,7 @@ export const httpSurface = {
           'acme-app:common:modules:shell:facade',
           'acme-core:modules:application',
           'acme-core:modules:infrastructure',
+          'acme-core:modules:infrastructure:core-adapters',
           'acme-core:modules:shell',
           'acme-core:modules:shell:facade',
           'acme-app:processors:application',

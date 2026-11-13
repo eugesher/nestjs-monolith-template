@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { LedgerLibModule } from '@acme-libs/ledger';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
+import { LedgerCoreModule } from '@acme-core/modules/ledger';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 
 import { OrderGetManyUseCase, OrderGetOneUseCase, OrderPlaceUseCase } from './application';
@@ -10,7 +10,7 @@ import {
   OrderGetManyRepository,
   OrderGetOneRepository,
   OrderIdempotencyCoreAdapter,
-  OrderLedgerLibAdapter,
+  OrderLedgerCoreAdapter,
   OrderPlaceRepository,
   OrderProductStockCoreAdapter,
   OrderTransactionAdapter,
@@ -18,7 +18,7 @@ import {
 import { OrderController } from './presentation';
 
 @Module({
-  imports: [LedgerLibModule, IdempotencyCoreModule, ProductStockCoreModule],
+  imports: [LedgerCoreModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [OrderController],
   providers: [
     OrderGetManyUseCase,
@@ -28,7 +28,7 @@ import { OrderController } from './presentation';
     OrderGetOneRepository.provider,
     OrderPlaceRepository.provider,
     OrderIdempotencyCoreAdapter.provider,
-    OrderLedgerLibAdapter.provider,
+    OrderLedgerCoreAdapter.provider,
     OrderProductStockCoreAdapter.provider,
     OrderTransactionAdapter.provider,
     HttpExceptionFilter,

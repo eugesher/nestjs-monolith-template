@@ -5,5 +5,4 @@ export interface IProductLedgerRecordOutput {
   action: string;
   payload: Record<string, unknown>;
   occurredAt: string;
-  correlationId: string;
 }

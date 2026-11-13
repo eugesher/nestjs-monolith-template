@@ -149,10 +149,24 @@ entity list of processor-app is in `023-processor-app.md`.
 
 ## Logs
 
-Outside production, the `info` lines of `InstanceLoader`, `NestFactory`, `NestApplication`,
-`RouterExplorer` and `RoutesResolver` are dropped by a pino `logMethod` hook in `LoggerSetupConfig`:
-a start prints `listening` instead of one line per module and route. Their warnings and errors still
-pass, and production keeps everything.
+**A write logs once, where it happens.** The use case that changes state logs one `info` line with
+the ids of what it changed, after the change: `Tag deleted`, `Product archived`. A thin use case
+over a core module or a common module logs nothing, because the module below it already logged the
+operation. A read logs nothing: the request log of pino-http already carries the method, the URL,
+the status and the correlation id. A refusal the client sees as a 4xx is the line
+`Response with error` of `HttpExceptionFilter`, and a use case adds its own line only when the
+filter cannot see what happened, such as a failed login or a refused idempotency key.
+
+**Only application logs, in every kind of module.** Lint lets `nestjs-pino` into the application
+layer of features, processors, common modules and core modules alike. Presentation, adapters,
+infrastructure and the shell log nothing; a lib takes the package as a whole, so its infrastructure
+logs its own failures. Retries log through `OccRetryHelper` and `ReplayRetryHelper`, which take the
+logger of the use case: `warn` for an attempt, `error` with a call to replay after the last one.
+
+`LoggerSetupConfig` sends the logs through `pino-pretty` only when `NODE_ENV` is `development`.
+Production, the e2e runs with `NODE_ENV=test` and a process without `NODE_ENV` log JSON lines, so
+`pino-pretty`, a dev dependency, is never loaded outside a local start. Every line of Nest itself
+passes, including one line per module and route at start.
 
 ## Entry points
 

@@ -1,26 +1,26 @@
 import { Module } from '@nestjs/common';
 
-import { LedgerLibModule } from '@acme-libs/ledger';
+import { LedgerCoreModule } from '@acme-core/modules/ledger';
 import { PRODUCT_CORE_PORT } from '@acme-core/contracts/product';
 
 import { ProductCoreArchiveUseCase } from '../application';
 import {
   ProductCoreArchiveRepository,
   ProductCoreCatalogCacheAdapter,
-  ProductCoreLedgerLibAdapter,
+  ProductCoreLedgerCoreAdapter,
   ProductCoreTransactionAdapter,
 } from '../infrastructure';
 import { ProductCoreFacade } from './product-core.facade';
 
 @Module({
-  imports: [LedgerLibModule],
+  imports: [LedgerCoreModule],
   exports: [PRODUCT_CORE_PORT],
   providers: [
     { provide: PRODUCT_CORE_PORT, useClass: ProductCoreFacade },
     ProductCoreArchiveUseCase,
     ProductCoreArchiveRepository.provider,
     ProductCoreCatalogCacheAdapter.provider,
-    ProductCoreLedgerLibAdapter.provider,
+    ProductCoreLedgerCoreAdapter.provider,
     ProductCoreTransactionAdapter.provider,
   ],
 })

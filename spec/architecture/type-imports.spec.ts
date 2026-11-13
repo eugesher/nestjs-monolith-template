@@ -25,7 +25,7 @@ describe('type imports', () => {
 
   it('a decorated file may NOT import an interface without type', async () => {
     const rules = await rulesOf(
-      'import { Injectable } from "@nestjs/common";\nimport { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n@Injectable()\nexport class Item {\n  public read(port: ILedgerLibPort): ILedgerLibPort {\n    return port;\n  }\n}\n',
+      'import { Injectable } from "@nestjs/common";\nimport { ILedgerCorePort } from "@acme-libs/contracts/ledger";\n@Injectable()\nexport class Item {\n  public read(port: ILedgerCorePort): ILedgerCorePort {\n    return port;\n  }\n}\n',
     );
 
     expect(rules).toContain('acme/type-imports-in-decorated-files');
@@ -33,7 +33,7 @@ describe('type imports', () => {
 
   it('a decorated file MAY import an interface with type', async () => {
     const rules = await rulesOf(
-      'import { Injectable } from "@nestjs/common";\nimport type { ILedgerLibPort } from "@acme-libs/contracts/ledger";\n@Injectable()\nexport class Item {\n  public read(port: ILedgerLibPort): ILedgerLibPort {\n    return port;\n  }\n}\n',
+      'import { Injectable } from "@nestjs/common";\nimport type { ILedgerCorePort } from "@acme-libs/contracts/ledger";\n@Injectable()\nexport class Item {\n  public read(port: ILedgerCorePort): ILedgerCorePort {\n    return port;\n  }\n}\n',
     );
 
     expect(rules).not.toContain('acme/type-imports-in-decorated-files');
@@ -74,7 +74,7 @@ describe('type imports', () => {
 
   it('a file without decorators may NOT import a type without type', async () => {
     const rules = await rulesOf(
-      'import { ILedgerLibPort } from "@acme-libs/contracts/ledger";\nexport const read = (port: ILedgerLibPort): ILedgerLibPort => port;\n',
+      'import { ILedgerCorePort } from "@acme-libs/contracts/ledger";\nexport const read = (port: ILedgerCorePort): ILedgerCorePort => port;\n',
     );
 
     expect(rules).toContain('@typescript-eslint/consistent-type-imports');
@@ -83,7 +83,7 @@ describe('type imports', () => {
 
   it('an import of types only may NOT keep type inside the braces', async () => {
     const rules = await rulesOf(
-      'import { type ILedgerLibPort } from "@acme-libs/contracts/ledger";\nexport const read = (port: ILedgerLibPort): ILedgerLibPort => port;\n',
+      'import { type ILedgerCorePort } from "@acme-libs/contracts/ledger";\nexport const read = (port: ILedgerCorePort): ILedgerCorePort => port;\n',
     );
 
     expect(rules).toContain('@typescript-eslint/no-import-type-side-effects');

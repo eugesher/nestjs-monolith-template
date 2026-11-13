@@ -1,4 +1,7 @@
+import type { PinoLogger } from 'nestjs-pino';
+
 import { IdempotencyStatusEnum } from '@acme-libs/kernel';
+import { makePinoLoggerMock, type PinoLoggerMock } from '@acme-libs/testing';
 
 import {
   IdempotencyCoreClaimInsertOutcomeEnum,
@@ -8,6 +11,7 @@ import { IdempotencyCoreClaimUseCase } from '../idempotency-core-claim.use-case'
 
 describe('IdempotencyCoreClaimUseCase', () => {
   let repository: { insert: jest.Mock; findByKey: jest.Mock };
+  let logger: PinoLoggerMock;
   let useCase: IdempotencyCoreClaimUseCase;
 
   beforeEach(() => {
@@ -15,7 +19,8 @@ describe('IdempotencyCoreClaimUseCase', () => {
       insert: jest.fn().mockResolvedValue(IdempotencyCoreClaimInsertOutcomeEnum.INSERTED),
       findByKey: jest.fn(),
     };
-    useCase = new IdempotencyCoreClaimUseCase(repository);
+    logger = makePinoLoggerMock();
+    useCase = new IdempotencyCoreClaimUseCase(repository, logger as unknown as PinoLogger);
   });
 
   afterEach(() => {
@@ -40,6 +45,7 @@ describe('IdempotencyCoreClaimUseCase', () => {
         responseBody: null,
       });
       expect(repository.findByKey).not.toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
     });
 
     it('replays the stored response of a completed key with the same body', async () => {
@@ -77,6 +83,10 @@ describe('IdempotencyCoreClaimUseCase', () => {
       });
 
       expect(claim).toEqual({ outcome: 'in-flight', storedResponse: undefined });
+      expect(logger.info).toHaveBeenCalledWith(
+        { scope: 'customer:101', key: 'key-1' },
+        'Idempotency key is in flight, the request is refused',
+      );
     });
 
     it('passes a failing insert through as is without reading the key', async () => {
@@ -108,6 +118,10 @@ describe('IdempotencyCoreClaimUseCase', () => {
       });
 
       expect(claim).toEqual({ outcome: 'mismatch', storedResponse: undefined });
+      expect(logger.info).toHaveBeenCalledWith(
+        { scope: 'customer:101', key: 'key-1' },
+        'Idempotency key reused with another body, the request is refused',
+      );
     });
 
     it('answers in-flight when the holder released the key between the insert and the read', async () => {
@@ -121,6 +135,10 @@ describe('IdempotencyCoreClaimUseCase', () => {
       });
 
       expect(claim).toEqual({ outcome: 'in-flight', storedResponse: undefined });
+      expect(logger.info).toHaveBeenCalledWith(
+        { scope: 'customer:101', key: 'key-1' },
+        'Idempotency key is in flight, the request is refused',
+      );
     });
 
     it('lets an invalid key escape before touching the store', async () => {

@@ -42,10 +42,11 @@ serves the identity exceptions of several apps the same way.
 with a compound name keeps it whole: `ProductStockCorePostSubtractQueueAdapter` sends to the
 post-subtract queue.
 
-**A lib adapter is named by the port and the lib.** `OrderLedgerLibAdapter` implements
-`IOrderLedgerPort`, `ORDER_LEDGER_PORT`, in
-`infrastructure/lib-adapters/order-ledger-lib.adapter.ts`, as `AuthCredentialsLibAdapter` implements
-`IAuthCredentialsPort`.
+**An adapter to a lib or a core module is named by the port and the target.**
+`AuthCredentialsLibAdapter` implements `IAuthCredentialsPort` in
+`infrastructure/lib-adapters/auth-credentials-lib.adapter.ts`, and `OrderLedgerCoreAdapter`
+implements `IOrderLedgerPort`, `ORDER_LEDGER_PORT`, in
+`infrastructure/core-adapters/order-ledger-core.adapter.ts`.
 
 **The commands of a service live in one file named after the service.** A service of
 `application/services` takes its commands from

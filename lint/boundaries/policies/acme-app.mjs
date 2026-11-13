@@ -44,7 +44,7 @@ export const acmeApp = [
     appContracts,
     to('acme-core:contracts'),
     baseLibs('http', 'observability', 'queue'),
-    libContracts('cache', 'ledger'),
+    libContracts('cache'),
     packages('@nestjs/common', 'nestjs-pino'),
   ]),
   from('acme-app:common:shared:index', [
@@ -122,8 +122,7 @@ export const acmeApp = [
     to('acme-core:contracts'),
     to('acme-core:entities'),
     to('acme-app:common:entities', own('app')),
-    baseLibs('database', 'testing'),
-    libContracts('ledger'),
+    baseLibs('database', 'observability', 'testing'),
     packages(
       '@nestjs/bull',
       '@nestjs/common',

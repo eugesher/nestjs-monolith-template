@@ -29,7 +29,6 @@ export const acmeLibs = [
       'database',
       'health',
       'http',
-      'ledger',
       'local-storage',
       'observability',
       'openapi',
@@ -55,10 +54,6 @@ export const acmeLibs = [
     ),
   ]),
   { from: { file: { path: '**/*.spec.ts' } }, allow: [libs('testing')] },
-  fromLib('ledger', [
-    libs('config', 'queue'),
-    packages('@nestjs/bull', '@nestjs/common', 'bull', 'nestjs-pino'),
-  ]),
   fromLib('credentials', [
     packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt', 'argon2'),
   ]),

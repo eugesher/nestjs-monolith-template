@@ -53,8 +53,13 @@ An unknown queue or job answers 404, a job that is not failed 409. A retried job
 attempt, not a new round. The ledger deduplicates on the operation key, so retrying a ledger record
 that did append writes nothing.
 
+**Both actions log the staff user.** A retry logs `Failed job returned to the queue` at `info` with
+the queue, the job id and `staffUserId`. A delete logs `Failed job deleted` at `warn` with the same
+fields and the `data` of the job: a deleted ledger record never reaches the ledger, and the log is
+the only place it can be restored from.
+
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
-`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_ENQUEUE_RETRY_ATTEMPTS` of the ledger lib and
+`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_ENQUEUE_RETRY_ATTEMPTS` of the core ledger and
 `ENQUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and tracing, and `JWT_SECRET`,
 `JWT_EXPIRES_IN` and the argon2 costs for the staff login. No cache TTL.
 

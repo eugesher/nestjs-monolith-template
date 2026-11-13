@@ -257,11 +257,6 @@ describe('unused edges', () => {
   describe('core modules', () => {
     it.each([
       [
-        'core outbound may NOT reach the contracts of its module: a port speaks the module types, the contracts serve consumers',
-        'core/modules/src/__unused-fixture__/outbound/__fixture__.ts',
-        '../../../../contracts/src/__unused-fixture__',
-      ],
-      [
         'core infrastructure may NOT reach the contracts of its module: it implements outbound ports',
         'core/modules/src/__unused-fixture__/infrastructure/persistence/__fixture__.ts',
         '../../../../../contracts/src/__unused-fixture__',

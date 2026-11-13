@@ -41,6 +41,32 @@ describe('EnvHelper', () => {
     });
   });
 
+  describe('isDevelopment', () => {
+    it('is true when NODE_ENV is development', () => {
+      process.env.NODE_ENV = 'development';
+
+      const development = EnvHelper.isDevelopment();
+
+      expect(development).toBe(true);
+    });
+
+    it.each(['production', 'test'])('is false when NODE_ENV is %s', (nodeEnv) => {
+      process.env.NODE_ENV = nodeEnv;
+
+      const development = EnvHelper.isDevelopment();
+
+      expect(development).toBe(false);
+    });
+
+    it('is false when NODE_ENV is not set', () => {
+      delete process.env.NODE_ENV;
+
+      const development = EnvHelper.isDevelopment();
+
+      expect(development).toBe(false);
+    });
+  });
+
   describe('appEnvFilePaths', () => {
     afterEach(() => {
       jest.restoreAllMocks();

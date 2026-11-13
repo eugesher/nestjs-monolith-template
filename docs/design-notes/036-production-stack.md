@@ -32,8 +32,8 @@ when the dependency returns. Docker without Swarm only reports the state and res
 orchestrator such as Kubernetes ignores the instruction and probes `/health` and `/health/ready`
 itself. Each check is a request and so a line of the request log.
 
-The image has no dev dependencies and so no `pino-pretty`, which `LoggerSetupConfig` uses only
-outside production: a production process logs JSON.
+The image has no dev dependencies and so no `pino-pretty`, which `LoggerSetupConfig` uses only with
+`NODE_ENV=development`: a production process logs JSON.
 
 The target `migrations` of the same `Dockerfile` holds `migrations/`, the production dependencies
 and `scripts/node/admin-create.ts`. Its default command runs `migration:run` once. The apps depend

@@ -7,7 +7,7 @@ import { E2EContext } from '@acme-libs/testing';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-libs/contracts/ledger';
+} from '@acme-core/contracts/ledger';
 import {
   PRODUCT_STOCK_POST_SUBTRACT_QUEUE,
   type IProductStockPostSubtractPayload,

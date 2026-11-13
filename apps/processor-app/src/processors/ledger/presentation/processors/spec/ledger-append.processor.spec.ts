@@ -1,7 +1,7 @@
 import type { Job } from 'bull';
 
 import { CorrelationContextHelper } from '@acme-libs/observability';
-import type { ILedgerRecordProcessorPayload } from '@acme-libs/contracts/ledger';
+import type { ILedgerRecordProcessorPayload } from '@acme-core/contracts/ledger';
 
 import { LedgerAppendProcessor } from '../ledger-append.processor';
 import type { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../../application';

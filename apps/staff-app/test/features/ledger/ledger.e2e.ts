@@ -1,7 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 
-import { LEDGER_LIB_PORT, type ILedgerLibPort } from '@acme-libs/contracts/ledger';
+import { CorrelationContextHelper } from '@acme-libs/observability';
+import { LEDGER_CORE_PORT, type ILedgerCorePort } from '@acme-core/contracts/ledger';
 
 import type { AppE2EContext } from '../../context/app-e2e.context';
 
@@ -37,9 +38,9 @@ export class LedgerE2E {
   }
 
   public handleEnqueue(): void {
-    describe('LEDGER_LIB_PORT handleEnqueue', () => {
+    describe('LEDGER_CORE_PORT handleEnqueue', () => {
       it('should keep one job for a record enqueued twice under the same operation key', async () => {
-        const ledger = this.ctx.moduleFixture.get<ILedgerLibPort>(LEDGER_LIB_PORT);
+        const ledger = this.ctx.moduleFixture.get<ILedgerCorePort>(LEDGER_CORE_PORT);
         const record = {
           operationKey: 'e2e-enqueue:1',
           subjectType: 'product',
@@ -47,15 +48,18 @@ export class LedgerE2E {
           action: 'ProductCreated',
           payload: { name: 'Twice' },
           occurredAt: '2026-01-05T08:00:00.000Z',
-          correlationId: 'e2e00000-0000-4000-8000-000000000019',
         };
 
-        await ledger.handleEnqueue(record);
-        await ledger.handleEnqueue(record);
+        await CorrelationContextHelper.run('e2e00000-0000-4000-8000-000000000019', async () => {
+          await ledger.handleEnqueue(record);
+          await ledger.handleEnqueue(record);
+        });
 
         const records = await this.ctx.takeLedgerRecords();
 
-        expect(records).toEqual([record]);
+        expect(records).toEqual([
+          { ...record, correlationId: 'e2e00000-0000-4000-8000-000000000019' },
+        ]);
       });
     });
   }
