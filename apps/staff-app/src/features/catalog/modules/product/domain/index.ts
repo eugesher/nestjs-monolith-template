@@ -19,4 +19,5 @@ export * from './helpers/product.helper';
 
 export * from './interfaces';
 
+export * from './models/product-get-many.model';
 export * from './models/product.model';

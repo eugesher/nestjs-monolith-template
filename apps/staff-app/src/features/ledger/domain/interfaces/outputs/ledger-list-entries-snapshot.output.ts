@@ -1,4 +1,4 @@
-export interface ILedgerEntryRecordInput {
+export interface ILedgerListEntriesSnapshotOutput {
   id: string;
   operationKey: string;
   subjectType: string;
@@ -6,6 +6,6 @@ export interface ILedgerEntryRecordInput {
   action: string;
   payload: Record<string, unknown>;
   correlationId: string;
-  occurredAt: Date;
-  recordedAt: Date;
+  occurredAt: string;
+  recordedAt: string;
 }

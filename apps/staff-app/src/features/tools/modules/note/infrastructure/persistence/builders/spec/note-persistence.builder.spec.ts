@@ -69,7 +69,6 @@ describe('NotePersistenceBuilder', () => {
       const builder = new NotePersistenceBuilder(baseBuilder);
 
       builder.forList({
-        page: 3,
         limit: 20,
         offset: 40,
         authorId: '2',
@@ -88,7 +87,6 @@ describe('NotePersistenceBuilder', () => {
       const builder = new NotePersistenceBuilder(baseBuilder);
 
       builder.forList({
-        page: 1,
         limit: 20,
         offset: 0,
         authorId: '2',
@@ -106,7 +104,6 @@ describe('NotePersistenceBuilder', () => {
     it('returns the same builder for chaining', () => {
       const builder = new NotePersistenceBuilder(baseBuilder);
       const chained = builder.forList({
-        page: 3,
         limit: 20,
         offset: 40,
         authorId: '2',

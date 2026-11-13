@@ -1,3 +1,3 @@
-export * from './inputs/ledger-entry-record.input';
+export * from './inputs/ledger-list-entries-record.input';
 
-export * from './outputs/ledger-entry-snapshot.output';
+export * from './outputs/ledger-list-entries-snapshot.output';

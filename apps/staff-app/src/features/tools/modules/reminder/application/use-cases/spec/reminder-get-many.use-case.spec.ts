@@ -36,7 +36,6 @@ describe('ReminderGetManyUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 20,
         offset: 0,
         ownerId: 'owner-1',
@@ -72,7 +71,6 @@ describe('ReminderGetManyUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 2,
         limit: 100,
         offset: 100,
         ownerId: 'owner-1',

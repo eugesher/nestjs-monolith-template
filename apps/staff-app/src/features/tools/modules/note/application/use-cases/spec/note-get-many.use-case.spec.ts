@@ -36,7 +36,6 @@ describe('NoteGetManyUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 20,
         offset: 0,
         subjectType: undefined,
@@ -76,7 +75,6 @@ describe('NoteGetManyUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 100,
         offset: 0,
         subjectType: 'product',

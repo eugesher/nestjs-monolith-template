@@ -14,19 +14,15 @@ export class QueueListFailedJobsUseCase {
   ) {}
 
   public async execute(command: IQueueListFailedJobsCommand): Promise<IQueueListFailedJobsView> {
-    const { queueName, page, limit } = command;
+    const { queueName } = command;
 
     if (!this.registry.has(queueName)) {
       throw new QueueNotFoundException(queueName);
     }
 
-    const pageWindow = PaginationHelper.clampPageWindow(page, limit);
-    const [jobs, total] = await this.registry.findFailedJobs({
-      queueName,
-      offset: pageWindow.offset,
-      limit: pageWindow.limit,
-    });
+    const { limit, offset, page } = PaginationHelper.clampPageWindow({ query: command });
+    const [data, total] = await this.registry.findFailedJobs({ queueName, offset, limit });
 
-    return PaginationHelper.toPage(jobs, total, pageWindow);
+    return PaginationHelper.toPage({ data, page, limit, total });
   }
 }

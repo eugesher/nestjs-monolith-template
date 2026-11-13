@@ -11,4 +11,5 @@ export * from './exceptions/reminder-version-mismatch.exception';
 
 export * from './interfaces';
 
+export * from './models/reminder-get-many.model';
 export * from './models/reminder.model';

@@ -30,7 +30,7 @@ describe('CatalogProductListUseCase', () => {
 
       await useCase.execute({ page: 2, limit: 10 });
 
-      expect(list).toHaveBeenCalledWith({ page: 2, limit: 10, offset: 10 });
+      expect(list).toHaveBeenCalledWith({ limit: 10, offset: 10 });
     });
 
     it('builds the page of a miss from the repository rows and their total', async () => {
@@ -52,7 +52,7 @@ describe('CatalogProductListUseCase', () => {
 
       await useCase.execute({ page: undefined, limit: undefined });
 
-      expect(list).toHaveBeenCalledWith({ page: 1, limit: 20, offset: 0 });
+      expect(list).toHaveBeenCalledWith({ limit: 20, offset: 0 });
     });
 
     it('caps the limit at 100', async () => {
@@ -60,7 +60,7 @@ describe('CatalogProductListUseCase', () => {
 
       await useCase.execute({ page: 1, limit: 500 });
 
-      expect(list).toHaveBeenCalledWith({ page: 1, limit: 100, offset: 0 });
+      expect(list).toHaveBeenCalledWith({ limit: 100, offset: 0 });
     });
 
     it('answers a cached page without asking the repository', async () => {

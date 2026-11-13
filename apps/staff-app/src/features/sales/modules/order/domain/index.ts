@@ -6,5 +6,5 @@ export * from './exceptions/order-tag-not-found.exception';
 
 export * from './interfaces';
 
-export * from './models/order-summary.model';
+export * from './models/order-get-many.model';
 export * from './models/order.model';

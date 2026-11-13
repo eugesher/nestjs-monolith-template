@@ -20,7 +20,6 @@ describe('OrderGetManyUseCase', () => {
       });
 
       expect(list).toHaveBeenCalledWith({
-        page: 1,
         limit: 20,
         offset: 0,
         customerId: 'customer-1',
@@ -38,7 +37,6 @@ describe('OrderGetManyUseCase', () => {
       await useCase.execute({ customerId: 'customer-1', page: 3, limit: 500 });
 
       expect(list).toHaveBeenCalledWith({
-        page: 3,
         limit: 100,
         offset: 200,
         customerId: 'customer-1',

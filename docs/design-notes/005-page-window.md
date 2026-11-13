@@ -19,14 +19,17 @@ with an empty body. The OpenAPI description of each field names its cap from
 `PaginationHelper.MAX_PAGE` and `MAX_LIMIT`, the defaults of `clampPageWindow`, so the document and
 the cap cannot drift apart.
 
-**The helper computes the offset.** `clampPageWindow` answers `{ page, limit, offset }`, and the
-repository passes `offset` and `limit` to the query as they are. The page cap keeps the offset under
-100 000: `@IsInt()` accepts `1e20`, whose offset JavaScript prints as `1e+22`, which MySQL rejects
-as a syntax error. It also bounds the cache of the customer catalog, which keeps one key per page
-and limit (see `020-cross-app-cache-invalidation.md`).
+**The helper computes the offset.** `clampPageWindow({ query, options })` takes the `page` and
+`limit` of the query, here the command of the use case itself, and the defaults and caps of the
+options, and answers `{ page, limit, offset }`. The query of the repository carries only `limit` and
+`offset`, which the repository passes to SQL as they are, and `toPage({ data, page, limit, total })`
+builds the response. The page cap keeps the offset under 100 000: `@IsInt()` accepts `1e20`, whose
+offset JavaScript prints as `1e+22`, which MySQL rejects as a syntax error. It also bounds the cache
+of the customer catalog, which keeps one key per page and limit (see
+`020-cross-app-cache-invalidation.md`).
 
 **A read-only module refuses nothing.** `apps/staff-app/src/features/ledger` has no domain exception
-and no exception filter. Its domain holds only the read model `LedgerEntryModel`: the use case
+and no exception filter. Its domain holds only the read model `LedgerListEntriesModel`: `toViewData`
 rebuilds each record of the page and answers its snapshot (see `035-enums-and-response-dtos.md`).
 
 **Ids of `bigint unsigned` are strings** from the row to the response, because they may exceed the

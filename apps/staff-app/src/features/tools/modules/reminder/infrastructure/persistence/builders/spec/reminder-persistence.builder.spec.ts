@@ -69,7 +69,7 @@ describe('ReminderPersistenceBuilder', () => {
     it('selects the reminders of the owner by due date inside the page window', () => {
       const builder = new ReminderPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 3, limit: 20, offset: 40, ownerId: '2', status: undefined });
+      builder.forList({ limit: 20, offset: 40, ownerId: '2', status: undefined });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Reminder`.`id` AS `Reminder_id`, `Reminder`.`ownerId` AS `Reminder_ownerId`, `Reminder`.`title` AS `Reminder_title`, `Reminder`.`body` AS `Reminder_body`, `Reminder`.`dueOn` AS `Reminder_dueOn`, `Reminder`.`status` AS `Reminder_status`, `Reminder`.`version` AS `Reminder_version`, `Reminder`.`createdAt` AS `Reminder_createdAt`, `Reminder`.`updatedAt` AS `Reminder_updatedAt` FROM `reminder` `Reminder` WHERE ( `Reminder`.`ownerId` = ? ) AND ( `Reminder`.`deletedAt` IS NULL ) ORDER BY `Reminder_dueOn` ASC, `Reminder_id` ASC LIMIT 20 OFFSET 40',
@@ -81,7 +81,6 @@ describe('ReminderPersistenceBuilder', () => {
       const builder = new ReminderPersistenceBuilder(baseBuilder);
 
       builder.forList({
-        page: 1,
         limit: 20,
         offset: 0,
         ownerId: '2',
@@ -97,7 +96,6 @@ describe('ReminderPersistenceBuilder', () => {
     it('returns the same builder for chaining', () => {
       const builder = new ReminderPersistenceBuilder(baseBuilder);
       const chained = builder.forList({
-        page: 3,
         limit: 20,
         offset: 40,
         ownerId: '2',

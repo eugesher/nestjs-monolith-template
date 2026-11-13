@@ -29,7 +29,6 @@ describe('LedgerPersistenceLedgerEntryBuilder', () => {
       const builder = new LedgerPersistenceLedgerEntryBuilder(baseBuilder);
 
       builder.forList({
-        page: 3,
         limit: 20,
         offset: 40,
         subjectType: undefined,
@@ -47,7 +46,6 @@ describe('LedgerPersistenceLedgerEntryBuilder', () => {
       const builder = new LedgerPersistenceLedgerEntryBuilder(baseBuilder);
 
       builder.forList({
-        page: 1,
         limit: 20,
         offset: 0,
         subjectType: 'order',
@@ -64,7 +62,6 @@ describe('LedgerPersistenceLedgerEntryBuilder', () => {
     it('returns the same builder for chaining', () => {
       const builder = new LedgerPersistenceLedgerEntryBuilder(baseBuilder);
       const chained = builder.forList({
-        page: 3,
         limit: 20,
         offset: 40,
         subjectType: undefined,

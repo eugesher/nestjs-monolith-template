@@ -88,7 +88,7 @@ describe('ProductPersistenceBuilder', () => {
     it('selects every product newest first inside the page window', () => {
       const builder = new ProductPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 3, limit: 20, offset: 40, productIds: undefined });
+      builder.forList({ limit: 20, offset: 40, productIds: undefined });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` FROM `product` `Product` WHERE `Product`.`deletedAt` IS NULL ORDER BY `Product_id` DESC LIMIT 20 OFFSET 40',
@@ -99,7 +99,7 @@ describe('ProductPersistenceBuilder', () => {
     it('keeps only the given products', () => {
       const builder = new ProductPersistenceBuilder(baseBuilder);
 
-      builder.forList({ page: 1, limit: 20, offset: 0, productIds: ['100', '101'] });
+      builder.forList({ limit: 20, offset: 0, productIds: ['100', '101'] });
 
       expect(builder.getQueryAndParameters()).toEqual([
         'SELECT `Product`.`id` AS `Product_id`, `Product`.`sku` AS `Product_sku`, `Product`.`name` AS `Product_name`, `Product`.`status` AS `Product_status`, `Product`.`version` AS `Product_version`, `Product`.`createdAt` AS `Product_createdAt`, `Product`.`updatedAt` AS `Product_updatedAt` FROM `product` `Product` WHERE ( `Product`.`id` IN (?, ?) ) AND ( `Product`.`deletedAt` IS NULL ) ORDER BY `Product_id` DESC LIMIT 20 OFFSET 0',
@@ -109,7 +109,7 @@ describe('ProductPersistenceBuilder', () => {
 
     it('returns the same builder for chaining', () => {
       const builder = new ProductPersistenceBuilder(baseBuilder);
-      const chained = builder.forList({ page: 3, limit: 20, offset: 40, productIds: undefined });
+      const chained = builder.forList({ limit: 20, offset: 40, productIds: undefined });
 
       expect(chained).toBe(builder);
     });
