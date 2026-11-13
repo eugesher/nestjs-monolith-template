@@ -5,7 +5,7 @@ import { CorrelationContextHelper } from '@acme-libs/observability';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-libs/contracts/ledger';
+} from '@acme-core/contracts/ledger';
 
 import { LedgerAppendReportFailureUseCase, LedgerAppendUseCase } from '../../application';
 

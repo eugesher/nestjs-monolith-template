@@ -10,7 +10,7 @@ deadline and retries.
 | queue contract     | `core/contracts/src/product-stock/queues/product-stock-post-subtract.queue.ts`                                     |
 | queue registration | `core/modules/src/product-stock/shell/product-stock-core.module.ts`                                                |
 | the processor      | `apps/processor-app/src/processors/product-stock/presentation/processors/product-stock-post-subtract.processor.ts` |
-| from a feature     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/lib-adapters/product-ledger-lib.adapter.ts`    |
+| from a feature     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/core-adapters/product-ledger-core.adapter.ts`  |
 
 ## After the commit
 
@@ -37,25 +37,26 @@ constant of `BullSetupModule`. The race does not cancel `add`: a timed-out comma
 offline queue of the client and may still reach Redis once it is back, so the log says the record
 may be absent, and a processor must tolerate a duplicate job.
 
-**A ledger job is named by its operation key.** `LedgerLibQueueAdapter` adds the job with
+**A ledger job is named by its operation key.** `LedgerCoreQueueAdapter` adds the job with
 `jobId: operationKey`, and Bull adds no job under an id it already holds, so the retries of one
 record leave one job in the queue. The id is free again once the job is recorded, because
 `removeOnComplete` drops it, while a job that ran out of attempts keeps its id in the failed set: it
 is replayed through `/queues`, not enqueued again. The post-subtract queue has no such key, and its
 processor writes nothing on a replay.
 
-**The ledger is a lib with a facade.** `LedgerLibModule` (`libs/ledger`) exposes `LEDGER_LIB_PORT`
-with one method, `handleEnqueue`. `LedgerLibEnqueueUseCase` reads the retry attempts and the timeout
-from the configuration, retries and logs under the subject and the operation key;
-`LedgerLibQueueAdapter` holds the race, the fields of the job and its id.
+**The ledger is a core module with a facade.** `LedgerCoreModule` (`core/modules/src/ledger`)
+exposes `LEDGER_CORE_PORT` with one method, `handleEnqueue`. `LedgerCoreEnqueueUseCase` reads the
+retry attempts and the timeout from the configuration, adds the correlation id of the context to the
+record, retries and logs under the subject and the operation key; `LedgerCoreQueueAdapter` holds the
+race, the fields of the job and its id.
 
-**A module records through its lib adapter.** A module declares `<MODULE>_LEDGER_PORT` with the
+**A module records through its core-adapter.** A module declares `<MODULE>_LEDGER_PORT` with the
 facts it records, such as `recordPlaced`, and implements it in
-`infrastructure/lib-adapters/<module>-ledger-lib.adapter.ts`. The adapter builds the record, takes
-the correlation id of the context and calls the facade. Nothing is inherited, and the application
-has no ledger service. An event builds its record itself, but infrastructure may not import the
-domain, so the use case picks the events that go to the ledger and passes them through the command
-of the port.
+`infrastructure/core-adapters/<module>-ledger-core.adapter.ts`. The adapter builds the record
+without the correlation id, which the ledger takes from the context itself, and calls the facade.
+Nothing is inherited, and the application has no ledger service. An event builds its record itself,
+but infrastructure may not import the domain, so the use case picks the events that go to the ledger
+and passes them through the command of the port.
 
 ## Where the queue is declared
 

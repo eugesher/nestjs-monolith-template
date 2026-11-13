@@ -7,7 +7,7 @@ export * from './common-adapters/product-tag-common.adapter';
 export * from './core-adapters/product-idempotency-core.adapter';
 export * from './core-adapters/product-status-core.adapter';
 
-export * from './lib-adapters/product-ledger-lib.adapter';
+export * from './core-adapters/product-ledger-core.adapter';
 
 export * from './persistence/repositories/product-access.repository';
 export * from './persistence/repositories/product-create.repository';

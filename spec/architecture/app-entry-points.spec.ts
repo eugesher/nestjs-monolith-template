@@ -258,10 +258,10 @@ describe('app entry points', () => {
     'apps/processor-app/src/common/shared/ledger/ledger-queue-setup.module.ts',
     'apps/staff-app/test/context/app-e2e.context.ts',
     'apps/customer-app/test/context/app-e2e.context.ts',
-  ])('%s MAY import the ledger record contract of the ledger lib', async (file) => {
+  ])('%s MAY import the ledger record contract of the core ledger', async (file) => {
     await expect({
       file,
-      code: 'import { LEDGER_RECORD_QUEUE } from "@acme-libs/contracts/ledger";',
+      code: 'import { LEDGER_RECORD_QUEUE } from "@acme-core/contracts/ledger";',
     }).toPassArchitectureLint();
   });
 
@@ -285,10 +285,10 @@ describe('app entry points', () => {
   it.each([
     'apps/staff-app/src/features/product/product.module.ts',
     'apps/customer-app/src/features/auth/auth.module.ts',
-  ])('%s MAY mount the ledger lib', async (file) => {
+  ])('%s MAY mount the core ledger', async (file) => {
     await expect({
       file,
-      code: 'import { LedgerLibModule } from "@acme-libs/ledger";',
+      code: 'import { LedgerCoreModule } from "@acme-core/modules/ledger";',
     }).toPassArchitectureLint();
   });
 

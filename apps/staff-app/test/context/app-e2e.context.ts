@@ -8,7 +8,7 @@ import { E2EContext } from '@acme-libs/testing';
 import {
   LEDGER_RECORD_QUEUE,
   type ILedgerRecordProcessorPayload,
-} from '@acme-libs/contracts/ledger';
+} from '@acme-core/contracts/ledger';
 import { AppModule } from '@acme-staff/app/app.module';
 import type { Maybe } from '@acme-libs/toolkit';
 

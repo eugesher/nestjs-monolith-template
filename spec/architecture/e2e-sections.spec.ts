@@ -28,6 +28,13 @@ describe('e2e sections', () => {
     },
   );
 
+  it('an e2e section MAY open a correlation context with the observability lib', async () => {
+    await expect({
+      file: 'apps/staff-app/test/features/__fixture__.e2e.ts',
+      code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+    }).toPassArchitectureLint();
+  });
+
   it('the e2e context MAY use the testing lib', async () => {
     await expect({
       file: 'apps/customer-app/test/context/__fixture__.ts',
@@ -35,7 +42,7 @@ describe('e2e sections', () => {
     }).toPassArchitectureLint();
   });
 
-  it.each(['@acme-libs/contracts/ledger', '@acme-core/contracts/product-stock'])(
+  it.each(['@acme-core/contracts/ledger', '@acme-core/contracts/product-stock'])(
     'the e2e context MAY read the queue contract %s',
     async (source) => {
       await expect({

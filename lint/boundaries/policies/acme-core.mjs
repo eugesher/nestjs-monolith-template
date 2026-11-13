@@ -17,7 +17,12 @@ const ownContracts = to('acme-core:contracts', own('module'));
 
 export const acmeCore = [
   from('acme-core:modules:domain', [layer('domain'), baseLibs()]),
-  from('acme-core:modules:outbound', [layer('domain'), layer('outbound'), baseLibs()]),
+  from('acme-core:modules:outbound', [
+    layer('domain'),
+    layer('outbound'),
+    ownContracts,
+    baseLibs(),
+  ]),
   fromFile('acme-core:modules:outbound', persistenceInterfaces, [to('acme-core:entities')]),
   from('acme-core:modules:application', [
     layer('domain'),
@@ -32,6 +37,7 @@ export const acmeCore = [
     layer('infrastructure'),
     layer('infrastructure:queue'),
     layer('infrastructure:config'),
+    layer('infrastructure:core-adapters'),
     layer('infrastructure:lib-adapters'),
     to('acme-core:entities'),
     baseLibs(),
@@ -45,11 +51,17 @@ export const acmeCore = [
     baseLibs(),
     packages('@nestjs/bull', '@nestjs/common', 'bull'),
   ]),
+  from('acme-core:modules:infrastructure:core-adapters', [
+    layer('outbound'),
+    layer('infrastructure:core-adapters'),
+    to('acme-core:contracts'),
+    baseLibs(),
+  ]),
   from('acme-core:modules:infrastructure:lib-adapters', [
     layer('outbound'),
     layer('infrastructure:lib-adapters'),
-    libContracts('credentials', 'ledger'),
-    baseLibs('observability'),
+    libContracts('credentials'),
+    baseLibs(),
     packages('@nestjs/common'),
   ]),
   from('acme-core:modules:infrastructure:config', [
@@ -64,7 +76,8 @@ export const acmeCore = [
     layer('shell:facade'),
     layer('shell'),
     ownContracts,
-    baseLibs('credentials', 'ledger', 'queue'),
+    to('acme-core:modules:index'),
+    baseLibs('credentials', 'queue'),
   ]),
   from('acme-core:modules:index', [layer('shell')]),
   from('acme-core:contracts', [ownContracts, baseLibs()]),

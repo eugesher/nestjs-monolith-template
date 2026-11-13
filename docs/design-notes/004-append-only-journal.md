@@ -3,16 +3,16 @@
 The `ledger_entry` table is an append-only journal. Every app writes to it through one queue, and
 one processor appends.
 
-| Part           | Example                                                                                                         |
-| -------------- | --------------------------------------------------------------------------------------------------------------- |
-| queue contract | `libs/contracts/src/ledger/queues/ledger-record.queue.ts`                                                       |
-| a producer     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/lib-adapters/product-ledger-lib.adapter.ts` |
-| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-processor.md`)                                       |
-| a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                                 |
+| Part           | Example                                                                                                           |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| queue contract | `core/contracts/src/ledger/queues/ledger-record.queue.ts`                                                         |
+| a producer     | `apps/staff-app/src/features/catalog/modules/product/infrastructure/core-adapters/product-ledger-core.adapter.ts` |
+| the appender   | `apps/processor-app/src/processors/ledger` (see `008-queue-processor.md`)                                         |
+| a reader       | `apps/staff-app/src/features/ledger` (see `005-page-window.md`)                                                   |
 
 **Producers enqueue, one processor appends.** No HTTP app writes the table, so the append has one
 caller and lives in the processor (see `024-code-placement.md`). The queue contract lives in
-`@acme-libs/contracts/ledger`, because every app writes to the queue and an app may not import
+`@acme-core/contracts/ledger`, because every app writes to the queue and an app may not import
 another.
 
 ## Append is the only verb
@@ -30,12 +30,12 @@ database error passes through, and Bull retries the job.
 
 **A key names one occurrence.** A producer that can record the same kind of record twice for one
 subject puts what tells the occurrences apart into the key, such as a version or a row id (see
-`ProductLedgerLibAdapter`).
+`ProductLedgerCoreAdapter`).
 
 The rejected insert still consumes an auto-increment value, so ids may have gaps.
 
 **A payload carries no personal data.** No row is ever deleted, so an address written once would
-stay for good. `AuthLedgerLibAdapter` records `CustomerRegistered` with the customer id as the
+stay for good. `AuthLedgerCoreAdapter` records `CustomerRegistered` with the customer id as the
 subject and an empty payload; the email stays in the `customer` table.
 
 ## Time and correlation

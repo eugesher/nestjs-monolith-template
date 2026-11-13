@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 
 import { HttpExceptionFilter } from '@acme-libs/http';
-import { LedgerLibModule } from '@acme-libs/ledger';
 import { IdempotencyCoreModule } from '@acme-core/modules/idempotency';
+import { LedgerCoreModule } from '@acme-core/modules/ledger';
 import { ProductStockCoreModule } from '@acme-core/modules/product-stock';
 
 import { ProductStockAddUseCase } from './application';
 import {
   ProductStockAddRepository,
   ProductStockIdempotencyCoreAdapter,
-  ProductStockLedgerLibAdapter,
+  ProductStockLedgerCoreAdapter,
   ProductStockMovementCoreAdapter,
   ProductStockTransactionAdapter,
 } from './infrastructure';
 import { ProductStockController } from './presentation';
 
 @Module({
-  imports: [LedgerLibModule, IdempotencyCoreModule, ProductStockCoreModule],
+  imports: [LedgerCoreModule, IdempotencyCoreModule, ProductStockCoreModule],
   controllers: [ProductStockController],
   providers: [
     HttpExceptionFilter,
@@ -24,7 +24,7 @@ import { ProductStockController } from './presentation';
     ProductStockAddRepository.provider,
     ProductStockIdempotencyCoreAdapter.provider,
     ProductStockMovementCoreAdapter.provider,
-    ProductStockLedgerLibAdapter.provider,
+    ProductStockLedgerCoreAdapter.provider,
     ProductStockTransactionAdapter.provider,
   ],
 })

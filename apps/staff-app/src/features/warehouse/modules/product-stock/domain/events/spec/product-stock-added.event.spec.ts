@@ -13,14 +13,13 @@ describe('ProductStockAddedEvent', () => {
     it('answers the ledger record of the addition under the product and its stock row', () => {
       const event = new ProductStockAddedEvent('12', 'SKU-0001', 5);
 
-      expect(event.toLedgerRecord('700', 'c0ffee00-0000-4000-8000-000000000001')).toEqual({
+      expect(event.toLedgerRecord('700')).toEqual({
         operationKey: 'product-restocked:700',
         subjectType: 'product',
         subjectId: '12',
         action: 'ProductRestocked',
         payload: { sku: 'SKU-0001', quantity: 5 },
         occurredAt: '2026-01-05T08:00:00.000Z',
-        correlationId: 'c0ffee00-0000-4000-8000-000000000001',
       });
     });
   });

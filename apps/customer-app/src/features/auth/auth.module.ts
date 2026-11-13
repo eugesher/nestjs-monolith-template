@@ -3,19 +3,19 @@ import { Module } from '@nestjs/common';
 import { CredentialsLibModule } from '@acme-libs/credentials';
 import { HttpExceptionFilter } from '@acme-libs/http';
 import { AuthAudienceEnum } from '@acme-libs/kernel';
-import { LedgerLibModule } from '@acme-libs/ledger';
+import { LedgerCoreModule } from '@acme-core/modules/ledger';
 
 import { AuthLoginUseCase, AuthRegisterUseCase } from './application';
 import {
   AuthCredentialsLibAdapter,
-  AuthLedgerLibAdapter,
+  AuthLedgerCoreAdapter,
   AuthLoginRepository,
   AuthRegisterRepository,
 } from './infrastructure';
 import { AuthController } from './presentation';
 
 @Module({
-  imports: [CredentialsLibModule.register(AuthAudienceEnum.CUSTOMER), LedgerLibModule],
+  imports: [CredentialsLibModule.register(AuthAudienceEnum.CUSTOMER), LedgerCoreModule],
   controllers: [AuthController],
   providers: [
     AuthLoginUseCase,
@@ -23,7 +23,7 @@ import { AuthController } from './presentation';
     AuthLoginRepository.provider,
     AuthRegisterRepository.provider,
     AuthCredentialsLibAdapter.provider,
-    AuthLedgerLibAdapter.provider,
+    AuthLedgerCoreAdapter.provider,
     HttpExceptionFilter,
   ],
 })

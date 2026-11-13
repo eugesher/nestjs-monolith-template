@@ -14,6 +14,8 @@ describe('core modules', () => {
       'core/modules/src/__ledger-fixture__/application/index.ts',
       'core/modules/src/__ledger-fixture__/infrastructure/index.ts',
       'core/modules/src/__ledger-fixture__/infrastructure/cache/ledger-core-cache.adapter.ts',
+      'core/modules/src/__ledger-fixture__/infrastructure/core-adapters/ledger-core-identity-core.adapter.ts',
+      'core/modules/src/__identity-fixture__/index.ts',
       'core/modules/src/__identity-fixture__/application/index.ts',
       'core/contracts/src/__ledger-fixture__/index.ts',
       'core/contracts/src/__identity-fixture__/index.ts',
@@ -29,7 +31,7 @@ describe('core modules', () => {
   });
 
   describe('isolation and contracts', () => {
-    it('a core module may NOT reach another core module', async () => {
+    it('core application may NOT reach another core module', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
         code: 'import { x } from "../../__identity-fixture__/application";',
@@ -43,10 +45,48 @@ describe('core modules', () => {
       }).toPassArchitectureLint();
     });
 
-    it('a core module may NOT reach the contracts of another module', async () => {
+    it('core application may NOT reach the contracts of another module — a core-adapter does', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/application/__fixture__.ts',
         code: 'import { x } from "../../../../contracts/src/__identity-fixture__";',
+      }).toBreakRule('boundaries/dependencies');
+    });
+
+    it('a core-adapter MAY reach the contracts of another core module and its own outbound', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { Injectable } from "@nestjs/common";\nimport { x } from "../../../../../contracts/src/__identity-fixture__";\nimport { y } from "../../outbound";',
+      }).toPassArchitectureLint();
+    });
+
+    it.each(['../../domain', '../../application', '../../../__identity-fixture__/application'])(
+      'a core-adapter may NOT reach %s',
+      async (source) => {
+        await expect({
+          file: 'core/modules/src/__ledger-fixture__/infrastructure/core-adapters/__fixture__.ts',
+          code: `import { x } from "${source}";`,
+        }).toBreakRule('boundaries/dependencies');
+      },
+    );
+
+    it('core infrastructure MAY bind its core-adapters', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/infrastructure/__fixture__.ts',
+        code: 'import { x } from "./core-adapters/ledger-core-identity-core.adapter";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the module root MAY mount another core module through its barrel', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+        code: 'import { x } from "../../__identity-fixture__";',
+      }).toPassArchitectureLint();
+    });
+
+    it('the module root may NOT reach the layers of another core module', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
+        code: 'import { x } from "../../__identity-fixture__/application";',
       }).toBreakRule('boundaries/dependencies');
     });
 
@@ -65,6 +105,20 @@ describe('core modules', () => {
         file: 'core/modules/src/product/application/use-cases/__fixture__.ts',
         code: 'import { PRODUCT_CORE_PORT } from "@acme-core/contracts/product";',
       }).toPassArchitectureLint();
+    });
+
+    it('core outbound MAY reach its own contracts: a queue command carries the record of the contract', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/outbound/__fixture__.ts',
+        code: 'import { x } from "../../../../contracts/src/__ledger-fixture__";',
+      }).toPassArchitectureLint();
+    });
+
+    it('core outbound may NOT reach the contracts of another module', async () => {
+      await expect({
+        file: 'core/modules/src/__ledger-fixture__/outbound/__fixture__.ts',
+        code: 'import { x } from "../../../../contracts/src/__identity-fixture__";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it('core application may NOT reach its own infrastructure', async () => {
@@ -337,18 +391,25 @@ describe('core modules', () => {
       }).toPassArchitectureLint();
     });
 
-    it('the module root MAY mount the ledger lib', async () => {
+    it('the module root MAY mount the core ledger', async () => {
       await expect({
-        file: 'core/modules/src/__ledger-fixture__/shell/__fixture__.ts',
-        code: 'import { LedgerLibModule } from "@acme-libs/ledger";',
+        file: 'core/modules/src/product/shell/__fixture__.ts',
+        code: 'import { LedgerCoreModule } from "@acme-core/modules/ledger";',
       }).toPassArchitectureLint();
     });
 
-    it('a lib adapter MAY take the ledger contract and the correlation helper', async () => {
+    it('a core-adapter MAY take the port of the core ledger', async () => {
+      await expect({
+        file: 'core/modules/src/product/infrastructure/core-adapters/__fixture__.ts',
+        code: 'import { LEDGER_CORE_PORT } from "@acme-core/contracts/ledger";',
+      }).toPassArchitectureLint();
+    });
+
+    it('a lib adapter may NOT take the correlation helper: the core ledger reads the correlation id itself', async () => {
       await expect({
         file: 'core/modules/src/__ledger-fixture__/infrastructure/lib-adapters/__fixture__.ts',
-        code: 'import { Injectable } from "@nestjs/common";\nimport { LEDGER_LIB_PORT } from "@acme-libs/contracts/ledger";\nimport { CorrelationContextHelper } from "@acme-libs/observability";\nimport { y } from "../../outbound";',
-      }).toPassArchitectureLint();
+        code: 'import { CorrelationContextHelper } from "@acme-libs/observability";',
+      }).toBreakRule('boundaries/dependencies');
     });
 
     it('a lib adapter may NOT reach domain', async () => {

@@ -59,7 +59,7 @@ fields and the `data` of the job: a deleted ledger record never reaches the ledg
 the only place it can be restored from.
 
 **The config holds what the processors read**: the database, Redis, `IDEMPOTENCY_KEY_TTL_HOURS`,
-`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_ENQUEUE_RETRY_ATTEMPTS` of the ledger lib and
+`IDEMPOTENCY_IN_FLIGHT_TTL_MINUTES`, `LEDGER_ENQUEUE_RETRY_ATTEMPTS` of the core ledger and
 `ENQUEUE_RETRY_ATTEMPTS` of the core modules it mounts, the logger and tracing, and `JWT_SECRET`,
 `JWT_EXPIRES_IN` and the argon2 costs for the staff login. No cache TTL.
 

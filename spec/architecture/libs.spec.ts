@@ -16,7 +16,6 @@ describe('libs', () => {
       'libs/http/src/index.ts',
       'libs/http/src/exceptions/unauthorized-http.exception.ts',
       'libs/kernel/src/index.ts',
-      'libs/ledger/src/index.ts',
       'libs/local-storage/src/index.ts',
       'libs/observability/src/index.ts',
       'libs/openapi/src/index.ts',
@@ -27,7 +26,6 @@ describe('libs', () => {
       'libs/contracts/src/credentials/index.ts',
       'libs/contracts/src/database/index.ts',
       'libs/contracts/src/health/index.ts',
-      'libs/contracts/src/ledger/index.ts',
       'libs/contracts/src/local-storage/index.ts',
       'core/modules/src/__ledger-fixture__/index.ts',
       'apps/__libs-fixture__/src/features/product/product.module.ts',
@@ -70,7 +68,6 @@ describe('libs', () => {
     ['database', ['kernel', 'toolkit', 'config', 'local-storage']],
     ['health', ['kernel', 'toolkit', 'observability']],
     ['http', ['kernel', 'toolkit', 'config', 'observability']],
-    ['ledger', ['kernel', 'toolkit', 'config', 'queue']],
     ['local-storage', ['kernel', 'toolkit', 'observability']],
     ['observability', ['kernel', 'toolkit', 'config']],
     ['openapi', ['kernel', 'toolkit']],
@@ -87,7 +84,6 @@ describe('libs', () => {
       'health',
       'http',
       'kernel',
-      'ledger',
       'local-storage',
       'observability',
       'openapi',
@@ -119,7 +115,7 @@ describe('libs', () => {
 
   it('a lib may NOT import the testing lib outside its specs', async () => {
     await expect({
-      file: 'libs/ledger/src/application/__fixture__.ts',
+      file: 'libs/cache/src/application/__fixture__.ts',
       code: 'import { x } from "../../../testing/src";',
     }).toBreakRule('boundaries/dependencies');
   });
@@ -133,7 +129,7 @@ describe('libs', () => {
 
   it('a spec of any layer MAY import the testing lib', async () => {
     await expect({
-      file: 'libs/ledger/src/application/spec/__fixture__.spec.ts',
+      file: 'libs/cache/src/application/spec/__fixture__.spec.ts',
       code: 'import { x } from "../../../../testing/src";',
     }).toPassArchitectureLint();
   });
@@ -148,7 +144,6 @@ describe('libs', () => {
     ['health', ['cache', 'health']],
     ['http', []],
     ['kernel', []],
-    ['ledger', ['ledger']],
     ['local-storage', ['local-storage']],
     ['observability', []],
     ['openapi', []],
@@ -156,15 +151,7 @@ describe('libs', () => {
     ['testing', []],
     ['toolkit', []],
   ])('%s may import only the contracts of %j', async (from, allowed) => {
-    const contracts = [
-      'auth',
-      'cache',
-      'credentials',
-      'database',
-      'health',
-      'ledger',
-      'local-storage',
-    ];
+    const contracts = ['auth', 'cache', 'credentials', 'database', 'health', 'local-storage'];
 
     for (const to of contracts) {
       if (allowed.includes(to)) {

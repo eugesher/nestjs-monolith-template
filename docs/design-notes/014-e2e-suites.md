@@ -200,10 +200,11 @@ and `supertest`. `test/infra` keeps running under plain node.
 ## Lint
 
 `apps/*/test/**` is the category `acme-app:test`. It sees its own app's tests, its `AppModule`, its
-contracts, the contracts of core, `@acme-libs/contracts/ledger`, `@acme-core/entities`, the libs
-`kernel`, `toolkit`, `database` and `testing`, and the packages `@nestjs/bull`, `@nestjs/common`,
-`@nestjs/config`, `@nestjs/schedule`, `bull`, `ioredis`, `supertest` and `typeorm`.
-`@nestjs/testing` and `nestjs-pino` stay in the testing lib.
+contracts, the contracts of core, `@acme-core/entities`, the libs `kernel`, `toolkit`, `database`,
+`observability` and `testing`, and the packages `@nestjs/bull`, `@nestjs/common`, `@nestjs/config`,
+`@nestjs/schedule`, `bull`, `ioredis`, `supertest` and `typeorm`. `@nestjs/testing` and
+`nestjs-pino` stay in the testing lib. The observability lib opens a correlation context for a case
+that calls a port directly, outside a request, as `LedgerE2E` does for the core ledger.
 `spec/architecture/e2e-sections.spec.ts` checks these edges.
 
 The e2e code turns off `no-unsafe-argument`, `no-unsafe-assignment` and `no-unsafe-member-access`

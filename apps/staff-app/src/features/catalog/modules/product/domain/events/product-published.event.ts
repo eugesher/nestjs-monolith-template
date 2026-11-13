@@ -13,7 +13,7 @@ export class ProductPublishedEvent extends DomainEventBase<string> {
     super(productId);
   }
 
-  public toLedgerRecord(correlationId: string): IProductLedgerRecordOutput {
+  public toLedgerRecord(): IProductLedgerRecordOutput {
     const { aggregateId, sku, version, previousStatus } = this;
     const occurredAt = this.occurredAt.toISOString();
 
@@ -24,7 +24,6 @@ export class ProductPublishedEvent extends DomainEventBase<string> {
       action: 'ProductPublished',
       payload: { sku, previousStatus },
       occurredAt,
-      correlationId,
     };
   }
 }

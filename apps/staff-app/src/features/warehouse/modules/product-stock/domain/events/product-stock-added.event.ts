@@ -11,10 +11,7 @@ export class ProductStockAddedEvent extends DomainEventBase<string> {
     super(productId);
   }
 
-  public toLedgerRecord(
-    productStockId: string,
-    correlationId: string,
-  ): IProductStockLedgerRecordOutput {
+  public toLedgerRecord(productStockId: string): IProductStockLedgerRecordOutput {
     const { aggregateId, sku, quantity } = this;
     const occurredAt = this.occurredAt.toISOString();
 
@@ -25,7 +22,6 @@ export class ProductStockAddedEvent extends DomainEventBase<string> {
       action: 'ProductRestocked',
       payload: { sku, quantity },
       occurredAt,
-      correlationId,
     };
   }
 }
