@@ -39,7 +39,7 @@ export const acmeLibs = [
   ),
   fromLib('bootstrap', [
     libs('observability', 'openapi'),
-    packages('@nestjs/common', '@nestjs/config', '@nestjs/core', 'nestjs-pino'),
+    packages('@nestjs/common', '@nestjs/config', 'nestjs-pino'),
   ]),
   fromLib('auth', [packages('@nestjs/common', '@nestjs/config', '@nestjs/core', '@nestjs/jwt')]),
   fromLib('testing', [

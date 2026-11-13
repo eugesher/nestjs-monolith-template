@@ -8,24 +8,26 @@ login and the failed jobs of its queues, and runs the queue processors and the s
 
 ## main.ts
 
-`main.ts` starts the process and nothing else, in two statements:
+`main.ts` starts the process and nothing else:
 
 1. `@acme-libs/observability/tracer` is the first import, so OpenTelemetry patches the modules
    before Nest loads them. Tracing starts only when `OTEL_SDK_DISABLED=false` is set in the
    environment of the process: the env file of the app is not loaded yet at that point.
    `yarn start:dev` and the built image pass `.env` to Node with `--env-file`, so both trace.
-2. `AppBootstrap.run(AppModule, <app>)` of `libs/bootstrap` starts the app.
+2. `BootstrapLogger.setup(<app>)` gives a pino logger for the line outside DI:
+   `<app> bootstrap error` with exit code 1 for a failed start.
+3. `NestFactory.create(AppModule, { bufferLogs: true })` creates the app, and
+   `AppBootstrap.create(app, <app>).execute()` of `libs/bootstrap` starts it, both inside the `try`
+   of the bootstrap error.
 
-`AppBootstrap.run` holds the steps every app takes, so the three apps cannot start differently:
+`main.ts` creates the app the way any Nest app does, and `AppBootstrap.execute` holds the steps
+every app takes after that, so the three apps cannot start differently:
 
-1. `BootstrapLogger.setup(<app>)` gives a pino logger for the lines outside DI:
-   `<app> is listening on port <port>`, and `<app> bootstrap error` with exit code 1 for a failed
-   start.
-2. `NestFactory.create(AppModule, { bufferLogs: true })`, then `app.useLogger(app.get(Logger))`:
-   Nest's own lines go through pino too, and the lines buffered before the logger existed are
-   flushed through it.
-3. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
+1. `app.useLogger(app.get(Logger))`: Nest's own lines go through pino too, and the lines buffered
+   before the logger existed are flushed through it.
+2. The global prefix from `API_PREFIX`, `enableShutdownHooks`, the API reference and `listen` on
    `PORT`.
+3. `<app> is listening on port <port>` through the logger of the app.
 
 ## Environment
 

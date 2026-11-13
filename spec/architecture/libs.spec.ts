@@ -249,11 +249,18 @@ describe('libs', () => {
     }).toBreakRule('boundaries/dependencies');
   });
 
-  it('the bootstrap lib MAY import the Nest packages that start an app', async () => {
+  it('the bootstrap lib MAY import the Nest packages that set up an app', async () => {
     await expect({
       file: 'libs/bootstrap/src/app/__fixture__.ts',
-      code: 'import { ConfigService } from "@nestjs/config";\nimport { NestFactory } from "@nestjs/core";\nimport { Logger } from "nestjs-pino";',
+      code: 'import { INestApplication } from "@nestjs/common";\nimport { ConfigService } from "@nestjs/config";\nimport { Logger } from "nestjs-pino";',
     }).toPassArchitectureLint();
+  });
+
+  it('the bootstrap lib may NOT import NestFactory: main.ts creates the app', async () => {
+    await expect({
+      file: 'libs/bootstrap/src/app/__fixture__.ts',
+      code: 'import { NestFactory } from "@nestjs/core";',
+    }).toBreakRule('boundaries/dependencies');
   });
 
   it('the config lib MAY import the Nest config packages it wraps', async () => {
